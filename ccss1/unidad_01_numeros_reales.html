@@ -678,10 +678,12 @@
       --fondo-bloque: #ffffff;
       --cuadricula: #e3eaf3;
       --celda: 1.4rem;
+      position: relative;
       width: fit-content;
       min-width: min(100%, 24rem);
       max-width: 100%;
-      padding: 0.95rem 1.9rem 1.15rem 1.7rem;
+      margin-top: 2.2rem;
+      padding: 1.6rem 1.9rem 1.15rem 1.7rem;
       background-color: #ffffff;
       background-image:
         linear-gradient(to right, var(--cuadricula) 1px, transparent 1px),
@@ -699,11 +701,11 @@
       line-height: calc(2 * var(--celda));
     }
 
+    /* El párrafo de la etiqueta no ocupa sitio: la píldora cuelga del
+       borde superior. */
     .bloque-didactico.cuaderno > p:first-child {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-bottom: calc(0.45 * var(--celda));
+      margin: 0;
+      height: 0;
     }
 
     /* Fórmulas «a mano»: letras, números y nombres de función también en
@@ -716,6 +718,22 @@
     .bloque-didactico.cuaderno .katex {
       color: #1e3a8a;
       font-size: 1.1em;
+      /* Una igualdad nunca se parte en dos líneas. */
+      white-space: nowrap;
+    }
+
+    /* Una fracción apilada lleva aire sobre y bajo su línea para no
+       tocar las líneas vecinas (las líneas sin fracción no cambian). */
+    .bloque-didactico.cuaderno .formula-alta {
+      display: inline-block;
+      padding: 0.3em 0;
+      vertical-align: baseline;
+    }
+
+    /* Si una fórmula no cabe (móvil), el cuerpo de la nota se desplaza en
+       horizontal; la píldora colgada queda fuera de este contenedor. */
+    .bloque-didactico.cuaderno .cuerpo-cuaderno {
+      overflow-x: auto;
     }
 
     .bloque-didactico.cuaderno .katex .mord,
@@ -746,23 +764,39 @@
       font-size: 1.15em;
     }
 
-    /* «Al cuaderno» es una etiqueta: rectángulo redondeado sin relleno,
-       con el texto y el lápiz en el color del apartado. El título de la
-       nota va debajo, a la izquierda. */
+    /* «Al cuaderno» es una píldora con el texto y el lápiz siempre en el
+       rojo teja del margen de la hoja (#d85a30, relleno #fdeee7), el mismo
+       en toda la web para localizar las notas al desplazarse (elegido
+       entre ocho colores el 12 de septiembre de 2026); a la izquierda y
+       montada sobre el borde superior
+       (mitad fuera, mitad dentro), sin pisar el título ni la primera línea
+       (decisión del profesor, 12 de septiembre de 2026, tras varias
+       posiciones). Altura fija para que la maquetación no dependa de las
+       métricas de la letra. */
     .cuaderno .etiqueta-bloque {
+      position: absolute;
+      top: -1rem;
+      left: 1.1rem;
+      box-sizing: border-box;
+      height: 1.95rem;
+      /* Sin la altura mínima táctil de los botones: la tira entera ya es
+         un objetivo grande. */
+      min-height: 0;
+      z-index: 1;
       display: inline-flex;
       gap: 0.4rem;
       align-items: center;
       padding: 0.08rem 0.85rem 0.08rem 0.65rem;
-      border: 1.5px solid var(--color-bloque);
+      border: 1.5px solid #d85a30;
       border-radius: 999px;
-      background: #ffffff;
-      color: var(--color-bloque);
+      background: #fdeee7;
+      box-shadow: 0 2px 6px rgb(15 35 80 / 0.16);
+      color: #d85a30;
       font-family: "Kalam", "Segoe Print", "Bradley Hand", cursive;
       font-size: 1.02rem;
       font-weight: 700;
       letter-spacing: 0.02em;
-      line-height: 1.5;
+      line-height: 1;
       text-transform: none;
     }
 
@@ -771,13 +805,105 @@
       flex: none;
       width: 1.05em;
       height: 1.05em;
-      background-color: var(--color-bloque);
+      background-color: #d85a30;
       -webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") center / contain no-repeat;
       mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
+    /* La píldora es un botón: flechita que indica si la nota está
+       cerrada o abierta. */
+    .cuaderno .etiqueta-bloque {
+      margin: 0;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
     .cuaderno .etiqueta-bloque::after {
-      content: none;
+      content: "\25BE";
+      font-size: 0.8em;
+      margin-left: 0.1em;
+    }
+
+    .cuaderno .etiqueta-bloque[aria-expanded="true"]::after {
+      content: "\25B4";
+    }
+
+    .cuaderno .etiqueta-bloque:focus-visible {
+      outline: 2px solid #d85a30;
+      outline-offset: 2px;
+    }
+
+    /* Nota cerrada (estado inicial; decisión del profesor, 12 de
+       septiembre de 2026): se ve el título y la primera línea del cuerpo,
+       que se funde en blanco; toda la tira abre la nota. */
+    .bloque-didactico.cuaderno .cuerpo-cuaderno {
+      position: relative;
+    }
+
+    .bloque-didactico.cuaderno.plegada {
+      padding-bottom: 0.5rem;
+    }
+
+    .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno {
+      max-height: 3.9rem;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 3.2rem;
+      background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.85) 55%, #ffffff 85%);
+    }
+
+    .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno::before {
+      content: "\25BE";
+      position: absolute;
+      right: 0.1rem;
+      bottom: 0.15rem;
+      z-index: 1;
+      color: #d85a30;
+      font: 700 0.95rem/1 -apple-system, "Segoe UI", sans-serif;
+    }
+
+    /* Control del índice: abre o cierra todas las notas de la unidad. */
+    .alternar-notas {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      margin-top: 0.85rem;
+      padding: 0.38rem 0.6rem;
+      border: 1px solid var(--borde);
+      border-radius: 0.6rem;
+      background: #ffffff;
+      color: #b8461c;
+      font: 600 0.78rem/1.3 -apple-system, "Segoe UI", sans-serif;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .alternar-notas[hidden] {
+      display: none;
+    }
+
+    .alternar-notas::before {
+      content: "";
+      flex: none;
+      width: 1em;
+      height: 1em;
+      background-color: currentColor;
+      -webkit-mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+      mask: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    .alternar-notas:hover,
+    .alternar-notas:focus-visible {
+      border-color: #d85a30;
+      background: #fdeee7;
     }
 
     /* Título de la nota: su propia línea, a la izquierda, algo mayor que
@@ -799,18 +925,50 @@
 
 
 
-    /* Formatos esquemáticos de la nota: etiqueta recuadrada al principio
-       de una línea, tabla con rejilla (clasificaciones y propiedades) y
-       tabla de columnas sin rejilla (dos casos enfrentados). */
+    /* Formatos esquemáticos de la nota: etiqueta al principio de una
+       línea (el nombre seguido de dos puntos, sin recuadro ni negrita:
+       los recuadros se probaron y el profesor los retiró el 12 de
+       septiembre de 2026), tabla con rejilla (clasificaciones y
+       propiedades) y tabla de columnas sin rejilla (dos casos
+       enfrentados). */
     .bloque-didactico.cuaderno .etiqueta-nota {
-      display: inline-block;
-      margin-right: 0.4em;
-      padding: 0 0.5em;
-      border: 1.5px solid #475569;
-      border-radius: 0.35rem;
-      color: #1f2937;
-      font-weight: 700;
-      line-height: 1.55;
+      font-weight: 400;
+    }
+
+    .bloque-didactico.cuaderno .etiqueta-nota.ejemplo {
+      color: #0f6e4f;
+    }
+
+    /* Casos de una misma regla: lista con rayita; el ejemplo de cada
+       caso va en una cita, metido dentro del caso. */
+    .bloque-didactico.cuaderno ul {
+      margin: 0;
+      padding: 0 0 0 1.3rem;
+      list-style: none;
+    }
+
+    .bloque-didactico.cuaderno li {
+      position: relative;
+      margin: 0;
+    }
+
+    .bloque-didactico.cuaderno li::before {
+      content: "\2013";
+      position: absolute;
+      left: -1.3rem;
+    }
+
+    /* Líneas sangradas: los ejemplos, uno debajo de otro. */
+    .bloque-didactico.cuaderno blockquote {
+      margin: 0 0 0 1.6rem;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      color: inherit;
+      font: inherit;
+      line-height: calc(2 * var(--celda));
     }
 
     .bloque-didactico.cuaderno .etiqueta-nota .katex {
@@ -826,32 +984,28 @@
 
     .bloque-didactico.cuaderno .tabla-nota th,
     .bloque-didactico.cuaderno .tabla-nota td {
-      padding: 0.05rem 0.8rem;
+      padding: 0.18rem 0.8rem;
       border: 1.5px solid #94a3b8;
       text-align: left;
       vertical-align: middle;
     }
 
-    .bloque-didactico.cuaderno th {
-      color: #1f2937;
-      background: transparent;
-    }
-
     .bloque-didactico.cuaderno .tabla-nota th {
-      font-weight: 700;
+      font-weight: 400;
+      text-align: center;
       background: rgb(255 255 255 / 0.7);
     }
 
     .bloque-didactico.cuaderno .tabla-columnas th {
       padding: 0 1.2rem 0.1rem 0;
-      font-weight: 700;
+      font-weight: 400;
       text-align: left;
       text-decoration: underline;
       text-underline-offset: 0.18em;
     }
 
     .bloque-didactico.cuaderno .tabla-columnas td {
-      padding: 0.05rem 1.2rem 0.05rem 0;
+      padding: 0.12rem 1.2rem 0.12rem 0;
       vertical-align: top;
     }
 
@@ -2093,6 +2247,21 @@
         background-image: none;
       }
 
+      .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno {
+        max-height: none;
+        overflow: visible;
+      }
+
+      .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno::before,
+      .bloque-didactico.cuaderno.plegada .cuerpo-cuaderno::after,
+      .cuaderno .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .alternar-notas {
+        display: none;
+      }
+
       a {
         color: inherit;
         text-decoration: none;
@@ -2613,6 +2782,7 @@ Bachillerato</p>
           práctica</a></li>
           </ul>
         </nav>
+        <button type="button" class="alternar-notas" id="alternar-notas" hidden>Mostrar todas las notas</button>
       </aside>
       
       <main
@@ -2825,8 +2995,9 @@ Bachillerato</p>
                 class="math inline">\(3{,}14\)</span> es racional aunque
                 <span class="math inline">\(\pi\)</span> no lo sea.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-1">Al cuaderno</button></p>
+                <div id="cuaderno-1" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <colgroup>
                 <col style="width: 33%" />
@@ -2868,13 +3039,15 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Inclusiones</span> <span
+                <p><span class="etiqueta-nota">Inclusiones:</span> <span
                 class="math inline">\(\mathbb N\subset\mathbb
                 Z\subset\mathbb Q\subset\mathbb R\)</span><br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(\sqrt{36}=6\in\mathbb N\)</span>,
-                pero <span class="math inline">\(\sqrt{20}\)</span> es
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(\sqrt{36}=6\in\mathbb
+                N\)</span>, pero <span
+                class="math inline">\(\sqrt{20}\)</span> es
                 irracional.</p>
+                </div>
                 </div>
                 <section id="ejercicios"
                 class="level4 ejercicios unnumbered">
@@ -3010,10 +3183,11 @@ Bachillerato</p>
                 expresión decimal es exacta, <span
                 class="math inline">\(0{,}75\)</span>.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-2">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Tipo de decimal sin
                 dividir</span></p>
+                <div id="cuaderno-2" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
                 <tr>
@@ -3039,12 +3213,20 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(\dfrac{9}{40}\)</span> exacta;
-                <span class="math inline">\(\dfrac{4}{33}\)</span>
-                periódica pura; <span
-                class="math inline">\(\dfrac{11}{30}\)</span> periódica
-                mixta.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <p><span class="formula-alta"><span
+                class="math inline">\(\dfrac{9}{40}\)</span></span>
+                exacta<br />
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{4}{33}\)</span></span>
+                periódica pura<br />
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{11}{30}\)</span></span>
+                periódica mixta.</p>
+                </blockquote>
+                </div>
                 </div>
                 <section id="ejercicios-1"
                 class="level4 ejercicios unnumbered">
@@ -3203,37 +3385,30 @@ Bachillerato</p>
                 class="math inline">\(4{,}3\)</span> son el mismo
                 número.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <table class="tabla-nota">
-                <colgroup>
-                <col style="width: 50%" />
-                <col style="width: 50%" />
-                </colgroup>
-                <thead>
-                <tr>
-                <th scope="col">Decimal</th>
-                <th scope="col">Fracción generatriz</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <td>exacto</td>
-                <td>el número sin coma sobre <span
-                class="math inline">\(10^n\)</span></td>
-                </tr>
-                <tr>
-                <td>periódico</td>
-                <td><span
-                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span>:
-                un <span class="math inline">\(9\)</span> por cifra del
-                período y un <span class="math inline">\(0\)</span> por
-                cifra del anteperíodo</td>
-                </tr>
-                </tbody>
-                </table>
-                <p><span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(0{,}375=\dfrac{375}{1000}=\dfrac{3}{8}\qquad0{,}\overline{45}=\dfrac{45}{99}=\dfrac{5}{11}\qquad2{,}1\overline{6}=\dfrac{216-21}{90}=\dfrac{13}{6}\)</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-3">Al cuaderno</button></p>
+                <div id="cuaderno-3" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Decimal exacto:</span> el
+                número sin coma, sobre <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(100\)</span>, <span
+                class="math inline">\(1000\)</span>…<br />
+                <span class="etiqueta-nota">Decimal periódico:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span></span>:
+                un <span class="math inline">\(9\)</span> por cada cifra
+                del período y un <span class="math inline">\(0\)</span>
+                por cada cifra del anteperíodo.<br />
+                <span class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <p><span class="formula-alta"><span
+                class="math inline">\(0{,}375=\dfrac{375}{1000}=\dfrac{3}{8}\)</span></span><br />
+                <span class="formula-alta"><span
+                class="math inline">\(0{,}\overline{45}=\dfrac{45}{99}=\dfrac{5}{11}\)</span></span><br />
+                <span class="formula-alta"><span
+                class="math inline">\(2{,}1\overline{6}=\dfrac{216-21}{90}=\dfrac{13}{6}\)</span></span></p>
+                </blockquote>
+                </div>
                 </div>
                 <section id="ejercicios-2"
                 class="level4 ejercicios unnumbered">
@@ -3349,24 +3524,29 @@ Bachillerato</p>
                 <span class="math inline">\(\sqrt5\)</span> ocurre lo
                 mismo.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Raíces</span> <span
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-4">Al cuaderno</button></p>
+                <div id="cuaderno-4" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Raíces:</span> <span
                 class="math inline">\(\sqrt n\)</span> es irracional si
                 <span class="math inline">\(n\)</span> no es un cuadrado
-                perfecto.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(\sqrt{20}\)</span> es irracional;
-                <span class="math inline">\(\sqrt{49}=7\)</span>
-                no.<br />
-                <span class="etiqueta-nota">Densidad</span> entre dos
-                reales distintos hay infinitos racionales e infinitos
-                irracionales.<br />
-                <span class="etiqueta-nota">Ejemplo</span> entre <span
-                class="math inline">\(1{,}41\)</span> y <span
-                class="math inline">\(1{,}42\)</span> están <span
+                perfecto.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <p><span class="math inline">\(\sqrt{20}\)</span> es
+                irracional<br />
+                <span class="math inline">\(\sqrt{49}=7\)</span> no.</p>
+                </blockquote>
+                <p><span class="etiqueta-nota">Densidad:</span> entre
+                dos reales distintos hay infinitos racionales e
+                infinitos irracionales.<br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                entre <span class="math inline">\(1{,}41\)</span> y
+                <span class="math inline">\(1{,}42\)</span> están <span
                 class="math inline">\(1{,}415\)</span> y <span
-                class="math inline">\(\sqrt2\)</span>.</p>
+                class="math inline">\(\sqrt2\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-3"
                 class="level4 ejercicios unnumbered">
@@ -3513,8 +3693,9 @@ Bachillerato</p>
                 también se puede calcular de una vez como <span
                 class="math inline">\(1{,}21\cdot50\)</span>.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-5">Al cuaderno</button></p>
+                <div id="cuaderno-5" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
                 <tr>
@@ -3556,6 +3737,7 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                </div>
                 </div>
                 <section id="ejercicios-4"
                 class="level4 ejercicios unnumbered">
@@ -3647,22 +3829,25 @@ Bachillerato</p>
                 class="math inline">\(0^{0}\)</span> ni las potencias de
                 base <span class="math inline">\(0\)</span> con
                 exponente negativo.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-6">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Exponente cero y
                 negativo</span></p>
-                <p><span class="etiqueta-nota">Exponente cero</span>
+                <div id="cuaderno-6" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Exponente cero:</span>
                 <span class="math inline">\(a^0=1\)</span>, con <span
-                class="math inline">\(a\neq0\)</span>.<br />
-                <span class="etiqueta-nota">Exponente negativo</span>
-                <span
-                class="math inline">\(a^{-n}=\dfrac{1}{a^n}\)</span>:
+                class="math inline">\(a\neq0\)</span><br />
+                <span class="etiqueta-nota">Exponente negativo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(a^{-n}=\dfrac{1}{a^n}\)</span></span>:
                 invierte, no cambia el signo.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(2^{-3}=\dfrac{1}{8}\)</span><br />
-                <span class="etiqueta-nota">Paréntesis</span> <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(2^{-3}=\dfrac{1}{8}\)</span></span><br />
+                <span class="etiqueta-nota">Paréntesis:</span> <span
                 class="math inline">\((-2)^4=16\)</span>, pero <span
-                class="math inline">\(-2^4=-16\)</span>.</p>
+                class="math inline">\(-2^4=-16\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-5"
                 class="level4 ejercicios unnumbered">
@@ -3750,15 +3935,12 @@ Bachillerato</p>
                 x^{7}
                 \]</span></p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-7">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Propiedades de las
                 potencias</span></p>
+                <div id="cuaderno-7" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
-                <colgroup>
-                <col style="width: 50%" />
-                <col style="width: 50%" />
-                </colgroup>
                 <thead>
                 <tr>
                 <th scope="col">Propiedad</th>
@@ -3783,15 +3965,21 @@ Bachillerato</p>
                 class="math inline">\((a^m)^n=a^{mn}\)</span></td>
                 </tr>
                 <tr>
-                <td>Producto y cociente elevados</td>
+                <td>Producto elevado</td>
                 <td><span
-                class="math inline">\((ab)^n=a^nb^n\qquad\left(\dfrac{a}{b}\right)^n=\dfrac{a^n}{b^n}\)</span></td>
+                class="math inline">\((ab)^n=a^nb^n\)</span></td>
+                </tr>
+                <tr>
+                <td>Cociente elevado</td>
+                <td><span
+                class="math inline">\(\left(\dfrac{a}{b}\right)^n=\dfrac{a^n}{b^n}\)</span></td>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Nunca con sumas</span>
+                <p><span class="etiqueta-nota">Nunca con sumas:</span>
                 <span class="math inline">\((a+b)^2\neq
                 a^2+b^2\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-6"
                 class="level4 ejercicios unnumbered">
@@ -3862,28 +4050,30 @@ Bachillerato</p>
                 class="math inline">\(3\%\)</span>. Lo mismo ocurre con
                 un capital a interés compuesto o con una población que
                 crece a ritmo constante.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-8">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Factor de
                 crecimiento</span></p>
+                <div id="cuaderno-8" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Subida del <span
-                class="math inline">\(r\%\)</span></span> multiplicar
-                por <span
-                class="math inline">\(1+\dfrac{r}{100}\)</span>; bajada:
-                por <span
-                class="math inline">\(1-\dfrac{r}{100}\)</span>.<br />
-                <span class="etiqueta-nota">Varios períodos</span> en
+                class="math inline">\(r\%\)</span>:</span> multiplicar
+                por <span class="formula-alta"><span
+                class="math inline">\(1+\dfrac{r}{100}\)</span></span>;
+                bajada: por <span class="formula-alta"><span
+                class="math inline">\(1-\dfrac{r}{100}\)</span></span><br />
+                <span class="etiqueta-nota">Varios períodos:</span> en
                 <span class="math inline">\(n\)</span> períodos, por
-                <span
-                class="math inline">\(\left(1+\dfrac{r}{100}\right)^n\)</span>:
+                <span class="formula-alta"><span
+                class="math inline">\(\left(1+\dfrac{r}{100}\right)^n\)</span></span>:
                 los factores se multiplican, los porcentajes no se
                 suman.<br />
-                <span class="etiqueta-nota">Ejemplo</span> un <span
-                class="math inline">\(3\%\)</span> anual durante <span
-                class="math inline">\(10\)</span> años: <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span> un
+                <span class="math inline">\(3\%\)</span> anual durante
+                <span class="math inline">\(10\)</span> años: <span
                 class="math inline">\(1{,}03^{10}\approx1{,}344\)</span>,
                 un <span class="math inline">\(34{,}4\%\)</span>
                 más.</p>
+                </div>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -4003,11 +4193,12 @@ Bachillerato</p>
                 no <span class="math inline">\(-3\)</span>: la raíz
                 cuadrada devuelve siempre el valor sin signo.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-9">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Raíz
                 principal</span></p>
-                <p><span class="etiqueta-nota">Definición</span> <span
+                <div id="cuaderno-9" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(\sqrt[n]{a}=b\iff
                 b^n=a\)</span></p>
                 <table class="tabla-columnas">
@@ -4036,6 +4227,7 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                </div>
                 </div>
                 <section id="ejercicios-8"
                 class="level4 ejercicios unnumbered">
@@ -4094,17 +4286,20 @@ Bachillerato</p>
                 tecla de potencia (<code>x^y</code> o <code>^</code>):
                 <span
                 class="math inline">\(200^{1/7}\approx2{,}13\)</span>.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Definición</span> <span
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-10">Al cuaderno</button></p>
+                <div id="cuaderno-10" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(a^{m/n}=\sqrt[n]{a^m}\)</span>,
                 con <span class="math inline">\(a&gt;0\)</span>:
                 denominador, índice; numerador, exponente.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
                 class="math inline">\(8^{2/3}=\left(\sqrt[3]{8}\right)^2=4\)</span><br />
-                <span class="etiqueta-nota">Calculadora</span> cualquier
-                raíz es una potencia: <span
-                class="math inline">\(\sqrt[7]{200}=200^{1/7}\)</span>.</p>
+                <span class="etiqueta-nota">Calculadora:</span>
+                cualquier raíz es una potencia: <span
+                class="math inline">\(\sqrt[7]{200}=200^{1/7}\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-9"
                 class="level4 ejercicios unnumbered">
@@ -4161,16 +4356,24 @@ Bachillerato</p>
                 class="math inline">\(\sqrt[4]{5}=\sqrt[8]{5^{2}}=\sqrt[8]{25}\)</span>.
                 Esto sirve para simplificar radicales y para llevar
                 varios radicales a un índice común.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Equivalentes</span>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-11">Al cuaderno</button></p>
+                <div id="cuaderno-11" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Equivalentes:</span>
                 multiplicar o dividir índice y exponente por el mismo
-                número no cambia el radical.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^3}=\sqrt2\qquad\sqrt[4]{5}=\sqrt[8]{25}\)</span><br />
-                <span class="etiqueta-nota">Índice común</span> el mcm
-                de los índices, para operar o comparar radicales de
+                número no cambia el radical.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <p><span
+                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^3}=\sqrt2\)</span><br />
+                <span
+                class="math inline">\(\sqrt[4]{5}=\sqrt[8]{25}\)</span></p>
+                </blockquote>
+                <p><span class="etiqueta-nota">Índice común:</span> el
+                mcm de los índices, para operar o comparar radicales de
                 distinto índice.</p>
+                </div>
                 </div>
                 <section id="ejercicios-10"
                 class="level4 ejercicios unnumbered">
@@ -4228,10 +4431,11 @@ Bachillerato</p>
                 \qquad
                 \sqrt9+\sqrt{16}=3+4=7
                 \]</span></p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-12">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Propiedades de los
                 radicales</span></p>
+                <div id="cuaderno-12" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
                 <tr>
@@ -4262,10 +4466,11 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Ojo</span> con radicandos
-                positivos; nunca con sumas: <span
+                <p><span class="etiqueta-nota">Ojo:</span> con
+                radicandos positivos; nunca con sumas: <span
                 class="math inline">\(\sqrt{9+16}=5\)</span>, pero <span
-                class="math inline">\(\sqrt9+\sqrt{16}=7\)</span>.</p>
+                class="math inline">\(\sqrt9+\sqrt{16}=7\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-11"
                 class="level4 ejercicios unnumbered">
@@ -4350,22 +4555,27 @@ Bachillerato</p>
                 \qquad
                 \sqrt2\cdot\sqrt[3]{2}=\sqrt[6]{2^{3}}\cdot\sqrt[6]{2^{2}}=\sqrt[6]{2^{5}}=\sqrt[6]{32}
                 \]</span></p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Extraer factores</span>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-13">Al cuaderno</button></p>
+                <div id="cuaderno-13" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Extraer factores:</span>
                 descompón y saca los grupos completos del índice.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
                 class="math inline">\(\sqrt{72}=\sqrt{2^2\cdot2\cdot3^2}=6\sqrt2\)</span><br />
-                <span class="etiqueta-nota">Sumar y restar</span> solo
+                <span class="etiqueta-nota">Sumar y restar:</span> solo
                 radicales semejantes: mismo índice y mismo
                 radicando.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
                 class="math inline">\(\sqrt{50}+3\sqrt8-\sqrt{18}=5\sqrt2+6\sqrt2-3\sqrt2=8\sqrt2\)</span><br />
-                <span class="etiqueta-nota">Multiplicar y dividir</span>
-                con el mismo índice se operan los radicandos; con
-                distinto, índice común.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
+                <span class="etiqueta-nota">Multiplicar y
+                dividir:</span> con el mismo índice se operan los
+                radicandos; con distinto, índice común.<br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
                 class="math inline">\(\sqrt[3]{9}\cdot\sqrt[3]{3}=\sqrt[3]{27}=3\)</span></p>
+                </div>
                 </div>
                 </section>
                 <section id="ejercicios-12"
@@ -4478,35 +4688,39 @@ Bachillerato</p>
                 class="math inline">\(\frac{4}{\sqrt5-1}\)</span> y
                 <span class="math inline">\(\sqrt5+1\)</span> valen
                 <span class="math inline">\(3{,}236\ldots\)</span></p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Racionalizar</span>
-                multiplicar arriba y abajo por lo mismo: la fracción no
-                cambia de valor.</p>
-                <table class="tabla-columnas">
-                <colgroup>
-                <col style="width: 50%" />
-                <col style="width: 50%" />
-                </colgroup>
-                <thead>
-                <tr>
-                <th scope="col">Una raíz sola</th>
-                <th scope="col">Suma o resta con raíz cuadrada</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <td>por la que completa el índice</td>
-                <td>por el conjugado</td>
-                </tr>
-                <tr>
-                <td><span
-                class="math inline">\(\dfrac{6}{\sqrt3}=\dfrac{6\sqrt3}{3}=2\sqrt3\)</span></td>
-                <td><span
-                class="math inline">\(\dfrac{4}{\sqrt5-1}=\dfrac{4(\sqrt5+1)}{4}=\sqrt5+1\)</span></td>
-                </tr>
-                </tbody>
-                </table>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-14">Al cuaderno</button></p>
+                <div id="cuaderno-14" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Regla:</span> multiplicar
+                numerador y denominador por lo mismo, hasta que abajo no
+                quede ninguna raíz.</p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Raíz cuadrada
+                sola:</span> por esa misma raíz.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{6}{\sqrt3}=\dfrac{6\cdot\sqrt3}{\sqrt3\cdot\sqrt3}=\dfrac{6\sqrt3}{3}=2\sqrt3\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Raíz de índice <span
+                class="math inline">\(n\)</span>:</span> por la raíz que
+                completa el exponente hasta <span
+                class="math inline">\(n\)</span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{5}{\sqrt[3]{25}}=\dfrac{5\cdot\sqrt[3]{5}}{\sqrt[3]{25}\cdot\sqrt[3]{5}}=\dfrac{5\sqrt[3]{5}}{\sqrt[3]{125}}=\dfrac{5\sqrt[3]{5}}{5}=\sqrt[3]{5}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Suma o resta con
+                raíces:</span> por el conjugado: lo mismo con el signo
+                del medio cambiado.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{4}{\sqrt5-1}=\dfrac{4\cdot(\sqrt5+1)}{(\sqrt5-1)(\sqrt5+1)}=\dfrac{4(\sqrt5+1)}{5-1}=\sqrt5+1\)</span></span></p>
+                </blockquote></li>
+                </ul>
+                </div>
                 </div>
                 <section id="ejercicios-13"
                 class="level4 ejercicios unnumbered">
@@ -4586,22 +4800,25 @@ Bachillerato</p>
                 €. Para pedir la valla en la ferretería la forma útil es
                 la aproximada; para seguir calculando, la exacta.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-15">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Ritmo medio de
                 crecimiento</span></p>
-                <p><span class="etiqueta-nota">Factor por período</span>
-                si en <span class="math inline">\(n\)</span> períodos
-                una cantidad se multiplica por <span
+                <div id="cuaderno-15" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Factor por
+                período:</span> si en <span
+                class="math inline">\(n\)</span> períodos una cantidad
+                se multiplica por <span
                 class="math inline">\(k\)</span>, cada período
                 multiplica por <span
-                class="math inline">\(f=\sqrt[n]{k}\)</span>.<br />
-                <span class="etiqueta-nota">Ejemplo</span> de <span
-                class="math inline">\(200\,000\)</span> a <span
+                class="math inline">\(f=\sqrt[n]{k}\)</span><br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span> de
+                <span class="math inline">\(200\,000\)</span> a <span
                 class="math inline">\(1\,000\,000\)</span> en <span
                 class="math inline">\(5\)</span> años: <span
                 class="math inline">\(f=\sqrt[5]{5}\approx1{,}38\)</span>,
                 un <span class="math inline">\(38\%\)</span> anual.</p>
+                </div>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -4761,20 +4978,22 @@ Bachillerato</p>
                 class="math inline">\(1\)</span>, porque <span
                 class="math inline">\(1^{y}\)</span> vale siempre <span
                 class="math inline">\(1\)</span>.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Definición</span> <span
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-16">Al cuaderno</button></p>
+                <div id="cuaderno-16" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(\log_a x=y\iff a^y=x\)</span>, con
                 <span class="math inline">\(a&gt;0\)</span>, <span
                 class="math inline">\(a\neq1\)</span> y <span
                 class="math inline">\(x&gt;0\)</span>: el logaritmo es
                 el exponente.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(\log_2 8=3\)</span> porque <span
-                class="math inline">\(2^3=8\)</span><br />
-                <span class="etiqueta-nota">Inmediatos</span> <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(\log_2 8=3\)</span> porque
+                <span class="math inline">\(2^3=8\)</span><br />
+                <span class="etiqueta-nota">Inmediatos:</span> <span
                 class="math inline">\(\log_a 1=0\qquad\log_a
                 a=1\qquad\log_a(a^t)=t\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-15"
                 class="level4 ejercicios unnumbered">
@@ -4856,8 +5075,9 @@ Bachillerato</p>
                 <p>En un crecimiento son «¿cuánto habrá?», «¿a qué
                 ritmo?» y «¿cuándo?».</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-17">Al cuaderno</button></p>
+                <div id="cuaderno-17" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
                 <col style="width: 33%" />
@@ -4888,8 +5108,9 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">En un crecimiento</span>
+                <p><span class="etiqueta-nota">En un crecimiento:</span>
                 ¿cuánto habrá?, ¿a qué ritmo?, ¿cuándo?</p>
+                </div>
                 </div>
                 </section>
                 <section id="logaritmos-decimales-y-neperianos"
@@ -4917,8 +5138,9 @@ Bachillerato</p>
                 la tecla <code>ln</code>: <span
                 class="math inline">\(\ln e=1\)</span> y <span
                 class="math inline">\(\ln5\approx1{,}609\)</span>.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-18">Al cuaderno</button></p>
+                <div id="cuaderno-18" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <thead>
                 <tr>
@@ -4941,6 +5163,7 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                </div>
                 </div>
                 <section id="ejercicios-16"
                 class="level4 ejercicios unnumbered">
@@ -5022,10 +5245,11 @@ Bachillerato</p>
                 class="math inline">\(\log(10+10)=\log20\approx1{,}301\)</span>,
                 mientras que <span
                 class="math inline">\(\log10+\log10=2\)</span>.</p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-19">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Propiedades de los
                 logaritmos</span></p>
+                <div id="cuaderno-19" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
                 <tr>
@@ -5057,9 +5281,10 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Ojo</span> no hay
+                <p><span class="etiqueta-nota">Ojo:</span> no hay
                 propiedad para <span
-                class="math inline">\(\log(x+y)\)</span>.</p>
+                class="math inline">\(\log(x+y)\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-17"
                 class="level4 ejercicios unnumbered">
@@ -5132,8 +5357,9 @@ Bachillerato</p>
                 \log\left(\frac{5x^{2}}{2}\right)
                 \]</span></p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-20">Al cuaderno</button></p>
+                <div id="cuaderno-20" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
                 <col style="width: 50%" />
@@ -5162,6 +5388,7 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                </div>
                 </div>
                 <section id="ejercicios-18"
                 class="level4 ejercicios unnumbered">
@@ -5333,19 +5560,23 @@ Bachillerato</p>
                 Antes de calcular hay que decidir qué modelo describe la
                 situación.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
-                <p><span class="etiqueta-nota">Regla</span> toma
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-21">Al cuaderno</button></p>
+                <div id="cuaderno-21" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Regla:</span> toma
                 logaritmos y baja el exponente: <span
+                class="formula-alta"><span
                 class="math inline">\(a^x=b\iff x=\dfrac{\log b}{\log
-                a}\)</span>.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
+                a}\)</span></span><br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
                 class="math inline">\(1{,}03^t=2\iff
-                t=\dfrac{\log2}{\log1{,}03}\approx23{,}4\)</span>
+                t=\dfrac{\log2}{\log1{,}03}\approx23{,}4\)</span></span>
                 años<br />
-                <span class="etiqueta-nota">A saltos</span> si el tiempo
-                avanza por períodos enteros, la respuesta es el primer
-                entero que supera la solución.</p>
+                <span class="etiqueta-nota">A saltos:</span> si el
+                tiempo avanza por períodos enteros, la respuesta es el
+                primer entero que supera la solución.</p>
+                </div>
                 </div>
                 <section id="ejercicios-19"
                 class="level4 ejercicios unnumbered">
@@ -5465,26 +5696,28 @@ Bachillerato</p>
                 class="math inline">\(10^{3{,}5}\approx3162\)</span>.</li>
                 </ol>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-22">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Escalas
                 logarítmicas</span></p>
-                <p><span class="etiqueta-nota">Regla</span> cada unidad
+                <div id="cuaderno-22" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Regla:</span> cada unidad
                 de la escala multiplica la cantidad real por un factor
                 fijo.<br />
-                <span class="etiqueta-nota">Decibelios</span> cada <span
-                class="math inline">\(10\)</span> dB, diez veces más
-                intenso.<br />
-                <span class="etiqueta-nota">Magnitud sísmica</span> cada
-                unidad, amplitud <span
+                <span class="etiqueta-nota">Decibelios:</span> cada
+                <span class="math inline">\(10\)</span> dB, diez veces
+                más intenso.<br />
+                <span class="etiqueta-nota">Magnitud sísmica:</span>
+                cada unidad, amplitud <span
                 class="math inline">\(\times10\)</span>; con <span
                 class="math inline">\(d\)</span> unidades de diferencia,
                 <span class="math inline">\(10^d\)</span> veces.<br />
-                <span class="etiqueta-nota">Ejemplo</span> de <span
-                class="math inline">\(5{,}1\)</span> a <span
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span> de
+                <span class="math inline">\(5{,}1\)</span> a <span
                 class="math inline">\(9\)</span>, <span
                 class="math inline">\(10^{3{,}9}\approx7943\)</span>
                 veces.</p>
+                </div>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -5728,21 +5961,23 @@ Bachillerato</p>
                 \qquad
                 2\cdot(-4)&gt;5\cdot(-4)
                 \]</span></p>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-23">Al cuaderno</button></p>
                 <p><span
                 class="titulo-cuaderno">Desigualdades</span></p>
-                <p><span class="etiqueta-nota">Ordenar</span> números
+                <div id="cuaderno-23" class="cuerpo-cuaderno">
+                <p><span class="etiqueta-nota">Ordenar:</span> números
                 escritos de distintas formas: pásalos todos a
                 decimal.<br />
-                <span class="etiqueta-nota">Sumar o restar</span> lo
+                <span class="etiqueta-nota">Sumar o restar:</span> lo
                 mismo a los dos lados: la desigualdad no cambia.<br />
-                <span class="etiqueta-nota">Multiplicar o dividir</span>
-                por un positivo, no cambia; por un negativo, cambia de
-                sentido.<br />
-                <span class="etiqueta-nota">Ejemplo</span> <span
-                class="math inline">\(2&lt;5\)</span>, pero <span
-                class="math inline">\(-2&gt;-5\)</span>.</p>
+                <span class="etiqueta-nota">Multiplicar o
+                dividir:</span> por un positivo, no cambia; por un
+                negativo, cambia de sentido.<br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(2&lt;5\)</span>, pero <span
+                class="math inline">\(-2&gt;-5\)</span></p>
+                </div>
                 </div>
                 <section id="ejercicios-21"
                 class="level4 ejercicios unnumbered">
@@ -5900,8 +6135,9 @@ Bachillerato</p>
                 \end{aligned}
                 \]</span></p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-24">Al cuaderno</button></p>
+                <div id="cuaderno-24" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <thead>
                 <tr>
@@ -5922,15 +6158,19 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Infinito</span> <span
+                <p><span class="etiqueta-nota">Infinito:</span> <span
                 class="math inline">\(+\infty\)</span> y <span
                 class="math inline">\(-\infty\)</span> no son números:
-                siempre con paréntesis.<br />
-                <span class="etiqueta-nota">Ejemplo</span> «hasta <span
-                class="math inline">\(2\)</span> kg» es <span
-                class="math inline">\(p\leq2\)</span>; «más de <span
-                class="math inline">\(2\)</span> kg» es <span
-                class="math inline">\(p&gt;2\)</span>.</p>
+                siempre con paréntesis.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <p>«hasta <span class="math inline">\(2\)</span> kg» es
+                <span class="math inline">\(p\leq2\)</span><br />
+                «más de <span class="math inline">\(2\)</span> kg» es
+                <span class="math inline">\(p&gt;2\)</span></p>
+                </blockquote>
+                </div>
                 </div>
                 <section id="ejercicios-22"
                 class="level4 ejercicios unnumbered">
@@ -6037,8 +6277,9 @@ Bachillerato</p>
                 <span
                 class="math inline">\([9,21]\cup[16,23]=[9,23]\)</span>.</p>
                 </div>
-                <div class="cuaderno bloque-didactico">
-                <p><span class="etiqueta-bloque">Al cuaderno</span></p>
+                <div class="cuaderno bloque-didactico plegada">
+                <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-25">Al cuaderno</button></p>
+                <div id="cuaderno-25" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <thead>
                 <tr>
@@ -6061,6 +6302,7 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                </div>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -6805,6 +7047,52 @@ Bachillerato</p>
             rotulo.textContent = plegado ? textoAbrir : textoCerrar;
           });
         });
+    });
+  </script>
+
+  <script>
+    // Notas «Al cuaderno»: cerradas al cargar; la píldora y la tira las
+    // abren, la píldora las cierra, y el índice ofrece abrirlas todas.
+    document.addEventListener("DOMContentLoaded", function () {
+      var notas = Array.prototype.slice.call(
+        document.querySelectorAll(".bloque-didactico.cuaderno")
+      );
+      function poner(nota, abierta) {
+        nota.classList.toggle("plegada", !abierta);
+        var boton = nota.querySelector("button.etiqueta-bloque");
+        if (boton) {
+          boton.setAttribute("aria-expanded", abierta ? "true" : "false");
+        }
+      }
+      notas.forEach(function (nota) {
+        var boton = nota.querySelector("button.etiqueta-bloque");
+        var cuerpo = nota.querySelector(".cuerpo-cuaderno");
+        if (!boton || !cuerpo) {
+          return;
+        }
+        boton.addEventListener("click", function () {
+          poner(nota, nota.classList.contains("plegada"));
+        });
+        cuerpo.addEventListener("click", function () {
+          if (nota.classList.contains("plegada")) {
+            poner(nota, true);
+          }
+        });
+      });
+      var control = document.getElementById("alternar-notas");
+      if (control && notas.length) {
+        control.hidden = false;
+        control.addEventListener("click", function () {
+          var abrir = control.getAttribute("data-estado") !== "abiertas";
+          notas.forEach(function (nota) {
+            poner(nota, abrir);
+          });
+          control.setAttribute("data-estado", abrir ? "abiertas" : "cerradas");
+          control.textContent = abrir
+            ? "Ocultar todas las notas"
+            : "Mostrar todas las notas";
+        });
+      }
     });
   </script>
 
