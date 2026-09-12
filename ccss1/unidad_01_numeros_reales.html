@@ -734,6 +734,16 @@
        horizontal; la píldora colgada queda fuera de este contenedor. */
     .bloque-didactico.cuaderno .cuerpo-cuaderno {
       overflow-x: auto;
+      /* Nunca barra vertical: `overflow-x` distinto de `visible` haría
+         `overflow-y: auto`, y una fracción que sobresale 4 px por abajo
+         bastaba para pintarla; el relleno inferior deja sitio a ese pico. */
+      overflow-y: hidden;
+      padding-bottom: 0.45rem;
+      /* Medio rem de holgura a la derecha, comido al relleno de la nota:
+         una fórmula que sobresale un par de píxeles no debe pintar una
+         barra horizontal. */
+      margin-right: -0.5rem;
+      padding-right: 0.5rem;
     }
 
     .bloque-didactico.cuaderno .katex .mord,
@@ -977,6 +987,9 @@
     }
 
     .bloque-didactico.cuaderno table {
+      /* Nunca más ancha que la nota: antes que desplazarse, las celdas de
+         texto parten líneas (las fórmulas no se parten). */
+      max-width: 100%;
       border-collapse: collapse;
       margin: 0.15rem 0 0.35rem;
       line-height: 1.75;
