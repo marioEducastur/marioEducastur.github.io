@@ -7015,14 +7015,50 @@ Bachillerato</p>
           }
         });
       });
+      // Al abrir o cerrar todas las notas cambia la altura de las que
+      // quedan por encima del punto de lectura, y el texto se movería bajo
+      // la vista. Se toma como ancla el primer elemento estable del
+      // contenido que asoma bajo la cabecera fija (un título, un párrafo,
+      // la píldora de una nota; nunca el cuerpo de una nota, que es lo que
+      // cambia de tamaño), se mide antes y después y se compensa la
+      // diferencia de un solo salto, sin el suavizado de la página.
+      var contenido = document.querySelector("main");
+      var cabecera = document.querySelector(".cabecera-portal");
+      function anclaVisible() {
+        if (!contenido) {
+          return null;
+        }
+        var limite = cabecera ? cabecera.getBoundingClientRect().bottom : 0;
+        var candidatos = contenido.querySelectorAll(
+          "h1, h2, h3, h4, p, li, table, figure, pre, .cuaderno .etiqueta-bloque"
+        );
+        for (var i = 0; i < candidatos.length; i++) {
+          var el = candidatos[i];
+          if (el.closest(".cuerpo-cuaderno") || el.querySelector(".cuaderno")) {
+            continue;
+          }
+          if (el.getBoundingClientRect().bottom > limite) {
+            return el;
+          }
+        }
+        return null;
+      }
       var control = document.getElementById("alternar-notas");
       if (control && notas.length) {
         control.hidden = false;
         control.addEventListener("click", function () {
           var abrir = control.getAttribute("data-estado") !== "abiertas";
+          var ancla = anclaVisible();
+          var antes = ancla ? ancla.getBoundingClientRect().top : 0;
           notas.forEach(function (nota) {
             poner(nota, abrir);
           });
+          if (ancla) {
+            var salto = ancla.getBoundingClientRect().top - antes;
+            if (salto) {
+              window.scrollBy({ top: salto, left: 0, behavior: "instant" });
+            }
+          }
           control.setAttribute("data-estado", abrir ? "abiertas" : "cerradas");
           control.textContent = abrir
             ? "Ocultar todas las notas"
