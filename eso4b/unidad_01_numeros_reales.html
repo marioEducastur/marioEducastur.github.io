@@ -967,8 +967,10 @@
       color: #0f6e4f;
     }
 
-    /* Casos de una misma regla: lista con rayita; el ejemplo de cada
-       caso va en una cita, metido dentro del caso. */
+    /* Casos de una misma regla: lista con un rombo como viñeta (elegido
+       por el profesor entre ocho el 13 de septiembre de 2026; nunca una raya,
+       que delante de un número se lee como un signo menos); el ejemplo de
+       cada caso va en una cita, metido dentro del caso. */
     .bloque-didactico.cuaderno ul {
       margin: 0;
       padding: 0 0 0 1.3rem;
@@ -980,11 +982,13 @@
       margin: 0;
     }
 
-    /* La rayita va dentro de la primera línea del elemento (el filtro
+    /* La viñeta va dentro de la primera línea del elemento (el filtro
        garantiza que todo elemento empieza por un párrafo), alineada con su
        texto aunque empiece con una fracción alta. */
     .bloque-didactico.cuaderno li > p:first-child::before {
-      content: "\2013";
+      content: "\25C6";
+      font-size: 0.66em;
+      vertical-align: 0.16em;
       display: inline-block;
       width: 1.3rem;
       margin-left: -1.3rem;
@@ -1858,6 +1862,16 @@
       color: #ffffff;
       border-color: #475569;
       background: #475569;
+    }
+
+    /* Dos bloques plegables seguidos (dos ampliaciones, o una aplicación y
+       una ampliación) van cada uno en su línea, nunca uno al lado del otro
+       (petición del profesor, 13 de septiembre de 2026). */
+    .boton-ampliacion,
+    .boton-aplicacion {
+      display: block;
+      width: fit-content;
+      max-width: 100%;
     }
 
     /* El botón de «Matemáticas en acción» sí invita: contorno morado,
@@ -3263,16 +3277,16 @@
                 <blockquote>
                 <ul>
                 <li><p><span class="formula-alta"><span
-                class="math inline">\(\dfrac{7}{20}=0{,}35\)</span></span>
-                exacta, porque <span
+                class="math inline">\(\dfrac{7}{20}=0{,}35\)</span></span>,
+                exacta: <span
                 class="math inline">\(20=2^{2}\cdot5\)</span></p></li>
                 <li><p><span class="formula-alta"><span
-                class="math inline">\(\dfrac{5}{9}=0{,}\overline{5}\)</span></span>
-                periódica pura, porque <span
+                class="math inline">\(\dfrac{5}{9}=0{,}\overline{5}\)</span></span>,
+                periódica pura: <span
                 class="math inline">\(9=3^{2}\)</span></p></li>
                 <li><p><span class="formula-alta"><span
-                class="math inline">\(\dfrac{4}{15}=0{,}2\overline{6}\)</span></span>
-                periódica mixta, porque <span
+                class="math inline">\(\dfrac{4}{15}=0{,}2\overline{6}\)</span></span>,
+                periódica mixta: <span
                 class="math inline">\(15=3\cdot5\)</span></p></li>
                 </ul>
                 </blockquote>
@@ -3477,6 +3491,22 @@
                 195\quad\Rightarrow\quad N=\dfrac{195}{90}=\dfrac{13}{6}
                 \end{array}\)</span></span></p></li>
                 </ul>
+                <p><span class="etiqueta-nota">Atajo:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span></span>:
+                un <span class="math inline">\(9\)</span> por cifra del
+                período, un <span class="math inline">\(0\)</span> por
+                cifra del anteperíodo</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(0{,}\overline{45}=\dfrac{45}{99}=\dfrac{5}{11}\)</span></span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(2{,}1\overline{6}=\dfrac{216-21}{90}=\dfrac{13}{6}\)</span></span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-2"
@@ -3556,6 +3586,64 @@
                 todavía si <span class="math inline">\(\pi\)</span> lo
                 es.</figcaption>
                 </figure>
+                <div class="ampliacion bloque-didactico plegable">
+                <p><span class="etiqueta-bloque">Para ampliar</span></p>
+                <p><strong>¿Está todo en π?</strong> Un número es
+                <strong>normal</strong> cuando sus cifras decimales se
+                reparten como si salieran de un dado de diez caras: cada
+                cifra aparece una de cada diez veces, cada pareja de
+                cifras una de cada cien, cada bloque de tres una de cada
+                mil, y así con los bloques de cualquier longitud. Émile
+                Borel demostró en 1909 que casi todos los números reales
+                son normales, pero probar que uno concreto lo es resulta
+                dificilísimo: de <span
+                class="math inline">\(\pi\)</span>, de <span
+                class="math inline">\(e\)</span> y de <span
+                class="math inline">\(\sqrt2\)</span> solo se sospecha.
+                De <span class="math inline">\(\pi\)</span> se han
+                calculado más de cien billones de cifras y todas las
+                estadísticas cuadran con la normalidad, pero nadie la ha
+                demostrado. Ser irracional no basta: <span
+                class="math inline">\(0{,}1010010001\ldots\)</span> es
+                irracional y solo usa ceros y unos.</p>
+                <p>Si <span class="math inline">\(\pi\)</span> es
+                normal, cualquier secuencia finita de cifras aparece en
+                sus decimales, e infinitas veces: tu fecha de
+                nacimiento, tu DNI, un número de teléfono y, si
+                codificas las letras como números, el Quijote entero. No
+                es ninguna magia: le pasa a cualquier tirada infinita de
+                un dado. Algunas apariciones son famosas:</p>
+                <ul>
+                <li>el primer <span class="math inline">\(0\)</span> se
+                hace esperar: es la cifra decimal número <span
+                class="math inline">\(32\)</span>;</li>
+                <li>en la posición <span
+                class="math inline">\(762\)</span> aparecen seis nueves
+                seguidos, <span class="math inline">\(999999\)</span>,
+                el llamado <strong>punto de Feynman</strong>: según se
+                cuenta, el físico bromeaba con memorizar <span
+                class="math inline">\(\pi\)</span> hasta ahí para
+                recitar «nueve, nueve, nueve, nueve, nueve, nueve, y así
+                sucesivamente»;</li>
+                <li>seis nueves seguidos vuelven a salir en la posición
+                <span class="math inline">\(193\,034\)</span>; siete, en
+                la <span class="math inline">\(1\,722\,776\)</span>;
+                ocho, en la <span
+                class="math inline">\(36\,356\,642\)</span>; y nueve, en
+                la <span
+                class="math inline">\(564\,665\,206\)</span>;</li>
+                <li><span class="math inline">\(\pi\)</span> contiene
+                sus propias seis primeras cifras: <span
+                class="math inline">\(314159\)</span> reaparece en la
+                posición <span
+                class="math inline">\(176\,451\)</span>.</li>
+                </ul>
+                <p>Compruébalo: en <a
+                href="https://pi.thefirstverse.com">pi.thefirstverse.com</a>
+                puedes buscar en qué posición de <span
+                class="math inline">\(\pi\)</span> aparecen tu fecha de
+                cumpleaños, tu DNI o tu teléfono.</p>
+                </div>
                 <ul>
                 <li><span
                 class="math inline">\(\sqrt2=1{,}41421356\ldots\)</span>
@@ -3734,7 +3822,7 @@
                 class="math inline">\(\sqrt5\)</span></p>
                 </blockquote></li>
                 <li><p><span class="etiqueta-nota">Operar:</span> con
-                irracionales no hay garantía: <span
+                irracionales puede dar racional: <span
                 class="math inline">\(\sqrt2\cdot\sqrt2=2\)</span></p></li>
                 </ul>
                 </div>
@@ -3881,23 +3969,59 @@
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-5">Al cuaderno</button></p>
                 <div id="cuaderno-5" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Ordenar:</span> pásalo
-                todo a decimal: <span class="formula-alta"><span
-                class="math inline">\(81\%=0{,}81&lt;\dfrac{5}{6}=0{,}833\ldots&lt;\sqrt{0{,}7}\approx0{,}837\)</span></span><br />
-                <span class="etiqueta-nota">Empate:</span> si los
-                decimales coinciden, compara con fracciones: <span
+                todo a decimal</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(81\%=0{,}81&lt;\dfrac{5}{6}=0{,}833\ldots&lt;\sqrt{0{,}7}\approx0{,}837\)</span></span></p>
+                </blockquote>
+                <p><span class="etiqueta-nota">Empate:</span> si parecen
+                iguales, saca más cifras: <span
                 class="formula-alta"><span
-                class="math inline">\(\dfrac{3}{5}=\dfrac{9}{15}&lt;\dfrac{10}{15}=\dfrac{2}{3}\)</span></span><br />
+                class="math inline">\(\dfrac{2}{3}=0{,}666\ldots&lt;0{,}67\)</span></span><br />
                 <span class="etiqueta-nota">Recta:</span> más a la
-                izquierda es menor: <span
-                class="math inline">\(-7&lt;-3\)</span><br />
-                <span class="etiqueta-nota">Sumar o restar:</span> lo
-                mismo a los dos lados: la desigualdad no cambia.<br />
-                <span class="etiqueta-nota">Multiplicar o
-                dividir:</span> por un positivo, no cambia; por un
-                negativo, cambia de sentido.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(2&lt;5\)</span>, pero <span
-                class="math inline">\(-8&gt;-20\)</span></p>
+                izquierda, menor: <span
+                class="math inline">\(-7&lt;-3\)</span></p>
+                <svg class="dibujo-nota" viewBox="0 0 520 100" width="520" height="100" style="max-width: 100%; height: auto; display: block; margin: 0.1rem 0 0.3rem;" role="img" aria-label="Recta numérica: el −7 queda a la izquierda del −3, así que es menor">
+                <line x1="30" y1="52" x2="490" y2="52" stroke="#1e3a8a" stroke-width="2"/>
+                <polygon points="30,52 42,46 42,58" fill="#1e3a8a"/>
+                <polygon points="490,52 478,46 478,58" fill="#1e3a8a"/>
+                <g stroke="#1e3a8a" stroke-width="2">
+                <line x1="60" y1="46" x2="60" y2="58"/><line x1="106" y1="46" x2="106" y2="58"/><line x1="152" y1="46" x2="152" y2="58"/><line x1="198" y1="46" x2="198" y2="58"/><line x1="244" y1="46" x2="244" y2="58"/><line x1="290" y1="46" x2="290" y2="58"/><line x1="336" y1="46" x2="336" y2="58"/><line x1="382" y1="46" x2="382" y2="58"/><line x1="428" y1="46" x2="428" y2="58"/>
+                </g> <circle cx="106" cy="52" r="6" fill="#d85a30"/>
+                <circle cx="290" cy="52" r="6" fill="#d85a30"/>
+                <g fill="#1e3a8a" font-size="22" text-anchor="middle">
+                <text x="106" y="88">−7</text><text x="290" y="88">−3</text><text x="428" y="88">0</text>
+                </g> <g fill="currentColor" font-size="19">
+                <text x="44" y="30">menor</text><text x="476" y="30" text-anchor="end">mayor</text>
+                </g>
+                </svg>
+                <p><span class="etiqueta-nota">Sumar o restar:</span> lo
+                mismo a los dos lados: no cambia.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2+3&lt;5+3\ \to\ 5&lt;8\)</span></p></li>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2-4&lt;5-4\ \to\ -2&lt;1\)</span></p></li>
+                </ul>
+                </blockquote>
+                <p><span class="etiqueta-nota">Multiplicar o
+                dividir:</span> por positivo: no cambia; por negativo:
+                cambia de sentido.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2\cdot4&lt;5\cdot4\ \to\ 8&lt;20\)</span></p></li>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2\cdot(-4)&gt;5\cdot(-4)\ \to\
+                -8&gt;-20\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-4"
@@ -4030,25 +4154,42 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-6">Al cuaderno</button></p>
                 <div id="cuaderno-6" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Entero:</span> con una
-                unidad fija desde el <span
-                class="math inline">\(0\)</span><br />
-                <span class="etiqueta-nota">Fracción:</span> divide la
-                unidad en tantas partes como diga el denominador; si es
-                impropia, parte entera más fracción: <span
-                class="formula-alta"><span
-                class="math inline">\(\dfrac{7}{4}=1+\dfrac{3}{4}\)</span></span><br />
-                <span class="etiqueta-nota">Decimal:</span> divide la
-                unidad en décimas y, si hace falta, cada décima en
-                centésimas.<br />
-                <span class="etiqueta-nota">Irracional:</span> por
-                aproximaciones cada vez más finas: <span
-                class="math inline">\(3{,}1&lt;\pi&lt;3{,}2\qquad3{,}14&lt;\pi&lt;3{,}15\)</span><br />
-                <span class="etiqueta-nota">Raíz cuadrada:</span>
-                exacta, con regla y compás: <span
-                class="math inline">\(\sqrt2\)</span> es la hipotenusa
+                <ul>
+                <li><p><span class="etiqueta-nota">Entero:</span> unidad
+                fija desde el <span
+                class="math inline">\(0\)</span></p></li>
+                <li><p><span class="etiqueta-nota">Fracción:</span>
+                divide la unidad en tantas partes como el denominador;
+                impropia: parte entera más fracción</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{7}{4}=1+\dfrac{3}{4}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Decimal:</span>
+                divide la unidad en décimas; cada décima, en
+                centésimas</p></li>
+                <li><p><span class="etiqueta-nota">Irracional:</span>
+                por aproximaciones cada vez más finas</p>
+                <blockquote>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(3{,}1&lt;\pi&lt;3{,}2\)</span></p></li>
+                <li><p><span
+                class="math inline">\(3{,}14&lt;\pi&lt;3{,}15\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Raíz cuadrada:</span>
+                exacta, con regla y compás</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(\sqrt2\)</span>, hipotenusa
                 de catetos <span class="math inline">\(1\)</span> y
                 <span class="math inline">\(1\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-5"
@@ -4173,17 +4314,14 @@
                 </blockquote></li>
                 <li><p><span class="etiqueta-nota">Ecuación:</span>
                 <span class="math inline">\(\lvert x-a\rvert=r\)</span>:
-                los dos números que distan <span
+                los dos números a distancia <span
                 class="math inline">\(r\)</span> de <span
-                class="math inline">\(a\)</span>, uno a cada lado; con
-                <span class="math inline">\(r&lt;0\)</span> no hay
-                solución.</p>
+                class="math inline">\(a\)</span>; si <span
+                class="math inline">\(r&lt;0\)</span>, sin solución.</p>
                 <blockquote>
                 <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\lvert x+1\rvert=3\)</span>:
-                distan <span class="math inline">\(3\)</span> de <span
-                class="math inline">\(-1\)</span>, luego <span
-                class="math inline">\(x=2\)</span> o <span
+                <span class="math inline">\(\lvert x+1\rvert=3\ \to\
+                x=-1\pm3\ \to\ x=2\)</span> o <span
                 class="math inline">\(x=-4\)</span></p>
                 </blockquote></li>
                 </ul>
@@ -4362,11 +4500,11 @@
                 <blockquote>
                 <ul>
                 <li><p>«al menos <span
-                class="math inline">\(1{,}40\)</span>» es <span
-                class="math inline">\(\geq\)</span> y entra</p></li>
+                class="math inline">\(1{,}40\)</span>»: <span
+                class="math inline">\(\geq\)</span>, entra</p></li>
                 <li><p>«menos de <span
-                class="math inline">\(1{,}95\)</span>» es <span
-                class="math inline">\(&lt;\)</span> y no entra</p></li>
+                class="math inline">\(1{,}95\)</span>»: <span
+                class="math inline">\(&lt;\)</span>, no entra</p></li>
                 </ul>
                 </blockquote>
                 </div>
@@ -4638,12 +4776,9 @@
                 <li><p><span class="math inline">\(\lvert
                 x\rvert&lt;4\)</span> es <span
                 class="math inline">\((-4,4)\)</span></p></li>
-                <li><p>un margen de <span
-                class="math inline">\(\pm1{,}5\)</span> alrededor de
-                <span class="math inline">\(21\)</span>: <span
-                class="math inline">\(\lvert
-                T-21\rvert\leq1{,}5\)</span>, es decir, <span
-                class="math inline">\([19{,}5;\,22{,}5]\)</span></p></li>
+                <li><p><span class="math inline">\(21\pm1{,}5\)</span>:
+                <span class="math inline">\(\lvert T-21\rvert\leq1{,}5\
+                \to\ [19{,}5;\,22{,}5]\)</span></p></li>
                 </ul>
                 </blockquote>
                 </div>
@@ -4834,10 +4969,10 @@
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Por defecto o por
-                exceso:</span> quedarse por debajo (<span
+                exceso:</span> por debajo (<span
                 class="math inline">\(2{,}64\)</span>) o por encima
-                (<span class="math inline">\(2{,}65\)</span>); el
-                redondeo elige la más cercana.<br />
+                (<span class="math inline">\(2{,}65\)</span>); redondear
+                elige la más cercana.<br />
                 <span class="etiqueta-nota">Aproximado:</span> se
                 escribe con <span
                 class="math inline">\(\approx\)</span>, nunca con <span
@@ -4931,15 +5066,13 @@
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <ul>
-                <li><p><span class="math inline">\(0{,}00456\)</span>
-                tiene tres: los ceros iniciales solo colocan la
-                coma</p></li>
-                <li><p><span class="math inline">\(1{,}00\)</span> tiene
-                tres: los ceros finales tras la coma se han escrito a
-                propósito</p></li>
-                <li><p><span class="math inline">\(2500\)</span> es
-                ambiguo; en notación científica, <span
-                class="math inline">\(2{,}5\cdot10^{3}\)</span> tiene
+                <li><p><span class="math inline">\(0{,}00456\)</span>:
+                tres (los ceros iniciales solo colocan la coma)</p></li>
+                <li><p><span class="math inline">\(1{,}00\)</span>: tres
+                (los ceros finales van a propósito)</p></li>
+                <li><p><span class="math inline">\(2500\)</span>:
+                ambiguo; <span
+                class="math inline">\(2{,}5\cdot10^{3}\)</span>:
                 dos</p></li>
                 </ul>
                 </blockquote></li>
@@ -5252,8 +5385,8 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-14">Al cuaderno</button></p>
                 <div id="cuaderno-14" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Cota:</span> sin el valor
-                exacto no hay error, pero sí un número que seguro no
+                <p><span class="etiqueta-nota">Cota:</span> sin valor
+                exacto no hay error, pero sí un tope que seguro no
                 supera.<br />
                 <span class="etiqueta-nota">Redondear a un orden:</span>
                 <span class="math inline">\(E_a\leq\)</span> media
@@ -5265,17 +5398,15 @@
                 <blockquote>
                 <ul>
                 <li><p><span
-                class="math inline">\(\sqrt5\approx2{,}24\)</span>, a
-                las centésimas: <span
-                class="math inline">\(E_a\leq0{,}005\)</span>, luego
-                <span class="formula-alta"><span
-                class="math inline">\(E_r\leq\dfrac{0{,}005}{2{,}24}\approx0{,}22\%\)</span></span></p></li>
-                <li><p>una báscula de décimas que marca <span
-                class="math inline">\(2{,}5\)</span> kg: masa entre
+                class="math inline">\(\sqrt5\approx2{,}24\)</span>
+                (centésimas): <span class="formula-alta"><span
+                class="math inline">\(E_a\leq0{,}005\ \to\
+                E_r\leq\dfrac{0{,}005}{2{,}24}\approx0{,}22\%\)</span></span></p></li>
+                <li><p>báscula de décimas, <span
+                class="math inline">\(2{,}5\)</span> kg: <span
+                class="math inline">\(2{,}5\pm0{,}05\)</span> kg, entre
                 <span class="math inline">\(2{,}45\)</span> y <span
-                class="math inline">\(2{,}55\)</span> kg, <span
-                class="math inline">\(2{,}5\pm0{,}05\)</span>
-                kg</p></li>
+                class="math inline">\(2{,}55\)</span></p></li>
                 </ul>
                 </blockquote>
                 </div>
@@ -5340,8 +5471,7 @@
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-15">Al cuaderno</button></p>
                 <div id="cuaderno-15" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Estimar:</span> prever el
-                resultado antes de calcular, para cazar errores de
-                tecleo: si <span
+                resultado para cazar errores de tecleo: si <span
                 class="math inline">\(47\cdot19\)</span> sale <span
                 class="math inline">\(8930\)</span>, sobra un cero.</p>
                 <ul>
@@ -5358,10 +5488,8 @@
                 class="math inline">\(100=5\cdot20&lt;5{,}1\cdot19{,}8&lt;6\cdot20=120\)</span></p></li>
                 <li><p><span class="etiqueta-nota">Orden de
                 magnitud:</span> <span
-                class="math inline">\(3{,}2\)</span> millones por <span
-                class="math inline">\(0{,}004\)</span> son unos <span
-                class="math inline">\(12\,800\)</span>: decenas de
-                miles, no millones</p></li>
+                class="math inline">\(3{,}2\cdot10^{6}\cdot0{,}004\approx12\,800\)</span>:
+                decenas de miles, no millones.</p></li>
                 </ul>
                 </div>
                 </div>
@@ -5654,8 +5782,8 @@
                 <blockquote>
                 <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(1{,}024\cdot10^{26}&lt;5{,}683\cdot10^{26}\)</span>:
-                Neptuno tiene menos masa que Saturno</p>
+                class="math inline">\(1{,}024\cdot10^{26}&lt;5{,}683\cdot10^{26}\)</span>
+                (Neptuno, Saturno)</p>
                 </blockquote></li>
                 <li><p><span class="etiqueta-nota">Sumar o
                 restar:</span> mismo exponente, el mayor, y se suman las
@@ -6731,8 +6859,8 @@
                 <li><p><span
                 class="math inline">\(\sqrt{12}+3\sqrt{75}-4\sqrt{27}=2\sqrt3+15\sqrt3-12\sqrt3=5\sqrt3\)</span></p></li>
                 <li><p><span
-                class="math inline">\(\sqrt5+\sqrt7\)</span> no son
-                semejantes: se queda así</p></li>
+                class="math inline">\(\sqrt5+\sqrt7\)</span>: no
+                semejantes, se queda así</p></li>
                 </ul>
                 </blockquote></li>
                 <li><p><span class="etiqueta-nota">Multiplicar y
@@ -7153,10 +7281,8 @@
                 class="math inline">\(\log_{3}\dfrac{1}{81}=-4\)</span></span>
                 porque <span class="formula-alta"><span
                 class="math inline">\(3^{-4}=\dfrac{1}{81}\)</span></span></p></li>
-                <li><p>si <span
-                class="math inline">\(\log_{x}64=6\)</span>, entonces
-                <span class="math inline">\(x^{6}=64=2^{6}\)</span>,
-                luego <span class="math inline">\(x=2\)</span></p></li>
+                <li><p><span class="math inline">\(\log_{x}64=6\ \to\
+                x^{6}=64=2^{6}\ \to\ x=2\)</span></p></li>
                 </ul>
                 </blockquote>
                 <p><span class="etiqueta-nota">Inmediatos:</span> <span
@@ -7573,12 +7699,11 @@
                 <p><span class="etiqueta-nota">Igualdad:</span> si <span
                 class="math inline">\(\log A=\log B\)</span>, entonces
                 <span class="math inline">\(A=B\)</span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span> de
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
                 class="math inline">\(\log
-                A=\log8-2\log3=\log\dfrac{8}{9}\)</span></span> sale
-                <span class="formula-alta"><span
-                class="math inline">\(A=\dfrac{8}{9}\)</span></span></p>
+                A=\log8-2\log3=\log\dfrac{8}{9}\ \to\
+                A=\dfrac{8}{9}\)</span></span></p>
                 </div>
                 </div>
                 <section id="ejercicios-27"
@@ -7804,9 +7929,9 @@
                 x=\dfrac{\log40}{\log1{,}5}\approx9{,}10\)</span></span></p></li>
                 </ul>
                 </blockquote>
-                <p><span class="etiqueta-nota">A saltos:</span> si el
-                tiempo cuenta por meses o años, la respuesta es el
-                primer entero que iguala o supera la solución.</p>
+                <p><span class="etiqueta-nota">A saltos:</span> con
+                meses o años enteros, la respuesta es el primer entero
+                que iguala o supera la solución.</p>
                 </div>
                 </div>
                 <section id="ejercicios-28"
@@ -8052,13 +8177,20 @@
                 <ul>
                 <li><p>directa: <span class="math inline">\(45\)</span>
                 páginas en <span class="math inline">\(3\)</span> min
-                son <span class="math inline">\(15\)</span> por minuto;
-                en <span class="math inline">\(20\)</span> min, <span
+                <span class="math inline">\(\to\)</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{45}{3}=15\)</span></span>
+                por min <span class="math inline">\(\to\)</span> en
+                <span class="math inline">\(20\)</span> min, <span
                 class="math inline">\(15\cdot20=300\)</span></p></li>
-                <li><p>inversa: cuatro grifos tardan <span
-                class="math inline">\(6\)</span> h; uno solo, <span
-                class="math inline">\(4\cdot6=24\)</span> h, y tres,
-                <span class="math inline">\(24:3=8\)</span> h</p></li>
+                <li><p>inversa: <span class="math inline">\(4\)</span>
+                grifos, <span class="math inline">\(6\)</span> h <span
+                class="math inline">\(\to\)</span> <span
+                class="math inline">\(1\)</span> grifo, <span
+                class="math inline">\(4\cdot6=24\)</span> h <span
+                class="math inline">\(\to\)</span> <span
+                class="math inline">\(3\)</span> grifos, <span
+                class="math inline">\(24:3=8\)</span> h</p></li>
                 </ul>
                 </blockquote>
                 <p><span class="etiqueta-nota">Ojo:</span> antes de la

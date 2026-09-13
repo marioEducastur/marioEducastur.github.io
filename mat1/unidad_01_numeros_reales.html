@@ -967,8 +967,10 @@
       color: #0f6e4f;
     }
 
-    /* Casos de una misma regla: lista con rayita; el ejemplo de cada
-       caso va en una cita, metido dentro del caso. */
+    /* Casos de una misma regla: lista con un rombo como viñeta (elegido
+       por el profesor entre ocho el 13 de septiembre de 2026; nunca una raya,
+       que delante de un número se lee como un signo menos); el ejemplo de
+       cada caso va en una cita, metido dentro del caso. */
     .bloque-didactico.cuaderno ul {
       margin: 0;
       padding: 0 0 0 1.3rem;
@@ -980,11 +982,13 @@
       margin: 0;
     }
 
-    /* La rayita va dentro de la primera línea del elemento (el filtro
+    /* La viñeta va dentro de la primera línea del elemento (el filtro
        garantiza que todo elemento empieza por un párrafo), alineada con su
        texto aunque empiece con una fracción alta. */
     .bloque-didactico.cuaderno li > p:first-child::before {
-      content: "\2013";
+      content: "\25C6";
+      font-size: 0.66em;
+      vertical-align: 0.16em;
       display: inline-block;
       width: 1.3rem;
       margin-left: -1.3rem;
@@ -1858,6 +1862,16 @@
       color: #ffffff;
       border-color: #475569;
       background: #475569;
+    }
+
+    /* Dos bloques plegables seguidos (dos ampliaciones, o una aplicación y
+       una ampliación) van cada uno en su línea, nunca uno al lado del otro
+       (petición del profesor, 13 de septiembre de 2026). */
+    .boton-ampliacion,
+    .boton-aplicacion {
+      display: block;
+      width: fit-content;
+      max-width: 100%;
     }
 
     /* El botón de «Matemáticas en acción» sí invita: contorno morado,
@@ -3140,6 +3154,64 @@ Bachillerato</p>
                 class="math inline">\(e\)</span> volverá a aparecer en
                 los logaritmos y en los límites.</p>
                 </div>
+                <div class="ampliacion bloque-didactico plegable">
+                <p><span class="etiqueta-bloque">Para ampliar</span></p>
+                <p><strong>¿Está todo en π?</strong> Un número es
+                <strong>normal</strong> cuando sus cifras decimales se
+                reparten como si salieran de un dado de diez caras: cada
+                cifra aparece una de cada diez veces, cada pareja de
+                cifras una de cada cien, cada bloque de tres una de cada
+                mil, y así con los bloques de cualquier longitud. Émile
+                Borel demostró en 1909 que casi todos los números reales
+                son normales, pero probar que uno concreto lo es resulta
+                dificilísimo: de <span
+                class="math inline">\(\pi\)</span>, de <span
+                class="math inline">\(e\)</span> y de <span
+                class="math inline">\(\sqrt2\)</span> solo se sospecha.
+                De <span class="math inline">\(\pi\)</span> se han
+                calculado más de cien billones de cifras y todas las
+                estadísticas cuadran con la normalidad, pero nadie la ha
+                demostrado. Ser irracional no basta: <span
+                class="math inline">\(0{,}1010010001\ldots\)</span> es
+                irracional y solo usa ceros y unos.</p>
+                <p>Si <span class="math inline">\(\pi\)</span> es
+                normal, cualquier secuencia finita de cifras aparece en
+                sus decimales, e infinitas veces: tu fecha de
+                nacimiento, tu DNI, un número de teléfono y, si
+                codificas las letras como números, el Quijote entero. No
+                es ninguna magia: le pasa a cualquier tirada infinita de
+                un dado. Algunas apariciones son famosas:</p>
+                <ul>
+                <li>el primer <span class="math inline">\(0\)</span> se
+                hace esperar: es la cifra decimal número <span
+                class="math inline">\(32\)</span>;</li>
+                <li>en la posición <span
+                class="math inline">\(762\)</span> aparecen seis nueves
+                seguidos, <span class="math inline">\(999999\)</span>,
+                el llamado <strong>punto de Feynman</strong>: según se
+                cuenta, el físico bromeaba con memorizar <span
+                class="math inline">\(\pi\)</span> hasta ahí para
+                recitar «nueve, nueve, nueve, nueve, nueve, nueve, y así
+                sucesivamente»;</li>
+                <li>seis nueves seguidos vuelven a salir en la posición
+                <span class="math inline">\(193\,034\)</span>; siete, en
+                la <span class="math inline">\(1\,722\,776\)</span>;
+                ocho, en la <span
+                class="math inline">\(36\,356\,642\)</span>; y nueve, en
+                la <span
+                class="math inline">\(564\,665\,206\)</span>;</li>
+                <li><span class="math inline">\(\pi\)</span> contiene
+                sus propias seis primeras cifras: <span
+                class="math inline">\(314159\)</span> reaparece en la
+                posición <span
+                class="math inline">\(176\,451\)</span>.</li>
+                </ul>
+                <p>Compruébalo: en <a
+                href="https://pi.thefirstverse.com">pi.thefirstverse.com</a>
+                puedes buscar en qué posición de <span
+                class="math inline">\(\pi\)</span> aparecen tu fecha de
+                cumpleaños, tu DNI o tu teléfono.</p>
+                </div>
                 <section id="ejercicios"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
@@ -3366,6 +3438,22 @@ Bachillerato</p>
                 N=\dfrac{111}{90}=\dfrac{37}{30}
                 \end{array}\)</span></span></p></li>
                 </ul>
+                <p><span class="etiqueta-nota">Atajo:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span></span>:
+                un <span class="math inline">\(9\)</span> por cifra del
+                período, un <span class="math inline">\(0\)</span> por
+                cifra del anteperíodo</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(1{,}\overline{23}=\dfrac{123-1}{99}=\dfrac{122}{99}\)</span></span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(1{,}2\overline{3}=\dfrac{123-12}{90}=\dfrac{111}{90}=\dfrac{37}{30}\)</span></span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-1"
@@ -3464,29 +3552,34 @@ Bachillerato</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-3">Al cuaderno</button></p>
                 <div id="cuaderno-3" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Entero:</span> con una
-                unidad fija desde el <span
-                class="math inline">\(0\)</span><br />
-                <span class="etiqueta-nota">Fracción:</span> dividiendo
-                la unidad en tantas partes como diga el denominador
-                (Tales); si es impropia, parte entera más fracción:
+                <ul>
+                <li><p><span class="etiqueta-nota">Entero:</span> unidad
+                fija desde el <span
+                class="math inline">\(0\)</span></p></li>
+                <li><p><span class="etiqueta-nota">Fracción:</span>
+                divide la unidad en tantas partes como el denominador
+                (Tales); impropia: parte entera más fracción</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
-                class="math inline">\(\dfrac{7}{3}=2+\dfrac{1}{3}\)</span></span><br />
-                <span class="etiqueta-nota">Raíz:</span> como hipotenusa
-                de un triángulo rectángulo, llevada a la recta con el
-                compás.</p>
+                class="math inline">\(\dfrac{7}{3}=2+\dfrac{1}{3}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Raíz:</span>
+                hipotenusa de un triángulo rectángulo, llevada a la
+                recta con el compás</p>
+                <blockquote>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
                 <ul>
-                <li><p><span class="math inline">\(\sqrt2\)</span> con
+                <li><p><span class="math inline">\(\sqrt2\)</span>:
                 catetos <span class="math inline">\(1\)</span> y <span
                 class="math inline">\(1\)</span></p></li>
-                <li><p><span class="math inline">\(\sqrt{10}\)</span>
-                con catetos <span class="math inline">\(3\)</span> y
-                <span class="math inline">\(1\)</span></p></li>
+                <li><p><span class="math inline">\(\sqrt{10}\)</span>:
+                catetos <span class="math inline">\(3\)</span> y <span
+                class="math inline">\(1\)</span></p></li>
                 </ul>
-                </blockquote>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <div class="cierre-repaso">
@@ -4656,15 +4749,14 @@ Bachillerato</p>
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <ul>
-                <li><p><span class="math inline">\(\sqrt{3-2x}\)</span>
-                exige <span class="math inline">\(3-2x\geq0\)</span>,
-                luego <span class="formula-alta"><span
-                class="math inline">\(x\leq\dfrac{3}{2}\)</span></span></p></li>
+                <li><p><span class="math inline">\(\sqrt{3-2x}\)</span>:
+                <span class="formula-alta"><span
+                class="math inline">\(3-2x\geq0\ \to\
+                x\leq\dfrac{3}{2}\)</span></span></p></li>
                 <li><p><span class="formula-alta"><span
-                class="math inline">\(\dfrac{1}{\sqrt{x+1}}\)</span></span>
-                exige <span class="math inline">\(x+1&gt;0\)</span>,
-                luego <span
-                class="math inline">\(x&gt;-1\)</span></p></li>
+                class="math inline">\(\dfrac{1}{\sqrt{x+1}}\)</span></span>:
+                <span class="math inline">\(x+1&gt;0\ \to\
+                x&gt;-1\)</span></p></li>
                 </ul>
                 </blockquote>
                 </div>
@@ -5709,18 +5801,34 @@ Bachillerato</p>
                 <p><span
                 class="titulo-cuaderno">Desigualdades</span></p>
                 <div id="cuaderno-21" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Sumar o restar:</span> lo
-                mismo a los dos lados: la desigualdad no cambia.<br />
-                <span class="etiqueta-nota">Multiplicar o
-                dividir:</span> por un positivo, no cambia; por un
-                negativo, cambia de sentido.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(2&lt;5\)</span>, pero <span
-                class="math inline">\(-2&gt;-5\)</span><br />
-                <span class="etiqueta-nota">Ordenar:</span> formas
-                distintas: pásalas a decimal con cifras suficientes:
+                <p><span class="etiqueta-nota">Ordenar:</span> pásalo
+                todo a decimal, con cifras suficientes</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
                 class="math inline">\(77\%=0{,}77&lt;\sqrt{0{,}6}\approx0{,}7746&lt;\dfrac{7}{9}=0{,}777\ldots\)</span></span></p>
+                </blockquote>
+                <p><span class="etiqueta-nota">Sumar o restar:</span> lo
+                mismo a los dos lados: no cambia.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(2&lt;5\ \to\ 2+4&lt;5+4\
+                \to\ 6&lt;9\)</span></p>
+                </blockquote>
+                <p><span class="etiqueta-nota">Multiplicar o
+                dividir:</span> por positivo: no cambia; por negativo:
+                cambia de sentido.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2\cdot3&lt;5\cdot3\ \to\ 6&lt;15\)</span></p></li>
+                <li><p><span class="math inline">\(2&lt;5\ \to\
+                2\cdot(-1)&gt;5\cdot(-1)\ \to\
+                -2&gt;-5\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-14"
@@ -6186,10 +6294,8 @@ Bachillerato</p>
                 <ul>
                 <li><p><span class="math inline">\(\lvert
                 x-4\rvert&lt;3\iff x\in(1,7)\)</span></p></li>
-                <li><p><span
-                class="math inline">\((-1,5)=E(2,3)\)</span>, es decir,
-                <span class="math inline">\(\lvert
-                x-2\rvert&lt;3\)</span></p></li>
+                <li><p><span class="math inline">\((-1,5)=E(2,3)\ \to\
+                \lvert x-2\rvert&lt;3\)</span></p></li>
                 </ul>
                 </blockquote>
                 </div>
