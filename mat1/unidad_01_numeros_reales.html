@@ -774,6 +774,24 @@
       font-size: 1.15em;
     }
 
+    /* Las cifras de Kalam se inclinan a la derecha y sobresalen de su caja,
+       y KaTeX no añade corrección de cursiva a una fuente recta: el exponente
+       o el subíndice que sigue a una base manuscrita se pegaba a ella (el
+       «−» de 5⁻¹ tocaba el 5). Un pequeño espacio solo tras un símbolo en
+       Kalam; tras un paréntesis, que va en KaTeX_Main, no hace falta. */
+    .bloque-didactico.cuaderno .katex .mord + .msupsub {
+      margin-left: 0.16em;
+    }
+
+    /* Dentro de una nota, la raya discontinua de un array (\hdashline)
+       va punteada y en verde: separa el dato del que se parte de la resta
+       que se hace con él. */
+    .bloque-didactico.cuaderno .katex .hdashline {
+      color: #1b7f3b;
+      border-bottom-style: dotted;
+      border-bottom-width: 0.11em;
+    }
+
     /* «Al cuaderno» es una píldora con el texto y el lápiz siempre en el
        rojo teja del margen de la hoja (#d85a30, relleno #fdeee7), el mismo
        en toda la web para localizar las notas al desplazarse (elegido
@@ -962,10 +980,14 @@
       margin: 0;
     }
 
-    .bloque-didactico.cuaderno li::before {
+    /* La rayita va dentro de la primera línea del elemento (el filtro
+       garantiza que todo elemento empieza por un párrafo), alineada con su
+       texto aunque empiece con una fracción alta. */
+    .bloque-didactico.cuaderno li > p:first-child::before {
       content: "\2013";
-      position: absolute;
-      left: -1.3rem;
+      display: inline-block;
+      width: 1.3rem;
+      margin-left: -1.3rem;
     }
 
     /* Líneas sangradas: los ejemplos, uno debajo de otro. */
@@ -3003,10 +3025,14 @@ Bachillerato</p>
                 <p><span class="etiqueta-nota">Inclusiones:</span> <span
                 class="math inline">\(\mathbb N\subset\mathbb
                 Z\subset\mathbb Q\subset\mathbb R\)</span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\sqrt{49}=7\in\mathbb
-                N\)</span>, pero <span
-                class="math inline">\(\sqrt{50}\)</span> es
+                <span class="etiqueta-nota">Densidad:</span> entre dos
+                reales distintos hay infinitos racionales e infinitos
+                irracionales.<br />
+                <span class="etiqueta-nota">Clasificar:</span>
+                simplifica antes: <span
+                class="math inline">\(\sqrt{49}=7\in\mathbb N\)</span>,
+                pero <span
+                class="math inline">\(\sqrt{50}=5\sqrt2\)</span> es
                 irracional.</p>
                 </div>
                 </div>
@@ -3248,21 +3274,39 @@ Bachillerato</p>
                 factor <span class="math inline">\(3\)</span>.</p>
                 <p><strong>Fracción generatriz.</strong> Es la fracción
                 irreducible que genera un decimal exacto o periódico.
-                Para un decimal exacto, el número sin coma sobre un
-                <span class="math inline">\(1\)</span> seguido de tantos
-                ceros como cifras decimales. Para un decimal periódico,
-                en el numerador el número sin coma hasta completar un
-                período menos el número sin coma hasta terminar el
-                anteperíodo, y en el denominador tantos nueves como
-                cifras tiene el período seguidos de tantos ceros como
-                cifras tiene el anteperíodo:</p>
+                Decimal exacto: se quita la coma y se divide por la
+                potencia de <span class="math inline">\(10\)</span> que
+                corresponda, <span
+                class="math inline">\(2{,}56=\frac{256}{100}=\frac{64}{25}\)</span>.
+                Decimal periódico: se llama <span
+                class="math inline">\(N\)</span> al número, se
+                multiplica por potencias de <span
+                class="math inline">\(10\)</span> hasta obtener dos
+                números con la misma parte decimal y se restan, con lo
+                que el período desaparece:</p>
                 <p><span class="math display">\[
-                2{,}56=\frac{256}{100}=\frac{64}{25},
-                \qquad
-                6{,}\overline{98}=\frac{698-6}{99}=\frac{692}{99},
-                \qquad
-                2{,}5\overline{3}=\frac{253-25}{90}=\frac{228}{90}=\frac{38}{15}
+                \begin{aligned}
+                N&amp;=2{,}5\overline{3}\\
+                10N&amp;=25{,}\overline{3}\\
+                100N&amp;=253{,}\overline{3}\\
+                100N-10N&amp;=253-25
+                \end{aligned}
                 \]</span></p>
+                <p>Así, <span class="math inline">\(90N=228\)</span> y
+                <span
+                class="math inline">\(N=\frac{228}{90}=\frac{38}{15}\)</span>.
+                Sin anteperíodo basta una multiplicación: si <span
+                class="math inline">\(N=6{,}\overline{98}\)</span>,
+                entonces <span
+                class="math inline">\(100N-N=698-6\)</span> y <span
+                class="math inline">\(N=\frac{692}{99}\)</span>.</p>
+                <p>De aquí sale el atajo: en el numerador, el número sin
+                coma hasta completar un período menos el número sin coma
+                hasta el anteperíodo; en el denominador, un nueve por
+                cada cifra del período y un cero por cada cifra del
+                anteperíodo. Para <span
+                class="math inline">\(2{,}5\overline{3}\)</span>, <span
+                class="math inline">\(\frac{253-25}{90}\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-2">Al cuaderno</button></p>
                 <div id="cuaderno-2" class="cuerpo-cuaderno">
@@ -3291,20 +3335,37 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Decimal <span
-                class="math inline">\(\to\)</span> fracción:</span>
-                exacto: sin coma sobre <span
-                class="math inline">\(10^n\)</span>; periódico: <span
+                <p><span class="etiqueta-nota">Fracción
+                generatriz:</span> quitar la coma; si hay período,
+                restar dos múltiplos de <span
+                class="math inline">\(N\)</span> para que
+                desaparezca.</p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Exacto:</span> <span
                 class="formula-alta"><span
-                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span></span></p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
-                <p><span class="formula-alta"><span
-                class="math inline">\(0{,}\overline{45}=\dfrac{45}{99}\)</span></span><br />
-                <span class="formula-alta"><span
-                class="math inline">\(2{,}1\overline{6}=\dfrac{216-21}{90}=\dfrac{13}{6}\)</span></span></p>
-                </blockquote>
+                class="math inline">\(2{,}56=\dfrac{256}{100}=\dfrac{64}{25}\)</span></span></p></li>
+                <li><p><span class="etiqueta-nota">Puro:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\begin{array}{rrcl} &amp; N &amp;
+                = &amp; \phantom{12}1{,}2323\ldots\\ \hdashline
+                \rule{0pt}{1.2em} &amp; 100N &amp; = &amp;
+                123{,}2323\ldots\\ - &amp; N &amp; = &amp;
+                \phantom{12}1{,}2323\ldots\\ \hline
+                \rule[-1.05em]{0pt}{2.7em} &amp; 99N &amp; = &amp;
+                122\quad\Rightarrow\quad N=\dfrac{122}{99}
+                \end{array}\)</span></span></p></li>
+                <li><p><span class="etiqueta-nota">Mixto:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\begin{array}{rrcl} &amp; N &amp;
+                = &amp; \phantom{12}1{,}2333\ldots\\ \hdashline
+                \rule{0pt}{1.2em} &amp; 100N &amp; = &amp;
+                123{,}3333\ldots\\ - &amp; 10N &amp; = &amp;
+                \phantom{1}12{,}3333\ldots\\ \hline
+                \rule[-1.05em]{0pt}{2.7em} &amp; 90N &amp; = &amp;
+                111\quad\Rightarrow\quad
+                N=\dfrac{111}{90}=\dfrac{37}{30}
+                \end{array}\)</span></span></p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-1"
@@ -3408,19 +3469,23 @@ Bachillerato</p>
                 class="math inline">\(0\)</span><br />
                 <span class="etiqueta-nota">Fracción:</span> dividiendo
                 la unidad en tantas partes como diga el denominador
-                (Tales).<br />
+                (Tales); si es impropia, parte entera más fracción:
+                <span class="formula-alta"><span
+                class="math inline">\(\dfrac{7}{3}=2+\dfrac{1}{3}\)</span></span><br />
                 <span class="etiqueta-nota">Raíz:</span> como hipotenusa
                 de un triángulo rectángulo, llevada a la recta con el
                 compás.</p>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span class="math inline">\(\sqrt2\)</span> con
+                <ul>
+                <li><p><span class="math inline">\(\sqrt2\)</span> con
                 catetos <span class="math inline">\(1\)</span> y <span
-                class="math inline">\(1\)</span><br />
-                <span class="math inline">\(\sqrt{10}\)</span> con
-                catetos <span class="math inline">\(3\)</span> y <span
-                class="math inline">\(1\)</span></p>
+                class="math inline">\(1\)</span></p></li>
+                <li><p><span class="math inline">\(\sqrt{10}\)</span>
+                con catetos <span class="math inline">\(3\)</span> y
+                <span class="math inline">\(1\)</span></p></li>
+                </ul>
                 </blockquote>
                 </div>
                 </div>
@@ -3543,6 +3608,8 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                <p><span class="etiqueta-nota">Cero:</span> no tiene
+                inverso: no se divide entre cero.</p>
                 </div>
                 </div>
                 <div class="cierre-repaso">
@@ -3571,40 +3638,67 @@ Bachillerato</p>
                 a^n=
                 \underbrace{a\cdot a\cdots a}_{n\text{ factores}}
                 \]</span></p>
-                <p>Exponente cero y exponente negativo:</p>
+                <p>Exponente cero y exponente negativo, con <span
+                class="math inline">\(a\neq0\)</span>:</p>
                 <div class="fichas">
                 <p><span class="math display">\[
-                a^0=1\quad (a\neq0)
+                a^0=1
                 \]</span></p>
                 <p><span class="math display">\[
-                a^{-n}=\frac{1}{a^n}\quad (a\neq0,\ n&gt;0)
+                a^{-n}=\frac{1}{a^n}
+                \]</span></p>
+                <p><span class="math display">\[
+                \left(\frac{a}{b}\right)^{-n}=\left(\frac{b}{a}\right)^{n}\quad(b\neq0)
                 \]</span></p>
                 </div>
-                <p>No se define <span class="math inline">\(0^0\)</span>
-                ni ninguna potencia de base cero y exponente
-                negativo.</p>
+                <p>Un exponente negativo invierte la base y eleva al
+                exponente positivo; con una fracción, la da la vuelta:
+                <span class="math inline">\(5^{-1}=\frac{1}{5}\)</span>,
+                <span
+                class="math inline">\(2^{-3}=\left(\frac{1}{2}\right)^{3}=\frac{1}{8}\)</span>
+                y <span
+                class="math inline">\(\left(\frac{2}{3}\right)^{-2}=\left(\frac{3}{2}\right)^{2}=\frac{9}{4}\)</span>.
+                No se define <span class="math inline">\(0^0\)</span> ni
+                ninguna potencia de base cero y exponente negativo.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-5">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Exponente cero y
                 negativo</span></p>
                 <div id="cuaderno-5" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Exponente cero:</span>
-                <span class="math inline">\(a^0=1\)</span>, con <span
-                class="math inline">\(a\neq0\)</span><br />
-                <span class="etiqueta-nota">Exponente negativo:</span>
+                <ul>
+                <li><p><span class="etiqueta-nota">Exponente
+                cero:</span> <span class="math inline">\(a^0=1\)</span>,
+                con <span class="math inline">\(a\neq0\)</span> (<span
+                class="math inline">\(0^0\)</span> no existe)</p></li>
+                <li><p><span class="etiqueta-nota">Exponente
+                negativo:</span> invierte la base, no cambia el signo:
                 <span class="formula-alta"><span
-                class="math inline">\(a^{-n}=\dfrac{1}{a^n}\)</span></span>:
-                invierte, no cambia el signo.<br />
-                <span class="etiqueta-nota">Base negativa:</span>
+                class="math inline">\(a^{-n}=\dfrac{1}{a^n}\)</span></span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(2^{-3}=\left(\dfrac{1}{2}\right)^{3}=\dfrac{1}{8}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Base fracción:</span>
+                se le da la vuelta: <span class="formula-alta"><span
+                class="math inline">\(\left(\dfrac{a}{b}\right)^{-n}=\left(\dfrac{b}{a}\right)^{n}\)</span></span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(\left(\dfrac{2}{3}\right)^{-2}=\left(\dfrac{3}{2}\right)^{2}=\dfrac{9}{4}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Base negativa:</span>
                 exponente par <span
-                class="math inline">\(\Rightarrow\)</span> resultado
-                positivo; impar <span
-                class="math inline">\(\Rightarrow\)</span>
-                negativo.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                class="math inline">\(\Rightarrow\)</span> positivo;
+                impar <span class="math inline">\(\Rightarrow\)</span>
+                negativo</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="math inline">\((-2)^4=16\)</span>, pero
                 <span class="math inline">\(-2^4=-16\)</span>: el
                 paréntesis manda.</p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="propiedades"
@@ -3725,7 +3819,8 @@ Bachillerato</p>
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol type="1">
                 <li>Calcula: <span class="math display">\[
-                (-2)^4,\qquad -2^4,\qquad (-2)^{-3}
+                (-2)^4,\qquad -2^4,\qquad (-2)^{-3},\qquad
+                \left(\frac{3}{5}\right)^{-2}
                 \]</span></li>
                 <li>Simplifica y escribe con exponentes positivos: <span
                 class="math display">\[
@@ -3737,7 +3832,7 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="math display">\[
-                16,\qquad -16,\qquad -\frac18
+                16,\qquad -16,\qquad -\frac18,\qquad \frac{25}{9}
                 \]</span></li>
                 <li><span class="math display">\[
                 \frac{y^5}{x^3}
@@ -3819,21 +3914,27 @@ Bachillerato</p>
                 <div id="cuaderno-7" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Forma:</span> <span
                 class="math inline">\(a\cdot10^{n}\)</span>, con <span
-                class="math inline">\(1\leq a&lt;10\)</span> y <span
-                class="math inline">\(n\)</span> entero.</p>
+                class="math inline">\(1\leq a&lt;10\)</span> (mantisa) y
+                <span class="math inline">\(n\)</span> entero (orden de
+                magnitud)</p>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span
-                class="math inline">\(39\,000\,000=3{,}9\cdot10^{7}\)</span><br />
-                <span
-                class="math inline">\(0{,}000034=3{,}4\cdot10^{-5}\)</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(39\,000\,000=3{,}9\cdot10^{7}\)</span></p></li>
+                <li><p><span
+                class="math inline">\(0{,}000034=3{,}4\cdot10^{-5}\)</span></p></li>
+                </ul>
                 </blockquote>
                 <p><span class="etiqueta-nota">Sumar o restar:</span>
-                mismo exponente y se suman las partes decimales.<br />
+                mismo orden de magnitud, el mayor, y se suman las
+                mantisas.<br />
                 <span class="etiqueta-nota">Multiplicar o
-                dividir:</span> decimales por un lado, potencias de
-                <span class="math inline">\(10\)</span> por otro.</p>
+                dividir:</span> mantisas por un lado, potencias de <span
+                class="math inline">\(10\)</span> por otro; al final,
+                mantisa entre <span class="math inline">\(1\)</span> y
+                <span class="math inline">\(10\)</span>.</p>
                 </div>
                 </div>
                 <section id="ejercicios-3"
@@ -3959,11 +4060,21 @@ Bachillerato</p>
                 <td><span
                 class="math inline">\(\sqrt[3]{-8}=-2\)</span></td>
                 </tr>
+                <tr>
+                <td>raíz de una potencia: <span
+                class="math inline">\(\sqrt[n]{a^{n}}=\lvert
+                a\rvert\)</span></td>
+                <td>raíz de una potencia: <span
+                class="math inline">\(\sqrt[n]{a^{n}}=a\)</span></td>
+                </tr>
+                <tr>
+                <td><span
+                class="math inline">\(\sqrt{(-3)^{2}}=3\)</span></td>
+                <td><span
+                class="math inline">\(\sqrt[3]{(-2)^{3}}=-2\)</span></td>
+                </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Cuadrado:</span> <span
-                class="math inline">\(\sqrt{a^2}=\lvert
-                a\rvert\)</span></p>
                 </div>
                 </div>
                 <section id="ejercicios-4"
@@ -4016,23 +4127,24 @@ Bachillerato</p>
                 <p><span class="titulo-cuaderno">Radicales equivalentes
                 e índice común</span></p>
                 <div id="cuaderno-9" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Equivalentes:</span>
-                multiplicar o dividir índice y exponente por el mismo
-                número no cambia el radical.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Equivalentes:</span>
+                con radicando positivo, multiplicar o dividir índice y
+                exponente por el mismo número no cambia el radical.</p>
                 <blockquote>
-                <p><span
-                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^3}=\sqrt2\)</span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt[3]{2}=\sqrt[6]{2^2}\)</span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Índice común:</span> el
-                mcm de los índices, para multiplicar, dividir o
-                comparar.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^3}=\sqrt2\qquad\sqrt[3]{2}=\sqrt[6]{2^2}\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Índice común:</span>
+                el mcm de los índices, para multiplicar, dividir o
+                comparar.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
                 class="math inline">\(\sqrt[3]{2}\cdot\sqrt5=\sqrt[6]{2^2}\cdot\sqrt[6]{5^3}=\sqrt[6]{500}\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-5"
@@ -4100,23 +4212,35 @@ Bachillerato</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-10">Al cuaderno</button></p>
                 <div id="cuaderno-10" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Definición:</span> <span
+                <ul>
+                <li><p><span class="etiqueta-nota">Definición:</span>
+                <span
                 class="math inline">\(a^{m/n}=\sqrt[n]{a^m}\)</span>,
                 con <span class="math inline">\(a&gt;0\)</span>:
-                denominador, índice; numerador, exponente.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span
-                class="math inline">\(27^{2/3}=\left(\sqrt[3]{27}\right)^2=9\)</span><br />
-                <span class="etiqueta-nota">Base negativa:</span> solo
-                si el denominador, ya reducido, es impar.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                denominador, índice; numerador, exponente.</p>
                 <blockquote>
-                <p><span
-                class="math inline">\((-8)^{2/3}=4\)</span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
+                class="math inline">\(27^{2/3}=\left(\sqrt[3]{27}\right)^2=9\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Exponente
+                negativo:</span> se invierte, como siempre: <span
+                class="formula-alta"><span
+                class="math inline">\(a^{-m/n}=\dfrac{1}{\sqrt[n]{a^m}}\)</span></span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(27^{-2/3}=\dfrac{1}{27^{2/3}}=\dfrac{1}{9}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Base negativa:</span>
+                solo si el denominador, ya reducido, es impar.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\((-8)^{2/3}=4\)</span>, pero
                 <span class="math inline">\((-16)^{3/4}\)</span> no
                 existe.</p>
-                </blockquote>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-6"
@@ -4226,11 +4350,18 @@ Bachillerato</p>
                 <td><span
                 class="math inline">\(\sqrt[m]{\sqrt[n]{a}}=\sqrt[mn]{a}\)</span></td>
                 </tr>
+                <tr>
+                <td>Introducir un factor</td>
+                <td><span
+                class="math inline">\(c\sqrt[n]{a}=\sqrt[n]{c^{n}a}\)</span>,
+                con <span class="math inline">\(c\geq0\)</span></td>
+                </tr>
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Ojo:</span> con índice
                 par, radicandos <span
-                class="math inline">\(\geq0\)</span>; nunca con sumas:
+                class="math inline">\(\geq0\)</span><br />
+                <span class="etiqueta-nota">Nunca con sumas:</span>
                 <span class="math inline">\(\sqrt{a+b}\neq\sqrt a+\sqrt
                 b\)</span></p>
                 </div>
@@ -4316,23 +4447,38 @@ Bachillerato</p>
                 <p><span class="titulo-cuaderno">Operar con
                 radicales</span></p>
                 <div id="cuaderno-12" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Extraer factores:</span>
-                descompón y saca los grupos completos del índice.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <ul>
+                <li><p><span class="etiqueta-nota">Extraer
+                factores:</span> descompón y saca los grupos completos
+                del índice; con variables, valor absoluto.</p>
+                <blockquote>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(\sqrt{72}=\sqrt{2^2\cdot2\cdot3^2}=6\sqrt2\)</span></p></li>
+                <li><p><span
+                class="math inline">\(\sqrt{49x^{2}}=7\lvert
+                x\rvert\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Sumar y
+                restar:</span> solo radicales semejantes: mismo índice y
+                mismo radicando.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt{72}=\sqrt{2^2\cdot2\cdot3^2}=6\sqrt2\)</span><br />
-                <span class="etiqueta-nota">Sumar y restar:</span> solo
-                radicales semejantes: mismo índice y mismo
-                radicando.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span
-                class="math inline">\(3\sqrt8-\sqrt{18}=6\sqrt2-3\sqrt2=3\sqrt2\)</span><br />
-                <span class="etiqueta-nota">Multiplicar y
+                class="math inline">\(3\sqrt8-\sqrt{18}=6\sqrt2-3\sqrt2=3\sqrt2\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Multiplicar y
                 dividir:</span> con el mismo índice se operan los
-                radicandos; con distinto, índice común.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                radicandos; con distinto, índice común.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
                 class="math inline">\(\sqrt[3]{9}\cdot\sqrt[3]{24}=\sqrt[3]{216}=6\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 </section>
@@ -4506,11 +4652,21 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\sqrt{3-2x}\)</span> exige
-                <span class="math inline">\(3-2x\geq0\)</span>, luego
-                <span class="formula-alta"><span
-                class="math inline">\(x\leq\dfrac{3}{2}\)</span></span></p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(\sqrt{3-2x}\)</span>
+                exige <span class="math inline">\(3-2x\geq0\)</span>,
+                luego <span class="formula-alta"><span
+                class="math inline">\(x\leq\dfrac{3}{2}\)</span></span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(\dfrac{1}{\sqrt{x+1}}\)</span></span>
+                exige <span class="math inline">\(x+1&gt;0\)</span>,
+                luego <span
+                class="math inline">\(x&gt;-1\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <div class="error-tipico bloque-didactico">
@@ -4654,13 +4810,23 @@ Bachillerato</p>
                 <span class="math inline">\(a&gt;0\)</span>, <span
                 class="math inline">\(a\neq1\)</span> y <span
                 class="math inline">\(x&gt;0\)</span>: el logaritmo es
-                el exponente.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\log_2 8=3\)</span> porque
-                <span class="math inline">\(2^3=8\)</span><br />
-                <span class="etiqueta-nota">Inmediatos:</span> <span
+                el exponente.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(\log_2 8=3\)</span>
+                porque <span
+                class="math inline">\(2^3=8\)</span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(\log_3\dfrac{1}{9}=-2\)</span></span>
+                porque <span class="formula-alta"><span
+                class="math inline">\(3^{-2}=\dfrac{1}{9}\)</span></span></p></li>
+                </ul>
+                </blockquote>
+                <p><span class="etiqueta-nota">Inmediatos:</span> <span
                 class="math inline">\(\log_a 1=0\qquad\log_a
-                a=1\qquad\log_a(a^t)=t\)</span></p>
+                a=1\qquad\log_a(a^t)=t\qquad a^{\log_a x}=x\)</span></p>
                 </div>
                 </div>
                 <div class="aviso bloque-didactico">
@@ -4752,9 +4918,13 @@ Bachillerato</p>
                 class="math inline">\(e\approx2{,}718\)</span></td>
                 </tr>
                 <tr>
-                <td><span
-                class="math inline">\(\log1000=3\qquad\log0{,}01=-2\)</span></td>
+                <td><span class="math inline">\(\log1000=3\)</span></td>
                 <td><span class="math inline">\(\ln e^5=5\)</span></td>
+                </tr>
+                <tr>
+                <td><span
+                class="math inline">\(\log0{,}01=-2\)</span></td>
+                <td><span class="math inline">\(\ln1=0\)</span></td>
                 </tr>
                 </tbody>
                 </table>
@@ -4986,7 +5156,10 @@ Bachillerato</p>
                 <span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
                 class="math inline">\(3^x=7\iff x=\log_3
-                7=\dfrac{\ln7}{\ln3}\approx1{,}77\)</span></span></p>
+                7=\dfrac{\ln7}{\ln3}\approx1{,}77\)</span></span><br />
+                <span class="etiqueta-nota">Por períodos:</span> si solo
+                cambia cada período, la respuesta es el primer período
+                que alcanza o supera la solución.</p>
                 </div>
                 </div>
                 <section id="ejercicios-12"
@@ -5041,262 +5214,118 @@ Bachillerato</p>
                 es la concentración de iones de hidrógeno. Si <span
                 class="math inline">\([H^+]=3{,}2\cdot10^{-5}\)</span>,
                 entonces <span
-                class="math inline">\(\operatorname{pH}=-\log(3{,}2\cdot10^{-5})\approx4{,}49\)</span>.</p>
+                class="math inline">\(\operatorname{pH}=-\log(3{,}2\cdot10^{-5})\approx4{,}49\)</span>.
+                Una unidad menos de pH es diez veces más concentración:
+                el zumo de limón, de pH <span
+                class="math inline">\(2\)</span>, es mil veces más ácido
+                que el café, de pH <span
+                class="math inline">\(5\)</span>.</p>
                 </section>
                 <section id="magnitud-sísmica"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Magnitud sísmica</h4>
-                <p>En un modelo introductorio, la magnitud de un
-                terremoto es</p>
+                <p>La magnitud de un terremoto se mide con un
+                logaritmo:</p>
                 <p><span class="math display">\[
                 M=\log\left(\frac{A}{A_0}\right),
                 \]</span></p>
                 <p>donde <span class="math inline">\(A\)</span> es la
-                amplitud registrada y <span
-                class="math inline">\(A_0&gt;0\)</span>, una amplitud de
-                referencia. Cada unidad de magnitud multiplica la
-                amplitud por <span class="math inline">\(10\)</span>:
-                entre una magnitud <span
-                class="math inline">\(5{,}1\)</span> y una <span
-                class="math inline">\(9\)</span> la amplitud se
+                amplitud de la sacudida que registra el sismógrafo y
+                <span class="math inline">\(A_0\)</span>, una amplitud
+                fija de referencia. Por ser una escala logarítmica,
+                <strong>cada unidad más de magnitud multiplica la
+                amplitud por <span
+                class="math inline">\(10\)</span></strong>.</p>
+                <div class="ejemplo bloque-didactico">
+                <p><span class="etiqueta-bloque">Ejemplo</span></p>
+                <p><strong>De magnitud <span
+                class="math inline">\(7\)</span> a magnitud <span
+                class="math inline">\(8\)</span>.</strong> Si dos
+                terremotos tienen magnitudes <span
+                class="math inline">\(M_1=7\)</span> y <span
+                class="math inline">\(M_2=8\)</span>, al restar las dos
+                igualdades queda</p>
+                <p><span class="math display">\[
+                M_2-M_1=\log\frac{A_2}{A_0}-\log\frac{A_1}{A_0}=\log\frac{A_2}{A_1},
+                \]</span></p>
+                <p>luego <span
+                class="math inline">\(\frac{A_2}{A_1}=10^{M_2-M_1}=10^{1}=10\)</span>:
+                el de magnitud <span class="math inline">\(8\)</span>
+                sacude con una amplitud diez veces mayor. Con dos
+                unidades de diferencia, de <span
+                class="math inline">\(6\)</span> a <span
+                class="math inline">\(8\)</span>, la amplitud se
                 multiplica por <span
+                class="math inline">\(10^{2}=100\)</span>; con <span
+                class="math inline">\(3{,}9\)</span>, de <span
+                class="math inline">\(5{,}1\)</span> a <span
+                class="math inline">\(9\)</span>, por <span
                 class="math inline">\(10^{3{,}9}\approx7943\)</span>.</p>
+                </div>
+                </section>
+                <section id="interés-compuesto"
+                class="level4 unnumbered">
+                <h4 class="unnumbered">Interés compuesto</h4>
+                <p>Un capital <span class="math inline">\(C_0\)</span>
+                colocado a un interés compuesto del <span
+                class="math inline">\(r\)</span> por uno anual se
+                multiplica cada año por <span
+                class="math inline">\(1+r\)</span>: al cabo de <span
+                class="math inline">\(t\)</span> años vale</p>
+                <p><span class="math display">\[
+                C(t)=C_0(1+r)^{t}
+                \]</span></p>
+                <p>Para saber <strong>cuándo</strong> llega a un valor
+                <span class="math inline">\(C\)</span> se despeja el
+                exponente con logaritmos:</p>
+                <p><span class="math display">\[
+                (1+r)^{t}=\frac{C}{C_0}
+                \iff
+                t=\frac{\ln(C/C_0)}{\ln(1+r)}
+                \]</span></p>
+                <div class="ejemplo bloque-didactico">
+                <p><span class="etiqueta-bloque">Ejemplo</span></p>
+                <p><strong>Duplicar un capital al <span
+                class="math inline">\(3\%\)</span>.</strong> Con <span
+                class="math inline">\(r=0{,}03\)</span> y <span
+                class="math inline">\(C=2C_0\)</span>,</p>
+                <p><span class="math display">\[
+                t=\frac{\ln2}{\ln1{,}03}\approx23{,}45\ \text{años}
+                \]</span></p>
+                <p>Si los intereses se abonan al final de cada año, el
+                capital aparece duplicado al terminar el año <span
+                class="math inline">\(24\)</span>: tras <span
+                class="math inline">\(23\)</span> años vale <span
+                class="math inline">\(1{,}03^{23}C_0\approx1{,}97C_0\)</span>
+                y tras <span class="math inline">\(24\)</span>, <span
+                class="math inline">\(1{,}03^{24}C_0\approx2{,}03C_0\)</span>.</p>
+                </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-20">Al cuaderno</button></p>
                 <p><span class="titulo-cuaderno">Escalas
                 logarítmicas</span></p>
                 <div id="cuaderno-20" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">pH:</span> <span
-                class="math inline">\(\mathrm{pH}=-\log[H^+]\)</span><br />
-                <span class="etiqueta-nota">Magnitud sísmica:</span>
-                <span class="formula-alta"><span
-                class="math inline">\(M=\log\dfrac{A}{A_0}\)</span></span><br />
-                <span class="etiqueta-nota">Regla:</span> cada unidad de
-                la escala multiplica la cantidad por <span
-                class="math inline">\(10\)</span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span> de
-                magnitud <span class="math inline">\(5{,}1\)</span> a
-                <span class="math inline">\(9\)</span>, la amplitud se
+                <p><span class="etiqueta-nota">Regla:</span> cada unidad
+                de una escala logarítmica multiplica la cantidad por
+                <span class="math inline">\(10\)</span>; <span
+                class="math inline">\(d\)</span> unidades, por <span
+                class="math inline">\(10^{d}\)</span></p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p>de magnitud <span
+                class="math inline">\(7\)</span> a <span
+                class="math inline">\(8\)</span>, la amplitud del
+                terremoto se multiplica por <span
+                class="math inline">\(10\)</span></p></li>
+                <li><p>de pH <span class="math inline">\(5\)</span> a pH
+                <span class="math inline">\(2\)</span>, la acidez se
                 multiplica por <span
-                class="math inline">\(10^{3{,}9}\approx7943\)</span></p>
+                class="math inline">\(10^{3}=1000\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
-                </div>
-                </section>
-                <section id="interés-compuesto"
-                class="level4 solo-web unnumbered">
-                <h4 class="solo-web unnumbered">Interés compuesto</h4>
-                <p>Si un capital inicial <span
-                class="math inline">\(C_0&gt;0\)</span> aumenta a una
-                tasa <span class="math inline">\(r&gt;0\)</span> por
-                período, el capital tras <span
-                class="math inline">\(t\geq0\)</span> períodos es</p>
-                <p><span class="math display">\[
-                C(t)=C_0(1+r)^t
-                \]</span></p>
-                <p>Para un objetivo <span
-                class="math inline">\(C&gt;C_0\)</span>:</p>
-                <p><span class="math display">\[
-                t
-                =
-                \frac{\ln(C/C_0)}{\ln(1+r)}
-                \]</span></p>
-                <p>Por ejemplo, con un crecimiento anual del <span
-                class="math inline">\(3\%\)</span>, el tiempo teórico
-                necesario para duplicar el capital es</p>
-                <p><span class="math display">\[
-                t
-                =
-                \frac{\ln2}{\ln1{,}03}
-                \approx
-                23{,}45\text{ años}
-                \]</span></p>
-                <p>Si la capitalización solo se realiza al final de cada
-                año, el primer período entero en el que el capital se ha
-                duplicado es el año <span
-                class="math inline">\(24\)</span>: al terminar el año
-                <span class="math inline">\(23\)</span> aún no se ha
-                duplicado y al terminar el <span
-                class="math inline">\(24\)</span> sí.</p>
-                <div id="crecimiento-logaritmico"
-                class="interactivo bloque-didactico"
-                data-componente="crecimiento-logaritmico"
-                data-titulo="Crecimiento continuo y discreto"
-                data-inicial="1" data-factor="10" data-periodo="10"
-                data-objetivo="2000000">
-                <p><span class="etiqueta-bloque">Explora</span></p>
-                <p><strong>Modelo y resultados de
-                referencia.</strong></p>
-                <p>Una población parte de una persona y su tamaño se
-                multiplica por <span class="math inline">\(10\)</span>
-                cada <span class="math inline">\(10\)</span> días.
-                Comparamos dos modelos.</p>
-                <p>En el modelo continuo:</p>
-                <p><span class="math display">\[
-                P_c(t)=10^{t/10},
-                \]</span></p>
-                <p>donde <span class="math inline">\(t\geq0\)</span> se
-                mide en días. El instante en que se alcanzan <span
-                class="math inline">\(2\,000\,000=2\cdot10^6\)</span>
-                personas cumple <span
-                class="math inline">\(10^{t/10}=2\cdot10^6\)</span>.</p>
-                <p>Tomando logaritmos decimales:</p>
-                <p><span class="math display">\[
-                \frac{t}{10}
-                =
-                \log(2\cdot10^6)
-                =
-                \log2+6
-                \]</span></p>
-                <p>Por tanto,</p>
-                <p><span class="math display">\[
-                t
-                =
-                10(\log2+6)
-                \approx
-                63{,}01\text{ días}
-                \]</span></p>
-                <p>En el modelo discreto solo se actualiza el total cada
-                <span class="math inline">\(10\)</span> días:</p>
-                <p><span class="math display">\[
-                P_d(k)=10^k,
-                \qquad
-                t=10k,
-                \qquad
-                k\in\mathbb N
-                \]</span></p>
-                <table>
-                <thead>
-                <tr>
-                <th style="text-align: right;" scope="col">Días</th>
-                <th style="text-align: right;" scope="col">Generación</th>
-                <th style="text-align: right;" scope="col">Personas</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <td style="text-align: right;"><span
-                class="math inline">\(60\)</span></td>
-                <td style="text-align: right;"><span
-                class="math inline">\(6\)</span></td>
-                <td style="text-align: right;"><span
-                class="math inline">\(10^6\)</span></td>
-                </tr>
-                <tr>
-                <td style="text-align: right;"><span
-                class="math inline">\(70\)</span></td>
-                <td style="text-align: right;"><span
-                class="math inline">\(7\)</span></td>
-                <td style="text-align: right;"><span
-                class="math inline">\(10^7\)</span></td>
-                </tr>
-                </tbody>
-                </table>
-                <p>Por tanto, en el modelo discreto se alcanza o supera
-                por primera vez el objetivo a los <span
-                class="math inline">\(70\)</span> días.</p>
-                <p>La frase «cada persona da lugar a diez personas
-                nuevas» describe otro recuento si las personas que ya
-                estaban siguen incluidas: entonces el total se
-                multiplica por <span class="math inline">\(11\)</span>,
-                no por <span class="math inline">\(10\)</span>. Antes de
-                calcular hay que decidir qué significa exactamente el
-                modelo.</p>
-                </div>
-                </section>
-                <section id="la-escala-del-universo"
-                class="level4 solo-web unnumbered">
-                <h4 class="solo-web unnumbered">La escala del
-                universo</h4>
-                <p>Las distancias astronómicas se llevan mal con los
-                ejes lineales: si el borde del universo observable cabe
-                en la pantalla, la Luna, el Sol y hasta la galaxia de
-                Andrómeda se aplastan contra el cero, indistinguibles.
-                Una escala logarítmica, en la que cada paso del eje
-                multiplica la distancia por <span
-                class="math inline">\(10\)</span>, reparte todos esos
-                objetos con comodidad. Es la misma idea de la escala
-                Richter o del pH: cuando un fenómeno vive en órdenes de
-                magnitud, el logaritmo es la regla adecuada para
-                medirlo.</p>
-                <div id="escala-cosmica"
-                class="interactivo bloque-didactico"
-                data-componente="escala-cosmica"
-                data-titulo="La escala del universo">
-                <p><span class="etiqueta-bloque">Explora</span></p>
-                <p><strong>Distancias aproximadas desde la
-                Tierra.</strong></p>
-                <table>
-                <thead>
-                <tr>
-                <th scope="col">Objeto</th>
-                <th style="text-align: right;" scope="col">Distancia (m)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <td>Estación Espacial Internacional</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(4\cdot10^{5}\)</span></td>
-                </tr>
-                <tr>
-                <td>Luna</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(3{,}84\cdot10^{8}\)</span></td>
-                </tr>
-                <tr>
-                <td>Marte (aproximación mínima)</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(5{,}6\cdot10^{10}\)</span></td>
-                </tr>
-                <tr>
-                <td>Sol</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(1{,}50\cdot10^{11}\)</span></td>
-                </tr>
-                <tr>
-                <td>Neptuno</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(4{,}3\cdot10^{12}\)</span></td>
-                </tr>
-                <tr>
-                <td>Voyager 1</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(2{,}5\cdot10^{13}\)</span></td>
-                </tr>
-                <tr>
-                <td>Próxima Centauri</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(4{,}0\cdot10^{16}\)</span></td>
-                </tr>
-                <tr>
-                <td>Galaxia de Andrómeda</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(2{,}4\cdot10^{22}\)</span></td>
-                </tr>
-                <tr>
-                <td>Borde del universo observable</td>
-                <td style="text-align: right;"><span
-                class="math inline">\(4{,}4\cdot10^{26}\)</span></td>
-                </tr>
-                </tbody>
-                </table>
-                <ol type="1">
-                <li>Dibuja un eje lineal de <span
-                class="math inline">\(10\ \text{cm}\)</span> que termine
-                en el Sol y sitúa en él la Estación Espacial, la Luna y
-                Marte. ¿A cuántos centímetros del cero queda cada marca?
-                ¿Cuáles se distinguen del origen a simple vista?</li>
-                <li>Dibuja ahora un eje logarítmico de <span
-                class="math inline">\(10^{5}\)</span> a <span
-                class="math inline">\(10^{27}\)</span> metros en el que
-                cada centímetro multiplique la distancia por <span
-                class="math inline">\(10^{2}\)</span>, y sitúa los nueve
-                objetos. ¿Qué posición ocupa cada uno?</li>
-                <li>Explica con tus palabras por qué la escala
-                logarítmica es la única razonable para un catálogo que
-                va de la órbita terrestre al borde del universo
-                observable.</li>
-                </ol>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -5318,6 +5347,82 @@ Bachillerato</p>
                 <li>Confundir un modelo continuo con uno que solo cambia
                 en períodos enteros.</li>
                 </ul>
+                </div>
+                </section>
+                <section id="ejercicios-13"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios</h4>
+                <ol start="6" type="1">
+                <li>Un capital de <span
+                class="math inline">\(5000\)</span> € se coloca al <span
+                class="math inline">\(4\%\)</span> anual de interés
+                compuesto, de modo que al cabo de <span
+                class="math inline">\(t\)</span> años vale <span
+                class="math inline">\(C(t)=5000\cdot1{,}04^{t}\)</span>.
+                <ol type="a">
+                <li>Calcula cuánto vale a los <span
+                class="math inline">\(10\)</span> años.</li>
+                <li>¿Cuántos años tardará en llegar a <span
+                class="math inline">\(8000\)</span> €?</li>
+                <li>Si los intereses se abonan al final de cada año, ¿al
+                terminar qué año supera por primera vez los <span
+                class="math inline">\(8000\)</span> €?</li>
+                </ol></li>
+                <li>La magnitud de un terremoto es <span
+                class="math inline">\(M=\log(A/A_0)\)</span>, donde
+                <span class="math inline">\(A\)</span> es la amplitud
+                registrada y <span class="math inline">\(A_0\)</span>
+                una amplitud de referencia. Un terremoto tiene magnitud
+                <span class="math inline">\(6\)</span> y otro, magnitud
+                <span class="math inline">\(8{,}5\)</span>.
+                <ol type="a">
+                <li>¿Por qué factor se multiplica la amplitud del
+                primero al segundo?</li>
+                <li>Un tercer terremoto sacude con una amplitud <span
+                class="math inline">\(1000\)</span> veces mayor que el
+                de magnitud <span class="math inline">\(6\)</span>.
+                ¿Cuál es su magnitud?</li>
+                </ol></li>
+                <li>El pH de una disolución es <span
+                class="math inline">\(\mathrm{pH}=-\log[H^+]\)</span>,
+                donde <span class="math inline">\([H^+]\)</span> es la
+                concentración de iones de hidrógeno. El café tiene pH
+                <span class="math inline">\(5\)</span> y el zumo de
+                limón, pH <span class="math inline">\(2\)</span>.
+                ¿Cuántas veces mayor es la concentración del zumo?</li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <ol start="6" type="1">
+                <li><ol type="a">
+                <li><span
+                class="math inline">\(5000\cdot1{,}04^{10}\approx7401\)</span>
+                €.</li>
+                <li><span
+                class="math inline">\(1{,}04^{t}=\frac{8000}{5000}=1{,}6\)</span>,
+                luego <span
+                class="math inline">\(t=\frac{\ln1{,}6}{\ln1{,}04}\approx11{,}98\)</span>
+                años: prácticamente <span
+                class="math inline">\(12\)</span>.</li>
+                <li>Al terminar el año <span
+                class="math inline">\(12\)</span>: tras <span
+                class="math inline">\(11\)</span> años hay <span
+                class="math inline">\(5000\cdot1{,}04^{11}\approx7697\)</span>
+                € y tras <span class="math inline">\(12\)</span>, <span
+                class="math inline">\(\approx8005\)</span> €.</li>
+                </ol></li>
+                <li><ol type="a">
+                <li><span
+                class="math inline">\(10^{8{,}5-6}=10^{2{,}5}\approx316\)</span>.</li>
+                <li><span
+                class="math inline">\(M=6+\log1000=6+3=9\)</span>.</li>
+                </ol></li>
+                <li><span
+                class="math inline">\([H^+]=10^{-\mathrm{pH}}\)</span>,
+                así que <span
+                class="math inline">\(\frac{10^{-2}}{10^{-5}}=10^{3}=1000\)</span>
+                veces.</li>
+                </ol>
                 </div>
                 <div class="aplicacion bloque-didactico plegable">
                 <p><span class="etiqueta-bloque">Matemáticas en
@@ -5451,6 +5556,102 @@ Bachillerato</p>
                 inventados.</p>
                 </div>
                 </section>
+                <section id="la-escala-del-universo"
+                class="level4 solo-web unnumbered">
+                <h4 class="solo-web unnumbered">La escala del
+                universo</h4>
+                <p>Las distancias astronómicas se llevan mal con los
+                ejes lineales: si el borde del universo observable cabe
+                en la pantalla, la Luna, el Sol y hasta la galaxia de
+                Andrómeda se aplastan contra el cero, indistinguibles.
+                Una escala logarítmica, en la que cada paso del eje
+                multiplica la distancia por <span
+                class="math inline">\(10\)</span>, reparte todos esos
+                objetos con comodidad. Es la misma idea de la escala
+                Richter o del pH: cuando un fenómeno vive en órdenes de
+                magnitud, el logaritmo es la regla adecuada para
+                medirlo.</p>
+                <div id="escala-cosmica"
+                class="interactivo bloque-didactico"
+                data-componente="escala-cosmica"
+                data-titulo="La escala del universo">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p><strong>Distancias aproximadas desde la
+                Tierra.</strong></p>
+                <table>
+                <thead>
+                <tr>
+                <th scope="col">Objeto</th>
+                <th style="text-align: right;" scope="col">Distancia (m)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>Estación Espacial Internacional</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(4\cdot10^{5}\)</span></td>
+                </tr>
+                <tr>
+                <td>Luna</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(3{,}84\cdot10^{8}\)</span></td>
+                </tr>
+                <tr>
+                <td>Marte (aproximación mínima)</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(5{,}6\cdot10^{10}\)</span></td>
+                </tr>
+                <tr>
+                <td>Sol</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(1{,}50\cdot10^{11}\)</span></td>
+                </tr>
+                <tr>
+                <td>Neptuno</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(4{,}3\cdot10^{12}\)</span></td>
+                </tr>
+                <tr>
+                <td>Voyager 1</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(2{,}5\cdot10^{13}\)</span></td>
+                </tr>
+                <tr>
+                <td>Próxima Centauri</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(4{,}0\cdot10^{16}\)</span></td>
+                </tr>
+                <tr>
+                <td>Galaxia de Andrómeda</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(2{,}4\cdot10^{22}\)</span></td>
+                </tr>
+                <tr>
+                <td>Borde del universo observable</td>
+                <td style="text-align: right;"><span
+                class="math inline">\(4{,}4\cdot10^{26}\)</span></td>
+                </tr>
+                </tbody>
+                </table>
+                <ol type="1">
+                <li>Dibuja un eje lineal de <span
+                class="math inline">\(10\ \text{cm}\)</span> que termine
+                en el Sol y sitúa en él la Estación Espacial, la Luna y
+                Marte. ¿A cuántos centímetros del cero queda cada marca?
+                ¿Cuáles se distinguen del origen a simple vista?</li>
+                <li>Dibuja ahora un eje logarítmico de <span
+                class="math inline">\(10^{5}\)</span> a <span
+                class="math inline">\(10^{27}\)</span> metros en el que
+                cada centímetro multiplique la distancia por <span
+                class="math inline">\(10^{2}\)</span>, y sitúa los nueve
+                objetos. ¿Qué posición ocupa cada uno?</li>
+                <li>Explica con tus palabras por qué la escala
+                logarítmica es la única razonable para un catálogo que
+                va de la órbita terrestre al borde del universo
+                observable.</li>
+                </ol>
+                </div>
+                </section>
                 </section>
                 </section>
                 <section id="recta-real.-ordenación.-valor-absoluto"
@@ -5515,10 +5716,14 @@ Bachillerato</p>
                 negativo, cambia de sentido.<br />
                 <span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="math inline">\(2&lt;5\)</span>, pero <span
-                class="math inline">\(-2&gt;-5\)</span></p>
+                class="math inline">\(-2&gt;-5\)</span><br />
+                <span class="etiqueta-nota">Ordenar:</span> formas
+                distintas: pásalas a decimal con cifras suficientes:
+                <span class="formula-alta"><span
+                class="math inline">\(77\%=0{,}77&lt;\sqrt{0{,}6}\approx0{,}7746&lt;\dfrac{7}{9}=0{,}777\ldots\)</span></span></p>
                 </div>
                 </div>
-                <section id="ejercicios-13"
+                <section id="ejercicios-14"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol type="1">
@@ -5684,7 +5889,7 @@ Bachillerato</p>
                 \end{aligned}
                 \]</span></p>
                 </div>
-                <section id="ejercicios-14"
+                <section id="ejercicios-15"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="2" type="1">
@@ -5769,9 +5974,13 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
+                <p><span class="etiqueta-nota">Separados:</span> la
+                unión no es un intervalo: se deja con <span
+                class="math inline">\(\cup\)</span>, como <span
+                class="math inline">\((-4,-1)\cup[2,5]\)</span></p>
                 </div>
                 </div>
-                <section id="ejercicios-15"
+                <section id="ejercicios-16"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="3" type="1">
@@ -5839,12 +6048,26 @@ Bachillerato</p>
                 <span class="math inline">\(x&lt;0\)</span>: la
                 distancia de <span class="math inline">\(x\)</span> al
                 cero.<br />
+                <span class="etiqueta-nota">Propiedades:</span> <span
+                class="formula-alta"><span class="math inline">\(\lvert
+                xy\rvert=\lvert x\rvert\lvert
+                y\rvert\qquad\left\lvert\dfrac{x}{y}\right\rvert=\dfrac{\lvert
+                x\rvert}{\lvert y\rvert}\qquad\lvert x+y\rvert\leq\lvert
+                x\rvert+\lvert y\rvert\)</span></span><br />
                 <span class="etiqueta-nota">Distancia:</span> <span
                 class="math inline">\(d(a,b)=\lvert
                 a-b\rvert\)</span><br />
                 <span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(d(-3,5)=\lvert5-(-3)\rvert=8\)</span></p>
+                class="math inline">\(d(-3,5)=\lvert5-(-3)\rvert=8\)</span><br />
+                <span class="etiqueta-nota">Por tramos:</span> <span
+                class="math inline">\(\lvert2x-1\rvert=2x-1\)</span> si
+                <span class="formula-alta"><span
+                class="math inline">\(x\geq\dfrac{1}{2}\)</span></span>;
+                <span
+                class="math inline">\(\lvert2x-1\rvert=1-2x\)</span> si
+                <span class="formula-alta"><span
+                class="math inline">\(x&lt;\dfrac{1}{2}\)</span></span></p>
                 </div>
                 </div>
                 <p><strong>Propiedades.</strong> Para cualesquiera <span
@@ -5879,7 +6102,7 @@ Bachillerato</p>
                 \end{cases}
                 \]</span></p>
                 </div>
-                <section id="ejercicios-16"
+                <section id="ejercicios-17"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="4" type="1">
@@ -5950,13 +6173,25 @@ Bachillerato</p>
                 <p><span class="etiqueta-nota">Entorno:</span> <span
                 class="math inline">\(\lvert x-a\rvert&lt;r\iff
                 a-r&lt;x&lt;a+r\iff x\in E(a,r)\)</span><br />
+                <span class="etiqueta-nota">Cerrado:</span> <span
+                class="math inline">\(\lvert x-a\rvert\leq r\iff x\in
+                E[a,r]=[a-r,a+r]\)</span><br />
                 <span class="etiqueta-nota">Centro y radio:</span> <span
                 class="math inline">\(a\)</span> es el punto medio;
                 <span class="math inline">\(r\)</span>, del centro a un
-                extremo.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\lvert x-4\rvert&lt;3\iff
-                x\in(1,7)\)</span></p>
+                extremo.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(\lvert
+                x-4\rvert&lt;3\iff x\in(1,7)\)</span></p></li>
+                <li><p><span
+                class="math inline">\((-1,5)=E(2,3)\)</span>, es decir,
+                <span class="math inline">\(\lvert
+                x-2\rvert&lt;3\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <div id="distancia-intervalo-lab"
@@ -5997,7 +6232,7 @@ Bachillerato</p>
                 desigualdad al multiplicar por un número negativo.</li>
                 </ul>
                 </div>
-                <section id="ejercicios-17"
+                <section id="ejercicios-18"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="6" type="1">
@@ -6102,13 +6337,39 @@ Bachillerato</p>
                 class="math inline">\(=\)</span><br />
                 <span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt2\approx1{,}414\)</span><br />
-                <span class="etiqueta-nota">Regla:</span> redondea solo
-                al final; en los pasos intermedios, con el valor
+                class="math inline">\(\sqrt2\approx1{,}414\)</span></p>
+                <table class="tabla-columnas">
+                <colgroup>
+                <col style="width: 50%" />
+                <col style="width: 50%" />
+                </colgroup>
+                <thead>
+                <tr>
+                <th scope="col">Truncar</th>
+                <th scope="col">Redondear</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>cortar sin mirar</td>
+                <td>si la cifra siguiente es <span
+                class="math inline">\(5\)</span> o más, la última
+                sube</td>
+                </tr>
+                <tr>
+                <td><span
+                class="math inline">\(\dfrac{2}{3}\to0{,}666\)</span></td>
+                <td><span
+                class="math inline">\(\dfrac{2}{3}\to0{,}667\)</span></td>
+                </tr>
+                </tbody>
+                </table>
+                <p><span class="etiqueta-nota">Regla:</span> redondea
+                solo al final; en los pasos intermedios, con el valor
                 exacto.</p>
                 </div>
                 </div>
-                <section id="ejercicios-18"
+                <section id="ejercicios-19"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol type="1">
@@ -6215,7 +6476,7 @@ Bachillerato</p>
                 orden.</p>
                 </div>
                 </div>
-                <section id="ejercicios-19"
+                <section id="ejercicios-20"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="3" type="1">
@@ -6394,6 +6655,8 @@ Bachillerato</p>
                 <tbody>
                 <tr>
                 <td>denominador <span
+                class="math inline">\(\neq0\)</span>; exponente
+                negativo, base <span
                 class="math inline">\(\neq0\)</span></td>
                 <td>radicando <span
                 class="math inline">\(\geq0\)</span>; en un denominador,
@@ -6404,7 +6667,12 @@ Bachillerato</p>
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Varias a la vez:</span>
-                se cumplen todas.</p>
+                se cumplen todas.<br />
+                <span class="etiqueta-nota">Antes de simplificar:</span>
+                anota las restricciones: <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{(x-1)(x+2)}{x-1}=x+2\)</span></span>
+                solo si <span class="math inline">\(x\neq1\)</span></p>
                 </div>
                 </div>
                 </section>
@@ -6670,7 +6938,7 @@ Bachillerato</p>
                 </div>
                 </section>
                 </section>
-                <section id="soluciones-20" class="level3 unnumbered">
+                <section id="soluciones-21" class="level3 unnumbered">
                 <h3 class="unnumbered">Soluciones</h3>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">

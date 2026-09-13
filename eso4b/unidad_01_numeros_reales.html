@@ -774,6 +774,24 @@
       font-size: 1.15em;
     }
 
+    /* Las cifras de Kalam se inclinan a la derecha y sobresalen de su caja,
+       y KaTeX no añade corrección de cursiva a una fuente recta: el exponente
+       o el subíndice que sigue a una base manuscrita se pegaba a ella (el
+       «−» de 5⁻¹ tocaba el 5). Un pequeño espacio solo tras un símbolo en
+       Kalam; tras un paréntesis, que va en KaTeX_Main, no hace falta. */
+    .bloque-didactico.cuaderno .katex .mord + .msupsub {
+      margin-left: 0.16em;
+    }
+
+    /* Dentro de una nota, la raya discontinua de un array (\hdashline)
+       va punteada y en verde: separa el dato del que se parte de la resta
+       que se hace con él. */
+    .bloque-didactico.cuaderno .katex .hdashline {
+      color: #1b7f3b;
+      border-bottom-style: dotted;
+      border-bottom-width: 0.11em;
+    }
+
     /* «Al cuaderno» es una píldora con el texto y el lápiz siempre en el
        rojo teja del margen de la hoja (#d85a30, relleno #fdeee7), el mismo
        en toda la web para localizar las notas al desplazarse (elegido
@@ -962,10 +980,14 @@
       margin: 0;
     }
 
-    .bloque-didactico.cuaderno li::before {
+    /* La rayita va dentro de la primera línea del elemento (el filtro
+       garantiza que todo elemento empieza por un párrafo), alineada con su
+       texto aunque empiece con una fracción alta. */
+    .bloque-didactico.cuaderno li > p:first-child::before {
       content: "\2013";
-      position: absolute;
-      left: -1.3rem;
+      display: inline-block;
+      width: 1.3rem;
+      margin-left: -1.3rem;
     }
 
     /* Líneas sangradas: los ejemplos, uno debajo de otro. */
@@ -3051,11 +3073,11 @@
                 </table>
                 <p><span class="etiqueta-nota">Inclusiones:</span> <span
                 class="math inline">\(\mathbb N\subset\mathbb
-                Z\subset\mathbb Q\subset\mathbb R\)</span> y <span
-                class="math inline">\(\mathbb R=\mathbb Q\cup\mathbb
-                I\)</span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="math inline">\(\sqrt{121}=11\in\mathbb
+                Z\subset\mathbb Q\subset\mathbb R\qquad\mathbb R=\mathbb
+                Q\cup\mathbb I\)</span><br />
+                <span class="etiqueta-nota">Clasificar:</span>
+                simplifica antes: <span
+                class="math inline">\(\sqrt{121}=11\in\mathbb
                 N\)</span>, pero <span
                 class="math inline">\(\sqrt{50}\)</span> es
                 irracional.</p>
@@ -3239,15 +3261,20 @@
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span class="formula-alta"><span
+                <ul>
+                <li><p><span class="formula-alta"><span
                 class="math inline">\(\dfrac{7}{20}=0{,}35\)</span></span>
-                exacta<br />
-                <span class="formula-alta"><span
+                exacta, porque <span
+                class="math inline">\(20=2^{2}\cdot5\)</span></p></li>
+                <li><p><span class="formula-alta"><span
                 class="math inline">\(\dfrac{5}{9}=0{,}\overline{5}\)</span></span>
-                periódica pura<br />
-                <span class="formula-alta"><span
+                periódica pura, porque <span
+                class="math inline">\(9=3^{2}\)</span></p></li>
+                <li><p><span class="formula-alta"><span
                 class="math inline">\(\dfrac{4}{15}=0{,}2\overline{6}\)</span></span>
-                periódica mixta.</p>
+                periódica mixta, porque <span
+                class="math inline">\(15=3\cdot5\)</span></p></li>
+                </ul>
                 </blockquote>
                 </div>
                 </div>
@@ -3335,21 +3362,21 @@
                 0{,}375=\frac{375}{1000}=\frac{3}{8}
                 \]</span></p>
                 <p><strong>Decimal periódico puro.</strong> Se llama
-                <span class="math inline">\(x\)</span> al número, se
+                <span class="math inline">\(N\)</span> al número, se
                 multiplica por un <span class="math inline">\(1\)</span>
                 seguido de tantos ceros como cifras tenga el período y
                 se restan las dos igualdades:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
-                x&amp;=0{,}\overline{45}=0{,}454545\ldots\\
-                100x&amp;=45{,}454545\ldots\\
-                100x-x&amp;=45
+                N&amp;=0{,}\overline{45}=0{,}454545\ldots\\
+                100N&amp;=45{,}454545\ldots\\
+                100N-N&amp;=45
                 \end{aligned}
                 \]</span></p>
                 <p>Por tanto, <span
-                class="math inline">\(99x=45\)</span> y</p>
+                class="math inline">\(99N=45\)</span> y</p>
                 <p><span class="math display">\[
-                x=\frac{45}{99}=\frac{5}{11}
+                N=\frac{45}{99}=\frac{5}{11}
                 \]</span></p>
                 <p><strong>Decimal periódico mixto.</strong> Se
                 multiplica dos veces: primero hasta dejar el período
@@ -3357,24 +3384,23 @@
                 más; se restan las dos igualdades:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
-                x&amp;=2{,}1\overline{6}=2{,}1666\ldots\\
-                10x&amp;=21{,}666\ldots\\
-                100x&amp;=216{,}666\ldots\\
-                100x-10x&amp;=216-21
+                N&amp;=2{,}1\overline{6}=2{,}1666\ldots\\
+                10N&amp;=21{,}666\ldots\\
+                100N&amp;=216{,}666\ldots\\
+                100N-10N&amp;=216-21
                 \end{aligned}
                 \]</span></p>
-                <p>Así, <span class="math inline">\(90x=195\)</span>
+                <p>Así, <span class="math inline">\(90N=195\)</span>
                 y</p>
                 <p><span class="math display">\[
-                x=\frac{195}{90}=\frac{13}{6}
+                N=\frac{195}{90}=\frac{13}{6}
                 \]</span></p>
                 </div>
-                <p>De aquí sale la regla práctica: en el numerador, el
-                número sin coma hasta completar un período menos el
-                número sin coma hasta terminar el anteperíodo; en el
-                denominador, tantos nueves como cifras tenga el período
-                seguidos de tantos ceros como cifras tenga el
-                anteperíodo. Para <span
+                <p>De aquí sale el atajo: en el numerador, el número sin
+                coma hasta completar un período menos el número sin coma
+                hasta terminar el anteperíodo; en el denominador, tantos
+                nueves como cifras tenga el período seguidos de tantos
+                ceros como cifras tenga el anteperíodo. Para <span
                 class="math inline">\(2{,}1\overline{6}\)</span>:</p>
                 <p><span class="math display">\[
                 \frac{216-21}{90}=\frac{195}{90}=\frac{13}{6}
@@ -3407,7 +3433,7 @@
                 class="math inline">\(0{,}\overline{9}\)</span>? Si
                 <span class="math inline">\(x=0{,}999\ldots\)</span>,
                 entonces <span
-                class="math inline">\(10x=9{,}999\ldots\)</span> y, al
+                class="math inline">\(10N=9{,}999\ldots\)</span> y, al
                 restar, <span class="math inline">\(9x=9\)</span>, así
                 que <span class="math inline">\(x=1\)</span>. No son dos
                 números muy próximos, sino dos escrituras decimales del
@@ -3422,26 +3448,35 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-3">Al cuaderno</button></p>
                 <div id="cuaderno-3" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Decimal exacto:</span> el
-                número sin coma, sobre <span
-                class="math inline">\(10\)</span>, <span
-                class="math inline">\(100\)</span>, <span
-                class="math inline">\(1000\)</span>…<br />
-                <span class="etiqueta-nota">Decimal periódico:</span>
-                <span class="formula-alta"><span
-                class="math inline">\(\dfrac{\text{todo}-\text{anteperíodo}}{9\ldots9\,0\ldots0}\)</span></span>:
-                un <span class="math inline">\(9\)</span> por cada cifra
-                del período y un <span class="math inline">\(0\)</span>
-                por cada cifra del anteperíodo.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
-                <p><span class="formula-alta"><span
-                class="math inline">\(0{,}24=\dfrac{24}{100}=\dfrac{6}{25}\)</span></span><br />
-                <span class="formula-alta"><span
-                class="math inline">\(0{,}\overline{6}=\dfrac{6}{9}=\dfrac{2}{3}\)</span></span><br />
-                <span class="formula-alta"><span
-                class="math inline">\(0{,}5\overline{3}=\dfrac{53-5}{90}=\dfrac{8}{15}\)</span></span></p>
-                </blockquote>
+                <p><span class="etiqueta-nota">Regla:</span> quitar la
+                coma; si hay período, restar dos múltiplos de <span
+                class="math inline">\(N\)</span> para que
+                desaparezca.</p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Exacto:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(0{,}24=\dfrac{24}{100}=\dfrac{6}{25}\)</span></span></p></li>
+                <li><p><span class="etiqueta-nota">Puro:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\begin{array}{rrcl} &amp; N &amp;
+                = &amp; \phantom{4}0{,}4545\ldots\\ \hdashline
+                \rule{0pt}{1.2em} &amp; 100N &amp; = &amp;
+                45{,}4545\ldots\\ - &amp; N &amp; = &amp;
+                \phantom{4}0{,}4545\ldots\\ \hline
+                \rule[-1.05em]{0pt}{2.7em} &amp; 99N &amp; = &amp;
+                45\quad\Rightarrow\quad N=\dfrac{45}{99}=\dfrac{5}{11}
+                \end{array}\)</span></span></p></li>
+                <li><p><span class="etiqueta-nota">Mixto:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\begin{array}{rrcl} &amp; N &amp;
+                = &amp; \phantom{21}2{,}1666\ldots\\ \hdashline
+                \rule{0pt}{1.2em} &amp; 100N &amp; = &amp;
+                216{,}666\ldots\\ - &amp; 10N &amp; = &amp;
+                \phantom{2}21{,}666\ldots\\ \hline
+                \rule[-1.05em]{0pt}{2.7em} &amp; 90N &amp; = &amp;
+                195\quad\Rightarrow\quad N=\dfrac{195}{90}=\dfrac{13}{6}
+                \end{array}\)</span></span></p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-2"
@@ -3666,24 +3701,42 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-4">Al cuaderno</button></p>
                 <div id="cuaderno-4" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Raíces:</span> <span
+                <ul>
+                <li><p><span class="etiqueta-nota">Raíces:</span> <span
                 class="math inline">\(\sqrt{n}\)</span> es irracional si
                 <span class="math inline">\(n\)</span> no es un cuadrado
                 perfecto.</p>
+                <blockquote>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
-                <p><span class="math inline">\(\sqrt{20}\)</span>
-                sí<br />
-                <span class="math inline">\(\sqrt{16}=4\)</span> no.</p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Muchos decimales:</span>
-                no significa irracional: <span
+                <ul>
+                <li><p><span class="math inline">\(\sqrt{20}\)</span> es
+                irracional</p></li>
+                <li><p><span class="math inline">\(\sqrt{16}=4\)</span>
+                no lo es</p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Muchos
+                decimales:</span> no significa irracional: <span
                 class="math inline">\(3{,}1416\)</span> es racional;
-                <span class="math inline">\(\pi\)</span>, no.<br />
-                <span class="etiqueta-nota">Patrón sin período:</span>
-                también es irracional: <span
-                class="math inline">\(2{,}010010001\ldots\)</span></p>
+                <span class="math inline">\(\pi\)</span>, no.</p></li>
+                <li><p><span class="etiqueta-nota">Patrón sin
+                período:</span> también es irracional: <span
+                class="math inline">\(2{,}010010001\ldots\)</span></p></li>
+                <li><p><span class="etiqueta-nota">Densidad:</span>
+                entre dos reales distintos hay infinitos racionales e
+                infinitos irracionales.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                entre <span class="math inline">\(2{,}23\)</span> y
+                <span class="math inline">\(2{,}24\)</span> están <span
+                class="math inline">\(2{,}235\)</span> y <span
+                class="math inline">\(\sqrt5\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Operar:</span> con
+                irracionales no hay garantía: <span
+                class="math inline">\(\sqrt2\cdot\sqrt2=2\)</span></p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-3"
@@ -3829,7 +3882,11 @@
                 <div id="cuaderno-5" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Ordenar:</span> pásalo
                 todo a decimal: <span class="formula-alta"><span
-                class="math inline">\(76\%=0{,}76\qquad\dfrac{7}{9}=0{,}777\ldots\)</span></span><br />
+                class="math inline">\(81\%=0{,}81&lt;\dfrac{5}{6}=0{,}833\ldots&lt;\sqrt{0{,}7}\approx0{,}837\)</span></span><br />
+                <span class="etiqueta-nota">Empate:</span> si los
+                decimales coinciden, compara con fracciones: <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{3}{5}=\dfrac{9}{15}&lt;\dfrac{10}{15}=\dfrac{2}{3}\)</span></span><br />
                 <span class="etiqueta-nota">Recta:</span> más a la
                 izquierda es menor: <span
                 class="math inline">\(-7&lt;-3\)</span><br />
@@ -3973,9 +4030,14 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-6">Al cuaderno</button></p>
                 <div id="cuaderno-6" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Fracción:</span> divide
-                la unidad en tantas partes como diga el
-                denominador.<br />
+                <p><span class="etiqueta-nota">Entero:</span> con una
+                unidad fija desde el <span
+                class="math inline">\(0\)</span><br />
+                <span class="etiqueta-nota">Fracción:</span> divide la
+                unidad en tantas partes como diga el denominador; si es
+                impropia, parte entera más fracción: <span
+                class="formula-alta"><span
+                class="math inline">\(\dfrac{7}{4}=1+\dfrac{3}{4}\)</span></span><br />
                 <span class="etiqueta-nota">Decimal:</span> divide la
                 unidad en décimas y, si hace falta, cada décima en
                 centésimas.<br />
@@ -4087,35 +4149,44 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-7">Al cuaderno</button></p>
                 <div id="cuaderno-7" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Definición:</span> <span
-                class="math inline">\(\lvert a\rvert=a\)</span> si <span
-                class="math inline">\(a\geq0\)</span>; <span
+                <ul>
+                <li><p><span class="etiqueta-nota">Definición:</span>
+                <span class="math inline">\(\lvert a\rvert=a\)</span> si
+                <span class="math inline">\(a\geq0\)</span>; <span
                 class="math inline">\(\lvert a\rvert=-a\)</span> si
                 <span class="math inline">\(a&lt;0\)</span>: la
                 distancia de <span class="math inline">\(a\)</span> al
                 <span class="math inline">\(0\)</span>, nunca
                 negativa.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span
-                class="math inline">\(\lvert-8\rvert=8\)</span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\lvert3-10\rvert=7\)</span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Distancia:</span> <span
-                class="math inline">\(d(a,b)=\lvert
-                b-a\rvert\)</span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                class="math inline">\(\lvert-8\rvert=8\qquad\lvert3-10\rvert=7\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Distancia:</span>
+                <span class="math inline">\(d(a,b)=\lvert
+                b-a\rvert\)</span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(d(7,-3)=\lvert-3-7\rvert=10\)</span><br />
-                <span class="etiqueta-nota">Ecuación:</span> <span
-                class="math inline">\(\lvert x+1\rvert=3\)</span>: los
-                números que distan <span
-                class="math inline">\(3\)</span> de <span
-                class="math inline">\(-1\)</span>, es decir, <span
+                class="math inline">\(d(7,-3)=\lvert-3-7\rvert=10\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Ecuación:</span>
+                <span class="math inline">\(\lvert x-a\rvert=r\)</span>:
+                los dos números que distan <span
+                class="math inline">\(r\)</span> de <span
+                class="math inline">\(a\)</span>, uno a cada lado; con
+                <span class="math inline">\(r&lt;0\)</span> no hay
+                solución.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(\lvert x+1\rvert=3\)</span>:
+                distan <span class="math inline">\(3\)</span> de <span
+                class="math inline">\(-1\)</span>, luego <span
                 class="math inline">\(x=2\)</span> o <span
                 class="math inline">\(x=-4\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-6"
@@ -4282,16 +4353,21 @@
                 <p><span class="etiqueta-nota">Infinito:</span> <span
                 class="math inline">\(+\infty\)</span> y <span
                 class="math inline">\(-\infty\)</span> no son números:
-                siempre con paréntesis.</p>
+                siempre con paréntesis.<br />
+                <span class="etiqueta-nota">Extremos decimales:</span>
+                se separan con punto y coma: <span
+                class="math inline">\([1{,}40;\,1{,}95)\)</span></p>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p>«al menos <span
+                <ul>
+                <li><p>«al menos <span
                 class="math inline">\(1{,}40\)</span>» es <span
-                class="math inline">\(\geq\)</span> y entra<br />
-                «menos de <span class="math inline">\(1{,}95\)</span>»
-                es <span class="math inline">\(&lt;\)</span> y no
-                entra.</p>
+                class="math inline">\(\geq\)</span> y entra</p></li>
+                <li><p>«menos de <span
+                class="math inline">\(1{,}95\)</span>» es <span
+                class="math inline">\(&lt;\)</span> y no entra</p></li>
+                </ul>
                 </blockquote>
                 </div>
                 </div>
@@ -4448,9 +4524,12 @@
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Sin puntos
-                comunes:</span> <span class="math inline">\(A\cap
-                B=\emptyset\)</span>; si están separados, la unión se
-                deja con <span class="math inline">\(\cup\)</span></p>
+                comunes:</span> la intersección es el conjunto vacío,
+                <span class="math inline">\(\emptyset\)</span><br />
+                <span class="etiqueta-nota">Separados:</span> la unión
+                no es un intervalo: se deja con <span
+                class="math inline">\(\cup\)</span>, como <span
+                class="math inline">\((-4,-1)\cup[2,5]\)</span></p>
                 </div>
                 </div>
                 <section id="ejercicios-8"
@@ -4547,24 +4626,26 @@
                 a menos de <span class="math inline">\(r\)</span> de
                 <span class="math inline">\(a\)</span><br />
                 <span class="etiqueta-nota">Con <span
-                class="math inline">\(\leq\)</span>:</span>
-                corchetes.</p>
+                class="math inline">\(\leq\)</span>:</span> corchetes:
+                <span class="math inline">\([a-r,a+r]\)</span></p>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span class="math inline">\(\lvert
+                <ul>
+                <li><p><span class="math inline">\(\lvert
                 x-3\rvert\leq2\)</span> es <span
-                class="math inline">\([1,5]\)</span><br />
-                <span class="math inline">\(\lvert x\rvert&lt;4\)</span>
-                es <span class="math inline">\((-4,4)\)</span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                un margen de <span
+                class="math inline">\([1,5]\)</span></p></li>
+                <li><p><span class="math inline">\(\lvert
+                x\rvert&lt;4\)</span> es <span
+                class="math inline">\((-4,4)\)</span></p></li>
+                <li><p>un margen de <span
                 class="math inline">\(\pm1{,}5\)</span> alrededor de
                 <span class="math inline">\(21\)</span>: <span
                 class="math inline">\(\lvert
                 T-21\rvert\leq1{,}5\)</span>, es decir, <span
-                class="math inline">\([19{,}5;\,22{,}5]\)</span></p>
+                class="math inline">\([19{,}5;\,22{,}5]\)</span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-9"
@@ -4752,7 +4833,12 @@
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Aproximado:</span> se
+                <p><span class="etiqueta-nota">Por defecto o por
+                exceso:</span> quedarse por debajo (<span
+                class="math inline">\(2{,}64\)</span>) o por encima
+                (<span class="math inline">\(2{,}65\)</span>); el
+                redondeo elige la más cercana.<br />
+                <span class="etiqueta-nota">Aproximado:</span> se
                 escribe con <span
                 class="math inline">\(\approx\)</span>, nunca con <span
                 class="math inline">\(=\)</span><br />
@@ -4838,29 +4924,42 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-12">Al cuaderno</button></p>
                 <div id="cuaderno-12" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Cuentan:</span> todas las
-                cifras menos los ceros que solo colocan la coma.</p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Cuentan:</span> todas
+                las cifras menos los ceros que solo colocan la coma.</p>
+                <blockquote>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
-                <p><span class="math inline">\(0{,}00456\)</span> tiene
-                tres<br />
-                <span class="math inline">\(1{,}00\)</span>, tres<br />
-                <span class="math inline">\(2500\)</span> es ambiguo y
-                <span class="math inline">\(2{,}5\cdot10^{3}\)</span>
-                tiene dos.</p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Redondear a <span
+                <ul>
+                <li><p><span class="math inline">\(0{,}00456\)</span>
+                tiene tres: los ceros iniciales solo colocan la
+                coma</p></li>
+                <li><p><span class="math inline">\(1{,}00\)</span> tiene
+                tres: los ceros finales tras la coma se han escrito a
+                propósito</p></li>
+                <li><p><span class="math inline">\(2500\)</span> es
+                ambiguo; en notación científica, <span
+                class="math inline">\(2{,}5\cdot10^{3}\)</span> tiene
+                dos</p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Redondear a <span
                 class="math inline">\(n\)</span> cifras:</span> al orden
                 de la última de ellas.</p>
+                <blockquote>
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
-                <blockquote>
-                <p>a tres cifras, <span
-                class="math inline">\(1{,}0045\to1{,}00\)</span><br />
-                <span
-                class="math inline">\(32\,475\to32\,500\)</span></p>
-                </blockquote>
+                <ul>
+                <li><p>a tres cifras, <span
+                class="math inline">\(1{,}0045\to1{,}00\)</span></p></li>
+                <li><p>a tres cifras, <span
+                class="math inline">\(32\,475\to32\,500\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">En una
+                respuesta:</span> tantas cifras como los datos, no las
+                que dé la calculadora.</p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-11"
@@ -5159,18 +5258,26 @@
                 <span class="etiqueta-nota">Redondear a un orden:</span>
                 <span class="math inline">\(E_a\leq\)</span> media
                 unidad de ese orden; truncar: menos de una unidad.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span
-                class="math inline">\(\sqrt5\approx2{,}24\)</span>:
-                <span class="math inline">\(E_a\leq0{,}005\)</span> y
+                <span class="etiqueta-nota">Más cifras:</span>
+                significativas, menor cota del error relativo.</p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span
+                class="math inline">\(\sqrt5\approx2{,}24\)</span>, a
+                las centésimas: <span
+                class="math inline">\(E_a\leq0{,}005\)</span>, luego
                 <span class="formula-alta"><span
-                class="math inline">\(E_r\leq\dfrac{0{,}005}{2{,}24}\approx0{,}22\%\)</span></span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span> una
-                báscula de décimas que marca <span
+                class="math inline">\(E_r\leq\dfrac{0{,}005}{2{,}24}\approx0{,}22\%\)</span></span></p></li>
+                <li><p>una báscula de décimas que marca <span
                 class="math inline">\(2{,}5\)</span> kg: masa entre
                 <span class="math inline">\(2{,}45\)</span> y <span
                 class="math inline">\(2{,}55\)</span> kg, <span
-                class="math inline">\(2{,}5\pm0{,}05\)</span> kg.</p>
+                class="math inline">\(2{,}5\pm0{,}05\)</span>
+                kg</p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-13"
@@ -5233,14 +5340,29 @@
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-15">Al cuaderno</button></p>
                 <div id="cuaderno-15" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Estimar:</span> prever el
-                resultado con números fáciles antes de calcular.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span
-                class="math inline">\(47\cdot19\approx50\cdot20=1000\)</span>
-                (exacto: <span class="math inline">\(893\)</span>)<br />
-                <span class="etiqueta-nota">Para qué:</span> cazar
-                errores de tecleo: si sale <span
+                resultado antes de calcular, para cazar errores de
+                tecleo: si <span
+                class="math inline">\(47\cdot19\)</span> sale <span
                 class="math inline">\(8930\)</span>, sobra un cero.</p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Redondear:</span> a
+                números fáciles: <span
+                class="math inline">\(47\cdot19\approx50\cdot20=1000\)</span>
+                (exacto: <span
+                class="math inline">\(893\)</span>)</p></li>
+                <li><p><span class="etiqueta-nota">Números
+                compatibles:</span> <span
+                class="math inline">\(598:3\approx600:3=200\)</span></p></li>
+                <li><p><span class="etiqueta-nota">Acotar:</span> entre
+                dos valores: <span
+                class="math inline">\(100=5\cdot20&lt;5{,}1\cdot19{,}8&lt;6\cdot20=120\)</span></p></li>
+                <li><p><span class="etiqueta-nota">Orden de
+                magnitud:</span> <span
+                class="math inline">\(3{,}2\)</span> millones por <span
+                class="math inline">\(0{,}004\)</span> son unos <span
+                class="math inline">\(12\,800\)</span>: decenas de
+                miles, no millones</p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-14"
@@ -5506,36 +5628,58 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-16">Al cuaderno</button></p>
                 <div id="cuaderno-16" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Forma:</span> <span
+                <ul>
+                <li><p><span class="etiqueta-nota">Forma:</span> <span
                 class="math inline">\(a\cdot10^{p}\)</span>, con <span
                 class="math inline">\(1\leq\lvert a\rvert&lt;10\)</span>
                 y <span class="math inline">\(p\)</span> entero (el
                 orden de magnitud).</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <p><span
-                class="math inline">\(1\,390\,000\,000=1{,}39\cdot10^{9}\)</span><br />
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(1\,390\,000\,000=1{,}39\cdot10^{9}\)</span></p></li>
+                <li><p><span
+                class="math inline">\(0{,}000004=4\cdot10^{-6}\)</span></p></li>
+                <li><p><span
+                class="math inline">\(12\cdot10^{21}\)</span> no vale:
+                es <span
+                class="math inline">\(1{,}2\cdot10^{22}\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Comparar:</span>
+                primero el orden de magnitud; si coincide, la parte
+                decimal.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(0{,}000004=4\cdot10^{-6}\)</span><br />
-                <span class="math inline">\(12\cdot10^{21}\)</span> no
-                vale: es <span
-                class="math inline">\(1{,}2\cdot10^{22}\)</span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Sumar o restar:</span>
-                mismo exponente y se suman las partes decimales.<br />
-                <span class="etiqueta-nota">Multiplicar o
+                class="math inline">\(1{,}024\cdot10^{26}&lt;5{,}683\cdot10^{26}\)</span>:
+                Neptuno tiene menos masa que Saturno</p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Sumar o
+                restar:</span> mismo exponente, el mayor, y se suman las
+                partes decimales.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
+                class="math inline">\(4{,}2\cdot10^{5}+3{,}5\cdot10^{4}=4{,}2\cdot10^{5}+0{,}35\cdot10^{5}=4{,}55\cdot10^{5}\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Multiplicar o
                 dividir:</span> decimales por un lado, potencias de
                 <span class="math inline">\(10\)</span> por otro; al
                 final, ajusta la coma.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <p><span
-                class="math inline">\(4{,}2\cdot10^{5}+3{,}5\cdot10^{4}=4{,}55\cdot10^{5}\)</span><br />
-                <span
-                class="math inline">\((2\cdot10^{5})\cdot(3\cdot10^{-2})=6\cdot10^{3}\)</span></p>
-                </blockquote>
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\((2\cdot10^{5})\cdot(3\cdot10^{-2})=6\cdot10^{3}\)</span></p></li>
+                <li><p><span
+                class="math inline">\((4\cdot10^{5})\cdot(5\cdot10^{-2})=20\cdot10^{3}=2\cdot10^{4}\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-15"
@@ -5695,34 +5839,50 @@
                 <p><span class="titulo-cuaderno">Exponente cero y
                 negativo</span></p>
                 <div id="cuaderno-17" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Exponente cero:</span>
-                <span class="math inline">\(a^{0}=1\)</span>, con <span
-                class="math inline">\(a\neq0\)</span><br />
-                <span class="etiqueta-nota">Exponente negativo:</span>
-                <span class="formula-alta"><span
-                class="math inline">\(a^{-n}=\dfrac{1}{a^{n}}\)</span></span>:
-                «dar la vuelta», no signo menos.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Exponente
+                cero:</span> <span
+                class="math inline">\(a^{0}=1\)</span>, con <span
+                class="math inline">\(a\neq0\)</span> (<span
+                class="math inline">\(0^{0}\)</span> no existe)</p></li>
+                <li><p><span class="etiqueta-nota">Exponente
+                negativo:</span> «dar la vuelta», no signo menos: <span
+                class="formula-alta"><span
+                class="math inline">\(a^{-n}=\dfrac{1}{a^{n}}\)</span></span></p>
                 <blockquote>
-                <p><span class="formula-alta"><span
-                class="math inline">\(5^{-2}=\dfrac{1}{25}\)</span></span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="formula-alta"><span
+                class="math inline">\(5^{-2}=\dfrac{1}{5^{2}}=\dfrac{1}{25}\)</span></span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Base fracción:</span>
+                se le da la vuelta: <span class="formula-alta"><span
+                class="math inline">\(\left(\dfrac{a}{b}\right)^{-n}=\left(\dfrac{b}{a}\right)^{n}\)</span></span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
                 class="math inline">\(\left(\dfrac{3}{4}\right)^{-2}=\left(\dfrac{4}{3}\right)^{2}=\dfrac{16}{9}\)</span></span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Base negativa:</span>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Base negativa:</span>
                 exponente par <span
                 class="math inline">\(\Rightarrow\)</span> positivo;
                 impar <span class="math inline">\(\Rightarrow\)</span>
                 negativo; sin paréntesis, el menos no es de la base.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <p><span
-                class="math inline">\((-2)^{4}=16\)</span><br />
-                <span class="math inline">\((-2)^{3}=-8\)</span><br />
-                <span class="math inline">\(-2^{4}=-16\)</span></p>
-                </blockquote>
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\((-2)^{4}=16\)</span></p></li>
+                <li><p><span
+                class="math inline">\((-2)^{3}=-8\)</span></p></li>
+                <li><p><span class="math inline">\(-2^{4}=-16\)</span>:
+                el paréntesis manda</p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Jerarquía:</span>
+                paréntesis; potencias y raíces; productos y cocientes;
+                sumas y restas.</p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="propiedades"
@@ -6014,9 +6174,14 @@
                 <div id="cuaderno-19" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(\sqrt[n]{a}=b\iff
-                b^{n}=a\)</span>: <span
-                class="math inline">\(\sqrt[3]{343}=7\)</span> porque
-                <span class="math inline">\(7^{3}=343\)</span></p>
+                b^{n}=a\)</span><br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span class="math inline">\(\sqrt[3]{343}=7\)</span>
+                porque <span
+                class="math inline">\(7^{3}=343\)</span><br />
+                <span class="etiqueta-nota">Cero:</span> <span
+                class="math inline">\(\sqrt[n]{0}=0\)</span>, con
+                cualquier índice</p>
                 <table class="tabla-columnas">
                 <colgroup>
                 <col style="width: 50%" />
@@ -6041,11 +6206,21 @@
                 <td><span
                 class="math inline">\(\sqrt[3]{-27}=-3\)</span></td>
                 </tr>
+                <tr>
+                <td>raíz de una potencia: <span
+                class="math inline">\(\sqrt[n]{a^{n}}=\lvert
+                a\rvert\)</span></td>
+                <td>raíz de una potencia: <span
+                class="math inline">\(\sqrt[n]{a^{n}}=a\)</span></td>
+                </tr>
+                <tr>
+                <td><span
+                class="math inline">\(\sqrt{(-3)^{2}}=3\)</span></td>
+                <td><span
+                class="math inline">\(\sqrt[3]{(-2)^{3}}=-2\)</span></td>
+                </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Cuadrado:</span> <span
-                class="math inline">\(\sqrt{a^{2}}=\lvert
-                a\rvert\)</span></p>
                 </div>
                 </div>
                 <section id="ejercicios-17"
@@ -6125,22 +6300,42 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-20">Al cuaderno</button></p>
                 <div id="cuaderno-20" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Definición:</span> <span
+                <ul>
+                <li><p><span class="etiqueta-nota">Definición:</span>
+                <span
                 class="math inline">\(a^{\frac{m}{n}}=\sqrt[n]{a^{m}}\)</span>,
                 con <span class="math inline">\(a&gt;0\)</span>:
                 denominador, índice; numerador, exponente.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span
-                class="math inline">\(25^{\frac{3}{2}}=\left(\sqrt{25}\right)^{3}=125\)</span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
+                class="math inline">\(25^{\frac{3}{2}}=\left(\sqrt{25}\right)^{3}=5^{3}=125\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Exponente
+                negativo:</span> se invierte, como siempre: <span
+                class="formula-alta"><span
+                class="math inline">\(a^{-\frac{m}{n}}=\dfrac{1}{\sqrt[n]{a^{m}}}\)</span></span></p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span class="formula-alta"><span
                 class="math inline">\(16^{-\frac{1}{4}}=\dfrac{1}{\sqrt[4]{16}}=\dfrac{1}{2}\)</span></span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Calculadora:</span>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Simplificar un
+                radical:</span> escribe el radicando como potencia y
+                reduce la fracción.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                <span
+                class="math inline">\(\sqrt[4]{1024}=2^{\frac{10}{4}}=2^{\frac{5}{2}}=\sqrt{2^{5}}=4\sqrt2\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Calculadora:</span>
                 cualquier raíz es una potencia: <span
                 class="math inline">\(\sqrt[7]{200}=200^{1/7}\)</span>,
-                con el exponente entre paréntesis.</p>
+                con el exponente entre paréntesis.</p></li>
+                <li><p><span class="etiqueta-nota">Base negativa:</span>
+                la calculadora puede negarse: <span
+                class="math inline">\(\sqrt[3]{-8}=-\sqrt[3]{8}=-2\)</span></p></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-18"
@@ -6226,23 +6421,24 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-21">Al cuaderno</button></p>
                 <div id="cuaderno-21" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Equivalentes:</span>
-                multiplicar o dividir índice y exponente por el mismo
-                número no cambia el radical.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Equivalentes:</span>
+                con radicando positivo, multiplicar o dividir índice y
+                exponente por el mismo número no cambia el radical.</p>
                 <blockquote>
-                <p><span
-                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^{3}}=\sqrt{2}\)</span><br />
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt[4]{5}=\sqrt[8]{25}\)</span></p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Índice común:</span> el
-                mcm de los índices; con el mismo índice, es mayor el de
-                mayor radicando.<br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
+                class="math inline">\(\sqrt[6]{8}=\sqrt[6]{2^{3}}=\sqrt{2}\qquad\sqrt[4]{5}=\sqrt[8]{25}\)</span></p>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Índice común:</span>
+                el mcm de los índices; con el mismo índice, es mayor el
+                de mayor radicando.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt[4]{4}=\sqrt[8]{16}&gt;\sqrt[8]{8}\)</span></p>
+                class="math inline">\(\sqrt[4]{4}=\sqrt[8]{4^{2}}=\sqrt[8]{16}&gt;\sqrt[8]{8}\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-19"
@@ -6341,9 +6537,10 @@
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Ojo:</span> con
-                radicandos positivos; nunca con sumas: <span
-                class="math inline">\(\sqrt{36+64}=10\)</span>, pero
-                <span
+                radicandos positivos<br />
+                <span class="etiqueta-nota">Nunca con sumas:</span>
+                <span class="math inline">\(\sqrt{36+64}=10\)</span>,
+                pero <span
                 class="math inline">\(\sqrt{36}+\sqrt{64}=14\)</span></p>
                 </div>
                 </div>
@@ -6434,6 +6631,12 @@
                 <td><span
                 class="math inline">\(4\sqrt3=\sqrt{4^{2}\cdot3}=\sqrt{48}\)</span></td>
                 </tr>
+                <tr>
+                <td><span
+                class="math inline">\(\sqrt[3]{2^{7}\cdot7^{3}}=\sqrt[3]{2^{6}\cdot2\cdot7^{3}}=28\sqrt[3]{2}\)</span></td>
+                <td><span
+                class="math inline">\(2\sqrt[3]{5}=\sqrt[3]{2^{3}\cdot5}=\sqrt[3]{40}\)</span></td>
+                </tr>
                 </tbody>
                 </table>
                 </div>
@@ -6517,28 +6720,42 @@
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-24">Al cuaderno</button></p>
                 <div id="cuaderno-24" class="cuerpo-cuaderno">
-                <p><span class="etiqueta-nota">Sumar y restar:</span>
-                solo radicales semejantes: mismo índice y mismo
-                radicando, tras simplificar.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span class="etiqueta-nota">Sumar y
+                restar:</span> solo radicales semejantes: mismo índice y
+                mismo radicando, tras simplificar.</p>
                 <blockquote>
                 <p><span
-                class="math inline">\(\sqrt{12}+3\sqrt{75}-4\sqrt{27}=2\sqrt3+15\sqrt3-12\sqrt3=5\sqrt3\)</span><br />
-                <span class="math inline">\(\sqrt5+\sqrt7\)</span> se
-                queda así.</p>
-                </blockquote>
-                <p><span class="etiqueta-nota">Multiplicar y
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(\sqrt{12}+3\sqrt{75}-4\sqrt{27}=2\sqrt3+15\sqrt3-12\sqrt3=5\sqrt3\)</span></p></li>
+                <li><p><span
+                class="math inline">\(\sqrt5+\sqrt7\)</span> no son
+                semejantes: se queda así</p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Multiplicar y
                 dividir:</span> con el mismo índice se operan los
                 radicandos; con distinto, índice común.</p>
-                <p><span
-                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <p><span
-                class="math inline">\(\sqrt8\cdot\sqrt{27}=\sqrt{216}=6\sqrt6\)</span><br />
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span
+                class="math inline">\(\sqrt8\cdot\sqrt{27}=\sqrt{216}=6\sqrt6\)</span></p></li>
+                <li><p><span
+                class="math inline">\(\sqrt3\cdot\sqrt[3]{2}=\sqrt[6]{3^{3}}\cdot\sqrt[6]{2^{2}}=\sqrt[6]{27\cdot4}=\sqrt[6]{108}\)</span></p></li>
+                </ul>
+                </blockquote></li>
+                <li><p><span class="etiqueta-nota">Producto de
+                sumas:</span> término a término, como con letras.</p>
+                <blockquote>
+                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
                 <span
-                class="math inline">\(\sqrt3\cdot\sqrt[3]{2}=\sqrt[6]{27}\cdot\sqrt[6]{4}=\sqrt[6]{108}\)</span></p>
-                </blockquote>
+                class="math inline">\((2+\sqrt3)(1+\sqrt3)=2+2\sqrt3+\sqrt3+3=5+3\sqrt3\)</span></p>
+                </blockquote></li>
+                </ul>
                 </div>
                 </div>
                 <section id="ejercicios-22"
@@ -6729,9 +6946,14 @@
                 raíces:</span> por el conjugado: lo mismo con el signo
                 del medio cambiado.</p>
                 <blockquote>
-                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="formula-alta"><span
-                class="math inline">\(\dfrac{7}{\sqrt3+\sqrt2}=\dfrac{7\cdot(\sqrt3-\sqrt2)}{(\sqrt3+\sqrt2)(\sqrt3-\sqrt2)}=\dfrac{7(\sqrt3-\sqrt2)}{3-2}=7\sqrt3-7\sqrt2\)</span></span></p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <ul>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(\dfrac{7}{\sqrt3+\sqrt2}=\dfrac{7\cdot(\sqrt3-\sqrt2)}{(\sqrt3+\sqrt2)(\sqrt3-\sqrt2)}=\dfrac{7(\sqrt3-\sqrt2)}{3-2}=7\sqrt3-7\sqrt2\)</span></span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(\dfrac{1+\sqrt3}{2-\sqrt3}=\dfrac{(1+\sqrt3)(2+\sqrt3)}{(2-\sqrt3)(2+\sqrt3)}=\dfrac{2+\sqrt3+2\sqrt3+3}{4-3}=5+3\sqrt3\)</span></span></p></li>
+                </ul>
                 </blockquote></li>
                 </ul>
                 </div>
@@ -6923,16 +7145,23 @@
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
-                <p><span class="math inline">\(\log_{2}32=5\)</span>
+                <ul>
+                <li><p><span class="math inline">\(\log_{2}32=5\)</span>
                 porque <span
-                class="math inline">\(2^{5}=32\)</span><br />
-                <span class="formula-alta"><span
+                class="math inline">\(2^{5}=32\)</span></p></li>
+                <li><p><span class="formula-alta"><span
                 class="math inline">\(\log_{3}\dfrac{1}{81}=-4\)</span></span>
                 porque <span class="formula-alta"><span
-                class="math inline">\(3^{-4}=\dfrac{1}{81}\)</span></span></p>
+                class="math inline">\(3^{-4}=\dfrac{1}{81}\)</span></span></p></li>
+                <li><p>si <span
+                class="math inline">\(\log_{x}64=6\)</span>, entonces
+                <span class="math inline">\(x^{6}=64=2^{6}\)</span>,
+                luego <span class="math inline">\(x=2\)</span></p></li>
+                </ul>
                 </blockquote>
                 <p><span class="etiqueta-nota">Inmediatos:</span> <span
-                class="math inline">\(\log_{a}1=0\qquad\log_{a}a=1\)</span><br />
+                class="math inline">\(\log_{a}1=0\qquad\log_{a}a=1\qquad\log_{a}\left(a^{t}\right)=t\qquad
+                a^{\log_{a}x}=x\)</span><br />
                 <span class="etiqueta-nota">No existen:</span> <span
                 class="math inline">\(\log_{a}0\)</span> ni el logaritmo
                 de un número negativo.</p>
@@ -7048,18 +7277,30 @@
                 class="math inline">\(e=2{,}718\ldots\)</span></td>
                 </tr>
                 <tr>
+                <td><span class="math inline">\(\log1000=3\)</span></td>
+                <td><span class="math inline">\(\ln e=1\)</span></td>
+                </tr>
+                <tr>
                 <td><span
-                class="math inline">\(\log1000=3\qquad\log0{,}001=-3\)</span></td>
-                <td><span class="math inline">\(\ln
-                e=1\qquad\ln1=0\)</span></td>
+                class="math inline">\(\log0{,}001=-3\)</span></td>
+                <td><span class="math inline">\(\ln1=0\)</span></td>
                 </tr>
                 </tbody>
                 </table>
                 <p><span class="etiqueta-nota">Despejar:</span> se pasa
-                a potencia: <span class="formula-alta"><span
-                class="math inline">\(\log x=2\iff
-                x=10^{2}=100\qquad\log x=\dfrac{1}{2}\iff
-                x=\sqrt{10}\)</span></span></p>
+                a potencia: <span class="math inline">\(\log x=k\iff
+                x=10^{k}\)</span></p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="math inline">\(\log x=2\iff
+                x=10^{2}=100\)</span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(\log x=\dfrac{1}{2}\iff
+                x=10^{\frac{1}{2}}=\sqrt{10}\)</span></span></p></li>
+                </ul>
+                </blockquote>
                 </div>
                 </div>
                 <section id="ejercicios-25"
@@ -7198,9 +7439,12 @@
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota">Ojo:</span> no hay
-                propiedad para <span
-                class="math inline">\(\log(x+y)\)</span></p>
+                <p><span class="etiqueta-nota">Con el <span
+                class="math inline">\(10\)</span>:</span> <span
+                class="formula-alta"><span
+                class="math inline">\(\log5=\log\dfrac{10}{2}=1-\log2\qquad\log80=\log8+1\)</span></span><br />
+                <span class="etiqueta-nota">Ojo:</span> no hay propiedad
+                para <span class="math inline">\(\log(x+y)\)</span></p>
                 </div>
                 </div>
                 <section id="ejercicios-26"
@@ -7328,8 +7572,11 @@
                 </table>
                 <p><span class="etiqueta-nota">Igualdad:</span> si <span
                 class="math inline">\(\log A=\log B\)</span>, entonces
-                <span class="math inline">\(A=B\)</span>: de <span
-                class="math inline">\(\log A=\log8-2\log3\)</span> sale
+                <span class="math inline">\(A=B\)</span><br />
+                <span class="etiqueta-nota ejemplo">Ejemplo:</span> de
+                <span class="formula-alta"><span
+                class="math inline">\(\log
+                A=\log8-2\log3=\log\dfrac{8}{9}\)</span></span> sale
                 <span class="formula-alta"><span
                 class="math inline">\(A=\dfrac{8}{9}\)</span></span></p>
                 </div>
@@ -7544,12 +7791,20 @@
                 potencia, toma logaritmos en los dos lados y baja el
                 exponente: <span class="formula-alta"><span
                 class="math inline">\(a^{x}=b\iff x=\dfrac{\log b}{\log
-                a}\)</span></span><br />
-                <span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                <span class="formula-alta"><span
+                a}\)</span></span></p>
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p><span class="formula-alta"><span
                 class="math inline">\(2^{x}=6\iff
-                x=\dfrac{\log6}{\log2}\approx2{,}58\)</span></span><br />
-                <span class="etiqueta-nota">A saltos:</span> si el
+                x=\dfrac{\log6}{\log2}\approx2{,}58\)</span></span></p></li>
+                <li><p><span class="formula-alta"><span
+                class="math inline">\(5\cdot1{,}5^{x}=200\iff1{,}5^{x}=40\iff
+                x=\dfrac{\log40}{\log1{,}5}\approx9{,}10\)</span></span></p></li>
+                </ul>
+                </blockquote>
+                <p><span class="etiqueta-nota">A saltos:</span> si el
                 tiempo cuenta por meses o años, la respuesta es el
                 primer entero que iguala o supera la solución.</p>
                 </div>
@@ -7773,13 +8028,15 @@
                 <tbody>
                 <tr>
                 <td>cociente constante: <span
-                class="math inline">\(\dfrac{y}{x}=k\)</span>, <span
-                class="math inline">\(y=k\cdot x\)</span>; al doble, el
-                doble</td>
+                class="math inline">\(\dfrac{y}{x}=k\)</span></td>
                 <td>producto constante: <span
-                class="math inline">\(x\cdot y=k\)</span>, <span
-                class="math inline">\(y=\dfrac{k}{x}\)</span>; al doble,
-                la mitad</td>
+                class="math inline">\(x\cdot y=k\)</span></td>
+                </tr>
+                <tr>
+                <td>al doble, el doble: <span
+                class="math inline">\(y=k\cdot x\)</span></td>
+                <td>al doble, la mitad: <span
+                class="math inline">\(y=\dfrac{k}{x}\)</span></td>
                 </tr>
                 <tr>
                 <td>reducción a la unidad: divide y luego
@@ -7789,12 +8046,22 @@
                 </tr>
                 </tbody>
                 </table>
-                <p><span class="etiqueta-nota ejemplo">Ejemplo:</span>
-                cuatro grifos, <span class="math inline">\(6\)</span> h:
-                uno solo tardaría <span
-                class="math inline">\(24\)</span> h y tres, <span
-                class="math inline">\(8\)</span> h.<br />
-                <span class="etiqueta-nota">Ojo:</span> antes de la
+                <p><span
+                class="etiqueta-nota ejemplo">Ejemplos:</span></p>
+                <blockquote>
+                <ul>
+                <li><p>directa: <span class="math inline">\(45\)</span>
+                páginas en <span class="math inline">\(3\)</span> min
+                son <span class="math inline">\(15\)</span> por minuto;
+                en <span class="math inline">\(20\)</span> min, <span
+                class="math inline">\(15\cdot20=300\)</span></p></li>
+                <li><p>inversa: cuatro grifos tardan <span
+                class="math inline">\(6\)</span> h; uno solo, <span
+                class="math inline">\(4\cdot6=24\)</span> h, y tres,
+                <span class="math inline">\(24:3=8\)</span> h</p></li>
+                </ul>
+                </blockquote>
+                <p><span class="etiqueta-nota">Ojo:</span> antes de la
                 regla de tres, comprueba que el cociente o el producto
                 se mantienen.</p>
                 </div>
