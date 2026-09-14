@@ -951,6 +951,21 @@
       text-decoration-color: #64748b;
     }
 
+    /* La primera nota de cada apartado abre con su número y su título, en
+       la tinta azul de las fórmulas, para que el cuaderno lleve la misma
+       estructura que la web (decisión del profesor, 14 de septiembre de
+       2026). */
+    .bloque-didactico.cuaderno .titulo-apartado {
+      color: #1e3a8a;
+      font-size: 1.62rem;
+    }
+
+    /* Y la primera de cada subapartado, con su número y su título, algo
+       menores y en la tinta del texto. */
+    .bloque-didactico.cuaderno .titulo-subapartado {
+      font-size: 1.42rem;
+    }
+
 
 
     /* Formatos esquemáticos de la nota: etiqueta al principio de una
@@ -2678,6 +2693,352 @@
       }
     }
 
+    /* Modo clase (decisiones del profesor del 13 y el 14 de septiembre de
+       2026): la misma web para el proyector del aula. Se enciende con el
+       interruptor del índice o con `?clase` en la dirección y se apaga con el
+       interruptor o con `Esc`; al cambiar, la vista se queda en el apartado
+       donde estaba. Solo queda lo que se usa en clase: sin cabecera, portada,
+       prosa, listas del texto, pies de figura, ampliaciones ni «Matemáticas
+       en acción»; índice en fila y solo con números; notas algo mayores; y
+       una barra con anterior, apartado, siguiente, nota y soluciones. Solo en
+       pantalla: la impresión no lo ve. */
+    @media screen {
+      /* El interruptor vive en la esquina superior derecha en los dos
+         modos, para que no cambie de sitio al encenderlo o apagarlo: en la
+         cabecera, en blanco sobre el azul; en el modo clase, solo él queda
+         de la cabecera, flotando sobre el índice en fila. */
+      .unidad-en-cabecera {
+        margin-left: auto;
+      }
+
+      .interruptor-clase {
+        display: flex;
+        flex: none;
+        gap: 0.5rem;
+        align-items: center;
+        padding: 0.32rem 0.7rem;
+        color: #ffffff;
+        background: rgb(255 255 255 / 0.12);
+        border: 1px solid rgb(255 255 255 / 0.45);
+        border-radius: 999px;
+        font: 650 0.85rem/1.3 -apple-system, "Segoe UI", sans-serif;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .interruptor-clase[hidden] {
+        display: none;
+      }
+
+      /* En un teléfono no se proyecta: el interruptor dejaría sin sitio al
+         título de la unidad. Si el modo está encendido, se ve para poder
+         apagarlo. */
+      @media (max-width: 42rem) {
+        html:not(.modo-clase) .interruptor-clase {
+          display: none;
+        }
+      }
+
+      .interruptor-clase:hover,
+      .interruptor-clase:focus-visible {
+        background: rgb(255 255 255 / 0.24);
+        border-color: #ffffff;
+      }
+
+      .pista-interruptor {
+        position: relative;
+        flex: none;
+        width: 2.1em;
+        height: 1.2em;
+        background: rgb(255 255 255 / 0.35);
+        border-radius: 999px;
+        transition: background 160ms ease;
+      }
+
+      .pista-interruptor::after {
+        content: "";
+        position: absolute;
+        top: 0.15em;
+        left: 0.15em;
+        width: 0.9em;
+        height: 0.9em;
+        background: #ffffff;
+        border-radius: 50%;
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.3);
+        transition: transform 160ms ease;
+      }
+
+      .interruptor-clase[aria-checked="true"] .pista-interruptor {
+        background: var(--acento);
+      }
+
+      html.modo-clase .cabecera-portal {
+        position: fixed;
+        top: 0;
+        right: calc(max(0px, (100vw - var(--ancho)) / 2) + clamp(0.9rem, 3vw, 2rem));
+        left: auto;
+        min-height: 0;
+        background: none;
+        box-shadow: none;
+      }
+
+      html.modo-clase .cabecera-interior {
+        width: auto;
+        min-height: 0;
+        padding: 0.22rem 0.6rem;
+      }
+
+      html.modo-clase .cabecera-interior > :not(.interruptor-clase) {
+        display: none;
+      }
+
+      html.modo-clase .interruptor-clase {
+        color: var(--acento-oscuro);
+        background: #ffffff;
+        border-color: var(--borde);
+        font-size: 0.95rem;
+      }
+
+      html.modo-clase .interruptor-clase:hover,
+      html.modo-clase .interruptor-clase:focus-visible {
+        border-color: var(--acento);
+        background: var(--acento-suave);
+      }
+
+      .interruptor-clase[aria-checked="true"] .pista-interruptor::after {
+        transform: translateX(0.9em);
+      }
+
+      html.modo-clase {
+        --ancho: 104rem;
+        --alto-cabecera: 0rem;
+        scroll-padding-top: 4.5rem;
+      }
+
+      html.modo-clase body {
+        font-size: 1.42rem;
+        line-height: 1.6;
+      }
+
+      html.modo-clase #root {
+        padding-top: 0;
+      }
+
+      html.modo-clase h2 {
+        font-size: 2.2rem;
+      }
+
+      html.modo-clase h3 {
+        font-size: 1.85rem;
+      }
+
+      html.modo-clase h4 {
+        font-size: 1.55rem;
+      }
+
+      /* Lo que no se usa en clase no se ve. */
+      html.modo-clase .portada-unidad,
+      html.modo-clase .titulo-indice,
+      html.modo-clase #alternar-notas,
+      html.modo-clase #contenido-unidad section > p:not(:has(.math.display)),
+      html.modo-clase #contenido-unidad section > ul:not(.ejercicios *),
+      html.modo-clase #contenido-unidad section > ol:not(.ejercicios *),
+      html.modo-clase #contenido-unidad figcaption,
+      html.modo-clase .boton-ampliacion,
+      html.modo-clase .boton-aplicacion,
+      html.modo-clase .bloque-didactico.ampliacion,
+      html.modo-clase .bloque-didactico.aplicacion,
+      html.modo-clase #contenido-unidad :is(h3, h4, h5):has(+ .boton-soluciones) {
+        display: none !important;
+      }
+
+      html.modo-clase figure:has(> img.retrato-lateral) {
+        float: none;
+        max-width: 16rem;
+        margin: 1rem auto;
+      }
+
+      /* «Ver las soluciones» se queda en «Soluciones». */
+      html.modo-clase .boton-soluciones .rotulo-boton-plegable {
+        display: none;
+      }
+
+      html.modo-clase .boton-soluciones::before {
+        content: "Soluciones";
+      }
+
+      /* Índice arriba, en fila y solo con los números; el título completo
+         sale al pasar el ratón. */
+      html.modo-clase .disposicion-unidad {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      html.modo-clase .indice-unidad {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+        justify-content: flex-start;
+        top: 0;
+        z-index: 30;
+        max-height: none;
+        margin-bottom: 0.6rem;
+        padding: 0.35rem 0.6rem;
+        overflow: visible;
+        border-radius: 0 0 0.75rem 0.75rem;
+      }
+
+      html.modo-clase #TOC {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+      }
+
+      html.modo-clase #TOC ul {
+        display: flex;
+        gap: 0.3rem;
+        width: max-content;
+      }
+
+      html.modo-clase #TOC li + li {
+        margin-top: 0;
+      }
+
+      html.modo-clase #TOC a {
+        min-width: 2.6rem;
+        padding: 0.3rem 0.6rem;
+        border-bottom: 0.2rem solid transparent;
+        border-left: 0;
+        font-size: 0;
+        text-align: center;
+      }
+
+      html.modo-clase #TOC .toc-section-number {
+        font-size: 1.15rem;
+      }
+
+      html.modo-clase #TOC .toc-section-number::after {
+        content: none;
+      }
+
+      html.modo-clase #TOC a:focus-visible,
+      html.modo-clase #TOC a[aria-current="location"] {
+        border-bottom-color: var(--acento);
+        border-left-color: transparent;
+      }
+
+      /* Las notas, algo mayores: la letra y la cuadrícula crecen juntas. */
+      html.modo-clase .bloque-didactico.cuaderno {
+        --celda: 1.7rem;
+        font-size: 1.58rem;
+      }
+
+      html.modo-clase .bloque-didactico.cuaderno .titulo-cuaderno {
+        font-size: 1.82rem;
+      }
+
+      html.modo-clase .bloque-didactico.cuaderno .titulo-apartado {
+        font-size: 1.96rem;
+      }
+
+      html.modo-clase .bloque-didactico.cuaderno .titulo-subapartado {
+        font-size: 1.72rem;
+      }
+
+      html.modo-clase .cuaderno .etiqueta-bloque {
+        font-size: 1.22rem;
+      }
+
+      .barra-clase {
+        display: none;
+      }
+
+      html.modo-clase .barra-clase {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 50;
+        display: flex;
+        gap: 0.3rem;
+        align-items: center;
+        padding: 0.35rem;
+        background: rgb(255 255 255 / 0.96);
+        border: 1px solid var(--borde);
+        border-radius: 999px;
+        box-shadow: var(--sombra);
+        font: 700 1.1rem/1 -apple-system, "Segoe UI", sans-serif;
+      }
+
+      .barra-clase button {
+        display: grid;
+        place-items: center;
+        width: 2.7rem;
+        height: 2.7rem;
+        padding: 0;
+        color: var(--acento-oscuro);
+        background: #ffffff;
+        border: 1px solid var(--borde);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .barra-clase button::before {
+        content: "";
+        width: 1.2rem;
+        height: 1.2rem;
+        background-color: currentColor;
+        -webkit-mask: var(--icono) center / contain no-repeat;
+        mask: var(--icono) center / contain no-repeat;
+      }
+
+      .barra-clase [data-accion="anterior"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
+      }
+
+      .barra-clase [data-accion="siguiente"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+      }
+
+      .barra-clase [data-accion="nota"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E");
+        color: #b8461c;
+      }
+
+      .barra-clase [data-accion="soluciones"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+        color: var(--verde);
+      }
+
+      .barra-clase button:focus-visible {
+        border-color: var(--acento);
+        background: var(--acento-suave);
+      }
+
+      @media (hover: hover) {
+        .barra-clase button:hover {
+          border-color: var(--acento);
+          background: var(--acento-suave);
+        }
+      }
+
+      .barra-clase .posicion-clase {
+        min-width: 3.4rem;
+        padding: 0 0.2rem;
+        color: var(--acento-oscuro);
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+    }
+
+    @media print {
+      .interruptor-clase,
+      .barra-clase {
+        display: none !important;
+      }
+    }
+
     /* Piezas de los componentes de la unidad 2 */
     .tabla-ruffini {
       margin: 0.6rem auto;
@@ -2790,6 +3151,7 @@
       <span class="unidad-en-cabecera">
         Unidad 1: Números reales
       </span>
+      <button type="button" class="interruptor-clase" id="modo-clase" role="switch" aria-checked="false" hidden><span class="pista-interruptor" aria-hidden="true"></span>Modo clase</button>
     </div>
   </header>
 
@@ -3043,6 +3405,11 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-1">Al cuaderno</button></p>
+                <p><span class="titulo-cuaderno titulo-apartado">1. Los
+                conjuntos numéricos</span></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">1.1. De los
+                naturales a los reales</span></p>
                 <div id="cuaderno-1" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <colgroup>
@@ -3152,13 +3519,13 @@
                 dividiendo. Según cómo sea el resultado, distinguimos
                 tres tipos:</p>
                 <ul>
-                <li><strong>decimal exacto</strong>, cuando la división
+                <li><strong>Decimal exacto</strong>, cuando la división
                 termina: <span
-                class="math inline">\(\frac{7}{8}=0{,}875\)</span>;</li>
-                <li><strong>decimal periódico puro</strong>, cuando se
+                class="math inline">\(\frac{7}{8}=0{,}875\)</span>.</li>
+                <li><strong>Decimal periódico puro</strong>, cuando se
                 repite un bloque de cifras desde la coma: <span
-                class="math inline">\(\frac{5}{11}=0{,}\overline{45}=0{,}454545\ldots\)</span>;</li>
-                <li><strong>decimal periódico mixto</strong>, cuando
+                class="math inline">\(\frac{5}{11}=0{,}\overline{45}=0{,}454545\ldots\)</span></li>
+                <li><strong>Decimal periódico mixto</strong>, cuando
                 antes del bloque que se repite hay cifras que no se
                 repiten, el <strong>anteperíodo</strong>: <span
                 class="math inline">\(\frac{7}{12}=0{,}58\overline{3}=0{,}58333\ldots\)</span></li>
@@ -3176,16 +3543,16 @@
                 Simplifica la fracción y descompón su denominador en
                 factores primos:</p>
                 <ol type="1">
-                <li>si solo aparecen los factores <span
+                <li>Si solo aparecen los factores <span
                 class="math inline">\(2\)</span> y <span
                 class="math inline">\(5\)</span> (o el denominador es
                 <span class="math inline">\(1\)</span>), el decimal es
-                exacto;</li>
-                <li>si no aparece ni el <span
+                exacto.</li>
+                <li>Si no aparece ni el <span
                 class="math inline">\(2\)</span> ni el <span
                 class="math inline">\(5\)</span>, el decimal es
-                periódico puro;</li>
-                <li>si aparecen el <span
+                periódico puro.</li>
+                <li>Si aparecen el <span
                 class="math inline">\(2\)</span> o el <span
                 class="math inline">\(5\)</span> junto con otros
                 factores, el decimal es periódico mixto.</li>
@@ -3223,15 +3590,15 @@
                 <p>Antes de dividir, reduce la fracción y estudia el
                 denominador de la fracción irreducible:</p>
                 <ol type="1">
-                <li>si solo contiene factores <span
+                <li>Si solo contiene factores <span
                 class="math inline">\(2\)</span> y <span
                 class="math inline">\(5\)</span>, el decimal es
-                exacto;</li>
-                <li>si no contiene ni <span
+                exacto.</li>
+                <li>Si no contiene ni <span
                 class="math inline">\(2\)</span> ni <span
                 class="math inline">\(5\)</span>, el decimal es
-                periódico puro;</li>
-                <li>si combina algún factor <span
+                periódico puro.</li>
+                <li>Si combina algún factor <span
                 class="math inline">\(2\)</span> o <span
                 class="math inline">\(5\)</span> con otros factores
                 primos, el decimal es periódico mixto.</li>
@@ -3244,6 +3611,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-2">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">1.2. Fracciones
+                y expresiones decimales</span></p>
                 <p><span class="titulo-cuaderno">Tipo de decimal sin
                 dividir</span></p>
                 <div id="cuaderno-2" class="cuerpo-cuaderno">
@@ -3461,6 +3831,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-3">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">1.3. Fracción
+                generatriz</span></p>
                 <div id="cuaderno-3" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Regla:</span> quitar la
                 coma; si hay período, restar dos múltiplos de <span
@@ -3614,24 +3987,24 @@
                 es ninguna magia: le pasa a cualquier tirada infinita de
                 un dado. Algunas apariciones son famosas:</p>
                 <ul>
-                <li>el primer <span class="math inline">\(0\)</span> se
+                <li>El primer <span class="math inline">\(0\)</span> se
                 hace esperar: es la cifra decimal número <span
-                class="math inline">\(32\)</span>;</li>
-                <li>en la posición <span
+                class="math inline">\(32\)</span>.</li>
+                <li>En la posición <span
                 class="math inline">\(762\)</span> aparecen seis nueves
                 seguidos, <span class="math inline">\(999999\)</span>,
                 el llamado <strong>punto de Feynman</strong>: según se
                 cuenta, el físico bromeaba con memorizar <span
                 class="math inline">\(\pi\)</span> hasta ahí para
                 recitar «nueve, nueve, nueve, nueve, nueve, nueve, y así
-                sucesivamente»;</li>
-                <li>seis nueves seguidos vuelven a salir en la posición
+                sucesivamente».</li>
+                <li>Seis nueves seguidos vuelven a salir en la posición
                 <span class="math inline">\(193\,034\)</span>; siete, en
                 la <span class="math inline">\(1\,722\,776\)</span>;
                 ocho, en la <span
                 class="math inline">\(36\,356\,642\)</span>; y nueve, en
                 la <span
-                class="math inline">\(564\,665\,206\)</span>;</li>
+                class="math inline">\(564\,665\,206\)</span>.</li>
                 <li><span class="math inline">\(\pi\)</span> contiene
                 sus propias seis primeras cifras: <span
                 class="math inline">\(314159\)</span> reaparece en la
@@ -3788,6 +4161,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-4">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">1.4. Números
+                irracionales</span></p>
                 <div id="cuaderno-4" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Raíces:</span> <span
@@ -3967,6 +4343,12 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-5">Al cuaderno</button></p>
+                <p><span class="titulo-cuaderno titulo-apartado">2. La
+                recta real: orden, valor absoluto e
+                intervalos</span></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.1. Orden en
+                la recta real</span></p>
                 <div id="cuaderno-5" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Ordenar:</span> pásalo
                 todo a decimal</p>
@@ -4153,6 +4535,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-6">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.2. Representar
+                números en la recta</span></p>
                 <div id="cuaderno-6" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Entero:</span> unidad
@@ -4289,6 +4674,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-7">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.3. Valor
+                absoluto y distancia</span></p>
                 <div id="cuaderno-7" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Definición:</span>
@@ -4467,6 +4855,9 @@
                 coma.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-8">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.4. Intervalos
+                y semirrectas</span></p>
                 <div id="cuaderno-8" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <thead>
@@ -4499,10 +4890,10 @@
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <ul>
-                <li><p>«al menos <span
+                <li><p>«Al menos <span
                 class="math inline">\(1{,}40\)</span>»: <span
                 class="math inline">\(\geq\)</span>, entra</p></li>
-                <li><p>«menos de <span
+                <li><p>«Menos de <span
                 class="math inline">\(1{,}95\)</span>»: <span
                 class="math inline">\(&lt;\)</span>, no entra</p></li>
                 </ul>
@@ -4614,16 +5005,16 @@
                 <li><span class="math inline">\(A\)</span> contiene los
                 números mayores que <span
                 class="math inline">\(-2\)</span> y menores o iguales
-                que <span class="math inline">\(3\)</span>;</li>
+                que <span class="math inline">\(3\)</span>.</li>
                 <li><span class="math inline">\(B\)</span> contiene los
                 números mayores o iguales que <span
                 class="math inline">\(1\)</span> y menores que <span
-                class="math inline">\(5\)</span>;</li>
-                <li>el extremo <span class="math inline">\(-2\)</span>
+                class="math inline">\(5\)</span>.</li>
+                <li>El extremo <span class="math inline">\(-2\)</span>
                 no pertenece a <span class="math inline">\(A\)</span>,
                 pero el extremo <span class="math inline">\(3\)</span>
-                sí;</li>
-                <li>el extremo <span class="math inline">\(1\)</span>
+                sí.</li>
+                <li>El extremo <span class="math inline">\(1\)</span>
                 pertenece a <span class="math inline">\(B\)</span>, pero
                 el extremo <span class="math inline">\(5\)</span>
                 no.</li>
@@ -4638,6 +5029,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-9">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.5. Unión e
+                intersección</span></p>
                 <div id="cuaderno-9" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <thead>
@@ -4757,6 +5151,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-10">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">2.6. Del
+                valor absoluto al intervalo</span></p>
                 <div id="cuaderno-10" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Regla:</span> <span
                 class="math inline">\(\lvert x-a\rvert&lt;r\iff
@@ -4937,6 +5334,12 @@
                 class="math inline">\(32\,000\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-11">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-apartado">3. Aproximaciones,
+                errores y notación científica</span></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.1. Valores
+                exactos y aproximados</span></p>
                 <p><span class="titulo-cuaderno">Truncar y
                 redondear</span></p>
                 <div id="cuaderno-11" class="cuerpo-cuaderno">
@@ -5058,6 +5461,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-12">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.2. Cifras
+                significativas</span></p>
                 <div id="cuaderno-12" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Cuentan:</span> todas
@@ -5083,9 +5489,9 @@
                 <p><span
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <ul>
-                <li><p>a tres cifras, <span
+                <li><p>A tres cifras, <span
                 class="math inline">\(1{,}0045\to1{,}00\)</span></p></li>
-                <li><p>a tres cifras, <span
+                <li><p>A tres cifras, <span
                 class="math inline">\(32\,475\to32\,500\)</span></p></li>
                 </ul>
                 </blockquote></li>
@@ -5150,11 +5556,11 @@
                 exacto y <span class="math inline">\(x_{a}\)</span> una
                 aproximación:</p>
                 <ul>
-                <li>el <strong>error absoluto</strong> es la distancia
+                <li>El <strong>error absoluto</strong> es la distancia
                 entre los dos, <span class="math display">\[
                 E_{a}=|x-x_{a}|
                 \]</span></li>
-                <li>el <strong>error relativo</strong> es el error
+                <li>El <strong>error relativo</strong> es el error
                 absoluto comparado con el valor exacto, <span
                 class="math display">\[
                 E_{r}=\frac{E_{a}}{|x|}
@@ -5237,6 +5643,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-13">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.3. Error
+                absoluto y relativo</span></p>
                 <div id="cuaderno-13" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
@@ -5384,6 +5793,9 @@
                 relativo.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-14">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.4. Cota del
+                error</span></p>
                 <div id="cuaderno-14" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Cota:</span> sin valor
                 exacto no hay error, pero sí un tope que seguro no
@@ -5402,7 +5814,7 @@
                 (centésimas): <span class="formula-alta"><span
                 class="math inline">\(E_a\leq0{,}005\ \to\
                 E_r\leq\dfrac{0{,}005}{2{,}24}\approx0{,}22\%\)</span></span></p></li>
-                <li><p>báscula de décimas, <span
+                <li><p>Báscula de décimas, <span
                 class="math inline">\(2{,}5\)</span> kg: <span
                 class="math inline">\(2{,}5\pm0{,}05\)</span> kg, entre
                 <span class="math inline">\(2{,}45\)</span> y <span
@@ -5446,18 +5858,18 @@
                 <p>Estimar es prever el resultado de forma rápida para
                 decidir si un cálculo o un dato tiene sentido:</p>
                 <ul>
-                <li>redondear a números fáciles: <span
+                <li>Redondear a números fáciles: <span
                 class="math inline">\(47\cdot19\approx50\cdot20=1000\)</span>
                 (el valor exacto es <span
-                class="math inline">\(893\)</span>);</li>
-                <li>buscar números compatibles: <span
-                class="math inline">\(598:3\approx600:3=200\)</span>;</li>
-                <li>acotar entre dos valores: <span
+                class="math inline">\(893\)</span>).</li>
+                <li>Buscar números compatibles: <span
+                class="math inline">\(598:3\approx600:3=200\)</span>.</li>
+                <li>Acotar entre dos valores: <span
                 class="math inline">\(5{,}1\cdot19{,}8\)</span> está
                 entre <span class="math inline">\(5\cdot20=100\)</span>
                 y <span
-                class="math inline">\(6\cdot20=120\)</span>;</li>
-                <li>pensar en el orden de magnitud: <span
+                class="math inline">\(6\cdot20=120\)</span>.</li>
+                <li>Pensar en el orden de magnitud: <span
                 class="math inline">\(3{,}2\)</span> millones por <span
                 class="math inline">\(0{,}004\)</span> son unos <span
                 class="math inline">\(12\,800\)</span>, decenas de miles
@@ -5469,6 +5881,9 @@
                 avisa de que sobra un cero.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-15">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.5. Estimar
+                antes de calcular</span></p>
                 <div id="cuaderno-15" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Estimar:</span> prever el
                 resultado para cazar errores de tecleo: si <span
@@ -5755,6 +6170,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-16">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">3.6. Notación
+                científica</span></p>
                 <div id="cuaderno-16" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Forma:</span> <span
@@ -5964,6 +6382,12 @@
                 sumas y restas.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-17">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-apartado">4. Potencias y
+                radicales</span></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.1. Potencias
+                de exponente entero</span></p>
                 <p><span class="titulo-cuaderno">Exponente cero y
                 negativo</span></p>
                 <div id="cuaderno-17" class="cuerpo-cuaderno">
@@ -6299,6 +6723,8 @@
                 class="math inline">\(-7\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-19">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.2. Raíces</span></p>
                 <div id="cuaderno-19" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(\sqrt[n]{a}=b\iff
@@ -6427,6 +6853,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-20">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.3. Potencias
+                de exponente fraccionario</span></p>
                 <div id="cuaderno-20" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Definición:</span>
@@ -6548,6 +6977,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-21">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.4. Radicales
+                equivalentes e índice común</span></p>
                 <div id="cuaderno-21" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Equivalentes:</span>
@@ -6632,6 +7064,9 @@
                 \]</span></p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-22">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.5. Propiedades
+                de los radicales</span></p>
                 <div id="cuaderno-22" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
@@ -6734,6 +7169,9 @@
                 class="math inline">\(2\sqrt[3]{5}=\sqrt[3]{2^{3}\cdot5}=\sqrt[3]{40}\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-23">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.6. Extraer
+                e introducir factores</span></p>
                 <div id="cuaderno-23" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
@@ -6847,6 +7285,9 @@
                 class="math inline">\((2+\sqrt3)(1+\sqrt3)=2+2\sqrt3+\sqrt3+3=5+3\sqrt3\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-24">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.7. Sumar,
+                restar, multiplicar y dividir</span></p>
                 <div id="cuaderno-24" class="cuerpo-cuaderno">
                 <ul>
                 <li><p><span class="etiqueta-nota">Sumar y
@@ -7049,6 +7490,8 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-25">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">4.8. Racionalización</span></p>
                 <div id="cuaderno-25" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Regla:</span> multiplicar
                 numerador y denominador por lo mismo, hasta que abajo no
@@ -7263,6 +7706,10 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-26">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-apartado">5. Logaritmos</span></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">5.1. Definición</span></p>
                 <div id="cuaderno-26" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Definición:</span> <span
                 class="math inline">\(\log_{a}x=y\iff a^{y}=x\)</span>,
@@ -7363,11 +7810,11 @@
                 <p>Dos bases tienen nombre propio y tecla en la
                 calculadora:</p>
                 <ul>
-                <li>el <strong>logaritmo decimal</strong>, de base <span
+                <li>El <strong>logaritmo decimal</strong>, de base <span
                 class="math inline">\(10\)</span>, se escribe sin base:
                 <span class="math inline">\(\log
-                x=\log_{10}x\)</span>;</li>
-                <li>el <strong>logaritmo neperiano</strong> o natural,
+                x=\log_{10}x\)</span>.</li>
+                <li>El <strong>logaritmo neperiano</strong> o natural,
                 de base <span
                 class="math inline">\(e=2{,}71828\ldots\)</span>, se
                 escribe <span class="math inline">\(\ln
@@ -7382,6 +7829,9 @@
                 class="math inline">\(\ln5\approx1{,}609\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-27">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">5.2. Logaritmos
+                decimales y neperianos</span></p>
                 <div id="cuaderno-27" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
@@ -7534,6 +7984,8 @@
                 class="math inline">\(\log100+\log100=4\)</span>.</p>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-28">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">5.3. Propiedades</span></p>
                 <div id="cuaderno-28" class="cuerpo-cuaderno">
                 <table class="tabla-nota">
                 <thead>
@@ -7667,6 +8119,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-29">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">5.4. Desarrollar
+                y reunir logaritmos</span></p>
                 <div id="cuaderno-29" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
@@ -7911,6 +8366,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-30">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-subapartado">5.5. Despejar
+                el exponente</span></p>
                 <div id="cuaderno-30" class="cuerpo-cuaderno">
                 <p><span class="etiqueta-nota">Regla:</span> aísla la
                 potencia, toma logaritmos en los dos lados y baja el
@@ -8138,6 +8596,9 @@
                 </div>
                 <div class="cuaderno bloque-didactico plegada">
                 <p><button type="button" class="etiqueta-bloque" aria-expanded="false" aria-controls="cuaderno-31">Al cuaderno</button></p>
+                <p><span
+                class="titulo-cuaderno titulo-apartado">6. Razonamiento
+                proporcional</span></p>
                 <div id="cuaderno-31" class="cuerpo-cuaderno">
                 <table class="tabla-columnas">
                 <colgroup>
@@ -8175,7 +8636,7 @@
                 class="etiqueta-nota ejemplo">Ejemplos:</span></p>
                 <blockquote>
                 <ul>
-                <li><p>directa: <span class="math inline">\(45\)</span>
+                <li><p>Directa: <span class="math inline">\(45\)</span>
                 páginas en <span class="math inline">\(3\)</span> min
                 <span class="math inline">\(\to\)</span> <span
                 class="formula-alta"><span
@@ -8183,7 +8644,7 @@
                 por min <span class="math inline">\(\to\)</span> en
                 <span class="math inline">\(20\)</span> min, <span
                 class="math inline">\(15\cdot20=300\)</span></p></li>
-                <li><p>inversa: <span class="math inline">\(4\)</span>
+                <li><p>Inversa: <span class="math inline">\(4\)</span>
                 grifos, <span class="math inline">\(6\)</span> h <span
                 class="math inline">\(\to\)</span> <span
                 class="math inline">\(1\)</span> grifo, <span
@@ -8581,9 +9042,9 @@
                 <li>Decide si conviene dar cada resultado exacto o
                 aproximado, y calcúlalo:
                 <ol type="a">
-                <li>el lado de una parcela cuadrada de <span
+                <li>El lado de una parcela cuadrada de <span
                 class="math inline">\(50\)</span> metros cuadrados, para
-                pedir la valla en la ferretería;</li>
+                pedir la valla en la ferretería.</li>
                 <li><span
                 class="math inline">\(\frac{\sqrt{98}}{\sqrt2}\)</span>,
                 dentro de una simplificación algebraica.</li>
@@ -9164,6 +9625,373 @@
             ? "Ocultar todas las notas"
             : "Mostrar todas las notas";
         });
+      }
+    });
+  </script>
+
+  <script>
+    // Modo clase: interruptor del índice o `?clase` en la dirección; `Esc`
+    // lo apaga. Al encender o apagar, la vista se queda en el apartado donde
+    // estaba. La barra recorre los apartados y abre la nota y las soluciones
+    // del apartado en pantalla; sus teclas no actúan dentro de los campos de
+    // los laboratorios.
+    document.addEventListener("DOMContentLoaded", function () {
+      var raiz = document.documentElement;
+      var interruptor = document.getElementById("modo-clase");
+      var contenido = document.querySelector("main");
+      var cabecera = document.querySelector(".cabecera-portal");
+      var indice = document.querySelector(".indice-unidad");
+      if (!interruptor || !contenido) {
+        return;
+      }
+      var secciones = Array.prototype.slice.call(
+        contenido.querySelectorAll("section.level2, section.level3")
+      );
+      if (!secciones.length) {
+        return;
+      }
+      interruptor.hidden = false;
+
+      // En el índice del modo clase solo se ven los números: el título
+      // completo queda como aviso al pasar el ratón.
+      Array.prototype.forEach.call(document.querySelectorAll("#TOC a"), function (enlace) {
+        if (!enlace.title) {
+          enlace.title = enlace.textContent.trim().replace(/\s+/g, " ");
+        }
+      });
+
+      var barra = document.createElement("div");
+      barra.className = "barra-clase";
+      barra.setAttribute("role", "toolbar");
+      barra.setAttribute("aria-label", "Modo clase");
+      barra.innerHTML =
+        '<button type="button" data-accion="anterior" aria-label="Apartado anterior" title="Anterior (flecha izquierda)"></button>' +
+        '<span class="posicion-clase" aria-live="polite"></span>' +
+        '<button type="button" data-accion="siguiente" aria-label="Apartado siguiente" title="Siguiente (flecha derecha)"></button>' +
+        '<button type="button" data-accion="nota" aria-label="Nota «Al cuaderno»" title="Al cuaderno (N)"></button>' +
+        '<button type="button" data-accion="soluciones" aria-label="Soluciones" title="Soluciones (S)"></button>';
+      document.body.appendChild(barra);
+      var posicion = barra.querySelector(".posicion-clase");
+
+      function activo() {
+        return raiz.classList.contains("modo-clase");
+      }
+      function visible(elemento) {
+        return elemento.getClientRects().length > 0;
+      }
+      // Lo que tapa la parte de arriba: la cabecera y el índice cuando van a
+      // todo lo ancho (en el modo clase, de la cabecera solo queda el
+      // interruptor en la esquina).
+      function bordeSuperior() {
+        var borde = 0;
+        if (cabecera && visible(cabecera)) {
+          var franja = cabecera.getBoundingClientRect();
+          if (franja.width > window.innerWidth / 2) {
+            borde = Math.max(borde, franja.bottom);
+          }
+        }
+        if (indice && visible(indice)) {
+          var caja = indice.getBoundingClientRect();
+          if (caja.width > window.innerWidth / 2) {
+            borde = Math.max(borde, caja.bottom);
+          }
+        }
+        return borde;
+      }
+
+      // Un apartado cuyo contenido propio no se ve (solo prosa, que el modo
+      // oculta) no es parada: lo representa su primer subapartado, y el
+      // salto lleva al título del apartado.
+      function contenidoPropio(seccion) {
+        for (var i = 0; i < seccion.children.length; i++) {
+          var hijo = seccion.children[i];
+          if (hijo.tagName === "SECTION") {
+            return false;
+          }
+          if (!/^H[1-6]$/.test(hijo.tagName) && visible(hijo)) {
+            return true;
+          }
+        }
+        return true;
+      }
+      function paradas() {
+        return secciones.filter(function (seccion) {
+          return !seccion.classList.contains("level2") || contenidoPropio(seccion);
+        });
+      }
+      function destino(parada) {
+        var padre = parada.parentElement;
+        if (
+          parada.classList.contains("level3") &&
+          padre && padre.classList.contains("level2") &&
+          !contenidoPropio(padre) &&
+          padre.querySelector(":scope > section") === parada
+        ) {
+          return padre;
+        }
+        return parada;
+      }
+      function actual(lista) {
+        var limite = bordeSuperior() + 48;
+        var elegida = lista[0];
+        for (var i = 0; i < lista.length; i++) {
+          if (destino(lista[i]).getBoundingClientRect().top <= limite) {
+            elegida = lista[i];
+          } else {
+            break;
+          }
+        }
+        return elegida;
+      }
+      function etiqueta(seccion) {
+        var numero = seccion.getAttribute("data-number");
+        if (numero) {
+          return numero;
+        }
+        var titulo = seccion.querySelector("h2, h3, h4");
+        return titulo ? titulo.textContent.trim().split(/\s+/)[0] : "";
+      }
+      function pintar() {
+        if (activo()) {
+          posicion.textContent = etiqueta(actual(paradas()));
+        }
+      }
+      function llevar(elemento, desfase) {
+        var y = window.scrollY + elemento.getBoundingClientRect().top - bordeSuperior() - (desfase || 0);
+        window.scrollTo({ top: Math.max(y, 0), left: 0, behavior: "instant" });
+      }
+      function mover(paso) {
+        var lista = paradas();
+        var presente = actual(lista);
+        var i = lista.indexOf(presente);
+        // Hacia atrás, desde la mitad de un apartado, primero a su comienzo.
+        if (paso < 0 && destino(presente).getBoundingClientRect().top < bordeSuperior() - 40) {
+          llevar(destino(presente), 8);
+          pintar();
+          return;
+        }
+        var j = Math.min(Math.max(i + paso, 0), lista.length - 1);
+        llevar(destino(lista[j]), 8);
+        pintar();
+      }
+      // Del apartado en pantalla, el primer elemento que asoma bajo el borde
+      // (o el último, si todos quedaron arriba); si el apartado no tiene
+      // ninguno, el siguiente del documento.
+      function elegir(selector) {
+        var seccion = actual(paradas());
+        var borde = bordeSuperior();
+        var candidatos = Array.prototype.filter.call(seccion.querySelectorAll(selector), visible);
+        for (var i = 0; i < candidatos.length; i++) {
+          if (candidatos[i].getBoundingClientRect().bottom > borde) {
+            return candidatos[i];
+          }
+        }
+        if (candidatos.length) {
+          return candidatos[candidatos.length - 1];
+        }
+        var todos = Array.prototype.filter.call(contenido.querySelectorAll(selector), visible);
+        for (var j = 0; j < todos.length; j++) {
+          if (todos[j].getBoundingClientRect().top > borde) {
+            return todos[j];
+          }
+        }
+        return null;
+      }
+      // La píldora «Al cuaderno» cuelga por encima del borde de la nota: al
+      // traer una nota a la vista se deja sitio para ella.
+      function asomar(elemento, aire) {
+        var caja = elemento.getBoundingClientRect();
+        if (caja.top < bordeSuperior() || caja.bottom > window.innerHeight) {
+          llevar(elemento, aire || 8);
+        }
+      }
+      function alternarNota() {
+        var nota = elegir(".bloque-didactico.cuaderno");
+        var boton = nota && nota.querySelector("button.etiqueta-bloque");
+        if (!boton) {
+          return;
+        }
+        boton.click();
+        if (!nota.classList.contains("plegada")) {
+          asomar(nota, 34);
+        }
+      }
+      function alternarSoluciones() {
+        var boton = elegir("button.boton-soluciones");
+        if (!boton) {
+          return;
+        }
+        boton.click();
+        if (boton.getAttribute("aria-expanded") === "true") {
+          asomar(boton);
+        }
+      }
+
+      // Ancla para no perder el sitio al cambiar de modo: el primer elemento
+      // que se ve en los dos modos y asoma bajo el borde, si está en el
+      // primer cuarto de la pantalla; si no (arriba solo hay texto), el
+      // apartado más interno que ocupa la parte de arriba, que queda con su
+      // título arriba.
+      var ESTABLES =
+        "h2, h3, h4, h5, .bloque-didactico, figure, table, .fichas, .interactivo, " +
+        ".ejercicios ol > li, .boton-soluciones, section > p";
+      function estable(elemento) {
+        if (elemento.closest(".cuerpo-cuaderno, .ampliacion, .aplicacion")) {
+          return false;
+        }
+        if (elemento.matches("section > p") && !elemento.querySelector(".math.display")) {
+          return false;
+        }
+        var siguiente = elemento.nextElementSibling;
+        if (
+          elemento.matches("h3, h4, h5") &&
+          siguiente && siguiente.classList.contains("boton-soluciones")
+        ) {
+          return false;
+        }
+        return visible(elemento);
+      }
+      function anclar() {
+        var borde = bordeSuperior();
+        var todas = contenido.querySelectorAll("section");
+        // La línea de referencia queda algo por debajo del borde: un salto
+        // deja el título a 8 píxeles y ese hueco no debe contar como el
+        // apartado padre.
+        var linea = borde + 24;
+        var arriba = null;
+        for (var k = 0; k < todas.length; k++) {
+          var marco = todas[k].getBoundingClientRect();
+          if (marco.top <= linea && marco.bottom > linea) {
+            arriba = todas[k];
+          }
+        }
+        var candidatos = contenido.querySelectorAll(ESTABLES);
+        for (var i = 0; i < candidatos.length; i++) {
+          if (!estable(candidatos[i])) {
+            continue;
+          }
+          var caja = candidatos[i].getBoundingClientRect();
+          if (caja.bottom > borde + 4) {
+            // Solo vale si es del apartado de arriba, no del siguiente.
+            var suya = candidatos[i].closest("section");
+            var delDeArriba = !arriba || (suya && suya.contains(arriba));
+            if (delDeArriba && caja.top - borde < (window.innerHeight - borde) / 4) {
+              // Cortado por el borde: se guarda la proporción que quedaba
+              // arriba, porque su altura cambia de un modo a otro; una
+              // fórmula suelta vuelve entera.
+              if (caja.top < borde) {
+                if (candidatos[i].matches("section > p")) {
+                  return { elemento: candidatos[i], desfase: 8 };
+                }
+                return { elemento: candidatos[i], fraccion: (borde - caja.top) / caja.height };
+              }
+              return { elemento: candidatos[i], desfase: caja.top - borde };
+            }
+            break;
+          }
+        }
+        return arriba ? { elemento: arriba, desfase: 8 } : null;
+      }
+      function poner(encendido) {
+        if (encendido === activo()) {
+          return;
+        }
+        var ancla = anclar();
+        // Si arriba de la pantalla ya se estaba dentro del apartado del ancla,
+        // ese apartado no puede bajar: encima no debe asomar el anterior.
+        var propia = ancla ? ancla.elemento.closest("section") : null;
+        var dentro = propia && propia.getBoundingClientRect().top <= bordeSuperior() + 4;
+        raiz.classList.toggle("modo-clase", encendido);
+        interruptor.setAttribute("aria-checked", encendido ? "true" : "false");
+        if (ancla && visible(ancla.elemento)) {
+          var desfase = ancla.fraccion === undefined
+            ? ancla.desfase
+            : -ancla.fraccion * ancla.elemento.getBoundingClientRect().height;
+          llevar(ancla.elemento, desfase);
+          if (dentro && propia.getBoundingClientRect().top > bordeSuperior() + 8) {
+            llevar(propia, 8);
+          }
+        }
+        pintar();
+      }
+
+      interruptor.addEventListener("click", function () {
+        poner(!activo());
+      });
+      barra.addEventListener("click", function (evento) {
+        var boton = evento.target.closest("button[data-accion]");
+        if (!boton) {
+          return;
+        }
+        var accion = boton.getAttribute("data-accion");
+        if (accion === "anterior") {
+          mover(-1);
+        } else if (accion === "siguiente") {
+          mover(1);
+        } else if (accion === "nota") {
+          alternarNota();
+        } else if (accion === "soluciones") {
+          alternarSoluciones();
+        }
+        boton.blur();
+      });
+      document.addEventListener("keydown", function (evento) {
+        if (!activo() || evento.altKey || evento.ctrlKey || evento.metaKey) {
+          return;
+        }
+        var origen = evento.target;
+        if (
+          origen &&
+          (origen.tagName === "INPUT" ||
+            origen.tagName === "TEXTAREA" ||
+            origen.tagName === "SELECT" ||
+            origen.isContentEditable ||
+            (evento.key === " " && origen.tagName === "BUTTON"))
+        ) {
+          return;
+        }
+        switch (evento.key) {
+          case "ArrowRight":
+          case "PageDown":
+          case " ":
+            evento.preventDefault();
+            mover(1);
+            break;
+          case "ArrowLeft":
+          case "PageUp":
+            evento.preventDefault();
+            mover(-1);
+            break;
+          case "n":
+          case "N":
+            alternarNota();
+            break;
+          case "s":
+          case "S":
+            alternarSoluciones();
+            break;
+          case "Escape":
+            poner(false);
+            break;
+          default:
+            return;
+        }
+      });
+      var pendiente = false;
+      function alMoverse() {
+        if (!activo() || pendiente) {
+          return;
+        }
+        pendiente = true;
+        window.requestAnimationFrame(function () {
+          pendiente = false;
+          pintar();
+        });
+      }
+      window.addEventListener("scroll", alMoverse, { passive: true });
+      window.addEventListener("resize", alMoverse);
+      if (new URLSearchParams(window.location.search).has("clase")) {
+        poner(true);
       }
     });
   </script>
