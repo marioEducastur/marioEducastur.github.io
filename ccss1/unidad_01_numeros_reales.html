@@ -268,6 +268,75 @@
       }
     }
 
+    /* Descargas de la unidad: los apuntes y las soluciones en PDF, en dos
+       pastillas bajo el índice. Los enlaces salen del metadato `descargas`
+       de la unidad; sin él, el bloque no existe. En pantallas estrechas,
+       donde el índice es una fila, lo sustituye la tira `.descargas-movil`,
+       justo debajo del índice. Ni el modo clase ni la impresión las ven. */
+    .descargas-unidad {
+      margin-top: 0.9rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--borde);
+    }
+
+    .descargas-unidad .titulo-indice {
+      margin-bottom: 0.55rem;
+    }
+
+    .fila-descargas {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .pastilla-descarga {
+      display: inline-flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.4rem;
+      font-size: 0.84rem;
+      font-weight: 750;
+      line-height: 1;
+      text-decoration: none;
+      border: 1.5px solid;
+      border-radius: 999px;
+    }
+
+    .pastilla-descarga svg {
+      flex: none;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .pastilla-descarga.apuntes {
+      color: var(--acento-oscuro);
+      background: var(--acento-suave);
+      border-color: var(--acento);
+    }
+
+    .pastilla-descarga.soluciones {
+      color: var(--verde);
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .pastilla-descarga:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    @media (hover: hover) {
+      .pastilla-descarga:hover {
+        text-decoration: underline;
+        filter: brightness(0.96);
+      }
+    }
+
+    .descargas-movil {
+      display: none;
+    }
+
     #contenido-unidad {
       min-width: 0;
     }
@@ -1630,6 +1699,20 @@
         scrollbar-width: thin;
       }
 
+      .descargas-unidad {
+        display: none;
+      }
+
+      .descargas-movil {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .descargas-movil .pastilla-descarga {
+        padding: 0.62rem 0.5rem;
+        font-size: 0.9rem;
+      }
+
       .titulo-indice {
         position: absolute;
         width: 1px;
@@ -1823,7 +1906,8 @@
 
       .salto-contenido,
       .cabecera-portal,
-      .indice-unidad {
+      .indice-unidad,
+      .descargas-movil {
         display: none;
       }
 
@@ -2399,6 +2483,8 @@
          «Repaso de la ESO», que envuelve su tramo. */
       html.modo-clase .portada-unidad,
       html.modo-clase .titulo-indice,
+      html.modo-clase .descargas-unidad,
+      html.modo-clase .descargas-movil,
       html.modo-clase #contenido-unidad :is(section, .tramo-repaso) > p:not(:has(.math.display)),
       html.modo-clase #contenido-unidad :is(section, .tramo-repaso) > :is(ul, ol):not(.ejercicios *):not(:has(.math.display)),
       html.modo-clase #contenido-unidad :is(section, .tramo-repaso) > :is(ul, ol):not(.ejercicios *) > li:not(:has(.math.display)),
@@ -2734,7 +2820,18 @@ Bachillerato</p>
           práctica</a></li>
           </ul>
         </nav>
-      </aside>
+                <div class="descargas-unidad">
+          <p class="titulo-indice">En PDF</p>
+          <div class="fila-descargas">
+                        <a class="pastilla-descarga apuntes" href="salida/Mat_CCSS_I_Numeros_reales.pdf" target="_blank" rel="noopener" aria-label="Apuntes de la unidad en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Apuntes</span></a>
+                                    <a class="pastilla-descarga soluciones" href="salida/Mat_CCSS_I_Numeros_reales_soluciones.pdf" target="_blank" rel="noopener" aria-label="Soluciones de los ejercicios en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones</span></a>
+                      </div>
+        </div>
+              </aside>
+                  <div class="descargas-movil">
+                <a class="pastilla-descarga apuntes" href="salida/Mat_CCSS_I_Numeros_reales.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Apuntes en PDF</span></a>
+                        <a class="pastilla-descarga soluciones" href="salida/Mat_CCSS_I_Numeros_reales_soluciones.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones en PDF</span></a>
+              </div>
       
       <main
         id="contenido-unidad"
