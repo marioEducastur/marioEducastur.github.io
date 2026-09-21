@@ -2651,11 +2651,244 @@
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
       }
+
+      .barra-clase [data-accion="ampliar"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5L21 21M10.5 7.8v5.4M7.8 10.5h5.4'/%3E%3C/svg%3E");
+      }
+
+      /* Ampliar, «toca y se amplía» (decisión del profesor del 20 de
+         septiembre de 2026, que proyecta desde un iPad y tenía que
+         pellizcar para que se leyera): en el modo clase, un toque sobre una
+         fórmula, unas fichas, un bloque, una lista o una figura lo deja
+         solo en la pantalla con la letra más grande que quepa; lo que
+         entero quedaría pequeño se reparte en partes por sus piezas. Se
+         pasa con las flechas o deslizando y se vuelve con la ×. Las medidas
+         del marco van en píxeles, no en `rem`, porque la ampliación cambia
+         el tamaño de `rem` para recolocar el contenido. */
+      html.modo-clase .ampliable {
+        cursor: pointer;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        html.modo-clase .ampliable {
+          cursor: zoom-in;
+        }
+      }
+
+      html.ampliando .ampliable {
+        cursor: auto;
+      }
+
+      html.ampliando,
+      html.ampliando body {
+        overflow: hidden;
+      }
+
+      html.ampliando .ampliar-oculto,
+      html.ampliando .indice-unidad,
+      html.ampliando .barra-clase,
+      html.ampliando .cabecera-portal {
+        display: none !important;
+      }
+
+      /* El apartado que contiene lo ampliado hace de pantalla. */
+      html.ampliando #contenido-unidad > section.ampliar-camino {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 76px 104px 80px;
+        overflow: hidden auto;
+        background: #ffffff;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        touch-action: manipulation;
+        /* Sin barra de desplazamiento: si ocupara sitio, el texto saltaría
+           de línea al aparecer y la medida de lo que cabe dependería del
+           orden en que se prueban los tamaños. */
+        scrollbar-width: none;
+      }
+
+      html.ampliando #contenido-unidad > section.ampliar-camino::-webkit-scrollbar {
+        display: none;
+      }
+
+      html.ampliando section.ampliar-camino {
+        margin: 0;
+      }
+
+      /* Centrado con márgenes automáticos: si lo ampliado no cabe ni a su
+         tamaño normal, empieza arriba y se desplaza, en vez de cortarse. */
+      html.ampliando .ampliar-arriba {
+        margin-top: auto !important;
+      }
+
+      html.ampliando .ampliar-abajo {
+        margin-bottom: auto !important;
+      }
+
+      /* Las soluciones de lo ampliado se ven sin desplegar las de la página. */
+      html.ampliando .bloque-didactico.plegable.ampliar-abierto {
+        display: block;
+      }
+
+      html.ampliando .ampliar-camino > .boton-soluciones {
+        display: none !important;
+      }
+
+      .marco-ampliar {
+        display: none;
+      }
+
+      html.ampliando .marco-ampliar {
+        display: block;
+      }
+
+      .marco-ampliar .miga-ampliar,
+      .marco-ampliar .cuenta-ampliar {
+        position: fixed;
+        z-index: 90;
+        font-family: -apple-system, "Segoe UI", sans-serif;
+        white-space: nowrap;
+      }
+
+      /* El título del subapartado se lee desde el fondo del aula, como lo
+         ampliado: crece con la altura de la ventana y, si es largo, ocupa
+         dos líneas. */
+      .marco-ampliar .miga-ampliar {
+        top: 16px;
+        left: 28px;
+        display: -webkit-box;
+        max-width: calc(100vw - 124px);
+        overflow: hidden;
+        color: var(--acento-oscuro);
+        font-size: clamp(24px, 3.9vh, 44px);
+        font-weight: 750;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        white-space: normal;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .marco-ampliar .miga-ampliar .parte-miga {
+        color: #475569;
+        font-weight: 600;
+      }
+
+      .marco-ampliar .cuenta-ampliar {
+        bottom: 22px;
+        left: 50%;
+        color: #64748b;
+        font-size: clamp(16px, 2.3vh, 26px);
+        font-weight: 600;
+        line-height: 1.3;
+        transform: translateX(-50%);
+      }
+
+      /* Una ecuación escrita dentro de una frase no se parte entre dos
+         líneas: si no cabe al final de una, baja entera a la siguiente.
+         Solo se deja partir la que no cabe ni en una línea entera. */
+      html.ampliando #contenido-unidad .math.inline {
+        white-space: nowrap;
+      }
+
+      html.ampliando #contenido-unidad .math.inline.formula-partible,
+      html.ampliando #contenido-unidad .ampliar-partible .math.inline {
+        white-space: normal;
+      }
+
+      .marco-ampliar button {
+        position: fixed;
+        z-index: 90;
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        min-height: 0;
+        padding: 0;
+        color: var(--acento-oscuro);
+        background: #ffffff;
+        border: 1.5px solid var(--borde);
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgb(15 23 42 / 0.12);
+        touch-action: manipulation;
+        transform: none;
+      }
+
+      .marco-ampliar button::before {
+        content: "";
+        width: 28px;
+        height: 28px;
+        background-color: currentColor;
+        -webkit-mask: var(--icono) center / contain no-repeat;
+        mask: var(--icono) center / contain no-repeat;
+      }
+
+      .marco-ampliar button[hidden] {
+        display: none;
+      }
+
+      .marco-ampliar button:disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+
+      .marco-ampliar button:focus-visible {
+        border-color: var(--acento);
+        background: var(--acento-suave);
+      }
+
+      @media (hover: hover) {
+        .marco-ampliar button:not(:disabled):hover {
+          border-color: var(--acento);
+          background: var(--acento-suave);
+        }
+      }
+
+      .marco-ampliar [data-ampliar="cerrar"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");
+        top: 12px;
+        right: 18px;
+        width: 56px;
+        height: 56px;
+      }
+
+      .marco-ampliar [data-ampliar="anterior"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E");
+        top: calc(50% - 32px);
+        left: 16px;
+      }
+
+      .marco-ampliar [data-ampliar="siguiente"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+        top: calc(50% - 32px);
+        right: 16px;
+      }
+
+      .marco-ampliar [data-ampliar="soluciones"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+        right: 18px;
+        bottom: 12px;
+        width: 56px;
+        height: 56px;
+        color: var(--verde);
+      }
+
+      .marco-ampliar [data-ampliar="soluciones"][aria-pressed="true"] {
+        color: #ffffff;
+        background: var(--verde);
+        border-color: var(--verde);
+      }
     }
 
     @media print {
       .interruptor-clase,
-      .barra-clase {
+      .barra-clase,
+      .marco-ampliar {
         display: none !important;
       }
     }
@@ -7003,7 +7236,8 @@ Bachillerato</p>
         '<button type="button" data-accion="anterior" aria-label="Apartado anterior" title="Anterior (flecha izquierda)"></button>' +
         '<span class="posicion-clase" aria-live="polite"></span>' +
         '<button type="button" data-accion="siguiente" aria-label="Apartado siguiente" title="Siguiente (flecha derecha)"></button>' +
-        '<button type="button" data-accion="soluciones" aria-label="Soluciones" title="Soluciones (S)"></button>';
+        '<button type="button" data-accion="soluciones" aria-label="Soluciones" title="Soluciones (S)"></button>' +
+        '<button type="button" data-accion="ampliar" aria-label="Ampliar lo que está en pantalla" title="Ampliar (A), o toca lo que quieras ampliar"></button>';
       document.body.appendChild(barra);
       var posicion = barra.querySelector(".posicion-clase");
 
@@ -7218,6 +7452,9 @@ Bachillerato</p>
         if (encendido === activo()) {
           return;
         }
+        if (!encendido) {
+          cerrarAmpliacion();
+        }
         var ancla = anclar();
         // Si arriba de la pantalla ya se estaba dentro del apartado del ancla,
         // ese apartado no puede bajar: encima no debe asomar el anterior.
@@ -7252,6 +7489,8 @@ Bachillerato</p>
           mover(1);
         } else if (accion === "soluciones") {
           alternarSoluciones();
+        } else if (accion === "ampliar") {
+          ampliarLoQueSeVe();
         }
         boton.blur();
       });
@@ -7270,7 +7509,15 @@ Bachillerato</p>
         ) {
           return;
         }
+        if (ampliacion) {
+          teclaAmpliada(evento);
+          return;
+        }
         switch (evento.key) {
+          case "a":
+          case "A":
+            ampliarLoQueSeVe();
+            break;
           case "ArrowRight":
           case "PageDown":
           case " ":
@@ -7293,6 +7540,704 @@ Bachillerato</p>
             return;
         }
       });
+      // Ampliar («toca y se amplía»): en el modo clase, un toque sobre una
+      // fórmula, unas fichas, un bloque, una lista o una figura lo deja solo
+      // en la pantalla con la letra más grande que quepa. La ampliación
+      // cambia el tamaño de `rem`: el contenido se recoloca, como con el
+      // zoom de página, y no se estira como con el pellizco. Una unidad que
+      // entera quedaría lejos de la letra de una transparencia se reparte en
+      // partes por sus piezas (fichas, líneas de una lista, ejercicios,
+      // párrafos de un bloque). Los laboratorios no se amplían.
+      var UNIDADES =
+        ".fichas, .bloque-didactico, figure, table, " +
+        ":is(section, .tramo-repaso) > :is(ul, ol), " +
+        ":is(section, .tramo-repaso) > p";
+      var AMPLIACION_MAXIMA = 3.2;
+      // Letra que se busca, en proporción a la altura de la ventana: la de
+      // una transparencia (24 pt en una de 7,5 pulgadas) es el 4,4 %, y la
+      // ventana del navegador es algo más baja que la pantalla.
+      var LETRA_OBJETIVO = 0.046;
+      var ampliacion = null;
+
+      function esUnidad(elemento) {
+        if (elemento.closest(".interactivo, .ampliacion, .aplicacion")) {
+          return false;
+        }
+        if (elemento.parentElement.closest(".fichas, .bloque-didactico, figure, table")) {
+          return false;
+        }
+        return elemento.tagName !== "P" || !!elemento.querySelector(".math.display");
+      }
+      Array.prototype.forEach.call(contenido.querySelectorAll(UNIDADES), function (elemento) {
+        if (esUnidad(elemento)) {
+          elemento.classList.add("ampliable");
+        }
+      });
+
+      var marco = document.createElement("div");
+      marco.className = "marco-ampliar";
+      marco.innerHTML =
+        '<div class="miga-ampliar"></div>' +
+        '<button type="button" data-ampliar="cerrar" aria-label="Volver a la página" title="Volver (Esc)"></button>' +
+        '<button type="button" data-ampliar="anterior" aria-label="Anterior" title="Anterior (flecha izquierda)"></button>' +
+        '<button type="button" data-ampliar="siguiente" aria-label="Siguiente" title="Siguiente (flecha derecha)"></button>' +
+        '<button type="button" data-ampliar="soluciones" aria-label="Soluciones" aria-pressed="false" title="Soluciones (S)" hidden></button>' +
+        '<div class="cuenta-ampliar" aria-live="polite"></div>';
+      document.body.appendChild(marco);
+      var miga = marco.querySelector(".miga-ampliar");
+      var cuenta = marco.querySelector(".cuenta-ampliar");
+      var botonAnterior = marco.querySelector('[data-ampliar="anterior"]');
+      var botonSiguiente = marco.querySelector('[data-ampliar="siguiente"]');
+      var botonSoluciones = marco.querySelector('[data-ampliar="soluciones"]');
+
+      function hijosVisibles(caja) {
+        return Array.prototype.filter.call(caja.children, visible);
+      }
+      // El rótulo de un bloque («Ejemplo», «Errores frecuentes»…) acompaña a
+      // todas sus partes.
+      function esRotulo(elemento) {
+        return !!elemento.querySelector(":scope > .etiqueta-bloque");
+      }
+      // Lo que acompaña a todas las partes de una unidad: los rótulos de un
+      // bloque, o la cabecera y las columnas de una tabla.
+      function fijosDe(unidad) {
+        if (unidad.tagName === "TABLE") {
+          return Array.prototype.filter.call(unidad.children, function (hijo) {
+            return hijo.tagName !== "TBODY";
+          });
+        }
+        return unidad.classList.contains("bloque-didactico")
+          ? hijosVisibles(unidad).filter(esRotulo)
+          : [];
+      }
+      function piezasDe(unidad) {
+        if (unidad.matches("ul, ol, .fichas")) {
+          return hijosVisibles(unidad);
+        }
+        if (unidad.tagName === "TABLE") {
+          var filas = [];
+          Array.prototype.forEach.call(unidad.tBodies, function (cuerpo) {
+            Array.prototype.push.apply(filas, hijosVisibles(cuerpo));
+          });
+          return filas.length > 1 ? filas : [unidad];
+        }
+        if (!unidad.classList.contains("bloque-didactico")) {
+          return [unidad];
+        }
+        var piezas = [];
+        hijosVisibles(unidad).forEach(function (hijo) {
+          if (esRotulo(hijo)) {
+            return;
+          }
+          if (hijo.matches("ul, ol")) {
+            Array.prototype.push.apply(piezas, hijosVisibles(hijo));
+          } else {
+            piezas.push(hijo);
+          }
+        });
+        return piezas;
+      }
+      // Número que pinta cada elemento de una lista numerada: si luego solo
+      // se ve una parte, cada uno conserva el suyo.
+      function numerosDe(lista, soloVisibles) {
+        var pares = [];
+        if (lista.tagName !== "OL") {
+          return pares;
+        }
+        var numero = lista.start || 1;
+        Array.prototype.forEach.call(lista.children, function (li) {
+          if (li.tagName !== "LI" || (soloVisibles && !visible(li))) {
+            return;
+          }
+          if (li.hasAttribute("value")) {
+            numero = parseInt(li.getAttribute("value"), 10) || numero;
+          }
+          pares.push([li, numero]);
+          numero++;
+        });
+        return pares;
+      }
+
+      function limpiar() {
+        Array.prototype.forEach.call(
+          contenido.querySelectorAll(
+            ".ampliar-oculto, .ampliar-camino, .ampliar-abierto, .ampliar-arriba, .ampliar-abajo, " +
+              ".ampliar-partible, .formula-partible"
+          ),
+          function (elemento) {
+            elemento.classList.remove(
+              "ampliar-oculto", "ampliar-camino", "ampliar-abierto", "ampliar-arriba", "ampliar-abajo",
+              "ampliar-partible", "formula-partible"
+            );
+          }
+        );
+        ampliacion.puestos.forEach(function (li) {
+          li.removeAttribute("value");
+        });
+        ampliacion.puestos = [];
+        if (ampliacion.tarjeta) {
+          ampliacion.tarjeta.style.paddingTop = "";
+        }
+      }
+      // Deja a la vista solo los elementos dados, enteros, y el camino de
+      // cajas que los contiene; el apartado de ese camino hace de pantalla.
+      function mostrar(visibles) {
+        var a = ampliacion;
+        limpiar();
+        var camino = [];
+        visibles.forEach(function (elemento) {
+          for (var caja = elemento.parentElement; caja && caja !== contenido; caja = caja.parentElement) {
+            if (camino.indexOf(caja) === -1) {
+              camino.push(caja);
+            }
+          }
+        });
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.children, function (hijo) {
+            if (visibles.indexOf(hijo) !== -1) {
+              return;
+            }
+            if (camino.indexOf(hijo) === -1) {
+              hijo.classList.add("ampliar-oculto");
+              return;
+            }
+            hijo.classList.add("ampliar-camino");
+            if (hijo.classList.contains("esta-plegado")) {
+              hijo.classList.add("ampliar-abierto");
+            }
+            recorrer(hijo);
+          });
+        })(contenido);
+        a.tarjeta = contenido.querySelector(":scope > section.ampliar-camino");
+        if (!a.tarjeta) {
+          return false;
+        }
+        // Sitio para el título, que puede ocupar dos líneas.
+        a.tarjeta.style.paddingTop = a.margenArriba + "px";
+        var quedan = Array.prototype.filter.call(a.tarjeta.children, function (hijo) {
+          return !hijo.classList.contains("ampliar-oculto");
+        });
+        a.primero = quedan[0];
+        a.ultimo = quedan[quedan.length - 1];
+        a.primero.classList.add("ampliar-arriba");
+        a.ultimo.classList.add("ampliar-abajo");
+        a.numeros.forEach(function (par) {
+          if (visible(par[0]) && !par[0].hasAttribute("value")) {
+            par[0].setAttribute("value", par[1]);
+            a.puestos.push(par[0]);
+          }
+        });
+        return true;
+      }
+      function ponerZoom(zoom) {
+        raiz.style.fontSize = Math.round(zoom * 1000) / 10 + "%";
+      }
+      // Las ecuaciones escritas dentro de una frase no se parten entre dos
+      // líneas (van con `nowrap`); se deja partir solo la que, con el tamaño
+      // puesto, no cabe ni en una línea entera de su párrafo.
+      function partirLoImprescindible() {
+        var formulas = Array.prototype.filter.call(
+          ampliacion.tarjeta.querySelectorAll(".math.inline"),
+          visible
+        );
+        formulas.forEach(function (formula) {
+          formula.classList.remove("formula-partible");
+        });
+        formulas
+          .filter(function (formula) {
+            var caja = formula.closest("p, li, dd, dt, figcaption, div");
+            if (!caja || formula.closest("td, th")) {
+              return false;
+            }
+            var estilo = window.getComputedStyle(caja);
+            var ancho = caja.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+            return formula.getBoundingClientRect().width > ancho + 1;
+          })
+          .forEach(function (formula) {
+            formula.classList.add("formula-partible");
+          });
+      }
+      // ¿Cabe lo que se ve, a lo alto y a lo ancho, con el tamaño puesto?
+      function cabe() {
+        var a = ampliacion;
+        partirLoImprescindible();
+        var estilo = window.getComputedStyle(a.tarjeta);
+        var alto = a.tarjeta.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
+        if (a.ultimo.getBoundingClientRect().bottom - a.primero.getBoundingClientRect().top > alto + 0.5) {
+          return false;
+        }
+        var derecha = a.tarjeta.getBoundingClientRect().right - parseFloat(estilo.paddingRight);
+        var cajas = a.tarjeta.querySelectorAll(".math.display, table, img");
+        for (var i = 0; i < cajas.length; i++) {
+          if (!visible(cajas[i])) {
+            continue;
+          }
+          // Una raíz o un paréntesis alto sobresalen un par de píxeles de su
+          // caja aunque la fórmula quepa: solo cuenta lo que sobra de verdad.
+          if (
+            cajas[i].scrollWidth > cajas[i].clientWidth * 1.03 + 2 ||
+            cajas[i].getBoundingClientRect().right > derecha + 1
+          ) {
+            return false;
+          }
+        }
+        return true;
+      }
+      // El mayor tamaño entre los dos dados con el que cabe; 0 si no cabe ni
+      // con el menor.
+      function mayorZoom(minimo, maximo) {
+        var a = ampliacion;
+        a.tarjeta.classList.toggle("ampliar-partible", !!a.partible);
+        ponerZoom(minimo);
+        if (!cabe()) {
+          // Ni con el tamaño menor: es imprescindible dejar que las
+          // ecuaciones de las frases (las de una tabla, sobre todo) se partan.
+          if (a.partible) {
+            return 0;
+          }
+          a.partible = true;
+          a.tarjeta.classList.add("ampliar-partible");
+          if (!cabe()) {
+            return 0;
+          }
+        }
+        ponerZoom(maximo);
+        if (cabe()) {
+          return maximo;
+        }
+        var abajo = minimo;
+        var arriba = maximo;
+        while (arriba - abajo > 0.04) {
+          var medio = (abajo + arriba) / 2;
+          ponerZoom(medio);
+          if (cabe()) {
+            abajo = medio;
+          } else {
+            arriba = medio;
+          }
+        }
+        return Math.max(minimo, Math.floor(abajo * 20) / 20);
+      }
+      // Si con el tamaño elegido alguna ecuación tuviera que partirse, se
+      // prueba con algo menos de letra (hasta un 15 %) antes de dejarla partir.
+      function evitarPartir(zoom) {
+        var a = ampliacion;
+        ponerZoom(zoom || 1);
+        cabe();
+        if (!zoom || !a.tarjeta.querySelector(".formula-partible")) {
+          return zoom;
+        }
+        for (var menor = zoom - 0.05; menor >= Math.max(1, zoom * 0.85); menor -= 0.05) {
+          ponerZoom(menor);
+          if (cabe() && !a.tarjeta.querySelector(".formula-partible")) {
+            return Math.round(menor * 100) / 100;
+          }
+        }
+        return zoom;
+      }
+      // Reparte la unidad en partes: entera si así ya se acerca a la letra
+      // buscada; si no, tantas piezas seguidas por parte como quepan con esa
+      // letra. Una pieza que sola no cabe con ella lleva la mayor que admita.
+      function componer(unidad) {
+        var a = ampliacion;
+        a.numeros = [];
+        if (!mostrar([unidad])) {
+          return [];
+        }
+        [unidad].concat(hijosVisibles(unidad)).forEach(function (lista) {
+          a.numeros = a.numeros.concat(numerosDe(lista, !lista.closest(".ejercicios, .resultado")));
+        });
+        var piezas = piezasDe(unidad);
+        var rotulos = fijosDe(unidad);
+        a.partible = false;
+        var entera = evitarPartir(mayorZoom(1, AMPLIACION_MAXIMA));
+        // Una tabla se lee comparando sus filas: aguanta entera con menos
+        // letra que lo demás y, si se reparte, todas sus partes llevan la
+        // misma, la de la fila que menos admite.
+        var esTabla = unidad.tagName === "TABLE";
+        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? 0.7 : 0.85)) {
+          return [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
+        }
+        var meta = a.objetivo;
+        if (esTabla) {
+          piezas.forEach(function (fila) {
+            mostrar(rotulos.concat([fila]));
+            a.partible = false;
+            meta = Math.min(meta, evitarPartir(mayorZoom(1, a.objetivo)) || 1);
+          });
+        }
+        var partes = [];
+        var i = 0;
+        while (i < piezas.length) {
+          var grupo = [piezas[i]];
+          i++;
+          while (i < piezas.length) {
+            mostrar(rotulos.concat(grupo, [piezas[i]]));
+            ponerZoom(meta);
+            if (!cabe()) {
+              break;
+            }
+            grupo.push(piezas[i]);
+            i++;
+          }
+          partes.push({ piezas: grupo, visibles: rotulos.concat(grupo), zoom: 1 });
+        }
+        partes.forEach(function (parte) {
+          mostrar(parte.visibles);
+          a.partible = false;
+          parte.zoom = evitarPartir(mayorZoom(1, meta)) || 1;
+          parte.partible = a.partible;
+        });
+        return partes;
+      }
+      // Soluciones de una lista de ejercicios: el bloque plegable que la
+      // sigue en su sección, con el número de cada respuesta.
+      function solucionesDeLaLista(unidad) {
+        var seccion = unidad.tagName === "OL" ? unidad.closest("section.ejercicios") : null;
+        if (!seccion || unidad.parentElement.closest(".resultado")) {
+          return null;
+        }
+        var bloques = seccion.querySelectorAll(".resultado.plegable");
+        for (var i = 0; i < bloques.length; i++) {
+          if (unidad.compareDocumentPosition(bloques[i]) & Node.DOCUMENT_POSITION_FOLLOWING) {
+            var lista = bloques[i].querySelector(":scope > ol");
+            return lista ? numerosDe(lista, false) : null;
+          }
+        }
+        return null;
+      }
+      function respuestasDe(parte) {
+        var a = ampliacion;
+        if (!a.soluciones) {
+          return [];
+        }
+        var numeros = a.numeros
+          .filter(function (par) {
+            return parte.piezas.indexOf(par[0]) !== -1 || parte.piezas[0] === a.unidades[a.indice];
+          })
+          .map(function (par) {
+            return par[1];
+          });
+        return a.soluciones
+          .filter(function (par) {
+            return numeros.indexOf(par[1]) !== -1;
+          })
+          .map(function (par) {
+            return par[0];
+          });
+      }
+      function texto(elemento) {
+        return elemento ? elemento.textContent.replace(/\s+/g, " ").trim() : "";
+      }
+      // El título de un apartado, como en la web: el número lleva su punto.
+      function tituloDe(encabezado) {
+        var numero = encabezado ? encabezado.querySelector(".header-section-number") : null;
+        if (!numero) {
+          return texto(encabezado);
+        }
+        return texto(numero) + ". " + texto(encabezado).slice(texto(numero).length).trim();
+      }
+      // Arriba, el subapartado de lo ampliado, en grande, y detrás el título
+      // interior («Propiedades», «Ejercicios») o el aviso de repaso. Se pone
+      // antes de componer, porque de sus líneas depende el sitio que queda.
+      function titular(unidad) {
+        var a = ampliacion;
+        var ambito = unidad.closest("section.level3") || unidad.closest("section.level2");
+        var detras = [];
+        var interior = unidad.closest("section.level4, section.level5");
+        if (interior && ambito && ambito.contains(interior)) {
+          detras.push(tituloDe(interior.querySelector(":scope > h4, :scope > h5")));
+        }
+        if (unidad.closest(".tramo-repaso")) {
+          detras.push("Repaso de la ESO");
+        }
+        miga.textContent = ambito ? tituloDe(ambito.querySelector(":scope > h2, :scope > h3")) : "";
+        detras.filter(Boolean).forEach(function (parte) {
+          var trozo = document.createElement("span");
+          trozo.className = "parte-miga";
+          trozo.textContent = " · " + parte;
+          miga.appendChild(trozo);
+        });
+        var apartado = unidad.closest("section.level2");
+        miga.style.color = apartado
+          ? window.getComputedStyle(apartado).getPropertyValue("--apartado").trim()
+          : "";
+        a.margenArriba = Math.max(76, Math.ceil(miga.getBoundingClientRect().bottom) + 22);
+      }
+      function rotular() {
+        var a = ampliacion;
+        var unidad = a.unidades[a.indice];
+        var ambito = unidad.closest("section.level3") || unidad.closest("section.level2");
+        var suyas = a.unidades.filter(function (otra) {
+          return !ambito || ambito.contains(otra);
+        });
+        var lugar = suyas.indexOf(unidad) + 1 + " de " + suyas.length;
+        if (a.paginas.length > 1) {
+          lugar += " · parte " + (a.pagina + 1) + " de " + a.paginas.length;
+        }
+        cuenta.textContent = lugar;
+        botonAnterior.disabled = a.indice === 0 && a.pagina === 0;
+        botonSiguiente.disabled =
+          a.indice === a.unidades.length - 1 && a.pagina === a.paginas.length - 1;
+        botonSoluciones.hidden = respuestasDe(a.paginas[a.pagina]).length === 0;
+        botonSoluciones.setAttribute("aria-pressed", a.conSoluciones ? "true" : "false");
+      }
+      function pintarParte() {
+        var a = ampliacion;
+        var parte = a.paginas[a.pagina];
+        var respuestas = a.conSoluciones ? respuestasDe(parte) : [];
+        a.numeros = a.numeros.filter(function (par) {
+          return !a.soluciones || a.soluciones.indexOf(par) === -1;
+        });
+        if (respuestas.length) {
+          a.numeros = a.numeros.concat(a.soluciones);
+        }
+        mostrar(parte.visibles.concat(respuestas));
+        a.partible = !!parte.partible;
+        a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+        // Con las respuestas debajo puede hacer falta una letra algo menor.
+        ponerZoom(respuestas.length ? mayorZoom(1, parte.zoom) || 1 : parte.zoom);
+        partirLoImprescindible();
+        a.tarjeta.scrollTop = 0;
+        rotular();
+      }
+      function prepararUnidad(indice, cual, toque) {
+        var a = ampliacion;
+        a.indice = indice;
+        a.conSoluciones = false;
+        a.toque = toque || null;
+        titular(a.unidades[indice]);
+        a.soluciones = solucionesDeLaLista(a.unidades[indice]);
+        a.paginas = componer(a.unidades[indice]);
+        if (!a.paginas.length) {
+          cerrarAmpliacion();
+          return;
+        }
+        a.pagina = cual === "ultima" ? a.paginas.length - 1 : 0;
+        if (toque) {
+          a.paginas.forEach(function (parte, lugar) {
+            var dentro = parte.piezas.some(function (pieza) {
+              return pieza.contains(toque);
+            });
+            if (dentro) {
+              a.pagina = lugar;
+            }
+          });
+        }
+        pintarParte();
+      }
+      function letraObjetivo(letra) {
+        return Math.min(2.4, Math.max(1.3, (LETRA_OBJETIVO * window.innerHeight) / letra));
+      }
+      function abrirAmpliacion(unidad, toque) {
+        if (!activo() || ampliacion) {
+          return;
+        }
+        var unidades = Array.prototype.filter.call(contenido.querySelectorAll(".ampliable"), visible);
+        var indice = unidades.indexOf(unidad);
+        if (indice === -1) {
+          return;
+        }
+        var letra = parseFloat(window.getComputedStyle(document.body).fontSize) || 22.72;
+        ampliacion = {
+          unidades: unidades,
+          y: window.scrollY,
+          letra: letra,
+          objetivo: letraObjetivo(letra),
+          numeros: [],
+          puestos: [],
+          paginas: [],
+          pagina: 0,
+          margenArriba: 76,
+          partible: false
+        };
+        raiz.classList.add("ampliando");
+        prepararUnidad(indice, "primera", toque);
+      }
+      function cerrarAmpliacion() {
+        if (!ampliacion) {
+          return;
+        }
+        var y = ampliacion.y;
+        limpiar();
+        ampliacion = null;
+        raiz.style.fontSize = "";
+        raiz.classList.remove("ampliando");
+        window.scrollTo({ top: y, left: 0, behavior: "instant" });
+        pintar();
+      }
+      function pasar(paso) {
+        var a = ampliacion;
+        var parte = a.pagina + paso;
+        if (parte >= 0 && parte < a.paginas.length) {
+          a.pagina = parte;
+          a.conSoluciones = false;
+          a.toque = null;
+          pintarParte();
+          return;
+        }
+        var indice = a.indice + paso;
+        if (indice >= 0 && indice < a.unidades.length) {
+          prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
+        }
+      }
+      // Las respuestas salen debajo de sus ejercicios. Si con ellas la letra
+      // se quedara corta, la parte se reparte en un ejercicio con su
+      // respuesta por pantalla.
+      function alternarRespuestas() {
+        var a = ampliacion;
+        if (botonSoluciones.hidden) {
+          return;
+        }
+        a.conSoluciones = !a.conSoluciones;
+        var parte = a.paginas[a.pagina];
+        if (a.conSoluciones) {
+          mostrar([a.unidades[a.indice]]);
+          var ejercicios = piezasDe(a.unidades[a.indice]).filter(function (li) {
+            return parte.piezas[0] === a.unidades[a.indice] || parte.piezas.indexOf(li) !== -1;
+          });
+          a.numeros = a.numeros.concat(a.soluciones);
+          mostrar(parte.visibles.concat(respuestasDe(parte)));
+          a.partible = !!parte.partible;
+          if (ejercicios.length > 1 && mayorZoom(1, parte.zoom) < a.objetivo * 0.85) {
+            var sueltos = ejercicios.map(function (li) {
+              var suelto = { piezas: [li], visibles: [li], zoom: 1 };
+              mostrar([li].concat(respuestasDe(suelto)));
+              a.partible = false;
+              suelto.zoom = evitarPartir(mayorZoom(1, a.objetivo)) || 1;
+              suelto.partible = a.partible;
+              return suelto;
+            });
+            Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(sueltos));
+            // Se queda en el ejercicio que se tocó, si se abrió tocando uno.
+            sueltos.forEach(function (suelto, lugar) {
+              if (a.toque && suelto.piezas[0].contains(a.toque)) {
+                a.pagina += lugar;
+                a.toque = null;
+              }
+            });
+          }
+        }
+        pintarParte();
+      }
+      // Lo que asoma arriba de la pantalla, ampliado: para la barra y la tecla A.
+      function ampliarLoQueSeVe() {
+        var unidad = elegir(".ampliable");
+        if (unidad) {
+          abrirAmpliacion(unidad, null);
+        }
+      }
+      function teclaAmpliada(evento) {
+        switch (evento.key) {
+          case "ArrowRight":
+          case "PageDown":
+          case " ":
+            evento.preventDefault();
+            pasar(1);
+            break;
+          case "ArrowLeft":
+          case "PageUp":
+            evento.preventDefault();
+            pasar(-1);
+            break;
+          case "s":
+          case "S":
+            alternarRespuestas();
+            break;
+          case "Escape":
+            cerrarAmpliacion();
+            break;
+          default:
+            return;
+        }
+      }
+
+      contenido.addEventListener("click", function (evento) {
+        var origen = evento.target;
+        if (!activo() || ampliacion || !origen.closest) {
+          return;
+        }
+        if (origen.closest("a, button, input, select, textarea, label, summary, .interactivo")) {
+          return;
+        }
+        if (window.getSelection && String(window.getSelection()).trim() !== "") {
+          return;
+        }
+        var unidad = origen.closest(".ampliable");
+        if (unidad && visible(unidad)) {
+          abrirAmpliacion(unidad, origen);
+        }
+      });
+      marco.addEventListener("click", function (evento) {
+        var boton = evento.target.closest("button[data-ampliar]");
+        if (!boton || !ampliacion) {
+          return;
+        }
+        var orden = boton.getAttribute("data-ampliar");
+        if (orden === "cerrar") {
+          cerrarAmpliacion();
+        } else if (orden === "soluciones") {
+          alternarRespuestas();
+        } else {
+          pasar(orden === "siguiente" ? 1 : -1);
+        }
+        boton.blur();
+      });
+      // Deslizar con un dedo pasa de parte, salvo sobre una fórmula que se
+      // desplaza porque no cabe.
+      var gesto = null;
+      document.addEventListener(
+        "touchstart",
+        function (evento) {
+          gesto = null;
+          if (!ampliacion || evento.touches.length !== 1) {
+            return;
+          }
+          var formula = evento.target.closest ? evento.target.closest(".math.display") : null;
+          if (formula && formula.scrollWidth > formula.clientWidth + 1) {
+            return;
+          }
+          gesto = { x: evento.touches[0].clientX, y: evento.touches[0].clientY, inicio: Date.now() };
+        },
+        { passive: true }
+      );
+      document.addEventListener(
+        "touchend",
+        function (evento) {
+          if (!ampliacion || !gesto) {
+            return;
+          }
+          var dx = evento.changedTouches[0].clientX - gesto.x;
+          var dy = evento.changedTouches[0].clientY - gesto.y;
+          var rapido = Date.now() - gesto.inicio < 700;
+          gesto = null;
+          if (rapido && Math.abs(dx) > 60 && Math.abs(dx) > 1.6 * Math.abs(dy)) {
+            pasar(dx < 0 ? 1 : -1);
+          }
+        },
+        { passive: true }
+      );
+      // Al girar la tableta o cambiar la ventana se recompone lo ampliado.
+      var recomposicion = false;
+      window.addEventListener("resize", function () {
+        if (!ampliacion || recomposicion) {
+          return;
+        }
+        recomposicion = true;
+        window.requestAnimationFrame(function () {
+          recomposicion = false;
+          if (ampliacion) {
+            ampliacion.objetivo = letraObjetivo(ampliacion.letra);
+            prepararUnidad(
+              ampliacion.indice,
+              "primera",
+              ampliacion.paginas[ampliacion.pagina].piezas[0]
+            );
+          }
+        });
+      });
+      window.addEventListener("beforeprint", cerrarAmpliacion);
+
       var pendiente = false;
       function alMoverse() {
         if (!activo() || pendiente) {
