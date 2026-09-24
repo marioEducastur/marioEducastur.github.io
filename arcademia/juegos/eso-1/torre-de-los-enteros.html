@@ -104,6 +104,8 @@ summary{cursor:pointer;font-weight:800}
 
 /* ---------- tablero ---------- */
 #game-grid{display:grid;grid-template-columns:152px 1fr;gap:16px;align-items:start}
+/* sin esto, en el móvil la torre horizontal ensancha su columna y la página se desborda */
+#game-grid>*{min-width:0}
 #tower-panel{padding:12px}
 #tower-panel h3{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:8px;opacity:.65}
 #tower{display:flex;flex-direction:column;gap:5px}
@@ -376,6 +378,19 @@ svg.boss.dieSplit{animation:bossSplit .9s ease-in forwards}
 .pipebtn.lose{opacity:.35;filter:grayscale(.8)}
 .pipebtn.pick{opacity:1;filter:none;outline:3px solid var(--red);outline-offset:4px;border-radius:10px}
 .pipebtn.pick::after{content:"✗";position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:1.6rem;font-weight:900;color:var(--red)}
+
+/* ---------- elegir el tubo (pregunta inversa) ---------- */
+#floor-choice{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+#floor-choice .pipebtn svg{width:62px}
+#floor-choice .pipebtn .pv{top:44%;font-size:1.05rem}
+#floor-choice .pipebtn.sel{transform:translateY(-6px)}
+#floor-choice .pipebtn.sel::after{content:"✓";position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:1.3rem;font-weight:900;color:var(--green-d)}
+#floor-choice .pipebtn.win::after,#floor-choice .pipebtn.pick::after{top:-24px;font-size:1.3rem}
+body.projector #floor-choice .pipebtn svg{width:78px}
+
+/* ---------- saltar la animación ---------- */
+#btn-skip{position:absolute;top:10px;left:10px;z-index:7;font:inherit;font-weight:800;font-size:.82rem;color:var(--ink);background:var(--card);border:2.5px solid var(--ink);border-radius:999px;box-shadow:0 3px 0 var(--ink);padding:4px 12px;cursor:pointer}
+#btn-skip:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink)}
 .pjump{position:absolute;left:50%;top:-30px;width:34px;pointer-events:none;z-index:2;animation:pjA .5s cubic-bezier(.5,0,.8,.4) forwards}
 .pjump svg{width:100%;height:auto;display:block;animation:none}
 @keyframes pjA{0%{transform:translate(-50%,-10px) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,30px) scale(.12) rotate(180deg);opacity:0}}
@@ -409,6 +424,7 @@ svg.boss.dieSplit{animation:bossSplit .9s ease-in forwards}
 .skill{display:flex;align-items:center;gap:10px;background:#fff;border:2.5px solid var(--ink);border-radius:12px;padding:10px 14px;flex-wrap:wrap}
 .skill .sname{font-weight:800}
 .skill .sval{margin-left:auto;font-weight:800}
+#end-diag{margin:0 0 12px;font-weight:700;color:var(--ink);background:#FFF6DC;border:2.5px dashed #C8912A;border-radius:12px;padding:10px;text-align:left}
 .photonote{margin:0 0 16px;font-weight:700;background:#E8F6EA;border:2.5px dashed var(--green-d);border-radius:12px;padding:10px}
 .endbtns{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
 #pauseveil{position:fixed;inset:0;background:rgba(42,36,32,.6);display:grid;place-items:center;z-index:95;padding:20px}
@@ -437,7 +453,7 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
 }
 @media (max-width:680px){
   #game-grid{grid-template-columns:1fr}
-  #tower{flex-direction:row-reverse;overflow-x:auto;padding-bottom:6px}
+  #tower{flex-direction:row-reverse;overflow-x:auto;padding-bottom:6px;min-width:0}
   .trow{flex-direction:column;justify-content:center;gap:2px;height:auto;min-width:46px;padding:6px 4px}
   .trow .flabel{min-width:0}
   .trow .pl{margin-left:0}
@@ -483,7 +499,7 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
       <li><span class="hicon">🗼</span><span><b>La planta.</b> Calcula a qué planta has llegado: planta de salida + lo que sube o baja el tubo. Después verás la pelea y el viaje por la torre con tus propios ojos.</span></li>
       <li><span class="hicon">✨</span><span><b>El bonus.</b> Si aciertas las dos, se abren 3 tubos: elige el que tenga el resultado de multiplicar o dividir tus dos números.</span></li>
       <li><span class="hicon">🪙</span><span><b>Las monedas.</b> A veces aparece una moneda flotando: ¡tócala antes de que desaparezca! Cada 3 monedas = +1 punto.</span></li>
-      <li><span class="hicon">👑</span><span><b>Sorpresas.</b> Cada 5 rondas, ¡RONDA JEFE!: el Rey Lío vale por un montón de enemigos. Y cuidado con los tubos averiados: tendrás que calcular cuánto te han movido.</span></li>
+      <li><span class="hicon">👑</span><span><b>Sorpresas.</b> Cada 5 rondas, ¡RONDA JEFE!, y cada jefe trae su operación: el Rey Lío vale por un montón de enemigos, la Reina Resta te rompe el tubo, el Dragón División parte los números y el Slime Gemelo duplica sus nubes. Y ojo con los tubos sin marcar: unas veces tendrás que decir cuánto te movieron y otras elegir cuál de los tres era.</span></li>
     </ol>
     <p class="scorenote">🏅 +1 punto por acierto · −1 por fallo · 0 si solo fallas por poquito.<br>Cuantos más puntos tengas, más difícil se vuelve la torre (¡y al revés!).<br>🔥 Encadena rondas perfectas para encender tu racha. 🗓️ Con el Reto del día, toda la clase juega las mismas operaciones.</p>
     <details>
@@ -513,6 +529,10 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
       <label><input type="checkbox" id="chk-music"> 🎵 Música</label>
       <label><input type="checkbox" id="chk-proj"> 🖥️ Modo proyector</label>
       <label><input type="checkbox" id="chk-reto"> 🗓️ Reto del día</label>
+      <label>Fecha del reto
+        <input type="date" id="inp-reto-date" disabled>
+        <span class="tiny">(para mandarlo de deberes otro día)</span>
+      </label>
       <label>Empezar en nivel
         <select id="sel-level"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select>
         <span class="tiny">(para probar niveles)</span>
@@ -573,6 +593,7 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
           <span class="wq" style="--x:86%;animation-delay:-.3s">¿</span>
           <span class="wp" id="warp-player"></span>
         </div>
+        <button type="button" id="btn-skip" class="hidden" aria-label="Saltar la animación de esta ronda">⏩ Saltar</button>
         <div id="flash"></div>
       </div>
       <div id="questions" class="card">
@@ -584,7 +605,8 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
         <div class="q">
           <label for="ans-floor" id="lbl-floor">🗼 ¿A qué planta llegas?</label>
           <span class="hint" id="hint-floor">Planta de salida + lo que sube o baja el tubo.</span>
-          <div class="numfield"><button type="button" class="signbtn" data-sign="+">+</button><input id="ans-floor" inputmode="numeric" autocomplete="off"></div>
+          <div class="numfield" id="floor-field"><button type="button" class="signbtn" data-sign="+">+</button><input id="ans-floor" inputmode="numeric" autocomplete="off"></div>
+          <div id="floor-choice" class="hidden" role="group" aria-label="Elige el tubo que te ha traído"></div>
         </div>
         <button class="btn primary big" id="btn-check" disabled>Comprobar</button>
       </div>
@@ -622,6 +644,7 @@ footer{text-align:center;margin-top:26px;font-size:.8rem;font-weight:600;opacity
       <div class="skill"><span class="sname">🗼 Plantas (posición en la recta)</span><span class="sval" id="st-floor"></span></div>
       <div class="skill"><span class="sname">✨ Tubos bonus (× y ÷)</span><span class="sval" id="st-bonus"></span></div>
     </div>
+    <p id="end-diag" class="hidden"></p>
     <p class="photonote">📸 Enséñale esta pantalla a tu profe para registrar tu resultado.</p>
     <div class="endbtns">
       <button class="btn primary big" id="btn-again">▶ Jugar otra vez</button>
@@ -666,9 +689,30 @@ let rng=Math.random;
 function setRng(f){rng=f||Math.random;}
 function mulberry32(a){return function(){a|=0;a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
 function strSeed(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+/* Personalidad matemática de cada jefe: qué se pregunta en su ronda y qué bonus fuerza.
+   Las claves son los id de BOSSES (más abajo, en la interfaz). */
+const BOSS_MATH={
+ lio:{ask:'floor'},
+ resta:{ask:'move'},
+ divi:{ask:'floor',bonus:'÷'},
+ slime:{ask:'floor',combo:true}
+};
+/* Qué se pregunta en la segunda casilla:
+   'floor'  = a qué planta llegas (suma)
+   'move'   = cuánto te ha movido el tubo (resta: llegada − salida)
+   'target' = cuál de los tres tubos te ha traído (el sumando que falta, eligiendo) */
+function askFor(variant,bossId){
+ if(variant==='boss')return (BOSS_MATH[bossId]&&BOSS_MATH[bossId].ask)||'floor';
+ if(variant==='averia')return 'move';
+ if(variant==='objetivo')return 'target';
+ return 'floor';
+}
 function pickVariant(round,level){
  if(round>0&&round%5===0)return 'boss';
- if(level>=2&&rng()<0.3)return 'averia';
+ if(level>=2&&rng()<0.34){
+  /* abajo se elige el tubo entre tres; arriba se escribe el desplazamiento */
+  return (rng()<(level>=4?0.7:0.35))?'averia':'objetivo';
+ }
  return 'normal';
 }
 const rint=(a,b)=>Math.floor(rng()*(b-a+1))+a;
@@ -683,7 +727,12 @@ const levelFor=score=>Math.max(1,Math.min(6,1+Math.floor(Math.max(0,score)/4)));
 function pickMove(floor,L){
  for(let i=0;i<80;i++){
   const m=(rng()<0.5?1:-1)*rint(L.move[0],L.move[1]);
-  if(m!==0&&Math.abs(floor+m)<=L.floor)return m;
+  if(m===0)continue;
+  const d=floor+m;
+  if(Math.abs(d)>L.floor)continue;
+  /* la calle (planta 0) sigue existiendo, pero se visita poco: con ella el bonus sería ×0 */
+  if(d===0&&rng()>=0.25)continue;
+  return m;
  }
  const mag=rint(L.move[0],L.move[1]);
  return floor>=0?-mag:mag;
@@ -691,19 +740,27 @@ function pickMove(floor,L){
 /* Cada bando es una lista de términos {n: criaturas por grupo, m: nº de grupos iguales}.
    En niveles normales m=1. En el nivel 6 (combo) un bando tiene "m nubes iguales de n":
    eso introduce la multiplicación dentro de la suma → operación combinada. */
+function genComboArmies(L){
+ for(let i=0;i<300;i++){
+  const cm=rint(2,3),cn=rint(1,Math.max(2,Math.min(4,L.creat)));
+  const comboSide=[{n:cn,m:cm}];
+  const otherSide=Array.from({length:rint(1,2)},function(){return{n:rint(1,L.creat),m:1};});
+  const f=(rng()<0.5)?comboSide:otherSide;
+  const e=(f===comboSide)?otherSide:comboSide;
+  const F=sideTotal(f),E=sideTotal(e);
+  if(F===0&&E===0)continue;
+  if(F===E&&rng()<0.75)continue;
+  return{f:f,e:e};
+ }
+ return{f:[{n:2,m:2}],e:[{n:3,m:1}]};
+}
 function genArmies(L){
+ if(L.combo)return genComboArmies(L);
  let f=[{n:1,m:1}],e=[{n:0,m:1}];
  for(let i=0;i<300;i++){
-  if(L.combo){
-   const cm=rint(2,3),cn=rint(1,4);
-   const comboSide=[{n:cn,m:cm}];
-   const otherSide=Array.from({length:rint(1,2)},function(){return{n:rint(1,L.creat),m:1};});
-   if(rng()<0.5){f=comboSide;e=otherSide;}else{f=otherSide;e=comboSide;}
-  }else{
-   const lo=L.groups===2?1:0;
-   f=Array.from({length:L.groups},function(){return{n:rint(lo,L.creat),m:1};});
-   e=Array.from({length:L.groups},function(){return{n:rint(lo,L.creat),m:1};});
-  }
+  const lo=L.groups===2?1:0;
+  f=Array.from({length:L.groups},function(){return{n:rint(lo,L.creat),m:1};});
+  e=Array.from({length:L.groups},function(){return{n:rint(lo,L.creat),m:1};});
   const F=sideTotal(f),E=sideTotal(e);
   if(F===0&&E===0)continue;
   if(F===E&&rng()<0.75)continue;
@@ -713,8 +770,17 @@ function genArmies(L){
 }
 /* Ronda jefe: un único enemigo gigante que "vale por" P enemigos.
    Los amigos se generan cerca de P para que la pelea esté reñida. */
-function genBossArmies(L){
+function genBossArmies(L,combo){
  const P=rint(L.creat,L.creat+3);
+ if(combo){
+  /* Slime Gemelo: los amigos llegan en nubes iguales, así la batalla lleva una multiplicación dentro */
+  let cm=2,cn=2;
+  for(let i=0;i<60;i++){
+   cm=rint(2,3);cn=rint(1,Math.max(2,Math.min(4,L.creat)));
+   if(cm*cn!==P||rng()<0.35)break;
+  }
+  return{f:[{n:cn,m:cm}],e:[{n:P,m:1}]};
+ }
  let T=1;
  for(let i=0;i<60;i++){
   T=rint(Math.max(1,P-3),P+3);
@@ -729,48 +795,99 @@ function genBossArmies(L){
  }
  return{f:f,e:[{n:P,m:1}]};
 }
-function pickBonusOp(A,B,L){
+function genArmiesFor(L,variant,bossId){
+ if(variant!=='boss')return genArmies(L);
+ const m=BOSS_MATH[bossId]||{};
+ return genBossArmies(L,!!m.combo&&L.creat>=3);
+}
+/* Las divisiones que dan ±1 se descartan: se aciertan sin dividir. */
+function pickBonusOp(A,B,L,force){
  const divs=[];
- if(L.div&&A!==0&&B!==0){
-  if(Math.abs(A)>1&&B%A===0)divs.push({op:'÷',a:B,b:A,res:B/A});
-  if(Math.abs(B)>1&&A%B===0)divs.push({op:'÷',a:A,b:B,res:A/B});
+ if((L.div||force==='÷')&&A!==0&&B!==0){
+  if(Math.abs(A)>1&&B%A===0&&Math.abs(B/A)>1)divs.push({op:'÷',a:B,b:A,res:B/A});
+  if(Math.abs(B)>1&&A%B===0&&Math.abs(A/B)>1)divs.push({op:'÷',a:A,b:B,res:A/B});
  }
- if(divs.length>0&&rng()<0.65)return choice(divs);
+ if(divs.length>0&&(force==='÷'||rng()<0.65))return choice(divs);
  return{op:'×',a:A,b:B,res:A*B};
 }
+/* Tres tubos: el resultado, su OPUESTO y un distractor de otro valor absoluto.
+   Con el opuesto siempre delante, el signo hay que pensarlo; antes no hacía falta. */
 function makeOptions(correct,A,B){
- const set=new Set([correct]);
- const cands=shuffle([-correct,A+B,-(A+B),correct+1,correct-1,correct+2,correct-2,B-A,A-B,correct+3,correct-3]);
- for(const v of cands){if(set.size>=3)break;if(Number.isInteger(v)&&!set.has(v))set.add(v);}
- let g=0;
- while(set.size<3&&g<60){g++;const v=correct+(rng()<0.5?-1:1)*rint(1,6);if(!set.has(v))set.add(v);}
- return shuffle(Array.from(set));
+ const pool=[];
+ const add=function(v){
+  if(!Number.isInteger(v)||v===0)return;
+  if(Math.abs(v)===Math.abs(correct))return;
+  if(pool.indexOf(v)<0)pool.push(v);
+ };
+ if(correct===0){
+  [Math.abs(A)+Math.abs(B),Math.abs(A),Math.abs(B),Math.abs(A-B),1,2,3].forEach(add);
+  const k=pool.length?choice(pool):1;
+  return shuffle([0,Math.abs(k),-Math.abs(k)]);
+ }
+ const m=Math.abs(correct);
+ [A+B,-(A+B),Math.abs(A)+Math.abs(B),m+1,m-1,m+2,m-2,B-A,A-B,m+3,m-3,2*m,Math.abs(A),Math.abs(B)].forEach(function(v){add(v);add(-v);});
+ const c=shuffle(pool);
+ return shuffle([correct,-correct,c.length?c[0]:(sgn(correct)*(m+1))]);
 }
-function genRound(level,floor,variant){
+/* Tres tubos para la pregunta inversa: el bueno, el del signo contrario y uno más.
+   Todos caen dentro de la torre, ninguno es 0 y no se repiten. */
+function makeMoveOptions(floor,move,L){
+ const opts=[move];
+ const ok=function(m){return m!==0&&Math.abs(floor+m)<=L.floor&&opts.indexOf(m)<0;};
+ const cands=[-move,move+1,move-1,-move+1,-move-1,move+2,move-2,move+3,move-3];
+ for(let i=0;i<cands.length&&opts.length<3;i++){if(ok(cands[i]))opts.push(cands[i]);}
+ let g=0;
+ while(opts.length<3&&g<80){
+  g++;
+  const m=(rng()<0.5?1:-1)*rint(L.move[0],L.move[1]);
+  if(ok(m))opts.push(m);
+ }
+ while(opts.length<3){const m=opts[opts.length-1]+1;if(ok(m))opts.push(m);else break;}
+ return shuffle(opts);
+}
+function genRound(level,floor,variant,bossId){
  variant=variant||'normal';
  const L=LEVELS[level];
- const armies=(variant==='boss')?genBossArmies(L):genArmies(L);
- const battle=sideTotal(armies.f)-sideTotal(armies.e);
- const move=pickMove(floor,L);
- const newFloor=floor+move;
- const bonus=pickBonusOp(battle,newFloor,L);
+ const ask=askFor(variant,bossId);
+ const bm=(variant==='boss')?(BOSS_MATH[bossId]||{}):{};
+/* Dos condiciones, por orden de importancia:
+    1) la batalla NUNCA puede dar el mismo número que la otra respuesta (si coinciden,
+       la segunda pregunta se contesta sola y el bonus se vuelve trivial);
+    2) el jefe que exige una operación (el Dragón División) la consigue si existe.
+   Si no hay ninguna división exacta posible, se cede en (2), nunca en (1). */
+ const intento=function(exigirOp){
+  const A=genArmiesFor(L,variant,bossId);
+  const B=sideTotal(A.f)-sideTotal(A.e);
+  const M=pickMove(floor,L);
+  const NF=floor+M;
+  if(B===((ask==='floor')?NF:M))return null;
+  const BO=pickBonusOp(B,NF,L,bm.bonus);
+  if(exigirOp&&bm.bonus&&BO.op!==bm.bonus)return null;
+  return{f:A.f,e:A.e,battle:B,move:M,newFloor:NF,bonus:BO};
+ };
+ let c=null;
+ if(bm.bonus){for(let t=0;t<60&&!c;t++)c=intento(true);}
+ for(let t=0;t<200&&!c;t++)c=intento(false);
+ while(!c){c=intento(false);}
+ const armies={f:c.f,e:c.e},battle=c.battle,move=c.move,newFloor=c.newFloor,bonus=c.bonus;
  bonus.options=makeOptions(bonus.res,battle,newFloor);
  const hasCombo=armies.f.concat(armies.e).some(function(t){return t.m>1;});
  const coin=rng()<0.62;
- return{level:level,variant:variant,f:armies.f,e:armies.e,battle:battle,move:move,oldFloor:floor,newFloor:newFloor,bonus:bonus,hasCombo:hasCombo,coin:coin};
+ return{level:level,variant:variant,ask:ask,f:armies.f,e:armies.e,battle:battle,move:move,oldFloor:floor,newFloor:newFloor,bonus:bonus,moveOptions:(ask==='target')?makeMoveOptions(floor,move,L):null,hasCombo:hasCombo,coin:coin};
 }
 function scoreAnswer(ans,correct,tol){
- if(ans===correct)return{pts:1,mark:'ok'};
+ if(ans===correct)return{pts:1,mark:'ok',kind:null};
+ const signoMal=(correct!==0&&ans!==0&&sgn(ans)!==sgn(correct));
  if(tol){
   const signOK=(correct===0)?(Math.abs(ans)<=1):(sgn(ans)===sgn(correct)||ans===0);
-  if(signOK&&Math.abs(ans-correct)<=1)return{pts:0,mark:'casi'};
+  if(signOK&&Math.abs(ans-correct)<=1)return{pts:0,mark:'casi',kind:'cuenta'};
  }
- return{pts:-1,mark:'mal'};
+ return{pts:-1,mark:'mal',kind:signoMal?'signo':'cuenta'};
 }
 function scoreBonus(v,c){
- if(v===c)return{pts:1,mark:'ok'};
- if(c!==0&&sgn(v)!==sgn(c))return{pts:-1,mark:'mal'};
- return{pts:0,mark:'casi'};
+ if(v===c)return{pts:1,mark:'ok',kind:null};
+ if(c!==0&&sgn(v)!==sgn(c))return{pts:-1,mark:'mal',kind:'signo'};
+ return{pts:0,mark:'casi',kind:'cuenta'};
 }
 function opBattle(r){
  const ts=function(side,s){return side.map(function(t){return t.m>1?(t.m+'·'+par(s*t.n)):par(s*t.n);});};
@@ -780,7 +897,8 @@ function opBattle(r){
  return a+' = '+ex(r.f,1).concat(ex(r.e,-1)).join(' + ')+' = '+fmt(r.battle);
 }
 function opFloor(r){
- if(r.variant==='averia')return par(r.newFloor)+' − '+par(r.oldFloor)+' = '+fmt(r.move);
+ if(r.ask==='move')return par(r.newFloor)+' − '+par(r.oldFloor)+' = '+fmt(r.move);
+ if(r.ask==='target')return par(r.oldFloor)+' + ? = '+par(r.newFloor)+', o sea ? = '+fmt(r.move);
  return par(r.oldFloor)+' + '+par(r.move)+' = '+fmt(r.newFloor);
 }
 
@@ -802,7 +920,6 @@ pipe:`<svg viewBox="0 0 70 86" xmlns="http://www.w3.org/2000/svg"><rect x="16" y
 coin:`<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="17" fill="#FFC53D" stroke="${I}" stroke-width="3"/><circle cx="20" cy="20" r="11" fill="none" stroke="#E09A12" stroke-width="3"/><path d="M20 13 v14 M13.5 17.5 h13" stroke="#7A5200" stroke-width="3.4" stroke-linecap="round"/></svg>`,
 poof:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g stroke="${I}" stroke-width="2"><circle cx="30" cy="30" r="13" fill="#FFF"/><circle cx="16" cy="26" r="8" fill="#FFF"/><circle cx="44" cy="27" r="8" fill="#FFF"/><circle cx="24" cy="42" r="7" fill="#FFF"/><circle cx="38" cy="41" r="7" fill="#FFF"/></g><g fill="#FFC53D" stroke="${I}" stroke-width="1.6"><path d="M30 2 l3 7 -6 0 z"/><path d="M6 14 l7 3 -5 5 z"/><path d="M54 14 l-7 3 5 5 z"/><path d="M8 48 l7 -2 -3 6 z"/><path d="M52 48 l-7 -2 3 6 z"/></g></svg>`,
 bird:`<svg viewBox="0 0 34 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 9 Q9 1 17 9" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round"/><path d="M17 9 Q25 1 32 9" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round"/></svg>`,
-bird:`<svg viewBox="0 0 34 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 9 Q9 1 17 9" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round"/><path d="M17 9 Q25 1 32 9" fill="none" stroke="${I}" stroke-width="2.6" stroke-linecap="round"/></svg>`,
 boss:`<svg viewBox="0 0 96 88" xmlns="http://www.w3.org/2000/svg"><path d="M26 22 Q12 14 14 3 Q26 9 31 18 Z" fill="#5A4632" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><path d="M70 22 Q84 14 82 3 Q70 9 65 18 Z" fill="#5A4632" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><ellipse cx="11" cy="54" rx="7.5" ry="9.5" fill="#B3415A" stroke="${I}" stroke-width="2.5"/><ellipse cx="85" cy="54" rx="7.5" ry="9.5" fill="#B3415A" stroke="${I}" stroke-width="2.5"/><ellipse cx="36" cy="83" rx="9" ry="4.5" fill="#7A2230" stroke="${I}" stroke-width="2.5"/><ellipse cx="60" cy="83" rx="9" ry="4.5" fill="#7A2230" stroke="${I}" stroke-width="2.5"/><ellipse cx="48" cy="50" rx="34" ry="32" fill="#B3415A" stroke="${I}" stroke-width="3"/><ellipse cx="48" cy="62" rx="19" ry="13" fill="#E08A9B" stroke="${I}" stroke-width="2.4"/><path d="M34 15 L38.5 4 L44 12.5 L48 2 L52 12.5 L57.5 4 L62 15 Z" fill="#FFC53D" stroke="${I}" stroke-width="2.4" stroke-linejoin="round"/><rect x="33" y="14" width="30" height="6.5" rx="2.5" fill="#FFC53D" stroke="${I}" stroke-width="2.2"/><circle cx="41" cy="17.2" r="1.6" fill="#E5533C" stroke="${I}" stroke-width="1.2"/><circle cx="55" cy="17.2" r="1.6" fill="#49BFDE" stroke="${I}" stroke-width="1.2"/><circle cx="38" cy="38" r="5.6" fill="#fff" stroke="${I}" stroke-width="2.2"/><circle cx="58" cy="38" r="5.6" fill="#fff" stroke="${I}" stroke-width="2.2"/><circle cx="39.5" cy="39.2" r="2.4" fill="${I}"/><circle cx="56.5" cy="39.2" r="2.4" fill="${I}"/><path d="M30 29.5 L44 34.5" stroke="${I}" stroke-width="3" stroke-linecap="round"/><path d="M66 29.5 L52 34.5" stroke="${I}" stroke-width="3" stroke-linecap="round"/><path d="M34 51 Q48 59 62 51 Q60.5 64 48 64.5 Q35.5 64 34 51 Z" fill="#7A2230" stroke="${I}" stroke-width="2.5" stroke-linejoin="round"/><path d="M39 52.5 l3.4 6.2 3 -5.4 z" fill="#fff" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/><path d="M57 52.5 l-3.4 6.2 -3 -5.4 z" fill="#fff" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/></svg>`
 };
 const EARTH_SHADES=['#A56F44','#97653D','#895B36','#7B512F','#6D4729','#5F3D23','#523320'];
@@ -810,7 +927,7 @@ const SKY_SHADES=['#D6EEFF','#CBE9FF','#BFE3FF','#B2DDFF','#A5D6FF','#98D0FF','#
 const CONF=['#FFC53D','#3FAE5A','#E5533C','#5FA8E8','#8F5FCB','#FF8FB1'];
 
 /* ---- estado ---- */
-const state={name:'',round:0,totalRounds:10,playedRounds:0,score:0,level:1,maxLevel:1,baseLevel:1,floor:0,coins:0,coinsAll:0,streak:0,reto:false,cap:'sol',needIntro:false,badges:{},paused:false,music:false,proj:false,path:[0],failedRounds:[],loreSeen:{},repesca:false,repQueue:[],repIdx:0,repFixed:0,tol:true,sound:true,anim:true,current:null,checked:false,startTime:0,runId:0,
+const state={name:'',round:0,totalRounds:10,playedRounds:0,score:0,level:1,maxLevel:1,baseLevel:1,floor:0,coins:0,coinsAll:0,streak:0,reto:false,cap:'sol',needIntro:false,badges:{},paused:false,music:false,proj:false,path:[0],failedRounds:[],loreSeen:{},repesca:false,repQueue:[],repIdx:0,repFixed:0,tol:true,sound:true,anim:true,current:null,checked:false,startTime:0,runId:0,skip:false,retoDate:'',errs:{signo:0,cuenta:0},
  stats:{battle:{ok:0,casi:0,mal:0},floor:{ok:0,casi:0,mal:0},bonus:{ok:0,casi:0,mal:0}}};
 const reducedMotion=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 const cine=function(){return state.anim&&!reducedMotion;};
@@ -818,7 +935,7 @@ function wait(ms){return new Promise(function(res){
  setTimeout(function check(){
   if(state.paused){setTimeout(check,150);return;}
   res();
- },cine()?ms:0);
+ },(cine()&&!state.skip)?ms:0);
 });}
 const alive=function(id){return id===state.runId;};
 
@@ -945,7 +1062,6 @@ const sndBad=function(){beep(150,0.28,'sawtooth',0.1);};
 const sndLevel=function(){[523,659,784,1047].forEach(function(f,i){beep(f,0.13,'square',0.12,i*0.09);});};
 const sndClick=function(){beep(760,0.05,'square',0.05);};
 const sndWhoosh=function(){tone(950,130,0.55,'sawtooth',0.07);};
-const sndPopUp=function(){tone(180,560,0.2,'square',0.12);};
 const sndTick=function(){beep(820,0.045,'square',0.05);};
 const sndThump=function(){tone(260,70,0.12,'square',0.16);beep(1100,0.05,'square',0.05);};
 const sndPoof=function(){tone(600,1400,0.12,'triangle',0.08);};
@@ -953,7 +1069,6 @@ const sndCoin=function(){beep(988,0.085,'square',0.1);beep(1319,0.17,'square',0.
 const sndJump=function(){tone(250,720,0.2,'square',0.1);};
 const sndPipe=function(){tone(540,170,0.22,'square',0.12);tone(430,140,0.22,'square',0.12,0.16);};
 const sndRise=function(){tone(170,560,0.26,'square',0.1);};
-const sndRoar=function(){tone(170,55,0.55,'sawtooth',0.15);tone(120,45,0.4,'sawtooth',0.1,0.1);};
 const sndBossDie=function(){tone(700,70,0.85,'square',0.12);[880,740,620,500,380].forEach(function(f,i){beep(f,0.09,'triangle',0.08,i*0.1);});};
 const sndBadge=function(){[1175,1568,2093].forEach(function(f,i){beep(f,0.11,'triangle',0.1,i*0.09);});};
 const sndChirp=function(){beep(1760,0.06,'square',0.07);beep(2217,0.11,'square',0.07,0.06);};
@@ -1016,7 +1131,16 @@ function sndCave(){
  beep(160,0.25,'sine',0.035,0.45);
  beep(150,0.22,'sine',0.022,0.85);
 }
-function retoSeedStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+/* La semilla del reto es una fecha: hoy por defecto, o la que fije el profesor
+   en la portada o en el enlace (#reto=AAAA-MM-DD), para mandarlo de deberes. */
+function retoSeedStr(){return state.retoDate||$('inp-reto-date').value||todayStr();}
+function retoLabel(str){
+ const t=String(str).split('-');
+ if(t.length!==3)return str;
+ const d=new Date(Number(t[0]),Number(t[1])-1,Number(t[2]));
+ return isNaN(d.getTime())?str:d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+}
 
 /* ---- referencias ---- */
 const els={
@@ -1041,6 +1165,29 @@ function toast(msg){
 }
 function show(el){el.classList.remove('hidden');}
 function hide(el){el.classList.add('hidden');}
+function showSkip(on){const b=$('btn-skip');if(b)b.classList.toggle('hidden',!on);}
+/* Preferencias guardadas en el propio dispositivo (nunca salen de él) */
+const PREFS='torre.prefs.v1';
+function loadPrefs(){
+ try{
+  const o=JSON.parse(window.localStorage.getItem(PREFS)||'{}');
+  if(!o||typeof o!=='object')return;
+  if(o.name)$('inp-name').value=String(o.name).slice(0,24);
+  if(o.rounds)$('sel-rounds').value=String(o.rounds);
+  if(o.level)$('sel-level').value=String(o.level);
+  ['tol','snd','anim','music','proj'].forEach(function(k){
+   if(typeof o[k]==='boolean')$('chk-'+k).checked=o[k];
+  });
+ }catch(err){}
+}
+function savePrefs(){
+ try{
+  window.localStorage.setItem(PREFS,JSON.stringify({
+   name:$('inp-name').value.trim(),rounds:$('sel-rounds').value,level:$('sel-level').value,
+   tol:$('chk-tol').checked,snd:$('chk-snd').checked,anim:$('chk-anim').checked,
+   music:$('chk-music').checked,proj:$('chk-proj').checked}));
+ }catch(err){}
+}
 function roundDots(){
  if(state.repesca)return '🔁 REPESCA <b class="rnum">'+state.repIdx+'/'+state.repQueue.length+'</b>';
  let h='';
@@ -1339,8 +1486,47 @@ function resetField(inp){
  inp.value='';inp.disabled=false;signBtnFor(inp).disabled=false;
 }
 function lockField(inp){inp.disabled=true;signBtnFor(inp).disabled=true;}
+let chosenMove=null;
+function floorAnswer(){
+ const r=state.current;
+ if(r&&r.ask==='target')return chosenMove;
+ return getAnswer(els.ansF);
+}
 function validate(){
- els.check.disabled=state.checked||getAnswer(els.ansB)===null||getAnswer(els.ansF)===null;
+ els.check.disabled=state.checked||getAnswer(els.ansB)===null||floorAnswer()===null;
+}
+/* La segunda pregunta se escribe (planta o desplazamiento) o se elige entre tres tubos */
+function setFloorMode(r){
+ const ch=$('floor-choice'),fd=$('floor-field');
+ chosenMove=null;
+ if(r.ask==='target'&&r.moveOptions){
+  hide(fd);show(ch);
+  ch.innerHTML=r.moveOptions.map(function(m,i){
+   const txt=(m>0)?('sube '+m+' plantas'):('baja '+Math.abs(m)+' plantas');
+   return '<button type="button" class="pipebtn" style="--wd:'+(i*0.9)+'s" data-m="'+m+'" aria-pressed="false" aria-label="Tubo que '+txt+'">'+SPRITES.pipe+'<span class="pv">'+fmt(m)+'</span></button>';
+  }).join('');
+  ch.querySelectorAll('.pipebtn').forEach(function(b){
+   b.addEventListener('click',function(){
+    if(state.checked||b.disabled)return;
+    ch.querySelectorAll('.pipebtn').forEach(function(x){x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
+    b.classList.add('sel');b.setAttribute('aria-pressed','true');
+    chosenMove=parseInt(b.dataset.m,10);
+    sndClick();validate();
+   });
+  });
+ }else{
+  show(fd);hide(ch);ch.innerHTML='';
+ }
+}
+function lockChoice(ans,r){
+ if(!r||r.ask!=='target')return;
+ $('floor-choice').querySelectorAll('.pipebtn').forEach(function(pb){
+  const v=parseInt(pb.dataset.m,10);
+  pb.disabled=true;
+  if(v===r.move)pb.classList.add('win');
+  else if(v===ans)pb.classList.add('pick');
+  else pb.classList.add('lose');
+ });
 }
 document.querySelectorAll('.signbtn').forEach(function(btn){
  setSign(btn,'+');
@@ -1397,6 +1583,8 @@ function startGame(reuse){
   state.reto=$('chk-reto').checked;
   state.music=$('chk-music').checked;
   state.proj=$('chk-proj').checked;
+  state.retoDate=$('inp-reto-date').value||todayStr();
+  savePrefs();
  }
  document.body.classList.toggle('projector',state.proj);
  if(state.reto){
@@ -1410,6 +1598,7 @@ function startGame(reuse){
  state.level=state.baseLevel;state.maxLevel=state.baseLevel;
  state.floor=0;state.current=null;state.checked=false;
  state.stats={battle:{ok:0,casi:0,mal:0},floor:{ok:0,casi:0,mal:0},bonus:{ok:0,casi:0,mal:0}};
+ state.errs={signo:0,cuenta:0};state.skip=false;showSkip(false);
  state.startTime=Date.now();
  state.needIntro=true;
  state.path=[0];state.failedRounds=[];state.loreSeen={};
@@ -1419,7 +1608,7 @@ function startGame(reuse){
  hide(els.streakChip);els.hudStreak.textContent='0';
  $('capshop').classList.add('hidden');
  hide(els.start);hide(els.end);show(els.game);
- if(state.reto)toast('🗓️ Reto del '+retoSeedStr()+': toda la clase juega las mismas operaciones');
+ if(state.reto)toast('🗓️ Reto del '+retoLabel(state.retoDate)+': toda la clase juega las mismas operaciones');
  if(state.music)startMusic();
  if(state.sound){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();}catch(err){}}
  window.scrollTo(0,0);
@@ -1438,8 +1627,9 @@ async function nextRound(){
   }
  }
  const variant=pickVariant(state.round,state.level);
- const r=genRound(state.level,state.floor,variant);
- if(variant==='boss')r.bossDef=bossFor(state.round);
+ const bd=(variant==='boss')?bossFor(state.round):null;
+ const r=genRound(state.level,state.floor,variant,bd?bd.id:null);
+ if(bd)r.bossDef=bd;
  playRound(r);
 }
 /* ---- repesca: repetir las rondas falladas, sin puntuar ---- */
@@ -1486,13 +1676,19 @@ async function playRound(r){
  setVS('VS');
  els.friends.innerHTML='';els.enemies.innerHTML='';
  resetField(els.ansB);resetField(els.ansF);
- if(variant==='averia'){
+ const ask=r.ask||'floor';
+ if(ask==='move'){
   $('lbl-floor').textContent='🔧 ¿Cuánto te ha movido el tubo?';
   $('hint-floor').textContent='Llegada − salida. Si has bajado, es negativo.';
+ }else if(ask==='target'){
+  $('lbl-floor').textContent='🎯 ¿Cuál de estos tubos te ha traído?';
+  $('hint-floor').textContent='Salida + tubo = llegada. ¡Ojo con el signo!';
  }else{
   $('lbl-floor').textContent='🗼 ¿A qué planta llegas?';
   $('hint-floor').textContent='Planta de salida + lo que sube o baja el tubo.';
  }
+ setFloorMode(r);
+ state.skip=false;showSkip(cine());
  validate();hud();
  clearCoin();
  const up=r.move>0;
@@ -1507,9 +1703,13 @@ async function playRound(r){
  if(variant==='boss'){
   showBanner('👑 ¡RONDA JEFE! 👑');
   sndRoarB(r.bossDef);
-  els.pipeMsg.innerHTML=bubble(['👑 ¡'+r.bossDef.name+' ha bloqueado la torre!','Estás en la planta '+nch(r.oldFloor)+' y este tubo te '+dirNow+'. ¡A por él!']);
- }else if(variant==='averia'){
+  els.pipeMsg.innerHTML=bubble(['👑 ¡'+r.bossDef.name+' ha bloqueado la torre!',(ask==='floor')
+   ?('Estás en la planta '+nch(r.oldFloor)+' y este tubo te '+dirNow+'. ¡A por él!')
+   :('Estás en la planta '+nch(r.oldFloor)+' y te ha estropeado el tubo. ¡Adentro igual!')]);
+ }else if(ask==='move'){
   els.pipeMsg.innerHTML=bubble(['🔧 ¡Tubo AVERIADO! Nadie sabe cuánto mueve.','Estás en la planta '+nch(r.oldFloor)+'. ¡Adentro, valiente!']);
+ }else if(ask==='target'){
+  els.pipeMsg.innerHTML=bubble(['🎯 ¡Tres tubos iguales y ninguno lleva letrero!','Estás en la planta '+nch(r.oldFloor)+'. Te metes en uno… ¿en cuál?']);
  }else{
   els.pipeMsg.innerHTML=bubble(['📍 Estás en la planta '+nch(r.oldFloor)+'.','Este tubo te '+dirNow+'. ¡Adentro!']);
  }
@@ -1550,17 +1750,17 @@ async function playRound(r){
   els.sp.classList.add('gone');
   els.sp.classList.remove('inPipe');
   els.warp.classList.remove('up','down','mix');
-  els.warp.classList.add('on',variant==='averia'?'mix':(up?'up':'down'));
+  els.warp.classList.add('on',(ask==='floor')?(up?'up':'down'):'mix');
   sndWhoosh();
   await wait(820);
   if(!alive(id))return;
   els.warp.classList.remove('on');
  }
  /* 3 · llegada: emerge del tubo (misteriosa salvo con tubo averiado) */
- if(variant==='averia'){
+ if(ask!=='floor'){
   await smoothScene(r.newFloor,false);
   if(!alive(id))return;
-  els.floorTag.innerHTML='Planta <b>'+fmt(r.newFloor)+'</b> · 🔧 tubo averiado';
+  els.floorTag.innerHTML='Planta <b>'+fmt(r.newFloor)+'</b> · '+((ask==='move')?'🔧 tubo averiado':'🎯 ¿qué tubo?');
   renderTower(r.newFloor);
  }else{
   await smoothScene(0,true);
@@ -1583,13 +1783,18 @@ async function playRound(r){
   sndChirp();
  }
  if(variant==='boss'){
-  els.pipeMsg.innerHTML=bubble(['👑 ¡'+r.bossDef.name+' te corta el paso! Vale por '+nch(sideTotal(r.e))+' enemigos.','Saliste de '+nch(r.oldFloor)+' y el tubo te '+dirPast+'.']);
+  els.pipeMsg.innerHTML=bubble(['👑 ¡'+r.bossDef.name+' te corta el paso! Vale por '+nch(sideTotal(r.e))+' enemigos.',(ask==='floor')
+   ?('Saliste de '+nch(r.oldFloor)+' y el tubo te '+dirPast+'.')
+   :('Saliste de '+nch(r.oldFloor)+' y has aparecido en '+nch(r.newFloor)+'.')]);
   sndRoarB(r.bossDef);
- }else if(variant==='averia'){
+ }else if(ask==='move'){
   els.pipeMsg.innerHTML=bubble(['🔧 Saliste de '+nch(r.oldFloor)+' y apareciste en '+nch(r.newFloor)+'.','¿Cuánto te ha movido este tubo loco? ¡Y gana la batalla mientras lo piensas!']);
+ }else if(ask==='target'){
+  els.pipeMsg.innerHTML=bubble(['🎯 Saliste de '+nch(r.oldFloor)+' y has aparecido en '+nch(r.newFloor)+'.','¿Por cuál de los tres tubos has venido? ¡Y gana la batalla mientras lo piensas!']);
  }else{
   els.pipeMsg.innerHTML=bubble(['🌫️ ¡Planta misteriosa… y batalla a la vista!','Saliste de '+nch(r.oldFloor)+' y el tubo te '+dirPast+'.']);
  }
+ showSkip(false);
  renderArmies(r);
  maybeBird();
  maybeCoin(r);
@@ -1787,19 +1992,27 @@ async function fightAnimation(r,id){
 async function onCheck(){
  if(state.checked)return;
  const r=state.current;
- const aB=getAnswer(els.ansB),aF=getAnswer(els.ansF);
+ const ask=r.ask||'floor';
+ const aB=getAnswer(els.ansB),aF=floorAnswer();
  if(aB===null||aF===null)return;
  const id=state.runId;
  state.checked=true;
  if(!state.repesca)state.playedRounds++;
  els.check.disabled=true;
  lockField(els.ansB);lockField(els.ansF);
+ lockChoice(aF,r);
  clearCoin();
+ state.skip=false;showSkip(cine());
  const sB=scoreAnswer(aB,r.battle,state.tol);
- const correctF=(r.variant==='averia')?r.move:r.newFloor;
- const sF=scoreAnswer(aF,correctF,state.tol);
- if(!state.repesca){state.stats.battle[sB.mark]++;state.stats.floor[sF.mark]++;}
- if(r.variant==='averia'){
+ const correctF=(ask==='floor')?r.newFloor:r.move;
+ /* al elegir tubo no hay "casi": o es ese tubo o no lo es */
+ const sF=scoreAnswer(aF,correctF,(ask==='target')?false:state.tol);
+ if(!state.repesca){
+  state.stats.battle[sB.mark]++;state.stats.floor[sF.mark]++;
+  if(sB.mark==='mal')state.errs[sB.kind]++;
+  if(sF.mark==='mal')state.errs[sF.kind]++;
+ }
+ if(ask!=='floor'){
   /* la planta ya era visible: rebobinamos la torre para repasar el viaje */
   renderTower(r.oldFloor);
   await wait(300);
@@ -1825,9 +2038,10 @@ async function onCheck(){
  /* 3 · la batalla se resuelve sola */
  await fightAnimation(r,id);
  if(!alive(id))return;
+ showSkip(false);
  /* 4 · puntos y corrección */
  if(!state.repesca)applyPoints(sB.pts+sF.pts);
- const lbl2=(r.variant==='averia')?'🔧 Tubo':'🗼 Planta';
+ const lbl2=(ask==='move')?'🔧 Tubo':((ask==='target')?'🎯 Tubo':'🗼 Planta');
  els.feedback.innerHTML='<h3>Resultado'+(state.repesca?' <span class="tiny">· repesca: no puntúa</span>':'')+'</h3>'+fbRow('⚔️ Batalla',opBattle(r),aB,sB)+fbRow(lbl2,opFloor(r),aF,sF);
  els.feedback.classList.remove('pop-in');void els.feedback.offsetWidth;els.feedback.classList.add('pop-in');
  show(els.feedback);
@@ -1857,7 +2071,7 @@ async function onCheck(){
    petReact(true);
    if(state.streak>=5)award('racha5');
    if(r.hasCombo)award('combo');
-   if(r.variant==='averia')award('fontanero');
+   if(ask==='move')award('fontanero');
    confetti(els.scene.getBoundingClientRect(),26);
    if(r.variant==='boss'&&r.battle>=0){
     award('boss');
@@ -1914,7 +2128,7 @@ async function onPipe(btn,b){
   pj.remove();
  }
  const s=scoreBonus(v,b.res);
- if(!state.repesca)state.stats.bonus[s.mark]++;
+ if(!state.repesca){state.stats.bonus[s.mark]++;if(s.mark==='mal')state.errs[s.kind]++;}
  els.bonusPipes.querySelectorAll('.pipebtn').forEach(function(p){
   const pv=parseInt(p.dataset.v,10);
   if(pv===b.res)p.classList.add('win');else p.classList.add('lose');
@@ -1993,6 +2207,20 @@ function endGame(){
  else medal=['💪','¡Sigue entrenando!'];
  $('end-medal').innerHTML='<span class="bigmedal">'+medal[0]+'</span><div class="medlabel">'+medal[1]+' <span style="font-weight:700;opacity:.7">('+Math.round(acc*100)+'% de aciertos)</span></div>';
  if(state.playedRounds>0&&state.playedRounds>=state.totalRounds&&(state.stats.battle.mal+state.stats.floor.mal+state.stats.bonus.mal)===0)award('perfecta');
+ const fs=state.errs.signo,fc=state.errs.cuenta,fall=fs+fc;
+ const casi=state.stats.battle.casi+state.stats.floor.casi+state.stats.bonus.casi;
+ const diag=$('end-diag');
+ let dt;
+ if(fall===0&&casi===0)dt='🔎 Ni un fallo: ni de signo ni de cuenta. ¡Impecable!';
+ else if(fall===0)dt='🔎 Sin fallos, solo '+casi+(casi===1?' respuesta por muy poco.':' respuestas por muy poco.');
+ else{
+  dt='🔎 Fallos: '+fall+' · de signo: '+fs+' · de cuenta: '+fc+'.';
+  if(casi>0)dt+=' Y '+casi+' por muy poco.';
+  dt+=(fs>fc)
+   ?' Repasa los signos: en la batalla manda el bando que tiene más, y al multiplicar, signos iguales dan + y distintos dan −.'
+   :' Repasa las cuentas: cuenta despacio cuántos quedan y cuántas plantas salta el tubo.';
+ }
+ diag.textContent=dt;show(diag);
  renderBadges();
  const ps=pathSVG();
  $('end-path').innerHTML=ps?'<h3>🗺️ Tu viaje por la torre</h3>'+ps:'';
@@ -2092,14 +2320,19 @@ $('inp-name').addEventListener('keydown',function(e){if(e.key==='Enter')startGam
 function syncReto(){
  const on=$('chk-reto').checked;
  ['sel-rounds','sel-level','chk-tol'].forEach(function(i){$(i).disabled=on;});
+ $('inp-reto-date').disabled=!on;
  if(on){
   $('sel-rounds').value='10';$('sel-level').value='1';$('chk-tol').checked=true;
-  $('reto-note').textContent='🗓️ Reto del '+retoSeedStr()+': 10 rondas, dificultad programada por ronda y las mismas operaciones para toda la clase. ¡A competir en igualdad!';
+  if(!$('inp-reto-date').value)$('inp-reto-date').value=todayStr();
+  const d=$('inp-reto-date').value;
+  $('reto-note').innerHTML='🗓️ Reto del '+retoLabel(d)+': 10 rondas, dificultad programada por ronda y las mismas operaciones para toda la clase. ¡A competir en igualdad!<br><span class="tiny">Profes: para mandarlo de deberes otro día, compartid el enlace del juego acabado en <b>#reto='+d+'</b></span>';
  }else{
   $('reto-note').textContent='';
  }
 }
 $('chk-reto').addEventListener('change',syncReto);
+$('inp-reto-date').addEventListener('change',syncReto);
+$('btn-skip').addEventListener('click',function(){state.skip=true;showSkip(false);});
 
 /* ---- decoración inicial ---- */
 $('deco1').innerHTML=SPRITES.friendA;
@@ -2111,6 +2344,13 @@ els.sp.innerHTML=heroSVG(false);
 els.spipe.innerHTML=SPRITES.pipe;
 els.pet.innerHTML=petSVG(false);
 $('warp-player').innerHTML=heroSVG(false);
+loadPrefs();
+(function(){
+ const m=/(?:^|[#&?])reto=(\d{4}-\d{2}-\d{2})/.exec(location.hash+'&'+location.search.slice(1));
+ $('inp-reto-date').value=m?m[1]:todayStr();
+ if(m)$('chk-reto').checked=true;
+ syncReto();
+})();
 window.__torre=state;
 
 }
