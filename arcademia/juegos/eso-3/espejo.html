@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0e24">
+<title>ESPEJO · Arcademia</title>
+<!--
+  Juego: ESPEJO — el bullet-hell de las isometrías
+  Curso: 3.º ESO (las primeras oleadas, solo con vectores y espejos
+  verticales u horizontales, sirven también en 2.º ESO)
+  Tema: Movimientos en el plano — traslaciones (vector), simetrías
+  axiales (ejes x = k, y = k, y = x + k, y = −x + k), giros (centro y
+  ángulo de 90°, 180° y 270°), mediatriz y punto medio como lugar
+  geométrico, composición de movimientos (dos espejos paralelos son una
+  traslación; dos perpendiculares, un giro de 180°).
+  Origen: diseñado para Arcademia (2026-09-01); autocontenido: canvas y
+  WebAudio nativos, sin dependencias externas ni webfonts.
+  Mecánica: la nave no dispara. Al pulsar Espejo, Giro o Vector el
+  tiempo se congela y el jugador dibuja sobre la cuadrícula un eje, un
+  centro de giro o un vector; al aplicarlo, la isometría se aplica DE
+  VERDAD a la posición y a la velocidad de todas las balas en pantalla,
+  que pasan a su bando. No hay corrector de respuestas: el daño emerge
+  de dónde caen las balas transformadas.
+  Estructura: el bloque de script «logica» es lógica pura sin DOM
+  (isometrías, oleadas y motor de juego) y se ejecuta tal cual en jsc
+  para el barrido de verificación; el bloque «interfaz» es la capa de
+  canvas, mandos, sonido y paneles.
+-->
+<style>
+:root{
+  --fondo:#0a0e24; --panel:#131843; --panel-2:#1b2160; --borde:#2a3380;
+  --tinta:#f4ecff; --tinta-2:#b9bde6;
+  --cian:#38e0f0; --ambar:#ffc229; --magenta:#f472b6; --verde:#6ee7b7;
+  --rojo:#ff5c5c; --violeta:#a78bfa;
+  --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; height:100%; overflow:hidden}
+body{
+  background:var(--fondo); color:var(--tinta); font-family:var(--ui);
+  user-select:none; -webkit-user-select:none; touch-action:manipulation;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 9%, rgba(255,255,255,.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 36%, rgba(255,255,255,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 74%, rgba(255,255,255,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 65% 88%, rgba(255,255,255,.45) 50%, transparent 51%);
+}
+#app{
+  display:flex; flex-direction:column; height:100dvh; width:100%;
+  max-width:620px; margin:0 auto; position:relative; z-index:1;
+}
+
+/* ---------------- barra superior ---------------- */
+#superior{
+  display:flex; align-items:center; gap:8px; padding:6px 8px; flex:0 0 auto;
+  border-bottom:1px solid var(--borde); background:linear-gradient(#141a4a,#0d1233);
+}
+#rotulo{display:flex; flex-direction:column; min-width:0; margin-right:auto}
+#rotulo .n{font:700 10px/1.1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--verde)}
+#rotulo .t{font:800 19px/1.15 var(--mono); letter-spacing:.22em; color:var(--ambar); text-shadow:0 0 8px rgba(255,194,41,.55)}
+#botonera{display:flex; gap:6px}
+.icobtn{
+  width:36px; height:36px; border-radius:10px; border:2px solid var(--borde);
+  background:#0f1440; color:var(--ambar); font:700 16px var(--mono);
+  display:grid; place-items:center; cursor:pointer; text-decoration:none;
+  box-shadow:0 2px 0 #050826; padding:0;
+}
+.icobtn[aria-pressed="false"]{opacity:.55}
+.icobtn:hover,.icobtn:focus-visible{background:var(--ambar); color:#141a4a}
+.icobtn:focus-visible,.herr:focus-visible,.btn:focus-visible,#planEntrada:focus-visible,.pie-marca a:focus-visible{outline:3px solid #ffffff; outline-offset:2px}
+
+/* ---------------- marcador ---------------- */
+#hud{
+  display:grid; grid-template-columns:repeat(6,1fr); gap:4px; padding:4px 6px;
+  background:#0d1233; border-bottom:1px solid var(--borde); flex:0 0 auto;
+}
+.celda{display:flex; flex-direction:column; align-items:center; min-width:0}
+.celda .eti{font:700 9px/1 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-2)}
+.celda .val{font:800 15px/1.25 var(--mono); color:var(--cian); white-space:nowrap}
+#hCargas{color:var(--ambar); letter-spacing:.1em}
+#hCasco{color:var(--rojo); letter-spacing:.05em}
+#hCristales{color:var(--verde)}
+#hVidas{color:var(--violeta)}
+.val.destello{animation:destello .5s ease-out}
+@keyframes destello{0%{filter:brightness(2.2)} 100%{filter:brightness(1)}}
+
+/* ---------------- escenario ---------------- */
+#escenario{
+  position:relative; flex:1 1 auto; min-height:0; display:flex;
+  align-items:center; justify-content:center; overflow:hidden; padding:4px;
+}
+canvas{display:block; background:#070a1e; border-radius:8px; touch-action:none}
+#banner{
+  position:absolute; left:10px; right:10px; top:10px; text-align:center;
+  pointer-events:none; opacity:0; transition:opacity .3s; z-index:2;
+}
+#banner.visible{opacity:1}
+#banner .grande{
+  font:800 21px/1.1 var(--mono); color:var(--ambar); letter-spacing:.08em;
+  text-shadow:0 0 10px rgba(255,194,41,.6), 0 2px 0 #050826;
+}
+#banner .pista{
+  margin-top:6px; font:600 13px/1.35 var(--ui); color:var(--tinta);
+  background:rgba(10,14,36,.9); border:1px solid var(--borde); border-radius:8px;
+  padding:6px 10px; display:inline-block; max-width:100%;
+}
+#banner .pista code{font:700 13px var(--mono); color:var(--cian)}
+@media (max-width:420px){ #banner .grande{font-size:18px} #banner .pista{font-size:12px; padding:4px 8px} #banner .pista code{font-size:12px} }
+
+/* ---------------- mandos ---------------- */
+#mandos{
+  position:relative; height:120px; flex:0 0 auto; display:flex; align-items:stretch;
+  gap:8px; padding:8px; border-top:1px solid var(--borde); background:#0d1233;
+}
+#joystick{flex:0 0 112px; display:flex; align-items:center; justify-content:center; touch-action:none}
+#joyBase{
+  width:96px; height:96px; border-radius:50%; border:2px solid var(--borde);
+  background:radial-gradient(circle at 50% 40%, #1b2160, #0f1440); position:relative;
+}
+#joyPomo{
+  position:absolute; left:50%; top:50%; width:44px; height:44px; margin:-22px 0 0 -22px;
+  border-radius:50%; background:radial-gradient(circle at 40% 35%, #6be6f4, #1b9fb3);
+  box-shadow:0 0 12px rgba(56,224,240,.5); pointer-events:none;
+}
+#herramientas{flex:1 1 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; min-width:0}
+.herr{
+  border:2px solid var(--borde); border-radius:12px; background:#0f1440; color:var(--ambar);
+  font:700 11px var(--mono); display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:2px; cursor:pointer; padding:4px 2px; text-transform:uppercase;
+  letter-spacing:.06em; min-width:0;
+}
+.herr .ico{font-size:24px; line-height:1}
+.herr kbd{font:600 10px var(--mono); color:var(--tinta-2); border:1px solid var(--borde); border-radius:4px; padding:0 4px}
+.herr:hover,.herr:focus-visible{background:var(--ambar); color:#141a4a}
+.herr:hover kbd,.herr:focus-visible kbd{color:#141a4a; border-color:#141a4a}
+.herr[aria-disabled="true"]{opacity:.35; cursor:not-allowed}
+.herr[aria-disabled="true"]:hover{background:#0f1440; color:var(--ambar)}
+.herr.sin-cargas{border-style:dashed}
+
+/* ---------------- panel de plan (tiempo congelado) ---------------- */
+#plan{
+  position:absolute; left:0; right:0; bottom:0; background:#0d1233; padding:6px 8px;
+  display:flex; flex-direction:column; gap:4px; z-index:3; border-top:1px solid var(--cian);
+  min-height:120px; max-height:min(60%, 280px); overflow-y:auto; box-shadow:0 -6px 18px rgba(0,0,0,.45);
+}
+#plan > *{flex:0 0 auto}
+#plan[hidden]{display:none}
+#planTitulo{font:700 11px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--verde); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pantalla{
+  font:800 17px/1.25 var(--mono); color:#f6f8ff; background:#0a0e24;
+  border:1px solid var(--borde); border-radius:8px; padding:4px 8px; min-height:30px;
+  overflow-x:auto; white-space:nowrap;
+}
+#planAngulos,#planBotones{display:flex; gap:6px}
+#planAngulos[hidden],#planPizarra[hidden]{display:none}
+.btn{
+  flex:1 1 auto; border:2px solid var(--borde); border-radius:10px; background:#0f1440;
+  color:var(--ambar); font:700 13px var(--mono); padding:6px 8px; cursor:pointer; min-height:36px;
+}
+.btn:hover,.btn:focus-visible{background:var(--ambar); color:#141a4a}
+.btn.secundario{color:var(--tinta-2)}
+.btn[aria-pressed="true"]{background:var(--verde); color:#0a0e24; border-color:var(--verde)}
+#planPizarra{display:flex; align-items:center; gap:6px}
+#planPizarra label{font:700 11px var(--mono); color:var(--tinta-2); white-space:nowrap}
+#planEntrada{
+  flex:1 1 auto; min-width:0; font:700 16px var(--mono); color:#f6f8ff; background:#0a0e24;
+  border:1px solid var(--cian); border-radius:8px; padding:4px 8px;
+}
+#planAyuda{font:600 11px/1.3 var(--ui); color:var(--tinta-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#planMedidor{height:5px; background:#0a0e24; border-radius:3px; overflow:hidden; margin-top:auto}
+#planMedidorBarra{height:100%; width:100%; background:linear-gradient(90deg, var(--cian), var(--violeta))}
+
+/* ---------------- región viva y paneles ---------------- */
+#aviso{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden}
+#velo{
+  position:absolute; inset:0; background:rgba(5,8,30,.88); display:flex; align-items:center;
+  justify-content:center; padding:12px; z-index:10; overflow:auto;
+}
+#velo[hidden]{display:none}
+.panel{
+  width:100%; max-width:460px; background:var(--panel); border:2px solid var(--ambar);
+  border-radius:16px; padding:16px; box-shadow:0 0 24px rgba(255,194,41,.25);
+  max-height:100%; overflow:auto;
+}
+.panel h2{margin:0 0 6px; font:800 24px/1.1 var(--mono); letter-spacing:.2em; color:var(--ambar); text-align:center}
+.panel h3{margin:12px 0 4px; font:700 12px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--verde)}
+.panel p{margin:6px 0; font:500 14px/1.45 var(--ui); color:var(--tinta)}
+.panel .sub{text-align:center; color:var(--tinta-2); font-size:13px}
+.panel .fila{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.panel .btn{flex:1 1 140px}
+.panel .btn.principal{background:var(--ambar); color:#141a4a; border-color:var(--ambar)}
+.panel .btn.principal:hover,.panel .btn.principal:focus-visible{background:#ffd76a; color:#141a4a}
+.panel ul{margin:4px 0; padding-left:18px; font:500 13px/1.45 var(--ui)}
+.panel li{margin:3px 0}
+.panel code{font:700 13px var(--mono); color:var(--cian)}
+.panel .recor{font:700 13px/1.4 var(--mono); color:var(--tinta-2); text-align:center; margin-top:8px}
+.panel .cifra{font:800 34px/1.1 var(--mono); color:var(--cian); text-align:center; margin:6px 0}
+.pie-marca{margin-top:12px; text-align:center; font:600 12px var(--mono); color:var(--tinta-2)}
+.pie-marca a{color:var(--verde)}
+.tabla{display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font:500 13px/1.4 var(--ui); margin:4px 0}
+.tabla b{font:700 13px var(--mono); color:var(--cian); white-space:nowrap}
+.aviso-sesion{font:600 12px/1.4 var(--ui); color:var(--ambar); text-align:center; margin-top:6px}
+
+@media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+@media (min-width:600px){ #mandos{height:130px} }
+@media (max-height:560px){ #mandos{height:104px} #joyBase{width:84px; height:84px} .herr .ico{font-size:20px} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="superior">
+    <a class="icobtn" id="bVolver" href="../../index.html" aria-label="Volver al salón Arcademia" title="Volver a Arcademia">←</a>
+    <div id="rotulo"><span class="n">Geometría · 3.º ESO</span><span class="t">ESPEJO</span></div>
+    <div id="botonera">
+      <button type="button" class="icobtn" id="bSonido" aria-pressed="true" aria-label="Sonido" title="Sonido (M)">🔊</button>
+      <button type="button" class="icobtn" id="bPausa" aria-label="Pausa" title="Pausa (P)">⏸</button>
+      <button type="button" class="icobtn" id="bAyuda" aria-label="Cómo se juega" title="Cómo se juega (?)">?</button>
+    </div>
+  </header>
+
+  <div id="hud" role="group" aria-label="Marcador">
+    <div class="celda"><span class="eti">Oleada</span><span class="val" id="hOleada">–</span></div>
+    <div class="celda"><span class="eti">Puntos</span><span class="val" id="hPuntos">0</span></div>
+    <div class="celda"><span class="eti">Cargas</span><span class="val" id="hCargas" role="img" aria-label="3 de 3 cargas">●●●</span></div>
+    <div class="celda"><span class="eti">Cristal</span><span class="val" id="hCristales">0/4</span></div>
+    <div class="celda"><span class="eti">Casco</span><span class="val" id="hCasco" role="img" aria-label="Casco 3 de 3">♥♥♥</span></div>
+    <div class="celda"><span class="eti">Vidas</span><span class="val" id="hVidas">3</span></div>
+  </div>
+
+  <div id="escenario">
+    <canvas id="lienzo" role="img" aria-label="Cuadrícula de coordenadas de −6 a 6 con la nave, las torretas enemigas y las balas"></canvas>
+    <div id="banner" aria-hidden="true"><div class="grande" id="bannerGrande"></div><div class="pista" id="bannerPista"></div></div>
+  </div>
+
+  <div id="mandos">
+    <div id="joystick" aria-hidden="true"><div id="joyBase"><div id="joyPomo"></div></div></div>
+    <div id="herramientas" role="group" aria-label="Transformaciones">
+      <button type="button" class="herr" id="bEspejo" data-herr="espejo" aria-keyshortcuts="E"><span class="ico" aria-hidden="true">⟋</span><span>Espejo</span><kbd aria-hidden="true">E</kbd></button>
+      <button type="button" class="herr" id="bGiro" data-herr="giro" aria-keyshortcuts="G"><span class="ico" aria-hidden="true">↻</span><span>Giro</span><kbd aria-hidden="true">G</kbd></button>
+      <button type="button" class="herr" id="bVector" data-herr="vector" aria-keyshortcuts="V"><span class="ico" aria-hidden="true">→</span><span>Vector</span><kbd aria-hidden="true">V</kbd></button>
+    </div>
+  </div>
+
+  <div id="plan" hidden role="group" aria-labelledby="planTitulo">
+    <div id="planTitulo"></div>
+    <div id="planEcuacion" class="pantalla"></div>
+    <div id="planAngulos" hidden role="group" aria-label="Ángulo del giro (antihorario)">
+      <button type="button" class="btn" data-ang="90">↺ 90°</button>
+      <button type="button" class="btn" data-ang="180">180°</button>
+      <button type="button" class="btn" data-ang="270">↻ 270°</button>
+    </div>
+    <div id="planPizarra" hidden>
+      <label for="planEntrada" id="planEtiqueta">Eje</label>
+      <input id="planEntrada" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div id="planAyuda"></div>
+    <div id="planBotones">
+      <button type="button" class="btn" id="bAplicar">Aplicar (Intro)</button>
+      <button type="button" class="btn secundario" id="bCancelar">Cancelar (Esc)</button>
+    </div>
+    <div id="planMedidor" aria-hidden="true"><div id="planMedidorBarra"></div></div>
+  </div>
+
+  <div id="aviso" role="status" aria-live="polite"></div>
+  <div id="velo"><div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitulo"></div></div>
+</div>
+
+<script id="logica">
+/* @@LOGICA-INICIO — lógica pura de ESPEJO, sin DOM (se ejecuta tal cual en jsc) */
+var ESPEJO = (function(){
+"use strict";
+var LIMITE = 6;             /* cuadrícula de −6 a 6 */
+var BORDE_NAVE = 5.8;       /* la nave no sale de ±5,8 */
+var VEL_NAVE = 3;           /* unidades por segundo */
+var R_NAVE = 0.2, R_BALA = 0.15;
+var CARGAS_MAX = 3, CRISTALES_POR_CARGA = 4;
+var CADENCIA_CRISTAL = 2.0, CRISTALES_MAX = 6;
+var CONGELACION = 8;        /* segundos de tiempo congelado por plan */
+var FUERA = 6.6;            /* las balas mueren más allá */
+
+/* ---------- utilidades numéricas y de formato (coma decimal) ---------- */
+function red05(v){ return Math.round(v*2)/2; }
+function casi(a,b,eps){ return Math.abs(a-b) <= (eps===undefined ? 1e-9 : eps); }
+function esEntero(v){ return casi(v, Math.round(v), 1e-9); }
+function esMedio(v){ return casi(v*2, Math.round(v*2), 1e-9); }
+function fmtNum(v, dec){
+  if(casi(v,0,1e-9)) v = 0;
+  var s;
+  if(dec===undefined){
+    if(esEntero(v)) s = String(Math.round(Math.abs(v)));
+    else { s = Math.abs(v).toFixed(2); if(/0$/.test(s)) s = s.slice(0,-1); s = s.replace('.',','); }
+  } else { s = Math.abs(v).toFixed(dec).replace('.',','); }
+  return (v<0 ? '−' : '') + s;
+}
+function fmtPar(p, dec){
+  var a = fmtNum(p[0],dec), b = fmtNum(p[1],dec);
+  var sep = (a.indexOf(',')>=0 || b.indexOf(',')>=0) ? '; ' : ', ';
+  return '(' + a + sep + b + ')';
+}
+function fmtPuntos(n){ var s=String(Math.round(n)); return s.replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function cosE(a){ a=((a%360)+360)%360; if(a===0) return 1; if(a===90) return 0; if(a===180) return -1; if(a===270) return 0; return Math.cos(a*Math.PI/180); }
+function sinE(a){ a=((a%360)+360)%360; if(a===0) return 0; if(a===90) return 1; if(a===180) return 0; if(a===270) return -1; return Math.sin(a*Math.PI/180); }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- Movimientos: isometrías del plano ----------
+   iso = {tipo:'espejo', fam:'x'|'y'|'d'|'a', k}   x = k · y = k · y = x + k · y = −x + k
+       | {tipo:'giro', centro:[a,b], angulo: 90|180|270}   (antihorario)
+       | {tipo:'traslacion', v:[a,b]}
+       | {tipo:'identidad'}                                              */
+var Movimientos = {
+  aplicarPunto: function(iso, p){
+    var x=p[0], y=p[1];
+    if(iso.tipo==='espejo'){
+      var k=iso.k;
+      if(iso.fam==='x') return [2*k-x, y];
+      if(iso.fam==='y') return [x, 2*k-y];
+      if(iso.fam==='d') return [y-k, x+k];
+      if(iso.fam==='a') return [k-y, k-x];
+    }
+    if(iso.tipo==='giro'){
+      var c=iso.centro, cs=cosE(iso.angulo), sn=sinE(iso.angulo), dx=x-c[0], dy=y-c[1];
+      return [c[0]+dx*cs-dy*sn, c[1]+dx*sn+dy*cs];
+    }
+    if(iso.tipo==='traslacion') return [x+iso.v[0], y+iso.v[1]];
+    return [x,y];
+  },
+  aplicarVector: function(iso, v){
+    if(iso.tipo==='espejo'){
+      if(iso.fam==='x') return [-v[0], v[1]];
+      if(iso.fam==='y') return [v[0], -v[1]];
+      if(iso.fam==='d') return [v[1], v[0]];
+      if(iso.fam==='a') return [-v[1], -v[0]];
+    }
+    if(iso.tipo==='giro'){ var cs=cosE(iso.angulo), sn=sinE(iso.angulo); return [v[0]*cs-v[1]*sn, v[0]*sn+v[1]*cs]; }
+    return [v[0], v[1]];
+  },
+  ecuacionEje: function(iso){
+    var k=iso.k, ks=fmtNum(Math.abs(k)), signo = k<0 ? ' − ' : ' + ';
+    if(iso.fam==='x') return 'x = ' + fmtNum(k);
+    if(iso.fam==='y') return 'y = ' + fmtNum(k);
+    if(iso.fam==='d') return casi(k,0) ? 'y = x' : 'y = x' + signo + ks;
+    if(iso.fam==='a') return casi(k,0) ? 'y = −x' : 'y = −x' + signo + ks;
+    return '';
+  },
+  describir: function(iso){
+    if(!iso) return '';
+    if(iso.tipo==='espejo') return 'Espejo ' + Movimientos.ecuacionEje(iso);
+    if(iso.tipo==='giro') return 'Giro de ' + iso.angulo + '° con centro ' + fmtPar(iso.centro);
+    if(iso.tipo==='traslacion') return 'Traslación de vector ' + fmtPar(iso.v);
+    if(iso.tipo==='identidad') return 'Identidad';
+    return '';
+  },
+  puntoMedio: function(A,B){ return [(A[0]+B[0])/2, (A[1]+B[1])/2]; },
+  /* mediatriz del segmento AB si cae en una de las cuatro familias; si no, null */
+  mediatriz: function(A,B){
+    var dx=B[0]-A[0], dy=B[1]-A[1], M=[(A[0]+B[0])/2,(A[1]+B[1])/2];
+    if(casi(dx,0)&&casi(dy,0)) return null;
+    if(casi(dy,0)) return {tipo:'espejo', fam:'x', k:M[0]};
+    if(casi(dx,0)) return {tipo:'espejo', fam:'y', k:M[1]};
+    if(casi(dx,-dy)) return {tipo:'espejo', fam:'d', k:M[1]-M[0]};
+    if(casi(dx,dy))  return {tipo:'espejo', fam:'a', k:M[0]+M[1]};
+    return null;
+  },
+  /* imán: de un arrastre p0→p1 al eje más cercano de las cuatro familias */
+  imantar: function(p0, p1){
+    var dx=p1[0]-p0[0], dy=p1[1]-p0[1];
+    if(Math.hypot(dx,dy) < 0.5) return null;
+    var ang=Math.atan2(dy,dx)*180/Math.PI; if(ang<0) ang+=180; if(ang>=180) ang-=180;
+    var mx=(p0[0]+p1[0])/2, my=(p0[1]+p1[1])/2, iso;
+    if(ang<22.5 || ang>=157.5) iso={tipo:'espejo', fam:'y', k:red05(my)};
+    else if(ang<67.5)          iso={tipo:'espejo', fam:'d', k:red05(my-mx)};
+    else if(ang<112.5)         iso={tipo:'espejo', fam:'x', k:red05(mx)};
+    else                       iso={tipo:'espejo', fam:'a', k:red05(mx+my)};
+    return Movimientos.acotar(iso);
+  },
+  acotar: function(iso){
+    if(iso.tipo==='espejo'){
+      var lim = (iso.fam==='x'||iso.fam==='y') ? LIMITE : 2*LIMITE-1;
+      iso.k = Math.max(-lim, Math.min(lim, iso.k));
+    } else if(iso.tipo==='giro'){
+      iso.centro=[Math.max(-LIMITE,Math.min(LIMITE,iso.centro[0])), Math.max(-LIMITE,Math.min(LIMITE,iso.centro[1]))];
+    }
+    return iso;
+  },
+  validar: function(iso){
+    if(!iso || !iso.tipo) return false;
+    if(iso.tipo==='espejo'){
+      if('xyda'.indexOf(iso.fam)<0 || iso.fam.length!==1) return false;
+      if(!isFinite(iso.k) || !esMedio(iso.k)) return false;
+      var lim=(iso.fam==='x'||iso.fam==='y') ? LIMITE : 2*LIMITE-1;
+      return Math.abs(iso.k) <= lim + 1e-9;
+    }
+    if(iso.tipo==='giro'){
+      if(!iso.centro || !isFinite(iso.centro[0]) || !isFinite(iso.centro[1])) return false;
+      if(!esMedio(iso.centro[0]) || !esMedio(iso.centro[1])) return false;
+      if(Math.abs(iso.centro[0])>LIMITE+1e-9 || Math.abs(iso.centro[1])>LIMITE+1e-9) return false;
+      return iso.angulo===90 || iso.angulo===180 || iso.angulo===270;
+    }
+    if(iso.tipo==='traslacion'){
+      return !!iso.v && isFinite(iso.v[0]) && isFinite(iso.v[1]) && esMedio(iso.v[0]) && esMedio(iso.v[1]);
+    }
+    return iso.tipo==='identidad';
+  },
+  /* forma afín p → L·p + t */
+  matrizDe: function(iso){
+    var e1=Movimientos.aplicarVector(iso,[1,0]), e2=Movimientos.aplicarVector(iso,[0,1]), t=Movimientos.aplicarPunto(iso,[0,0]);
+    return {L:[[e1[0],e2[0]],[e1[1],e2[1]]], t:t};
+  },
+  /* primero m1, después m2 */
+  componer: function(m1, m2){
+    var A=Movimientos.matrizDe(m1), B=Movimientos.matrizDe(m2), L1=A.L, L2=B.L;
+    var L=[[L2[0][0]*L1[0][0]+L2[0][1]*L1[1][0], L2[0][0]*L1[0][1]+L2[0][1]*L1[1][1]],
+           [L2[1][0]*L1[0][0]+L2[1][1]*L1[1][0], L2[1][0]*L1[0][1]+L2[1][1]*L1[1][1]]];
+    var t=[L2[0][0]*A.t[0]+L2[0][1]*A.t[1]+B.t[0], L2[1][0]*A.t[0]+L2[1][1]*A.t[1]+B.t[1]];
+    return {L:L, t:t};
+  },
+  aplicarAfin: function(af, p){ return [af.L[0][0]*p[0]+af.L[0][1]*p[1]+af.t[0], af.L[1][0]*p[0]+af.L[1][1]*p[1]+af.t[1]]; },
+  clasificar: function(af){
+    var a=af.L[0][0], b=af.L[0][1], c=af.L[1][0], d=af.L[1][1], t=af.t, e=1e-7;
+    var det=a*d-b*c;
+    if(casi(a,1,e)&&casi(d,1,e)&&casi(b,0,e)&&casi(c,0,e)){
+      if(casi(t[0],0,e)&&casi(t[1],0,e)) return {tipo:'identidad'};
+      return {tipo:'traslacion', v:[t[0],t[1]]};
+    }
+    if(casi(det,1,e)){
+      var ang=Math.round(Math.atan2(c,a)*180/Math.PI); ang=((ang%360)+360)%360;
+      var det2=(1-a)*(1-d)-b*c;                       /* (I − L)·C = t */
+      var C=[((1-d)*t[0]+b*t[1])/det2, (c*t[0]+(1-a)*t[1])/det2];
+      return {tipo:'giro', centro:[C[0],C[1]], angulo:ang};
+    }
+    if(casi(det,-1,e)) return {tipo:'simetria'};
+    return {tipo:'otro'};
+  },
+  /* imagen de una isometría por otra (conjugación g∘iso∘g⁻¹): sirve para el reto del día */
+  transformarIso: function(g, iso){
+    if(iso.tipo==='espejo'){
+      var P, Q;
+      if(iso.fam==='x'){ P=[iso.k,0]; Q=[iso.k,1]; }
+      else if(iso.fam==='y'){ P=[0,iso.k]; Q=[1,iso.k]; }
+      else if(iso.fam==='d'){ P=[0,iso.k]; Q=[1,1+iso.k]; }
+      else { P=[0,iso.k]; Q=[1,iso.k-1]; }
+      var P2=Movimientos.aplicarPunto(g,P), Q2=Movimientos.aplicarPunto(g,Q), dx=Q2[0]-P2[0], dy=Q2[1]-P2[1];
+      if(casi(dx,0)) return {tipo:'espejo', fam:'x', k:P2[0]};
+      if(casi(dy,0)) return {tipo:'espejo', fam:'y', k:P2[1]};
+      if(casi(dx,dy)) return {tipo:'espejo', fam:'d', k:P2[1]-P2[0]};
+      return {tipo:'espejo', fam:'a', k:P2[0]+P2[1]};
+    }
+    if(iso.tipo==='giro'){
+      var det=Movimientos.matrizDe(g); var s=det.L[0][0]*det.L[1][1]-det.L[0][1]*det.L[1][0];
+      var ang = s>0 ? iso.angulo : (360-iso.angulo)%360;
+      return {tipo:'giro', centro:Movimientos.aplicarPunto(g, iso.centro), angulo:ang};
+    }
+    if(iso.tipo==='traslacion') return {tipo:'traslacion', v:Movimientos.aplicarVector(g, iso.v)};
+    return iso;
+  },
+  /* lectura del modo Pizarra */
+  normalizarTexto: function(txt){ return String(txt||'').toLowerCase().replace(/−|–/g,'-').replace(/\s+/g,'').replace(/·/g,''); },
+  parsearEje: function(txt){
+    var s=Movimientos.normalizarTexto(txt).replace(/,/g,'.'), m, k;
+    var eje=null;
+    if((m=/^x=(-?\d+(?:\.\d+)?)$/.exec(s))){ eje={tipo:'espejo',fam:'x',k:parseFloat(m[1])}; }
+    else if((m=/^y=(-?\d+(?:\.\d+)?)$/.exec(s))){ eje={tipo:'espejo',fam:'y',k:parseFloat(m[1])}; }
+    else if((m=/^y=(-?)x((?:[+-]\d+(?:\.\d+)?)?)$/.exec(s))){ eje={tipo:'espejo', fam:(m[1]==='-'?'a':'d'), k:(m[2] ? parseFloat(m[2]) : 0)}; }
+    if(eje){
+      if(!esMedio(eje.k)) return {error:'k debe ir de 0,5 en 0,5'};
+      if(!Movimientos.validar(eje)) return {error:(eje.fam==='x'||eje.fam==='y') ? 'El eje debe cruzar la cuadrícula: k entre −6 y 6' : 'El eje debe cruzar la cuadrícula: k entre −11 y 11'};
+      return eje;
+    }
+    return {error:'Escribe x = k, y = k, y = x + k o y = −x + k'};
+  },
+  parsearPar: function(txt){
+    var s=Movimientos.normalizarTexto(txt).replace(/^\(|\)$/g,''), partes;
+    if(s.indexOf(';')>=0){ partes=s.split(';'); }
+    else if((s.match(/,/g)||[]).length===1 && !/\.\d/.test(s)){ partes=s.split(','); }
+    else if((s.match(/,/g)||[]).length===1){ partes=s.split(','); }
+    else if((s.match(/,/g)||[]).length===3){ var t=s.split(','); partes=[t[0]+'.'+t[1], t[2]+'.'+t[3]]; }
+    else return {error:'Escribe el par como (a, b) o (a; b)'};
+    if(partes.length!==2) return {error:'Escribe el par como (a, b) o (a; b)'};
+    var a=parseFloat(partes[0].replace(',','.')), b=parseFloat(partes[1].replace(',','.'));
+    if(!isFinite(a)||!isFinite(b)) return {error:'Escribe el par como (a, b) o (a; b)'};
+    if(!esMedio(a)||!esMedio(b)) return {error:'Las coordenadas van de 0,5 en 0,5'};
+    return [a,b];
+  }
+};
+
+/* ---------- oleadas ---------- */
+var OLEADAS = [
+  { nombre:'Primer contacto', herramientas:['vector','espejo'], nave:[0,-4],
+    pista:'Ponte justo debajo de la torreta, en <code>(0, −4)</code>, y dibuja el espejo <code>y = 0</code>: es la mediatriz entre los dos y sus disparos volverán contra ella.',
+    enemigos:[ {tipo:'gota', pos:[0,4], hp:6, cad:1.0, vel:2.0} ],
+    solucion:{ nave:[0,-4], iso:{tipo:'espejo',fam:'y',k:0}, objetivo:0 } },
+  { nombre:'El muro', herramientas:['vector','espejo'], nave:[0,-4],
+    pista:'Un espejo horizontal (<code>y = k</code>) invierte la caída de las balas. Uno vertical solo las cambia de lado.',
+    enemigos:[ {tipo:'muro',pos:[-3,5],hp:5,cad:1.5,vel:1.6,dir:[0,-1],ancho:3}, {tipo:'muro',pos:[-1,5],hp:5,cad:1.5,vel:1.6,dir:[0,-1],ancho:3},
+               {tipo:'muro',pos:[1,5],hp:5,cad:1.5,vel:1.6,dir:[0,-1],ancho:3}, {tipo:'muro',pos:[3,5],hp:5,cad:1.5,vel:1.6,dir:[0,-1],ancho:3} ],
+    solucion:{ nave:[0,-4], iso:{tipo:'espejo',fam:'y',k:1}, objetivo:0 } },
+  { nombre:'Fuego cruzado', herramientas:['vector','espejo'], nave:[0,-3],
+    pista:'Colócate entre las dos torretas, en <code>(0, 2)</code>. Tu mediatriz con la de la izquierda es <code>x = −2</code>: todo lo que te apunte irá hacia ella.',
+    enemigos:[ {tipo:'gota',pos:[-4,2],hp:7,cad:1.1,vel:2.2}, {tipo:'gota',pos:[4,2],hp:7,cad:1.1,vel:2.2} ],
+    solucion:{ nave:[0,2], iso:{tipo:'espejo',fam:'x',k:-2}, objetivo:0 } },
+  { nombre:'Rotonda', herramientas:['vector','espejo','giro'], nave:[0,-4],
+    pista:'Nueva herramienta: el giro. Un giro de 90° con centro en el origen convierte la lluvia vertical en un barrido hacia la derecha, contra la torreta de <code>(5, 0)</code>; con 270°, hacia la de <code>(−5, 0)</code>.',
+    enemigos:[ {tipo:'muro',pos:[-2,5.5],hp:5,cad:1.2,vel:1.8,dir:[0,-1],ancho:3}, {tipo:'muro',pos:[0,5.5],hp:5,cad:1.2,vel:1.8,dir:[0,-1],ancho:3},
+               {tipo:'muro',pos:[2,5.5],hp:5,cad:1.2,vel:1.8,dir:[0,-1],ancho:3},
+               {tipo:'gota',pos:[-5,0],hp:8,cad:1.5,vel:2.0}, {tipo:'gota',pos:[5,0],hp:8,cad:1.5,vel:2.0} ],
+    solucion:{ nave:[0,-4], iso:{tipo:'giro',centro:[0,0],angulo:90}, objetivo:4 } },
+  { nombre:'Punto medio', herramientas:['vector','espejo','giro'], nave:[2,-3],
+    pista:'Desde <code>(2, −3)</code>, el punto medio con la torreta de <code>(−3, 2)</code> es <code>(−0,5; −0,5)</code>. Un giro de 180° ahí intercambia vuestros papeles.',
+    enemigos:[ {tipo:'gota',pos:[-3,2],hp:10,cad:1.0,vel:2.5}, {tipo:'gota',pos:[3,3],hp:10,cad:1.2,vel:2.3},
+               {tipo:'abanico',pos:[0,5],hp:8,cad:2.0,vel:2.2,n:3,apertura:12} ],
+    solucion:{ nave:[2,-3], iso:{tipo:'giro',centro:[-0.5,-0.5],angulo:180}, objetivo:0 } },
+  { nombre:'La flor', herramientas:['vector','espejo','giro'], nave:[0,-3],
+    pista:'La flor es simétrica: girarla sobre su propio centro no cambia nada. Desde <code>(0, −3)</code>, el espejo <code>y = 0</code> te lleva sobre la flor y manda hacia ella todo lo que te apuntaba.',
+    enemigos:[ {tipo:'flor',pos:[0,3],hp:14,cad:1.5,vel:1.5,n:10}, {tipo:'gota',pos:[-4,-2],hp:8,cad:1.3,vel:2.4}, {tipo:'gota',pos:[4,-2],hp:8,cad:1.3,vel:2.4} ],
+    solucion:{ nave:[0,-3], iso:{tipo:'espejo',fam:'y',k:0}, objetivo:0 } },
+  { nombre:'Diagonales', herramientas:['vector','espejo','giro'], nave:[2,-3],
+    pista:'Desde <code>(2, −3)</code>, la mediatriz con la torreta de <code>(−3, 2)</code> es <code>y = x</code>, y con la de <code>(5, 0)</code> es <code>y = −x + 2</code>.',
+    enemigos:[ {tipo:'gota',pos:[-3,2],hp:10,cad:1.0,vel:2.6}, {tipo:'gota',pos:[5,0],hp:10,cad:1.1,vel:2.6},
+               {tipo:'espiral',pos:[0,5],hp:8,cad:0.45,vel:1.7,paso:37} ],
+    solucion:{ nave:[2,-3], iso:{tipo:'espejo',fam:'d',k:0}, objetivo:0 } },
+  { nombre:'El Mosaico', jefe:true, herramientas:['vector','espejo','giro'], nave:[0,-3],
+    pista:'El Mosaico salta con giros de 90° alrededor del origen. Desde <code>(0, −3)</code> tu mediatriz con él es <code>y = 0</code>, <code>y = x</code> o <code>y = −x</code> según dónde esté; si salta sobre tu sitio, pásate a <code>(0, 3)</code>. Devuélvele sus abanicos.',
+    enemigos:[ {tipo:'jefe',pos:[0,3],hp:40,r:0.7}, {tipo:'gota',pos:[-4,-2],hp:8,cad:1.2,vel:2.2}, {tipo:'gota',pos:[4,-2],hp:8,cad:1.2,vel:2.2} ],
+    solucion:{ nave:[0,-3], iso:{tipo:'espejo',fam:'d',k:0}, objetivo:0, espera:17 } }
+];
+var DIEDRICO = [ {tipo:'identidad'}, {tipo:'espejo',fam:'x',k:0}, {tipo:'espejo',fam:'y',k:0}, {tipo:'espejo',fam:'d',k:0},
+                 {tipo:'espejo',fam:'a',k:0}, {tipo:'giro',centro:[0,0],angulo:90}, {tipo:'giro',centro:[0,0],angulo:180}, {tipo:'giro',centro:[0,0],angulo:270} ];
+function copiar(o){ return JSON.parse(JSON.stringify(o)); }
+/* modo 'campana': las oleadas tal cual; modo 'reto': cada oleada pasa por una simetría del cuadrado elegida por la semilla */
+function construirOleadas(modo, semilla){
+  var lista=copiar(OLEADAS), rng=mulberry32((semilla|0)||1);
+  if(modo!=='reto') return lista;
+  for(var i=0;i<lista.length;i++){
+    var g=DIEDRICO[Math.floor(rng()*DIEDRICO.length)], o=lista[i];
+    o.g=g; o.pista='';
+    o.nave=Movimientos.aplicarPunto(g,o.nave);
+    for(var j=0;j<o.enemigos.length;j++){ var e=o.enemigos[j]; e.pos=Movimientos.aplicarPunto(g,e.pos); if(e.dir) e.dir=Movimientos.aplicarVector(g,e.dir); }
+    for(j=0;j<o.enemigos.length;j++){ if(o.enemigos[j].tipo==='jefe') o.enemigos[j].salto=Movimientos.transformarIso(g,{tipo:'giro',centro:[0,0],angulo:90}); }
+    if(o.solucion){ o.solucion={ nave:Movimientos.aplicarPunto(g,o.solucion.nave), iso:Movimientos.transformarIso(g,o.solucion.iso), objetivo:o.solucion.objetivo, espera:o.solucion.espera }; }
+  }
+  return lista;
+}
+
+/* ---------- motor de juego (estado puro, emite eventos) ---------- */
+function crearMotor(){
+  var MAX=900;
+  var M={
+    balas:{ x:new Float32Array(MAX), y:new Float32Array(MAX), vx:new Float32Array(MAX), vy:new Float32Array(MAX), bando:new Uint8Array(MAX), gen:new Uint16Array(MAX), n:0 },
+    enemigos:[], cristales:[], eventos:[],
+    nave:{x:0,y:-4,inv:0}, mando:{dx:0,dy:0},
+    oleadas:[], oleada:0, cargas:CARGAS_MAX, cristalesN:0, casco:3, vidas:3, puntos:0,
+    fase:'menu', tiempo:0, tOleada:0, golpesOleada:0, tTransicion:0, plan:null,
+    gen:0, gens:{}, ultimaIso:null, ultimaIsoT:-99,
+    modo:'campana', pizarra:false, mult:1, rng:mulberry32(1), semilla:0, pistas:true,
+    cronoCristal:0, dios:false,
+    estad:{transformaciones:0, impactos:0, combos:0, devueltas:0, golpes:0}
+  };
+  function anadirBala(x,y,vx,vy){ var b=M.balas, i=b.n; if(i>=MAX) return; b.x[i]=x; b.y[i]=y; b.vx[i]=vx; b.vy[i]=vy; b.bando[i]=0; b.gen[i]=0; b.n=i+1; }
+  function quitarBala(i){ var b=M.balas, j=b.n-1; b.x[i]=b.x[j]; b.y[i]=b.y[j]; b.vx[i]=b.vx[j]; b.vy[i]=b.vy[j]; b.bando[i]=b.bando[j]; b.gen[i]=b.gen[j]; b.n=j; }
+  function crearEnemigo(d){
+    return { tipo:d.tipo, x:d.pos[0], y:d.pos[1], hp:d.hp, hpMax:d.hp, r:d.r||(d.tipo==='jefe'?0.7:0.45),
+             cad:d.cad||1, vel:d.vel||2, dir:d.dir?[d.dir[0],d.dir[1]]:[0,-1], ancho:d.ancho||1, n:d.n||8,
+             apertura:d.apertura||30, paso:d.paso||30, fase:0, crono:0, vivo:true, patron:0, tPatron:0, tSalto:0,
+             salto:d.salto||{tipo:'giro',centro:[0,0],angulo:90} };
+  }
+  function angular(e, grados, vel){ var a=grados*Math.PI/180, cx=Math.cos(a), sy=Math.sin(a); anadirBala(e.x+cx*(e.r+0.25), e.y+sy*(e.r+0.25), cx*vel, sy*vel); }
+  function apuntada(e, vel, desvio){ var a=Math.atan2(M.nave.y-e.y, M.nave.x-e.x)*180/Math.PI + desvio; angular(e, a, vel); }
+  function radial(e, n, vel, fase){ for(var i=0;i<n;i++) angular(e, fase+i*360/n, vel); }
+  function recta(e){
+    var d=e.dir, L=Math.hypot(d[0],d[1])||1, ux=d[0]/L, uy=d[1]/L, px=-uy, py=ux;
+    for(var i=0;i<e.ancho;i++){ var off=(i-(e.ancho-1)/2)*0.5; anadirBala(e.x+ux*(e.r+0.25)+px*off, e.y+uy*(e.r+0.25)+py*off, ux*e.vel, uy*e.vel); }
+  }
+  var CAD_JEFE=[1.4,0.18,0.8];
+  function disparar(e){
+    switch(e.tipo){
+      case 'gota': apuntada(e, e.vel, 0); break;
+      case 'abanico': for(var i=0;i<e.n;i++) apuntada(e, e.vel, (i-(e.n-1)/2)*(e.apertura/Math.max(1,e.n-1))); break;
+      case 'muro': recta(e); break;
+      case 'flor': radial(e, e.n, e.vel, e.fase); e.fase+=180/e.n; break;
+      case 'espiral': angular(e, e.fase, e.vel); angular(e, e.fase+180, e.vel); e.fase+=e.paso; break;
+      case 'jefe':
+        if(e.patron===0){ radial(e, 12, 1.6, e.fase); e.fase+=15; }
+        else if(e.patron===1){ for(var j=0;j<3;j++) angular(e, e.fase+j*120, 1.9); e.fase+=23; }
+        else { for(var k=0;k<5;k++) apuntada(e, 2.2, (k-2)*6); }
+        break;
+    }
+  }
+  function jefePaso(e, dt){
+    e.tPatron+=dt; e.tSalto+=dt;
+    if(e.tPatron>=8){ e.tPatron=0; e.patron=(e.patron+1)%3; e.cad=CAD_JEFE[e.patron]; e.crono=Math.min(e.crono,0.4); M.eventos.push({tipo:'jefePatron', patron:e.patron}); }
+    if(e.tSalto>=12){
+      e.tSalto=0; var g=e.salto, p=Movimientos.aplicarPunto(g,[e.x,e.y]);
+      e.x=Math.round(p[0]*2)/2; e.y=Math.round(p[1]*2)/2;
+      M.eventos.push({tipo:'jefeSalta', iso:g, pos:[e.x,e.y]});
+    }
+  }
+  function generarCristal(){
+    for(var intento=0;intento<12;intento++){
+      var x=red05((M.rng()*2-1)*5), y=red05((M.rng()*2-1)*5), libre=true;
+      for(var k=0;k<M.enemigos.length;k++){ var e=M.enemigos[k]; if(e.vivo && Math.hypot(e.x-x,e.y-y)<1.3){ libre=false; break; } }
+      if(libre && Math.hypot(M.nave.x-x,M.nave.y-y)<1.0) libre=false;
+      if(libre){ M.cristales.push({x:x,y:y,vida:9}); return true; }
+    }
+    return false;
+  }
+  function recogerCristal(){
+    M.cristalesN++; M.eventos.push({tipo:'cristal', n:M.cristalesN});
+    if(M.cristalesN>=CRISTALES_POR_CARGA){
+      M.cristalesN=0;
+      if(M.cargas<CARGAS_MAX){ M.cargas++; M.eventos.push({tipo:'carga', cargas:M.cargas}); }
+      else { M.puntos+=50*M.mult; M.eventos.push({tipo:'cargaLlena', puntos:50*M.mult}); }
+    }
+  }
+  function danoEnemigo(en, gen, x, y){
+    en.hp-=1; M.puntos+=5*M.mult; M.estad.impactos++;
+    var G=M.gens[gen]; if(G) G.impactos++;
+    M.eventos.push({tipo:'impacto', x:x, y:y});
+    if(en.hp<=0){
+      en.vivo=false; var pts=10*en.hpMax*M.mult; M.puntos+=pts;
+      M.eventos.push({tipo:'enemigoDestruido', x:en.x, y:en.y, clase:en.tipo, puntos:pts});
+      M.cristales.push({x:red05(en.x-0.5),y:red05(en.y),vida:9}); M.cristales.push({x:red05(en.x+0.5),y:red05(en.y),vida:9});
+      if(M.cargas<CARGAS_MAX){ M.cargas++; M.eventos.push({tipo:'carga', cargas:M.cargas, motivo:'torreta'}); } else { M.puntos+=50*M.mult; }
+    }
+  }
+  /* devuelve true si la oleada se ha reiniciado o la partida ha terminado */
+  function golpeNave(){
+    if(M.dios) return false;
+    M.casco-=1; M.golpesOleada+=1; M.estad.golpes++; M.nave.inv=1.6;
+    M.eventos.push({tipo:'golpe', casco:M.casco});
+    if(M.casco>0) return false;
+    M.vidas-=1;
+    if(M.vidas>0){ M.eventos.push({tipo:'vidaPerdida', vidas:M.vidas}); M.cargarOleada(M.oleada, true); }
+    else { M.fase='fin'; M.plan=null; M.eventos.push({tipo:'fin', puntos:M.puntos, oleada:M.oleada}); }
+    return true;
+  }
+  function oleadaSuperada(){
+    var bonus=(100*M.cargas + (M.golpesOleada===0?200:0))*M.mult;
+    M.puntos+=bonus; M.fase='transicion'; M.plan=null; M.tTransicion=2.4;
+    M.eventos.push({tipo:'oleadaSuperada', idx:M.oleada, bonus:bonus, cargas:M.cargas, golpes:M.golpesOleada});
+  }
+  function siguienteOleada(){
+    if(M.oleada+1<M.oleadas.length) M.cargarOleada(M.oleada+1,false);
+    else { M.fase='victoria'; M.eventos.push({tipo:'victoria', puntos:M.puntos, estad:M.estad}); }
+  }
+  M.nuevaPartida=function(modo, pizarra, semilla){
+    M.modo=modo||'campana'; M.pizarra=!!pizarra; M.mult=M.pizarra?2:1; M.semilla=semilla|0; M.rng=mulberry32(M.semilla||1);
+    M.pistas=(M.modo!=='reto'); M.oleadas=construirOleadas(M.modo, M.semilla);
+    M.vidas=3; M.puntos=0; M.gen=0; M.gens={}; M.tiempo=0; M.eventos.length=0;
+    M.estad={transformaciones:0, impactos:0, combos:0, devueltas:0, golpes:0};
+    M.cargarOleada(0,false);
+  };
+  M.cargarOleada=function(i, reinicio){
+    var def=M.oleadas[i]; M.oleada=i;
+    M.enemigos=def.enemigos.map(function(d,idx){ var e=crearEnemigo(d); if(e.tipo==='jefe') e.cad=CAD_JEFE[0]; e.crono=e.cad*0.7+idx*0.2; return e; });
+    M.balas.n=0; M.cristales=[]; M.cargas=CARGAS_MAX; M.cristalesN=0; M.casco=3; M.golpesOleada=0; M.tOleada=0; M.cronoCristal=0;
+    M.nave.x=def.nave[0]; M.nave.y=def.nave[1]; M.nave.inv=1.0; M.mando.dx=0; M.mando.dy=0;
+    M.ultimaIso=null; M.ultimaIsoT=-99; M.plan=null; M.fase='jugando';
+    for(var gk in M.gens) M.gens[gk].balanceado=true;
+    M.eventos.push({tipo:'oleada', idx:i, def:def, reinicio:!!reinicio});
+  };
+  M.iniciarPlan=function(herr){
+    if(M.fase!=='jugando') return {ok:false, motivo:'fase'};
+    var def=M.oleadas[M.oleada];
+    if(def.herramientas.indexOf(herr)<0){ M.eventos.push({tipo:'bloqueada', herr:herr}); return {ok:false, motivo:'bloqueada'}; }
+    if(M.cargas<=0){ M.eventos.push({tipo:'sinCargas'}); return {ok:false, motivo:'cargas'}; }
+    M.fase='plan'; M.plan={herr:herr, congelacion:CONGELACION}; M.mando.dx=0; M.mando.dy=0;
+    M.eventos.push({tipo:'plan', herr:herr}); return {ok:true};
+  };
+  M.cancelarPlan=function(){ if(M.fase!=='plan') return; M.fase='jugando'; M.plan=null; M.eventos.push({tipo:'planCancelado'}); };
+  M.aplicar=function(iso){
+    if(M.fase!=='plan') return {ok:false, motivo:'fase'};
+    if(!Movimientos.validar(iso)) return {ok:false, motivo:'invalida'};
+    if(M.plan.herr==='vector' && iso.tipo!=='traslacion') return {ok:false, motivo:'herramienta'};
+    if(M.plan.herr==='espejo' && iso.tipo!=='espejo') return {ok:false, motivo:'herramienta'};
+    if(M.plan.herr==='giro' && iso.tipo!=='giro') return {ok:false, motivo:'herramienta'};
+    if(iso.tipo==='traslacion'){
+      if(casi(iso.v[0],0)&&casi(iso.v[1],0)) return {ok:false, motivo:'nulo'};
+      var nx=M.nave.x+iso.v[0], ny=M.nave.y+iso.v[1];
+      if(Math.abs(nx)>BORDE_NAVE+1e-9||Math.abs(ny)>BORDE_NAVE+1e-9) return {ok:false, motivo:'fuera'};
+      var origen=[M.nave.x,M.nave.y];
+      M.nave.x=nx; M.nave.y=ny; M.nave.inv=Math.max(M.nave.inv,0.6);
+      M.cargas--; M.fase='jugando'; M.plan=null; M.estad.transformaciones++;
+      M.eventos.push({tipo:'aplicado', iso:iso, transformadas:0, origen:origen, destino:[nx,ny]});
+      return {ok:true, transformadas:0};
+    }
+    var b=M.balas, n=0; M.gen++; var g=M.gen;
+    for(var i=0;i<b.n;i++){
+      var p=Movimientos.aplicarPunto(iso,[b.x[i],b.y[i]]), v=Movimientos.aplicarVector(iso,[b.vx[i],b.vy[i]]);
+      b.x[i]=p[0]; b.y[i]=p[1]; b.vx[i]=v[0]; b.vy[i]=v[1];
+      if(b.bando[i]===0) n++;
+      b.bando[i]=1; b.gen[i]=g;
+    }
+    M.gens[g]={iso:iso, transformadas:n, balas:b.n, impactos:0, t:M.tiempo, balanceado:false};
+    M.estad.devueltas+=n; M.estad.transformaciones++;
+    var combo=null;
+    if(M.ultimaIso && M.tiempo-M.ultimaIsoT<15){
+      var cl=Movimientos.clasificar(Movimientos.componer(M.ultimaIso, iso));
+      if(cl.tipo==='traslacion'){ combo=cl; combo.puntos=150*M.mult; M.puntos+=combo.puntos; M.estad.combos++; }
+      else if(cl.tipo==='giro'){ combo=cl; combo.puntos=100*M.mult; M.puntos+=combo.puntos; M.estad.combos++; }
+    }
+    M.ultimaIso=iso; M.ultimaIsoT=M.tiempo;
+    M.cargas--; M.fase='jugando'; M.plan=null;
+    M.eventos.push({tipo:'aplicado', iso:iso, transformadas:n, combo:combo, gen:g});
+    return {ok:true, transformadas:n, combo:combo, gen:g};
+  };
+  M.paso=function(dt){
+    if(M.fase==='transicion'){ M.tTransicion-=dt; if(M.tTransicion<=0) siguienteOleada(); return; }
+    if(M.fase==='plan'){ M.plan.congelacion-=dt; if(M.plan.congelacion>0) return; if(!M.plan.caducado){ M.plan.caducado=true; M.eventos.push({tipo:'planCaducado'}); } dt*=0.25; }
+    else if(M.fase!=='jugando') return;
+    M.tiempo+=dt; M.tOleada+=dt;
+    var nv=M.nave;
+    if(M.fase==='jugando'){
+      var L=Math.hypot(M.mando.dx,M.mando.dy);
+      if(L>1e-6){ var f=Math.min(1,L); nv.x+=M.mando.dx/L*f*VEL_NAVE*dt; nv.y+=M.mando.dy/L*f*VEL_NAVE*dt;
+        nv.x=Math.max(-BORDE_NAVE,Math.min(BORDE_NAVE,nv.x)); nv.y=Math.max(-BORDE_NAVE,Math.min(BORDE_NAVE,nv.y)); }
+    }
+    if(nv.inv>0) nv.inv-=dt;
+    var k, e;
+    for(k=0;k<M.enemigos.length;k++){ e=M.enemigos[k]; if(!e.vivo) continue; if(e.tipo==='jefe') jefePaso(e,dt); e.crono-=dt; if(e.crono<=0){ e.crono+=e.cad; disparar(e); } }
+    var b=M.balas;
+    for(var i=b.n-1;i>=0;i--){
+      b.x[i]+=b.vx[i]*dt; b.y[i]+=b.vy[i]*dt;
+      var x=b.x[i], y=b.y[i];
+      if(x<-FUERA||x>FUERA||y<-FUERA||y>FUERA){ quitarBala(i); continue; }
+      if(b.bando[i]===0){
+        if(nv.inv<=0 && !M.dios){ var ddx=x-nv.x, ddy=y-nv.y, rr=R_NAVE+R_BALA; if(ddx*ddx+ddy*ddy<rr*rr){ quitarBala(i); if(golpeNave()) return; continue; } }
+      } else {
+        var tocado=false;
+        for(k=0;k<M.enemigos.length;k++){ e=M.enemigos[k]; if(!e.vivo) continue; var ex=x-e.x, ey=y-e.y, r2=e.r+R_BALA; if(ex*ex+ey*ey<r2*r2){ tocado=true; danoEnemigo(e, b.gen[i], x, y); break; } }
+        if(tocado){ quitarBala(i); continue; }
+      }
+    }
+    M.cronoCristal+=dt;
+    if(M.cronoCristal>=(M.cargas<=0 ? CADENCIA_CRISTAL*0.6 : CADENCIA_CRISTAL)){ M.cronoCristal=0; if(M.cristales.length<CRISTALES_MAX) generarCristal(); }
+    for(var c=M.cristales.length-1;c>=0;c--){
+      var cr=M.cristales[c]; cr.vida-=dt; var cx=cr.x-nv.x, cy=cr.y-nv.y;
+      if(cx*cx+cy*cy<0.55*0.55){ M.cristales.splice(c,1); recogerCristal(); }
+      else if(cr.vida<=0) M.cristales.splice(c,1);
+    }
+    var vivasPorGen={}; for(i=0;i<b.n;i++) if(b.bando[i]===1) vivasPorGen[b.gen[i]]=true;
+    for(var gk in M.gens){ var G=M.gens[gk]; if(!G.balanceado && (M.tiempo-G.t>=8 || (M.tiempo-G.t>=0.5 && !vivasPorGen[gk]))){ G.balanceado=true; M.eventos.push({tipo:'balance', gen:+gk, iso:G.iso, transformadas:G.transformadas, balas:G.balas, impactos:G.impactos}); } }
+    var quedan=0; for(k=0;k<M.enemigos.length;k++) if(M.enemigos[k].vivo) quedan++;
+    if(quedan===0 && M.fase!=='fin') oleadaSuperada();
+  };
+  M.herramientasActivas=function(){ var def=M.oleadas[M.oleada]; return def ? def.herramientas : []; };
+  return M;
+}
+
+/* simulación de referencia para el barrido: nave quieta en la posición de la solución,
+   la oleada dispara tEspera segundos, se aplica la isometría y se sigue tSigue segundos */
+function simularSolucion(idx, modo, semilla, tEspera, tSigue, isoAlt){
+  var M=crearMotor(); M.nuevaPartida(modo, false, semilla||1); M.cargarOleada(idx,false); M.dios=true;
+  var def=M.oleadas[idx], sol=def.solucion, iso=isoAlt||sol.iso;
+  M.nave.x=sol.nave[0]; M.nave.y=sol.nave[1]; M.eventos.length=0;
+  var h=1/120, t;
+  for(t=0;t<(tEspera||sol.espera||4);t+=h) M.paso(h);
+  var antes=M.balas.n; var r=M.iniciarPlan(iso.tipo==='espejo'?'espejo':iso.tipo==='giro'?'giro':'vector');
+  var ap=M.aplicar(iso); var hp0=M.enemigos.map(function(e){ return e.hp; });
+  for(t=0;t<(tSigue||6);t+=h){ if(M.fase!=='jugando' && M.fase!=='plan') break; M.paso(h); }
+  var impactos=M.enemigos.map(function(e,i){ return hp0[i]-e.hp; });
+  return { ok:r.ok&&ap.ok, balasAntes:antes, transformadas:ap.transformadas||0, impactos:impactos, objetivo:sol.objetivo, fase:M.fase, puntos:M.puntos };
+}
+
+return { Movimientos:Movimientos, OLEADAS:OLEADAS, DIEDRICO:DIEDRICO, construirOleadas:construirOleadas, crearMotor:crearMotor,
+         simularSolucion:simularSolucion, mulberry32:mulberry32, fmtNum:fmtNum, fmtPar:fmtPar, fmtPuntos:fmtPuntos, red05:red05, casi:casi,
+         constantes:{LIMITE:LIMITE, BORDE_NAVE:BORDE_NAVE, VEL_NAVE:VEL_NAVE, R_NAVE:R_NAVE, R_BALA:R_BALA, CARGAS_MAX:CARGAS_MAX, CRISTALES_POR_CARGA:CRISTALES_POR_CARGA, CONGELACION:CONGELACION, FUERA:FUERA} };
+})();
+if(typeof window!=='undefined'){ window.ESPEJO=ESPEJO; }
+/* @@LOGICA-FIN */
+</script>
+
+<script id="interfaz">
+(function(){
+"use strict";
+var E=window.ESPEJO, Mv=E.Movimientos, K=E.constantes;
+var REDUCIDO=!!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+function $(id){ return document.getElementById(id); }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+var lienzo=$('lienzo'), ctx=lienzo.getContext('2d');
+var M=E.crearMotor();
+var UI={ pausa:false, panel:null, propuesta:null, arrastre:null, centroTocado:false, particulas:[], sacudida:0, flash:0,
+         bannerT:0, teclas:{}, joy:{activo:false,id:null,cx:0,cy:0,dx:0,dy:0}, tam:0, u:1, cx:0, cy:0,
+         dirNave:[0,1], ultimoImpactoSfx:-1, pizarra:false, recordNuevo:false };
+var progreso=cargar();
+UI.pizarra=!!progreso.pizarra;
+function cargar(){ try{ var o=JSON.parse(localStorage.getItem('espejo.v1')||'{}'); return (o && typeof o==='object' && !Array.isArray(o)) ? o : {}; }catch(e){ return {}; } }
+function guardar(){ try{ localStorage.setItem('espejo.v1', JSON.stringify(progreso)); }catch(e){} }
+function fechaClave(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function semillaDia(){ var d=new Date(); return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate(); }
+function fechaBonita(){ var d=new Date(); return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(); }
+
+/* ---------------- sonido (WebAudio, sin muestras) ---------------- */
+var Sonido=(function(){
+  var AC=null, master=null, filtro=null, activo=true;
+  function ac(){
+    if(!AC){
+      try{
+        AC=new (window.AudioContext||window.webkitAudioContext)();
+        master=AC.createGain(); master.gain.value=0.3;
+        filtro=AC.createBiquadFilter(); filtro.type='lowpass'; filtro.frequency.value=16000;
+        master.connect(filtro); filtro.connect(AC.destination);
+      }catch(e){ AC=null; }
+    }
+    if(AC && AC.state!=='running'){ try{ var pr=AC.resume(); if(pr && pr.catch) pr.catch(function(){}); }catch(e){} }
+    return AC;
+  }
+  function tono(f0, f1, dur, tipo, g, retardo){
+    var A=ac(); if(!A||!activo) return; var t=A.currentTime+(retardo||0);
+    var o=A.createOscillator(), ga=A.createGain(); o.type=tipo||'square';
+    o.frequency.setValueAtTime(f0,t); if(f1) o.frequency.exponentialRampToValueAtTime(Math.max(20,f1), t+dur);
+    ga.gain.setValueAtTime(0.0001,t); ga.gain.exponentialRampToValueAtTime(g||0.2, t+0.01); ga.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(ga); ga.connect(master); o.start(t); o.stop(t+dur+0.02);
+  }
+  function ruido(dur, g, f0, f1){
+    var A=ac(); if(!A||!activo) return; var t=A.currentTime;
+    var n=Math.floor(A.sampleRate*dur), buf=A.createBuffer(1,n,A.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    var src=A.createBufferSource(); src.buffer=buf;
+    var bp=A.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=0.8; bp.frequency.setValueAtTime(f0||800,t); bp.frequency.exponentialRampToValueAtTime(f1||200,t+dur);
+    var ga=A.createGain(); ga.gain.setValueAtTime(g||0.3,t); ga.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.connect(bp); bp.connect(ga); ga.connect(master); src.start(t); src.stop(t+dur);
+  }
+  return {
+    sfx:function(n){
+      switch(n){
+        case 'whoosh': ruido(0.5,0.5,300,3000); tono(220,880,0.35,'sine',0.15); break;
+        case 'impacto': tono(1200,600,0.05,'square',0.07); break;
+        case 'explosion': ruido(0.6,0.6,900,80); tono(160,40,0.5,'sawtooth',0.2); break;
+        case 'golpe': tono(120,50,0.3,'sawtooth',0.35); ruido(0.25,0.4,400,100); break;
+        case 'cristal': tono(880,1320,0.12,'sine',0.12); tono(1320,1760,0.12,'sine',0.1,0.08); break;
+        case 'carga': tono(440,0,0.1,'square',0.12); tono(660,0,0.1,'square',0.12,0.1); tono(880,0,0.18,'square',0.14,0.2); break;
+        case 'oleada': tono(523,0,0.12,'square',0.14); tono(659,0,0.12,'square',0.14,0.12); tono(784,0,0.3,'square',0.16,0.24); break;
+        case 'combo': tono(660,1320,0.3,'triangle',0.2); tono(990,1980,0.3,'triangle',0.15,0.1); break;
+        case 'fallo': tono(200,120,0.25,'square',0.15); break;
+        case 'plan': tono(300,150,0.3,'sine',0.15); break;
+        case 'vida': tono(300,60,0.8,'sawtooth',0.3); break;
+        case 'salto': tono(500,1500,0.2,'sine',0.15); tono(1500,500,0.2,'sine',0.12,0.15); break;
+      }
+    },
+    congelar:function(si){ var A=ac(); if(!A||!filtro) return; var t=A.currentTime; filtro.frequency.cancelScheduledValues(t); filtro.frequency.setValueAtTime(Math.max(50,filtro.frequency.value),t); filtro.frequency.exponentialRampToValueAtTime(si?350:16000, t+0.25); },
+    alternar:function(){ activo=!activo; if(activo) ac(); return activo; },
+    activo:function(){ return activo; },
+    despertar:ac
+  };
+})();
+
+/* ---------------- lienzo y coordenadas ---------------- */
+function ajustar(){
+  var esc=$('escenario'), w=esc.clientWidth-8, h=esc.clientHeight-8, s=Math.max(200, Math.floor(Math.min(w,h)));
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  lienzo.style.width=s+'px'; lienzo.style.height=s+'px'; lienzo.width=Math.round(s*dpr); lienzo.height=Math.round(s*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  UI.tam=s; UI.u=s/13.4; UI.cx=s/2; UI.cy=s/2;
+}
+function aX(x){ return UI.cx+x*UI.u; }
+function aY(y){ return UI.cy-y*UI.u; }
+function aRejilla(ev){ var r=lienzo.getBoundingClientRect(); return [(ev.clientX-r.left-UI.cx)/UI.u, (UI.cy-(ev.clientY-r.top))/UI.u]; }
+var MONO='ui-monospace, "SF Mono", Menlo, Consolas, monospace';
+function fuente(f){ return '700 '+Math.max(9,Math.round(UI.u*f))+'px '+MONO; }
+function fmtEje(i){ return (i<0?'−':'')+Math.abs(i); }
+
+/* ---------------- dibujo ---------------- */
+function dibujar(){
+  var s=UI.tam;
+  ctx.clearRect(0,0,s,s);
+  var g=ctx.createRadialGradient(UI.cx,UI.cy,0,UI.cx,UI.cy,s*0.75); g.addColorStop(0,'#0f1546'); g.addColorStop(1,'#070a1e');
+  ctx.fillStyle=g; ctx.fillRect(0,0,s,s);
+  var sac=(UI.sacudida>0 && !REDUCIDO);
+  if(sac){ ctx.save(); ctx.translate((Math.random()-0.5)*UI.sacudida*8,(Math.random()-0.5)*UI.sacudida*8); }
+  dibujarRejilla(); dibujarCristales(); dibujarEnemigos(); dibujarBalas(); dibujarNave(); dibujarParticulas();
+  if(M.fase==='plan') dibujarPlan();
+  if(UI.flash>0){ ctx.fillStyle='rgba(56,224,240,'+(UI.flash*0.3).toFixed(3)+')'; ctx.fillRect(0,0,s,s); }
+  if(sac) ctx.restore();
+}
+function dibujarRejilla(){
+  var u=UI.u, L=K.LIMITE, i;
+  for(i=-L;i<=L;i++){
+    ctx.strokeStyle = i===0 ? 'rgba(180,190,240,0.8)' : 'rgba(120,130,200,0.2)';
+    ctx.lineWidth = i===0 ? 1.5 : 1;
+    ctx.beginPath(); ctx.moveTo(aX(i),aY(-L)); ctx.lineTo(aX(i),aY(L)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(aX(-L),aY(i)); ctx.lineTo(aX(L),aY(i)); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(185,189,230,0.85)'; ctx.font=fuente(0.34);
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(i=-L;i<=L;i++){ if(i===0) continue; ctx.fillText(fmtEje(i), aX(i), aY(0)+3); }
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(i=-L;i<=L;i++){ if(i===0) continue; ctx.fillText(fmtEje(i), aX(0)-4, aY(i)); }
+  ctx.textAlign='left'; ctx.textBaseline='top'; ctx.fillText('x', aX(L)+3, aY(0)+3);
+  ctx.textAlign='right'; ctx.textBaseline='bottom'; ctx.fillText('y', aX(0)-4, aY(L)-2);
+  ctx.textAlign='left'; ctx.textBaseline='top'; ctx.fillText('O', aX(0)+3, aY(0)+3);
+}
+function poligono(n, r, relleno, borde){
+  ctx.beginPath(); for(var i=0;i<n;i++){ var a=-Math.PI/2+i*2*Math.PI/n; ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r); } ctx.closePath();
+  ctx.fillStyle=relleno; ctx.fill(); ctx.strokeStyle=borde; ctx.stroke();
+}
+function punto(r, color){ ctx.fillStyle=color; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill(); }
+function dibujarEnemigos(){
+  var u=UI.u, t=M.tiempo;
+  for(var k=0;k<M.enemigos.length;k++){
+    var e=M.enemigos[k]; if(!e.vivo) continue;
+    var x=aX(e.x), y=aY(e.y), r=e.r*u, bob=REDUCIDO?0:Math.sin(t*2+k)*u*0.05;
+    ctx.save(); ctx.translate(x,y+bob); ctx.lineWidth=2;
+    if(e.tipo==='jefe'){
+      var rot=REDUCIDO?0:t*0.3;
+      ctx.rotate(rot); poligono(6, r, '#f472b6', '#7a2a56'); poligono(6, r*0.58, '#ffc229', '#5a3a00'); ctx.rotate(-rot);
+      poligono(3, r*0.3, '#38e0f0', '#0a4a52');
+    } else if(e.tipo==='gota'){ poligono(5, r, '#f472b6', '#5a1c40'); punto(r*0.25,'#ffd7ea'); }
+    else if(e.tipo==='abanico'){ poligono(3, r, '#fb923c', '#5a2a00'); punto(r*0.2,'#fff1e0'); }
+    else if(e.tipo==='muro'){ ctx.fillStyle='#ffc229'; ctx.strokeStyle='#5a3a00'; ctx.fillRect(-r,-r*0.8,2*r,1.6*r); ctx.strokeRect(-r,-r*0.8,2*r,1.6*r); ctx.fillStyle='#5a3a00'; ctx.fillRect(-r*0.3, 0, r*0.6, r*0.9); }
+    else if(e.tipo==='flor'){ for(var p=0;p<6;p++){ ctx.rotate(Math.PI/3); ctx.fillStyle='#a78bfa'; ctx.beginPath(); ctx.ellipse(r*0.55,0,r*0.5,r*0.28,0,0,Math.PI*2); ctx.fill(); } punto(r*0.4,'#ffc229'); }
+    else if(e.tipo==='espiral'){
+      ctx.strokeStyle='#38e0f0'; ctx.beginPath();
+      for(var a=0;a<Math.PI*4;a+=0.2){ var rr=r*a/(Math.PI*4), ang=a+(REDUCIDO?0:t*2); ctx.lineTo(Math.cos(ang)*rr,Math.sin(ang)*rr); }
+      ctx.stroke(); ctx.strokeStyle='#f472b6'; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.stroke();
+    }
+    ctx.restore();
+    var bw=Math.max(u*1.2, r*2.2), bh=4, bx=x-bw/2, by=y-r-10;
+    ctx.fillStyle='rgba(10,14,36,0.85)'; ctx.fillRect(bx-1,by-1,bw+2,bh+2);
+    var f=e.hp/e.hpMax; ctx.fillStyle = f>0.5?'#6ee7b7':(f>0.25?'#ffc229':'#ff5c5c'); ctx.fillRect(bx,by,bw*f,bh);
+    ctx.fillStyle='rgba(244,236,255,0.92)'; ctx.font=fuente(0.32); ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(E.fmtPar([e.x,e.y]), x, y+r+3);
+  }
+}
+function dibujarBalas(){
+  var b=M.balas, r=K.R_BALA*UI.u+1, i, x, y;
+  ctx.beginPath();
+  for(i=0;i<b.n;i++){ if(b.bando[i]!==0) continue; x=aX(b.x[i]); y=aY(b.y[i]); ctx.moveTo(x+r,y); ctx.arc(x,y,r,0,Math.PI*2); }
+  ctx.fillStyle='#f472b6'; ctx.fill(); ctx.strokeStyle='rgba(255,215,234,0.9)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.beginPath();
+  for(i=0;i<b.n;i++){ if(b.bando[i]!==1) continue; x=aX(b.x[i]); y=aY(b.y[i]); var d=r*1.3; ctx.moveTo(x,y-d); ctx.lineTo(x+d,y); ctx.lineTo(x,y+d); ctx.lineTo(x-d,y); ctx.closePath(); }
+  ctx.fillStyle='#38e0f0'; ctx.fill(); ctx.strokeStyle='rgba(235,255,255,0.9)'; ctx.stroke();
+}
+function dibujarNave(){
+  var nv=M.nave, u=UI.u, x=aX(nv.x), y=aY(nv.y), r=0.42*u;
+  var parpadeo = nv.inv>0 && !REDUCIDO && Math.floor(nv.inv*12)%2===0;
+  ctx.save(); ctx.translate(x,y); ctx.rotate(Math.atan2(UI.dirNave[0],UI.dirNave[1]));
+  ctx.globalAlpha = parpadeo ? 0.35 : 1;
+  ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r*0.75,r*0.7); ctx.lineTo(0,r*0.3); ctx.lineTo(-r*0.75,r*0.7); ctx.closePath();
+  ctx.fillStyle='#38e0f0'; ctx.fill(); ctx.strokeStyle='#e8fdff'; ctx.lineWidth=2; ctx.stroke();
+  ctx.globalAlpha=1; ctx.restore();
+  if(nv.inv>0){ ctx.strokeStyle='rgba(56,224,240,0.45)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,y,r*1.45,0,Math.PI*2); ctx.stroke(); }
+  ctx.fillStyle='#ffffff'; ctx.beginPath(); ctx.arc(x,y,Math.max(2,K.R_NAVE*u*0.6),0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(56,224,240,0.95)'; ctx.font=fuente(0.36); ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(E.fmtPar([nv.x,nv.y],1), x, y+r+4);
+}
+function dibujarCristales(){
+  var u=UI.u, t=M.tiempo;
+  for(var i=0;i<M.cristales.length;i++){
+    var c=M.cristales[i], x=aX(c.x), y=aY(c.y), r=u*0.22*(c.vida<2 ? (REDUCIDO ? 0.65 : (0.6+0.4*Math.abs(Math.sin(t*10)))) : 1);
+    ctx.save(); ctx.translate(x,y); ctx.rotate(REDUCIDO?Math.PI/4:t*2);
+    ctx.fillStyle='#6ee7b7'; ctx.strokeStyle='#e9fff5'; ctx.lineWidth=1.5; ctx.fillRect(-r,-r,2*r,2*r); ctx.strokeRect(-r,-r,2*r,2*r);
+    ctx.restore();
+  }
+}
+function extremosEje(p){ var L=7.2, k=p.k; if(p.fam==='x') return [[k,-L],[k,L]]; if(p.fam==='y') return [[-L,k],[L,k]]; if(p.fam==='d') return [[-L,-L+k],[L,L+k]]; return [[-L,L+k],[L,-L+k]]; }
+function etiqueta(txt, x, y){
+  ctx.font=fuente(0.4); var w=ctx.measureText(txt).width+12;
+  x=clamp(x, w/2+2, UI.tam-w/2-2); y=clamp(y, 12, UI.tam-12);
+  ctx.fillStyle='rgba(10,14,36,0.92)'; ctx.fillRect(x-w/2, y-11, w, 22);
+  ctx.strokeStyle='rgba(56,224,240,0.7)'; ctx.lineWidth=1; ctx.strokeRect(x-w/2, y-11, w, 22);
+  ctx.fillStyle='#f6f8ff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt, x, y);
+}
+function dibujarPlan(){
+  var s=UI.tam, u=UI.u, p=UI.propuesta, herr=M.plan.herr;
+  ctx.fillStyle='rgba(5,8,30,0.38)'; ctx.fillRect(0,0,s,s);
+  if(UI.arrastre && UI.arrastre.p1 && herr!=='giro'){
+    ctx.strokeStyle='rgba(244,236,255,0.3)'; ctx.lineWidth=2; ctx.setLineDash([4,4]); ctx.beginPath();
+    ctx.moveTo(aX(UI.arrastre.p0[0]),aY(UI.arrastre.p0[1])); ctx.lineTo(aX(UI.arrastre.p1[0]),aY(UI.arrastre.p1[1])); ctx.stroke(); ctx.setLineDash([]);
+  }
+  if(!p) return;
+  if(herr==='espejo' && p.tipo==='espejo'){
+    var pts=extremosEje(p), x0=aX(pts[0][0]), y0=aY(pts[0][1]), x1=aX(pts[1][0]), y1=aY(pts[1][1]);
+    ctx.strokeStyle='rgba(56,224,240,0.35)'; ctx.lineWidth=9; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    ctx.strokeStyle='#e8fdff'; ctx.lineWidth=2; ctx.setLineDash([10,6]); ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]);
+    var ex=clamp((x0+x1)/2, u*1.5, s-u*1.5), ey=clamp((y0+y1)/2-16, 14, s-14);
+    if(p.fam==='y') ey=clamp(y0-16, 14, s-14); if(p.fam==='x') ex=clamp(x0, u*1.5, s-u*1.5);
+    etiqueta(Mv.ecuacionEje(p), ex, ey);
+  } else if(herr==='giro' && p.tipo==='giro'){
+    var cx=aX(p.centro[0]), cy=aY(p.centro[1]), r=u*0.9;
+    ctx.strokeStyle='#ffc229'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cx-9,cy); ctx.lineTo(cx+9,cy); ctx.moveTo(cx,cy-9); ctx.lineTo(cx,cy+9); ctx.stroke();
+    ctx.fillStyle='#ffc229'; ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2); ctx.fill();
+    var a2=-p.angulo*Math.PI/180;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,a2,true); ctx.strokeStyle='#ffc229'; ctx.lineWidth=3; ctx.stroke();
+    var fx=cx+Math.cos(a2)*r, fy=cy+Math.sin(a2)*r, ta=a2-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(fx+Math.cos(ta)*10, fy+Math.sin(ta)*10);
+    ctx.lineTo(fx-Math.cos(a2)*6, fy-Math.sin(a2)*6); ctx.lineTo(fx+Math.cos(a2)*6, fy+Math.sin(a2)*6); ctx.closePath(); ctx.fill();
+    etiqueta(p.angulo+'° · centro '+E.fmtPar(p.centro), cx, cy-r-18);
+  } else if(herr==='vector' && p.tipo==='traslacion'){
+    var nx=M.nave.x+p.v[0], ny=M.nave.y+p.v[1], vx0=aX(M.nave.x), vy0=aY(M.nave.y), vx1=aX(nx), vy1=aY(ny);
+    var fuera = Math.abs(nx)>K.BORDE_NAVE+1e-9 || Math.abs(ny)>K.BORDE_NAVE+1e-9;
+    ctx.strokeStyle= fuera ? '#ff5c5c' : '#6ee7b7'; ctx.fillStyle=ctx.strokeStyle; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(vx0,vy0); ctx.lineTo(vx1,vy1); ctx.stroke();
+    if(!(p.v[0]===0 && p.v[1]===0)){ var an=Math.atan2(vy1-vy0,vx1-vx0); ctx.beginPath(); ctx.moveTo(vx1,vy1); ctx.lineTo(vx1-Math.cos(an-0.4)*12, vy1-Math.sin(an-0.4)*12); ctx.lineTo(vx1-Math.cos(an+0.4)*12, vy1-Math.sin(an+0.4)*12); ctx.closePath(); ctx.fill(); }
+    ctx.globalAlpha=0.5; ctx.strokeStyle='#38e0f0'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(vx1,vy1,u*0.42,0,Math.PI*2); ctx.stroke(); ctx.globalAlpha=1;
+    etiqueta('v = '+E.fmtPar(p.v)+(fuera?' · fuera de la cuadrícula':''), (vx0+vx1)/2, (vy0+vy1)/2-18);
+  }
+}
+function particulas(x,y,n,color,vel){
+  if(REDUCIDO) n=Math.min(n,3);
+  for(var i=0;i<n;i++){ if(UI.particulas.length>320) break; var a=Math.random()*Math.PI*2, v=(0.5+Math.random())*(vel||2); UI.particulas.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vida:0.35+Math.random()*0.4,color:color}); }
+}
+function actualizarParticulas(dt){ for(var i=UI.particulas.length-1;i>=0;i--){ var p=UI.particulas[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vida-=dt; if(p.vida<=0) UI.particulas.splice(i,1); } }
+function dibujarParticulas(){ for(var i=0;i<UI.particulas.length;i++){ var p=UI.particulas[i]; ctx.globalAlpha=clamp(p.vida*2,0,1); ctx.fillStyle=p.color; ctx.fillRect(aX(p.x)-2,aY(p.y)-2,4,4); } ctx.globalAlpha=1; }
+
+/* ---------------- marcador, herramientas, banner y región viva ---------------- */
+var hudPrev={};
+function poner(id, txt, destello){
+  if(hudPrev[id]===txt) return; hudPrev[id]=txt; var el=$(id); el.textContent=txt;
+  if(destello && !REDUCIDO){ el.classList.remove('destello'); void el.offsetWidth; el.classList.add('destello'); }
+}
+function actualizarHUD(){
+  var i, c='', h='';
+  poner('hOleada', M.oleadas.length ? (M.oleada+1)+'/'+M.oleadas.length : '–');
+  poner('hPuntos', E.fmtPuntos(M.puntos));
+  for(i=0;i<K.CARGAS_MAX;i++) c+= i<M.cargas ? '●' : '○';
+  if(hudPrev.hCargas!==c){ $('hCargas').setAttribute('aria-label', M.cargas+' de 3 cargas'); } poner('hCargas', c, true);
+  poner('hCristales', M.cristalesN+'/'+K.CRISTALES_POR_CARGA);
+  for(i=0;i<3;i++) h+= i<M.casco ? '♥' : '♡';
+  if(hudPrev.hCasco!==h){ $('hCasco').setAttribute('aria-label','Casco '+M.casco+' de 3'); } poner('hCasco', h, true);
+  poner('hVidas', String(M.vidas), true);
+}
+function actualizarHerramientas(){
+  var act=M.herramientasActivas();
+  [['espejo','bEspejo'],['giro','bGiro'],['vector','bVector']].forEach(function(par){
+    var b=$(par[1]), ok=act.indexOf(par[0])>=0;
+    b.setAttribute('aria-disabled', ok?'false':'true'); b.classList.toggle('sin-cargas', M.cargas<=0);
+  });
+}
+function banner(grande, pista, dur){
+  $('bannerGrande').textContent=grande||''; $('bannerGrande').style.display=grande?'block':'none';
+  $('bannerPista').innerHTML=pista||''; $('bannerPista').style.display=pista?'inline-block':'none';
+  $('banner').classList.add('visible'); UI.bannerT=dur||3;
+}
+var colaAviso=[], tUltimoAviso=-9;
+function anunciar(txt){ if(txt) colaAviso.push(String(txt)); }
+function vaciarAvisos(ahora){
+  if(!colaAviso.length || ahora-tUltimoAviso<1.1) return;
+  var txt=colaAviso.join(' '); colaAviso.length=0; tUltimoAviso=ahora;
+  var a=$('aviso'); a.textContent=''; setTimeout(function(){ a.textContent=txt; },30);
+}
+function avisar(txt, dur){ banner('', txt, dur||2.5); anunciar(txt); }
+function sinEtiquetas(h){ return String(h||'').replace(/<[^>]+>/g,''); }
+
+/* ---------------- plan: tiempo congelado ---------------- */
+var TITULOS={ espejo:'Espejo · dibuja el eje sobre la cuadrícula', giro:'Giro · toca el centro y elige el ángulo', vector:'Vector · arrastra: la nave saltará según el vector' };
+var TITULOS_PIZARRA={ espejo:'Espejo · escribe la ecuación del eje', giro:'Giro · escribe el centro y elige el ángulo', vector:'Vector · escribe el vector' };
+var AYUDAS={ espejo:'Se imanta a x = k, y = k, y = x + k, y = −x + k. Teclado: F cambia la familia, flechas mueven el eje.',
+             giro:'Teclado: flechas mueven el centro; 1, 2 y 3 eligen 90°, 180° y 270° (antihorario).',
+             vector:'Teclado: las flechas cambian el vector de 0,5 en 0,5.' };
+var AYUDAS_PIZARRA={ espejo:'Ejemplos: x = 1,5 · y = −2 · y = x + 1 · y = −x − 0,5', giro:'Centro como (a; b), p. ej. (−0,5; −0,5); después elige el ángulo.', vector:'Vector como (a, b), p. ej. (3, −2) o (−1,5; 2)' };
+function abrirPlan(herr){
+  var nv=M.nave; UI.arrastre=null; UI.centroTocado=false;
+  if(herr==='espejo') UI.propuesta={tipo:'espejo', fam:'y', k:E.red05(nv.y)};
+  else if(herr==='giro') UI.propuesta={tipo:'giro', centro:[E.red05(nv.x),E.red05(nv.y)], angulo:180};
+  else UI.propuesta={tipo:'traslacion', v:[0,0]};
+  $('plan').hidden=false; $('planAngulos').hidden=(herr!=='giro'); $('planPizarra').hidden=!M.pizarra;
+  $('planTitulo').textContent=(M.pizarra?TITULOS_PIZARRA:TITULOS)[herr];
+  $('planAyuda').textContent=(M.pizarra?AYUDAS_PIZARRA:AYUDAS)[herr];
+  if(M.pizarra){
+    $('planEtiqueta').textContent={espejo:'Eje',giro:'Centro',vector:'Vector'}[herr];
+    var inp=$('planEntrada'); inp.value=''; inp.setAttribute('placeholder', {espejo:'y = x + 1', giro:'(−0,5; −0,5)', vector:'(3, −2)'}[herr]);
+    UI.propuesta = (herr==='giro') ? UI.propuesta : null;
+    setTimeout(function(){ inp.focus(); },40);
+  } else { $('bAplicar').focus(); }
+  refrescarPlan();
+}
+/* Pizarra: analizar lo escrito en vivo (sin mensajes) para previsualizarlo */
+$('planEntrada').addEventListener('input', function(){
+  if(M.fase!=='plan' || !M.pizarra) return;
+  var herr=M.plan.herr, txt=$('planEntrada').value, r;
+  if(herr==='espejo'){ r=Mv.parsearEje(txt); UI.propuesta = r.error ? null : r; }
+  else if(herr==='giro'){ r=Mv.parsearPar(txt); if(!r.error && Mv.validar({tipo:'giro',centro:r,angulo:180})){ UI.propuesta={tipo:'giro', centro:r, angulo:(UI.propuesta&&UI.propuesta.angulo)||180}; } else if(UI.propuesta){ UI.propuesta.centroEscrito=false; } }
+  else { r=Mv.parsearPar(txt); UI.propuesta = r.error ? null : {tipo:'traslacion', v:r}; }
+  refrescarPlan();
+});
+function refrescarPlan(){
+  var p=UI.propuesta, txt='—';
+  if(M.pizarra && p && p.tipo==='giro' && !$('planEntrada').value.trim()) { p=null; }
+  if(p){
+    if(p.tipo==='espejo') txt=Mv.ecuacionEje(p);
+    else if(p.tipo==='giro') txt='Centro '+E.fmtPar(p.centro)+' · '+p.angulo+'°';
+    else txt='v = '+E.fmtPar(p.v)+' → nave en '+E.fmtPar([M.nave.x+p.v[0], M.nave.y+p.v[1]],1);
+  }
+  $('planEcuacion').textContent=txt;
+  var btns=$('planAngulos').querySelectorAll('button');
+  for(var i=0;i<btns.length;i++) btns[i].setAttribute('aria-pressed', (p&&p.tipo==='giro'&&+btns[i].getAttribute('data-ang')===p.angulo)?'true':'false');
+}
+function cerrarPlan(){ $('plan').hidden=true; UI.propuesta=null; UI.arrastre=null; }
+function leerPizarra(){
+  var herr=M.plan.herr, txt=$('planEntrada').value, r;
+  if(herr==='espejo'){ r=Mv.parsearEje(txt); if(r.error){ fallo(r.error); return null; } return r; }
+  r=Mv.parsearPar(txt); if(r.error){ fallo(r.error); return null; }
+  if(herr==='giro'){ var gi={tipo:'giro', centro:r, angulo:(UI.propuesta&&UI.propuesta.angulo)||180}; if(!Mv.validar(gi)){ fallo('El centro debe estar dentro de la cuadrícula (entre −6 y 6).'); return null; } return gi; }
+  if(Math.abs(r[0])>2*K.LIMITE||Math.abs(r[1])>2*K.LIMITE){ fallo('Ese vector es demasiado largo para la cuadrícula.'); return null; }
+  return {tipo:'traslacion', v:r};
+}
+function fallo(msg){ avisar(msg, 2.5); Sonido.sfx('fallo'); }
+function aplicarPropuesta(){
+  if(M.fase!=='plan') return false;
+  var p = M.pizarra ? leerPizarra() : UI.propuesta;
+  if(!p){ if(!M.pizarra) fallo('Dibuja primero el eje, el centro o el vector.'); return false; }
+  var r=M.aplicar(p);
+  if(!r.ok){
+    var m={fuera:'Ese vector saca la nave de la cuadrícula.', nulo:'El vector (0, 0) no mueve nada: arrastra o usa las flechas.', invalida:'Movimiento no válido.', herramienta:'Esa no es la herramienta activa.'};
+    fallo(m[r.motivo]||'No se puede aplicar.'); return false;
+  }
+  return true;
+}
+function pedirPlan(herr){ Sonido.despertar(); if(M.fase!=='jugando' || UI.pausa || UI.panel) return; M.iniciarPlan(herr); procesarEventos(); }
+
+/* ---------------- entrada: puntero sobre el lienzo (solo en plan) ---------------- */
+lienzo.addEventListener('pointerdown', function(ev){
+  Sonido.despertar();
+  if(M.fase!=='plan' || M.pizarra || UI.pausa) return;
+  ev.preventDefault(); try{ lienzo.setPointerCapture(ev.pointerId); }catch(e){}
+  var p=aRejilla(ev); UI.arrastre={id:ev.pointerId, p0:p, p1:null};
+  if(M.plan.herr==='giro'){ UI.propuesta.centro=[E.red05(clamp(p[0],-6,6)), E.red05(clamp(p[1],-6,6))]; UI.centroTocado=true; refrescarPlan(); }
+});
+lienzo.addEventListener('pointermove', function(ev){
+  if(!UI.arrastre || UI.arrastre.id!==ev.pointerId || M.fase!=='plan') return;
+  var p=aRejilla(ev), herr=M.plan.herr; UI.arrastre.p1=p;
+  if(herr==='espejo'){ var iso=Mv.imantar(UI.arrastre.p0,p); if(iso){ UI.propuesta=iso; refrescarPlan(); } }
+  else if(herr==='vector'){ UI.propuesta={tipo:'traslacion', v:[E.red05(p[0]-UI.arrastre.p0[0]), E.red05(p[1]-UI.arrastre.p0[1])]}; refrescarPlan(); }
+  else if(herr==='giro'){ UI.propuesta.centro=[E.red05(clamp(p[0],-6,6)), E.red05(clamp(p[1],-6,6))]; refrescarPlan(); }
+});
+function finArrastre(ev){
+  if(!UI.arrastre || UI.arrastre.id!==ev.pointerId) return;
+  var a=UI.arrastre; UI.arrastre=null;
+  if(M.fase!=='plan') return;
+  var herr=M.plan.herr;
+  if(herr==='espejo'){ if(a.p1 && Mv.imantar(a.p0,a.p1)) aplicarPropuesta(); else avisar('Arrastra a lo largo del eje para dibujarlo (o usa las flechas y Aplicar).'); }
+  else if(herr==='vector'){ if(a.p1 && UI.propuesta && !(UI.propuesta.v[0]===0 && UI.propuesta.v[1]===0)) aplicarPropuesta(); else avisar('Arrastra desde la nave hasta el destino.'); }
+}
+lienzo.addEventListener('pointerup', finArrastre);
+/* H10: un arrastre cancelado por el sistema no aplica nada; la propuesta dibujada se conserva */
+lienzo.addEventListener('pointercancel', function(ev){ if(UI.arrastre && UI.arrastre.id===ev.pointerId){ UI.arrastre=null; refrescarPlan(); } });
+
+/* ---------------- entrada: joystick táctil ---------------- */
+var joy=$('joystick'), pomo=$('joyPomo');
+joy.addEventListener('pointerdown', function(ev){
+  ev.preventDefault(); Sonido.despertar(); try{ joy.setPointerCapture(ev.pointerId); }catch(e){}
+  UI.joy.activo=true; UI.joy.id=ev.pointerId; UI.joy.cx=ev.clientX; UI.joy.cy=ev.clientY; UI.joy.dx=0; UI.joy.dy=0;
+});
+joy.addEventListener('pointermove', function(ev){
+  if(!UI.joy.activo || UI.joy.id!==ev.pointerId) return;
+  var dx=ev.clientX-UI.joy.cx, dy=ev.clientY-UI.joy.cy, L=Math.hypot(dx,dy), R=38;
+  if(L>R){ dx*=R/L; dy*=R/L; }
+  UI.joy.dx=dx/R; UI.joy.dy=-dy/R; pomo.style.transform='translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px)';
+});
+function joyFin(ev){ if(!UI.joy.activo || UI.joy.id!==ev.pointerId) return; UI.joy.activo=false; UI.joy.dx=0; UI.joy.dy=0; pomo.style.transform=''; }
+joy.addEventListener('pointerup', joyFin); joy.addEventListener('pointercancel', joyFin);
+
+/* ---------------- entrada: teclado ---------------- */
+var TECLAS_MOV={ ArrowUp:[0,1], ArrowDown:[0,-1], ArrowLeft:[-1,0], ArrowRight:[1,0], w:[0,1], s:[0,-1], a:[-1,0], d:[1,0] };
+function teclaNorm(ev){ return (ev.key && ev.key.length===1) ? ev.key.toLowerCase() : ev.key; }
+document.addEventListener('keydown', function(ev){
+  var tag=(ev.target && ev.target.tagName)||'', k=teclaNorm(ev);
+  if(ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if(tag==='INPUT'){
+    if(k==='Enter'){ ev.preventDefault(); aplicarPropuesta(); }
+    else if(k==='Escape'){ ev.preventDefault(); M.cancelarPlan(); procesarEventos(); }
+    return;
+  }
+  if((tag==='BUTTON' || tag==='A') && (k==='Enter' || k===' ')) return;   /* el botón se activa solo */
+  if(UI.panel){ if(k==='Escape' && (UI.panel==='ayuda' || UI.panel==='pausa')){ ev.preventDefault(); cerrarPanelVolver(); } return; }
+  if(k==='p'){ alternarPausa(); return; }
+  if(k==='m'){ alternarSonido(); return; }
+  if(k==='?'){ UI.panelPrevio=null; if(M.fase==='jugando'||M.fase==='plan'||M.fase==='transicion') UI.pausa=true; abrirPanel('ayuda'); return; }
+  if(M.fase==='plan'){
+    if(k==='Escape'){ ev.preventDefault(); M.cancelarPlan(); procesarEventos(); return; }
+    if(k==='Enter'){ ev.preventDefault(); aplicarPropuesta(); return; }
+    if(M.pizarra) return;
+    var p=UI.propuesta, herr=M.plan.herr, paso=0.5, d;
+    if(!p) return;
+    if(herr==='espejo'){
+      if(k==='f'){
+        var fams='yxda', i=fams.indexOf(p.fam); p.fam=fams[(i+1)%4];
+        p.k = p.fam==='x' ? E.red05(M.nave.x) : p.fam==='y' ? E.red05(M.nave.y) : p.fam==='d' ? E.red05(M.nave.y-M.nave.x) : E.red05(M.nave.x+M.nave.y);
+        Mv.acotar(p); refrescarPlan(); ev.preventDefault(); return;
+      }
+      if(k==='ArrowUp'||k==='ArrowRight'||k==='w'||k==='d'){ p.k+=paso; Mv.acotar(p); refrescarPlan(); ev.preventDefault(); return; }
+      if(k==='ArrowDown'||k==='ArrowLeft'||k==='s'||k==='a'){ p.k-=paso; Mv.acotar(p); refrescarPlan(); ev.preventDefault(); return; }
+    } else if(herr==='giro'){
+      d=TECLAS_MOV[k];
+      if(d){ p.centro=[p.centro[0]+d[0]*paso, p.centro[1]+d[1]*paso]; Mv.acotar(p); UI.centroTocado=true; refrescarPlan(); ev.preventDefault(); return; }
+      if(k==='1'){ p.angulo=90; refrescarPlan(); return; }
+      if(k==='2'){ p.angulo=180; refrescarPlan(); return; }
+      if(k==='3'){ p.angulo=270; refrescarPlan(); return; }
+      if(k==='r'){ p.angulo = p.angulo===90 ? 180 : (p.angulo===180 ? 270 : 90); refrescarPlan(); return; }
+    } else if(herr==='vector'){
+      d=TECLAS_MOV[k];
+      if(d){ p.v=[p.v[0]+d[0]*paso, p.v[1]+d[1]*paso]; refrescarPlan(); ev.preventDefault(); return; }
+    }
+    return;
+  }
+  if(TECLAS_MOV[k]){ UI.teclas[k]=true; ev.preventDefault(); Sonido.despertar(); return; }
+  if(k==='e') pedirPlan('espejo');
+  else if(k==='g') pedirPlan('giro');
+  else if(k==='v') pedirPlan('vector');
+});
+document.addEventListener('keyup', function(ev){ var k=teclaNorm(ev); if(TECLAS_MOV[k]) UI.teclas[k]=false; });
+window.addEventListener('blur', function(){ UI.teclas={}; });
+function actualizarMando(){
+  var dx=0, dy=0;
+  if(UI.joy.activo){ dx=UI.joy.dx; dy=UI.joy.dy; if(Math.hypot(dx,dy)<0.15){ dx=0; dy=0; } }
+  else { for(var k in TECLAS_MOV){ if(UI.teclas[k]){ dx+=TECLAS_MOV[k][0]; dy+=TECLAS_MOV[k][1]; } } var L=Math.hypot(dx,dy); if(L>1){ dx/=L; dy/=L; } }
+  M.mando.dx=dx; M.mando.dy=dy;
+  if(dx||dy) UI.dirNave=[dx,dy];
+}
+
+/* ---------------- eventos del motor → efectos ---------------- */
+var NOMBRE_HERR={espejo:'espejo', giro:'giro', vector:'vector'};
+function comboTexto(c){
+  if(c.tipo==='traslacion') return 'dos movimientos seguidos equivalen a la traslación de vector '+E.fmtPar(c.v);
+  if(c.tipo==='giro') return 'dos movimientos seguidos equivalen a un giro de '+c.angulo+'° con centro '+E.fmtPar(c.centro);
+  return '';
+}
+function procesarEventos(){
+  var evs=M.eventos; if(!evs.length) return;
+  var lote=evs.slice(); evs.length=0;
+  for(var i=0;i<lote.length;i++){
+    var ev=lote[i];
+    switch(ev.tipo){
+      case 'oleada': {
+        var def=ev.def, titulo=(def.jefe?'JEFE · ':'Oleada '+(ev.idx+1)+' · ')+def.nombre;
+        var pista = (M.pistas && def.pista) ? def.pista : (ev.reinicio ? 'Otra vez: la oleada vuelve a empezar.' : (M.modo==='reto' ? 'Reto del día: sin pistas y con las formaciones reflejadas o giradas.' : ''));
+        banner(titulo, pista, M.pistas ? 8 : 3.5);
+        anunciar(titulo+'. '+sinEtiquetas(pista)+' Herramientas: '+def.herramientas.map(function(h){ return NOMBRE_HERR[h]; }).join(', ')+'.');
+        actualizarHerramientas(); cerrarPlan(); Sonido.congelar(false); Sonido.sfx(ev.reinicio?'fallo':'oleada'); UI.particulas.length=0;
+        break; }
+      case 'plan': abrirPlan(ev.herr); Sonido.sfx('plan'); Sonido.congelar(true); UI.bannerT=Math.min(UI.bannerT,0.4);
+        anunciar('Tiempo congelado. '+({espejo:'Dibuja el eje del espejo.',giro:'Elige el centro y el ángulo del giro.',vector:'Elige el vector de la nave.'})[ev.herr]); break;
+      case 'planCancelado': cerrarPlan(); Sonido.congelar(false); anunciar('Plan cancelado.'); break;
+      case 'planCaducado': avisar('Se acabó el tiempo congelado: las balas vuelven a avanzar, despacio. Aplica o cancela.', 3); Sonido.sfx('fallo'); break;
+      case 'aplicado': {
+        cerrarPlan(); Sonido.congelar(false); Sonido.sfx('whoosh'); UI.flash=REDUCIDO?0.4:1; actualizarHerramientas();
+        var desc=Mv.describir(ev.iso), txt;
+        if(ev.iso.tipo==='traslacion'){
+          txt=desc+' · nave en '+E.fmtPar(ev.destino,1);
+          particulas(ev.origen[0],ev.origen[1],10,'#6ee7b7',3); particulas(ev.destino[0],ev.destino[1],10,'#6ee7b7',3);
+        } else {
+          txt=desc+' · '+ev.transformadas+(ev.transformadas===1?' bala pasa':' balas pasan')+' a tu bando';
+          if(ev.combo){ txt+=' · COMBO +'+ev.combo.puntos+': '+comboTexto(ev.combo); Sonido.sfx('combo'); }
+        }
+        banner('', txt, 3); anunciar(txt);
+        break; }
+      case 'balance': {
+        var nb=(ev.balas!==undefined?ev.balas:ev.transformadas);
+        var b='Balance de «'+Mv.describir(ev.iso)+'»: '+ev.impactos+(ev.impactos===1?' impacto':' impactos')+' de '+nb+(nb===1?' bala':' balas');
+        if(ev.impactos>=12) b+=' · ¡devolución magistral!'; else if(nb>0 && ev.impactos===0) b+=' · ninguna ha tocado una torreta';
+        banner('', b, 3); anunciar(b); break; }
+      case 'impacto':
+        if(!REDUCIDO) particulas(ev.x,ev.y,2,'#38e0f0',1.5);
+        if(M.tiempo-UI.ultimoImpactoSfx>0.06 || M.tiempo<UI.ultimoImpactoSfx){ UI.ultimoImpactoSfx=M.tiempo; Sonido.sfx('impacto'); }
+        break;
+      case 'enemigoDestruido': particulas(ev.x,ev.y,26,'#f472b6',3); particulas(ev.x,ev.y,12,'#ffc229',2); Sonido.sfx('explosion'); UI.sacudida=Math.max(UI.sacudida,0.5); break;
+      case 'golpe': Sonido.sfx('golpe'); UI.sacudida=1; particulas(M.nave.x,M.nave.y,14,'#ff5c5c',2.5); anunciar('Impacto. Casco '+ev.casco+' de 3.'); break;
+      case 'vidaPerdida': { Sonido.sfx('vida'); var qv=(ev.vidas===1?'Queda 1 vida':'Quedan '+ev.vidas+' vidas'); banner('Nave perdida', qv+'. La oleada vuelve a empezar.', 3); anunciar('Nave perdida. '+qv+'.'); break; }
+      case 'fin': cerrarPlan(); Sonido.congelar(false); Sonido.sfx('vida'); registrarRecord(); abrirPanel('fin'); break;
+      case 'oleadaSuperada': {
+        var t2='Oleada '+(ev.idx+1)+' superada', s2='+'+E.fmtPuntos(ev.bonus)+' puntos: '+ev.cargas+(ev.cargas===1?' carga':' cargas')+' sin usar'+(ev.golpes===0?' y ni un rasguño':'');
+        banner(t2, s2, 2.4); anunciar(t2+'. '+s2); Sonido.sfx('oleada'); cerrarPlan(); Sonido.congelar(false); break; }
+      case 'victoria': cerrarPlan(); Sonido.congelar(false); Sonido.sfx('combo'); registrarRecord(); abrirPanel('victoria'); break;
+      case 'cristal': Sonido.sfx('cristal'); break;
+      case 'carga': Sonido.sfx('carga'); banner('', (ev.motivo==='torreta'?'Torreta destruida: carga recuperada ('+ev.cargas+' de 3).':'Carga recuperada: '+ev.cargas+' de 3.'), 2); anunciar('Carga recuperada: '+ev.cargas+' de 3.'); actualizarHerramientas(); break;
+      case 'cargaLlena': Sonido.sfx('carga'); banner('', 'Cargas al máximo: +'+ev.puntos+' puntos.', 2); break;
+      case 'jefeSalta': Sonido.sfx('salto'); banner('', 'El Mosaico salta: '+Mv.describir(ev.iso)+'. Ahora está en '+E.fmtPar(ev.pos)+'.', 3.5); anunciar('El Mosaico salta: '+Mv.describir(ev.iso)+'. Ahora está en '+E.fmtPar(ev.pos)+'.'); break;
+      case 'bloqueada': fallo('Esa herramienta se desbloquea en una oleada posterior.'); break;
+      case 'sinCargas': fallo('Sin cargas. Recoge 4 cristales para recuperar una.'); break;
+    }
+  }
+}
+
+/* ---------------- récords ---------------- */
+function registrarRecord(){
+  var nuevo=false;
+  if(M.modo==='reto'){
+    var f=fechaClave(), ant=(progreso.reto && progreso.reto.fecha===f) ? progreso.reto.mejor : 0;
+    nuevo = M.puntos>ant; progreso.reto={fecha:f, mejor:Math.max(ant,M.puntos)};
+  } else {
+    if(M.puntos>(progreso.mejor||0)){ progreso.mejor=M.puntos; nuevo=true; }
+    progreso.mejorOleada=Math.max(progreso.mejorOleada||0, M.oleada+1);
+  }
+  if(M.fase==='victoria') progreso.victorias=(progreso.victorias||0)+1;
+  guardar(); UI.recordNuevo=nuevo;
+}
+function textoRecords(){
+  var partes=[];
+  if(progreso.mejor) partes.push('Récord: '+E.fmtPuntos(progreso.mejor)+' puntos · oleada '+(progreso.mejorOleada||1)+'/'+E.OLEADAS.length);
+  else partes.push('Sin récord todavía');
+  if(progreso.victorias) partes.push('Mosaicos derrotados: '+progreso.victorias);
+  if(progreso.reto && progreso.reto.fecha===fechaClave()) partes.push('Reto de hoy: '+E.fmtPuntos(progreso.reto.mejor));
+  return partes.join(' · ');
+}
+
+/* ---------------- paneles ---------------- */
+function pie(){ return '<div class="pie-marca"><a href="../../index.html">← Arcademia</a> · 3.º ESO · movimientos en el plano</div>'; }
+var FONDO=['superior','hud','escenario','mandos','plan'];
+function bloquearFondo(si){ FONDO.forEach(function(id){ var el=$(id); if(!el) return; if(si){ el.setAttribute('inert',''); el.setAttribute('aria-hidden','true'); } else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); } }); }
+function abrirPanel(nombre, focoId){
+  if(!UI.panel){ UI.focoPrevio=document.activeElement; }
+  UI.panel=nombre; var p=$('panel'), h='';
+  if(nombre==='menu'){
+    h='<h2 id="panelTitulo">ESPEJO</h2>'
+     +'<p class="sub">Tu nave no dispara. Congela el tiempo, dibuja un espejo o clava un giro, y toda la lluvia de balas se transforma de verdad y vuelve contra quien la lanzó.</p>'
+     +'<div class="fila"><button type="button" class="btn principal" id="mJugar">Jugar</button><button type="button" class="btn" id="mReto">Reto del día ('+fechaBonita()+')</button></div>'
+     +'<div class="fila"><button type="button" class="btn" id="mPizarra" aria-pressed="'+(UI.pizarra?'true':'false')+'">Modo Pizarra: '+(UI.pizarra?'sí (×2)':'no')+'</button><button type="button" class="btn" id="mAyuda">Cómo se juega</button></div>'
+     +'<p class="recor">'+textoRecords()+'</p>'+pie();
+  } else if(nombre==='ayuda'){
+    h='<h2 id="panelTitulo">Cómo se juega</h2>'
+     +'<h3>La idea</h3><p>Tu nave no dispara. Esquiva con el joystick o las flechas y recoge cristales. Al pulsar una herramienta el tiempo se congela durante 8 segundos (después vuelve a correr despacio hasta que apliques o canceles): dibujas sobre la cuadrícula y, al aplicar, el movimiento se aplica de verdad a la posición y a la velocidad de todas las balas de la pantalla, que pasan a tu bando y dañan a las torretas que toquen. No hay respuesta correcta: el daño depende de dónde caigan.</p>'
+     +'<h3>Las tres herramientas</h3><ul>'
+     +'<li><b>Espejo</b> (E): simetría axial. Arrastra a lo largo del eje; se imanta a <code>x = k</code>, <code>y = k</code>, <code>y = x + k</code> o <code>y = −x + k</code>, con k de 0,5 en 0,5.</li>'
+     +'<li><b>Giro</b> (G): toca el centro (de 0,5 en 0,5) y elige 90°, 180° o 270°, siempre en sentido antihorario.</li>'
+     +'<li><b>Vector</b> (V): traslación de la nave. Arrastra y la nave salta según el vector.</li></ul>'
+     +'<h3>El truco de la mediatriz</h3><p>Una bala que te apunta va de la torreta T hacia tu nave N. Si aplicas un movimiento que lleva N sobre T (el espejo cuyo eje es la mediatriz de NT, o el giro de 180° con centro en el punto medio de NT), esa bala vuelve exactamente contra T. Y en general, todo lo que apuntaba a N pasa a apuntar a la imagen de N.</p>'
+     +'<h3>Cargas, cristales y casco</h3><ul>'
+     +'<li>Cada movimiento gasta una de las 3 cargas; 4 cristales recuperan una, y destruir una torreta también.</li>'
+     +'<li>Tres impactos rompen el casco y cuestan una vida: la oleada vuelve a empezar al instante.</li>'
+     +'<li>Al superar una oleada: 100 puntos por carga sin usar y 200 si no te han tocado.</li>'
+     +'<li>Combo: si tu último espejo o giro y el nuevo, aplicados con menos de 15 segundos de diferencia, equivalen a una traslación (dos espejos paralelos, dos giros de 180°) o a un giro (dos espejos que se cortan), hay puntos extra. Los vectores no cuentan.</li></ul>'
+     +'<h3>Modo Pizarra</h3><p>Nada de arrastrar: se escribe la ecuación del eje, el centro o el vector con coma decimal, y los puntos valen el doble.</p>'
+     +'<h3>Teclado</h3><p>Flechas o WASD mueven la nave; E, G y V abren las herramientas. Con el tiempo congelado: F cambia la familia del eje, las flechas mueven el eje, el centro o el vector, 1, 2 y 3 eligen el ángulo, Intro aplica y Esc cancela. P pausa, M sonido, ? esta ayuda.</p>'
+     +'<div class="fila"><button type="button" class="btn principal" id="mVolver">Volver</button></div>'+pie();
+  } else if(nombre==='pausa'){
+    h='<h2 id="panelTitulo">Pausa</h2><p class="sub">Oleada '+(M.oleada+1)+' · '+E.fmtPuntos(M.puntos)+' puntos</p>'
+     +'<div class="fila"><button type="button" class="btn principal" id="mVolver">Continuar</button><button type="button" class="btn" id="mAyuda">Cómo se juega</button></div>'
+     +'<div class="fila"><button type="button" class="btn secundario" id="mMenu">Abandonar la partida</button></div>'+pie();
+  } else if(nombre==='fin' || nombre==='victoria'){
+    var est=M.estad;
+    h='<h2 id="panelTitulo">'+(nombre==='victoria'?'¡Mosaico derrotado!':'Fin de la partida')+'</h2>'
+     +'<p class="cifra">'+E.fmtPuntos(M.puntos)+' puntos</p>'
+     +'<p class="sub">'+(nombre==='victoria'?'Las '+M.oleadas.length+' oleadas superadas':'Has llegado a la oleada '+(M.oleada+1)+' de '+M.oleadas.length)+(M.modo==='reto'?' · reto del día':'')+(M.pizarra?' · modo Pizarra (×2)':'')+'</p>'
+     +'<div class="tabla"><b>'+est.transformaciones+'</b><span>movimientos aplicados</span><b>'+est.devueltas+'</b><span>balas devueltas</span><b>'+est.impactos+'</b><span>impactos</span><b>'+est.combos+'</b><span>combos</span><b>'+est.golpes+'</b><span>impactos recibidos</span></div>'
+     +(UI.recordNuevo?'<p class="aviso-sesion">¡Nuevo récord!</p>':'<p class="recor">'+textoRecords()+'</p>')
+     +'<div class="fila"><button type="button" class="btn principal" id="mOtra">Otra partida</button><button type="button" class="btn" id="mMenu">Menú</button></div>'+pie();
+  }
+  p.innerHTML=h; $('velo').hidden=false; bloquearFondo(true);
+  var b;
+  if((b=$('mJugar'))) b.addEventListener('click', function(){ iniciar('campana'); });
+  if((b=$('mReto'))) b.addEventListener('click', function(){ iniciar('reto'); });
+  if((b=$('mOtra'))) b.addEventListener('click', function(){ iniciar(M.modo); });
+  if((b=$('mPizarra'))) b.addEventListener('click', function(){ UI.pizarra=!UI.pizarra; progreso.pizarra=UI.pizarra; guardar(); abrirPanel('menu','mPizarra'); });
+  if((b=$('mAyuda'))) b.addEventListener('click', function(){ UI.panelPrevio=nombre; abrirPanel('ayuda'); });
+  if((b=$('mVolver'))) b.addEventListener('click', cerrarPanelVolver);
+  if((b=$('mMenu'))) b.addEventListener('click', function(){ M.fase='menu'; UI.pausa=false; cerrarPlan(); Sonido.congelar(false); abrirPanel('menu'); });
+  var objetivo=(focoId && $(focoId)) || p.querySelector('button'); if(objetivo) setTimeout(function(){ if(UI.panel===nombre) objetivo.focus(); },30);
+  $('velo').addEventListener('keydown', atraparTab);
+}
+/* el diálogo retiene el foco: Tab cicla entre sus controles */
+function atraparTab(ev){
+  if(ev.key!=='Tab' || !UI.panel) return;
+  var focables=$('panel').querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])'); if(!focables.length) return;
+  var primero=focables[0], ultimo=focables[focables.length-1];
+  if(ev.shiftKey && document.activeElement===primero){ ev.preventDefault(); ultimo.focus(); }
+  else if(!ev.shiftKey && document.activeElement===ultimo){ ev.preventDefault(); primero.focus(); }
+}
+function cerrarPanel(){
+  UI.panel=null; $('velo').hidden=true; $('panel').innerHTML=''; bloquearFondo(false); $('velo').removeEventListener('keydown', atraparTab);
+  var f=UI.focoPrevio; UI.focoPrevio=null; if(f && f.focus && document.contains(f) && f!==document.body){ try{ f.focus(); }catch(e){} }
+}
+function cerrarPanelVolver(){
+  if(UI.panel==='ayuda'){
+    var prev=UI.panelPrevio; UI.panelPrevio=null;
+    if(prev==='pausa' || prev==='menu' || prev==='fin' || prev==='victoria'){ abrirPanel(prev); return; }
+    cerrarPanel(); UI.pausa=false;               /* la ayuda se abrió desde la partida: se reanuda */
+    if(M.fase==='menu') abrirPanel('menu');
+    return;
+  }
+  if(UI.panel==='pausa'){ UI.pausa=false; }
+  cerrarPanel();
+  if(M.fase==='menu') abrirPanel('menu');
+}
+function iniciar(modo){
+  Sonido.despertar(); cerrarPanel(); UI.pausa=false; UI.particulas.length=0; UI.recordNuevo=false; hudPrev={};
+  M.nuevaPartida(modo, UI.pizarra, modo==='reto' ? semillaDia() : ((Date.now() % 2147483647)|0));
+  procesarEventos(); $('bEspejo').focus();
+}
+function alternarPausa(){
+  if(UI.panel){ if(UI.panel==='pausa') cerrarPanelVolver(); return; }
+  if(M.fase!=='jugando' && M.fase!=='plan' && M.fase!=='transicion') return;
+  UI.pausa=true; abrirPanel('pausa');
+}
+function alternarSonido(){ var on=Sonido.alternar(); var b=$('bSonido'); b.setAttribute('aria-pressed', on?'true':'false'); b.textContent=on?'🔊':'🔇'; }
+
+/* ---------------- botones ---------------- */
+$('bSonido').addEventListener('click', alternarSonido);
+$('bPausa').addEventListener('click', alternarPausa);
+$('bAyuda').addEventListener('click', function(){ if(UI.panel==='ayuda') return; UI.panelPrevio=UI.panel; if(!UI.panel && (M.fase==='jugando'||M.fase==='plan'||M.fase==='transicion')) UI.pausa=true; abrirPanel('ayuda'); });
+[['bEspejo','espejo'],['bGiro','giro'],['bVector','vector']].forEach(function(par){ $(par[0]).addEventListener('click', function(){ pedirPlan(par[1]); }); });
+Array.prototype.forEach.call($('planAngulos').querySelectorAll('button'), function(b){
+  b.addEventListener('click', function(){
+    if(M.fase!=='plan' || !UI.propuesta || UI.propuesta.tipo!=='giro') return;
+    UI.propuesta.angulo=+b.getAttribute('data-ang'); refrescarPlan();
+    if(!M.pizarra && UI.centroTocado){ aplicarPropuesta(); return; }
+    if(M.pizarra) $('planEntrada').focus(); else $('bAplicar').focus();
+  });
+});
+$('bAplicar').addEventListener('click', aplicarPropuesta);
+$('bCancelar').addEventListener('click', function(){ M.cancelarPlan(); procesarEventos(); });
+document.addEventListener('visibilitychange', function(){ if(document.hidden && !UI.panel && (M.fase==='jugando'||M.fase==='plan'||M.fase==='transicion')) alternarPausa(); });
+window.addEventListener('resize', ajustar);
+
+/* ---------------- bucle ---------------- */
+var prevTs=0, acc=0, H=1/120;
+function tic(ts){
+  requestAnimationFrame(tic);
+  if(!prevTs) prevTs=ts; var dt=Math.min(0.05,(ts-prevTs)/1000); prevTs=ts;
+  if(!UI.pausa && !UI.panel && (M.fase==='jugando'||M.fase==='plan'||M.fase==='transicion')){
+    actualizarMando(); acc+=dt; var n=0;
+    while(acc>=H && n<12){ M.paso(H); acc-=H; n++; }
+    if(n>=12) acc=0;
+    procesarEventos();
+  }
+  actualizarParticulas(dt);
+  if(UI.sacudida>0) UI.sacudida=Math.max(0,UI.sacudida-dt*3);
+  if(UI.flash>0) UI.flash=Math.max(0,UI.flash-dt*3);
+  if(UI.bannerT>0){ UI.bannerT-=dt; if(UI.bannerT<=0) $('banner').classList.remove('visible'); }
+  vaciarAvisos(ts/1000);
+  if(M.fase==='plan' && M.plan) $('planMedidorBarra').style.width=clamp(M.plan.congelacion/K.CONGELACION*100,0,100).toFixed(1)+'%';
+  dibujar(); actualizarHUD();
+}
+ajustar(); actualizarHerramientas(); abrirPanel('menu');
+requestAnimationFrame(tic);
+
+/* ganchos de verificación: avanzar la física a mano cuando el panel del navegador está oculto */
+function avanzar(segundos){
+  var n=Math.max(1,Math.round((segundos||1)/H));
+  for(var i=0;i<n;i++){ if(!(M.fase==='jugando'||M.fase==='plan'||M.fase==='transicion')) break; actualizarMando(); M.paso(H); if(M.eventos.length>40) procesarEventos(); }
+  procesarEventos(); actualizarParticulas(segundos||1); dibujar(); actualizarHUD(); tUltimoAviso=-9; vaciarAvisos(0);
+}
+window.__espejo={ M:M, UI:UI, E:E, iniciar:iniciar, pedirPlan:pedirPlan, aplicarPropuesta:aplicarPropuesta, abrirPanel:abrirPanel, cerrarPanel:cerrarPanel, procesarEventos:procesarEventos, ajustar:ajustar, Sonido:Sonido, avanzar:avanzar, dibujar:dibujar, refrescarPlan:refrescarPlan };
+})();
+</script>
+</body>
+</html>

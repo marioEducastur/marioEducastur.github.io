@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#140f2e">
+<title>Malabares Ninja · Arcademia</title>
+<!--
+  Juego: Malabares Ninja — el dojo de la divisibilidad
+  Curso: 1.º ESO (útil también en 2.º) · Tema: Divisibilidad — criterios
+  del 2, del 3 y del 5,
+  división exacta por 7, números primos y compuestos, descomposición en
+  factores primos y máximo común divisor (jefe «Los Gemelos»).
+  Aprende esto en…: sin enlace todavía (la unidad de divisibilidad de 1.º
+  ESO no tiene apuntes publicados).
+  Origen: diseñado para Arcademia (2026-09-24) a partir de la ideación de
+  1.º ESO del mismo día; autocontenido: canvas y WebAudio nativos, sin
+  dependencias externas ni webfonts.
+  Mecánica: los números vuelan como bolas de malabares. Se cortan
+  arrastrando desde una cuchilla (2, 3, 5 o 7) hasta el número: si la
+  cuchilla lo divide, cae una gema y el cociente sale relanzado; si no,
+  suena un «clonk», la bola cae más deprisa y se agrieta. Los primos se
+  atrapan con un toque. Cada número se fabrica como producto de primos con
+  cuchilla por, a lo sumo, un primo menor que 100, así que siempre se puede
+  terminar. Los Gemelos van encadenados: solo se cortan juntos, y la cadena
+  se rompe cuando ya no comparten divisores; su producto es el m.c.d.
+  Estructura: el bloque de script «logica» es lógica pura sin DOM
+  (aritmética, cinturones, generador y motor de juego) y se ejecuta tal
+  cual en jsc para el barrido de verificación; el bloque «interfaz» es el
+  canvas, los mandos, el sonido y los paneles.
+-->
+<style>
+:root{
+  --noche:#140f2e; --noche-2:#231a4d; --panel:#1d1642; --panel-2:#2a2060; --borde:#3d3180;
+  --tinta:#fdf6e3; --tinta-2:#cbc3ec; --oro:#ffc229; --oro-2:#ffd766; --rojo:#ff6b6b;
+  --jade:#6ee7b7; --celeste:#74c0fc; --violeta:#b197fc;
+  --g2:#ff6b6b; --g3:#4dabf7; --g5:#51cf66; --g7:#b197fc; --gg:#ffd43b;
+  --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --titulo: "Arial Black", "Helvetica Neue", Impact, system-ui, sans-serif;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; height:100%; overflow:hidden}
+body{background:var(--noche); color:var(--tinta); font-family:var(--ui); user-select:none; -webkit-user-select:none; touch-action:manipulation}
+#app{display:flex; flex-direction:column; height:100dvh; width:100%; max-width:640px; margin:0 auto; position:relative;
+  background:radial-gradient(120% 60% at 50% 0%, #2b1f5e 0%, var(--noche) 70%)}
+
+/* ---------- barra superior ---------- */
+#superior{display:flex; align-items:center; gap:8px; padding:6px 8px; flex:0 0 auto; border-bottom:1px solid var(--borde);
+  background:linear-gradient(#241a52, #19123b)}
+#rotulo{display:flex; flex-direction:column; min-width:0; margin-right:auto; overflow:hidden}
+#rotulo .n{font:700 10px/1.1 var(--ui); letter-spacing:.16em; text-transform:uppercase; color:var(--jade)}
+#rotulo .t{font:900 18px/1.15 var(--titulo); letter-spacing:.06em; color:var(--oro); text-shadow:0 2px 0 #7a3b00, 0 0 10px rgba(255,194,41,.35); white-space:nowrap}
+#botonera{display:flex; gap:6px}
+.icobtn{width:38px; height:38px; border-radius:10px; border:2px solid var(--borde); background:#171036; color:var(--oro);
+  font:800 16px var(--ui); display:grid; place-items:center; cursor:pointer; text-decoration:none; padding:0; box-shadow:0 2px 0 #0b0720}
+.icobtn[aria-pressed="false"]{opacity:.55}
+.icobtn:hover,.icobtn:focus-visible{background:var(--oro); color:#1d1642}
+
+/* ---------- marcador ---------- */
+#hud{display:grid; grid-template-columns:1.1fr .8fr 1fr 1.4fr; gap:4px; padding:4px 8px; flex:0 0 auto; background:#150f33; border-bottom:1px solid var(--borde)}
+.celda{display:flex; flex-direction:column; align-items:center; min-width:0}
+.celda .eti{font:700 9px/1.1 var(--ui); letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+.celda .val{font:800 16px/1.25 var(--ui); color:var(--tinta); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+#hPuntos{color:var(--oro)}
+#hCombo{color:var(--jade)}
+#hCorazones{color:var(--rojo); letter-spacing:.06em}
+#hCinturon{font-size:13px}
+.val.destello{animation:destello .45s ease-out}
+@keyframes destello{0%{transform:scale(1.25); filter:brightness(1.8)} 100%{transform:scale(1); filter:none}}
+
+/* ---------- escenario ---------- */
+#escenario{position:relative; flex:1 1 auto; min-height:0; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; padding:4px}
+canvas{display:block; border-radius:10px; touch-action:none; box-shadow:0 0 0 1px var(--borde), 0 8px 24px rgba(0,0,0,.45)}
+#banner{position:absolute; left:10px; right:10px; top:10px; text-align:center; pointer-events:none; opacity:0; transition:opacity .25s; z-index:2}
+#banner.visible{opacity:1}
+#banner .grande{font:900 20px/1.1 var(--titulo); color:var(--oro); letter-spacing:.04em; text-shadow:0 3px 0 #7a3b00, 0 0 14px rgba(255,194,41,.5)}
+#banner .pista{margin-top:4px; font:600 12.5px/1.3 var(--ui); color:var(--tinta); background:rgba(20,15,46,.62); border:1px solid rgba(61,49,128,.7);
+  border-radius:10px; padding:4px 9px; display:inline-block; max-width:100%; text-shadow:0 1px 2px #000}
+#banner .pista b{color:var(--oro)}
+
+/* ---------- cesta y marcador de la última jugada ---------- */
+#cesta{flex:0 0 auto; padding:4px 8px 2px; background:#150f33; border-top:1px solid var(--borde)}
+#ticker{font:700 14px/1.3 var(--ui); min-height:19px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--tinta)}
+#ticker.bien{color:var(--jade)} #ticker.mal{color:#ffb3b3} #ticker.info{color:var(--tinta-2)} #ticker.jefe{color:var(--oro)}
+#gemas{display:flex; align-items:center; gap:6px; margin-top:2px; min-height:24px}
+#gemas .rot{font:700 10px var(--ui); letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-2)}
+.gema{display:inline-flex; align-items:center; gap:3px; font:800 13px var(--ui); color:var(--tinta)}
+.gema i{display:inline-grid; place-items:center; width:20px; height:20px; transform:rotate(45deg); border-radius:4px; font-style:normal}
+.gema i span{transform:rotate(-45deg); font:900 11px var(--ui); color:#140f2e}
+.gema.destello{animation:destello .45s ease-out}
+#gGrandes{margin-left:auto; font:700 12px var(--ui); color:var(--gg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:40%}
+
+/* ---------- cuchillas ---------- */
+#mandos{flex:0 0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:6px 8px 8px; background:#150f33}
+#mandos.con-forja{grid-template-columns:repeat(5,1fr)}
+.cuchilla{position:relative; border:2px solid var(--borde); border-radius:14px; background:linear-gradient(#2a2060,#1b1440); color:var(--oro);
+  min-height:74px; padding:4px 2px 6px; cursor:pointer; touch-action:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  box-shadow:0 3px 0 #0b0720; min-width:0}
+.cuchilla::before{content:""; position:absolute; left:6px; right:6px; top:0; height:4px; border-radius:0 0 4px 4px; background:var(--c)}
+.cuchilla .num{font:900 28px/1 var(--titulo); color:var(--oro); text-shadow:0 2px 0 #7a3b00}
+.cuchilla svg{width:30px; height:12px; display:block}
+.cuchilla .crit{font:600 10px/1.15 var(--ui); color:var(--tinta-2); text-align:center; max-width:100%}
+#mandos.sin-pistas .crit{display:none}
+#mandos.sin-pistas .cuchilla{min-height:64px}
+.cuchilla:hover,.cuchilla:focus-visible{border-color:var(--oro)}
+.cuchilla[aria-pressed="true"]{background:linear-gradient(#ffd766,#ffb300); border-color:#fff}
+.cuchilla[aria-pressed="true"] .num{color:#1d1642; text-shadow:none}
+.cuchilla[aria-pressed="true"] .crit{color:#2a1f00}
+.cuchilla[aria-disabled="true"]{opacity:.4; cursor:not-allowed}
+#bForja{border-color:var(--oro); background:linear-gradient(#5a3a10,#2e1c06)}
+#bForja .num{font-size:22px}
+#bForja[hidden]{display:none}
+
+/* ---------- panel de la forja ---------- */
+#forja{position:absolute; left:0; right:0; bottom:0; z-index:4; background:#1b1440; border-top:2px solid var(--oro); padding:8px 10px 10px;
+  display:flex; flex-direction:column; gap:6px; max-height:min(62%, 330px); overflow-y:auto; box-shadow:0 -8px 20px rgba(0,0,0,.5)}
+#forja[hidden]{display:none}
+#forja > *{flex:0 0 auto}
+#forjaTitulo{font:800 12px var(--ui); letter-spacing:.12em; text-transform:uppercase; color:var(--oro)}
+#forjaGemelos{font:600 13px/1.35 var(--ui); color:var(--tinta-2)}
+#forjaValor{font:900 20px/1.3 var(--ui); color:#fff; background:#100b28; border:1px solid var(--borde); border-radius:10px; padding:4px 10px; overflow-x:auto; white-space:nowrap}
+#forjaGemas{display:grid; grid-template-columns:repeat(4,1fr); gap:6px}
+#forjaBotones{display:flex; gap:6px}
+#forjaMedidor{height:5px; background:#100b28; border-radius:3px; overflow:hidden}
+#forjaMedidorBarra{height:100%; width:100%; background:linear-gradient(90deg, var(--oro), var(--rojo))}
+
+/* ---------- botones y paneles ---------- */
+.btn{flex:1 1 auto; border:2px solid var(--borde); border-radius:12px; background:#171036; color:var(--oro); font:800 14px var(--ui);
+  padding:8px 10px; cursor:pointer; min-height:40px}
+.btn:hover,.btn:focus-visible{background:var(--oro); color:#1d1642}
+.btn.secundario{color:var(--tinta-2)}
+.btn.principal{background:var(--oro); color:#1d1642; border-color:var(--oro)}
+.btn.principal:hover,.btn.principal:focus-visible{background:var(--oro-2); color:#1d1642}
+.btn[aria-pressed="true"]{background:var(--jade); color:#0e2a20; border-color:var(--jade)}
+.btn[disabled]{opacity:.4; cursor:not-allowed}
+.btn.gema-btn{display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--tinta)}
+.btn.gema-btn b{font:900 20px var(--ui); color:var(--c)}
+.btn.gema-btn small{font:700 11px var(--ui); color:var(--tinta-2)}
+.btn.gema-btn:hover b,.btn.gema-btn:focus-visible b,.btn.gema-btn:hover small,.btn.gema-btn:focus-visible small{color:#1d1642}
+#aviso{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden}
+#velo{position:absolute; inset:0; background:rgba(8,5,24,.86); display:flex; align-items:center; justify-content:center; padding:12px; z-index:10; overflow:auto}
+#velo[hidden]{display:none}
+.panel{width:100%; max-width:470px; background:var(--panel); border:2px solid var(--oro); border-radius:18px; padding:16px;
+  box-shadow:0 0 26px rgba(255,194,41,.22); max-height:100%; overflow:auto}
+.panel h2{margin:0 0 6px; font:900 24px/1.1 var(--titulo); letter-spacing:.04em; color:var(--oro); text-align:center; text-shadow:0 3px 0 #7a3b00}
+.panel h3{margin:12px 0 4px; font:800 12px var(--ui); letter-spacing:.12em; text-transform:uppercase; color:var(--jade)}
+.panel p{margin:6px 0; font:500 14px/1.45 var(--ui); color:var(--tinta)}
+.panel .sub{text-align:center; color:var(--tinta-2); font-size:13px}
+.panel .fila{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.panel .fila .btn{flex:1 1 140px}
+.panel ul{margin:4px 0; padding-left:18px; font:500 13px/1.45 var(--ui)}
+.panel li{margin:3px 0}
+.panel b{color:var(--oro)}
+.panel .cifra{font:900 34px/1.1 var(--titulo); color:var(--oro); text-align:center; margin:6px 0}
+.panel .recor{font:700 13px/1.4 var(--ui); color:var(--tinta-2); text-align:center; margin-top:8px}
+.panel .aviso-sesion{font:800 13px/1.4 var(--ui); color:var(--jade); text-align:center; margin-top:6px}
+.cinturones{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:6px}
+.cinturones .btn{padding:6px 2px; font-size:11px; display:flex; flex-direction:column; align-items:center; gap:3px; min-width:0}
+.cinturones .btn .cinta{display:block; width:26px; height:8px; border-radius:3px; background:var(--c); border:1px solid rgba(255,255,255,.5)}
+.tabla{display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font:500 13px/1.4 var(--ui); margin:6px 0}
+.tabla b{font:800 13px var(--ui); color:var(--oro); text-align:right}
+.pie-marca{margin-top:12px; text-align:center; font:600 12px var(--ui); color:var(--tinta-2)}
+.pie-marca a{color:var(--jade)}
+.icobtn:focus-visible,.cuchilla:focus-visible,.btn:focus-visible,.pie-marca a:focus-visible{outline:3px solid #ffffff; outline-offset:2px}
+
+@media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+@media (max-width:400px){ #rotulo .t{font-size:15px; letter-spacing:.02em} #rotulo .n{font-size:9px} }
+@media (max-height:620px){ .cuchilla{min-height:60px} .cuchilla .num{font-size:24px} #hud .val{font-size:14px} }
+@media (min-width:600px){ .cuchilla{min-height:84px} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="superior">
+    <a class="icobtn" id="bVolver" href="../../index.html" aria-label="Volver al salón Arcademia" title="Volver a Arcademia">←</a>
+    <div id="rotulo"><span class="n">Números · 1.º y 2.º ESO</span><span class="t">MALABARES NINJA</span></div>
+    <div id="botonera">
+      <button type="button" class="icobtn" id="bSonido" aria-pressed="true" aria-label="Sonido" title="Sonido (M)">🔊</button>
+      <button type="button" class="icobtn" id="bPausa" aria-label="Pausa" title="Pausa (P)">⏸</button>
+      <button type="button" class="icobtn" id="bAyuda" aria-label="Cómo se juega" title="Cómo se juega (?)">?</button>
+    </div>
+  </header>
+
+  <div id="hud" role="group" aria-label="Marcador">
+    <div class="celda"><span class="eti">Puntos</span><span class="val" id="hPuntos">0</span></div>
+    <div class="celda"><span class="eti">Combo</span><span class="val" id="hCombo">×1</span></div>
+    <div class="celda"><span class="eti">Vidas</span><span class="val" id="hCorazones" role="img" aria-label="3 de 3 corazones">♥♥♥</span></div>
+    <div class="celda"><span class="eti" id="hCinturonEti">Cinturón</span><span class="val" id="hCinturon">–</span></div>
+  </div>
+
+  <div id="escenario">
+    <canvas id="lienzo" role="img" aria-label="El dojo: los números vuelan como bolas de malabares sobre el ninja"></canvas>
+    <div id="banner" aria-hidden="true"><div class="grande" id="bannerGrande"></div><div class="pista" id="bannerPista"></div></div>
+  </div>
+
+  <div id="cesta">
+    <div id="ticker" class="info">Corta con una cuchilla que divida al número. Atrapa los primos.</div>
+    <div id="gemas" role="group" aria-label="Cesta de gemas">
+      <span class="rot">Cesta</span>
+      <span class="gema" id="g2" style="--c:var(--g2)" role="img" aria-label="Gemas del 2"><i style="background:var(--g2)" aria-hidden="true"><span>2</span></i><span class="cuenta" id="g2c">×0</span></span>
+      <span class="gema" id="g3" style="--c:var(--g3)" role="img" aria-label="Gemas del 3"><i style="background:var(--g3)" aria-hidden="true"><span>3</span></i><span class="cuenta" id="g3c">×0</span></span>
+      <span class="gema" id="g5" style="--c:var(--g5)" role="img" aria-label="Gemas del 5"><i style="background:var(--g5)" aria-hidden="true"><span>5</span></i><span class="cuenta" id="g5c">×0</span></span>
+      <span class="gema" id="g7" style="--c:var(--g7)" role="img" aria-label="Gemas del 7"><i style="background:var(--g7)" aria-hidden="true"><span>7</span></i><span class="cuenta" id="g7c">×0</span></span>
+      <span id="gGrandes" aria-label="Primos grandes atrapados: ninguno"></span>
+    </div>
+  </div>
+
+  <div id="mandos" role="group" aria-label="Cuchillas">
+    <button type="button" class="cuchilla" data-p="2" style="--c:var(--g2)" aria-pressed="false" aria-keyshortcuts="2" aria-label="Cuchilla del 2"><span class="num">2</span><svg viewBox="0 0 60 24" aria-hidden="true"><path d="M2 12 L40 4 L58 12 L40 20 Z" fill="#dfe6ff"/><rect x="0" y="9" width="10" height="6" rx="2" fill="#8a5a2c"/></svg><span class="crit">acaba en 0, 2, 4, 6 u 8</span></button>
+    <button type="button" class="cuchilla" data-p="3" style="--c:var(--g3)" aria-pressed="false" aria-keyshortcuts="3" aria-label="Cuchilla del 3"><span class="num">3</span><svg viewBox="0 0 60 24" aria-hidden="true"><path d="M2 12 L40 4 L58 12 L40 20 Z" fill="#dfe6ff"/><rect x="0" y="9" width="10" height="6" rx="2" fill="#8a5a2c"/></svg><span class="crit">sus cifras suman un múltiplo de 3</span></button>
+    <button type="button" class="cuchilla" data-p="5" style="--c:var(--g5)" aria-pressed="false" aria-keyshortcuts="5" aria-label="Cuchilla del 5"><span class="num">5</span><svg viewBox="0 0 60 24" aria-hidden="true"><path d="M2 12 L40 4 L58 12 L40 20 Z" fill="#dfe6ff"/><rect x="0" y="9" width="10" height="6" rx="2" fill="#8a5a2c"/></svg><span class="crit">acaba en 0 o en 5</span></button>
+    <button type="button" class="cuchilla" data-p="7" style="--c:var(--g7)" aria-pressed="false" aria-keyshortcuts="7" aria-label="Cuchilla del 7"><span class="num">7</span><svg viewBox="0 0 60 24" aria-hidden="true"><path d="M2 12 L40 4 L58 12 L40 20 Z" fill="#dfe6ff"/><rect x="0" y="9" width="10" height="6" rx="2" fill="#8a5a2c"/></svg><span class="crit">haz la división</span></button>
+    <button type="button" class="cuchilla" id="bForja" hidden aria-keyshortcuts="F" aria-label="Forja: combina gemas de la cesta en una cuchilla para los Gemelos"><span class="num">⚒</span><span class="crit">forja (F)</span></button>
+  </div>
+
+  <div id="forja" hidden role="group" aria-labelledby="forjaTitulo">
+    <div id="forjaTitulo">Forja · el tiempo se congela</div>
+    <div id="forjaGemelos"></div>
+    <div id="forjaValor" aria-live="polite">Cuchilla: —</div>
+    <div id="forjaGemas">
+      <button type="button" class="btn gema-btn" data-gema="2" style="--c:var(--g2)"><b>2</b><small>×0</small></button>
+      <button type="button" class="btn gema-btn" data-gema="3" style="--c:var(--g3)"><b>3</b><small>×0</small></button>
+      <button type="button" class="btn gema-btn" data-gema="5" style="--c:var(--g5)"><b>5</b><small>×0</small></button>
+      <button type="button" class="btn gema-btn" data-gema="7" style="--c:var(--g7)"><b>7</b><small>×0</small></button>
+    </div>
+    <div id="forjaBotones">
+      <button type="button" class="btn secundario" id="bForjaQuitar">Quitar (⌫)</button>
+      <button type="button" class="btn principal" id="bForjaLanzar">Lanzar (Intro)</button>
+      <button type="button" class="btn secundario" id="bForjaCancelar">Cancelar (Esc)</button>
+    </div>
+    <div id="forjaMedidor" aria-hidden="true"><div id="forjaMedidorBarra"></div></div>
+  </div>
+
+  <div id="aviso" role="status" aria-live="polite"></div>
+  <div id="velo"><div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitulo"></div></div>
+</div>
+
+<script id="logica">
+/* @@LOGICA-INICIO — lógica pura de Malabares Ninja, sin DOM (se ejecuta tal cual en jsc) */
+var MALABARES = (function(){
+"use strict";
+/* mundo: 10 de ancho por 12 de alto, y hacia arriba; el suelo de madera llega hasta y = 0,8 */
+var W = 10, H = 12, SUELO = 0.8, R = 0.72, R_JEFE = 0.8, SEP_JEFE = 1.05;
+var LANZA_X = 5, LANZA_Y = 2.0;
+var CUCHILLAS = [2, 3, 5, 7];
+var PRIMO_MAX = 97;               /* el único factor que no se corta es un primo menor que 100 */
+var GRIETAS_MAX = 3;              /* tres cortes que no dividen rompen la bola */
+var CONGELACION_FORJA = 10;       /* segundos de tiempo congelado al abrir la forja */
+var FACTOR_TRANQUILO = 0.65;      /* el modo tranquilo reduce la gravedad */
+var SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+
+/* ---------- aritmética ---------- */
+function esPrimo(n){
+  if(n < 2 || n !== Math.floor(n)) return false;
+  if(n % 2 === 0) return n === 2;
+  for(var d = 3; d * d <= n; d += 2) if(n % d === 0) return false;
+  return true;
+}
+function factoriza(n){
+  var f = [], d = 2;
+  while(n > 1 && d * d <= n){
+    var e = 0; while(n % d === 0){ n /= d; e++; }
+    if(e) f.push([d, e]);
+    d += (d === 2 ? 1 : 2);
+  }
+  if(n > 1) f.push([n, 1]);
+  return f;
+}
+function omega(n){ var s = 0, f = factoriza(n); for(var i = 0; i < f.length; i++) s += f[i][1]; return s; }
+function exponente(e){ return String(e).split('').map(function(c){ return SUP[c]; }).join(''); }
+function textoFactorizacion(n){
+  if(n === 1) return '1';
+  return factoriza(n).map(function(f){ return f[1] > 1 ? f[0] + exponente(f[1]) : String(f[0]); }).join('·');
+}
+function mcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a; }
+function sumaCifras(n){ var s = 0; String(n).split('').forEach(function(c){ s += +c; }); return s; }
+function fmtPuntos(n){ return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function categoria(n){ if(esPrimo(n)) return 'primo'; if(n % 2 !== 0 && n % 5 !== 0) return 'impostor'; return 'otro'; }
+
+/* la lección de cada corte que no divide, con el criterio de divisibilidad de 1.º ESO */
+function porQueNoDivide(n, d){
+  if(n < d) return d + ' no divide a ' + n + ': ' + n + ' es menor que ' + d + '.';
+  if(d === 2) return '2 no divide a ' + n + ': acaba en ' + (n % 10) + ', que es impar.';
+  if(d === 3){
+    if(n < 10) return '3 no divide a ' + n + ': ' + n + ' no es múltiplo de 3.';
+    var cs = String(n).split('');
+    return '3 no divide a ' + n + ': ' + cs.join(' + ') + ' = ' + sumaCifras(n) + ', que no es múltiplo de 3.';
+  }
+  if(d === 5) return '5 no divide a ' + n + ': no acaba en 0 ni en 5.';
+  var q = Math.floor(n / d), r = n % d;
+  return d + ' no divide a ' + n + ': ' + n + ' = ' + d + '·' + q + ' + ' + r + '.';
+}
+
+/* ---------- cinturones ---------- */
+var CINTURONES = [
+  { id:'blanco',   nombre:'Cinturón blanco',   cuchillas:[2,3,5],   max:60,  omegaMax:3, bolas:10, faciles:2, simultaneas:1, intervalo:0,   g:3.0,
+    pesos:{primo:0.3, impostor:0.2}, jefe:null },
+  { id:'amarillo', nombre:'Cinturón amarillo', cuchillas:[2,3,5],   max:120, omegaMax:4, bolas:12, faciles:0, simultaneas:1, intervalo:0,   g:3.3,
+    pesos:{primo:0.25, impostor:0.25}, jefe:{ mcds:[6,10,12,15,18,20], maxPar:100, omegaLibre:2 } },
+  { id:'naranja',  nombre:'Cinturón naranja',  cuchillas:[2,3,5,7], max:250, omegaMax:4, bolas:12, faciles:0, simultaneas:1, intervalo:0,   g:3.4,
+    pesos:{primo:0.2, impostor:0.35}, jefe:{ mcds:[6,10,12,14,15,18,20,21,28,30], maxPar:200, omegaLibre:2 }, nuevaCuchilla:7 },
+  { id:'verde',    nombre:'Cinturón verde',    cuchillas:[2,3,5,7], max:500, omegaMax:5, bolas:14, faciles:0, simultaneas:2, intervalo:8,   g:3.2,
+    pesos:{primo:0.2, impostor:0.35}, jefe:{ mcds:[12,14,18,20,21,24,28,30,35,36,42], maxPar:400, omegaLibre:3 }, dosBolas:true },
+  { id:'negro',    nombre:'Cinturón negro',    cuchillas:[2,3,5,7], max:999, omegaMax:6, bolas:14, faciles:0, simultaneas:2, intervalo:6.5, g:3.5,
+    pesos:{primo:0.2, impostor:0.35}, jefe:{ mcds:[24,28,30,36,42,45,56,60,63,70,84], maxPar:999, omegaLibre:3 } }
+];
+var RETO = { id:'reto', nombre:'Reto del día', cuchillas:[2,3,5,7], max:300, omegaMax:5, bolas:15, faciles:0, simultaneas:1, intervalo:0, g:3.4,
+  pesos:{primo:0.2, impostor:0.35}, jefe:{ mcds:[12,14,18,20,21,28,30,42], maxPar:300, omegaLibre:2 } };
+
+/* conjunto de números de una configuración: n = (producto de primos con cuchilla) · q, con q = 1 o un primo sin cuchilla menor que 100 */
+var cachePool = {};
+function poolDe(c){
+  if(cachePool[c.id]) return cachePool[c.id];
+  var todos = [], primo = [], impostor = [], otro = [];
+  for(var n = 2; n <= c.max; n++){
+    if(omega(n) > c.omegaMax) continue;
+    var resto = n;
+    for(var i = 0; i < c.cuchillas.length; i++){ var p = c.cuchillas[i]; while(resto % p === 0) resto /= p; }
+    if(!(resto === 1 || (esPrimo(resto) && resto <= PRIMO_MAX))) continue;
+    todos.push(n);
+    var cat = categoria(n);
+    if(cat === 'primo'){ if(n >= 7) primo.push(n); }
+    else if(cat === 'impostor') impostor.push(n);
+    else otro.push(n);
+  }
+  cachePool[c.id] = { todos:todos, primo:primo, impostor:impostor, otro:otro };
+  return cachePool[c.id];
+}
+function barajar(arr, rng){ for(var i = arr.length - 1; i > 0; i--){ var j = Math.floor(rng() * (i + 1)); var t = arr[i]; arr[i] = arr[j]; arr[j] = t; } return arr; }
+function tomar(lista, k, rng){ var copia = barajar(lista.slice(), rng), out = []; for(var i = 0; i < k; i++) out.push(copia[i % copia.length]); return out; }
+function generarSecuencia(c, semilla){
+  var rng = mulberry32((semilla >>> 0) || 1), P = poolDe(c), n = c.bolas, fac = c.faciles || 0, libres = n - fac;
+  var nPrimo = Math.round(libres * c.pesos.primo), nImp = Math.round(libres * c.pesos.impostor), nOtro = libres - nPrimo - nImp;
+  var faciles = tomar(P.otro.filter(function(x){ return x <= 20 && x % 2 === 0; }), fac, rng);
+  var otros = P.otro.filter(function(x){ return faciles.indexOf(x) < 0; });
+  var resto = tomar(P.primo, nPrimo, rng).concat(tomar(P.impostor, nImp, rng), tomar(otros, nOtro, rng));
+  barajar(resto, rng);
+  return faciles.concat(resto);
+}
+/* jefe «Los Gemelos»: a = g·x y b = g·y con m.c.d.(x, y) = 1, así que m.c.d.(a, b) = g */
+function generarJefe(c, semilla){
+  if(!c.jefe) return null;
+  var rng = mulberry32(((semilla >>> 0) ^ 0x5bd1e995) >>> 0 || 7), P = poolDe(c).todos;
+  for(var t = 0; t < 4000; t++){
+    var g = c.jefe.mcds[Math.floor(rng() * c.jefe.mcds.length)];
+    var cand = P.filter(function(x){ return g * x <= c.jefe.maxPar && omega(x) <= (c.jefe.omegaLibre || 3); });
+    if(cand.length < 2) continue;
+    var x = cand[Math.floor(rng() * cand.length)], y = cand[Math.floor(rng() * cand.length)];
+    if(x === y || mcd(x, y) !== 1) continue;
+    return { a:g * x, b:g * y, g:g, x:x, y:y };
+  }
+  return null;
+}
+
+/* ---------- geometría de toques y tajos ---------- */
+function tCirculo(x0, y0, x1, y1, cx, cy, rad){
+  var dx = x1 - x0, dy = y1 - y0, fx = x0 - cx, fy = y0 - cy;
+  var a = dx * dx + dy * dy, b = 2 * (fx * dx + fy * dy), c = fx * fx + fy * fy - rad * rad;
+  if(c <= 0) return 0;
+  if(a < 1e-12) return -1;
+  var disc = b * b - 4 * a * c; if(disc < 0) return -1;
+  var t = (-b - Math.sqrt(disc)) / (2 * a);
+  return (t >= 0 && t <= 1) ? t : -1;
+}
+
+/* ---------- motor ---------- */
+function crearMotor(){
+  var M = { eventos:[], bolas:[], jefe:null, cola:[], fase:'menu', modo:'campana', tranquilo:false, semilla:1,
+            cinturon:0, config:CINTURONES[0], puntos:0, corazones:3, combo:0, comboMax:0, cesta:{2:0,3:0,5:0,7:0}, grandes:[],
+            forja:null, tiempo:0, intentos:0, estad:null };
+  var rng = mulberry32(1), multAnterior = 1, siguienteId = 1;
+  function emitir(tipo, datos){ var e = datos || {}; e.tipo = tipo; M.eventos.push(e); return e; }
+  function gravedad(esJefe){ var g = M.config.g * (M.tranquilo ? FACTOR_TRANQUILO : 1); return esJefe ? g * 0.8 : g; }
+  function simultaneas(){ return M.tranquilo ? 1 : M.config.simultaneas; }
+  function mult(){ return Math.min(4, 1 + Math.floor(M.combo / 3)); }
+  M.mult = mult;
+  function subirCombo(){ M.combo++; if(M.combo > M.comboMax) M.comboMax = M.combo; var m = mult(); if(m > multAnterior) emitir('combo', { mult:m }); multAnterior = m; }
+  function romperCombo(){ if(M.combo >= 3) emitir('comboRoto', { combo:M.combo }); M.combo = 0; multAnterior = 1; }
+  function estadNueva(){ return { cortes:0, clonks:0, primos:0, impostores:0, erroresPrimo:0, caidas:0, rotas:0, completadas:0, cadenas:0, tajosMaestros:0, corazonesPerdidos:0 }; }
+  function buscar(id){ for(var i = 0; i < M.bolas.length; i++) if(M.bolas[i].id === id) return M.bolas[i]; return null; }
+  function quitar(b){ var i = M.bolas.indexOf(b); if(i >= 0) M.bolas.splice(i, 1); }
+  function copiaCesta(c){ return { 2:c[2], 3:c[3], 5:c[5], 7:c[7] }; }
+
+  M.nuevaPartida = function(modo, op){
+    op = op || {};
+    M.modo = modo || 'campana'; M.tranquilo = !!op.tranquilo; M.semilla = (op.semilla >>> 0) || 1;
+    M.puntos = 0; M.cesta = {2:0,3:0,5:0,7:0}; M.grandes = []; M.combo = 0; M.comboMax = 0; multAnterior = 1; M.intentos = 0;
+    M.estad = estadNueva(); M.eventos.length = 0;
+    M.cargarEtapa(M.modo === 'campana' ? (op.cinturon || 0) : -1);
+  };
+  M.cargarEtapa = function(indice){
+    var c = (M.modo === 'campana') ? CINTURONES[indice] : RETO;
+    M.config = c; M.cinturon = indice;
+    var sem = ((M.semilla + (indice + 2) * 104729 + M.intentos * 7919) >>> 0) || 3;
+    M.cola = generarSecuencia(c, sem); M.totalBolas = M.cola.length;
+    M.jefePendiente = generarJefe(c, sem); M.jefe = null; M.bolas = []; M.forja = null;
+    M.corazones = 3; M.combo = 0; multAnterior = 1;
+    M.puntosInicioEtapa = M.puntos; M.cestaInicioEtapa = copiaCesta(M.cesta); M.grandesInicioEtapa = M.grandes.slice();
+    M.tiempo = 0; M.tUltimo = -99; M.retrasoInicio = 2.0; M.tJefe = -1;
+    rng = mulberry32(((sem ^ 0x9e3779b9) >>> 0) || 5);
+    M.fase = 'jugando';
+    emitir('etapa', { indice:indice, config:c, jefe:!!M.jefePendiente, nuevaCuchilla:c.nuevaCuchilla || null, reintento:M.intentos > 0, modo:M.modo });
+  };
+  M.reintentar = function(){
+    if(M.fase !== 'fallo') return false;
+    M.puntos = M.puntosInicioEtapa; M.cesta = copiaCesta(M.cestaInicioEtapa); M.grandes = M.grandesInicioEtapa.slice();
+    M.intentos++; M.cargarEtapa(M.cinturon); return true;
+  };
+
+  function lanzar(n){
+    var b = { id:siguienteId++, n:n, n0:n, x:LANZA_X + (rng() - 0.5) * 0.8, y:LANZA_Y, r:R, grietas:0, clonks:0, cortes:[], gemelo:false };
+    var g = gravedad(false), pico = 9.2 + rng() * 1.2;
+    b.vy = Math.sqrt(2 * g * (pico - b.y));
+    var xObjetivo = 1.8 + rng() * 6.4;
+    b.vx = (xObjetivo - b.x) / (b.vy / g);
+    M.bolas.push(b); M.tUltimo = M.tiempo;
+    emitir('lanzamiento', { id:b.id, n:n, x:b.x, y:b.y });
+  }
+  function lanzarJefe(j){
+    var g = gravedad(true);
+    var J = { id:'jefe', a:j.a, b:j.b, a0:j.a, b0:j.b, g0:j.g, x:W / 2, y:LANZA_Y + 0.3, r:R_JEFE, cadena:[], encadenado:true, clonks:0 };
+    J.vy = Math.sqrt(2 * g * (9.6 - J.y)); J.vx = (rng() - 0.5) * 0.6;
+    M.jefe = J;
+    emitir('jefeEntra', { a:J.a, b:J.b, eslabones:omega(mcd(J.a, J.b)) });
+  }
+  function relanzar(b, esJefe){
+    var g = gravedad(esJefe), tope = H - b.r - 0.3;
+    var pico = Math.min(Math.max(b.y + 3.2, 7.2), tope);
+    if(pico < b.y + 0.2) pico = Math.min(b.y + 0.2, H - b.r);
+    b.vy = Math.sqrt(Math.max(0, 2 * g * (pico - b.y)));
+    b.vx = b.vx * 0.5 + (W / 2 - b.x) * 0.12 + (rng() - 0.5) * 0.6;
+  }
+  function mover(b, g, dt, sep){
+    b.vy -= g * dt; b.x += b.vx * dt; b.y += b.vy * dt;
+    var minX = b.r + (sep || 0), maxX = W - b.r - (sep || 0);
+    if(b.x < minX){ b.x = minX; b.vx = Math.abs(b.vx) * 0.8; }
+    if(b.x > maxX){ b.x = maxX; b.vx = -Math.abs(b.vx) * 0.8; }
+    if(b.y > H - b.r){ b.y = H - b.r; if(b.vy > 0) b.vy = 0; }
+  }
+  function perderCorazon(motivo){
+    M.corazones--; M.estad.corazonesPerdidos++;
+    emitir('corazon', { corazones:M.corazones, motivo:motivo });
+    if(M.corazones <= 0) derrota();
+  }
+  function derrota(){
+    M.bolas = []; M.jefe = null; M.forja = null; M.cola = []; M.jefePendiente = null;
+    if(M.modo === 'campana'){ M.fase = 'fallo'; emitir('fallo', { indice:M.cinturon, puntos:M.puntos }); }
+    else { M.fase = 'fin'; emitir('fin', { puntos:M.puntos, completo:false }); }
+  }
+  function completar(b, como){
+    quitar(b);
+    var pts = 20 * omega(b.n0) * mult(), extras = [];
+    if(como === 'atrapada' && esPrimo(b.n0) && b.clonks === 0){ pts += 30; extras.push('primo'); }
+    if(categoria(b.n0) === 'impostor'){ pts += 50; extras.push('impostor'); M.estad.impostores++; }
+    M.puntos += pts; M.estad.completadas++;
+    emitir('completada', { id:b.id, n0:b.n0, fact:textoFactorizacion(b.n0), como:como, x:b.x, y:b.y, puntos:pts, extras:extras, gemelo:b.gemelo });
+  }
+  function etapaSuperada(){
+    var bonus = 100 * M.corazones; M.puntos += bonus;
+    M.fase = 'transicion'; M.tTransicion = 3.2;
+    var ultima = (M.modo !== 'campana') || (M.cinturon >= CINTURONES.length - 1);
+    emitir('etapaSuperada', { indice:M.cinturon, bonus:bonus, corazones:M.corazones, ultima:ultima, modo:M.modo });
+  }
+  function siguiente(){
+    if(M.modo === 'campana' && M.cinturon < CINTURONES.length - 1){ M.intentos = 0; M.cargarEtapa(M.cinturon + 1); }
+    else if(M.modo === 'campana'){ M.fase = 'victoria'; emitir('victoria', { puntos:M.puntos }); }
+    else { M.fase = 'fin'; emitir('fin', { puntos:M.puntos, completo:true }); }
+  }
+
+  /* acciones del jugador */
+  M.cortar = function(id, p){
+    if(M.fase !== 'jugando') return { ok:false, motivo:'fase' };
+    if(CUCHILLAS.indexOf(p) < 0) return { ok:false, motivo:'cuchilla' };
+    if(M.config.cuchillas.indexOf(p) < 0){ emitir('cuchillaBloqueada', { p:p }); return { ok:false, motivo:'bloqueada' }; }
+    if(id === 'jefe') return cortarCadena(p);
+    var b = buscar(id); if(!b) return { ok:false, motivo:'sin-bola' };
+    if(b.n % p === 0){
+      var antes = b.n; b.n = antes / p; b.cortes.push(p); M.cesta[p]++; M.estad.cortes++;
+      subirCombo(); var pts = 10 * mult(); M.puntos += pts;
+      emitir('corte', { id:b.id, antes:antes, p:p, despues:b.n, x:b.x, y:b.y, puntos:pts });
+      if(b.n === 1) completar(b, 'uno');
+      else { b.grietas = 0; relanzar(b, b.gemelo); }
+      return { ok:true, despues:b.n };
+    }
+    b.clonks++; M.estad.clonks++; romperCombo();
+    b.vy = Math.min(b.vy, 0) - 1.5;
+    var cuenta = (p !== 7);
+    if(cuenta) b.grietas++;
+    emitir('clonk', { id:b.id, n:b.n, p:p, x:b.x, y:b.y, grietas:b.grietas, cuenta:cuenta, porque:porQueNoDivide(b.n, p), esPrimo:esPrimo(b.n) });
+    if(b.grietas >= GRIETAS_MAX){
+      quitar(b); M.estad.rotas++;
+      emitir('rota', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:b.y, fact:textoFactorizacion(b.n), esPrimo:esPrimo(b.n) });
+      perderCorazon('rota');
+    }
+    return { ok:false, motivo:'no-divide' };
+  };
+  M.atrapar = function(id){
+    if(M.fase !== 'jugando') return { ok:false, motivo:'fase' };
+    if(id === 'jefe'){ if(M.jefe) emitir('jefeNoSeAtrapa', { a:M.jefe.a, b:M.jefe.b }); return { ok:false, motivo:'jefe' }; }
+    var b = buscar(id); if(!b) return { ok:false, motivo:'sin-bola' };
+    if(esPrimo(b.n)){
+      if(b.n <= 7) M.cesta[b.n]++; else M.grandes.push(b.n);
+      b.cortes.push(b.n); M.estad.primos++; subirCombo();
+      emitir('atrapada', { id:b.id, n:b.n, x:b.x, y:b.y });
+      completar(b, 'atrapada');
+      return { ok:true };
+    }
+    quitar(b); romperCombo(); M.estad.erroresPrimo++;
+    emitir('errorPrimo', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:b.y, fact:textoFactorizacion(b.n) });
+    perderCorazon('errorPrimo');
+    return { ok:false, motivo:'compuesto' };
+  };
+  function cortarCadena(p){
+    var J = M.jefe; if(!J || !J.encadenado) return { ok:false, motivo:'sin-jefe' };
+    if(J.a % p === 0 && J.b % p === 0){
+      var a = J.a, b = J.b; J.a /= p; J.b /= p; J.cadena.push(p); M.cesta[p]++; M.estad.cortes++;
+      subirCombo(); var pts = 20 * mult(); M.puntos += pts;
+      relanzar(J, true);
+      var queda = mcd(J.a, J.b);
+      emitir('cadenaCorte', { p:p, antesA:a, antesB:b, a:J.a, b:J.b, eslabones:omega(queda), puntos:pts, x:J.x, y:J.y });
+      if(queda === 1) romperCadena(false);
+      return { ok:true };
+    }
+    J.clonks++; M.estad.clonks++; romperCombo(); J.vy = Math.min(J.vy, 0) - 1.2;
+    emitir('cadenaClonk', { p:p, a:J.a, b:J.b, divideA:J.a % p === 0, divideB:J.b % p === 0, x:J.x, y:J.y });
+    return { ok:false, motivo:'no-divide' };
+  }
+  function romperCadena(maestro){
+    var J = M.jefe, g = J.a0 / J.a;
+    M.estad.cadenas++; if(maestro) M.estad.tajosMaestros++;
+    var pts = (maestro ? 300 : 100) * mult(); M.puntos += pts;
+    emitir('cadenaRota', { a0:J.a0, b0:J.b0, mcd:g, fact:textoFactorizacion(g), maestro:maestro, a:J.a, b:J.b, x:J.x, y:J.y, puntos:pts });
+    var lados = [[J.a, -1], [J.b, 1]];
+    for(var i = 0; i < 2; i++){
+      var n = lados[i][0], s = lados[i][1];
+      var bola = { id:siguienteId++, n:n, n0:n, x:Math.min(W - R, Math.max(R, J.x + s * SEP_JEFE)), y:J.y, r:R, grietas:0, clonks:0, cortes:[], gemelo:true, vx:s * 1.2, vy:0, pausa:1.2 };
+      var gG = gravedad(true), picoG = Math.min(Math.max(J.y + 2.5, 9.4), H - R - 0.3);
+      bola.vy = Math.sqrt(Math.max(0, 2 * gG * (picoG - bola.y)));
+      M.bolas.push(bola);
+    }
+    M.jefe = null; M.forja = null; if(M.fase === 'forja') M.fase = 'jugando';
+  }
+  M.abrirForja = function(){
+    if(M.fase !== 'jugando' || !M.jefe || !M.jefe.encadenado) return { ok:false, motivo:'sin-jefe' };
+    M.fase = 'forja'; M.forja = { gemas:[], congelacion:CONGELACION_FORJA, caducada:false };
+    emitir('forja', {}); return { ok:true };
+  };
+  M.valorForja = function(){ if(!M.forja) return 1; return M.forja.gemas.reduce(function(a, p){ return a * p; }, 1); };
+  M.gemasLibres = function(p){ var usadas = M.forja ? M.forja.gemas.filter(function(q){ return q === p; }).length : 0; return M.cesta[p] - usadas; };
+  M.forjaAnadir = function(p){
+    if(M.fase !== 'forja') return { ok:false, motivo:'fase' };
+    if(CUCHILLAS.indexOf(p) < 0) return { ok:false, motivo:'gema' };
+    if(M.gemasLibres(p) <= 0) return { ok:false, motivo:'sin-gemas' };
+    if(M.valorForja() * p > 999) return { ok:false, motivo:'grande' };
+    M.forja.gemas.push(p); return { ok:true, valor:M.valorForja() };
+  };
+  M.forjaQuitar = function(){ if(M.fase !== 'forja' || !M.forja.gemas.length) return { ok:false }; M.forja.gemas.pop(); return { ok:true, valor:M.valorForja() }; };
+  M.forjaCancelar = function(){ if(M.fase !== 'forja') return { ok:false }; M.fase = 'jugando'; M.forja = null; emitir('forjaCancelada', {}); return { ok:true }; };
+  M.forjaLanzar = function(){
+    if(M.fase !== 'forja') return { ok:false, motivo:'fase' };
+    var F = M.valorForja(), J = M.jefe, gemas = M.forja.gemas.slice();
+    if(F < 2) return { ok:false, motivo:'vacia' };
+    var primeraVez = J.cadena.length === 0;
+    M.fase = 'jugando'; M.forja = null;
+    if(J.a % F === 0 && J.b % F === 0){
+      for(var i = 0; i < gemas.length; i++) M.cesta[gemas[i]]--;
+      var a = J.a, b = J.b; J.a /= F; J.b /= F; J.cadena = J.cadena.concat(gemas); M.estad.cortes++;
+      subirCombo(); var pts = 20 * gemas.length * mult(); M.puntos += pts;
+      relanzar(J, true);
+      var queda = mcd(J.a, J.b);
+      if(queda === 1){ emitir('forjaAcierto', { F:F, antesA:a, antesB:b, a:J.a, b:J.b, puntos:pts }); romperCadena(primeraVez); return { ok:true, rota:true, maestro:primeraVez }; }
+      emitir('cadenaAfloja', { F:F, antesA:a, antesB:b, a:J.a, b:J.b, eslabones:omega(queda), puntos:pts, x:J.x, y:J.y });
+      return { ok:true, rota:false, maestro:false };
+    }
+    J.clonks++; M.estad.clonks++; romperCombo(); J.vy = Math.min(J.vy, 0) - 1.2;
+    emitir('forjaClonk', { F:F, a:J.a, b:J.b, divideA:J.a % F === 0, divideB:J.b % F === 0, porqueA:J.a % F ? porQueNoDivide(J.a, F) : '', porqueB:J.b % F ? porQueNoDivide(J.b, F) : '', x:J.x, y:J.y });
+    return { ok:false, motivo:'no-divide' };
+  };
+
+  /* paso de simulación */
+  M.paso = function(dt){
+    if(M.fase === 'transicion'){ M.tTransicion -= dt; if(M.tTransicion <= 0) siguiente(); return; }
+    if(M.fase === 'forja'){
+      M.forja.congelacion -= dt; if(M.forja.congelacion > 0) return;
+      if(!M.forja.caducada){ M.forja.caducada = true; emitir('forjaCaducada', {}); }
+      dt *= 0.25;
+    } else if(M.fase !== 'jugando') return;
+    M.tiempo += dt;
+    if(M.fase === 'jugando'){
+      if(M.cola.length){
+        if(M.bolas.length < simultaneas() && M.tiempo >= M.retrasoInicio){
+          var hueco = M.bolas.length === 0 ? 0.9 : M.config.intervalo;
+          if(M.tiempo - M.tUltimo >= hueco) lanzar(M.cola.shift());
+        }
+      } else if(M.jefePendiente && M.bolas.length === 0 && !M.jefe){
+        if(M.tJefe < 0){ M.tJefe = M.tiempo + 1.6; emitir('jefeAviso', { a:M.jefePendiente.a, b:M.jefePendiente.b }); }
+        if(M.tiempo >= M.tJefe){ lanzarJefe(M.jefePendiente); M.jefePendiente = null; }
+      } else if(!M.jefe && M.bolas.length === 0 && !M.jefePendiente){ etapaSuperada(); return; }
+    }
+    var g = gravedad(false), gGemelo = gravedad(true);
+    for(var i = M.bolas.length - 1; i >= 0; i--){
+      var b = M.bolas[i]; if(!b) continue;
+      if(b.pausa > 0){ b.pausa -= dt; continue; }
+      mover(b, b.gemelo ? gGemelo : g, dt, 0);
+      if(b.y - b.r <= SUELO){
+        M.bolas.splice(i, 1); M.estad.caidas++; romperCombo();
+        emitir('caida', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:SUELO + 0.1, fact:textoFactorizacion(b.n), esPrimo:esPrimo(b.n) });
+        perderCorazon('caida');
+        if(M.fase !== 'jugando' && M.fase !== 'forja') return;
+      }
+    }
+    var J = M.jefe;
+    if(J){
+      mover(J, gravedad(true), dt, SEP_JEFE);
+      if(J.y - J.r <= SUELO){
+        J.y = LANZA_Y + 0.3; J.vy = Math.sqrt(2 * gravedad(true) * (9.4 - J.y)); J.vx = (W / 2 - J.x) * 0.2;
+        romperCombo(); emitir('jefeCae', { a:J.a, b:J.b });
+        perderCorazon('jefe');
+      }
+    }
+  };
+
+  /* consultas para la interfaz */
+  M.cuerpos = function(){
+    var L = M.bolas.map(function(b){ return { id:b.id, n:b.n, x:b.x, y:b.y, r:b.r }; });
+    if(M.jefe) L.push({ id:'jefe', a:M.jefe.a, b:M.jefe.b, x:M.jefe.x, y:M.jefe.y, r:M.jefe.r });
+    return L;
+  };
+  M.masBajo = function(){ var L = M.cuerpos(); if(!L.length) return null; L.sort(function(p, q){ return p.y - q.y; }); return L[0].id; };
+  function circulosDe(cu){
+    if(cu.id !== 'jefe') return [[cu.x, cu.y, cu.r]];
+    return [[cu.x - SEP_JEFE, cu.y, cu.r], [cu.x + SEP_JEFE, cu.y, cu.r], [cu.x - 0.35, cu.y, 0.38], [cu.x + 0.35, cu.y, 0.38], [cu.x, cu.y, 0.38]];
+  }
+  M.golpeEn = function(x, y, extra){
+    var mejor = null, dmin = Infinity, L = M.cuerpos();
+    for(var i = 0; i < L.length; i++){
+      var cs = circulosDe(L[i]);
+      for(var k = 0; k < cs.length; k++){
+        var d = Math.hypot(x - cs[k][0], y - cs[k][1]) - cs[k][2];
+        if(d <= (extra || 0) && d < dmin){ dmin = d; mejor = L[i].id; }
+      }
+    }
+    return mejor;
+  };
+  M.cruce = function(x0, y0, x1, y1, extra){
+    var mejor = null, tmin = Infinity, L = M.cuerpos();
+    for(var i = 0; i < L.length; i++){
+      var cs = circulosDe(L[i]);
+      for(var k = 0; k < cs.length; k++){
+        var t = tCirculo(x0, y0, x1, y1, cs[k][0], cs[k][1], cs[k][2] + (extra || 0));
+        if(t >= 0 && t < tmin){ tmin = t; mejor = L[i].id; }
+      }
+    }
+    return mejor;
+  };
+  M.quedan = function(){ var n = M.cola.length; for(var i = 0; i < M.bolas.length; i++) if(!M.bolas[i].gemelo) n++; return n; };
+  M.jefeEnCamino = function(){ return !!(M.jefePendiente || M.jefe); };
+  return M;
+}
+
+return { crearMotor:crearMotor, CINTURONES:CINTURONES, RETO:RETO, poolDe:poolDe, generarSecuencia:generarSecuencia, generarJefe:generarJefe,
+         esPrimo:esPrimo, factoriza:factoriza, omega:omega, textoFactorizacion:textoFactorizacion, mcd:mcd, sumaCifras:sumaCifras,
+         categoria:categoria, porQueNoDivide:porQueNoDivide, fmtPuntos:fmtPuntos, mulberry32:mulberry32, tCirculo:tCirculo,
+         constantes:{ W:W, H:H, SUELO:SUELO, R:R, R_JEFE:R_JEFE, SEP_JEFE:SEP_JEFE, LANZA_X:LANZA_X, LANZA_Y:LANZA_Y, CUCHILLAS:CUCHILLAS,
+                      PRIMO_MAX:PRIMO_MAX, GRIETAS_MAX:GRIETAS_MAX, CONGELACION_FORJA:CONGELACION_FORJA, FACTOR_TRANQUILO:FACTOR_TRANQUILO } };
+})();
+if(typeof window !== 'undefined'){ window.MALABARES = MALABARES; }
+/* @@LOGICA-FIN */
+</script>
+
+<script id="interfaz">
+(function(){
+"use strict";
+var E = window.MALABARES, K = E.constantes;
+var REDUCIDO = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+function $(id){ return document.getElementById(id); }
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+var lienzo = $('lienzo'), ctx = lienzo.getContext('2d');
+var fondo = document.createElement('canvas');
+var M = E.crearMotor();
+var UI = { panel:null, pausa:false, escala:36, dpr:1, particulas:[], textos:[], mitades:[], vuelos:[], estela:[], sacudida:0, destello:0,
+           corte:null, armada:null, toque:null, objetivo:null, teclado:false, bannerT:0, ninjaLanza:0, recordNuevo:false,
+           duelo:null, panelPrevio:null, focoPrevio:null, reloj:0 };
+var COLORES_BOLA = ['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#9775fa', '#f783ac', '#38d9a9'];
+var COLOR_GEMA = { 2:'#ff6b6b', 3:'#4dabf7', 5:'#51cf66', 7:'#b197fc' };
+var COLOR_CINTA = { blanco:'#f1f3f5', amarillo:'#ffd43b', naranja:'#ff922b', verde:'#51cf66', negro:'#1b1b1f', reto:'#ffc229' };
+
+/* ---------------- progreso guardado en el dispositivo ---------------- */
+function cargar(){ try{ var o = JSON.parse(localStorage.getItem('malabares.v1') || '{}'); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }catch(e){ return {}; } }
+function guardar(){ try{ localStorage.setItem('malabares.v1', JSON.stringify(progreso)); }catch(e){} }
+var progreso = cargar();
+if(typeof progreso.tranquilo !== 'boolean') progreso.tranquilo = REDUCIDO;
+if(typeof progreso.pistas !== 'boolean') progreso.pistas = true;
+function fechaClave(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function semillaDia(){ var d = new Date(); return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+function fechaBonita(){ var d = new Date(); return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear(); }
+
+/* ---------------- sonido (WebAudio, sin muestras) ---------------- */
+var Sonido = (function(){
+  var AC = null, master = null, filtro = null, activo = true;
+  function ac(){
+    if(!AC){
+      try{
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+        master = AC.createGain(); master.gain.value = 0.3;
+        filtro = AC.createBiquadFilter(); filtro.type = 'lowpass'; filtro.frequency.value = 16000;
+        master.connect(filtro); filtro.connect(AC.destination);
+      }catch(e){ AC = null; }
+    }
+    if(AC && AC.state !== 'running'){ try{ var pr = AC.resume(); if(pr && pr.catch) pr.catch(function(){}); }catch(e){} }
+    return AC;
+  }
+  function tono(f0, f1, dur, tipo, g, retardo){
+    var A = ac(); if(!A || !activo) return; var t = A.currentTime + (retardo || 0);
+    var o = A.createOscillator(), ga = A.createGain(); o.type = tipo || 'square';
+    o.frequency.setValueAtTime(f0, t); if(f1) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+    ga.gain.setValueAtTime(0.0001, t); ga.gain.exponentialRampToValueAtTime(g || 0.2, t + 0.01); ga.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(ga); ga.connect(master); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function ruido(dur, g, f0, f1, retardo){
+    var A = ac(); if(!A || !activo) return; var t = A.currentTime + (retardo || 0);
+    var n = Math.floor(A.sampleRate * dur), buf = A.createBuffer(1, n, A.sampleRate), d = buf.getChannelData(0);
+    for(var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    var src = A.createBufferSource(); src.buffer = buf;
+    var bp = A.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.9; bp.frequency.setValueAtTime(f0 || 800, t); bp.frequency.exponentialRampToValueAtTime(f1 || 200, t + dur);
+    var ga = A.createGain(); ga.gain.setValueAtTime(g || 0.3, t); ga.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(bp); bp.connect(ga); ga.connect(master); src.start(t); src.stop(t + dur);
+  }
+  var NOTA_GEMA = { 2:880, 3:988, 5:1175, 7:1319 };
+  return {
+    sfx:function(n, x){
+      switch(n){
+        case 'lanza': ruido(0.25, 0.18, 400, 1600); break;
+        case 'tajo': ruido(0.16, 0.45, 5000, 900); tono(1400, 500, 0.08, 'triangle', 0.08); break;
+        case 'gema': tono(NOTA_GEMA[x] || 1568, 0, 0.14, 'sine', 0.14, 0.04); tono((NOTA_GEMA[x] || 1568) * 1.5, 0, 0.12, 'sine', 0.08, 0.1); break;
+        case 'clonk': tono(180, 140, 0.18, 'square', 0.16); tono(470, 380, 0.14, 'triangle', 0.12); break;
+        case 'grieta': ruido(0.12, 0.3, 2500, 1200); break;
+        case 'atrapa': tono(600, 1200, 0.09, 'sine', 0.2); break;
+        case 'completa': tono(660, 0, 0.09, 'square', 0.1); tono(880, 0, 0.09, 'square', 0.1, 0.08); tono(1320, 0, 0.18, 'square', 0.12, 0.16); break;
+        case 'error': tono(220, 110, 0.35, 'sawtooth', 0.2); break;
+        case 'cae': tono(130, 50, 0.3, 'sine', 0.35); ruido(0.3, 0.35, 500, 90); break;
+        case 'rota': ruido(0.4, 0.45, 3000, 300); tono(300, 80, 0.3, 'sawtooth', 0.12); break;
+        case 'corazon': tono(440, 0, 0.12, 'triangle', 0.16); tono(330, 0, 0.12, 'triangle', 0.16, 0.12); tono(220, 0, 0.25, 'triangle', 0.18, 0.24); break;
+        case 'combo': tono(660, 1320, 0.2, 'triangle', 0.16); break;
+        case 'gong': tono(110, 104, 1.6, 'sine', 0.35); tono(220, 208, 1.2, 'sine', 0.12); ruido(0.5, 0.15, 300, 120); break;
+        case 'cadena': tono(900, 700, 0.12, 'square', 0.1); tono(1350, 1100, 0.1, 'square', 0.08, 0.03); break;
+        case 'cadenaRota': ruido(0.6, 0.5, 4000, 400); tono(523, 0, 0.12, 'square', 0.14, 0.1); tono(784, 0, 0.12, 'square', 0.14, 0.22); tono(1047, 0, 0.3, 'square', 0.16, 0.34); break;
+        case 'forja': tono(300, 150, 0.3, 'sine', 0.15); break;
+        case 'fanfarria': tono(523, 0, 0.14, 'square', 0.14); tono(659, 0, 0.14, 'square', 0.14, 0.14); tono(784, 0, 0.14, 'square', 0.14, 0.28); tono(1047, 0, 0.4, 'square', 0.16, 0.42); break;
+      }
+    },
+    congelar:function(si){ var A = ac(); if(!A || !filtro) return; var t = A.currentTime; filtro.frequency.cancelScheduledValues(t); filtro.frequency.setValueAtTime(Math.max(50, filtro.frequency.value), t); filtro.frequency.exponentialRampToValueAtTime(si ? 380 : 16000, t + 0.25); },
+    alternar:function(){ activo = !activo; if(activo) ac(); return activo; },
+    activo:function(){ return activo; },
+    despertar:ac
+  };
+})();
+
+/* ---------------- lienzo y coordenadas ---------------- */
+function ajustar(){
+  var esc = $('escenario'), w = esc.clientWidth - 8, h = esc.clientHeight - 8;
+  var e = Math.max(14, Math.min(w / K.W, h / K.H));
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var cw = Math.floor(e * K.W), ch = Math.floor(e * K.H);
+  lienzo.style.width = cw + 'px'; lienzo.style.height = ch + 'px';
+  lienzo.width = Math.round(cw * dpr); lienzo.height = Math.round(ch * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  UI.escala = cw / K.W; UI.dpr = dpr;
+  pintarFondo();
+}
+function sx(x){ return x * UI.escala; }
+function sy(y){ return (K.H - y) * UI.escala; }
+function aMundo(cx, cy){ var r = lienzo.getBoundingClientRect(); return [(cx - r.left) / UI.escala, K.H - (cy - r.top) / UI.escala]; }
+
+/* ---------------- fondo del dojo (se pinta una vez por tamaño) ---------------- */
+function pintarFondo(){
+  fondo.width = lienzo.width; fondo.height = lienzo.height;
+  var c = fondo.getContext('2d'); c.setTransform(UI.dpr, 0, 0, UI.dpr, 0, 0);
+  var e = UI.escala, Wp = K.W * e, Hp = K.H * e, i;
+  var cielo = c.createLinearGradient(0, 0, 0, Hp); cielo.addColorStop(0, '#0d0826'); cielo.addColorStop(0.55, '#231a55'); cielo.addColorStop(1, '#3b2569');
+  c.fillStyle = cielo; c.fillRect(0, 0, Wp, Hp);
+  var r = E.mulberry32(11);
+  for(i = 0; i < 70; i++){ var s = r() < 0.15 ? 2 : 1; c.globalAlpha = 0.25 + r() * 0.6; c.fillStyle = '#fff'; c.fillRect(r() * Wp, r() * Hp * 0.6, s, s); }
+  c.globalAlpha = 1;
+  /* luna */
+  var mx = sx(7.3), my = sy(10.4), mr = 0.95 * e;
+  var halo = c.createRadialGradient(mx, my, mr * 0.6, mx, my, mr * 3.2); halo.addColorStop(0, 'rgba(255,238,190,0.32)'); halo.addColorStop(1, 'rgba(255,238,190,0)');
+  c.fillStyle = halo; c.fillRect(mx - mr * 3.2, my - mr * 3.2, mr * 6.4, mr * 6.4);
+  c.fillStyle = '#fff1cc'; c.beginPath(); c.arc(mx, my, mr, 0, Math.PI * 2); c.fill();
+  c.fillStyle = 'rgba(214,190,140,0.45)';
+  [[-0.3, -0.2, 0.18], [0.25, 0.1, 0.13], [-0.05, 0.35, 0.1], [0.35, -0.35, 0.08]].forEach(function(k){ c.beginPath(); c.arc(mx + k[0] * mr, my + k[1] * mr, k[2] * mr, 0, Math.PI * 2); c.fill(); });
+  /* montañas y pagoda */
+  c.fillStyle = '#2b2058'; c.beginPath(); c.moveTo(0, sy(3.4));
+  [[1.2, 4.6], [2.6, 3.7], [4.2, 5.1], [5.8, 3.9], [7.4, 4.8], [8.8, 3.6], [10, 4.2]].forEach(function(p){ c.lineTo(sx(p[0]), sy(p[1])); });
+  c.lineTo(Wp, Hp); c.lineTo(0, Hp); c.closePath(); c.fill();
+  c.fillStyle = '#1e1644'; c.beginPath(); c.moveTo(0, sy(2.4));
+  [[1.8, 3.1], [3.5, 2.5], [5.2, 3.0], [7.0, 2.4], [8.6, 3.2], [10, 2.6]].forEach(function(p){ c.lineTo(sx(p[0]), sy(p[1])); });
+  c.lineTo(Wp, Hp); c.lineTo(0, Hp); c.closePath(); c.fill();
+  c.fillStyle = '#170f38';
+  var px = 2.3, base = 2.7;
+  [[0.9, 0.55], [0.72, 0.5], [0.55, 0.45]].forEach(function(t, k){
+    var y0 = base + k * 0.62;
+    c.fillRect(sx(px - t[0] * 0.45), sy(y0 + 0.42), t[0] * 0.9 * e, 0.42 * e);
+    c.beginPath(); c.moveTo(sx(px - t[0] * 0.8), sy(y0 + 0.42)); c.lineTo(sx(px + t[0] * 0.8), sy(y0 + 0.42)); c.lineTo(sx(px + t[0] * 0.45), sy(y0 + 0.62)); c.lineTo(sx(px - t[0] * 0.45), sy(y0 + 0.62)); c.closePath(); c.fill();
+  });
+  c.fillRect(sx(px - 0.03), sy(base + 2.4), 0.06 * e, 0.5 * e);
+  /* bambú */
+  [[0.28, 0.26, '#1c5a41'], [0.72, 0.2, '#236b4d'], [9.35, 0.24, '#1c5a41'], [9.78, 0.2, '#236b4d']].forEach(function(b){
+    c.fillStyle = b[2]; c.fillRect(sx(b[0] - b[1] / 2), 0, b[1] * e, Hp);
+    c.fillStyle = 'rgba(0,0,0,0.35)';
+    for(var y = 1.3; y < K.H; y += 1.15) c.fillRect(sx(b[0] - b[1] / 2), sy(y), b[1] * e, Math.max(1, 0.05 * e));
+    c.fillStyle = '#2f8a60';
+    for(var k = 0; k < 3; k++){
+      var hy = 5 + k * 2.3 + (b[0] > 5 ? 0.8 : 0), dir = b[0] > 5 ? -1 : 1;
+      c.save(); c.translate(sx(b[0]), sy(hy)); c.rotate(dir * -0.5); c.beginPath(); c.ellipse(dir * 0.35 * e, 0, 0.38 * e, 0.07 * e, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    }
+  });
+  /* farolillos */
+  [[1.25, 11.1], [8.95, 11.25]].forEach(function(f){
+    var fx = sx(f[0]), fy = sy(f[1]);
+    c.strokeStyle = 'rgba(255,255,255,0.25)'; c.lineWidth = 1; c.beginPath(); c.moveTo(fx, 0); c.lineTo(fx, fy - 0.35 * e); c.stroke();
+    var luz = c.createRadialGradient(fx, fy, 0.1 * e, fx, fy, 1.4 * e); luz.addColorStop(0, 'rgba(255,150,60,0.35)'); luz.addColorStop(1, 'rgba(255,150,60,0)');
+    c.fillStyle = luz; c.fillRect(fx - 1.4 * e, fy - 1.4 * e, 2.8 * e, 2.8 * e);
+    c.fillStyle = '#e8563f'; c.beginPath(); c.ellipse(fx, fy, 0.34 * e, 0.42 * e, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(120,20,10,0.55)'; c.lineWidth = 1;
+    for(var k = -1; k <= 1; k++){ c.beginPath(); c.ellipse(fx, fy, Math.abs(k) * 0.16 * e + 0.02 * e, 0.42 * e, 0, 0, Math.PI * 2); c.stroke(); }
+    c.fillStyle = '#2b1a0c'; c.fillRect(fx - 0.16 * e, fy - 0.47 * e, 0.32 * e, 0.07 * e); c.fillRect(fx - 0.16 * e, fy + 0.4 * e, 0.32 * e, 0.07 * e);
+  });
+  /* suelo de madera */
+  var ys = sy(K.SUELO);
+  var madera = c.createLinearGradient(0, ys, 0, Hp); madera.addColorStop(0, '#9a6433'); madera.addColorStop(1, '#5c3717');
+  c.fillStyle = madera; c.fillRect(0, ys, Wp, Hp - ys);
+  c.fillStyle = 'rgba(0,0,0,0.25)';
+  for(i = 1; i < 8; i++) c.fillRect(sx(i * 1.3 - 0.2), ys, Math.max(1, 0.03 * e), Hp - ys);
+  c.fillStyle = '#d19a5a'; c.fillRect(0, ys, Wp, Math.max(2, 0.05 * e));
+}
+
+/* ---------------- dibujo ---------------- */
+function aclarar(hex, k){
+  var n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  r = Math.round(r + (255 - r) * k); g = Math.round(g + (255 - g) * k); b = Math.round(b + (255 - b) * k);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+function pintarBola(x, y, r, color, texto, grietas, mascara){
+  var e = UI.escala, rp = r * e;
+  ctx.save(); ctx.translate(sx(x), sy(y));
+  var gr = ctx.createRadialGradient(-rp * 0.35, -rp * 0.4, rp * 0.1, 0, 0, rp);
+  gr.addColorStop(0, aclarar(color, 0.45)); gr.addColorStop(1, color);
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, 0, rp, 0, Math.PI * 2); ctx.fill();
+  ctx.save(); ctx.clip();
+  ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = rp * 0.2;
+  ctx.beginPath(); ctx.ellipse(0, 0, rp * 0.55, rp * 1.15, 0.7, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(20,10,40,0.9)'; ctx.beginPath(); ctx.arc(0, 0, rp, 0, Math.PI * 2); ctx.stroke();
+  if(mascara){
+    ctx.fillStyle = '#140f2e'; ctx.fillRect(-rp * 0.95, -rp * 0.72, rp * 1.9, rp * 0.32);
+    ctx.fillStyle = '#fff'; ctx.fillRect(-rp * 0.5, -rp * 0.64, rp * 0.25, rp * 0.1); ctx.fillRect(rp * 0.25, -rp * 0.64, rp * 0.25, rp * 0.1);
+  }
+  if(grietas > 0){   /* las grietas van en el anillo de color: el disco del número las tapa y el número se lee siempre */
+    ctx.strokeStyle = '#140f2e'; ctx.lineWidth = Math.max(2, rp * 0.09); ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(-rp * 0.98, -rp * 0.12); ctx.lineTo(-rp * 0.78, -rp * 0.02); ctx.lineTo(-rp * 0.86, rp * 0.22); ctx.lineTo(-rp * 0.6, rp * 0.3); ctx.stroke();
+    if(grietas > 1){ ctx.beginPath(); ctx.moveTo(rp * 0.96, rp * 0.2); ctx.lineTo(rp * 0.76, rp * 0.1); ctx.lineTo(rp * 0.84, -rp * 0.14); ctx.lineTo(rp * 0.6, -rp * 0.26); ctx.stroke(); }
+  }
+  var discoY = mascara ? rp * 0.2 : 0, discoR = rp * (mascara ? 0.56 : 0.64);
+  ctx.fillStyle = '#fdf6e3'; ctx.beginPath(); ctx.arc(0, discoY, discoR, 0, Math.PI * 2); ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(20,10,40,0.35)'; ctx.stroke();
+  var cifras = String(texto).length, tam = discoR * (cifras <= 1 ? 1.5 : cifras === 2 ? 1.28 : 0.98);
+  ctx.fillStyle = '#140f2e'; ctx.font = '900 ' + Math.max(10, Math.round(tam)) + 'px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(texto), 0, discoY + 1);
+  ctx.restore();
+}
+function pintarJefe(J){
+  var e = UI.escala, S = K.SEP_JEFE, y = J.y;
+  var eslabones = Math.max(1, E.omega(E.mcd(J.a, J.b)));
+  var x0 = J.x - S + J.r * 0.9, x1 = J.x + S - J.r * 0.9, paso = (x1 - x0) / eslabones;
+  ctx.lineWidth = Math.max(2, 0.07 * e); ctx.strokeStyle = '#ffc229';
+  for(var i = 0; i < eslabones; i++){
+    var cx = x0 + paso * (i + 0.5);
+    ctx.beginPath(); ctx.ellipse(sx(cx), sy(y), Math.max(4, paso * 0.42 * e), 0.13 * e, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  pintarBola(J.x - S, y, J.r, '#7048e8', J.a, 0, true);
+  pintarBola(J.x + S, y, J.r, '#7048e8', J.b, 0, true);
+  ctx.fillStyle = '#ffc229'; ctx.font = '900 ' + Math.max(10, Math.round(0.3 * e)) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText('GEMELOS', sx(J.x), sy(y + J.r + 0.12));
+}
+function pintarNinja(t){
+  var e = UI.escala, x = sx(K.LANZA_X), yp = sy(K.SUELO) + 1;
+  var bob = REDUCIDO ? 0 : Math.sin(t * 3) * 0.03 * e, lanza = UI.ninjaLanza > 0 ? UI.ninjaLanza / 0.35 : 0;
+  var cinta = COLOR_CINTA[M.config ? M.config.id : 'blanco'] || '#f1f3f5';
+  ctx.save(); ctx.translate(x, yp + bob);
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, -1, 0.7 * e, 0.12 * e, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#15112e'; ctx.fillRect(-0.32 * e, -0.62 * e, 0.24 * e, 0.62 * e); ctx.fillRect(0.08 * e, -0.62 * e, 0.24 * e, 0.62 * e);
+  ctx.fillStyle = '#231d4d'; ctx.beginPath(); ctx.moveTo(-0.42 * e, -0.55 * e); ctx.lineTo(0.42 * e, -0.55 * e); ctx.lineTo(0.36 * e, -1.32 * e); ctx.lineTo(-0.36 * e, -1.32 * e); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = cinta; ctx.fillRect(-0.42 * e, -0.78 * e, 0.84 * e, 0.12 * e);
+  if(M.config && M.config.id === 'negro'){ ctx.fillStyle = '#ffc229'; ctx.fillRect(-0.42 * e, -0.7 * e, 0.84 * e, Math.max(1, 0.025 * e)); }
+  var ang = REDUCIDO ? 0 : Math.sin(t * 5) * 0.12, alto = 0.55 + lanza * 0.45;
+  ctx.strokeStyle = '#231d4d'; ctx.lineWidth = 0.17 * e; ctx.lineCap = 'round';
+  [[-1, ang], [1, -ang]].forEach(function(b){
+    var hx = b[0] * (0.62 - lanza * 0.12) * e, hy = -(1.0 + alto * 0.7) * e + b[1] * e * 0.2;
+    ctx.beginPath(); ctx.moveTo(b[0] * 0.34 * e, -1.22 * e); ctx.lineTo(hx, hy); ctx.stroke();
+    ctx.fillStyle = '#f2c9a0'; ctx.beginPath(); ctx.arc(hx, hy, 0.1 * e, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.fillStyle = '#231d4d'; ctx.beginPath(); ctx.arc(0, -1.6 * e, 0.3 * e, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#f2c9a0'; ctx.fillRect(-0.22 * e, -1.66 * e, 0.44 * e, 0.12 * e);
+  ctx.fillStyle = '#140f2e'; ctx.fillRect(-0.13 * e, -1.63 * e, 0.07 * e, 0.06 * e); ctx.fillRect(0.06 * e, -1.63 * e, 0.07 * e, 0.06 * e);
+  ctx.fillStyle = '#e8563f'; ctx.fillRect(-0.3 * e, -1.82 * e, 0.6 * e, 0.09 * e);
+  var ondea = REDUCIDO ? 0 : Math.sin(t * 7) * 0.08 * e;
+  ctx.strokeStyle = '#e8563f'; ctx.lineWidth = 0.07 * e;
+  ctx.beginPath(); ctx.moveTo(0.28 * e, -1.78 * e); ctx.quadraticCurveTo(0.5 * e, -1.7 * e + ondea, 0.7 * e, -1.82 * e - ondea); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0.28 * e, -1.78 * e); ctx.quadraticCurveTo(0.48 * e, -1.6 * e - ondea, 0.66 * e, -1.58 * e + ondea); ctx.stroke();
+  ctx.restore();
+}
+function colorBola(id){ return COLORES_BOLA[(typeof id === 'number' ? id : 0) % COLORES_BOLA.length]; }
+function pintarObjetivo(){
+  if(!UI.teclado || M.fase !== 'jugando') return;
+  var id = objetivoActual(); if(id === null) return;
+  var cu = M.cuerpos().filter(function(c){ return c.id === id; })[0]; if(!cu) return;
+  var e = UI.escala;
+  ctx.save(); ctx.strokeStyle = '#ffc229'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 5]);
+  if(id === 'jefe'){ ctx.beginPath(); ctx.ellipse(sx(cu.x), sy(cu.y), (K.SEP_JEFE + cu.r + 0.25) * e, (cu.r + 0.25) * e, 0, 0, Math.PI * 2); ctx.stroke(); }
+  else { ctx.beginPath(); ctx.arc(sx(cu.x), sy(cu.y), (cu.r + 0.22) * e, 0, Math.PI * 2); ctx.stroke(); }
+  ctx.restore();
+}
+function pintarEfectos(dt){
+  var e = UI.escala, i;
+  for(i = UI.mitades.length - 1; i >= 0; i--){
+    var m = UI.mitades[i]; m.vida -= dt; if(m.vida <= 0){ UI.mitades.splice(i, 1); continue; }
+    m.vy -= 9 * dt; m.x += m.vx * dt; m.y += m.vy * dt; m.rot += m.vr * dt;
+    ctx.save(); ctx.globalAlpha = clamp(m.vida / 0.5, 0, 1); ctx.translate(sx(m.x), sy(m.y)); ctx.rotate(m.rot);
+    ctx.fillStyle = m.color; ctx.beginPath(); ctx.arc(0, 0, m.r * e, m.lado < 0 ? Math.PI / 2 : -Math.PI / 2, m.lado < 0 ? Math.PI * 1.5 : Math.PI / 2); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(20,10,40,0.8)'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+  }
+  for(i = UI.vuelos.length - 1; i >= 0; i--){
+    var v = UI.vuelos[i]; v.t += dt; var k = v.t / v.dur; if(k >= 1){ UI.vuelos.splice(i, 1); pulsarGema(v.p); continue; }
+    var x = v.x + (v.tx - v.x) * k, y = v.y + (v.ty - v.y) * k + Math.sin(k * Math.PI) * 1.2;
+    ctx.save(); ctx.translate(sx(x), sy(y)); ctx.rotate(Math.PI / 4); var s = 0.3 * e;
+    ctx.fillStyle = COLOR_GEMA[v.p] || '#ffd43b'; ctx.fillRect(-s / 2, -s / 2, s, s); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(-s / 2, -s / 2, s, s);
+    ctx.rotate(-Math.PI / 4); ctx.fillStyle = '#140f2e'; ctx.font = '900 ' + Math.max(9, Math.round(0.24 * e)) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(v.p), 0, 1);
+    ctx.restore();
+  }
+  for(i = UI.particulas.length - 1; i >= 0; i--){
+    var p = UI.particulas[i]; p.vida -= dt; if(p.vida <= 0){ UI.particulas.splice(i, 1); continue; }
+    p.vy -= 6 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    ctx.globalAlpha = clamp(p.vida * 2, 0, 1); ctx.fillStyle = p.color; ctx.fillRect(sx(p.x) - p.tam / 2, sy(p.y) - p.tam / 2, p.tam, p.tam);
+  }
+  ctx.globalAlpha = 1;
+  for(i = UI.textos.length - 1; i >= 0; i--){
+    var t = UI.textos[i]; t.vida -= dt; if(t.vida <= 0){ UI.textos.splice(i, 1); continue; }
+    t.y += dt * 0.8;
+    ctx.globalAlpha = clamp(t.vida / 0.4, 0, 1); ctx.font = '900 ' + Math.max(12, Math.round(t.tam * e)) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(15,10,35,0.9)'; ctx.strokeText(t.txt, sx(t.x), sy(t.y)); ctx.fillStyle = t.color; ctx.fillText(t.txt, sx(t.x), sy(t.y));
+  }
+  ctx.globalAlpha = 1;
+  var ahora = UI.reloj, puntos = UI.estela.filter(function(q){ return ahora - q.t < 0.22; });
+  UI.estela = puntos;
+  if(puntos.length > 1){
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for(i = 1; i < puntos.length; i++){
+      var a = 1 - (ahora - puntos[i].t) / 0.22;
+      ctx.strokeStyle = 'rgba(210,240,255,' + (a * 0.9).toFixed(3) + ')'; ctx.lineWidth = Math.max(2, 0.12 * e * a);
+      ctx.beginPath(); ctx.moveTo(sx(puntos[i - 1].x), sy(puntos[i - 1].y)); ctx.lineTo(sx(puntos[i].x), sy(puntos[i].y)); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+function dibujar(dt){
+  var Wp = K.W * UI.escala, Hp = K.H * UI.escala;
+  ctx.setTransform(UI.dpr, 0, 0, UI.dpr, 0, 0);
+  ctx.clearRect(0, 0, Wp, Hp);
+  var sac = UI.sacudida > 0 && !REDUCIDO;
+  if(sac){ ctx.save(); ctx.translate((Math.random() - 0.5) * UI.sacudida * 8, (Math.random() - 0.5) * UI.sacudida * 8); }
+  ctx.drawImage(fondo, 0, 0, Wp, Hp);
+  pintarNinja(UI.reloj);
+  if(M.jefe) pintarJefe(M.jefe);
+  for(var i = 0; i < M.bolas.length; i++){ var b = M.bolas[i]; pintarBola(b.x, b.y, b.r, colorBola(b.id), b.n, b.grietas, false); }
+  pintarObjetivo();
+  pintarEfectos(dt || 0);
+  if(M.fase === 'forja'){ ctx.fillStyle = 'rgba(8,5,30,0.35)'; ctx.fillRect(0, 0, Wp, Hp); }
+  if(UI.destello > 0){ ctx.fillStyle = 'rgba(255,215,102,' + (UI.destello * 0.25).toFixed(3) + ')'; ctx.fillRect(0, 0, Wp, Hp); }
+  if(sac) ctx.restore();
+}
+function particulas(x, y, n, color, vel){
+  if(REDUCIDO) n = Math.min(n, 4);
+  for(var i = 0; i < n; i++){
+    if(UI.particulas.length > 260) break;
+    var a = Math.random() * Math.PI * 2, v = (0.4 + Math.random()) * (vel || 3);
+    UI.particulas.push({ x:x, y:y, vx:Math.cos(a) * v, vy:Math.sin(a) * v + 1, vida:0.4 + Math.random() * 0.4, color:color, tam:3 + Math.random() * 3 });
+  }
+}
+function texto(x, y, txt, color, tam){ UI.textos.push({ x:x, y:y + 0.9, txt:txt, color:color || '#fff', vida:0.9, tam:tam || 0.42 }); }
+function mitades(x, y, r, color){
+  if(REDUCIDO) return;
+  UI.mitades.push({ x:x, y:y, vx:-1.6, vy:1.2, rot:0, vr:-3, r:r, color:color, lado:-1, vida:0.6 });
+  UI.mitades.push({ x:x, y:y, vx:1.6, vy:1.2, rot:0, vr:3, r:r, color:color, lado:1, vida:0.6 });
+}
+function vueloGema(x, y, p){
+  var el = $(p <= 7 ? 'g' + p : 'gGrandes'), rl = lienzo.getBoundingClientRect(), tx = x, ty = -0.6;
+  if(el){ var re = el.getBoundingClientRect(); tx = clamp((re.left + re.width / 2 - rl.left) / UI.escala, 0.3, K.W - 0.3); }
+  UI.vuelos.push({ x:x, y:y, tx:tx, ty:ty, p:p, t:0, dur:REDUCIDO ? 0.25 : 0.55 });
+}
+
+/* ---------------- marcador, cesta, banner y avisos ---------------- */
+var hudPrev = {};
+function poner(id, txt, destello){
+  if(hudPrev[id] === txt) return; hudPrev[id] = txt; var el = $(id); el.textContent = txt;
+  if(destello && !REDUCIDO){ el.classList.remove('destello'); void el.offsetWidth; el.classList.add('destello'); }
+}
+function pulsarGema(p){ var el = $(p <= 7 ? 'g' + p : 'gGrandes'); if(!el || REDUCIDO) return; el.classList.remove('destello'); void el.offsetWidth; el.classList.add('destello'); }
+function actualizarHUD(){
+  poner('hPuntos', E.fmtPuntos(M.puntos), true);
+  poner('hCombo', '×' + M.mult(), true);
+  var c = ''; for(var i = 0; i < 3; i++) c += i < M.corazones ? '♥' : '♡';
+  if(hudPrev.hCorazones !== c) $('hCorazones').setAttribute('aria-label', M.corazones + ' de 3 corazones');
+  poner('hCorazones', c, true);
+  var cfg = M.config, nombre = cfg ? (cfg.id === 'reto' ? (M.modo === 'duelo' ? 'Duelo' : 'Reto del día') : cfg.nombre.replace('Cinturón ', '')) : 'Cinturón';
+  var q = M.quedan(), valor = q > 0 ? (q === 1 ? 'queda 1' : 'quedan ' + q) : (M.jefeEnCamino() ? 'Gemelos' : '—');
+  poner('hCinturonEti', nombre); poner('hCinturon', valor);
+  [2, 3, 5, 7].forEach(function(p){ var t = '×' + M.cesta[p]; if(hudPrev['g' + p + 'c'] !== t) $('g' + p).setAttribute('aria-label', 'Gemas del ' + p + ': ' + M.cesta[p]); poner('g' + p + 'c', t); });
+  var gr = M.grandes.length ? M.grandes.slice(-4).join(' · ') + (M.grandes.length > 4 ? ' …' : '') : '';
+  if(hudPrev.grandes !== gr){ hudPrev.grandes = gr; $('gGrandes').textContent = gr ? 'primos: ' + gr : ''; $('gGrandes').setAttribute('aria-label', 'Primos grandes atrapados: ' + (M.grandes.length ? M.grandes.join(', ') : 'ninguno')); }
+}
+function banner(grande, pista, dur){
+  $('bannerGrande').textContent = grande || ''; $('bannerGrande').style.display = grande ? 'block' : 'none';
+  $('bannerPista').innerHTML = pista || ''; $('bannerPista').style.display = pista ? 'inline-block' : 'none';
+  $('banner').classList.add('visible'); UI.bannerT = dur || 3;
+}
+function ticker(txt, clase){ var t = $('ticker'); t.textContent = txt; t.className = clase || 'info'; t.title = txt; }
+var colaAviso = [], tUltimoAviso = -9;
+function anunciar(txt){ if(txt) colaAviso.push(String(txt)); }
+function vaciarAvisos(ahora){
+  if(!colaAviso.length || ahora - tUltimoAviso < 1.1) return;
+  var txt = colaAviso.join(' '); colaAviso.length = 0; tUltimoAviso = ahora;
+  var a = $('aviso'); a.textContent = ''; setTimeout(function(){ a.textContent = txt; }, 30);
+}
+function avisar(txt, clase){ ticker(txt, clase); anunciar(txt); }
+
+/* ---------------- objetivo (teclado) ---------------- */
+function objetivoActual(){
+  var L = M.cuerpos();
+  if(UI.objetivo !== null && L.some(function(c){ return c.id === UI.objetivo; })) return UI.objetivo;
+  return M.masBajo();
+}
+function cambiarObjetivo(dir){
+  var L = M.cuerpos().sort(function(a, b){ return a.x - b.x; }); if(!L.length) return;
+  var actual = objetivoActual(), i = -1;
+  for(var k = 0; k < L.length; k++) if(L[k].id === actual) i = k;
+  var sig = L[(i + dir + L.length) % L.length];
+  UI.objetivo = sig.id; UI.teclado = true;
+  anunciar('Objetivo: ' + (sig.id === 'jefe' ? 'los Gemelos ' + sig.a + ' y ' + sig.b : 'el ' + sig.n) + '.');
+}
+function alturaTexto(y){ return y > 7.5 ? 'alto' : (y > 4 ? 'a media altura' : 'bajo'); }
+function anunciarAire(){
+  var L = M.cuerpos().sort(function(a, b){ return a.x - b.x; });
+  if(!L.length){ anunciar('No hay ningún número en el aire.'); return; }
+  anunciar('En el aire: ' + L.map(function(c){ return (c.id === 'jefe' ? 'los Gemelos ' + c.a + ' y ' + c.b : 'el ' + c.n) + ', ' + alturaTexto(c.y); }).join('; ') + '.');
+}
+
+/* ---------------- acciones ---------------- */
+function jugable(){ return M.fase === 'jugando' && !UI.panel && !UI.pausa; }
+function cuchillaDisponible(p){ return !!(M.config && M.config.cuchillas.indexOf(p) >= 0); }
+function ejecutarCorte(id, p){
+  if(!jugable()) return;
+  if(!cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); Sonido.sfx('clonk'); return; }
+  M.cortar(id, p); procesarEventos();
+}
+function ejecutarAtrapar(id){ if(!jugable()) return; M.atrapar(id); procesarEventos(); }
+function alternarArmada(p){
+  if(p !== null && !cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); return; }
+  UI.armada = (UI.armada === p) ? null : p;
+  actualizarCuchillas();
+  if(UI.armada !== null) avisar('Cuchilla del ' + UI.armada + ' preparada: toca un número para cortarlo.', 'info');
+}
+function actualizarCuchillas(){
+  Array.prototype.forEach.call(document.querySelectorAll('.cuchilla[data-p]'), function(b){
+    var p = +b.getAttribute('data-p'), ok = cuchillaDisponible(p);
+    b.setAttribute('aria-disabled', ok ? 'false' : 'true');
+    b.setAttribute('aria-pressed', UI.armada === p ? 'true' : 'false');
+    b.setAttribute('aria-label', 'Cuchilla del ' + p + (ok ? ': arrastra hasta un número o púlsala para prepararla' : ' (se gana en el cinturón naranja)'));
+  });
+  $('mandos').classList.toggle('sin-pistas', !progreso.pistas);
+}
+function actualizarForjaBoton(){
+  var ver = !!(M.jefe && M.jefe.encadenado && (M.fase === 'jugando' || M.fase === 'forja'));
+  var b = $('bForja');
+  if(b.hidden === ver){ b.hidden = !ver; $('mandos').classList.toggle('con-forja', ver); }
+}
+
+/* ---------------- entrada: cortes arrastrando desde una cuchilla ---------------- */
+function anadirEstela(w){ UI.estela.push({ x:w[0], y:w[1], t:UI.reloj }); if(UI.estela.length > 40) UI.estela.shift(); }
+Array.prototype.forEach.call(document.querySelectorAll('.cuchilla[data-p]'), function(boton){
+  var p = +boton.getAttribute('data-p');
+  boton.addEventListener('pointerdown', function(ev){
+    Sonido.despertar(); UI.teclado = false;
+    if(!jugable()) return;
+    ev.preventDefault();
+    try{ boton.setPointerCapture(ev.pointerId); }catch(e){}
+    UI.corte = { p:p, id:ev.pointerId, x0:ev.clientX, y0:ev.clientY, ultimo:null, movido:false, hecho:false };
+  });
+  boton.addEventListener('pointermove', function(ev){
+    var c = UI.corte; if(!c || c.id !== ev.pointerId) return;
+    if(!c.movido && Math.hypot(ev.clientX - c.x0, ev.clientY - c.y0) > 10) c.movido = true;
+    if(c.hecho || !c.movido) return;
+    var w = aMundo(ev.clientX, ev.clientY);
+    if(c.ultimo){
+      var id = M.cruce(c.ultimo[0], c.ultimo[1], w[0], w[1], 0.15);
+      if(id !== null){ c.hecho = true; if(!cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); } else ejecutarCorte(id, p); }
+    }
+    c.ultimo = w; anadirEstela(w);
+  });
+  function fin(ev){
+    var c = UI.corte; if(!c || c.id !== ev.pointerId) return;
+    UI.corte = null;
+    if(c.movido || c.hecho) UI.ignorarClicHasta = performance.now() + 400;   /* el clic que sigue a un arrastre no prepara la cuchilla */
+  }
+  boton.addEventListener('pointerup', fin);
+  boton.addEventListener('pointercancel', function(ev){ if(UI.corte && UI.corte.id === ev.pointerId){ UI.corte = null; UI.ignorarClicHasta = performance.now() + 400; } });
+  boton.addEventListener('click', function(){
+    if(performance.now() < (UI.ignorarClicHasta || 0)){ UI.ignorarClicHasta = 0; return; }
+    Sonido.despertar();
+    if(!jugable()) return;
+    alternarArmada(p);
+  });
+});
+
+/* ---------------- entrada: tocar un número (atrapar, o cortar con la cuchilla preparada) ---------------- */
+lienzo.addEventListener('pointerdown', function(ev){
+  Sonido.despertar(); UI.teclado = false;
+  if(!jugable()) return;
+  ev.preventDefault();
+  var w = aMundo(ev.clientX, ev.clientY);
+  if(UI.armada !== null){
+    var id = M.golpeEn(w[0], w[1], 0.35);
+    if(id !== null){ var p = UI.armada; UI.armada = null; actualizarCuchillas(); ejecutarCorte(id, p); }
+    return;
+  }
+  UI.toque = { id:ev.pointerId, x0:ev.clientX, y0:ev.clientY, t0:performance.now(), objetivo:M.golpeEn(w[0], w[1], 0.35) };
+});
+lienzo.addEventListener('pointerup', function(ev){
+  var t = UI.toque; if(!t || t.id !== ev.pointerId) return; UI.toque = null;
+  if(!jugable()) return;
+  var mov = Math.hypot(ev.clientX - t.x0, ev.clientY - t.y0), dur = performance.now() - t.t0;
+  if(mov < 22 && dur < 800){
+    var w = aMundo(ev.clientX, ev.clientY), id = t.objetivo;
+    if(id === null || !M.cuerpos().some(function(c){ return c.id === id; })) id = M.golpeEn(w[0], w[1], 0.45);
+    if(id !== null) ejecutarAtrapar(id);
+  } else if(mov >= 22){
+    avisar('Para cortar, arrastra desde una cuchilla de abajo hasta el número. Para atrapar un primo, tócalo.', 'info');
+  }
+});
+lienzo.addEventListener('pointercancel', function(){ UI.toque = null; });
+
+/* ---------------- forja ---------------- */
+function abrirForja(){ if(!jugable()) return; var r = M.abrirForja(); if(!r.ok){ avisar('La forja solo sirve contra los Gemelos encadenados.', 'info'); return; } procesarEventos(); }
+function refrescarForja(){
+  if(!M.forja) return;
+  var gemas = M.forja.gemas, F = M.valorForja();
+  $('forjaValor').textContent = gemas.length ? 'Cuchilla: ' + gemas.join(' · ') + (gemas.length > 1 ? ' = ' + F : '') : 'Cuchilla: — (toca gemas para multiplicarlas)';
+  var J = M.jefe;
+  $('forjaGemelos').innerHTML = J ? 'Gemelos: <b>' + J.a + '</b> y <b>' + J.b + '</b>. Solo su máximo común divisor rompe la cadena de un tajo.' : '';
+  Array.prototype.forEach.call(document.querySelectorAll('#forjaGemas button'), function(b){
+    var p = +b.getAttribute('data-gema'), libres = M.gemasLibres(p);
+    b.querySelector('small').textContent = '×' + libres;
+    b.disabled = libres <= 0;
+    b.setAttribute('aria-label', 'Gema del ' + p + ': quedan ' + libres);
+  });
+}
+function forjaAnadir(p){ var r = M.forjaAnadir(p); if(!r.ok){ if(r.motivo === 'sin-gemas') avisar('No te quedan gemas del ' + p + ' en la cesta.', 'mal'); else if(r.motivo === 'grande') avisar('Esa cuchilla sería demasiado grande.', 'mal'); } else Sonido.sfx('gema', p); refrescarForja(); }
+function forjaQuitar(){ M.forjaQuitar(); refrescarForja(); }
+function forjaLanzar(){ var r = M.forjaLanzar(); if(!r.ok && r.motivo === 'vacia'){ avisar('Primero elige gemas: la cuchilla es su producto.', 'info'); return; } procesarEventos(); }
+function forjaCancelar(){ M.forjaCancelar(); procesarEventos(); }
+function mostrarForja(si){
+  $('forja').hidden = !si;
+  if(si){ refrescarForja(); setTimeout(function(){ var b = document.querySelector('#forjaGemas button:not([disabled])') || $('bForjaCancelar'); if(b) b.focus(); }, 40); }
+}
+Array.prototype.forEach.call(document.querySelectorAll('#forjaGemas button'), function(b){ b.addEventListener('click', function(){ forjaAnadir(+b.getAttribute('data-gema')); }); });
+$('bForjaQuitar').addEventListener('click', forjaQuitar);
+$('bForjaLanzar').addEventListener('click', forjaLanzar);
+$('bForjaCancelar').addEventListener('click', forjaCancelar);
+$('bForja').addEventListener('click', function(){ Sonido.despertar(); abrirForja(); });
+
+/* ---------------- teclado ---------------- */
+function teclaNorm(ev){ return (ev.key && ev.key.length === 1) ? ev.key.toLowerCase() : ev.key; }
+document.addEventListener('keydown', function(ev){
+  var tag = (ev.target && ev.target.tagName) || '', k = teclaNorm(ev);
+  if(ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if((tag === 'BUTTON' || tag === 'A') && (k === 'Enter' || k === ' ')) return;
+  if(UI.panel){ if(k === 'Escape' && (UI.panel === 'ayuda' || UI.panel === 'pausa')){ ev.preventDefault(); cerrarPanelVolver(); } return; }
+  if(k === 'p'){ alternarPausa(); return; }
+  if(k === 'm'){ alternarSonido(); return; }
+  if(k === '?'){ abrirAyudaDesdeJuego(); return; }
+  if(M.fase === 'forja'){
+    if(k === '2' || k === '3' || k === '5' || k === '7'){ ev.preventDefault(); forjaAnadir(+k); return; }
+    if(k === 'Backspace'){ ev.preventDefault(); forjaQuitar(); return; }
+    if(k === 'Enter'){ ev.preventDefault(); forjaLanzar(); return; }
+    if(k === 'Escape'){ ev.preventDefault(); forjaCancelar(); return; }
+    return;
+  }
+  if(!jugable()) return;
+  if(k === '2' || k === '3' || k === '5' || k === '7'){ ev.preventDefault(); UI.teclado = true; Sonido.despertar(); var id = objetivoActual(); if(id !== null) ejecutarCorte(id, +k); return; }
+  if(k === ' ' || k === 'a'){ ev.preventDefault(); UI.teclado = true; var id2 = objetivoActual(); if(id2 !== null) ejecutarAtrapar(id2); return; }
+  if(k === 'ArrowLeft' || k === 'ArrowRight'){ ev.preventDefault(); cambiarObjetivo(k === 'ArrowLeft' ? -1 : 1); return; }
+  if(k === 'f'){ abrirForja(); return; }
+  if(k === 'l'){ anunciarAire(); return; }
+  if(k === 'Escape' && UI.armada !== null){ alternarArmada(null); return; }
+});
+
+/* ---------------- eventos del motor → efectos, mensajes y sonido ---------------- */
+var avisoCaida = {};
+function nombreEtapa(ev){
+  if(ev.modo === 'reto') return 'Reto del día · ' + fechaBonita();
+  if(ev.modo === 'duelo') return 'Duelo · jugador ' + (UI.duelo ? UI.duelo.turno : 1);
+  return ev.config.nombre;
+}
+function procesarEventos(){
+  var evs = M.eventos; if(!evs.length) return;
+  var lote = evs.slice(); evs.length = 0;
+  for(var i = 0; i < lote.length; i++){
+    var ev = lote[i];
+    switch(ev.tipo){
+      case 'etapa': {
+        var c = ev.config, cuch = c.cuchillas.join(', ').replace(/, (\d)$/, ' y $1');
+        var pista = (ev.reintento ? 'Otra vez, con otros números. ' : '') + 'Cuchillas ' + cuch + ' · ' + c.bolas + ' bolas' + (ev.jefe ? ' y al final los <b>Gemelos</b>' : '') + '.';
+        if(ev.nuevaCuchilla) pista += ' <b>¡Nueva cuchilla: ' + ev.nuevaCuchilla + '!</b>';
+        if(c.dosBolas && !M.tranquilo) pista += ' <b>¡Ahora vuelan dos a la vez!</b>';
+        if(M.tranquilo) pista += ' Modo tranquilo.';
+        banner(nombreEtapa(ev), pista, 3.6);
+        ticker('Corta con una cuchilla que divida al número. Atrapa los primos.', 'info');
+        anunciar(nombreEtapa(ev) + '. ' + pista.replace(/<[^>]+>/g, ''));
+        UI.armada = null; UI.objetivo = null; avisoCaida = {}; actualizarCuchillas(); mostrarForja(false);
+        break; }
+      case 'lanzamiento': UI.ninjaLanza = 0.35; Sonido.sfx('lanza'); anunciar('Sale el ' + ev.n + '.'); break;
+      case 'corte':
+        Sonido.sfx('tajo'); Sonido.sfx('gema', ev.p); mitades(ev.x, ev.y, K.R, colorBola(ev.id)); vueloGema(ev.x, ev.y, ev.p);
+        texto(ev.x, ev.y, '÷' + ev.p, '#ffffff', 0.5); avisoCaida[ev.id] = false;
+        avisar(ev.antes + ' : ' + ev.p + ' = ' + ev.despues + (ev.despues === 1 ? '. ¡Terminado!' : ''), 'bien');
+        break;
+      case 'clonk': {
+        Sonido.sfx('clonk'); if(ev.cuenta) Sonido.sfx('grieta');
+        particulas(ev.x, ev.y, 8, '#ffffff', 2.5); texto(ev.x, ev.y, 'clonk', '#ffb3b3', 0.4);
+        var msg = ev.porque + (ev.cuenta ? ' Grieta ' + ev.grietas + ' de 3.' : ' El 7 no agrieta.');
+        if(ev.esPrimo && (ev.grietas >= 2 || ev.p === 7)) msg += ' ¿Y si ' + ev.n + ' es primo?';
+        avisar(msg, 'mal');
+        break; }
+      case 'rota':
+        Sonido.sfx('rota'); UI.sacudida = 0.8; particulas(ev.x, ev.y, 22, colorBola(ev.id), 4);
+        avisar('¡El ' + ev.n + ' se rompe! ' + (ev.esPrimo ? ev.n + ' es primo: había que atraparlo.' : ev.n + ' = ' + ev.fact + '.'), 'mal');
+        break;
+      case 'atrapada': Sonido.sfx('atrapa'); particulas(ev.x, ev.y, 10, '#ffd43b', 2); vueloGema(ev.x, ev.y, ev.n); break;
+      case 'completada': {
+        Sonido.sfx('completa'); particulas(ev.x, ev.y, 16, '#ffd43b', 3); texto(ev.x, ev.y + 0.3, '+' + ev.puntos, '#ffd43b', 0.46);
+        var extra = (ev.extras.indexOf('impostor') >= 0 ? ' ¡Impostor desenmascarado!' : '') + (ev.extras.indexOf('primo') >= 0 ? ' ¡Primo a la primera!' : '');
+        avisar(ev.n0 + (ev.fact === String(ev.n0) ? ' es primo ✓' : ' = ' + ev.fact + ' ✓') + extra, 'bien');
+        break; }
+      case 'errorPrimo':
+        Sonido.sfx('error'); UI.sacudida = 1; particulas(ev.x, ev.y, 18, '#ff6b6b', 3.5);
+        avisar('¡' + ev.n + ' no es primo! ' + ev.n + ' = ' + ev.fact + '.', 'mal');
+        break;
+      case 'caida':
+        Sonido.sfx('cae'); UI.sacudida = 0.6; particulas(ev.x, ev.y, 16, colorBola(ev.id), 3);
+        avisar('Se te cayó el ' + ev.n + (ev.esPrimo ? ': es primo, había que atraparlo.' : ' (' + ev.n + ' = ' + ev.fact + ').'), 'mal');
+        break;
+      case 'corazon': Sonido.sfx('corazon'); anunciar(ev.corazones === 1 ? 'Te queda 1 corazón.' : 'Te quedan ' + ev.corazones + ' corazones.'); break;
+      case 'combo': Sonido.sfx('combo'); texto(K.W / 2, 6, 'COMBO ×' + ev.mult, '#6ee7b7', 0.6); anunciar('Combo por ' + ev.mult + '.'); break;
+      case 'jefeAviso':
+        Sonido.sfx('gong');
+        banner('¡Llegan los Gemelos!', 'Van encadenados: solo se cortan <b>juntos</b>, con una cuchilla que divida a los dos. La cadena se rompe cuando ya no comparten ningún divisor. Con la <b>forja</b> puedes intentarlo de un solo tajo.', 4.2);
+        anunciar('¡Llegan los Gemelos! Solo se cortan juntos, con una cuchilla que divida a los dos.');
+        break;
+      case 'jefeEntra': avisar('Gemelos: ' + ev.a + ' y ' + ev.b + '. Corta la cadena con una cuchilla que divida a los dos, o usa la forja.', 'jefe'); break;
+      case 'cadenaCorte':
+        Sonido.sfx('cadena'); Sonido.sfx('gema', ev.p); particulas(ev.x, ev.y, 10, '#ffc229', 2.5); vueloGema(ev.x, ev.y, ev.p); texto(ev.x, ev.y, '÷' + ev.p, '#ffc229', 0.5);
+        avisar(ev.antesA + ' y ' + ev.antesB + ' entre ' + ev.p + ': ' + ev.a + ' y ' + ev.b + '.' + (ev.eslabones ? ' Todavía comparten divisores.' : ''), 'jefe');
+        break;
+      case 'cadenaClonk': {
+        Sonido.sfx('clonk'); particulas(ev.x, ev.y, 8, '#ffffff', 2.5);
+        var m2 = ev.divideA ? ev.p + ' divide a ' + ev.a + ' pero no a ' + ev.b + '.' : (ev.divideB ? ev.p + ' divide a ' + ev.b + ' pero no a ' + ev.a + '.' : ev.p + ' no divide a ninguno de los dos.');
+        avisar(m2 + ' Tiene que dividir a los dos.', 'mal');
+        break; }
+      case 'cadenaAfloja':
+        mostrarForja(false); Sonido.congelar(false); Sonido.sfx('cadena'); particulas(ev.x, ev.y, 12, '#ffc229', 2.5);
+        avisar('La cuchilla ' + ev.F + ' divide a los dos: quedan ' + ev.a + ' y ' + ev.b + ', que aún comparten divisores. La cadena se afloja, pero no se rompe.', 'jefe');
+        break;
+      case 'forjaAcierto': mostrarForja(false); Sonido.congelar(false); break;
+      case 'cadenaRota': {
+        Sonido.sfx('cadenaRota'); UI.destello = 1; particulas(ev.x, ev.y, 30, '#ffc229', 4.5);
+        var detalle = 'm.c.d.(' + ev.a0 + ', ' + ev.b0 + ') = ' + ev.mcd + (ev.fact !== String(ev.mcd) ? ' = ' + ev.fact : '') + '. Ahora termina a los gemelos: <b>' + ev.a + '</b> y <b>' + ev.b + '</b>.';
+        banner(ev.maestro ? '¡TAJO MAESTRO!' : '¡Cadena rota!', detalle, 4.5);
+        avisar((ev.maestro ? '¡Tajo maestro! ' : '¡Cadena rota! ') + detalle.replace(/<[^>]+>/g, ''), 'jefe');
+        mostrarForja(false);
+        break; }
+      case 'forja': Sonido.sfx('forja'); Sonido.congelar(true); mostrarForja(true); anunciar('Forja abierta, el tiempo se congela. Elige gemas: la cuchilla es su producto.'); break;
+      case 'forjaCaducada': avisar('Se acabó el tiempo congelado: los Gemelos caen despacio. Lanza o cancela.', 'mal'); break;
+      case 'forjaClonk':
+        mostrarForja(false); Sonido.congelar(false); Sonido.sfx('clonk');
+        avisar('La cuchilla ' + ev.F + ' no divide a los dos. ' + (ev.porqueA || ev.porqueB) + ' Las gemas vuelven a la cesta.', 'mal');
+        break;
+      case 'forjaCancelada': mostrarForja(false); Sonido.congelar(false); anunciar('Forja cancelada.'); break;
+      case 'jefeCae': Sonido.sfx('cae'); UI.sacudida = 0.8; avisar('¡Los Gemelos tocan el suelo! Vuelven a subir, pero pierdes un corazón.', 'mal'); break;
+      case 'jefeNoSeAtrapa': avisar('Los Gemelos no se atrapan: corta la cadena con una cuchilla que divida a los dos.', 'info'); break;
+      case 'cuchillaBloqueada': avisar('La cuchilla del ' + ev.p + ' se gana en el cinturón naranja.', 'info'); break;
+      case 'etapaSuperada': {
+        Sonido.sfx('fanfarria'); UI.destello = 0.8;
+        if(ev.modo === 'campana'){
+          progreso.cinturonMax = Math.max(progreso.cinturonMax || 0, Math.min(ev.indice + 1, E.CINTURONES.length - 1)); guardar();
+          var sig = E.CINTURONES[ev.indice + 1];
+          banner('¡' + E.CINTURONES[ev.indice].nombre + ' conseguido!', '+' + ev.bonus + ' puntos por ' + ev.corazones + (ev.corazones === 1 ? ' corazón' : ' corazones') + (sig ? '. Siguiente: <b>' + sig.nombre + '</b>.' : '.'), 3.2);
+        } else banner('¡Completado!', '+' + ev.bonus + ' puntos por ' + ev.corazones + (ev.corazones === 1 ? ' corazón' : ' corazones') + '.', 3.2);
+        anunciar('Superado. Más ' + ev.bonus + ' puntos.');
+        break; }
+      case 'fallo': Sonido.congelar(false); mostrarForja(false); registrarCampana(); abrirPanel('fallo'); break;
+      case 'fin': Sonido.congelar(false); mostrarForja(false); terminarPartidaCorta(ev.completo); break;
+      case 'victoria': Sonido.congelar(false); registrarCampana(); abrirPanel('victoria'); break;
+    }
+  }
+}
+function vigilarCaidas(){
+  for(var i = 0; i < M.bolas.length; i++){
+    var b = M.bolas[i];
+    if(b.y < 3.4 && b.vy < 0 && !avisoCaida[b.id]){ avisoCaida[b.id] = true; anunciar('¡Cuidado, el ' + b.n + ' cae!'); }
+  }
+}
+
+/* ---------------- récords ---------------- */
+function registrarCampana(){
+  var nuevo = M.puntos > (progreso.mejor || 0);
+  if(nuevo) progreso.mejor = M.puntos;
+  if(M.fase === 'victoria'){ progreso.victorias = (progreso.victorias || 0) + 1; progreso.cinturonMax = E.CINTURONES.length - 1; }
+  guardar(); UI.recordNuevo = nuevo;
+}
+function registrarReto(){
+  var f = fechaClave(), ant = (progreso.reto && progreso.reto.fecha === f) ? progreso.reto.mejor : 0;
+  UI.recordNuevo = M.puntos > ant; progreso.reto = { fecha:f, mejor:Math.max(ant, M.puntos) }; guardar();
+}
+function terminarPartidaCorta(completo){
+  UI.completo = completo;
+  if(M.modo === 'duelo'){
+    UI.duelo.puntos[UI.duelo.turno - 1] = M.puntos; UI.duelo.completo[UI.duelo.turno - 1] = completo;
+    abrirPanel(UI.duelo.turno === 1 ? 'dueloTurno' : 'dueloFin');
+  } else { registrarReto(); abrirPanel('fin'); }
+}
+function textoRecords(){
+  var partes = [];
+  partes.push(progreso.mejor ? 'Récord: ' + E.fmtPuntos(progreso.mejor) + ' puntos' : 'Sin récord todavía');
+  if(progreso.victorias) partes.push('cinturones negros: ' + progreso.victorias);
+  if(progreso.reto && progreso.reto.fecha === fechaClave()) partes.push('reto de hoy: ' + E.fmtPuntos(progreso.reto.mejor));
+  return partes.join(' · ');
+}
+function tablaEstad(){
+  var s = M.estad;
+  return '<div class="tabla"><b>' + s.cortes + '</b><span>cortes exactos</span><b>' + s.primos + '</b><span>primos atrapados</span><b>' + s.impostores + '</b><span>impostores desenmascarados</span>'
+    + '<b>' + s.cadenas + '</b><span>cadenas de Gemelos rotas' + (s.tajosMaestros ? ' (' + s.tajosMaestros + ' de un tajo maestro)' : '') + '</span>'
+    + '<b>' + s.clonks + '</b><span>cortes que no dividían</span><b>' + s.corazonesPerdidos + '</b><span>corazones perdidos</span><b>' + M.comboMax + '</b><span>mejor racha</span></div>';
+}
+
+/* ---------------- paneles ---------------- */
+function pie(){ return '<div class="pie-marca"><a href="../../index.html">← Arcademia</a> · 1.º y 2.º ESO · divisibilidad</div>'; }
+var FONDO = ['superior', 'hud', 'escenario', 'cesta', 'mandos', 'forja'];
+function bloquearFondo(si){ FONDO.forEach(function(id){ var el = $(id); if(!el) return; if(si){ el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); } else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); } }); }
+function atraparTab(ev){
+  if(ev.key !== 'Tab' || !UI.panel) return;
+  var f = $('panel').querySelectorAll('button:not([disabled]), a[href]'); if(!f.length) return;
+  var primero = f[0], ultimo = f[f.length - 1];
+  if(ev.shiftKey && document.activeElement === primero){ ev.preventDefault(); ultimo.focus(); }
+  else if(!ev.shiftKey && document.activeElement === ultimo){ ev.preventDefault(); primero.focus(); }
+}
+$('velo').addEventListener('keydown', atraparTab);
+function abrirPanel(nombre, focoId){
+  if(!UI.panel) UI.focoPrevio = document.activeElement;
+  UI.panel = nombre; var p = $('panel'), h = '', i;
+  if(nombre === 'menu'){
+    h = '<h2 id="panelTitulo">MALABARES NINJA</h2>'
+      + '<p class="sub">Parte los números con cuchillas primas y atrapa los primos. ¡Que no se te caiga ninguno!</p>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mJugar">Jugar</button><button type="button" class="btn" id="mReto">Reto del día (' + fechaBonita() + ')</button></div>'
+      + '<h3>Empezar en otro cinturón</h3><div class="cinturones">';
+    for(i = 0; i < E.CINTURONES.length; i++){
+      var c = E.CINTURONES[i], libre = i <= (progreso.cinturonMax || 0), nom = c.nombre.replace('Cinturón ', '');
+      h += '<button type="button" class="btn" data-cinturon="' + i + '"' + (libre ? '' : ' disabled') + ' aria-label="Empezar en el ' + c.nombre.toLowerCase() + (libre ? '' : ' (bloqueado: supera antes los anteriores)') + '"><span class="cinta" style="--c:' + COLOR_CINTA[c.id] + '" aria-hidden="true"></span>' + nom + (libre ? '' : ' 🔒') + '</button>';
+    }
+    h += '</div><div class="fila"><button type="button" class="btn" id="mDuelo">Duelo por turnos (2 jugadores)</button></div>'
+      + '<div class="fila"><button type="button" class="btn" id="mTranquilo" aria-pressed="' + (progreso.tranquilo ? 'true' : 'false') + '">Modo tranquilo: ' + (progreso.tranquilo ? 'sí' : 'no') + '</button>'
+      + '<button type="button" class="btn" id="mPistas" aria-pressed="' + (progreso.pistas ? 'true' : 'false') + '">Pistas en las cuchillas: ' + (progreso.pistas ? 'sí' : 'no') + '</button></div>'
+      + '<div class="fila"><button type="button" class="btn secundario" id="mAyuda">Cómo se juega</button></div>'
+      + '<p class="recor">' + textoRecords() + '</p>' + pie();
+  } else if(nombre === 'ayuda'){
+    h = '<h2 id="panelTitulo">Cómo se juega</h2>'
+      + '<h3>La idea</h3><p>Los números vuelan como bolas de malabares. Tu trabajo es dejarlos en sus factores primos antes de que caigan al suelo.</p>'
+      + '<h3>Cortar</h3><p>Arrastra desde una cuchilla (2, 3, 5 o 7) hasta el número. Si la cuchilla lo divide, cae una gema en tu cesta y el cociente vuelve a subir: el 84 pasa a 42, luego a 21 y luego a 7. También puedes pulsar una cuchilla para prepararla y después tocar el número.</p>'
+      + '<h3>Atrapar</h3><p>Cuando lo que queda es un número primo, tócalo para atraparlo. Si llegas a 1, también está terminado.</p>'
+      + '<h3>Los criterios</h3><ul><li><b>2</b>: el número acaba en 0, 2, 4, 6 u 8.</li><li><b>3</b>: la suma de sus cifras es múltiplo de 3 (en 84, 8 + 4 = 12).</li><li><b>5</b>: acaba en 0 o en 5.</li><li><b>7</b>: no hay un criterio cómodo; haz la división.</li></ul>'
+      + '<h3>Errores</h3><p>Una cuchilla que no divide suena «clonk»: la bola cae más deprisa y se agrieta, y a la tercera grieta se rompe. El 7 no agrieta. Pierdes un corazón si atrapas un número que no es primo, si una bola se rompe o si toca el suelo. Sin corazones, el cinturón vuelve a empezar.</p>'
+      + '<h3>Los Gemelos</h3><p>Desde el cinturón amarillo, al final llegan dos números encadenados. Solo se cortan juntos, con una cuchilla que divida a los dos, y la cadena se rompe cuando ya no comparten ningún divisor: los primos que has cortado forman su <b>máximo común divisor</b>. Con la <b>forja</b> combinas gemas de tu cesta en una sola cuchilla, que es su producto; si aciertas el m.c.d. de un solo tajo, es un tajo maestro.</p>'
+      + '<h3>Puntos</h3><p>10 por cada corte y 20 por cada factor al terminar un número. Los impostores, números impares que parecen primos y no lo son (como 91 = 7·13), dan 50 más. Cada tres aciertos seguidos sube el combo, hasta multiplicar por 4.</p>'
+      + '<h3>Modo tranquilo</h3><p>La gravedad es más suave y solo vuela un número cada vez.</p>'
+      + '<h3>Teclado</h3><p>2, 3, 5 y 7 cortan el número marcado (el más bajo, si no eliges otro); Espacio o A lo atrapan; las flechas ← y → cambian de número; F abre la forja; L dice qué hay en el aire; P pausa; M sonido. En la forja: 2, 3, 5 y 7 añaden gemas, la tecla de borrar quita la última, Intro lanza y Esc cancela.</p>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mVolver">Volver</button></div>' + pie();
+  } else if(nombre === 'pausa'){
+    h = '<h2 id="panelTitulo">Pausa</h2><p class="sub">' + E.fmtPuntos(M.puntos) + ' puntos</p>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mVolver">Continuar</button><button type="button" class="btn" id="mAyuda">Cómo se juega</button></div>'
+      + '<div class="fila"><button type="button" class="btn secundario" id="mMenu">Abandonar la partida</button></div>' + pie();
+  } else if(nombre === 'fallo'){
+    var cf = E.CINTURONES[M.cinturon];
+    h = '<h2 id="panelTitulo">¡Sin corazones!</h2><p class="sub">' + cf.nombre + '</p><p class="cifra">' + E.fmtPuntos(M.puntos) + ' puntos</p>' + tablaEstad()
+      + (UI.recordNuevo ? '<p class="aviso-sesion">¡Nuevo récord!</p>' : '<p class="recor">' + textoRecords() + '</p>')
+      + '<div class="fila"><button type="button" class="btn principal" id="mReintentar">Repetir el ' + cf.nombre.toLowerCase() + '</button>'
+      + (M.tranquilo ? '' : '<button type="button" class="btn" id="mReintentarTranquilo">Repetirlo en modo tranquilo</button>') + '</div>'
+      + '<div class="fila"><button type="button" class="btn secundario" id="mMenu">Menú</button></div>' + pie();
+  } else if(nombre === 'fin'){
+    h = '<h2 id="panelTitulo">' + (UI.completo ? '¡Reto completado!' : 'Fin del reto') + '</h2><p class="sub">Reto del día · ' + fechaBonita() + (M.tranquilo ? ' · modo tranquilo' : '') + '</p>'
+      + '<p class="cifra">' + E.fmtPuntos(M.puntos) + ' puntos</p>' + tablaEstad()
+      + (UI.recordNuevo ? '<p class="aviso-sesion">¡Tu mejor marca de hoy!</p>' : '<p class="recor">' + textoRecords() + '</p>')
+      + '<div class="fila"><button type="button" class="btn principal" id="mOtraReto">Otra vez</button><button type="button" class="btn" id="mMenu">Menú</button></div>' + pie();
+  } else if(nombre === 'victoria'){
+    h = '<h2 id="panelTitulo">¡Cinturón negro!</h2><p class="sub">Has superado los cinco cinturones' + (M.tranquilo ? ' en modo tranquilo' : '') + '.</p>'
+      + '<p class="cifra">' + E.fmtPuntos(M.puntos) + ' puntos</p>' + tablaEstad()
+      + (UI.recordNuevo ? '<p class="aviso-sesion">¡Nuevo récord!</p>' : '<p class="recor">' + textoRecords() + '</p>')
+      + '<div class="fila"><button type="button" class="btn principal" id="mJugar">Otra partida</button><button type="button" class="btn" id="mMenu">Menú</button></div>' + pie();
+  } else if(nombre === 'dueloInicio'){
+    h = '<h2 id="panelTitulo">Duelo por turnos</h2><p>Los dos jugadores reciben exactamente los mismos números: 15 bolas y los Gemelos, con tres corazones. Primero juega uno y después el otro. Gana quien haga más puntos.</p>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mDueloEmpezar">Empieza el jugador 1</button><button type="button" class="btn secundario" id="mMenu">Menú</button></div>' + pie();
+  } else if(nombre === 'dueloTurno'){
+    h = '<h2 id="panelTitulo">Turno del jugador 2</h2><p class="sub">El jugador 1 ha hecho</p><p class="cifra">' + E.fmtPuntos(UI.duelo.puntos[0]) + ' puntos</p>'
+      + '<p>Ahora le toca al jugador 2, con los mismos números.</p>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mDueloSegundo">Empieza el jugador 2</button></div>' + pie();
+  } else if(nombre === 'dueloFin'){
+    var a = UI.duelo.puntos[0], b = UI.duelo.puntos[1];
+    var gana = a === b ? '¡Empate!' : (a > b ? '¡Gana el jugador 1!' : '¡Gana el jugador 2!');
+    h = '<h2 id="panelTitulo">' + gana + '</h2><div class="tabla"><b>' + E.fmtPuntos(a) + '</b><span>jugador 1</span><b>' + E.fmtPuntos(b) + '</b><span>jugador 2</span></div>'
+      + '<div class="fila"><button type="button" class="btn principal" id="mRevancha">Revancha con otros números</button><button type="button" class="btn" id="mMenu">Menú</button></div>' + pie();
+  }
+  p.innerHTML = h; $('velo').hidden = false; bloquearFondo(true);
+  var b2;
+  if((b2 = $('mJugar'))) b2.addEventListener('click', function(){ iniciar('campana', 0); });
+  if((b2 = $('mReto'))) b2.addEventListener('click', function(){ iniciar('reto'); });
+  if((b2 = $('mOtraReto'))) b2.addEventListener('click', function(){ iniciar('reto'); });
+  if((b2 = $('mDuelo'))) b2.addEventListener('click', function(){ UI.duelo = { turno:1, semilla:((Date.now() % 2147483647) | 0) || 11, puntos:[0, 0], completo:[false, false] }; abrirPanel('dueloInicio'); });
+  if((b2 = $('mDueloEmpezar'))) b2.addEventListener('click', function(){ UI.duelo.turno = 1; iniciar('duelo'); });
+  if((b2 = $('mDueloSegundo'))) b2.addEventListener('click', function(){ UI.duelo.turno = 2; iniciar('duelo'); });
+  if((b2 = $('mRevancha'))) b2.addEventListener('click', function(){ UI.duelo = { turno:1, semilla:((Date.now() % 2147483647) | 0) || 13, puntos:[0, 0], completo:[false, false] }; iniciar('duelo'); });
+  if((b2 = $('mTranquilo'))) b2.addEventListener('click', function(){ progreso.tranquilo = !progreso.tranquilo; guardar(); abrirPanel('menu', 'mTranquilo'); });
+  if((b2 = $('mPistas'))) b2.addEventListener('click', function(){ progreso.pistas = !progreso.pistas; guardar(); actualizarCuchillas(); abrirPanel('menu', 'mPistas'); });
+  if((b2 = $('mAyuda'))) b2.addEventListener('click', function(){ UI.panelPrevio = nombre; abrirPanel('ayuda'); });
+  if((b2 = $('mVolver'))) b2.addEventListener('click', cerrarPanelVolver);
+  if((b2 = $('mMenu'))) b2.addEventListener('click', function(){ M.fase = 'menu'; UI.pausa = false; mostrarForja(false); Sonido.congelar(false); abrirPanel('menu'); });
+  if((b2 = $('mReintentar'))) b2.addEventListener('click', function(){ cerrarPanel(); limpiarEfectos(); M.reintentar(); procesarEventos(); });
+  if((b2 = $('mReintentarTranquilo'))) b2.addEventListener('click', function(){ progreso.tranquilo = true; guardar(); M.tranquilo = true; cerrarPanel(); limpiarEfectos(); M.reintentar(); procesarEventos(); });
+  Array.prototype.forEach.call(p.querySelectorAll('[data-cinturon]'), function(bt){ bt.addEventListener('click', function(){ iniciar('campana', +bt.getAttribute('data-cinturon')); }); });
+  var objetivo = (focoId && $(focoId)) || p.querySelector('button:not([disabled])');
+  if(objetivo) setTimeout(function(){ if(UI.panel === nombre) objetivo.focus(); }, 30);
+}
+function cerrarPanel(){
+  UI.panel = null; $('velo').hidden = true; $('panel').innerHTML = ''; bloquearFondo(false);
+  var f = UI.focoPrevio; UI.focoPrevio = null;
+  if(f && f.focus && document.contains(f) && f !== document.body){ try{ f.focus(); }catch(e){} }
+}
+function cerrarPanelVolver(){
+  if(UI.panel === 'ayuda'){
+    var prev = UI.panelPrevio; UI.panelPrevio = null;
+    if(prev && prev !== 'ayuda' && prev !== 'juego'){ abrirPanel(prev); return; }
+    cerrarPanel(); UI.pausa = false;
+    if(M.fase === 'menu') abrirPanel('menu');
+    return;
+  }
+  if(UI.panel === 'pausa') UI.pausa = false;
+  cerrarPanel();
+  if(M.fase === 'menu') abrirPanel('menu');
+}
+function abrirAyudaDesdeJuego(){
+  if(UI.panel === 'ayuda') return;
+  UI.panelPrevio = UI.panel || 'juego';
+  if(!UI.panel && (M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')) UI.pausa = true;
+  abrirPanel('ayuda');
+}
+function limpiarEfectos(){ UI.particulas.length = 0; UI.textos.length = 0; UI.mitades.length = 0; UI.vuelos.length = 0; UI.estela.length = 0; UI.sacudida = 0; UI.destello = 0; }
+function iniciar(modo, cinturon){
+  Sonido.despertar(); cerrarPanel(); UI.pausa = false; limpiarEfectos(); UI.recordNuevo = false; hudPrev = {}; UI.armada = null; UI.objetivo = null;
+  var sem = modo === 'reto' ? semillaDia() : (modo === 'duelo' ? UI.duelo.semilla : (((Date.now() % 2147483647) | 0) || 17));
+  M.nuevaPartida(modo, { tranquilo:progreso.tranquilo, semilla:sem, cinturon:cinturon || 0 });
+  procesarEventos(); actualizarCuchillas();
+  var b = document.querySelector('.cuchilla[data-p="2"]'); if(b) b.focus();
+}
+function alternarPausa(){
+  if(UI.panel){ if(UI.panel === 'pausa') cerrarPanelVolver(); return; }
+  if(M.fase !== 'jugando' && M.fase !== 'forja' && M.fase !== 'transicion') return;
+  UI.pausa = true; abrirPanel('pausa');
+}
+function alternarSonido(){ var on = Sonido.alternar(); var b = $('bSonido'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? '🔊' : '🔇'; }
+$('bSonido').addEventListener('click', alternarSonido);
+$('bPausa').addEventListener('click', alternarPausa);
+$('bAyuda').addEventListener('click', abrirAyudaDesdeJuego);
+document.addEventListener('visibilitychange', function(){ if(document.hidden && !UI.panel && (M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')) alternarPausa(); });
+window.addEventListener('resize', ajustar);
+window.addEventListener('blur', function(){ UI.corte = null; UI.toque = null; });
+
+/* ---------------- bucle ---------------- */
+var prevTs = 0, acc = 0, PASO = 1 / 120;
+function tic(ts){
+  requestAnimationFrame(tic);
+  if(!prevTs) prevTs = ts; var dt = Math.min(0.05, (ts - prevTs) / 1000); prevTs = ts; UI.reloj += dt;
+  if(!UI.pausa && !UI.panel && (M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')){
+    acc += dt; var n = 0;
+    while(acc >= PASO && n < 12){ M.paso(PASO); acc -= PASO; n++; }
+    if(n >= 12) acc = 0;
+    procesarEventos(); vigilarCaidas();
+  }
+  if(UI.ninjaLanza > 0) UI.ninjaLanza = Math.max(0, UI.ninjaLanza - dt);
+  if(UI.sacudida > 0) UI.sacudida = Math.max(0, UI.sacudida - dt * 3);
+  if(UI.destello > 0) UI.destello = Math.max(0, UI.destello - dt * 2.5);
+  if(UI.bannerT > 0){ UI.bannerT -= dt; if(UI.bannerT <= 0) $('banner').classList.remove('visible'); }
+  if(M.fase === 'forja' && M.forja) $('forjaMedidorBarra').style.width = clamp(M.forja.congelacion / K.CONGELACION_FORJA * 100, 0, 100).toFixed(1) + '%';
+  vaciarAvisos(UI.reloj);
+  dibujar(dt); actualizarHUD(); actualizarForjaBoton();
+}
+ajustar(); actualizarCuchillas(); abrirPanel('menu');
+requestAnimationFrame(tic);
+
+/* ganchos de verificación: avanzar la física a mano cuando el panel del navegador está oculto */
+function avanzar(segundos){
+  var n = Math.max(1, Math.round((segundos || 1) / PASO));
+  for(var i = 0; i < n; i++){ if(!(M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')) break; M.paso(PASO); if(M.eventos.length > 40) procesarEventos(); }
+  procesarEventos(); UI.reloj += segundos || 1; dibujar(Math.min(segundos || 1, 1)); actualizarHUD(); actualizarForjaBoton(); tUltimoAviso = -9; vaciarAvisos(UI.reloj);
+}
+window.__malabares = { M:M, E:E, UI:UI, iniciar:iniciar, avanzar:avanzar, dibujar:dibujar, procesarEventos:procesarEventos, ejecutarCorte:ejecutarCorte, ejecutarAtrapar:ejecutarAtrapar,
+  abrirPanel:abrirPanel, cerrarPanel:cerrarPanel, abrirForja:abrirForja, forjaAnadir:forjaAnadir, forjaLanzar:forjaLanzar, aMundo:aMundo, sx:sx, sy:sy, ajustar:ajustar, Sonido:Sonido, progreso:progreso };
+})();
+</script>
+</body>
+</html>
