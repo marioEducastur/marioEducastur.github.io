@@ -20,8 +20,11 @@
   Mecánica: los números vuelan como bolas de malabares. Se cortan
   arrastrando desde una cuchilla (2, 3, 5 o 7) hasta el número: si la
   cuchilla lo divide, cae una gema y el cociente sale relanzado; si no,
-  suena un «clonk», la bola cae más deprisa y se agrieta. Los primos se
-  atrapan con un toque. Cada número se fabrica como producto de primos con
+  suena un «clonk», la bola cae más deprisa y se agrieta. Cuando lo que
+  queda es primo, se atrapa con el ninja, moviéndolo con el ratón, el dedo
+  o las flechas hasta ponerlo debajo; los primos no se cortan, ni siquiera
+  el 2, el 3, el 5 o el 7 con su propia cuchilla, porque son el último
+  factor. Si el ninja atrapa un número compuesto, se pierde un corazón. Cada número se fabrica como producto de primos con
   cuchilla por, a lo sumo, un primo menor que 100, así que siempre se puede
   terminar. Los Gemelos van encadenados: solo se cortan juntos, y la cadena
   se rompe cuando ya no comparten divisores; su producto es el m.c.d.
@@ -81,7 +84,7 @@ canvas{display:block; border-radius:10px; touch-action:none; box-shadow:0 0 0 1p
 
 /* ---------- cesta y marcador de la última jugada ---------- */
 #cesta{flex:0 0 auto; padding:4px 8px 2px; background:#150f33; border-top:1px solid var(--borde)}
-#ticker{font:700 14px/1.3 var(--ui); min-height:19px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--tinta)}
+#ticker{font:700 14px/1.3 var(--ui); height:2.6em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; color:var(--tinta)}
 #ticker.bien{color:var(--jade)} #ticker.mal{color:#ffb3b3} #ticker.info{color:var(--tinta-2)} #ticker.jefe{color:var(--oro)}
 #gemas{display:flex; align-items:center; gap:6px; margin-top:2px; min-height:24px}
 #gemas .rot{font:700 10px var(--ui); letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-2)}
@@ -190,12 +193,12 @@ canvas{display:block; border-radius:10px; touch-action:none; box-shadow:0 0 0 1p
   </div>
 
   <div id="escenario">
-    <canvas id="lienzo" role="img" aria-label="El dojo: los números vuelan como bolas de malabares sobre el ninja"></canvas>
+    <canvas id="lienzo" role="img" aria-label="El dojo: los números vuelan como bolas de malabares; mueve al ninja para atrapar los primos"></canvas>
     <div id="banner" aria-hidden="true"><div class="grande" id="bannerGrande"></div><div class="pista" id="bannerPista"></div></div>
   </div>
 
   <div id="cesta">
-    <div id="ticker" class="info">Corta con una cuchilla que divida al número. Atrapa los primos.</div>
+    <div id="ticker" class="info">Corta con una cuchilla que divida al número. Los primos, atrápalos con el ninja.</div>
     <div id="gemas" role="group" aria-label="Cesta de gemas">
       <span class="rot">Cesta</span>
       <span class="gema" id="g2" style="--c:var(--g2)" role="img" aria-label="Gemas del 2"><i style="background:var(--g2)" aria-hidden="true"><span>2</span></i><span class="cuenta" id="g2c">×0</span></span>
@@ -243,6 +246,11 @@ var MALABARES = (function(){
 /* mundo: 10 de ancho por 12 de alto, y hacia arriba; el suelo de madera llega hasta y = 0,8 */
 var W = 10, H = 12, SUELO = 0.8, R = 0.72, R_JEFE = 0.8, SEP_JEFE = 1.05;
 var LANZA_X = 5, LANZA_Y = 2.0;
+/* el ninja: se mueve por el suelo y atrapa con las manos lo que le cae encima */
+var NINJA_VEL = 9;                 /* unidades por segundo: cruza el dojo en algo más de un segundo */
+var MANOS_Y = SUELO + 1.9;         /* altura de las manos: una bola que baja hasta ahí sobre el ninja queda atrapada */
+var ANCHO_MANOS = 0.85;            /* distancia horizontal máxima entre el ninja y la bola para atraparla */
+var NINJA_MIN = 0.7, NINJA_MAX = W - 0.7;
 var CUCHILLAS = [2, 3, 5, 7];
 var PRIMO_MAX = 97;               /* el único factor que no se corta es un primo menor que 100 */
 var GRIETAS_MAX = 3;              /* tres cortes que no dividen rompen la bola */
@@ -369,7 +377,7 @@ function tCirculo(x0, y0, x1, y1, cx, cy, rad){
 function crearMotor(){
   var M = { eventos:[], bolas:[], jefe:null, cola:[], fase:'menu', modo:'campana', tranquilo:false, semilla:1,
             cinturon:0, config:CINTURONES[0], puntos:0, corazones:3, combo:0, comboMax:0, cesta:{2:0,3:0,5:0,7:0}, grandes:[],
-            forja:null, tiempo:0, intentos:0, estad:null };
+            forja:null, tiempo:0, intentos:0, estad:null, ninja:{ x:W / 2, objetivo:null, dir:0, vx:0 } };
   var rng = mulberry32(1), multAnterior = 1, siguienteId = 1;
   function emitir(tipo, datos){ var e = datos || {}; e.tipo = tipo; M.eventos.push(e); return e; }
   function gravedad(esJefe){ var g = M.config.g * (M.tranquilo ? FACTOR_TRANQUILO : 1); return esJefe ? g * 0.8 : g; }
@@ -399,6 +407,7 @@ function crearMotor(){
     M.corazones = 3; M.combo = 0; multAnterior = 1;
     M.puntosInicioEtapa = M.puntos; M.cestaInicioEtapa = copiaCesta(M.cesta); M.grandesInicioEtapa = M.grandes.slice();
     M.tiempo = 0; M.tUltimo = -99; M.retrasoInicio = 2.0; M.tJefe = -1;
+    M.ninja = { x:W / 2, objetivo:null, dir:0, vx:0 };
     rng = mulberry32(((sem ^ 0x9e3779b9) >>> 0) || 5);
     M.fase = 'jugando';
     emitir('etapa', { indice:indice, config:c, jefe:!!M.jefePendiente, nuevaCuchilla:c.nuevaCuchilla || null, reintento:M.intentos > 0, modo:M.modo });
@@ -410,7 +419,8 @@ function crearMotor(){
   };
 
   function lanzar(n){
-    var b = { id:siguienteId++, n:n, n0:n, x:LANZA_X + (rng() - 0.5) * 0.8, y:LANZA_Y, r:R, grietas:0, clonks:0, cortes:[], gemelo:false };
+    var x0 = Math.min(W - R, Math.max(R, M.ninja.x + (rng() - 0.5) * 0.4));
+    var b = { id:siguienteId++, n:n, n0:n, x:x0, y:LANZA_Y, r:R, grietas:0, clonks:0, cortes:[], gemelo:false };
     var g = gravedad(false), pico = 9.2 + rng() * 1.2;
     b.vy = Math.sqrt(2 * g * (pico - b.y));
     var xObjetivo = 1.8 + rng() * 6.4;
@@ -476,6 +486,11 @@ function crearMotor(){
     if(M.config.cuchillas.indexOf(p) < 0){ emitir('cuchillaBloqueada', { p:p }); return { ok:false, motivo:'bloqueada' }; }
     if(id === 'jefe') return cortarCadena(p);
     var b = buscar(id); if(!b) return { ok:false, motivo:'sin-bola' };
+    if(esPrimo(b.n) && b.n % p === 0){
+      /* 7 : 7 = 1 es una división correcta, pero la regla del juego es que el último factor, el primo, se atrapa */
+      emitir('primoNoSeCorta', { id:b.id, n:b.n, p:p, x:b.x, y:b.y });
+      return { ok:false, motivo:'primo' };
+    }
     if(b.n % p === 0){
       var antes = b.n; b.n = antes / p; b.cortes.push(p); M.cesta[p]++; M.estad.cortes++;
       subirCombo(); var pts = 10 * mult(); M.puntos += pts;
@@ -496,22 +511,22 @@ function crearMotor(){
     }
     return { ok:false, motivo:'no-divide' };
   };
-  M.atrapar = function(id){
-    if(M.fase !== 'jugando') return { ok:false, motivo:'fase' };
-    if(id === 'jefe'){ if(M.jefe) emitir('jefeNoSeAtrapa', { a:M.jefe.a, b:M.jefe.b }); return { ok:false, motivo:'jefe' }; }
-    var b = buscar(id); if(!b) return { ok:false, motivo:'sin-bola' };
+  function atraparBola(b){
     if(esPrimo(b.n)){
       if(b.n <= 7) M.cesta[b.n]++; else M.grandes.push(b.n);
       b.cortes.push(b.n); M.estad.primos++; subirCombo();
-      emitir('atrapada', { id:b.id, n:b.n, x:b.x, y:b.y });
+      emitir('atrapada', { id:b.id, n:b.n, x:b.x, y:b.y, vy:b.vy, ninja:M.ninja.x });
       completar(b, 'atrapada');
-      return { ok:true };
+      return true;
     }
     quitar(b); romperCombo(); M.estad.erroresPrimo++;
-    emitir('errorPrimo', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:b.y, fact:textoFactorizacion(b.n) });
+    emitir('errorPrimo', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:b.y, vy:b.vy, ninja:M.ninja.x, fact:textoFactorizacion(b.n) });
     perderCorazon('errorPrimo');
-    return { ok:false, motivo:'compuesto' };
-  };
+    return false;
+  }
+  /* mandos del ninja: ir hacia un punto (ratón o dedo) o caminar en una dirección (teclado) */
+  M.moverNinjaA = function(x){ if(!isFinite(x)) return; M.ninja.objetivo = Math.min(NINJA_MAX, Math.max(NINJA_MIN, x)); M.ninja.dir = 0; };
+  M.moverNinja = function(dir){ M.ninja.objetivo = null; M.ninja.dir = dir > 0 ? 1 : (dir < 0 ? -1 : 0); };
   function cortarCadena(p){
     var J = M.jefe; if(!J || !J.encadenado) return { ok:false, motivo:'sin-jefe' };
     if(J.a % p === 0 && J.b % p === 0){
@@ -535,7 +550,8 @@ function crearMotor(){
     var lados = [[J.a, -1], [J.b, 1]];
     for(var i = 0; i < 2; i++){
       var n = lados[i][0], s = lados[i][1];
-      var bola = { id:siguienteId++, n:n, n0:n, x:Math.min(W - R, Math.max(R, J.x + s * SEP_JEFE)), y:J.y, r:R, grietas:0, clonks:0, cortes:[], gemelo:true, vx:s * 1.2, vy:0, pausa:1.2 };
+      /* los dos gemelos liberados bajan escalonados: un solo ninja tiene que poder atrapar a ambos */
+      var bola = { id:siguienteId++, n:n, n0:n, x:Math.min(W - R, Math.max(R, J.x + s * SEP_JEFE)), y:J.y, r:R, grietas:0, clonks:0, cortes:[], gemelo:true, vx:s * 0.5, vy:0, pausa:(i === 0 ? 1.2 : 3.0) };
       var gG = gravedad(true), picoG = Math.min(Math.max(J.y + 2.5, 9.4), H - R - 0.3);
       bola.vy = Math.sqrt(Math.max(0, 2 * gG * (picoG - bola.y)));
       M.bolas.push(bola);
@@ -588,6 +604,10 @@ function crearMotor(){
       dt *= 0.25;
     } else if(M.fase !== 'jugando') return;
     M.tiempo += dt;
+    var nj = M.ninja, xAntes = nj.x;
+    if(nj.objetivo !== null){ var dx = nj.objetivo - nj.x, recorrido = NINJA_VEL * dt; nj.x += Math.abs(dx) <= recorrido ? dx : (dx > 0 ? recorrido : -recorrido); }
+    else if(nj.dir) nj.x += nj.dir * NINJA_VEL * dt;
+    nj.x = Math.min(NINJA_MAX, Math.max(NINJA_MIN, nj.x)); nj.vx = dt > 0 ? (nj.x - xAntes) / dt : 0;
     if(M.fase === 'jugando'){
       if(M.cola.length){
         if(M.bolas.length < simultaneas() && M.tiempo >= M.retrasoInicio){
@@ -604,6 +624,11 @@ function crearMotor(){
       var b = M.bolas[i]; if(!b) continue;
       if(b.pausa > 0){ b.pausa -= dt; continue; }
       mover(b, b.gemelo ? gGemelo : g, dt, 0);
+      if(b.vy < 0 && b.y - b.r <= MANOS_Y && b.y - b.r > SUELO && Math.abs(b.x - M.ninja.x) <= ANCHO_MANOS){
+        atraparBola(b);
+        if(M.fase !== 'jugando' && M.fase !== 'forja') return;
+        continue;
+      }
       if(b.y - b.r <= SUELO){
         M.bolas.splice(i, 1); M.estad.caidas++; romperCombo();
         emitir('caida', { id:b.id, n:b.n, n0:b.n0, x:b.x, y:SUELO + 0.1, fact:textoFactorizacion(b.n), esPrimo:esPrimo(b.n) });
@@ -655,6 +680,15 @@ function crearMotor(){
     }
     return mejor;
   };
+  M.bajoNinja = function(soloEncima){
+    var L = M.cuerpos(), nx = M.ninja.x, mejor = null, dmin = Infinity, ymin = Infinity;
+    for(var i = 0; i < L.length; i++){
+      var c = L[i], d = c.id === 'jefe' ? Math.max(0, Math.abs(c.x - nx) - SEP_JEFE) : Math.abs(c.x - nx);
+      if(soloEncima && d > ANCHO_MANOS) continue;
+      if(d < dmin - 1e-9 || (Math.abs(d - dmin) <= 1e-9 && c.y < ymin)){ dmin = d; mejor = c.id; ymin = c.y; }
+    }
+    return mejor;
+  };
   M.quedan = function(){ var n = M.cola.length; for(var i = 0; i < M.bolas.length; i++) if(!M.bolas[i].gemelo) n++; return n; };
   M.jefeEnCamino = function(){ return !!(M.jefePendiente || M.jefe); };
   return M;
@@ -664,7 +698,8 @@ return { crearMotor:crearMotor, CINTURONES:CINTURONES, RETO:RETO, poolDe:poolDe,
          esPrimo:esPrimo, factoriza:factoriza, omega:omega, textoFactorizacion:textoFactorizacion, mcd:mcd, sumaCifras:sumaCifras,
          categoria:categoria, porQueNoDivide:porQueNoDivide, fmtPuntos:fmtPuntos, mulberry32:mulberry32, tCirculo:tCirculo,
          constantes:{ W:W, H:H, SUELO:SUELO, R:R, R_JEFE:R_JEFE, SEP_JEFE:SEP_JEFE, LANZA_X:LANZA_X, LANZA_Y:LANZA_Y, CUCHILLAS:CUCHILLAS,
-                      PRIMO_MAX:PRIMO_MAX, GRIETAS_MAX:GRIETAS_MAX, CONGELACION_FORJA:CONGELACION_FORJA, FACTOR_TRANQUILO:FACTOR_TRANQUILO } };
+                      PRIMO_MAX:PRIMO_MAX, GRIETAS_MAX:GRIETAS_MAX, CONGELACION_FORJA:CONGELACION_FORJA, FACTOR_TRANQUILO:FACTOR_TRANQUILO,
+                      NINJA_VEL:NINJA_VEL, MANOS_Y:MANOS_Y, ANCHO_MANOS:ANCHO_MANOS, NINJA_MIN:NINJA_MIN, NINJA_MAX:NINJA_MAX } };
 })();
 if(typeof window !== 'undefined'){ window.MALABARES = MALABARES; }
 /* @@LOGICA-FIN */
@@ -682,7 +717,7 @@ var fondo = document.createElement('canvas');
 var M = E.crearMotor();
 var UI = { panel:null, pausa:false, escala:36, dpr:1, particulas:[], textos:[], mitades:[], vuelos:[], estela:[], sacudida:0, destello:0,
            corte:null, armada:null, toque:null, objetivo:null, teclado:false, bannerT:0, ninjaLanza:0, recordNuevo:false,
-           duelo:null, panelPrevio:null, focoPrevio:null, reloj:0 };
+           duelo:null, panelPrevio:null, focoPrevio:null, reloj:0, guia:null, ninjaAtrapa:0, teclasNinja:{}, ultimoBajo:null };
 var COLORES_BOLA = ['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#9775fa', '#f783ac', '#38d9a9'];
 var COLOR_GEMA = { 2:'#ff6b6b', 3:'#4dabf7', 5:'#51cf66', 7:'#b197fc' };
 var COLOR_CINTA = { blanco:'#f1f3f5', amarillo:'#ffd43b', naranja:'#ff922b', verde:'#51cf66', negro:'#1b1b1f', reto:'#ffc229' };
@@ -885,13 +920,22 @@ function pintarJefe(J){
   ctx.fillStyle = '#ffc229'; ctx.font = '900 ' + Math.max(10, Math.round(0.3 * e)) + 'px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   ctx.fillText('GEMELOS', sx(J.x), sy(y + J.r + 0.12));
 }
+function algoCaeCerca(){
+  var nx = M.ninja.x;
+  for(var i = 0; i < M.bolas.length; i++){ var b = M.bolas[i]; if(b.vy < 0 && b.y < 5.5 && Math.abs(b.x - nx) < 1.6) return true; }
+  return false;
+}
 function pintarNinja(t){
-  var e = UI.escala, x = sx(K.LANZA_X), yp = sy(K.SUELO) + 1;
-  var bob = REDUCIDO ? 0 : Math.sin(t * 3) * 0.03 * e, lanza = UI.ninjaLanza > 0 ? UI.ninjaLanza / 0.35 : 0;
+  var e = UI.escala, x = sx(M.ninja.x), yp = sy(K.SUELO) + 1, vx = M.ninja.vx || 0, corre = Math.abs(vx) > 0.4;
+  var bob = REDUCIDO ? 0 : Math.sin(t * (corre ? 14 : 3)) * (corre ? 0.05 : 0.03) * e;
+  var lanza = UI.ninjaLanza > 0 ? UI.ninjaLanza / 0.35 : 0;
+  if(UI.ninjaAtrapa > 0 || algoCaeCerca()) lanza = Math.max(lanza, 1);
   var cinta = COLOR_CINTA[M.config ? M.config.id : 'blanco'] || '#f1f3f5';
   ctx.save(); ctx.translate(x, yp + bob);
   ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, -1, 0.7 * e, 0.12 * e, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#15112e'; ctx.fillRect(-0.32 * e, -0.62 * e, 0.24 * e, 0.62 * e); ctx.fillRect(0.08 * e, -0.62 * e, 0.24 * e, 0.62 * e);
+  if(corre && !REDUCIDO) ctx.rotate(clamp(vx / 60, -0.12, 0.12));
+  var zancada = (corre && !REDUCIDO) ? Math.sin(t * 16) * 0.12 * e : 0;
+  ctx.fillStyle = '#15112e'; ctx.fillRect(-0.32 * e + zancada, -0.62 * e, 0.24 * e, 0.62 * e); ctx.fillRect(0.08 * e - zancada, -0.62 * e, 0.24 * e, 0.62 * e);
   ctx.fillStyle = '#231d4d'; ctx.beginPath(); ctx.moveTo(-0.42 * e, -0.55 * e); ctx.lineTo(0.42 * e, -0.55 * e); ctx.lineTo(0.36 * e, -1.32 * e); ctx.lineTo(-0.36 * e, -1.32 * e); ctx.closePath(); ctx.fill();
   ctx.fillStyle = cinta; ctx.fillRect(-0.42 * e, -0.78 * e, 0.84 * e, 0.12 * e);
   if(M.config && M.config.id === 'negro'){ ctx.fillStyle = '#ffc229'; ctx.fillRect(-0.42 * e, -0.7 * e, 0.84 * e, Math.max(1, 0.025 * e)); }
@@ -906,11 +950,22 @@ function pintarNinja(t){
   ctx.fillStyle = '#f2c9a0'; ctx.fillRect(-0.22 * e, -1.66 * e, 0.44 * e, 0.12 * e);
   ctx.fillStyle = '#140f2e'; ctx.fillRect(-0.13 * e, -1.63 * e, 0.07 * e, 0.06 * e); ctx.fillRect(0.06 * e, -1.63 * e, 0.07 * e, 0.06 * e);
   ctx.fillStyle = '#e8563f'; ctx.fillRect(-0.3 * e, -1.82 * e, 0.6 * e, 0.09 * e);
-  var ondea = REDUCIDO ? 0 : Math.sin(t * 7) * 0.08 * e;
+  var ondea = REDUCIDO ? 0 : Math.sin(t * 7) * 0.08 * e, lado = vx > 0.4 ? -1 : 1;   /* las cintas vuelan hacia atrás al correr */
   ctx.strokeStyle = '#e8563f'; ctx.lineWidth = 0.07 * e;
-  ctx.beginPath(); ctx.moveTo(0.28 * e, -1.78 * e); ctx.quadraticCurveTo(0.5 * e, -1.7 * e + ondea, 0.7 * e, -1.82 * e - ondea); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0.28 * e, -1.78 * e); ctx.quadraticCurveTo(0.48 * e, -1.6 * e - ondea, 0.66 * e, -1.58 * e + ondea); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(lado * 0.28 * e, -1.78 * e); ctx.quadraticCurveTo(lado * 0.5 * e, -1.7 * e + ondea, lado * 0.7 * e, -1.82 * e - ondea); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(lado * 0.28 * e, -1.78 * e); ctx.quadraticCurveTo(lado * 0.48 * e, -1.6 * e - ondea, lado * 0.66 * e, -1.58 * e + ondea); ctx.stroke();
   ctx.restore();
+}
+/* sombras en el suelo: dicen dónde caerá cada número, más oscuras cuanto más cerca está */
+function pintarSombras(){
+  var e = UI.escala, ys = sy(K.SUELO) + 0.12 * e;
+  function sombra(x, y, r){
+    var k = clamp(1 - (y - K.SUELO) / 10, 0.15, 1);
+    ctx.fillStyle = 'rgba(0,0,0,' + (0.18 + 0.32 * k).toFixed(3) + ')';
+    ctx.beginPath(); ctx.ellipse(sx(x), ys, r * (0.5 + 0.5 * k) * e, 0.1 * e, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  for(var i = 0; i < M.bolas.length; i++){ var b = M.bolas[i]; sombra(b.x, b.y, b.r); }
+  if(M.jefe){ sombra(M.jefe.x - K.SEP_JEFE, M.jefe.y, M.jefe.r); sombra(M.jefe.x + K.SEP_JEFE, M.jefe.y, M.jefe.r); }
 }
 function colorBola(id){ return COLORES_BOLA[(typeof id === 'number' ? id : 0) % COLORES_BOLA.length]; }
 function pintarObjetivo(){
@@ -972,6 +1027,7 @@ function dibujar(dt){
   var sac = UI.sacudida > 0 && !REDUCIDO;
   if(sac){ ctx.save(); ctx.translate((Math.random() - 0.5) * UI.sacudida * 8, (Math.random() - 0.5) * UI.sacudida * 8); }
   ctx.drawImage(fondo, 0, 0, Wp, Hp);
+  pintarSombras();
   pintarNinja(UI.reloj);
   if(M.jefe) pintarJefe(M.jefe);
   for(var i = 0; i < M.bolas.length; i++){ var b = M.bolas[i]; pintarBola(b.x, b.y, b.r, colorBola(b.id), b.n, b.grietas, false); }
@@ -1037,24 +1093,30 @@ function vaciarAvisos(ahora){
 function avisar(txt, clase){ ticker(txt, clase); anunciar(txt); }
 
 /* ---------------- objetivo (teclado) ---------------- */
-function objetivoActual(){
-  var L = M.cuerpos();
-  if(UI.objetivo !== null && L.some(function(c){ return c.id === UI.objetivo; })) return UI.objetivo;
-  return M.masBajo();
-}
-function cambiarObjetivo(dir){
-  var L = M.cuerpos().sort(function(a, b){ return a.x - b.x; }); if(!L.length) return;
-  var actual = objetivoActual(), i = -1;
-  for(var k = 0; k < L.length; k++) if(L[k].id === actual) i = k;
-  var sig = L[(i + dir + L.length) % L.length];
-  UI.objetivo = sig.id; UI.teclado = true;
-  anunciar('Objetivo: ' + (sig.id === 'jefe' ? 'los Gemelos ' + sig.a + ' y ' + sig.b : 'el ' + sig.n) + '.');
-}
+function objetivoActual(){ return M.bajoNinja(false); }
+function nombreCuerpo(c){ return c.id === 'jefe' ? 'los Gemelos ' + c.a + ' y ' + c.b : 'el ' + c.n; }
 function alturaTexto(y){ return y > 7.5 ? 'alto' : (y > 4 ? 'a media altura' : 'bajo'); }
+function ladoTexto(c){
+  var d = (c.id === 'jefe' ? c.x : c.x) - M.ninja.x, ancho = c.id === 'jefe' ? K.SEP_JEFE + K.ANCHO_MANOS : K.ANCHO_MANOS;
+  return Math.abs(d) <= ancho ? 'encima de ti' : (d < 0 ? 'a tu izquierda' : 'a tu derecha');
+}
 function anunciarAire(){
   var L = M.cuerpos().sort(function(a, b){ return a.x - b.x; });
   if(!L.length){ anunciar('No hay ningún número en el aire.'); return; }
-  anunciar('En el aire: ' + L.map(function(c){ return (c.id === 'jefe' ? 'los Gemelos ' + c.a + ' y ' + c.b : 'el ' + c.n) + ', ' + alturaTexto(c.y); }).join('; ') + '.');
+  anunciar('En el aire: ' + L.map(function(c){ return nombreCuerpo(c) + ', ' + ladoTexto(c) + ', ' + alturaTexto(c.y); }).join('; ') + '.');
+}
+function irDebajoDelMasBajo(){
+  var id = M.masBajo(); if(id === null) return;
+  var c = M.cuerpos().filter(function(q){ return q.id === id; })[0];
+  M.moverNinjaA(c.x); anunciar('Vas debajo de ' + nombreCuerpo(c) + '.');
+}
+function vigilarObjetivo(){
+  var id = M.bajoNinja(true);
+  if(id === UI.ultimoBajo) return;
+  UI.ultimoBajo = id;
+  if(!UI.teclado || id === null) return;
+  var c = M.cuerpos().filter(function(q){ return q.id === id; })[0];
+  if(c) anunciar('Debajo de ' + nombreCuerpo(c) + '.');
 }
 
 /* ---------------- acciones ---------------- */
@@ -1065,7 +1127,6 @@ function ejecutarCorte(id, p){
   if(!cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); Sonido.sfx('clonk'); return; }
   M.cortar(id, p); procesarEventos();
 }
-function ejecutarAtrapar(id){ if(!jugable()) return; M.atrapar(id); procesarEventos(); }
 function alternarArmada(p){
   if(p !== null && !cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); return; }
   UI.armada = (UI.armada === p) ? null : p;
@@ -1124,7 +1185,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.cuchilla[data-p]'), fun
   });
 });
 
-/* ---------------- entrada: tocar un número (atrapar, o cortar con la cuchilla preparada) ---------------- */
+/* ---------------- entrada: mover al ninja por el dojo (o cortar con la cuchilla preparada) ---------------- */
 lienzo.addEventListener('pointerdown', function(ev){
   Sonido.despertar(); UI.teclado = false;
   if(!jugable()) return;
@@ -1132,24 +1193,18 @@ lienzo.addEventListener('pointerdown', function(ev){
   var w = aMundo(ev.clientX, ev.clientY);
   if(UI.armada !== null){
     var id = M.golpeEn(w[0], w[1], 0.35);
-    if(id !== null){ var p = UI.armada; UI.armada = null; actualizarCuchillas(); ejecutarCorte(id, p); }
-    return;
+    if(id !== null){ var p = UI.armada; UI.armada = null; actualizarCuchillas(); ejecutarCorte(id, p); return; }
   }
-  UI.toque = { id:ev.pointerId, x0:ev.clientX, y0:ev.clientY, t0:performance.now(), objetivo:M.golpeEn(w[0], w[1], 0.35) };
+  UI.guia = ev.pointerId; try{ lienzo.setPointerCapture(ev.pointerId); }catch(e){}
+  M.moverNinjaA(w[0]);
 });
-lienzo.addEventListener('pointerup', function(ev){
-  var t = UI.toque; if(!t || t.id !== ev.pointerId) return; UI.toque = null;
+lienzo.addEventListener('pointermove', function(ev){
   if(!jugable()) return;
-  var mov = Math.hypot(ev.clientX - t.x0, ev.clientY - t.y0), dur = performance.now() - t.t0;
-  if(mov < 22 && dur < 800){
-    var w = aMundo(ev.clientX, ev.clientY), id = t.objetivo;
-    if(id === null || !M.cuerpos().some(function(c){ return c.id === id; })) id = M.golpeEn(w[0], w[1], 0.45);
-    if(id !== null) ejecutarAtrapar(id);
-  } else if(mov >= 22){
-    avisar('Para cortar, arrastra desde una cuchilla de abajo hasta el número. Para atrapar un primo, tócalo.', 'info');
-  }
+  if(UI.guia === ev.pointerId || (ev.pointerType === 'mouse' && UI.guia === null)){ UI.teclado = false; M.moverNinjaA(aMundo(ev.clientX, ev.clientY)[0]); }
 });
-lienzo.addEventListener('pointercancel', function(){ UI.toque = null; });
+function finGuia(ev){ if(UI.guia === ev.pointerId) UI.guia = null; }
+lienzo.addEventListener('pointerup', finGuia);
+lienzo.addEventListener('pointercancel', finGuia);
 
 /* ---------------- forja ---------------- */
 function abrirForja(){ if(!jugable()) return; var r = M.abrirForja(); if(!r.ok){ avisar('La forja solo sirve contra los Gemelos encadenados.', 'info'); return; } procesarEventos(); }
@@ -1199,12 +1254,22 @@ document.addEventListener('keydown', function(ev){
   }
   if(!jugable()) return;
   if(k === '2' || k === '3' || k === '5' || k === '7'){ ev.preventDefault(); UI.teclado = true; Sonido.despertar(); var id = objetivoActual(); if(id !== null) ejecutarCorte(id, +k); return; }
-  if(k === ' ' || k === 'a'){ ev.preventDefault(); UI.teclado = true; var id2 = objetivoActual(); if(id2 !== null) ejecutarAtrapar(id2); return; }
-  if(k === 'ArrowLeft' || k === 'ArrowRight'){ ev.preventDefault(); cambiarObjetivo(k === 'ArrowLeft' ? -1 : 1); return; }
+  if(k === ' '){ ev.preventDefault(); UI.teclado = true; irDebajoDelMasBajo(); return; }
+  if(k === 'ArrowLeft' || k === 'ArrowRight' || k === 'a' || k === 'd'){
+    ev.preventDefault(); UI.teclado = true; Sonido.despertar();
+    UI.teclasNinja[k] = true; M.moverNinja((k === 'ArrowLeft' || k === 'a') ? -1 : 1); return;
+  }
   if(k === 'f'){ abrirForja(); return; }
   if(k === 'l'){ anunciarAire(); return; }
   if(k === 'Escape' && UI.armada !== null){ alternarArmada(null); return; }
 });
+function soltarTeclaNinja(k){
+  if(!UI.teclasNinja[k]) return;
+  delete UI.teclasNinja[k];
+  var izq = UI.teclasNinja.ArrowLeft || UI.teclasNinja.a, der = UI.teclasNinja.ArrowRight || UI.teclasNinja.d;
+  if(M.ninja.objetivo === null) M.moverNinja(izq && !der ? -1 : (der && !izq ? 1 : 0));
+}
+document.addEventListener('keyup', function(ev){ soltarTeclaNinja(teclaNorm(ev)); });
 
 /* ---------------- eventos del motor → efectos, mensajes y sonido ---------------- */
 var avisoCaida = {};
@@ -1226,9 +1291,9 @@ function procesarEventos(){
         if(c.dosBolas && !M.tranquilo) pista += ' <b>¡Ahora vuelan dos a la vez!</b>';
         if(M.tranquilo) pista += ' Modo tranquilo.';
         banner(nombreEtapa(ev), pista, 3.6);
-        ticker('Corta con una cuchilla que divida al número. Atrapa los primos.', 'info');
+        ticker('Corta con una cuchilla que divida al número. Los primos, atrápalos con el ninja.', 'info');
         anunciar(nombreEtapa(ev) + '. ' + pista.replace(/<[^>]+>/g, ''));
-        UI.armada = null; UI.objetivo = null; avisoCaida = {}; actualizarCuchillas(); mostrarForja(false);
+        UI.armada = null; UI.ultimoBajo = null; avisoCaida = {}; actualizarCuchillas(); mostrarForja(false);
         break; }
       case 'lanzamiento': UI.ninjaLanza = 0.35; Sonido.sfx('lanza'); anunciar('Sale el ' + ev.n + '.'); break;
       case 'corte':
@@ -1240,14 +1305,18 @@ function procesarEventos(){
         Sonido.sfx('clonk'); if(ev.cuenta) Sonido.sfx('grieta');
         particulas(ev.x, ev.y, 8, '#ffffff', 2.5); texto(ev.x, ev.y, 'clonk', '#ffb3b3', 0.4);
         var msg = ev.porque + (ev.cuenta ? ' Grieta ' + ev.grietas + ' de 3.' : ' El 7 no agrieta.');
-        if(ev.esPrimo && (ev.grietas >= 2 || ev.p === 7)) msg += ' ¿Y si ' + ev.n + ' es primo?';
+        if(ev.esPrimo && (ev.grietas >= 2 || ev.p === 7)) msg += ' ¿Y si ' + ev.n + ' es primo? Los primos se atrapan con el ninja.';
         avisar(msg, 'mal');
         break; }
       case 'rota':
         Sonido.sfx('rota'); UI.sacudida = 0.8; particulas(ev.x, ev.y, 22, colorBola(ev.id), 4);
-        avisar('¡El ' + ev.n + ' se rompe! ' + (ev.esPrimo ? ev.n + ' es primo: había que atraparlo.' : ev.n + ' = ' + ev.fact + '.'), 'mal');
+        avisar('¡El ' + ev.n + ' se rompe! ' + (ev.esPrimo ? ev.n + ' es primo: había que atraparlo con el ninja.' : ev.n + ' = ' + ev.fact + '.'), 'mal');
         break;
-      case 'atrapada': Sonido.sfx('atrapa'); particulas(ev.x, ev.y, 10, '#ffd43b', 2); vueloGema(ev.x, ev.y, ev.n); break;
+      case 'atrapada': UI.ninjaAtrapa = 0.45; Sonido.sfx('atrapa'); particulas(ev.x, ev.y, 10, '#ffd43b', 2); vueloGema(ev.x, ev.y, ev.n); break;
+      case 'primoNoSeCorta':
+        Sonido.sfx('atrapa'); texto(ev.x, ev.y, 'primo', '#ffd43b', 0.42);
+        avisar(ev.n + ' ya es primo: es el último factor y no se corta. ¡Atrápalo con el ninja!', 'info');
+        break;
       case 'completada': {
         Sonido.sfx('completa'); particulas(ev.x, ev.y, 16, '#ffd43b', 3); texto(ev.x, ev.y + 0.3, '+' + ev.puntos, '#ffd43b', 0.46);
         var extra = (ev.extras.indexOf('impostor') >= 0 ? ' ¡Impostor desenmascarado!' : '') + (ev.extras.indexOf('primo') >= 0 ? ' ¡Primo a la primera!' : '');
@@ -1255,11 +1324,12 @@ function procesarEventos(){
         break; }
       case 'errorPrimo':
         Sonido.sfx('error'); UI.sacudida = 1; particulas(ev.x, ev.y, 18, '#ff6b6b', 3.5);
-        avisar('¡' + ev.n + ' no es primo! ' + ev.n + ' = ' + ev.fact + '.', 'mal');
+        UI.ninjaAtrapa = 0.3;
+        avisar('¡El ninja ha atrapado el ' + ev.n + ', que no es primo! ' + ev.n + ' = ' + ev.fact + ': había que cortarlo.', 'mal');
         break;
       case 'caida':
         Sonido.sfx('cae'); UI.sacudida = 0.6; particulas(ev.x, ev.y, 16, colorBola(ev.id), 3);
-        avisar('Se te cayó el ' + ev.n + (ev.esPrimo ? ': es primo, había que atraparlo.' : ' (' + ev.n + ' = ' + ev.fact + ').'), 'mal');
+        avisar('Se te cayó el ' + ev.n + (ev.esPrimo ? ': es primo, había que atraparlo con el ninja.' : ' (' + ev.n + ' = ' + ev.fact + ').'), 'mal');
         break;
       case 'corazon': Sonido.sfx('corazon'); anunciar(ev.corazones === 1 ? 'Te queda 1 corazón.' : 'Te quedan ' + ev.corazones + ' corazones.'); break;
       case 'combo': Sonido.sfx('combo'); texto(K.W / 2, 6, 'COMBO ×' + ev.mult, '#6ee7b7', 0.6); anunciar('Combo por ' + ev.mult + '.'); break;
@@ -1298,7 +1368,6 @@ function procesarEventos(){
         break;
       case 'forjaCancelada': mostrarForja(false); Sonido.congelar(false); anunciar('Forja cancelada.'); break;
       case 'jefeCae': Sonido.sfx('cae'); UI.sacudida = 0.8; avisar('¡Los Gemelos tocan el suelo! Vuelven a subir, pero pierdes un corazón.', 'mal'); break;
-      case 'jefeNoSeAtrapa': avisar('Los Gemelos no se atrapan: corta la cadena con una cuchilla que divida a los dos.', 'info'); break;
       case 'cuchillaBloqueada': avisar('La cuchilla del ' + ev.p + ' se gana en el cinturón naranja.', 'info'); break;
       case 'etapaSuperada': {
         Sonido.sfx('fanfarria'); UI.destello = 0.8;
@@ -1371,7 +1440,7 @@ function abrirPanel(nombre, focoId){
   UI.panel = nombre; var p = $('panel'), h = '', i;
   if(nombre === 'menu'){
     h = '<h2 id="panelTitulo">MALABARES NINJA</h2>'
-      + '<p class="sub">Parte los números con cuchillas primas y atrapa los primos. ¡Que no se te caiga ninguno!</p>'
+      + '<p class="sub">Parte los números con cuchillas primas y atrapa los primos con el ninja. ¡Que no se te caiga ninguno!</p>'
       + '<div class="fila"><button type="button" class="btn principal" id="mJugar">Jugar</button><button type="button" class="btn" id="mReto">Reto del día (' + fechaBonita() + ')</button></div>'
       + '<h3>Empezar en otro cinturón</h3><div class="cinturones">';
     for(i = 0; i < E.CINTURONES.length; i++){
@@ -1387,13 +1456,13 @@ function abrirPanel(nombre, focoId){
     h = '<h2 id="panelTitulo">Cómo se juega</h2>'
       + '<h3>La idea</h3><p>Los números vuelan como bolas de malabares. Tu trabajo es dejarlos en sus factores primos antes de que caigan al suelo.</p>'
       + '<h3>Cortar</h3><p>Arrastra desde una cuchilla (2, 3, 5 o 7) hasta el número. Si la cuchilla lo divide, cae una gema en tu cesta y el cociente vuelve a subir: el 84 pasa a 42, luego a 21 y luego a 7. También puedes pulsar una cuchilla para prepararla y después tocar el número.</p>'
-      + '<h3>Atrapar</h3><p>Cuando lo que queda es un número primo, tócalo para atraparlo. Si llegas a 1, también está terminado.</p>'
+      + '<h3>Atrapar</h3><p>Cuando lo que queda es un número primo, atrápalo con el ninja: muévelo con el ratón, arrastrando el dedo por el dojo o con las flechas, y ponlo debajo antes de que toque el suelo. La sombra del suelo te dice dónde caerá. Los primos no se cortan, ni siquiera el 2, el 3, el 5 o el 7 con su propia cuchilla: son el último factor. Si el ninja atrapa un número que no es primo, pierdes un corazón.</p>'
       + '<h3>Los criterios</h3><ul><li><b>2</b>: el número acaba en 0, 2, 4, 6 u 8.</li><li><b>3</b>: la suma de sus cifras es múltiplo de 3 (en 84, 8 + 4 = 12).</li><li><b>5</b>: acaba en 0 o en 5.</li><li><b>7</b>: no hay un criterio cómodo; haz la división.</li></ul>'
-      + '<h3>Errores</h3><p>Una cuchilla que no divide suena «clonk»: la bola cae más deprisa y se agrieta, y a la tercera grieta se rompe. El 7 no agrieta. Pierdes un corazón si atrapas un número que no es primo, si una bola se rompe o si toca el suelo. Sin corazones, el cinturón vuelve a empezar.</p>'
+      + '<h3>Errores</h3><p>Una cuchilla que no divide suena «clonk»: la bola cae más deprisa y se agrieta, y a la tercera grieta se rompe. El 7 no agrieta. Pierdes un corazón si el ninja atrapa un número que no es primo, si una bola se rompe o si toca el suelo. Sin corazones, el cinturón vuelve a empezar.</p>'
       + '<h3>Los Gemelos</h3><p>Desde el cinturón amarillo, al final llegan dos números encadenados. Solo se cortan juntos, con una cuchilla que divida a los dos, y la cadena se rompe cuando ya no comparten ningún divisor: los primos que has cortado forman su <b>máximo común divisor</b>. Con la <b>forja</b> combinas gemas de tu cesta en una sola cuchilla, que es su producto; si aciertas el m.c.d. de un solo tajo, es un tajo maestro.</p>'
       + '<h3>Puntos</h3><p>10 por cada corte y 20 por cada factor al terminar un número. Los impostores, números impares que parecen primos y no lo son (como 91 = 7·13), dan 50 más. Cada tres aciertos seguidos sube el combo, hasta multiplicar por 4.</p>'
       + '<h3>Modo tranquilo</h3><p>La gravedad es más suave y solo vuela un número cada vez.</p>'
-      + '<h3>Teclado</h3><p>2, 3, 5 y 7 cortan el número marcado (el más bajo, si no eliges otro); Espacio o A lo atrapan; las flechas ← y → cambian de número; F abre la forja; L dice qué hay en el aire; P pausa; M sonido. En la forja: 2, 3, 5 y 7 añaden gemas, la tecla de borrar quita la última, Intro lanza y Esc cancela.</p>'
+      + '<h3>Teclado</h3><p>Las flechas ← y → (o A y D) mueven al ninja; 2, 3, 5 y 7 cortan el número que tiene encima; Espacio lo lleva debajo del número más bajo; F abre la forja; L dice qué hay en el aire y dónde; P pausa; M sonido. En la forja: 2, 3, 5 y 7 añaden gemas, la tecla de borrar quita la última, Intro lanza y Esc cancela.</p>'
       + '<div class="fila"><button type="button" class="btn principal" id="mVolver">Volver</button></div>' + pie();
   } else if(nombre === 'pausa'){
     h = '<h2 id="panelTitulo">Pausa</h2><p class="sub">' + E.fmtPuntos(M.puntos) + ' puntos</p>'
@@ -1474,7 +1543,7 @@ function abrirAyudaDesdeJuego(){
 }
 function limpiarEfectos(){ UI.particulas.length = 0; UI.textos.length = 0; UI.mitades.length = 0; UI.vuelos.length = 0; UI.estela.length = 0; UI.sacudida = 0; UI.destello = 0; }
 function iniciar(modo, cinturon){
-  Sonido.despertar(); cerrarPanel(); UI.pausa = false; limpiarEfectos(); UI.recordNuevo = false; hudPrev = {}; UI.armada = null; UI.objetivo = null;
+  Sonido.despertar(); cerrarPanel(); UI.pausa = false; limpiarEfectos(); UI.recordNuevo = false; hudPrev = {}; UI.armada = null; UI.ultimoBajo = null;
   var sem = modo === 'reto' ? semillaDia() : (modo === 'duelo' ? UI.duelo.semilla : (((Date.now() % 2147483647) | 0) || 17));
   M.nuevaPartida(modo, { tranquilo:progreso.tranquilo, semilla:sem, cinturon:cinturon || 0 });
   procesarEventos(); actualizarCuchillas();
@@ -1491,7 +1560,7 @@ $('bPausa').addEventListener('click', alternarPausa);
 $('bAyuda').addEventListener('click', abrirAyudaDesdeJuego);
 document.addEventListener('visibilitychange', function(){ if(document.hidden && !UI.panel && (M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')) alternarPausa(); });
 window.addEventListener('resize', ajustar);
-window.addEventListener('blur', function(){ UI.corte = null; UI.toque = null; });
+window.addEventListener('blur', function(){ UI.corte = null; UI.guia = null; UI.teclasNinja = {}; if(M.ninja.objetivo === null) M.moverNinja(0); });
 
 /* ---------------- bucle ---------------- */
 var prevTs = 0, acc = 0, PASO = 1 / 120;
@@ -1502,9 +1571,10 @@ function tic(ts){
     acc += dt; var n = 0;
     while(acc >= PASO && n < 12){ M.paso(PASO); acc -= PASO; n++; }
     if(n >= 12) acc = 0;
-    procesarEventos(); vigilarCaidas();
+    procesarEventos(); vigilarCaidas(); vigilarObjetivo();
   }
   if(UI.ninjaLanza > 0) UI.ninjaLanza = Math.max(0, UI.ninjaLanza - dt);
+  if(UI.ninjaAtrapa > 0) UI.ninjaAtrapa = Math.max(0, UI.ninjaAtrapa - dt);
   if(UI.sacudida > 0) UI.sacudida = Math.max(0, UI.sacudida - dt * 3);
   if(UI.destello > 0) UI.destello = Math.max(0, UI.destello - dt * 2.5);
   if(UI.bannerT > 0){ UI.bannerT -= dt; if(UI.bannerT <= 0) $('banner').classList.remove('visible'); }
@@ -1521,7 +1591,7 @@ function avanzar(segundos){
   for(var i = 0; i < n; i++){ if(!(M.fase === 'jugando' || M.fase === 'forja' || M.fase === 'transicion')) break; M.paso(PASO); if(M.eventos.length > 40) procesarEventos(); }
   procesarEventos(); UI.reloj += segundos || 1; dibujar(Math.min(segundos || 1, 1)); actualizarHUD(); actualizarForjaBoton(); tUltimoAviso = -9; vaciarAvisos(UI.reloj);
 }
-window.__malabares = { M:M, E:E, UI:UI, iniciar:iniciar, avanzar:avanzar, dibujar:dibujar, procesarEventos:procesarEventos, ejecutarCorte:ejecutarCorte, ejecutarAtrapar:ejecutarAtrapar,
+window.__malabares = { M:M, E:E, UI:UI, iniciar:iniciar, avanzar:avanzar, dibujar:dibujar, procesarEventos:procesarEventos, ejecutarCorte:ejecutarCorte,
   abrirPanel:abrirPanel, cerrarPanel:cerrarPanel, abrirForja:abrirForja, forjaAnadir:forjaAnadir, forjaLanzar:forjaLanzar, aMundo:aMundo, sx:sx, sy:sy, ajustar:ajustar, Sonido:Sonido, progreso:progreso };
 })();
 </script>
