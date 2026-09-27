@@ -791,10 +791,25 @@
        centrada, también como en el PDF: `:first-child` no ve el texto
        suelto, así que el guion marca esos elementos con
        `.formula-tras-texto`. */
-    #contenido-unidad li:not(.formula-tras-texto) > .math.display:first-child:last-child {
+    #contenido-unidad li:not(.formula-tras-texto):not(.formula-abre) > .math.display:first-child:last-child {
       display: inline-block;
       width: auto;
       max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* Si la fórmula abre el elemento pero no va sola (una solución que
+       sigue con «porque…») o va dentro de un párrafo (los apartados de una
+       lista suelta), Safari tampoco pinta el número: lo mete en la primera
+       línea de dentro de la fórmula, que recorta lo que se sale porque se
+       desplaza a lo ancho. El guion marca esos elementos con
+       `.formula-abre` y la fórmula va en línea a todo el ancho: el número
+       comparte su línea y lo que sigue baja a la siguiente, como en
+       Chrome. */
+    #contenido-unidad li.formula-abre > .math.display:first-child,
+    #contenido-unidad li.formula-abre > p:first-child > .math.display:first-child {
+      display: inline-block;
+      width: 100%;
       vertical-align: middle;
     }
 
@@ -8403,6 +8418,31 @@ Bachillerato</p>
             formula.parentElement.classList.add("formula-tras-texto");
             return;
           }
+        }
+      });
+
+      // Una fórmula centrada que abre un elemento de lista sin ir sola
+      // (detrás lleva algo más, o va dentro de un párrafo) también va en
+      // línea, a todo el ancho, para que Safari pinte el número (véase la
+      // plantilla).
+      function nodoConContenido(nodo) {
+        while (nodo && nodo.nodeType !== Node.ELEMENT_NODE &&
+               !(nodo.nodeType === Node.TEXT_NODE && nodo.textContent.trim() !== "")) {
+          nodo = nodo.nextSibling;
+        }
+        return nodo;
+      }
+      contenido.querySelectorAll("li").forEach(function (elemento) {
+        var formula = nodoConContenido(elemento.firstChild);
+        var sola = false;
+        if (formula && formula.tagName === "P") {
+          formula = nodoConContenido(formula.firstChild);
+        } else if (formula) {
+          sola = !nodoConContenido(formula.nextSibling);
+        }
+        if (formula && !sola && formula.nodeType === Node.ELEMENT_NODE &&
+            formula.matches(".math.display")) {
+          elemento.classList.add("formula-abre");
         }
       });
 
