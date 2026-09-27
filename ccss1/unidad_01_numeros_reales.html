@@ -2537,6 +2537,23 @@
         font-size: 1.55rem;
       }
 
+      /* La sangría de las listas crece con su letra (observación del
+         profesor del 27 de septiembre de 2026, al ampliar en su iPad las
+         soluciones de 5.5 de la unidad 1: «mira ahora cómo se ven de
+         apelotonado en la web los números de ejercicios junto a las letras
+         de los apartados»). Sin esta regla las listas llevan la sangría del
+         navegador, 40 px fijos, que en la página normal bastan; con la letra
+         del modo clase, y más al ampliar, el número del ejercicio no cabía,
+         se montaba en la barra del bloque y en la «a)» de su primer
+         apartado, y Safari le deja al número más sitio que Chrome. En «em»
+         la proporción es la de la página normal (40 px para su letra de
+         16,56 px), así que la página normal no cambia. Quedan fuera las
+         tarjetas de los enunciados, que tienen su propia sangría, y los
+         laboratorios. */
+      html.modo-clase #contenido-unidad :is(ol, ul):not(section.ejercicios > ol):not(.interactivo *) {
+        padding-left: 2.4em;
+      }
+
       /* Lo que no se usa en clase no se ve. De la prosa y de las listas
          solo quedan los párrafos y los elementos que llevan una fórmula
          centrada, que son los ejemplos; también dentro del marco de un

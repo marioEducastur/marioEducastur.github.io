@@ -2537,6 +2537,23 @@
         font-size: 1.55rem;
       }
 
+      /* La sangría de las listas crece con su letra (observación del
+         profesor del 27 de septiembre de 2026, al ampliar en su iPad las
+         soluciones de 5.5 de la unidad 1: «mira ahora cómo se ven de
+         apelotonado en la web los números de ejercicios junto a las letras
+         de los apartados»). Sin esta regla las listas llevan la sangría del
+         navegador, 40 px fijos, que en la página normal bastan; con la letra
+         del modo clase, y más al ampliar, el número del ejercicio no cabía,
+         se montaba en la barra del bloque y en la «a)» de su primer
+         apartado, y Safari le deja al número más sitio que Chrome. En «em»
+         la proporción es la de la página normal (40 px para su letra de
+         16,56 px), así que la página normal no cambia. Quedan fuera las
+         tarjetas de los enunciados, que tienen su propia sangría, y los
+         laboratorios. */
+      html.modo-clase #contenido-unidad :is(ol, ul):not(section.ejercicios > ol):not(.interactivo *) {
+        padding-left: 2.4em;
+      }
+
       /* Lo que no se usa en clase no se ve. De la prosa y de las listas
          solo quedan los párrafos y los elementos que llevan una fórmula
          centrada, que son los ejemplos; también dentro del marco de un
@@ -7446,22 +7463,6 @@ Bachillerato</p>
                 class="math inline">\(-4{,}2\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(1{,}35\)</span>.</span></li>
-                <li>Lee cada condición como una distancia en la recta y
-                halla los números que la cumplen. Si son infinitos,
-                escríbelos como un intervalo o como una unión de
-                intervalos:
-                <ol type="a">
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(|x+4|=11\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(|x-8|\leq3\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(|x-1|&gt;3\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(|2x+1|&lt;5\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(|2x-3|\geq7\)</span>.</span></li>
-                </ol></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
@@ -7469,48 +7470,6 @@ Bachillerato</p>
                 <li><span class="math display">\[
                 |-4{,}2-1{,}35|=5{,}55
                 \]</span></li>
-                <li><ol type="a">
-                <li>Los números que distan de <span
-                class="math inline">\(-4\)</span> exactamente <span
-                class="formula-con-signo"><span
-                class="math inline">\(11\)</span>:</span> <span
-                class="math inline">\(x=7\)</span> o <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=-15\)</span>.</span></li>
-                <li>Los que distan de <span
-                class="math inline">\(8\)</span> como mucho <span
-                class="formula-con-signo"><span
-                class="math inline">\(3\)</span>:</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\([5,11]\)</span>.</span></li>
-                <li>Los que distan de <span
-                class="math inline">\(1\)</span> más de <span
-                class="formula-con-signo"><span
-                class="math inline">\(3\)</span>:</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\((-\infty,-2)\cup(4,+\infty)\)</span>.</span></li>
-                <li>Como <span class="formula-con-signo"><span
-                class="math inline">\(|2x+1|=2\left|x+\frac12\right|\)</span>,</span>
-                la condición equivale a <span
-                class="formula-con-signo"><span
-                class="math inline">\(\left|x+\frac12\right|&lt;\frac52\)</span>:</span>
-                los que distan de <span
-                class="math inline">\(-\frac12\)</span> menos de <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac52\)</span>,</span> es decir,
-                <span class="formula-con-signo"><span
-                class="math inline">\((-3,2)\)</span>.</span></li>
-                <li>Como <span class="formula-con-signo"><span
-                class="math inline">\(|2x-3|=2\left|x-\frac32\right|\)</span>,</span>
-                equivale a <span class="formula-con-signo"><span
-                class="math inline">\(\left|x-\frac32\right|\geq\frac72\)</span>:</span>
-                los que distan de <span
-                class="math inline">\(\frac32\)</span> al menos <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac72\)</span>,</span> es decir,
-                <span class="formula-con-signo"><span
-                class="math inline">\((-\infty,-2]\cup[5,+\infty)\)</span>.</span></li>
-                </ol></li>
                 </ol>
                 </div>
                 </section>
@@ -7550,6 +7509,21 @@ Bachillerato</p>
                 class="math inline">\(E[a,r]=[a-r,a+r]\)</span>,</span>
                 que equivale a <span class="formula-con-signo"><span
                 class="math inline">\(|x-a|\leq r\)</span>.</span></p>
+                <p>Los números que distan de <span
+                class="math inline">\(a\)</span> más que <span
+                class="math inline">\(r\)</span> quedan fuera del
+                entorno, a un lado o al otro: no forman un intervalo,
+                sino dos semirrectas. Si la distancia puede ser igual a
+                <span class="math inline">\(r\)</span> («al menos <span
+                class="formula-con-signo"><span
+                class="math inline">\(r\)</span>»),</span> entran
+                también los extremos:</p>
+                <p><span class="math display">\[
+                \begin{aligned}
+                |x-a|&gt;r&amp;\iff x&lt;a-r \text{ o } x&gt;a+r\\
+                |x-a|\geq r&amp;\iff x\leq a-r \text{ o } x\geq a+r
+                \end{aligned}
+                \]</span></p>
                 <p>Así, <span class="math inline">\(|x-4|&lt;3\)</span>
                 significa que <span class="math inline">\(x\)</span>
                 dista de <span class="math inline">\(4\)</span> menos
@@ -7557,7 +7531,19 @@ Bachillerato</p>
                 class="math inline">\(3\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\in E(4,3)=(1,7)\)</span>.</span>
-                Al revés, para escribir un intervalo como entorno, el
+                En cambio, <span
+                class="math inline">\(|x-4|&gt;3\)</span> significa que
+                dista de <span class="math inline">\(4\)</span> más que
+                <span class="formula-con-signo"><span
+                class="math inline">\(3\)</span>:</span></p>
+                <p><span class="math display">\[
+                \begin{aligned}
+                &amp;|x-4|&gt;3\\
+                \iff{}&amp;x&lt;4-3 \text{ o } x&gt;4+3\\
+                \iff{}&amp;x\in(-\infty,1)\cup(7,+\infty)
+                \end{aligned}
+                \]</span></p>
+                <p>Al revés, para escribir un intervalo como entorno, el
                 centro es el punto medio y el radio, la distancia del
                 centro a un extremo: <span
                 class="formula-con-signo"><span
@@ -7629,7 +7615,23 @@ Bachillerato</p>
                 <section id="ejercicios-18"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="12" type="1">
+                <ol start="11" type="1">
+                <li>Lee cada condición como una distancia en la recta y
+                halla los números que la cumplen. Si son infinitos,
+                escríbelos como un intervalo o como una unión de
+                intervalos:
+                <ol type="a">
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(|x+4|=11\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(|x-8|\leq3\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(|x-1|&gt;3\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(|2x+1|&lt;5\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(|2x-3|\geq7\)</span>.</span></li>
+                </ol></li>
                 <li><ol type="a">
                 <li>Escribe como intervalo <span
                 class="formula-con-signo"><span
@@ -7653,9 +7655,67 @@ Bachillerato</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="12" type="1">
+                <ol start="11" type="1">
                 <li><ol type="a">
-                <li><span class="formula-con-signo"><span
+                <li>Los números que distan de <span
+                class="math inline">\(-4\)</span> exactamente <span
+                class="formula-con-signo"><span
+                class="math inline">\(11\)</span>:</span> <span
+                class="math inline">\(x=7\)</span> o <span
+                class="formula-con-signo"><span
+                class="math inline">\(x=-15\)</span>.</span></li>
+                <li>Los que distan de <span
+                class="math inline">\(8\)</span> como mucho <span
+                class="formula-con-signo"><span
+                class="math inline">\(3\)</span>:</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\([5,11]\)</span>.</span></li>
+                <li>Los que distan de <span
+                class="math inline">\(1\)</span> más de <span
+                class="formula-con-signo"><span
+                class="math inline">\(3\)</span>:</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\((-\infty,-2)\cup(4,+\infty)\)</span>.</span></li>
+                <li>Como <span class="formula-con-signo"><span
+                class="math inline">\(|2x+1|=2\left|x+\frac12\right|\)</span>,</span>
+                la condición equivale a <span
+                class="formula-con-signo"><span
+                class="math inline">\(\left|x+\frac12\right|&lt;\frac52\)</span>:</span>
+                los que distan de <span
+                class="math inline">\(-\frac12\)</span> menos de <span
+                class="formula-con-signo"><span
+                class="math inline">\(\frac52\)</span>,</span> es decir,
+                <span class="formula-con-signo"><span
+                class="math inline">\((-3,2)\)</span>.</span></li>
+                <li>Como <span class="formula-con-signo"><span
+                class="math inline">\(|2x-3|=2\left|x-\frac32\right|\)</span>,</span>
+                equivale a <span class="formula-con-signo"><span
+                class="math inline">\(\left|x-\frac32\right|\geq\frac72\)</span>:</span>
+                los que distan de <span
+                class="math inline">\(\frac32\)</span> al menos <span
+                class="formula-con-signo"><span
+                class="math inline">\(\frac72\)</span>,</span> es decir,
+                <span class="formula-con-signo"><span
+                class="math inline">\((-\infty,-2]\cup[5,+\infty)\)</span>.</span></li>
+                </ol></li>
+                <li><ol type="a">
+                <li>Se escribe <span class="math inline">\(x+3\)</span>
+                como <span class="math inline">\(x-(-3)\)</span> para
+                ver el centro, <span class="formula-con-signo"><span
+                class="math inline">\(-3\)</span>,</span> y el radio,
+                <span class="formula-con-signo"><span
+                class="math inline">\(5\)</span>:</span> <span
+                class="math display">\[
+                \begin{aligned}
+                &amp;|x+3|&lt;5\\
+                \iff{}&amp;|x-(-3)|&lt;5\\
+                \iff{}&amp;-3-5&lt;x&lt;-3+5\\
+                \iff{}&amp;-8&lt;x&lt;2
+                \end{aligned}
+                \]</span> Es el entorno <span
+                class="formula-con-signo"><span
+                class="math inline">\(E(-3,5)\)</span>,</span> es decir,
+                el intervalo <span class="formula-con-signo"><span
                 class="math inline">\((-8,2)\)</span>.</span></li>
                 <li>Centro <span class="math inline">\(-1\)</span> y
                 radio <span class="formula-con-signo"><span
@@ -7673,12 +7733,35 @@ Bachillerato</p>
                 class="math inline">\(|x+7|\leq5\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(E(7,3)=(4,10)\)</span>.</span></li>
-                <li>Los que quedan fuera del entorno <span
+                <li>Distar de <span class="math inline">\(7\)</span>
+                menos de <span class="math inline">\(3\)</span> es estar
+                en el entorno de centro <span
+                class="math inline">\(7\)</span> y radio <span
                 class="formula-con-signo"><span
-                class="math inline">\(E(-5,2)=(-7,-3)\)</span>,</span>
-                con sus extremos: <span class="formula-con-signo"><span
+                class="math inline">\(3\)</span>:</span> <span
+                class="math display">\[
+                \begin{aligned}
+                &amp;|x-7|&lt;3\\
+                \iff{}&amp;7-3&lt;x&lt;7+3\\
+                \iff{}&amp;4&lt;x&lt;10
+                \end{aligned}
+                \]</span> Como entorno, <span
+                class="formula-con-signo"><span
+                class="math inline">\(E(7,3)\)</span>;</span> como
+                intervalo, <span class="formula-con-signo"><span
+                class="math inline">\((4,10)\)</span>.</span></li>
+                <li>Distar de <span class="math inline">\(-5\)</span> al
+                menos <span class="math inline">\(2\)</span> es quedar
+                fuera del entorno <span class="formula-con-signo"><span
+                class="math inline">\(E(-5,2)\)</span>,</span> con sus
+                extremos: <span class="math display">\[
+                \begin{aligned}
+                &amp;|x-(-5)|\geq2\\
+                \iff{}&amp;x\leq-5-2 \text{ o } x\geq-5+2\\
+                \iff{}&amp;x\leq-7 \text{ o } x\geq-3
+                \end{aligned}
+                \]</span> Son dos semirrectas: <span
+                class="formula-con-signo"><span
                 class="math inline">\((-\infty,-7]\cup[-3,+\infty)\)</span>.</span></li>
                 </ol></li>
                 </ol>
