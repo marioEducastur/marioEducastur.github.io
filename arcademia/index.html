@@ -335,6 +335,67 @@
       font-size: 1.02rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      text-shadow: 0 0 6px rgb(251 191 36 / 0.45);
+      transition:
+        color 120ms ease,
+        border-color 120ms ease,
+        background-color 120ms ease,
+        box-shadow 120ms ease,
+        text-shadow 120ms ease;
+      animation: zumbido-letrero 11s steps(1, end) infinite;
+    }
+
+    /* Los letreros de las estanterías son de neón: de vez en cuando zumban (dos parpadeos cortos, cada uno a su
+       ritmo, nunca más de dos por segundo) y al pasar el ratón se vuelven rosas. El parpadeo solo toca la opacidad,
+       así que también zumban en rosa */
+    .estante:nth-of-type(2) h2 {
+      animation-duration: 13s;
+      animation-delay: -4.2s;
+    }
+
+    .estante:nth-of-type(3) h2 {
+      animation-duration: 12s;
+      animation-delay: -7.9s;
+    }
+
+    .estante:nth-of-type(4) h2 {
+      animation-duration: 14s;
+      animation-delay: -2.6s;
+    }
+
+    .estante:nth-of-type(5) h2 {
+      animation-duration: 10.5s;
+      animation-delay: -6.3s;
+    }
+
+    .estante h2:hover {
+      color: #ffe4f5;
+      border-color: #ff6ad5;
+      background: rgb(255 106 213 / 0.1);
+      text-shadow: 0 0 4px rgb(255 170 230 / 0.95), 0 0 10px rgb(255 64 200 / 0.8);
+      box-shadow:
+        0 0 5px rgb(255 106 213 / 0.9),
+        0 0 14px rgb(255 64 200 / 0.55),
+        inset 0 0 6px rgb(255 106 213 / 0.45);
+    }
+
+    @keyframes zumbido-letrero {
+      0% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 0.35;
+      }
+      91% {
+        opacity: 1;
+      }
+      91.8% {
+        opacity: 0.4;
+      }
+      92.5%,
+      100% {
+        opacity: 1;
+      }
     }
 
     .estante-rejilla {
@@ -347,6 +408,8 @@
 
     .cartucho {
       position: relative;
+      display: flex;
+      flex-direction: column;
       max-width: 19rem;
       padding: 0.65rem 0.7rem 0.8rem;
       border: 1px solid #343d78;
@@ -368,22 +431,32 @@
         0 14px 28px rgb(0 0 0 / 0.45);
     }
 
-    /* Estrías superiores del cartucho */
+    /* Estrías superiores del cartucho: una máscara de cuadraditos sobre una franja de luz. Al pasar el ratón (o con
+       el foco en JUGAR) la luz se desliza y se encienden de izquierda a derecha; al irse, se apagan al revés */
     .cartucho::before {
       content: "";
       display: block;
       height: 0.5rem;
       margin: 0 1.2rem 0.55rem;
       border-radius: 0 0 0.3rem 0.3rem;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          #3a4487 0 0.5rem,
-          #232a5c 0.5rem 0.9rem
-        );
+      background: linear-gradient(90deg, var(--neon-claro) 0 50%, #3a4487 50% 100%);
+      background-size: 200% 100%;
+      background-position: 100% 0;
+      -webkit-mask: repeating-linear-gradient(90deg, #000 0 0.5rem, transparent 0.5rem 0.9rem);
+      mask: repeating-linear-gradient(90deg, #000 0 0.5rem, transparent 0.5rem 0.9rem);
+      transition: background-position 0.3s linear;
+    }
+
+    .cartucho:hover::before,
+    .cartucho:focus-within::before {
+      background-position: 0 0;
+      transition: background-position 0.6s linear;
     }
 
     .etiqueta-cartucho {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 0.6rem 0.7rem 0.7rem;
       border-radius: 0.5rem;
       border-top: 0.4rem solid var(--area, var(--violeta));
@@ -406,7 +479,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
-      margin: 0 0 0.75rem;
+      margin: 0 0 0.4rem;
       padding: 0;
       list-style: none;
     }
@@ -432,13 +505,20 @@
       border: 1.5px solid var(--curso-bach);
     }
 
-    .chip-tema {
-      color: var(--tinta-media);
-      border: 1px solid #333b6e;
+    /* El tema, en su propia línea tras los cursos: en azul, más apagado que ellos */
+    .tema-cartucho {
+      align-self: flex-start;
+      margin: 0 0 0.75rem;
+      padding: 0.08rem 0.55rem;
+      border: 1px solid rgb(147 187 230 / 0.35);
+      border-radius: 1rem;
       background: rgb(0 0 0 / 0.25);
+      color: #9bbbe6;
+      font-size: 0.8rem;
     }
 
     .acciones-cartucho {
+      margin-top: auto;
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem 0.9rem;
@@ -501,6 +581,10 @@
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
+      }
+
+      .estante h2 {
+        animation: none !important;
       }
     }
 
@@ -701,8 +785,8 @@
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">1.º ESO</li>
               <li class="chip-curso es-eso">2.º ESO</li>
-              <li class="chip-tema">Números enteros</li>
             </ul>
+            <p class="tema-cartucho">Números enteros</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -723,8 +807,8 @@
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">1.º ESO</li>
               <li class="chip-curso es-eso">2.º ESO</li>
-              <li class="chip-tema">Divisibilidad y primos</li>
             </ul>
+            <p class="tema-cartucho">Divisibilidad y primos</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -745,8 +829,8 @@
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">1.º ESO</li>
               <li class="chip-curso es-eso">2.º ESO</li>
-              <li class="chip-tema">Operaciones combinadas</li>
             </ul>
+            <p class="tema-cartucho">Operaciones combinadas</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -766,8 +850,8 @@
             <h3>Los Guardianes de ℝ</h3>
             <ul class="chips-cartucho">
               <li class="chip-curso es-bach">1.º Bach.</li>
-              <li class="chip-tema">Números reales</li>
             </ul>
+            <p class="tema-cartucho">Números reales</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -793,8 +877,8 @@
             <h3>El Grimorio de las Transformaciones</h3>
             <ul class="chips-cartucho">
               <li class="chip-curso es-bach">1.º Bach.</li>
-              <li class="chip-tema">Ecuaciones</li>
             </ul>
+            <p class="tema-cartucho">Ecuaciones</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -814,8 +898,8 @@
             <h3>Órbita Gauss</h3>
             <ul class="chips-cartucho">
               <li class="chip-curso es-bach">1.º Bach.</li>
-              <li class="chip-tema">Sistemas de ecuaciones</li>
             </ul>
+            <p class="tema-cartucho">Sistemas de ecuaciones</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -842,8 +926,8 @@
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">2.º ESO</li>
               <li class="chip-curso es-eso">3.º ESO</li>
-              <li class="chip-tema">Movimientos en el plano</li>
             </ul>
+            <p class="tema-cartucho">Movimientos en el plano</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -869,8 +953,8 @@
             <h3>Parabólica</h3>
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">4.º ESO</li>
-              <li class="chip-tema">Función cuadrática</li>
             </ul>
+            <p class="tema-cartucho">Función cuadrática</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
@@ -891,8 +975,8 @@
             <ul class="chips-cartucho">
               <li class="chip-curso es-eso">4.º ESO</li>
               <li class="chip-curso es-bach">1.º Bach.</li>
-              <li class="chip-tema">Familias de funciones</li>
             </ul>
+            <p class="tema-cartucho">Familias de funciones</p>
             <div class="acciones-cartucho">
               <a
                 class="boton-jugar"
