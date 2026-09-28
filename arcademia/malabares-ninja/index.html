@@ -24,7 +24,9 @@
   queda es primo, se atrapa con el ninja, moviéndolo con el ratón, el dedo
   o las flechas hasta ponerlo debajo; los primos no se cortan, ni siquiera
   el 2, el 3, el 5 o el 7 con su propia cuchilla, porque son el último
-  factor. Si el ninja atrapa un número compuesto, se pierde un corazón. Cada número se fabrica como producto de primos con
+  factor: intentarlo, o pulsar en el teclado una cifra que no es primo, es
+  un corte fallido, y el número cae más deprisa, aunque sin grieta. Si el
+  ninja atrapa un número compuesto, se pierde un corazón. Cada número se fabrica como producto de primos con
   cuchilla por, a lo sumo, un primo menor que 100, así que siempre se puede
   terminar. Los Gemelos van encadenados: solo se cortan juntos, y la cadena
   se rompe cuando ya no comparten divisores; su producto es el m.c.d.
@@ -176,7 +178,7 @@ canvas{display:block; border-radius:10px; touch-action:none; box-shadow:0 0 0 1p
 <body>
 <div id="app">
   <header id="superior">
-    <a class="icobtn" id="bVolver" href="../../index.html" aria-label="Volver al salón Arcademia" title="Volver a Arcademia">←</a>
+    <a class="icobtn" id="bVolver" href="../index.html" aria-label="Volver al salón Arcademia" title="Volver a Arcademia">←</a>
     <div id="rotulo"><span class="n">Números · 1.º y 2.º ESO</span><span class="t">MALABARES NINJA</span></div>
     <div id="botonera">
       <button type="button" class="icobtn" id="bSonido" aria-pressed="true" aria-label="Sonido" title="Sonido (M)">🔊</button>
@@ -252,6 +254,7 @@ var MANOS_Y = SUELO + 1.9;         /* altura de las manos: una bola que baja has
 var ANCHO_MANOS = 0.85;            /* distancia horizontal máxima entre el ninja y la bola para atraparla */
 var NINJA_MIN = 0.7, NINJA_MAX = W - 0.7;
 var CUCHILLAS = [2, 3, 5, 7];
+var CIFRAS_NO_PRIMAS = [0, 1, 4, 6, 8, 9];   /* se pueden pulsar en el teclado, pero no son cuchillas: el corte falla */
 var PRIMO_MAX = 97;               /* el único factor que no se corta es un primo menor que 100 */
 var GRIETAS_MAX = 3;              /* tres cortes que no dividen rompen la bola */
 var CONGELACION_FORJA = 10;       /* segundos de tiempo congelado al abrir la forja */
@@ -482,12 +485,16 @@ function crearMotor(){
   /* acciones del jugador */
   M.cortar = function(id, p){
     if(M.fase !== 'jugando') return { ok:false, motivo:'fase' };
+    if(CIFRAS_NO_PRIMAS.indexOf(p) >= 0) return cortarNoPrimo(id, p);
     if(CUCHILLAS.indexOf(p) < 0) return { ok:false, motivo:'cuchilla' };
     if(M.config.cuchillas.indexOf(p) < 0){ emitir('cuchillaBloqueada', { p:p }); return { ok:false, motivo:'bloqueada' }; }
     if(id === 'jefe') return cortarCadena(p);
     var b = buscar(id); if(!b) return { ok:false, motivo:'sin-bola' };
     if(esPrimo(b.n) && b.n % p === 0){
-      /* 7 : 7 = 1 es una división correcta, pero la regla del juego es que el último factor, el primo, se atrapa */
+      /* 7 : 7 = 1 es una división correcta, pero la regla del juego es que el último factor, el primo, se atrapa:
+         el corte falla y la bola cae más deprisa, sin grieta, porque la cuchilla sí lo divide */
+      b.clonks++; M.estad.clonks++; romperCombo();
+      b.vy = Math.min(b.vy, 0) - 1.5;
       emitir('primoNoSeCorta', { id:b.id, n:b.n, p:p, x:b.x, y:b.y });
       return { ok:false, motivo:'primo' };
     }
@@ -511,6 +518,15 @@ function crearMotor(){
     }
     return { ok:false, motivo:'no-divide' };
   };
+  /* una cifra que no es primo no corta: el número cae más deprisa, sin grieta, como en cualquier corte fallido */
+  function cortarNoPrimo(id, d){
+    var c = (id === 'jefe') ? M.jefe : buscar(id);
+    if(!c || (id === 'jefe' && !c.encadenado)) return { ok:false, motivo:'sin-bola' };
+    c.clonks++; M.estad.clonks++; romperCombo();
+    c.vy = Math.min(c.vy, 0) - (id === 'jefe' ? 1.2 : 1.5);
+    emitir('noEsPrimo', { id:id, d:d, jefe:id === 'jefe', x:c.x, y:c.y });
+    return { ok:false, motivo:'no-primo' };
+  }
   function atraparBola(b){
     if(esPrimo(b.n)){
       if(b.n <= 7) M.cesta[b.n]++; else M.grandes.push(b.n);
@@ -697,7 +713,7 @@ function crearMotor(){
 return { crearMotor:crearMotor, CINTURONES:CINTURONES, RETO:RETO, poolDe:poolDe, generarSecuencia:generarSecuencia, generarJefe:generarJefe,
          esPrimo:esPrimo, factoriza:factoriza, omega:omega, textoFactorizacion:textoFactorizacion, mcd:mcd, sumaCifras:sumaCifras,
          categoria:categoria, porQueNoDivide:porQueNoDivide, fmtPuntos:fmtPuntos, mulberry32:mulberry32, tCirculo:tCirculo,
-         constantes:{ W:W, H:H, SUELO:SUELO, R:R, R_JEFE:R_JEFE, SEP_JEFE:SEP_JEFE, LANZA_X:LANZA_X, LANZA_Y:LANZA_Y, CUCHILLAS:CUCHILLAS,
+         constantes:{ W:W, H:H, SUELO:SUELO, R:R, R_JEFE:R_JEFE, SEP_JEFE:SEP_JEFE, LANZA_X:LANZA_X, LANZA_Y:LANZA_Y, CUCHILLAS:CUCHILLAS, CIFRAS_NO_PRIMAS:CIFRAS_NO_PRIMAS,
                       PRIMO_MAX:PRIMO_MAX, GRIETAS_MAX:GRIETAS_MAX, CONGELACION_FORJA:CONGELACION_FORJA, FACTOR_TRANQUILO:FACTOR_TRANQUILO,
                       NINJA_VEL:NINJA_VEL, MANOS_Y:MANOS_Y, ANCHO_MANOS:ANCHO_MANOS, NINJA_MIN:NINJA_MIN, NINJA_MAX:NINJA_MAX } };
 })();
@@ -1124,7 +1140,7 @@ function jugable(){ return M.fase === 'jugando' && !UI.panel && !UI.pausa; }
 function cuchillaDisponible(p){ return !!(M.config && M.config.cuchillas.indexOf(p) >= 0); }
 function ejecutarCorte(id, p){
   if(!jugable()) return;
-  if(!cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); Sonido.sfx('clonk'); return; }
+  if(K.CUCHILLAS.indexOf(p) >= 0 && !cuchillaDisponible(p)){ avisar('La cuchilla del 7 se gana en el cinturón naranja.', 'info'); Sonido.sfx('clonk'); return; }
   M.cortar(id, p); procesarEventos();
 }
 function alternarArmada(p){
@@ -1253,7 +1269,7 @@ document.addEventListener('keydown', function(ev){
     return;
   }
   if(!jugable()) return;
-  if(k === '2' || k === '3' || k === '5' || k === '7'){ ev.preventDefault(); UI.teclado = true; Sonido.despertar(); var id = objetivoActual(); if(id !== null) ejecutarCorte(id, +k); return; }
+  if(/^[0-9]$/.test(k)){ ev.preventDefault(); UI.teclado = true; Sonido.despertar(); var id = objetivoActual(); if(id !== null) ejecutarCorte(id, +k); return; }   /* las cifras que no son primos llegan al motor, que las cuenta como corte fallido */
   if(k === ' '){ ev.preventDefault(); UI.teclado = true; irDebajoDelMasBajo(); return; }
   if(k === 'ArrowLeft' || k === 'ArrowRight' || k === 'a' || k === 'd'){
     ev.preventDefault(); UI.teclado = true; Sonido.despertar();
@@ -1314,9 +1330,15 @@ function procesarEventos(){
         break;
       case 'atrapada': UI.ninjaAtrapa = 0.45; Sonido.sfx('atrapa'); particulas(ev.x, ev.y, 10, '#ffd43b', 2); vueloGema(ev.x, ev.y, ev.n); break;
       case 'primoNoSeCorta':
-        Sonido.sfx('atrapa'); texto(ev.x, ev.y, 'primo', '#ffd43b', 0.42);
-        avisar(ev.n + ' ya es primo: es el último factor y no se corta. ¡Atrápalo con el ninja!', 'info');
+        Sonido.sfx('clonk'); particulas(ev.x, ev.y, 8, '#ffffff', 2.5); texto(ev.x, ev.y, 'primo', '#ffb3b3', 0.42);
+        avisar(ev.n + ' ya es primo: es el último factor y no se corta. ¡Atrápalo con el ninja!', 'mal');
         break;
+      case 'noEsPrimo': {
+        Sonido.sfx('clonk'); particulas(ev.x, ev.y, 8, '#ffffff', 2.5); texto(ev.x, ev.y, 'clonk', '#ffb3b3', 0.4);
+        var m3 = ev.d === 0 ? 'Entre 0 no se puede dividir.' : (ev.d === 1 ? '1 no es primo: dividir entre 1 no cambia nada.' : ev.d + ' no es primo: ' + ev.d + ' = ' + E.textoFactorizacion(ev.d) + '.');
+        m3 += ev.jefe ? ' Corta con primos o forja la cuchilla con gemas (F).' : ' Solo se corta con primos: ' + M.config.cuchillas.join(', ').replace(/, (\d)$/, ' y $1') + '.';
+        avisar(m3, 'mal');
+        break; }
       case 'completada': {
         Sonido.sfx('completa'); particulas(ev.x, ev.y, 16, '#ffd43b', 3); texto(ev.x, ev.y + 0.3, '+' + ev.puntos, '#ffd43b', 0.46);
         var extra = (ev.extras.indexOf('impostor') >= 0 ? ' ¡Impostor desenmascarado!' : '') + (ev.extras.indexOf('primo') >= 0 ? ' ¡Primo a la primera!' : '');
@@ -1420,11 +1442,11 @@ function tablaEstad(){
   var s = M.estad;
   return '<div class="tabla"><b>' + s.cortes + '</b><span>cortes exactos</span><b>' + s.primos + '</b><span>primos atrapados</span><b>' + s.impostores + '</b><span>impostores desenmascarados</span>'
     + '<b>' + s.cadenas + '</b><span>cadenas de Gemelos rotas' + (s.tajosMaestros ? ' (' + s.tajosMaestros + ' de un tajo maestro)' : '') + '</span>'
-    + '<b>' + s.clonks + '</b><span>cortes que no dividían</span><b>' + s.corazonesPerdidos + '</b><span>corazones perdidos</span><b>' + M.comboMax + '</b><span>mejor racha</span></div>';
+    + '<b>' + s.clonks + '</b><span>cortes fallidos</span><b>' + s.corazonesPerdidos + '</b><span>corazones perdidos</span><b>' + M.comboMax + '</b><span>mejor racha</span></div>';
 }
 
 /* ---------------- paneles ---------------- */
-function pie(){ return '<div class="pie-marca"><a href="../../index.html">← Arcademia</a> · 1.º y 2.º ESO · divisibilidad</div>'; }
+function pie(){ return '<div class="pie-marca"><a href="../index.html">← Arcademia</a> · 1.º y 2.º ESO · divisibilidad</div>'; }
 var FONDO = ['superior', 'hud', 'escenario', 'cesta', 'mandos', 'forja'];
 function bloquearFondo(si){ FONDO.forEach(function(id){ var el = $(id); if(!el) return; if(si){ el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); } else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); } }); }
 function atraparTab(ev){
@@ -1458,11 +1480,11 @@ function abrirPanel(nombre, focoId){
       + '<h3>Cortar</h3><p>Arrastra desde una cuchilla (2, 3, 5 o 7) hasta el número. Si la cuchilla lo divide, cae una gema en tu cesta y el cociente vuelve a subir: el 84 pasa a 42, luego a 21 y luego a 7. También puedes pulsar una cuchilla para prepararla y después tocar el número.</p>'
       + '<h3>Atrapar</h3><p>Cuando lo que queda es un número primo, atrápalo con el ninja: muévelo con el ratón, arrastrando el dedo por el dojo o con las flechas, y ponlo debajo antes de que toque el suelo. La sombra del suelo te dice dónde caerá. Los primos no se cortan, ni siquiera el 2, el 3, el 5 o el 7 con su propia cuchilla: son el último factor. Si el ninja atrapa un número que no es primo, pierdes un corazón.</p>'
       + '<h3>Los criterios</h3><ul><li><b>2</b>: el número acaba en 0, 2, 4, 6 u 8.</li><li><b>3</b>: la suma de sus cifras es múltiplo de 3 (en 84, 8 + 4 = 12).</li><li><b>5</b>: acaba en 0 o en 5.</li><li><b>7</b>: no hay un criterio cómodo; haz la división.</li></ul>'
-      + '<h3>Errores</h3><p>Una cuchilla que no divide suena «clonk»: la bola cae más deprisa y se agrieta, y a la tercera grieta se rompe. El 7 no agrieta. Pierdes un corazón si el ninja atrapa un número que no es primo, si una bola se rompe o si toca el suelo. Sin corazones, el cinturón vuelve a empezar.</p>'
+      + '<h3>Errores</h3><p>Una cuchilla que no divide suena «clonk»: la bola cae más deprisa y se agrieta, y a la tercera grieta se rompe. El 7 no agrieta. Cortar un primo con su propia cuchilla, como el 7 con la del 7, también lo hace caer más deprisa, aunque sin grieta, y lo mismo pasa si en el teclado pulsas una cifra que no es primo (0, 1, 4, 6, 8 o 9). Pierdes un corazón si el ninja atrapa un número que no es primo, si una bola se rompe o si toca el suelo. Sin corazones, el cinturón vuelve a empezar.</p>'
       + '<h3>Los Gemelos</h3><p>Desde el cinturón amarillo, al final llegan dos números encadenados. Solo se cortan juntos, con una cuchilla que divida a los dos, y la cadena se rompe cuando ya no comparten ningún divisor: los primos que has cortado forman su <b>máximo común divisor</b>. Con la <b>forja</b> combinas gemas de tu cesta en una sola cuchilla, que es su producto; si aciertas el m.c.d. de un solo tajo, es un tajo maestro.</p>'
       + '<h3>Puntos</h3><p>10 por cada corte y 20 por cada factor al terminar un número. Los impostores, números impares que parecen primos y no lo son (como 91 = 7·13), dan 50 más. Cada tres aciertos seguidos sube el combo, hasta multiplicar por 4.</p>'
       + '<h3>Modo tranquilo</h3><p>La gravedad es más suave y solo vuela un número cada vez.</p>'
-      + '<h3>Teclado</h3><p>Las flechas ← y → (o A y D) mueven al ninja; 2, 3, 5 y 7 cortan el número que tiene encima; Espacio lo lleva debajo del número más bajo; F abre la forja; L dice qué hay en el aire y dónde; P pausa; M sonido. En la forja: 2, 3, 5 y 7 añaden gemas, la tecla de borrar quita la última, Intro lanza y Esc cancela.</p>'
+      + '<h3>Teclado</h3><p>Las flechas ← y → (o A y D) mueven al ninja; 2, 3, 5 y 7 cortan el número que tiene encima (las demás cifras no son primos y fallan el corte); Espacio lo lleva debajo del número más bajo; F abre la forja; L dice qué hay en el aire y dónde; P pausa; M sonido. En la forja: 2, 3, 5 y 7 añaden gemas, la tecla de borrar quita la última, Intro lanza y Esc cancela.</p>'
       + '<div class="fila"><button type="button" class="btn principal" id="mVolver">Volver</button></div>' + pie();
   } else if(nombre === 'pausa'){
     h = '<h2 id="panelTitulo">Pausa</h2><p class="sub">' + E.fmtPuntos(M.puntos) + ' puntos</p>'
