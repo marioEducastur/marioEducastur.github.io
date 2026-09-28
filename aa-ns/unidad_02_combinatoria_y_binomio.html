@@ -3449,12 +3449,29 @@ Enfoques NS</p>
                 <h3 data-number="2.1"><span
                 class="header-section-number">2.1</span>
                 Permutaciones</h3>
+                <p>Para contar ordenaciones se piensa en
+                <strong>casillas</strong>, una por cada lugar de la
+                fila. Se rellenan de una en una y se multiplican las
+                opciones de cada casilla (el principio de multiplicación
+                del subapartado 1.1). Con las letras de SOL, la primera
+                casilla admite cualquiera de las <span
+                class="math inline">\(3\)</span> letras; la segunda,
+                cualquiera de las <span class="math inline">\(2\)</span>
+                que quedan, y la tercera, la única que sobra:</p>
+                <p><span class="math display">\[
+                \underbrace{3}_{\text{1.ª}}\cdot\underbrace{2}_{\text{2.ª}}\cdot\underbrace{1}_{\text{3.ª}}=6=3!
+                \]</span></p>
                 <div class="definicion bloque-didactico">
                 <p><span class="etiqueta-bloque">Definición</span></p>
                 <ul>
                 <li><span class="math inline">\(n\)</span> objetos
                 distintos se pueden ordenar de <span
-                class="math inline">\(n!\)</span> maneras.</li>
+                class="math inline">\(n!\)</span> maneras: la primera
+                casilla admite <span class="math inline">\(n\)</span>
+                opciones; la segunda, <span
+                class="math inline">\(n-1\)</span>, y así hasta la
+                última, que admite <span
+                class="math inline">\(1\)</span>.</li>
                 <li>Elegir <span class="math inline">\(r\)</span>
                 objetos de <span class="math inline">\(n\)</span>
                 distintos <strong>y ordenarlos</strong> se puede hacer
@@ -3464,7 +3481,9 @@ Enfoques NS</p>
                 <strong>permutaciones</strong> de <span
                 class="math inline">\(n\)</span> elementos tomados de
                 <span class="math inline">\(r\)</span> en <span
-                class="math inline">\(r\)</span>.</li>
+                class="math inline">\(r\)</span>. Es la misma cuenta,
+                pero solo se rellenan <span
+                class="math inline">\(r\)</span> casillas.</li>
                 </ul>
                 </div>
                 <p>La fórmula de <span
@@ -3475,9 +3494,16 @@ Enfoques NS</p>
                 class="math inline">\(V_{n,r}\)</span>; el IB dice
                 permutaciones. En la calculadora, en GeoGebra y en
                 Desmos: <code>nPr(8,3)</code>.</p>
+                <p>Si en una carrera de <span
+                class="math inline">\(8\)</span> corredores se reparten
+                oro, plata y bronce, el oro puede ser para cualquiera de
+                los <span class="math inline">\(8\)</span>; la plata,
+                para cualquiera de los <span
+                class="math inline">\(7\)</span> que quedan, y el
+                bronce, para cualquiera de los <span
+                class="math inline">\(6\)</span> restantes:</p>
                 <p><span class="math display">\[
-                \text{Oro, plata y bronce entre }8\text{ corredores:
-                }{}^{8}P_{3}=8\cdot7\cdot6=336
+                {}^{8}P_{3}=\underbrace{8}_{\text{oro}}\cdot\underbrace{7}_{\text{plata}}\cdot\underbrace{6}_{\text{bronce}}=336
                 \]</span></p>
                 <p>Las preguntas de ordenaciones casi nunca piden
                 ordenarlo todo sin más: añaden una
@@ -3487,57 +3513,128 @@ Enfoques NS</p>
                 class="math inline">\(n!\)</span> o <span
                 class="math inline">\({}^{n}P_{r}\)</span> a todos los
                 objetos de golpe, porque no todas las ordenaciones
-                valen. Se cuenta por partes, con el principio de
-                multiplicación, y la condición casi siempre es de uno de
-                estos tres tipos:</p>
+                valen. Se sigue contando por casillas, con el principio
+                de multiplicación, y la condición casi siempre es de uno
+                de estos tres tipos:</p>
                 <div class="metodo bloque-didactico">
                 <p><span class="etiqueta-bloque">Método</span></p>
                 <p><strong>Ordenaciones con condiciones.</strong></p>
                 <ol type="1">
                 <li><strong>Un lugar con condición</strong> (la primera
-                cifra, los extremos…): se rellena primero ese lugar y
-                después el resto.</li>
+                cifra, los extremos…): se rellena primero esa casilla y
+                después las demás. Si se dejara para el final, sus
+                opciones dependerían de lo que ya se hubiera colocado, y
+                no se podría multiplicar.</li>
                 <li><strong>Objetos que van juntos</strong>: se pegan en
-                un solo bloque, se ordena el bloque con los demás
-                objetos y se multiplica por las ordenaciones dentro del
-                bloque.</li>
-                <li><strong>Objetos que van separados</strong>: se
-                cuentan las ordenaciones en las que van juntos y se
-                restan del total.</li>
+                un bloque, que cuenta como un solo objeto. Se ordenan el
+                bloque y los demás objetos, y se multiplica por las
+                formas de ordenar los objetos dentro del bloque.</li>
+                <li><strong>Objetos que van separados</strong>: es más
+                fácil contar lo contrario. En cada ordenación van juntos
+                o van separados, así que las separadas son el total
+                menos las juntas.</li>
                 </ol>
                 </div>
                 <div class="ejemplo bloque-didactico">
                 <p><span class="etiqueta-bloque">Ejemplo</span></p>
                 <p><strong>¿Cuántas ordenaciones de las letras de CAMINO
                 empiezan y acaban en vocal?</strong></p>
-                <p>Es el tipo 1. Primero los lugares con condición: la
-                primera letra es una de las <span
-                class="math inline">\(3\)</span> vocales y la última,
-                una de las <span class="math inline">\(2\)</span> que
-                quedan. Después, las <span
-                class="math inline">\(4\)</span> letras restantes se
-                ordenan en medio. En total, <span
+                <p>Es el tipo 1. CAMINO tiene <span
+                class="math inline">\(6\)</span> letras distintas: <span
+                class="math inline">\(3\)</span> vocales (A, I, O) y
+                <span class="math inline">\(3\)</span> consonantes (C,
+                M, N). De las <span class="math inline">\(6\)</span>
+                casillas se rellenan primero las dos con condición, la
+                primera y la última, y después las de en medio:</p>
+                <ul>
+                <li>Primera casilla: una vocal, con <span
+                class="math inline">\(3\)</span> opciones.</li>
+                <li>Última casilla: otra vocal, con <span
+                class="math inline">\(2\)</span> opciones, porque una ya
+                está colocada.</li>
+                <li>Casillas de en medio: las <span
+                class="math inline">\(4\)</span> letras que quedan, con
+                <span class="math inline">\(4\)</span>, <span
+                class="math inline">\(3\)</span>, <span
+                class="math inline">\(2\)</span> y <span
+                class="math inline">\(1\)</span> opciones, es decir,
+                <span class="math inline">\(4!\)</span>.</li>
+                </ul>
+                <p><span class="math display">\[
+                \begin{array}{cccccc}
+                \text{1.ª}&amp;\text{2.ª}&amp;\text{3.ª}&amp;\text{4.ª}&amp;\text{5.ª}&amp;\text{6.ª}\\
+                \text{vocal}&amp;&amp;&amp;&amp;&amp;\text{vocal}\\
+                3&amp;4&amp;3&amp;2&amp;1&amp;2
+                \end{array}
+                \]</span></p>
+                <p>Por el principio de multiplicación, <span
+                class="math inline">\(3\cdot4\cdot3\cdot2\cdot1\cdot2\)</span>,
+                es decir, <span
                 class="math inline">\(3\cdot2\cdot4!=144\)</span>.</p>
                 </div>
                 <div class="ejemplo bloque-didactico">
                 <p><span class="etiqueta-bloque">Ejemplo</span></p>
                 <p><strong>Las <span class="math inline">\(7\)</span>
                 bicicletas de un club se colocan en fila; <span
-                class="math inline">\(2\)</span> son
-                eléctricas.</strong></p>
-                <p>Con las eléctricas juntas (tipo 2), el bloque y las
-                otras <span class="math inline">\(5\)</span> son <span
-                class="math inline">\(6\)</span> objetos, y el bloque se
-                ordena por dentro de <span
-                class="math inline">\(2!\)</span> maneras. Con las
-                eléctricas separadas (tipo 3), se restan esas del
-                total:</p>
+                class="math inline">\(2\)</span> son eléctricas. ¿De
+                cuántas formas quedan las eléctricas juntas? ¿Y
+                separadas?</strong></p>
+                <p>Las eléctricas se llaman <span
+                class="math inline">\(X\)</span> e <span
+                class="math inline">\(Y\)</span>, y las otras cinco,
+                <span class="math inline">\(A\)</span>, <span
+                class="math inline">\(B\)</span>, <span
+                class="math inline">\(C\)</span>, <span
+                class="math inline">\(D\)</span> y <span
+                class="math inline">\(E\)</span>.</p>
+                <p><strong>Juntas (tipo 2).</strong> Se pegan <span
+                class="math inline">\(X\)</span> e <span
+                class="math inline">\(Y\)</span> en un bloque. Quedan
+                <span class="math inline">\(6\)</span> objetos que
+                ordenar, el bloque y las <span
+                class="math inline">\(5\)</span> bicicletas normales, y
+                eso se hace de <span
+                class="math inline">\(6!=720\)</span> formas. Pero cada
+                una de esas filas da dos distintas, según vaya delante
+                <span class="math inline">\(X\)</span> o <span
+                class="math inline">\(Y\)</span> dentro del bloque:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
-                \text{Juntas: }&amp;6!\cdot2!=1440\\
-                \text{Separadas: }&amp;7!-1440=3600
+                &amp;A\ B\ \underbrace{X\,Y}_{\text{bloque}}\ C\ D\ E\\
+                &amp;A\ B\ \underbrace{Y\,X}_{\text{bloque}}\ C\ D\ E
                 \end{aligned}
                 \]</span></p>
+                <p>Por eso se multiplica por <span
+                class="math inline">\(2!=2\)</span>, las formas de
+                ordenar el bloque por dentro:</p>
+                <p><span class="math display">\[
+                6!\cdot2!=720\cdot2=1440
+                \]</span></p>
+                <p><strong>Separadas (tipo 3).</strong> Sin condiciones,
+                las <span class="math inline">\(7\)</span> bicicletas se
+                ordenan de <span class="math inline">\(7!=5040\)</span>
+                formas, y en cada una las eléctricas van juntas o
+                separadas. Las separadas son las que quedan al quitar
+                las juntas:</p>
+                <p><span class="math display">\[
+                7!-6!\cdot2!=5040-1440=3600
+                \]</span></p>
+                <p>Se puede comprobar contando directamente: <span
+                class="math inline">\(X\)</span> tiene <span
+                class="math inline">\(7\)</span> sitios posibles e <span
+                class="math inline">\(Y\)</span>, <span
+                class="math inline">\(6\)</span>, así que hay <span
+                class="math inline">\(7\cdot6=42\)</span> formas de
+                colocarlas. En <span class="math inline">\(12\)</span>
+                de ellas quedan pegadas (<span
+                class="math inline">\(6\)</span> parejas de sitios
+                seguidos, con <span class="math inline">\(X\)</span>
+                delante o detrás), así que en <span
+                class="math inline">\(30\)</span> van separadas, y las
+                otras <span class="math inline">\(5\)</span> bicicletas
+                ocupan los sitios libres de <span
+                class="math inline">\(5!=120\)</span> formas: <span
+                class="math inline">\(30\cdot120=3600\)</span>.</p>
                 </div>
                 <div class="aviso bloque-didactico">
                 <p><span class="etiqueta-bloque">Atención</span></p>
@@ -3559,7 +3656,9 @@ Enfoques NS</p>
                 también se ordenan.</li>
                 <li>«Separadas» son <span
                 class="math inline">\(7!-6!\cdot2!\)</span>, no <span
-                class="math inline">\(7!-6!\)</span>.</li>
+                class="math inline">\(7!-6!\)</span>: lo que se resta
+                son todas las juntas, con el bloque ordenado por
+                dentro.</li>
                 </ul>
                 </div>
                 <section id="ejercicios-2"
@@ -3591,27 +3690,60 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="9" type="1">
-                <li><span
-                class="math inline">\({}^{12}P_{5}=12\cdot11\cdot10\cdot9\cdot8=95\,040\)</span>.</li>
+                <li>Cinco casillas, del primer puesto al quinto, con
+                <span class="math inline">\(12\)</span>, <span
+                class="math inline">\(11\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(9\)</span> y <span
+                class="math inline">\(8\)</span> opciones: <span
+                class="math display">\[
+                {}^{12}P_{5}=12\cdot11\cdot10\cdot9\cdot8=95\,040
+                \]</span></li>
                 <li><ol type="a">
-                <li><span class="math inline">\(4!=24\)</span>.</li>
-                <li>La primera es U o E, y el resto se ordena: <span
+                <li>Son <span class="math inline">\(4\)</span> letras
+                distintas: <span
+                class="math inline">\(4!=4\cdot3\cdot2\cdot1=24\)</span>.</li>
+                <li>Tipo 1: la primera casilla es una de las <span
+                class="math inline">\(2\)</span> vocales (U o E), y las
+                otras <span class="math inline">\(3\)</span> letras se
+                ordenan detrás de <span
+                class="math inline">\(3!\)</span> formas: <span
                 class="math inline">\(2\cdot3!=12\)</span>.</li>
-                <li>El bloque de vocales con N y B son <span
-                class="math inline">\(3\)</span> objetos: <span
+                <li>Tipo 2: el bloque de las dos vocales, con N y B, son
+                <span class="math inline">\(3\)</span> objetos, que se
+                ordenan de <span class="math inline">\(3!\)</span>
+                formas; el bloque, por dentro, de <span
+                class="math inline">\(2!\)</span> (UE o EU): <span
                 class="math inline">\(3!\cdot2!=12\)</span>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
+                <li>Cuatro casillas con <span
+                class="math inline">\(7\)</span>, <span
+                class="math inline">\(6\)</span>, <span
+                class="math inline">\(5\)</span> y <span
+                class="math inline">\(4\)</span> opciones: <span
                 class="math inline">\({}^{7}P_{4}=840\)</span>.</li>
-                <li>La primera cifra es <span
+                <li>Tipo 1: la primera cifra es <span
                 class="math inline">\(5\)</span>, <span
                 class="math inline">\(6\)</span> o <span
-                class="math inline">\(7\)</span>: <span
+                class="math inline">\(7\)</span> (<span
+                class="math inline">\(3\)</span> opciones); después
+                quedan <span class="math inline">\(6\)</span> cifras
+                para la segunda casilla, <span
+                class="math inline">\(5\)</span> para la tercera y <span
+                class="math inline">\(4\)</span> para la cuarta: <span
                 class="math inline">\(3\cdot6\cdot5\cdot4=360\)</span>.</li>
                 </ol></li>
-                <li><span
-                class="math inline">\(6!-5!\cdot2!=720-240=480\)</span>.</li>
+                <li>Tipo 3. Sin condiciones hay <span
+                class="math inline">\(6!=720\)</span> formas. Con esas
+                dos juntas, su bloque y las otras <span
+                class="math inline">\(4\)</span> personas son <span
+                class="math inline">\(5\)</span> objetos, <span
+                class="math inline">\(5!\)</span> formas, por <span
+                class="math inline">\(2!\)</span> dentro del bloque:
+                <span class="math inline">\(5!\cdot2!=240\)</span>.
+                Separadas: <span
+                class="math inline">\(720-240=480\)</span>.</li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1H,
