@@ -12,11 +12,14 @@
   Autor: Mario Rodríguez Boya (© 2026), el juego y su música. Licencia CC BY-NC-ND 4.0
   (https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es): se puede usar y
   compartir citando al autor, sin fines comerciales y sin modificarlo.
-  Curso: 1.º y 2.º ESO (Copa del Prao, 1.º ESO; las copas del Puerto, de la
-  Cuesta y de la Cumbre llegarán más adelante).
+  Curso: 1.º y 2.º ESO (Copa del Prao, niveles 1 a 3; Copa del Puerto,
+  nivel 4, potencias de 2.º ESO; las copas de la Cuesta y de la Cumbre
+  llegarán más adelante).
   Tema: Sentido numérico (bloque A del Decreto 59/2022): enteros y
   jerarquía de las operaciones, potencias de exponente natural, fracciones,
-  decimales y porcentajes.
+  decimales y porcentajes; en la Copa del Puerto, potencias de exponente
+  entero y sus propiedades (producto, cociente y potencia de potencias de la
+  misma base).
   Origen: diseñado para Arcademia (2026-09-25) a partir de la idea del
   profesor, una carrera de puertas estilo Fall Guys, y de un rediseño con
   20 agentes. Fase 2b (2026-09-26), tras jugarlo el profesor: fuera las
@@ -70,9 +73,11 @@
   la segunda y «Last Lap Dash» en la final (las dos, 2026-09-27), sea cual
   sea la pista que toque. Es igual en los tres niveles, y el entrenamiento suena como
   El Prao. Desde el 2026-09-27 el juego va en su carpeta con sus recursos
-  (lo pidió el profesor): este index.html y, al lado, los MP3 originales de
-  192 kbps (one-final-tumble.mp3, final-lap-pandemonium.mp3 y
-  last-lap-dash.mp3), que se cargan la primera vez que hacen falta.
+  (lo pidió el profesor): este index.html y, al lado, sus tres canciones
+  (one-final-tumble.m4a, final-lap-pandemonium.m4a y last-lap-dash.m4a),
+  que se cargan la primera vez que hacen falta. Desde el 2026-09-28 van en
+  AAC de 96 kbps, sacadas de los MP3 originales de 192 kbps: pesan la mitad
+  (2,2 MB), para que la wifi del centro aguante a toda la clase.
   Cada manga empieza su canción desde el principio, y la música sigue
   sonando al acabar la manga, en la pausa y en el menú hasta que empieza la
   siguiente. Se quita y se pone con el botón ♪ de la carrera, «Música» en
@@ -184,6 +189,20 @@
   nivel que se elija allí; al acabar, «Otra vez» la repite y «Elegir otra
   pista» vuelve a la lista. Solo está escondida: quien lea el código la
   encuentra, pero no da ventaja ninguna.
+  Decimoséptima ronda (2026-09-28/29), seis ideas que eligió el profesor:
+  las canciones, a la mitad de peso; al final de un show con código de
+  clase, dos botones («Otra vez con el código…» y «Show nuevo, sin
+  código»); el menú más corto, con modo, ritmo, ayudas, lectura y calidad
+  plegados en «Más opciones»; el récord de cada nivel en este dispositivo;
+  la Copa del Puerto, un nivel 4 de 2.º ESO con las potencias de la misma
+  base y los exponentes negativos (el profesor eligió «Potencias»: seis
+  plantillas en las que solo salen las cuentas cuyos errores típicos dejan
+  la buena en cualquier puerta); y dos pistas nuevas de la reserva: El Pozu
+  (la mina, en la segunda carrera, con vagonetas de carbón que cruzan la
+  pista y los mazos de la ferrería, que caen por turnos) y Los Bufones (los
+  acantilados de Llanes, en la final, sobre el mar: bufones que lanzan por
+  los aires, la cucaña de tres vigas engrasadas y el paso a nivel del tren
+  de la FEVE). Sus obstáculos salen también, a sorteo, en las de siempre.
   Mandos: W avanza y, sin pulsarla, la faba se queda quieta; S va hacia
   atrás; A y D, de lado; todo respecto a la cámara, y las flechas igual.
   Con un clic en la carrera el ratón gira la cámara sin más clics (Pointer
@@ -214,8 +233,9 @@
   accesibilidad, el menú y el muestrario, y expone window.__carrerina (y,
   con su nombre de antes, window.__fabarrera) para las pruebas. Las
   preferencias se guardan en este dispositivo (localStorage «carrerina.v1»;
-  las de «fabarrera.v1» se leen y pasan a la clave nueva); no hay registro
-  de puntuaciones.
+  las de «fabarrera.v1» se leen y pasan a la clave nueva), y con ellas los
+  récords de cada nivel (los puntos del mejor show y las Fabas de Oro
+  ganadas), que no salen de él: no hay registro de puntuaciones.
 -->
 <style>
 :root{
@@ -333,21 +353,32 @@ sup{font-size:.6em}
 .casilla-op input:focus-visible{outline:3px solid var(--azul); outline-offset:2px}
 .nota{font:600 13px/1.45 var(--ui); color:var(--tinta-2); margin:6px 0 0}
 .como{margin:12px 0; padding:4px 12px 8px; border-radius:14px; border:2px solid var(--borde); background:#fffdf6; color:var(--tinta)}
+/* «Más opciones»: modo, ritmo, ayudas, lectura y calidad, plegados; al lado, cómo están ahora */
+.mas-opciones{margin:10px 0; padding:4px 12px 6px; border-radius:14px; border:2px solid var(--borde); background:#fffdf6; color:var(--tinta)}
+.mas-opciones > summary{cursor:pointer; min-height:44px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; font:800 15px var(--ui); color:var(--tinta)}
+.mas-opciones .resumen-opciones{font:600 13px/1.4 var(--ui); color:var(--tinta-2)}
+.mas-opciones[open] .resumen-opciones{display:none}
 .como summary{cursor:pointer; min-height:44px; display:flex; align-items:center; font:800 15px var(--ui); color:var(--tinta)}
 .como ul{margin:6px 0; padding-left:1.2em; font-size:14px; line-height:1.55}
 .como li{margin:3px 0}
 kbd{font:700 12px var(--mono); padding:1px 5px; border:1px solid var(--tinta-2); border-radius:5px; background:#fff; color:var(--tinta)}
-/* niveles: tres botones grandes antes de «Jugar» (aria-pressed; el elegido, además del color, lleva ✓ y otra sombra) */
+/* niveles: cuatro botones grandes antes de «Jugar», en dos columnas si caben (aria-pressed; el elegido, además del color,
+   lleva ✓ y otra sombra) */
 .niveles{margin:14px 0 4px}
 .niveles h2{margin:0 0 8px; font:900 18px/1.25 var(--ui); color:#2b2233}
 .grupo-niveles{display:grid; grid-template-columns:minmax(0, 1fr); gap:10px}
-@media (min-width:700px){ .grupo-niveles{grid-template-columns:repeat(3, minmax(0, 1fr))} }
+@media (min-width:600px){ .grupo-niveles{grid-template-columns:repeat(2, minmax(0, 1fr))} }
 .b-nivel{display:flex; flex-direction:column; align-items:flex-start; gap:3px; width:100%; min-width:0; min-height:64px; margin:0; padding:10px 14px 12px; border-radius:16px; border:3px solid #2b2233; background:#ffffff; color:#2b2233; box-shadow:0 4px 0 #2b2233; text-align:left; cursor:pointer; font:700 14px/1.3 var(--ui)}
 .b-nivel .bn-num{font:900 20px/1.15 var(--ui); color:#2b2233}
 .b-nivel .bn-nombre{font:800 16px/1.25 var(--ui); color:#2b2233}
 .b-nivel .bn-curso{font:700 12px/1.3 var(--ui); color:#5b4f63}
 .b-nivel .bn-entra{font:600 13px/1.4 var(--ui); color:#2b2233}
 .b-nivel[aria-pressed="true"]{background:#2b2233; color:#fdf3dc; box-shadow:0 4px 0 #f28c38}
+.b-nivel .bn-record{margin-top:2px; padding:2px 8px; border-radius:10px; background:#fff3d6; color:#6b3a06; font:800 12px/1.35 var(--ui)}
+.b-nivel .bn-record.sin{background:none; padding:0; color:#5b4f63; font-weight:600}
+.b-nivel[aria-pressed="true"] .bn-record{background:#f28c38; color:#2b1a05}
+.b-nivel[aria-pressed="true"] .bn-record.sin{background:none; color:#e8dcc4}
+.fin-record{margin:10px 0 2px; padding:6px 10px; border-radius:12px; background:#fff3d6; color:#6b3a06; font:800 15px/1.35 var(--ui); text-align:center}
 .b-nivel[aria-pressed="true"] .bn-num, .b-nivel[aria-pressed="true"] .bn-nombre, .b-nivel[aria-pressed="true"] .bn-entra{color:#fdf3dc}
 .b-nivel[aria-pressed="true"] .bn-curso{color:#f6e6c2}
 .b-nivel[aria-pressed="true"] .bn-num::before{content:"✓ "}
@@ -576,6 +607,7 @@ body.en-carrera{overflow:hidden; background:#bfe3f2; min-height:0}
 .pp-pista .pp-obst{font-size:13px; color:var(--tinta-2)}
 .pp-pista .boton{margin-top:auto}
 .pp-pista.tema-prao{border-left-color:#7fbf6a} .pp-pista.tema-brana{border-left-color:#c9a64a} .pp-pista.tema-sella{border-left-color:#3a8fc0} .pp-pista.tema-picu{border-left-color:#8f8a9e}
+.pp-pista.tema-pozu{border-left-color:#4b4b55} .pp-pista.tema-bufones{border-left-color:#2a9d8f}
 
 @keyframes salta{from{transform:translate(-50%,-50%) scale(.85)} to{transform:translate(-50%,-50%) scale(1)}}
 @keyframes asoma{from{transform:scale(.9); opacity:.5} to{transform:scale(1); opacity:1}}
@@ -597,7 +629,7 @@ body.reducir *{animation:none !important; transition:none !important}
     <a class="volver" href="../index.html" aria-label="Volver al salón Arcademia">←</a>
     <h1 id="tituloMenu"><small>Números · 1.º y 2.º ESO</small>La Carrerina</h1>
   </header>
-  <p class="obras"><strong>La Copa del Prao:</strong> tres carreras, cada una en una de sus dos pistas (a sorteo), y tres niveles de cuentas. En la final, el primero se lleva la Faba de Oro.</p>
+  <p class="obras"><strong>La Copa del Prao</strong> (niveles 1 a 3) y <strong>la Copa del Puerto</strong> (nivel 4): tres carreras, cada una en una de sus pistas (a sorteo). En la final, el primero se lleva la Faba de Oro.</p>
   <section class="explica" aria-labelledby="tExplica">
     <h2 id="tExplica">Cada faba lleva su cuenta: se te abre la puerta de tu resultado</h2>
     <p>En cada muro hay tres puertas, cada una con un número escrito. Arriba ves <strong>tu cuenta</strong>. Cada corredor lleva su propia cuenta: a cada uno se le abre la puerta con el resultado de la suya. Copiar a otro no sirve.</p>
@@ -606,9 +638,10 @@ body.reducir *{animation:none !important; transition:none !important}
   <section class="niveles" aria-labelledby="tNiveles">
     <h2 id="tNiveles">Elige nivel</h2>
     <div id="grupoNiveles" class="grupo-niveles" role="group" aria-labelledby="tNiveles">
-      <button type="button" class="b-nivel" data-nivel="1" aria-pressed="false"><span class="bn-num">Nivel 1</span><span class="bn-nombre">Enteros y potencias</span><span class="bn-curso">1.º ESO, principio de curso · ritmo Pausado</span><span class="bn-entra">Paréntesis, signos, potencias y jerarquía de las operaciones</span></button>
-      <button type="button" class="b-nivel" data-nivel="2" aria-pressed="false"><span class="bn-num">Nivel 2</span><span class="bn-nombre">Decimales, fracciones y porcentajes</span><span class="bn-curso">1.º ESO · ritmo Normal</span><span class="bn-entra">Lo del nivel 1, más decimales, fracción de una cantidad, suma y resta de fracciones y porcentajes</span></button>
-      <button type="button" class="b-nivel" data-nivel="3" aria-pressed="false"><span class="bn-num">Nivel 3</span><span class="bn-nombre">Todo</span><span class="bn-curso">2.º ESO · ritmo Normal</span><span class="bn-entra">Lo del nivel 2, más división y combinadas de fracciones y jerarquía con potencias</span></button>
+      <button type="button" class="b-nivel" data-nivel="1" aria-pressed="false"><span class="bn-num">Nivel 1</span><span class="bn-nombre">Enteros y potencias</span><span class="bn-curso">1.º ESO, principio de curso · ritmo Pausado</span><span class="bn-entra">Paréntesis, signos, potencias y jerarquía de las operaciones</span><span class="bn-record" data-record="1"></span></button>
+      <button type="button" class="b-nivel" data-nivel="2" aria-pressed="false"><span class="bn-num">Nivel 2</span><span class="bn-nombre">Decimales, fracciones y porcentajes</span><span class="bn-curso">1.º ESO · ritmo Normal</span><span class="bn-entra">Lo del nivel 1, más decimales, fracción de una cantidad, suma y resta de fracciones y porcentajes</span><span class="bn-record" data-record="2"></span></button>
+      <button type="button" class="b-nivel" data-nivel="3" aria-pressed="false"><span class="bn-num">Nivel 3</span><span class="bn-nombre">Todo</span><span class="bn-curso">2.º ESO · ritmo Normal</span><span class="bn-entra">Lo del nivel 2, más división y combinadas de fracciones y jerarquía con potencias</span><span class="bn-record" data-record="3"></span></button>
+      <button type="button" class="b-nivel" data-nivel="4" aria-pressed="false"><span class="bn-num">Nivel 4</span><span class="bn-nombre">Potencias</span><span class="bn-curso">2.º ESO · Copa del Puerto · ritmo Normal</span><span class="bn-entra">Producto, cociente y potencia de potencias de la misma base, y exponentes negativos</span><span class="bn-record" data-record="4"></span></button>
     </div>
     <p id="notaNivel" class="nota nota-nivel" role="status"></p>
   </section>
@@ -644,9 +677,11 @@ body.reducir *{animation:none !important; transition:none !important}
         <label for="inCodigo">Código</label>
         <input id="inCodigo" type="text" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="notaCodigo">
         <button type="button" id="bCodigo" class="boton">Crear un código</button>
-        <p id="notaCodigo" class="nota" role="status">Con el mismo código, toda la clase corre con los mismos muros. Es el nivel (1, 2 o 3) y cuatro letras. Vacío, cada carrera es nueva.</p>
+        <p id="notaCodigo" class="nota" role="status">Con el mismo código, toda la clase corre con los mismos muros. Es el nivel (del 1 al 4) y cuatro letras. Vacío, cada carrera es nueva.</p>
       </div>
     </fieldset>
+    <details class="mas-opciones" id="masOpciones">
+    <summary>Más opciones <span class="resumen-opciones" id="resumenOpciones"></span></summary>
     <fieldset>
       <legend>Modo</legend>
       <div class="grupo-opciones">
@@ -691,6 +726,7 @@ body.reducir *{animation:none !important; transition:none !important}
       </div>
       <p class="nota">La automática baja la resolución si el ordenador no llega (fotogramas de más de 20 ms). Baja: menos píxeles, sin antialias y sin sombras.</p>
     </fieldset>
+    </details>
   </div>
   <details class="como">
     <summary>Cómo se juega y mandos</summary>
@@ -813,6 +849,7 @@ body.reducir *{animation:none !important; transition:none !important}
     <div class="botones">
       <button type="button" id="bSiguiente" class="boton principal">Seguir</button>
       <button type="button" id="bOtraVez" class="boton">Otro show</button>
+      <button type="button" id="bShowNuevo" class="boton" hidden>Show nuevo, sin código</button>
       <button type="button" id="bMenuFin" class="boton">Menú</button>
     </div>
   </div>
@@ -846,9 +883,11 @@ body.reducir *{animation:none !important; transition:none !important}
     <button type="button" id="bMenuMuestrario" class="volver" aria-label="Volver al menú de La Carrerina">←</button>
     <h1 id="tituloMuestrario"><small>Números · 1.º y 2.º ESO · muestrario</small>La Carrerina</h1>
   </header>
-  <p class="obras"><strong>Muestrario de muros de la Copa del Prao (1.º ESO)</strong>, para revisar la parte matemática sin correr. Las tres puertas llevan su número; arriba está tu cuenta, y se te abre la puerta con su resultado. Los demás corredores llevan otras cuentas, así que a ellos se les abren otras puertas. Elige puerta con un toque o con las teclas 1, 2 y 3; «Otro muro» (tecla N) saca uno nuevo.</p>
+  <p class="obras"><strong>Muestrario de muros</strong> de las dos copas, para revisar la parte matemática sin correr. Las tres puertas llevan su número; arriba está tu cuenta, y se te abre la puerta con su resultado. Los demás corredores llevan otras cuentas, así que a ellos se les abren otras puertas. Elige puerta con un toque o con las teclas 1, 2 y 3; «Otro muro» (tecla N) saca uno nuevo.</p>
 
   <div class="mandos" role="group" aria-label="Opciones del muestrario">
+    <span class="par"><label for="selCopa">Copa</label>
+    <select id="selCopa"><option value="prao">del Prao (1.º ESO)</option><option value="puerto">del Puerto (2.º ESO)</option></select></span>
     <span class="par"><label for="selClase">Clase</label>
     <select id="selClase"><option value="1,2">1 y 2 (manga 1)</option><option value="1">1 paso</option><option value="2">2 pasos</option><option value="3">3 pasos (final)</option></select></span>
     <span class="par"><label for="selPlantilla">Plantilla</label>
@@ -894,6 +933,7 @@ body.reducir *{animation:none !important; transition:none !important}
       <label class="opcion"><input type="radio" name="nivelPrueba" value="1"><span>Nivel 1</span></label>
       <label class="opcion"><input type="radio" name="nivelPrueba" value="2"><span>Nivel 2</span></label>
       <label class="opcion"><input type="radio" name="nivelPrueba" value="3"><span>Nivel 3</span></label>
+      <label class="opcion"><input type="radio" name="nivelPrueba" value="4"><span>Nivel 4</span></label>
     </div>
     <p id="notaPistas" class="nota"></p>
   </fieldset>
@@ -935,7 +975,7 @@ function qResta(a, b){ return Q(a.n*b.d - b.n*a.d, a.d*b.d); }
 function qPor(a, b){ return Q(a.n*b.n, a.d*b.d); }
 function qEntre(a, b){ if(b.n === 0n) throw new Error('división por cero'); return Q(a.n*b.d, a.d*b.n); }
 function qOpuesto(a){ return Q(-a.n, a.d); }
-function qPot(a, e){ var r = Q(1); for(var i = 0; i < e; i++) r = qPor(r, a); return r; }
+function qPot(a, e){ if(e < 0) return qEntre(Q(1), qPot(a, -e)); var r = Q(1); for(var i = 0; i < e; i++) r = qPor(r, a); return r; }
 function isqrt(x){ if(x < 2n) return x; var r = BigInt(Math.floor(Math.sqrt(Number(x)))); while(r*r > x) r--; while((r + 1n)*(r + 1n) <= x) r++; return r; }
 function qRaiz(a){ if(a.n < 0n) return null; var n = isqrt(a.n), d = isqrt(a.d); return (n*n === a.n && d*d === a.d) ? Q(n, d) : null; }
 function qCmp(a, b){ var x = a.n*b.d, y = b.n*a.d; return x < y ? -1 : (x > y ? 1 : 0); }
@@ -948,8 +988,9 @@ function cifrasDecimales(q){ var d = q.d, a = 0, b = 0; while(d % 2n === 0n){ d 
 
 /* ================= escritura española ================= */
 var MENOS = '−', NBSP = String.fromCharCode(160), NNBSP = String.fromCharCode(8239);
-var SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'];
-function sup(e){ return String(e).split('').map(function(c){ return SUP[+c]; }).join(''); }
+var SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'], SUP_OP = { '-':'⁻', '+':'⁺', '(':'⁽', ')':'⁾' };
+/* un exponente (o una cuenta de exponentes, en los pasos de la Copa del Puerto) en superíndices: 2⁻³, 2⁵⁺⁽⁻³⁾ */
+function sup(e){ return String(e).split('').map(function(c){ return SUP_OP[c] || SUP[+c]; }).join(''); }
 function entTxt(n){ n = big(n); var neg = n < 0n, s = String(neg ? -n : n); if(s.length > 4) s = s.replace(/\B(?=(\d{3})+(?!\d))/g, NNBSP); return (neg ? MENOS : '') + s; }
 /* decimal exacto con coma (el racional debe tener desarrollo finito) */
 function decTxt(q){
@@ -1019,7 +1060,13 @@ function PCT(v){ return { t:'pct', v:big(v) }; }
 function NEG(a){ return { t:'neg', a:a }; }
 function PAR(a){ return { t:'par', a:a }; }
 function OP(op, a, b){ return { t:'op', op:op, a:a, b:b }; }
-function POT(a, e){ return { t:'pot', a:a, e:e }; }
+/* el exponente es un entero (negativo en la Copa del Puerto); con el, la voz dice «dos elevado a cinco» en vez de «la
+   quinta potencia de dos» */
+function POT(a, e, el){ return el ? { t:'pot', a:a, e:e, el:true } : { t:'pot', a:a, e:e }; }
+/* en los pasos de la Copa del Puerto: la base con la cuenta de sus exponentes (2⁵⁺⁽⁻³⁾, 3⁶⁻⁴), que vale a elevado a e,
+   y «uno partido por» una potencia (2⁻³ = 1/2³) */
+function EXPO(a, e, cuenta){ return { t:'expo', a:a, e:e, cuenta:cuenta }; }
+function INV(a){ return { t:'inv', a:a }; }
 function RAIZ(a){ return { t:'raiz', a:a }; }
 function DE(p, a){ return { t:'de', p:p, a:a }; }
 function VAL(q, fam){ return { t:'val', q:q, fam:fam || 'frac' }; }
@@ -1042,7 +1089,8 @@ function valor(x){
       if(x.op === '*') return qPor(a, b);
       return qEntre(a, b);
     }
-    case 'pot': return qPot(valor(x.a), x.e);
+    case 'pot': case 'expo': return qPot(valor(x.a), x.e);
+    case 'inv': return qEntre(Q(1), valor(x.a));
     case 'raiz': { var r = qRaiz(valor(x.a)); if(!r) throw new Error('raíz no exacta'); return r; }
     case 'de': return qPor(valor(x.p), valor(x.a));
   }
@@ -1069,7 +1117,9 @@ function html(x, lado){
     case 'neg': return MENOS + html(x.a, false);
     case 'par': return '(' + html(x.a, false) + ')';
     case 'op': return html(x.a, false) + OPS_TXT[x.op] + html(x.b, true);
-    case 'pot': return (x.a.t === 'frac' ? '(' + html(x.a) + ')' : html(x.a, true)) + '<sup>' + x.e + '</sup>';
+    case 'pot': return (x.a.t === 'frac' ? '(' + html(x.a) + ')' : html(x.a, true)) + '<sup>' + (x.e < 0 ? MENOS + (-x.e) : x.e) + '</sup>';
+    case 'expo': return (x.a.t === 'frac' ? '(' + html(x.a) + ')' : html(x.a, true)) + '<sup>' + cuentaExp(x.cuenta, 'html') + '</sup>';
+    case 'inv': return '<span class="fr"><span class="nu">1</span><span class="de">' + html(x.a, false) + '</span></span>';
     case 'raiz': return '<span class="raiz">√<span class="rad">' + html(x.a, false) + '</span></span>';
     case 'de': return html(x.p) + ' de ' + html(x.a, false);
   }
@@ -1086,12 +1136,30 @@ function plano(x, lado, agrupar){
     case 'par': return '(' + plano(x.a, false, false) + ')';
     case 'op': { var ag = (x.op === '*' || x.op === ':'); return plano(x.a, false, ag) + OPS_TXT[x.op] + plano(x.b, true, ag); }
     case 'pot': return plano(x.a, true, true) + sup(x.e);
+    case 'expo': return plano(x.a, true, true) + cuentaExp(x.cuenta, 'plano');
+    case 'inv': return '1/' + plano(x.a, true, true);
     case 'raiz': { var r = plano(x.a, false, false); return '√' + (x.a.t === 'num' ? r : '(' + r + ')'); }
     case 'de': return plano(x.p) + ' de ' + plano(x.a, false, false);
   }
 }
 var ORDINALES = { 4:'cuarta', 5:'quinta', 6:'sexta', 7:'séptima', 8:'octava', 9:'novena' };
-function vozPotencia(base, e){ return (e === 2 ? 'el cuadrado de ' : e === 3 ? 'el cubo de ' : 'la ' + ORDINALES[e] + ' potencia de ') + base; }
+function vozPotencia(base, e, el){
+  if(el || e < 2 || e > 9) return base + ' elevado a ' + palabras(e);
+  return ((e === 2 ? 'el cuadrado de ' : e === 3 ? 'el cubo de ' : 'la ' + ORDINALES[e] + ' potencia de ') + base).replace(/ de el /g, ' del ');
+}
+function cuentaExp(c, k){
+  var h = '', p = '', v = '';
+  for(var i = 0; i < c.length; i++){
+    var t = c[i];
+    if(typeof t === 'number'){
+      var neg = t < 0, primero = i === 0;
+      h += neg ? (primero ? MENOS + (-t) : '(' + MENOS + (-t) + ')') : String(t);
+      p += neg ? (primero ? '-' + (-t) : '(-' + (-t) + ')') : String(t);
+      v += palabras(t);
+    } else { h += ' ' + (t === '-' ? MENOS : t === '*' ? '·' : t) + ' '; p += t === '*' ? '' : t; v += ' ' + (t === '+' ? 'más' : t === '-' ? 'menos' : 'por') + ' '; }
+  }
+  return k === 'html' ? h : k === 'plano' ? sup(p) : v;
+}
 function esAtomo(x){ return x.t === 'num' || x.t === 'frac' || x.t === 'dec' || x.t === 'pct' || x.t === 'val' || (x.t === 'neg' && esAtomo(x.a) && x.a.t !== 'pot') || (x.t === 'par' && esAtomo(x.a)); }
 function voz(x){
   switch(x.t){
@@ -1103,7 +1171,10 @@ function voz(x){
     case 'neg': return x.a.t === 'pot' ? 'el opuesto ' + ('de ' + voz(x.a)).replace(/^de el /, 'del ') : 'menos ' + voz(x.a);
     case 'par': return esAtomo(x.a) ? voz(x.a) : 'abre paréntesis, ' + voz(x.a) + ', cierra paréntesis';
     case 'op': return voz(x.a) + (x.a.t === 'par' && !esAtomo(x.a.a) ? ',' : '') + ' ' + OPS_VOZ[x.op] + ' ' + voz(x.b);
-    case 'pot': return vozPotencia(voz(x.a.t === 'par' ? x.a.a : x.a), x.e);
+    case 'pot': if(x.el && x.a.t === 'par' && x.a.a.t === 'pot') return voz(x.a.a) + ', todo elevado a ' + palabras(x.e) + ',';
+      return vozPotencia(voz(x.a.t === 'par' ? x.a.a : x.a), x.e, x.el);
+    case 'expo': return voz(x.a) + ' elevado a ' + cuentaExp(x.cuenta, 'voz');
+    case 'inv': return 'uno entre ' + voz(x.a);
     case 'raiz': return 'la raíz cuadrada de ' + voz(x.a);
     case 'de': return voz(x.p) + ' de ' + voz(x.a);
   }
@@ -1134,7 +1205,7 @@ function reemplazar(x, objetivos, fam){
     case 'par': { var a = reemplazar(x.a, objetivos, fam); return (a.t === 'val') ? a : PAR(a); }
     case 'neg': { var n = reemplazar(x.a, objetivos, fam); return n.t === 'val' ? VAL(qOpuesto(n.q), fam) : NEG(n); }
     case 'op': return OP(x.op, reemplazar(x.a, objetivos, fam), reemplazar(x.b, objetivos, fam));
-    case 'pot': return POT(reemplazar(x.a, objetivos, fam), x.e);
+    case 'pot': return POT(reemplazar(x.a, objetivos, fam), x.e, x.el);
     case 'raiz': return RAIZ(reemplazar(x.a, objetivos, fam));
     case 'de': return DE(x.p, reemplazar(x.a, objetivos, fam));
   }
@@ -1274,7 +1345,23 @@ var ERRORES = {
   comita:    { bot:'Comita',     regla:'coloca mal la coma', corta:'coloca mal la coma' },
   tablaComa: { bot:'Comita',     regla:'se equivoca en una tabla y, además, coloca mal la coma', corta:'falla una tabla y la coma' },
   porcentino:{ bot:'Porcentino', regla:'suma o resta el tanto por ciento como si fueran unidades', corta:'toma el % por unidades', cortaVoz:'toma el tanto por ciento por unidades' },
-  alreves:   { bot:'Porcentino', regla:'aplica el tanto por ciento al revés', corta:'aplica el % al revés', cortaVoz:'aplica el tanto por ciento al revés' }
+  alreves:   { bot:'Porcentino', regla:'aplica el tanto por ciento al revés', corta:'aplica el % al revés', cortaVoz:'aplica el tanto por ciento al revés' },
+  /* Copa del Puerto (2.º ESO): potencias de la misma base (2026-09-28, pendientes de que el profesor los elija) */
+  expMult:   { bot:'Petra',      regla:'multiplica los exponentes en vez de sumarlos', corta:'multiplica los exponentes' },
+  expSuma:   { bot:'Petra',      regla:'suma los exponentes en vez de multiplicarlos', corta:'suma los exponentes' },
+  expSumaResta:{ bot:'Sumón',    regla:'suma los exponentes en vez de restarlos', corta:'suma en vez de restar' },
+  expDivide: { bot:'Medión',     regla:'divide los exponentes en vez de restarlos', corta:'divide los exponentes' },
+  basesMult: { bot:'Doblón',     regla:'multiplica también las bases', corta:'multiplica las bases' },
+  expSigno:  { bot:'Signín',     regla:'se come el signo del exponente negativo', corta:'se come el signo del exponente' },
+  unaSola:   { bot:'Olvidón',    regla:'se queda con una sola de las potencias', corta:'se queda con una potencia' },
+  noInvierte:{ bot:'Invertida',  regla:'eleva la fracción, pero no le da la vuelta', corta:'no le da la vuelta' },
+  soloVuelta:{ bot:'Olvidón',    regla:'le da la vuelta, pero se olvida del exponente', corta:'se olvida del exponente' },
+  sumaBaseExp:{ bot:'Sumón',     regla:'suma la base y el exponente en vez de elevar', corta:'suma base y exponente' },
+  unTermino: { bot:'Olvidón',    regla:'le da la vuelta a la fracción, pero eleva solo uno de sus dos términos', corta:'eleva solo un término' },
+  olvidaExp: { bot:'Olvidón',    regla:'se olvida del exponente de fuera del paréntesis', corta:'se olvida del exponente de fuera' },
+  /* compuestos, para que en (2/3)⁻² haya errores a los dos lados de la pareja 9/4 y 4/9 */
+  invertidaConton:{ bot:'Invertida', regla:'no le da la vuelta a la fracción y, además, cuenta mal los factores', corta:'no da la vuelta y cuenta mal' },
+  invertidaTermino:{ bot:'Invertida', regla:'no le da la vuelta a la fracción y, además, eleva solo uno de sus dos términos', corta:'no da la vuelta y eleva uno' }
 };
 
 /* ================= plantillas de la Copa del Prao ================= */
@@ -1532,7 +1619,200 @@ var PLANTILLAS = [
       return { arbol:arbol, errores:err, pasos:pasosC, variante:'divisor ' + (e > f ? 'mayor' : 'menor') + ' que 1' };
     } }
 ];
-var COPAS = { prao: { nombre:'Copa del Prao', curso:'1.º ESO', plantillas:PLANTILLAS.map(function(p){ return p.id; }) } };
+
+/* ================= plantillas de la Copa del Puerto (2.º ESO): potencias de la misma base ================= */
+/* El profesor, 2026-09-28: para la copa de 2.º, «Potencias»: producto, cociente y potencia de potencias de la misma base,
+   y exponentes negativos (2⁵ · 2⁻³ = 4, (3²)³ : 3⁴ = 9, 2⁻³ = 1/8). Las cuentas se escriben como potencias y las puertas,
+   con el número que dan: primero la propiedad y después la potencia, que se hace de cabeza (hasta 125, o 1/81).
+   Todas equilibran el puesto de la respuesta (no son exentas), así que en cada muro los tres números son del mismo
+   tipo: los tres enteros o las tres fracciones. Y solo salen las cuentas cuyos errores típicos dejan poner la respuesta
+   en cualquiera de los tres puestos (tresPuestos): así el puesto no depende ni de la forma de la cuenta ni de su base.
+   Los errores (con su bot) están pendientes de que el profesor los elija, plantilla por plantilla. */
+function pw(a, k){ return qPot(Q(a), k); }
+/* cabe en una puerta: hasta 9999 y con denominador de dos cifras */
+function cabe(q){ return qCmp(qAbs(q), LIMITE) <= 0 && q.d <= 99n; }
+var BASES_PUERTO = [2, 2, 2, 3, 3, 4, 5];
+/* los exponentes finales k de cada base: potencias que se hacen de cabeza (hasta 125, o 1/81), sin 0, 1 ni −1 (a⁰ = 1 y
+   a¹ = a: no queda potencia que hacer) ni 2² o 2⁻² (2 · 2 = 2 + 2: Doblón y Sumón acertarían) */
+function exponentesDe(a){ var r = []; for(var k = -6; k <= 6; k++){ if(k >= -1 && k <= 1 || a === 2 && (k === 2 || k === -2)) continue; if(qCmp(pw(a, Math.abs(k)), Q(125)) <= 0 && cabe(pw(a, k))) r.push(k); } return r; }
+function A(a, e){ return POT(NUM(a), e, true); }
+/* la explicación hablada no lleva cifras: si un error no trae su regla para la voz, la de su bot */
+function voces(errs){ errs.forEach(function(e){ if(e && !e.reglaVoz) e.reglaVoz = ERRORES[e.id].regla; }); return errs; }
+/* los pasos: la propiedad (2⁵⁺⁽⁻³⁾), la potencia (2²) y, si el exponente es negativo, 1/2³ */
+function pasosPotencia(a, k, cuenta){ var p = [EXPO(NUM(a), k, cuenta), A(a, k)]; if(k < 0) p.push(INV(A(a, -k))); return p; }
+/* Despistón falla la última multiplicación de la potencia si es de las tablas del 4 al 9, como en las potencias del
+   Prao: 2⁴ = 4 · 4 → 12 o 20; 2⁵ = 8 · 4 → 24, 40, 28 o 36; 2⁶ = 8 · 8 → 56 o 72. Con exponente negativo, en el
+   denominador: 2⁻⁶ = 1/(8 · 8) → 1/56 o 1/72 */
+function tablasPotencia(a, k){
+  var j = Math.abs(k), X = Math.pow(a, Math.ceil(j/2)), Y = Math.pow(a, Math.floor(j/2)), r = [];
+  if(X < 4 || Y < 4 || X > 9 || Y > 9) return r;
+  [X*(Y - 1), X*(Y + 1), (X - 1)*Y, (X + 1)*Y].forEach(function(v, i){
+    var q = k > 0 ? Q(v) : Q(1, v);
+    if(i === 3 && X + 1 > 9 || r.some(function(t){ return qIgual(t.q, q); })) return;
+    r.push({ id:'tabla', peso:0.6, q:q, regla:'cree que ' + X + ' · ' + Y + ' es ' + v, reglaVoz:'cree que ' + palabras(X) + ' por ' + palabras(Y) + ' es ' + palabras(v) });
+  });
+  return r;
+}
+/* errores que dependen solo del resultado a^k: Contón (un factor de menos o de más: con exponente negativo, en el
+   denominador), Sumón (la base más el exponente), Doblón (la base por el exponente), Girón (base y exponente
+   cambiados) y Despistón (una tabla) */
+function erroresResultado(a, k){
+  var j = Math.abs(k), neg = k < 0, kc = neg ? k + 1 : k - 1, kl = neg ? k - 1 : k + 1;
+  function en(v){ return neg ? Q(1, v) : Q(v); }
+  return [ { id:'corto', q:pw(a, kc), regla:'cuenta un factor de menos: le sale ' + a + sup(kc), reglaVoz:'cuenta un factor de menos' },
+           { id:'largo', q:pw(a, kl), regla:'cuenta un factor de más: le sale ' + a + sup(kl), reglaVoz:'cuenta un factor de más' },
+           { id:'sumaBaseExp', q:en(a + j), regla:'suma la base y el exponente: ' + (neg ? '1/(' + a + ' + ' + j + ')' : a + ' + ' + j), reglaVoz:'suma la base y el exponente en vez de elevar' },
+           { id:'doblon', peso:0.5, q:en(a*j), regla:'acierta el exponente, pero multiplica la base por el exponente: ' + (neg ? '1/(' + a + ' · ' + j + ')' : a + ' · ' + j), reglaVoz:'acierta el exponente, pero multiplica la base por el exponente' },
+           { id:'giron', peso:0.35, q:neg ? qEntre(Q(1), pw(j, a)) : pw(j, a), regla:'cambia la base y el exponente: ' + (neg ? '1/' + j + sup(a) + ' en vez de 1/' + a + sup(j) : j + sup(a) + ' en vez de ' + a + sup(j)), reglaVoz:'cambia la base y el exponente' }
+         ].concat(tablasPotencia(a, k));
+}
+/* ¿deja la cuenta poner la respuesta en cualquiera de los tres puestos? Con los filtros de construirMuro: errores que
+   caben, distintos de la respuesta y de los números de la cuenta, del mismo tipo de número que la respuesta, de dos
+   nombres distintos y sin progresiones */
+function tresPuestos(g, fam){
+  var resp; try { resp = valor(g.arbol); } catch(e){ return false; }
+  var vis = hojasDe(g.arbol, []);
+  if(!razonable(resp, fam) || vis.some(function(h){ return qIgual(qAbs(h), qAbs(resp)); })) return false;
+  var cr = claseNum(resp), c = candidatosDe(g.errores, resp, fam, vis).filter(function(e){ return claseNum(e.q) === cr; }), ps = [false, false, false];
+  for(var i = 0; i < c.length; i++) for(var j = i + 1; j < c.length; j++)
+    if((c[i].grupo || c[i].id) !== (c[j].grupo || c[j].id) && !enProgresion(resp, c[i].q, c[j].q)) ps[puestoDe(resp, c[i].q, c[j].q)] = true;
+  return ps[0] && ps[1] && ps[2];
+}
+/* la cuenta, si sirve para un muro; con libre, siempre (las cuentas propias de los bots no necesitan los tres puestos) */
+function completa(g, libre){ return libre || tresPuestos(g, 'frac') ? g : null; }
+var PLANTILLAS_PUERTO = [
+  { id:'potProducto', copa:'puerto', lejos:0.35, clase:1, tipos:['A'], fam:'frac', nombre:'Producto de potencias de la misma base',
+    generar:function(rng, libre){
+      var a = elegir(rng, BASES_PUERTO), k = elegir(rng, exponentesDe(a)), neg = rng() < 0.65, m, n;
+      if(neg){ m = k + entre(rng, 2, 6); n = k - m; if(m < 2 || n > -2) return null; if(rng() < 0.5){ var t = m; m = n; n = t; } }
+      else { if(k < 4) return null; m = entre(rng, 2, k - 2); n = k - m; }
+      var arbol = OP('*', A(a, m), A(a, n)), mayor = Math.max(m, n), menor = Math.min(m, n);
+      var err = [ { id:'expMult', peso:3, q:pw(a, m*n), regla:'multiplica los exponentes: ' + a + sup(m*n) },
+                  { id:'basesMult', peso:3, q:pw(a*a, k), regla:'multiplica también las bases: ' + (a*a) + sup(k) },
+                  { id:'unaSola', peso:1.5, q:pw(a, mayor), regla:'se queda con ' + a + sup(mayor) + ' y se olvida de la otra potencia' },
+                  { id:'unaSola', peso:1.5, q:pw(a, menor), regla:'se queda con ' + a + sup(menor) + ' y se olvida de la otra potencia' } ];
+      if(neg) err.push({ id:'expSigno', peso:4, q:pw(a, Math.abs(m) + Math.abs(n)), regla:'se come el signo del exponente negativo y suma ' + Math.abs(m) + ' + ' + Math.abs(n) + ': ' + a + sup(Math.abs(m) + Math.abs(n)) });
+      return completa({ arbol:arbol, errores:voces(err.concat(erroresResultado(a, k))), variante:neg ? 'aᵐ · aⁿ, un exponente negativo' : 'aᵐ · aⁿ, exponentes positivos',
+                        pasos:[arbol].concat(pasosPotencia(a, k, [m, '+', n])) }, libre);
+    } },
+  { id:'potCociente', copa:'puerto', lejos:0.35, clase:1, tipos:['A'], fam:'frac', nombre:'Cociente de potencias de la misma base',
+    generar:function(rng, libre){
+      /* el que divide lleva exponente negativo en tres de cada diez: 2³ : 2⁻² = 2³⁻⁽⁻²⁾ = 2⁵ */
+      var a = elegir(rng, BASES_PUERTO), k = elegir(rng, exponentesDe(a)), divNeg = rng() < 0.3, m, n, err = [];
+      if(divNeg){ if(k < 4) return null; m = entre(rng, 2, k - 2); n = m - k; }
+      else { n = entre(rng, 2, 6); m = k + n; if(m < 2) return null; }
+      var arbol = OP(':', A(a, m), A(a, n));
+      if(divNeg) err.push({ id:'expSigno', peso:4, q:pw(a, m + n), regla:'se come el signo del exponente negativo y resta ' + m + ' − ' + (-n) + ': ' + a + sup(m + n) });
+      else {
+        err.push({ id:'expSumaResta', peso:3, q:pw(a, m + n), regla:'suma los exponentes: ' + a + sup(m + n) });
+        if(m % n === 0) err.push({ id:'expDivide', peso:3, q:pw(a, m/n), regla:'divide los exponentes: ' + a + sup(m/n) });
+      }
+      if(divNeg || k > 0) err.push({ id:'unaSola', peso:1.5, q:pw(a, m), regla:'se olvida del divisor y se queda con ' + a + sup(m) });
+      return completa({ arbol:arbol, errores:voces(err.concat(erroresResultado(a, k))), variante:divNeg ? 'aᵐ : a⁻ⁿ' : k > 0 ? 'aᵐ : aⁿ, m > n' : 'aᵐ : aⁿ, m < n',
+                        pasos:[arbol].concat(pasosPotencia(a, k, [m, '-', n])) }, libre);
+    } },
+  { id:'potNegativo', copa:'puerto', lejos:0.35, clase:1, tipos:['A'], fam:'frac', nombre:'Exponente negativo',
+    generar:function(rng, libre){
+      /* a⁻ⁿ con una base natural o una fracción: con esta proporción, algo más de la mitad de los muros son de base
+         natural (de las fracciones valen más cuentas) */
+      if(rng() < 0.58){
+        var a = elegir(rng, [2, 2, 3, 3, 4, 5, 6, 7, 8, 9]), n = entre(rng, 2, 6), r = pw(a, -n);
+        if(qCmp(pw(a, n), Q(125)) > 0 || !cabe(r)) return null;
+        var arbol = A(a, -n);
+        var err = [ { id:'soloVuelta', peso:2, q:Q(1, a), regla:'le da la vuelta a ' + a + ', pero se olvida del exponente: 1/' + a } ].concat(erroresResultado(a, -n));
+        return completa({ arbol:arbol, errores:voces(err), variante:'a⁻ⁿ', pasos:[arbol, INV(A(a, n))] }, libre);
+      }
+      /* una fracción elevada a un exponente negativo: se le da la vuelta y se eleva. Es exenta, como las del signo en las
+         potencias del Prao: Invertida (no le da la vuelta: 4/9 en (2/3)⁻²) da siempre la inversa de la respuesta, así que
+         el tamaño la delata a quien ya sabe que la vuelta lo cambia, y saberlo es lo que se practica. elegirMalos
+         reparte las parejas para que «una de la pareja» y «la suelta» acierten lo que el azar (pendiente de que el
+         profesor lo apruebe); para eso hacen falta errores del lado de la gemela (4/9), que dan los compuestos de
+         Invertida: no le da la vuelta y, además, cuenta mal los factores (8/27) o eleva solo un término (4/3, 2/9).
+         Olvidón eleva solo el denominador (3/4); elevar solo el numerador (9/2) no sale: comparte numerador con la
+         respuesta y la de mayor denominador sería siempre la buena */
+      var p = entre(rng, 1, 5), q = entre(rng, 2, 6), n2 = elegir(rng, [2, 2, 3]);
+      if(p === q || !primos(p, q)) return null;
+      var base = FRAC(p, q), r2 = qPot(Q(q, p), n2);
+      if(!cabe(r2) || esEntero(r2)) return null;
+      var arbol2 = POT(base, -n2, true);
+      var err2 = [ { id:'noInvierte', peso:3, q:qPot(Q(p, q), n2), regla:'eleva la fracción, pero no le da la vuelta: (' + p + '/' + q + ')' + sup(n2) },
+                   { id:'soloVuelta', peso:2, q:Q(q, p), regla:'le da la vuelta a la fracción, pero se olvida del exponente: ' + q + '/' + p },
+                   { id:'corto', q:qPot(Q(q, p), n2 - 1), regla:'cuenta un factor de menos: (' + q + '/' + p + ')' + sup(n2 - 1), reglaVoz:'cuenta un factor de menos' },
+                   { id:'largo', q:qPot(Q(q, p), n2 + 1), regla:'cuenta un factor de más: (' + q + '/' + p + ')' + sup(n2 + 1), reglaVoz:'cuenta un factor de más' },
+                   { id:'unTermino', peso:1.5, q:Q(q, Math.pow(p, n2)), regla:'le da la vuelta a la fracción, pero eleva solo el denominador: ' + q + '/' + Math.pow(p, n2) },
+                   { id:'invertidaConton', q:qPot(Q(p, q), n2 + 1), regla:'no le da la vuelta a la fracción y, además, cuenta un factor de más: (' + p + '/' + q + ')' + sup(n2 + 1), reglaVoz:'no le da la vuelta a la fracción y, además, cuenta un factor de más' },
+                   { id:'invertidaTermino', q:Q(Math.pow(p, n2), q), regla:'no le da la vuelta a la fracción y, además, eleva solo el numerador: ' + Math.pow(p, n2) + '/' + q, reglaVoz:'no le da la vuelta a la fracción y, además, eleva solo el numerador' },
+                   { id:'invertidaTermino', q:Q(p, Math.pow(q, n2)), regla:'no le da la vuelta a la fracción y, además, eleva solo el denominador: ' + p + '/' + Math.pow(q, n2), reglaVoz:'no le da la vuelta a la fracción y, además, eleva solo el denominador' } ];
+      if(n2 > 2) err2.push({ id:'invertidaConton', q:qPot(Q(p, q), n2 - 1), regla:'no le da la vuelta a la fracción y, además, cuenta un factor de menos: (' + p + '/' + q + ')' + sup(n2 - 1), reglaVoz:'no le da la vuelta a la fracción y, además, cuenta un factor de menos' });
+      return completa({ arbol:arbol2, errores:voces(err2), variante:'(p/q)⁻ⁿ', exento:true, pasos:[arbol2, POT(FRAC(q, p), n2, true)] }, libre);
+    } },
+  { id:'potPotencia', copa:'puerto', lejos:0.35, clase:2, tipos:['A'], fam:'frac', nombre:'Potencia de una potencia',
+    generar:function(rng, libre){
+      /* (aᵐ)ⁿ entre otra potencia, o por otra (con exponente negativo si hace falta: (2³)² · 2⁻³ = 2³) */
+      var a = elegir(rng, BASES_PUERTO), k = elegir(rng, exponentesDe(a)), m = entre(rng, 2, 3), n = entre(rng, 2, 3), mn = m*n, divide = rng() < 0.5, p = divide ? mn - k : k - mn;
+      if(p > -2 && p < 2 || p > 9 || p < -6 || divide && p < 0) return null;
+      var op = divide ? ':' : '*', s = divide ? -1 : 1, arbol = OP(op, POT(PAR(A(a, m)), n, true), A(a, p));
+      var err = [ { id:'expSuma', peso:3, q:pw(a, m + n + s*p), regla:'suma los exponentes de la potencia de potencia: (' + a + sup(m) + ')' + sup(n) + ' = ' + a + sup(m + n) },
+                  { id:'olvidaExp', peso:2, q:pw(a, m + s*p), regla:'se olvida del exponente de fuera del paréntesis: (' + a + sup(m) + ')' + sup(n) + ' = ' + a + sup(m) } ];
+      if(divide) err.push({ id:'expSumaResta', peso:3, q:pw(a, mn + p), regla:'suma los exponentes al dividir: ' + a + sup(mn + p) });
+      else if(p > 0) err.push({ id:'expMult', peso:3, q:pw(a, mn*p), regla:'multiplica los exponentes también en el producto: ' + a + sup(mn*p) });
+      else err.push({ id:'expSigno', peso:4, q:pw(a, mn - p), regla:'se come el signo del exponente negativo: ' + a + sup(mn - p) });
+      return completa({ arbol:arbol, errores:voces(err.concat(erroresResultado(a, k))), variante:divide ? '(aᵐ)ⁿ : aᵖ' : p > 0 ? '(aᵐ)ⁿ · aᵖ' : '(aᵐ)ⁿ · a⁻ᵖ',
+                        pasos:[arbol, OP(op, A(a, mn), A(a, p))].concat(pasosPotencia(a, k, [mn, divide ? '-' : '+', p])) }, libre);
+    } },
+  { id:'potDoble', copa:'puerto', lejos:0.35, clase:2, tipos:['A'], fam:'frac', nombre:'Producto y cociente de potencias',
+    generar:function(rng, libre){
+      var a = elegir(rng, BASES_PUERTO), k = elegir(rng, exponentesDe(a)), m = entre(rng, 2, 7), n = entre(rng, -4, 6), p = m + n - k;
+      if(n > -2 && n < 2 || p < 2 || p > 9) return null;
+      var arbol = OP(':', OP('*', A(a, m), A(a, n)), A(a, p));
+      var err = [ { id:'expSumaResta', peso:3, q:pw(a, m + n + p), regla:'suma también el exponente del que divide: ' + a + sup(m + n + p) },
+                  { id:'expMult', peso:3, q:pw(a, m*n - p), regla:'multiplica los exponentes del producto (' + a + sup(m*n) + ') y luego resta ' + p + ': ' + a + sup(m*n - p) } ];
+      if(n < 0) err.push({ id:'expSigno', peso:4, q:pw(a, m - n - p), regla:'se come el signo del exponente negativo: ' + a + sup(m - n - p) });
+      return completa({ arbol:arbol, errores:voces(err.concat(erroresResultado(a, k))), variante:n < 0 ? 'aᵐ · a⁻ⁿ : aᵖ' : 'aᵐ · aⁿ : aᵖ',
+                        pasos:[arbol, OP(':', A(a, m + n), A(a, p))].concat(pasosPotencia(a, k, [m + n, '-', p])) }, libre);
+    } },
+  { id:'potCombinada', copa:'puerto', lejos:0.35, clase:3, tipos:['A'], fam:'frac', nombre:'Combinadas de potencias',
+    generar:function(rng, libre){
+      var a = elegir(rng, BASES_PUERTO), k = elegir(rng, exponentesDe(a)), m = entre(rng, 2, 3), n = entre(rng, 2, 3), p = entre(rng, -4, 4), mn = m*n, q = mn + p - k;
+      if(p > -2 && p < 2 || q < 2 || q > 9) return null;
+      var arbol = OP(':', OP('*', POT(PAR(A(a, m)), n, true), A(a, p)), A(a, q));
+      var err = [ { id:'expSuma', peso:3, q:pw(a, m + n + p - q), regla:'suma los exponentes de la potencia de potencia: (' + a + sup(m) + ')' + sup(n) + ' = ' + a + sup(m + n) },
+                  { id:'expSumaResta', peso:3, q:pw(a, mn + p + q), regla:'suma también el exponente del que divide: ' + a + sup(mn + p + q) },
+                  { id:'olvidaExp', peso:2, q:pw(a, m + p - q), regla:'se olvida del exponente de fuera del paréntesis: (' + a + sup(m) + ')' + sup(n) + ' = ' + a + sup(m) } ];
+      if(p < 0) err.push({ id:'expSigno', peso:4, q:pw(a, mn - p - q), regla:'se come el signo del exponente negativo: ' + a + sup(mn - p - q) });
+      return completa({ arbol:arbol, errores:voces(err.concat(erroresResultado(a, k))), variante:p < 0 ? '(aᵐ)ⁿ · a⁻ᵖ : aʳ' : '(aᵐ)ⁿ · aᵖ : aʳ',
+                        pasos:[arbol, OP(':', OP('*', A(a, mn), A(a, p)), A(a, q)), OP(':', A(a, mn + p), A(a, q))].concat(pasosPotencia(a, k, [mn + p, '-', q])) }, libre);
+    } }
+];
+/* los pasos de cualquier cuenta de potencias de una misma base natural (las de los bots): (aᵐ)ⁿ pasa a aᵐⁿ, después la
+   cuenta de exponentes en orden (con · suman y con : restan), la potencia y, si el exponente es negativo, 1/… */
+function pasosPuerto(arbol){
+  var a = null, terminos = [];
+  function plana(x, sg){
+    if(x.t === 'par') return plana(x.a, sg);
+    if(x.t === 'pot' && x.a.t === 'num'){ a = x.a.v; terminos.push({ sg:sg, e:x.e }); return true; }
+    if(x.t === 'pot' && x.a.t === 'par' && x.a.a.t === 'pot' && x.a.a.a.t === 'num'){ a = x.a.a.a.v; terminos.push({ sg:sg, e:x.a.a.e*x.e }); return true; }
+    if(x.t === 'op' && (x.op === '*' || x.op === ':')) return plana(x.a, sg) && plana(x.b, x.op === '*' ? sg : -sg);
+    return false;
+  }
+  if(!plana(arbol, 1) || a === null) return null;
+  var k = 0, cuenta = [];
+  terminos.forEach(function(t, i){ k += t.sg*t.e; if(i) cuenta.push(t.sg > 0 ? '+' : '-'); cuenta.push(t.e); });
+  function sinPotPot(x){ if(x.t === 'pot' && x.a.t === 'par' && x.a.a.t === 'pot') return A(Number(a), x.a.a.e*x.e); if(x.t === 'op') return OP(x.op, sinPotPot(x.a), sinPotPot(x.b)); return x; }
+  var p = [arbol], llano = sinPotPot(arbol);
+  if(plano(llano) !== plano(arbol)) p.push(llano);
+  return p.concat(pasosPotencia(Number(a), k, cuenta));
+}
+/* la cuenta propia de un bot en una plantilla de la Copa del Puerto: la misma forma de cuenta con exponentes que den
+   justo el objetivo, si es una potencia de alguna base (así el bot no cuenta con sumas de enteros) */
+function potenciaDeBase(q){
+  for(var b = 2; b <= 9; b++) for(var k = -4; k <= 13; k++){ if(k >= -1 && k <= 1) continue; if(qIgual(pw(b, k), q)) return { a:b, k:k }; }
+  return null;
+}
+var PLANTILLAS_PRAO = PLANTILLAS.map(function(p){ return p.id; });
+PLANTILLAS_PUERTO.forEach(function(p){ PLANTILLAS.push(p); });
+var COPAS = { prao: { nombre:'Copa del Prao', curso:'1.º ESO', plantillas:PLANTILLAS_PRAO },
+              puerto: { nombre:'Copa del Puerto', curso:'2.º ESO', plantillas:PLANTILLAS_PUERTO.map(function(p){ return p.id; }) } };
 function plantilla(id){ for(var i = 0; i < PLANTILLAS.length; i++) if(PLANTILLAS[i].id === id) return PLANTILLAS[i]; return null; }
 
 /* ================= niveles ================= */
@@ -1557,10 +1837,16 @@ var NIVELES = [
     plantillas:['parentesis', 'signos', 'potencia', 'jerarquia', 'decimales', 'fraccionDe', 'fraccionesSuma', 'porcentajes'], bots:{ acierto:0.92, momento:1.1 } },
   { n:3, nombre:'Todo', curso:'2.º ESO', ritmo:'normal',
     entra:'Lo del nivel 2, más división y combinadas de fracciones y jerarquía con potencias',
-    plantillas:PLANTILLAS.map(function(p){ return p.id; }), bots:{ acierto:1, momento:1 } }
+    plantillas:PLANTILLAS_PRAO.slice(), bots:{ acierto:1, momento:1 } },
+  /* la Copa del Puerto (2.º ESO, 2026-09-28): potencias de la misma base y exponentes negativos. Los bots, como en el
+     nivel 3 */
+  { n:4, copa:'puerto', nombre:'Potencias', curso:'2.º ESO', ritmo:'normal',
+    entra:'Producto, cociente y potencia de potencias de la misma base, y exponentes negativos',
+    plantillas:PLANTILLAS_PUERTO.map(function(p){ return p.id; }), bots:{ acierto:1, momento:1 } }
 ];
-/* el nivel n (1, 2 o 3); cualquier otra cosa, el 3 */
-function nivelDe(n){ n = +n; for(var k = 0; k < NIVELES.length; k++) if(NIVELES[k].n === n) return NIVELES[k]; return NIVELES[NIVELES.length - 1]; }
+NIVELES.forEach(function(nv){ if(!nv.copa) nv.copa = 'prao'; });
+/* el nivel n (del 1 al 4); cualquier otra cosa, el 3 */
+function nivelDe(n){ n = +n; for(var k = 0; k < NIVELES.length; k++) if(NIVELES[k].n === n) return NIVELES[k]; return NIVELES[2]; }
 /* las plantillas de un nivel para una manga que pide ciertas clases: { clases, plantillas } para generarMuro */
 function plantillasManga(n, clases){
   var niv = nivelDe(n), de = niv.plantillas.filter(function(id){ return clases.indexOf(plantilla(id).clase) >= 0; });
@@ -1600,9 +1886,11 @@ function ladosDe(errores, resp, fam){
    por el peso propio de cada error: sale más a menudo lo que se parece a la respuesta */
 var LEJOS = 1;
 function lejania(q, r){ if(q.n === 0n || r.n === 0n) return 3; return Math.abs(Math.log(Math.abs(qNum(q)/qNum(r)))); }
-function pesoPareja(par, r){ return (par[0].peso || 1)*(par[1].peso || 1)*Math.exp(-LEJOS*(lejania(par[0].q, r) + lejania(par[1].q, r))); }
-function sortearPareja(rng, pares, r){
-  var ps = pares.map(function(par){ return pesoPareja(par, r); }), t = 0, i;
+/* lejos: el de la plantilla si lo dice (en las potencias de la Copa del Puerto, más suave: sus errores típicos, como 2⁸
+   por 2², quedan lejos aunque sean los de verdad); si no, LEJOS */
+function pesoPareja(par, r, lejos){ return (par[0].peso || 1)*(par[1].peso || 1)*Math.exp(-(lejos === undefined ? LEJOS : lejos)*(lejania(par[0].q, r) + lejania(par[1].q, r))); }
+function sortearPareja(rng, pares, r, lejos){
+  var ps = pares.map(function(par){ return pesoPareja(par, r, lejos); }), t = 0, i;
   for(i = 0; i < ps.length; i++) t += ps[i];
   var y = rng()*t;
   for(i = 0; i < pares.length; i++){ y -= ps[i]; if(y < 0) return pares[i]; }
@@ -1642,7 +1930,7 @@ function parejaComa(a, b){ return pareja(a, b) || diezVeces(a, b); }
      puede): así «una de las dos más cercanas» y «la desparejada» aciertan lo que el azar.
    - Entre lo que queda, más a menudo lo que se parece a la respuesta.
    Devuelve [error, error] o null. Con fijo, la respuesta queda en el puesto k también en las exentas */
-function elegirMalos(rng, cands, resp, exento, k, fijo, esPar, parejaPrimero){
+function elegirMalos(rng, cands, resp, exento, k, fijo, esPar, parejaPrimero, lejos){
   esPar = esPar || pareja;
   var pares = [], i, j;
   for(i = 0; i < cands.length; i++) for(j = i + 1; j < cands.length; j++){
@@ -1682,7 +1970,7 @@ function elegirMalos(rng, cands, resp, exento, k, fijo, esPar, parejaPrimero){
     var cerca = elegidos.filter(function(par){ return cercaDeR(resp, par[0].q, par[1].q); }), lejos = elegidos.filter(function(par){ return !cercaDeR(resp, par[0].q, par[1].q); });
     if(cerca.length && lejos.length) elegidos = rng() < 0.5 ? cerca : lejos;
   }
-  var par = sortearPareja(rng, elegidos, resp);
+  var par = sortearPareja(rng, elegidos, resp, lejos);
   return rng() < 0.5 ? [par[0], par[1]] : [par[1], par[0]];
 }
 var estadisticas = { muros:0, rondasFallidas:0, fallos:{} };
@@ -1729,7 +2017,7 @@ function construirMuro(rng, pl, objetivo, fijo){
     /* en las no exentas, los errores del mismo tipo de número que la respuesta (signo, y entero o no): así ni los signos
        ni las fracciones de las puertas dicen nada de cuál es la buena */
     if(!g.exento){ var cr = claseNum(resp); cands = cands.filter(function(e){ return claseNum(e.q) === cr; }); }
-    var malos = elegirMalos(rng, cands, resp, !!g.exento, objetivo, fijo, g.parejaComa ? parejaComa : pareja, !!g.parejaComa); if(!malos) continue;
+    var malos = elegirMalos(rng, cands, resp, !!g.exento, objetivo, fijo, g.parejaComa ? parejaComa : pareja, !!g.parejaComa, pl.lejos); if(!malos) continue;
     var fr = formaOpcion(resp, pl.fam), f1 = formaOpcion(malos[0].q, pl.fam), f2 = formaOpcion(malos[1].q, pl.fam);
     if(!fr || !f1 || !f2) continue;
     var opciones = [ { f:fr, ok:true, error:null }, opcionMala(f1, malos[0]), opcionMala(f2, malos[1]) ];
@@ -1924,7 +2212,7 @@ function sustituir(x, viejo, nuevo){
     case 'neg': return NEG(sustituir(x.a, viejo, nuevo));
     case 'par': return PAR(sustituir(x.a, viejo, nuevo));
     case 'op': return OP(x.op, sustituir(x.a, viejo, nuevo), sustituir(x.b, viejo, nuevo));
-    case 'pot': return POT(sustituir(x.a, viejo, nuevo), x.e);
+    case 'pot': return POT(sustituir(x.a, viejo, nuevo), x.e, x.el);
     case 'raiz': return RAIZ(sustituir(x.a, viejo, nuevo));
     case 'de': return DE(sustituir(x.p, viejo, nuevo), sustituir(x.a, viejo, nuevo));
   }
@@ -1967,6 +2255,18 @@ function potenciaAjustada(rng, objetivo, vale){
 /* 2 y 3: una cuenta de la plantilla con un número cambiado para que dé justo el objetivo */
 function ajustada(rng, pl, objetivo, vale, intentos){
   if(pl.id === 'potencia'){ var ap = potenciaAjustada(rng, objetivo, vale); return ap ? nuevaCuenta(pl, pl.fam, ap, null, 'ajustada', false) : null; }
+  if(pl.copa === 'puerto'){
+    /* la misma forma de cuenta, con otros exponentes que den justo el objetivo (si es una potencia de alguna base) */
+    var pb = potenciaDeBase(objetivo); if(!pb) return null;
+    for(var kp = 0; kp < intentos*20; kp++){
+      var gp = pl.generar(rng, true); if(!gp) continue;
+      var arb = cambiarBase(gp.arbol, pb.a, pb.k), vp;
+      if(!arb) continue;
+      try { vp = valor(arb); } catch(e){ continue; }
+      if(qIgual(vp, objetivo) && vale(plano(arb))) return nuevaCuenta(pl, pl.fam, arb, { pasos:pasosPuerto(arb), errores:[], variante:gp.variante }, 'ajustada', true);
+    }
+    return null;
+  }
   for(var k = 0; k < intentos; k++){
     var g = pl.generar(rng); if(!g) continue;
     var hs = hojasNodo(g.arbol, []), vs = hs.map(function(h){ return valor(h); });
@@ -1983,6 +2283,25 @@ function ajustada(rng, pl, objetivo, vale, intentos){
       return nuevaCuenta(pl, pl.fam, arbol, g, 'ajustada', false);
     }
   }
+  return null;
+}
+/* una cuenta de potencias de una base con otra base y su último exponente cambiado para que el resultado sea a^k: se
+   cambian todas las bases (natural) y se ajusta el exponente de la última potencia de la cuenta */
+function cambiarBase(arbol, a, k){
+  var pots = [];
+  (function r(x){ if(!x) return; if(x.t === 'pot' && x.a.t === 'num'){ pots.push(x); return; } if(x.a) r(x.a); if(x.b) r(x.b); })(arbol);
+  if(!pots.length) return null;
+  function con(x, ult, e){
+    switch(x.t){
+      case 'pot': return x.a.t === 'num' ? POT(NUM(a), x === ult ? e : x.e, true) : POT(con(x.a, ult, e), x.e, true);
+      case 'par': return PAR(con(x.a, ult, e));
+      case 'op': return OP(x.op, con(x.a, ult, e), con(x.b, ult, e));
+    }
+    return x;
+  }
+  var ult = pots[pots.length - 1], e;
+  /* el exponente que falta a la última potencia (vaya multiplicando o dividiendo) para que salga justo a^k */
+  for(e = -6; e <= 9; e++){ if(e >= -1 && e <= 1) continue; var ar = con(arbol, ult, e); try { if(qIgual(valor(ar), pw(a, k))) return ar; } catch(er){} }
   return null;
 }
 /* 4: último recurso, una cuenta sencilla que da justo el valor: a + b o a − b con enteros, dos fracciones con el mismo
@@ -2152,10 +2471,10 @@ return {
   crearRng:crearRng, entre:entre, elegir:elegir, barajar:barajar,
   Q:Q, qSuma:qSuma, qResta:qResta, qPor:qPor, qEntre:qEntre, qOpuesto:qOpuesto, qPot:qPot, qRaiz:qRaiz, qCmp:qCmp, qIgual:qIgual, qNum:qNum, esEntero:esEntero, cifrasDecimales:cifrasDecimales,
   entTxt:entTxt, decTxt:decTxt, palabras:palabras, partes:partes, fraccionVoz:fraccionVoz, decimalVoz:decimalVoz, MENOS:MENOS, NBSP:NBSP, NNBSP:NNBSP,
-  NUM:NUM, ENT:ENT, ENTP:ENTP, FRAC:FRAC, DEC:DEC, PCT:PCT, NEG:NEG, PAR:PAR, OP:OP, POT:POT, RAIZ:RAIZ, DE:DE,
+  NUM:NUM, ENT:ENT, ENTP:ENTP, FRAC:FRAC, DEC:DEC, PCT:PCT, NEG:NEG, PAR:PAR, OP:OP, POT:POT, RAIZ:RAIZ, DE:DE, EXPO:EXPO, INV:INV, sup:sup,
   valor:valor, html:html, plano:plano, voz:voz, pasos:pasos,
   forma:forma, regBase:regBase, regsAlt:regsAlt, potenciaDe:potenciaDe,
-  ERRORES:ERRORES, PLANTILLAS:PLANTILLAS, COPAS:COPAS, plantilla:plantilla,
+  ERRORES:ERRORES, PLANTILLAS:PLANTILLAS, PLANTILLAS_PRAO:PLANTILLAS_PRAO, PLANTILLAS_PUERTO:PLANTILLAS_PUERTO, COPAS:COPAS, plantilla:plantilla, potenciaDeBase:potenciaDeBase,
   NIVELES:NIVELES, nivelDe:nivelDe, plantillasManga:plantillasManga,
   generarMuro:generarMuro, tipoMuro:tipoMuro,
   POSICIONES:POSICIONES, NOMBRES_PUERTA:NOMBRES_PUERTA, LA_PUERTA:LA_PUERTA, ordenPuertas:ordenPuertas, valorPuerta:valorPuerta, abre:abre, puertasQueAbren:puertasQueAbren,
@@ -2191,8 +2510,9 @@ return {
                  decisiones y el azar de la física, en cuatro generadores separados (así los muros no dependen de cómo
                  se juegue).
      manga       0, 1 o 2: índice de FAB.MANGAS (El Prao; Los Toboganes; La Cuesta del Portazo).
-     nivel       1, 2 o 3 (FAB.NIVELES; por defecto, 3): qué plantillas salen en los muros (FAB.plantillasManga) y cómo
-                 de flojos son los bots (su acierto y su momento de decidir). Con el 3, la carrera de siempre.
+     nivel       del 1 al 4 (FAB.NIVELES; por defecto, 3): qué plantillas salen en los muros (FAB.plantillasManga) y cómo
+                 de flojos son los bots (su acierto y su momento de decidir). Con el 3, la carrera de siempre; con el 4,
+                 la Copa del Puerto (potencias de 2.º ESO).
      modo        'show' (con eliminación) o 'clase' (nadie se va: el eliminado sigue como reserva, sin puesto).
      ritmo       'normal', 'pausado' o 'sinPrisas' (FAB.RITMOS).
      asistencia  true: la faba corre, esquiva, salta y se agarra sola, como un bot medio, y el jugador solo elige las
@@ -2239,8 +2559,8 @@ return {
      pasillo {muro, puerta, ultimaHora} (todos: entra en el pasillo de esa puerta), salePasillo {muro, puerta}
      (jugador: sale marcha atrás), cerrada {muro, puerta} (jugador: esa puerta ya le dio portazo y no le deja pasar),
      abre {muro, puerta, opcion, aLaPrimera, sello, puntos, racha}, sello {muro}, portazo {muro, puerta, opcion,
-     error, ultimaHora}, reaparicion {motivo: 'portazo'|'caida', x, z}, golpe {obstaculo: 'barredora'|'rodillo'|'barril'|'madreña'|'vaca'|'manzana'|'sidra'|'bola'|'cabra'|'queso'|'balagar'|'asturcon'|'salmon'},
-     piedra {fila, col} (alguien pisa una piedra falsa del vau: tiembla y se hunde), borde, agarre, trepa, caida {causa: 'borde'|'baldosa'|'vau', z}, chof, empujon {j (−1 si al aire)}, empujonCortado {j},
+     error, ultimaHora}, reaparicion {motivo: 'portazo'|'caida', x, z}, golpe {obstaculo: 'barredora'|'rodillo'|'barril'|'madreña'|'vaca'|'manzana'|'sidra'|'bola'|'cabra'|'queso'|'balagar'|'asturcon'|'salmon'|'vagoneta'|'mazo'|'bufon'|'tren'},
+     piedra {fila, col} (alguien pisa una piedra falsa del vau: tiembla y se hunde), borde, agarre, trepa, caida {causa: 'borde'|'baldosa'|'vau'|'cucana', z}, chof, empujon {j (−1 si al aire)}, empujonCortado {j},
      sinEmpujar (en el tobogán y la rampa de respiro no se empuja), sujetar {j}, soltar {j} (todos), salto,
      lanzamiento, planchazo, desliza (cae de barriga en el tobogán y se desliza), levanta {salto} (acaba de deslizarse: abajo del todo, o de un salto),
      pared, sinCuenta, tachada {muro, puerta}, enElTubo {puerta}, meta {puesto, pasa}, eliminado,
@@ -2260,8 +2580,11 @@ return {
      baldosas(e, k, t), estadoBaldosa(obst, fila, col, t), piedras(e, k, t) y estadoPiedra(obst, fila, col, t) (las del vau:
      firme, mojada, tiembla o hundida), quesos(e, k, t) (x, z, vx, s: segundos rodando), salmones(e, k, t) (los que van
      por el aire: x, y, z, u de 0 a 1, dx, dz, vy), balagarEn(obst, balagar, t),
-     segundosLocucion(muro, orden), controlDe(tramo, z).
-   Pistas: PISTAS[manga] (las dos de cada puesto del show) y pistaDe(op) (la que toca con esas opciones: { id, nombre, tema,
+     vagonetas(e, k, t) (x, z, dir, corre, avisa, via, h), vagonetaEn(obst, via, h, t), mazoEn(obst, mazo, t) (alto de su
+     cabeza, cayendo, golpea, abajo, avisa), bufonEn(obst, bufon, t) (fase 'calma', 'ruge' o 'sopla', u y fuerza),
+     enViga(obst, x) (la cucaña), feveEn(obst, t) (barreras 'arriba', 'bajan', 'abajo' o 'suben', bajada de 0 a 1, y x0 y
+     x1 del tren, o null), segundosLocucion(muro, orden), controlDe(tramo, z).
+   Pistas: PISTAS[manga] (las de cada puesto del show: dos, o tres desde El Pozu y Los Bufones) y pistaDe(op) (la que toca con esas opciones: { id, nombre, tema,
      fijos, otros, subida, cumbre }).
 
    Uso mínimo en la interfaz:
@@ -2284,7 +2607,11 @@ return {
      pisada[fila·4 + col]: cuándo la pisaron por primera vez, o −1) | 'quesos' (radio, grosor, u, vx, periodo, xMax,
      fase, sx) | 'salmones' (periodo, vuelo, alto, radio, fase, sx; solo en El Sella) | 'balagares' (radio, rebote, amp,
      periodo, fase, balagares[{ x, z, anda, golpe }]) | 'asturcones'
-     (como las cabras, en cabras[{ z, periodo, fase, manada, h }], y además tras, empuje, alto y golpe) }, vaca (solo en el tramo por el que cruza Casina: { z, fase }) }, zSprint, zMeta,
+     (como las cabras, en cabras[{ z, periodo, fase, manada, h }], y además tras, empuje, alto y golpe) | 'vagonetes' (vel,
+     espera, aviso, xLado, paso, enTren, largo, ancho, empuje, alto, vias[{ z, periodo, fase }]) | 'mazu' (periodo, cae,
+     abajo, sube, aviso, alto, ancho, largo, mazos[{ x, z, fase }]) | 'bufones' (radio, aviso, sopla, periodo, lanza,
+     bufones[{ x, z, fase }]) | 'cucana' (vigas[x], medio, z0, z1) | 'feve' (zv, vel, largoTren, ancho, xLado, espera, baja,
+     sube, dir, periodo, fase, zb[2]: las dos barreras) }, vaca (solo en el tramo por el que cruza Casina: { z, fase }) }, zSprint, zMeta,
      largo }.
    Estado: { semilla, manga, nivel, ajusteBots ({ acierto, momento, plantillas }), config (FAB.MANGAS[manga]), modo,
      ritmo, asistencia, reserva, pasan, t, fase
@@ -2325,6 +2652,8 @@ var AGARRE_MIN = 0.6;   /* agarrar con el clic dura como mínimo esto, aunque se
 var FRENO_AGARRADO = 0.5, FRENO_AGARRA = 0.6, CUERDA = 1.1;
 /* el charco de sidra, además de resbalar, frena: dentro, como mucho el 70 % */
 var FRENO_SIDRA = 0.7;
+/* en la viga de la cucaña el suelo agarra el 40 % y se va, como mucho, al 85 % */
+var AGARRE_VIGA = 0.4, FRENO_VIGA = 0.85;
 /* la plancha en el tobogán: quien cae de barriga cuesta abajo no se para, se desliza tumbado a 7,7 m/s (un 10 % más que
    corriendo) hasta el final de la bajada, girando poco; abajo (o al pulsar saltar) se levanta en 0,25 s */
 var V_DESLIZ = 7.7, V_LAT_DESLIZ = 2.5, T_LEVANTARSE_DESLIZ = 0.25;
@@ -2353,13 +2682,16 @@ var RETRASO_COPIA = 0.4;
 /* el entrenamiento: cuatro corredores, dos muros cortos (cualquier puerta abre) y un obstáculo para saltar y otro que
    echa al borde */
 var ENTRENO = { nombre:'Entrenamiento', corredores:4, muros:2, clases:[1], pasan:1 }, T_ENTRENO = 4, OBST_ENTRENO = ['rodillos', 'gaita'];
-/* catorce obstáculos: los de cada manga salen al azar de la semilla (del azar de la pista), sin repetir ninguno en la
-   misma manga y siempre con alguno por el que pueda cruzar Casina. Los cuatro últimos llegaron con las pistas nuevas
-   (2026-09-27) y salen también en las de siempre */
-var OBSTACULOS = ['barredoras', 'madrenas', 'baldosas', 'barriles', 'rodillos', 'manzanas', 'gaita', 'sidra', 'bolos', 'cabras', 'vau', 'quesos', 'balagares', 'asturcones'];
+/* diecinueve obstáculos: los de cada manga salen al azar de la semilla (del azar de la pista), sin repetir ninguno en la
+   misma manga y siempre con alguno por el que pueda cruzar Casina. Del vau a los asturcones llegaron con las pistas
+   nuevas del 2026-09-27, y los cinco últimos con El Pozu y Los Bufones (2026-09-29); todos salen también en las de
+   siempre */
+var OBSTACULOS = ['barredoras', 'madrenas', 'baldosas', 'barriles', 'rodillos', 'manzanas', 'gaita', 'sidra', 'bolos', 'cabras', 'vau', 'quesos', 'balagares', 'asturcones',
+                  'vagonetes', 'mazu', 'bufones', 'cucana', 'feve'];
 var CASINA_CABE = { barredoras:true, baldosas:true, gaita:true, sidra:true, balagares:true };
 /* las pistas (el profesor, 2026-09-27: «es hora de crear pistas más variadas»): cada puesto del show sortea la suya entre
-   dos, con un azar que solo sale de la semilla y del puesto (con el código de la clase, a todos les toca la misma). Las
+   dos (desde el 2026-09-29, la segunda carrera y la final, entre tres: El Pozu y Los Bufones), con un azar que solo sale
+   de la semilla y del puesto (con el código de la clase, a todos les toca la misma). Las
    de siempre sacan sus obstáculos del montón entero; las nuevas llevan fijos los que les dan carácter, y el resto sale
    de su lista. tema: el paisaje con que se dibuja; subida: lo que sube de más cada rampa (El Picu es una montaña; El
    Sella baja, río abajo); cumbre: lo que sube la recta de meta; agua: se corre en piragua (se salta, pero sin plancha, y
@@ -2371,9 +2703,11 @@ var PISTAS = [
    { id:'brana', nombre:'La Braña', tema:'brana', fijos:['asturcones', 'balagares'], otros:['cabras', 'gaita', 'madrenas', 'bolos', 'sidra'], curvas:1 }],
   [{ id:'toboganes', nombre:'Los Toboganes', tema:'prao', curvas:0.8 },
    { id:'sella', nombre:'El Sella', tema:'sella', agua:true, fijos:['salmones'], otros:['barriles', 'madrenas', 'gaita', 'sidra', 'barredoras', 'manzanas', 'rodillos'],
-     subida:-4, caida:3.5, chorrera:-5, cumbre:-2, curvas:1.3 }],
+     subida:-4, caida:3.5, chorrera:-5, cumbre:-2, curvas:1.3 },
+   { id:'pozu', nombre:'El Pozu', tema:'pozu', fijos:['vagonetes', 'mazu'], otros:['barriles', 'rodillos', 'baldosas', 'barredoras', 'madrenas'], curvas:0.9 }],
   [{ id:'cuesta', nombre:'La Cuesta del Portazo', tema:'prao', curvas:0.8 },
-   { id:'picu', nombre:'El Picu', tema:'picu', fijos:['quesos', 'quesos'], otros:['cabras', 'baldosas', 'gaita', 'barredoras', 'madrenas'], subida:3.5, cumbre:3, curvas:1.2 }]
+   { id:'picu', nombre:'El Picu', tema:'picu', fijos:['quesos', 'quesos'], otros:['cabras', 'baldosas', 'gaita', 'barredoras', 'madrenas'], subida:3.5, cumbre:3, curvas:1.2 },
+   { id:'bufones', nombre:'Los Bufones', tema:'bufones', fijos:['bufones', 'cucana', 'feve'], otros:['gaita', 'sidra', 'cabras', 'balagares', 'madrenas'], curvas:1.1 }]
 ];
 var PISTA_ENTRENO = { id:'entreno', nombre:'Entrenamiento', tema:'prao' };
 function pistaDe(op){
@@ -2516,6 +2850,38 @@ function crearObstaculo(tipo, tr, rng){
     var perA = 2*(o.espera + 2*o.xLado/o.vel);
     o.cabras = [];
     [8, 21, 34].forEach(function(dz, mA){ var fA = rng()*perA; [0, 1, -1].forEach(function(dzC, h){ o.cabras.push({ z:tr.zO0 + dz + dzC*1.05, periodo:perA, fase:fA - h*o.tras, manada:mA, h:h }); }); });
+  } else if(tipo === 'vagonetes'){
+    /* les vagonetes del pozu: tres vías cruzan la pista y en cada una un tren de tres vagonetas de carbón espera fuera, a
+       un lado, toca la campana (el aviso, 1 s) y la cruza a 6 m/s hasta el otro, donde espera y vuelve. No se saltan (son
+       altas); a quien pillan, lo empujan con fuerza hacia donde van, y a veces a la Pota */
+    o.vel = 6; o.espera = 2.4; o.aviso = 1; o.xLado = 7.2; o.paso = 2.05; o.enTren = 3; o.largo = 0.95; o.ancho = 0.62; o.empuje = 6; o.alto = 1.5;
+    var cruceV = (2*o.xLado + (o.enTren - 1)*o.paso)/o.vel, perV = 2*(o.espera + cruceV);
+    o.vias = [9, 21, 33].map(function(dz){ return { z:tr.zO0 + dz, periodo:perV, fase:rng()*perV }; });
+  } else if(tipo === 'mazu'){
+    /* el mazu de la ferrería: cuatro filas de tres mazos, uno por calle, que suben despacio y caen de golpe sobre el
+       tablado, uno tras otro (en cada fila siempre queda alguno arriba). Antes de caer tiemblan (el aviso). A quien pilla
+       debajo lo chafa y lo echa hacia atrás; caído, la cabeza del mazo es maciza. No se saltan: caen de arriba */
+    o.periodo = 2.7; o.cae = 0.18; o.abajo = 0.55; o.sube = 1.1; o.aviso = 0.45; o.alto = 3.2; o.ancho = 3.4; o.largo = 2.1; o.mazos = [];
+    [7, 17, 27, 37].forEach(function(dz){ var f = rng()*o.periodo, sentido = rng() < 0.5 ? 1 : -1; [4, 0, -4].forEach(function(x, h){ o.mazos.push({ x:x, z:tr.zO0 + dz, fase:f + sentido*h*o.periodo/3 }); }); });
+  } else if(tipo === 'bufones'){
+    /* los bufones de Llanes: agujeros en la roca por los que, al entrar la ola, el mar sopla un chorro de agua hacia el
+       cielo. Cada uno ruge y echa espuma antes (el aviso, 0,8 s) y sopla 0,9 s: a quien pilla encima lo lanza por los
+       aires, hacia atrás y de lado. Diez bufones en cuatro filas, cada uno a su compás */
+    o.radio = 1.0; o.aviso = 0.8; o.sopla = 0.9; o.periodo = 3.3; o.lanza = 8.5; o.bufones = [];
+    [[6, [-3.6, 0.2, 3.9]], [16, [-1.9, 2.1]], [26, [-4.1, -0.3, 3.4]], [36, [-2.4, 1.8]]].forEach(function(fl){
+      fl[1].forEach(function(x){ o.bufones.push({ x:x + (rng() - 0.5)*0.7, z:tr.zO0 + fl[0] + (rng() - 0.5)*2.4, fase:rng()*o.periodo }); });
+    });
+  } else if(tipo === 'cucana'){
+    /* la cucaña: tres vigas redondas y engrasadas, una por calle (x = 4, 0 y −4) y de 1,4 m de anchas, cruzan el agua de
+       un tablado a otro. Resbalan (cuesta frenar y girar) y quien pone el pie fuera cae al agua: vuelve al último punto
+       de control, sobre una viga. Se empuja como en todas partes */
+    o.vigas = [4, 0, -4]; o.medio = 0.7; o.z0 = tr.zO0 + 4.5; o.z1 = tr.zO1 - 4.5;
+  } else if(tipo === 'feve'){
+    /* el tren de la FEVE: a mitad del tramo, un paso a nivel. Suena la campana y bajan las barreras (1,5 s) y cruza
+       despacio (6 m/s) un tren de tres coches (26 m): la vía queda cortada unos 8 s. Las barreras bajadas y el tren son
+       macizos, y a quien está en la vía cuando llega el tren se lo lleva fuera. Luego suben las barreras */
+    o.zv = tr.zO0 + 21; o.vel = 6; o.largoTren = 26; o.ancho = 1.6; o.xLado = 9; o.espera = 6.5; o.baja = 1.5; o.sube = 0.8; o.dir = rng() < 0.5 ? 1 : -1;
+    o.periodo = o.espera + (2*o.xLado + o.largoTren)/o.vel; o.fase = rng()*o.periodo; o.zb = [o.zv - 2.6, o.zv + 2.6];
   } else {
     /* baldosas de 3 × 3 m: en cada fila impar, una se hunde por turnos (firme 2 s, tiembla 0,6 s, abajo 1 s); las
        filas pares nunca se hunden, y en ellas caen los puntos de control */
@@ -2752,6 +3118,51 @@ function salmones(e, k, t){
 }
 /* los balagares: la fila del medio va y viene de lado */
 function balagarEn(o, b, t){ return b.anda ? { x:b.x + o.amp*Math.sin(2*Math.PI*(t + o.fase)/o.periodo), z:b.z } : { x:b.x, z:b.z }; }
+/* les vagonetes: el tren de una vía espera fuera de la pista (su vagoneta 0, la de delante, a o.xLado del centro), cruza
+   hasta que la última sale por el otro lado, espera y vuelve. La h va detrás de la de delante, a h·o.paso */
+function vagonetaEn(o, via, h, t){
+  var cruce = (2*o.xLado + (o.enTren - 1)*o.paso)/o.vel, medio = o.espera + cruce, u = ((t + via.fase) % via.periodo + via.periodo) % via.periodo;
+  var lado = u < medio ? 1 : -1, v = u - (lado > 0 ? 0 : medio), recorrido = v < o.espera ? 0 : (v - o.espera)*o.vel, frente = lado*(o.xLado - recorrido);
+  return { x:frente + lado*h*o.paso, z:via.z, dir:-lado, corre:v >= o.espera, avisa:v < o.espera && v > o.espera - o.aviso };
+}
+function vagonetas(e, k, t){
+  var tr = e.pista.tramos[k], o = tr && tr.obst, r = [];
+  if(!o || o.tipo !== 'vagonetes') return r;
+  if(t === undefined) t = e.t;
+  o.vias.forEach(function(via, j){ for(var h = 0; h < o.enTren; h++){ var q = vagonetaEn(o, via, h, t); q.via = j; q.h = h; r.push(q); } });
+  return r;
+}
+/* un mazo: la altura de la cara de abajo de su cabeza sobre el tablado (0, caído; o.alto, arriba). Cae de golpe, se queda
+   abajo, sube despacio y espera arriba; en su último momento arriba tiembla (avisa) */
+function mazoEn(o, m, t){
+  var u = ((t + m.fase) % o.periodo + o.periodo) % o.periodo, alto, a = u/o.cae;
+  if(u < o.cae) alto = o.alto*(1 - a*a);
+  else if(u < o.cae + o.abajo) alto = 0;
+  else if(u < o.cae + o.abajo + o.sube) alto = o.alto*suave((u - o.cae - o.abajo)/o.sube);
+  else alto = o.alto;
+  return { x:m.x, z:m.z, alto:alto, cayendo:u < o.cae, golpea:u < o.cae + 0.08, abajo:u >= o.cae && u < o.cae + o.abajo, avisa:u > o.periodo - o.aviso };
+}
+/* un bufón: en calma, ruge (el aviso, con espuma) o sopla (fuerza de 0 a 1 y otra vez a 0) */
+function bufonEn(o, b, t){
+  var u = ((t + b.fase) % o.periodo + o.periodo) % o.periodo, c0 = o.periodo - o.aviso - o.sopla;
+  if(u < c0) return { x:b.x, z:b.z, fase:'calma', u:u/c0, fuerza:0 };
+  if(u < c0 + o.aviso) return { x:b.x, z:b.z, fase:'ruge', u:(u - c0)/o.aviso, fuerza:0 };
+  var w = (u - c0 - o.aviso)/o.sopla;
+  return { x:b.x, z:b.z, fase:'sopla', u:w, fuerza:Math.sin(Math.PI*Math.min(1, w)) };
+}
+/* ¿cae x sobre alguna viga de la cucaña? */
+function enViga(o, x){ for(var j = 0; j < o.vigas.length; j++) if(Math.abs(x - o.vigas[j]) < o.medio) return true; return false; }
+/* el paso a nivel de la FEVE: cómo están las barreras (bajada: 0 arriba, 1 abajo) y, si pasa el tren, de dónde a dónde va
+   (x0 < x1). El tren entra por el lado o.dir (x = o.dir·o.xLado) y sale por el otro */
+function feveEn(o, t){
+  var u = ((t + o.fase) % o.periodo + o.periodo) % o.periodo, r = { barreras:'arriba', bajada:0, x0:null, x1:null, campana:false };
+  if(u < o.sube){ r.barreras = 'suben'; r.bajada = 1 - u/o.sube; return r; }
+  if(u < o.espera - o.baja) return r;
+  if(u < o.espera){ r.barreras = 'bajan'; r.bajada = (u - o.espera + o.baja)/o.baja; r.campana = true; return r; }
+  var s = (u - o.espera)*o.vel, frente = o.dir*(o.xLado - s), cola = frente + o.dir*o.largoTren;
+  r.barreras = 'abajo'; r.bajada = 1; r.campana = true; r.x0 = Math.min(frente, cola); r.x1 = Math.max(frente, cola);
+  return r;
+}
 /* madreñas: el ángulo del péndulo solo depende del reloj; el centro de la madreña está a o.cuerda del pivote */
 function madrenaEn(o, m, t){
   var w = 2*Math.PI/m.periodo, a = o.amp*Math.sin(w*(t + m.fase)), da = o.amp*w*Math.cos(w*(t + m.fase));
@@ -3071,6 +3482,7 @@ function perder(c, s){ var a = s - PERDIDA_ACEL; if(a > c.aturdido) c.aturdido =
 function correr(e, c){
   var tr = tramoDe(e, c), zona = zonaDe(e, c, tr), ctl = c.ctl;
   if(zona !== 'obstaculo' || !tr || tr.obst.tipo !== 'sidra' || c.est !== 'corre') c.charco = false;
+  if(zona !== 'obstaculo' || !tr || tr.obst.tipo !== 'cucana' || c.est !== 'corre') c.resbala = false;
   var ia = !c.esJugador || e.asistencia, piloto = !ia && c.irA !== null;
   if(ia) controlIA(e, c, zona, tr, ctl);
   else if(piloto) controlPiloto(e, c, zona, tr, ctl);
@@ -3094,6 +3506,13 @@ function correr(e, c){
     /* los quesos no se saltan: son más altos que el salto */
     if(o.tipo === 'quesos' && c.fantasma <= 0 && c.golpeB <= 0) golpeQueso(e, c, tr, o);
     if(o.tipo === 'salmones' && c.fantasma <= 0 && c.golpeB <= 0) golpeSalmon(e, c, tr, o);
+    /* ni las vagonetas, ni los mazos, ni los chorros de los bufones, ni el tren se saltan */
+    if(o.tipo === 'vagonetes' && c.fantasma <= 0 && c.golpeB <= 0) golpeVagoneta(e, c, tr, o);
+    if(o.tipo === 'mazu' && c.fantasma <= 0 && c.golpeB <= 0) golpeMazo(e, c, tr, o);
+    if(o.tipo === 'bufones' && c.fantasma <= 0 && c.golpeB <= 0) golpeBufon(e, c, tr, o);
+    if(o.tipo === 'feve' && c.fantasma <= 0 && c.golpeB <= 0) golpeTren(e, c, tr, o);
+    /* la cucaña resbala: en la viga, cuesta frenar y girar */
+    c.resbala = o.tipo === 'cucana' && c.suelo && c.z >= o.z0 && c.z < o.z1;
     /* la sidra: en el charco, el suelo no agarra; entrar yendo de lado da una culada */
     if(o.tipo === 'sidra'){
       var ch = c.suelo && !!enCharco(o, c.x, c.z);
@@ -3105,6 +3524,7 @@ function correr(e, c){
     if(c.suelo){
       if(Math.abs(c.x) > MEDIO && !e.pista.agua) entrarBorde(e, c);
       else if(o.tipo === 'baldosas' && c.z >= tr.zO0 && c.z < tr.zO1 && estadoBaldosa(o, Math.floor((c.z - tr.zO0)/FILA), colDe(c.x), e.t) === 'hundida') caer(e, c, 'baldosa');
+      else if(o.tipo === 'cucana' && c.z >= o.z0 && c.z < o.z1 && !enViga(o, c.x)) caer(e, c, 'cucana');
       else if(o.tipo === 'vau' && c.z >= tr.zO0 && c.z < tr.zO1){
         /* la piedra que se pisa por primera vez queda pisada: si es falsa, tiembla y se hunde; si ya se hundió, al agua */
         var fp = Math.floor((c.z - tr.zO0)/FILA), cp = colDe(c.x), qp = fp*COLS + cp;
@@ -3125,13 +3545,13 @@ function integrarIA(e, c, ctl, zona){
   vxDes = obj !== null ? limitar((obj - c.x)*GANANCIA, -vmax, vmax) : 0;
   if(at) vxDes = 0;
   if(c.lanzado) vxDes = c.vx;
-  var agarreSuelo = c.charco ? 0.12 : 1;
+  var agarreSuelo = c.charco ? 0.12 : (c.resbala ? AGARRE_VIGA : 1);
   c.vx += (vxDes - c.vx)*Math.min(1, ACEL_LAT*agarreSuelo*dt);
   var vzDes = V;
   if(ctl.parar) vzDes = 0;                                                            /* asistencia sin puerta: espera */
   if(c.pasillo >= 0 && c.puerta !== null && c.pasillo !== c.puerta) vzDes = -V*ATRAS;  /* sale del pasillo que no es */
   if(c.sujetadoPor >= 0) vzDes *= FRENO_AGARRADO; else if(c.sujeta >= 0) vzDes *= FRENO_AGARRA;
-  if(c.charco) vzDes *= FRENO_SIDRA;
+  if(c.charco) vzDes *= FRENO_SIDRA; else if(c.resbala) vzDes *= FRENO_VIGA;
   if(c.lanzado) vzDes = V + IMPULSO_LANZA;
   if(e.t < c.ceder) vzDes = -2;   /* cede el paso junto al cuello */
   if(at) vzDes = 0;
@@ -3149,12 +3569,12 @@ function integrarManual(e, c, ctl){
   var fx = Math.sin(g), fz = Math.cos(g), rx = -Math.cos(g), rz = Math.sin(g);   /* delante y derecha de la cámara */
   var aa = a < 0 ? a*ATRAS : a;
   var vxDes = limitar(V*(aa*fx + l*rx), -V, V), vzDes = limitar(V*(aa*fz + l*rz), -V, V);
-  var freno = (c.sujetadoPor >= 0 ? FRENO_AGARRADO : (c.sujeta >= 0 ? FRENO_AGARRA : 1))*(c.charco ? FRENO_SIDRA : 1);
+  var freno = (c.sujetadoPor >= 0 ? FRENO_AGARRADO : (c.sujeta >= 0 ? FRENO_AGARRA : 1))*(c.charco ? FRENO_SIDRA : (c.resbala ? FRENO_VIGA : 1));
   vxDes *= freno; vzDes *= freno;
   if(c.lanzado){ vxDes = c.lanzaX; vzDes = c.lanzaZ; }
   if(at){ c.vx = 0; c.vz = 0; }   /* un tropiezo o un golpe la paran en seco */
   else {
-    var ex = vxDes - c.vx, ez = vzDes - c.vz, em = Math.sqrt(ex*ex + ez*ez), lim = ACEL*(c.charco ? 0.12 : 1)*dt;
+    var ex = vxDes - c.vx, ez = vzDes - c.vz, em = Math.sqrt(ex*ex + ez*ez), lim = ACEL*(c.charco ? 0.12 : (c.resbala ? AGARRE_VIGA : 1))*dt;
     if(em > lim){ ex *= lim/em; ez *= lim/em; }
     c.vx += ex; c.vz += ez;
   }
@@ -3383,10 +3803,71 @@ function golpeQueso(e, c, tr, o){
     return;
   }
 }
+/* una vagoneta que cruza: te lanza con fuerza hacia donde va (el empujón de un asturcón y algo más) */
+function golpeVagoneta(e, c, tr, o){
+  if(c.y > o.alto) return;
+  for(var j = 0; j < o.vias.length; j++){
+    var via = o.vias[j];
+    if(Math.abs(c.z - via.z) >= o.ancho + RADIO) continue;
+    for(var h = 0; h < o.enTren; h++){
+      var q = vagonetaEn(o, via, h, e.t);
+      if(!q.corre || Math.abs(c.x - q.x) >= o.largo + RADIO) continue;
+      c.kx += q.dir*o.empuje; c.kz -= 0.4;
+      perder(c, 0.5); c.golpeB = 0.8; c.sqv -= 5; c.lanzado = false;
+      evento(e, 'golpe', { i:c.i, obstaculo:'vagoneta' });
+      return;
+    }
+  }
+}
+/* un mazo que cae: a quien está debajo lo chafa (queda aplastado un segundo) y lo echa hacia atrás; también en el aire */
+function golpeMazo(e, c, tr, o){
+  for(var j = 0; j < o.mazos.length; j++){
+    var m = o.mazos[j];
+    if(Math.abs(c.z - m.z) >= o.largo/2 + RADIO || Math.abs(c.x - m.x) >= o.ancho/2 + RADIO) continue;
+    var q = mazoEn(o, m, e.t);
+    if(!q.golpea || q.alto > c.y + 1.3) continue;
+    c.kz -= 1.8; perder(c, 1.0); c.golpeB = 1.1; c.sqv -= 10; c.lanzado = false;
+    evento(e, 'golpe', { i:c.i, obstaculo:'mazo' });
+    return;
+  }
+}
+/* un bufón que sopla: a quien está encima lo lanza por los aires, hacia atrás y hacia fuera del agujero */
+function golpeBufon(e, c, tr, o){
+  if(c.y > 2) return;
+  for(var j = 0; j < o.bufones.length; j++){
+    var b = o.bufones[j], dx = c.x - b.x, dz = c.z - b.z;
+    if(dx*dx + dz*dz >= (o.radio + 0.2)*(o.radio + 0.2)) continue;
+    var q = bufonEn(o, b, e.t);
+    if(q.fase !== 'sopla' || q.fuerza < 0.25) continue;
+    c.vy = o.lanza*(0.75 + 0.25*q.fuerza); c.suelo = false; c.kz -= 1.6; c.kx += (dx >= 0 ? 1 : -1)*1.2;
+    c.golpeB = 1.3; c.sqv += 6; c.lanzado = false;
+    evento(e, 'golpe', { i:c.i, obstaculo:'bufon' });
+    return;
+  }
+}
+/* el tren: a quien está en la vía cuando pasa se lo lleva hacia donde va, fuera de la pista */
+function golpeTren(e, c, tr, o){
+  if(Math.abs(c.z - o.zv) >= o.ancho/2 + RADIO || c.y > 2.4) return;
+  var q = feveEn(o, e.t);
+  if(q.x0 === null || c.x < q.x0 - RADIO || c.x > q.x1 + RADIO) return;
+  c.kx += -o.dir*8; c.kz += (c.z < o.zv ? -1 : 1)*1.5;
+  perder(c, 0.8); c.golpeB = 1; c.sqv -= 6; c.lanzado = false;
+  evento(e, 'golpe', { i:c.i, obstaculo:'tren' });
+}
 /* los bolos en pie y las cabras que esperan son macizos */
 function macizosObstaculo(e, c, tr){
   var o = tr.obst, j;
   if(o.tipo === 'bolos'){ for(j = 0; j < o.bolos.length; j++){ var bo = o.bolos[j]; if(estadoBolo(tr, o, bo, e.t) < 0.5 && Math.abs(c.z - bo.z) < 1) postes(c, { postes:[{ z:bo.z, radioPoste:0.35, x:bo.x }] }, bo.x); } }
+  else if(o.tipo === 'mazu'){
+    /* la cabeza de un mazo caído, maciza */
+    for(j = 0; j < o.mazos.length; j++){ var mz = mazoEn(o, o.mazos[j], e.t); if(mz.abajo && c.y < 1.2) sacarDeCaja(c, mz.x, mz.z, o.ancho/2 + RADIO, o.largo/2 + RADIO); }
+  }
+  else if(o.tipo === 'feve'){
+    /* las barreras bajadas (se saltan por encima, si se llega a tiempo) y el tren, que tapa la vía de lado a lado */
+    var fv = feveEn(o, e.t);
+    if(fv.bajada > 0.7 && c.y < 0.9) for(j = 0; j < 2; j++) if(Math.abs(c.z - o.zb[j]) < 0.15 + RADIO) sacarDeCaja(c, 0, o.zb[j], MEDIO + 1, 0.15 + RADIO);
+    if(fv.x0 !== null && c.y < 2.4 && c.x > fv.x0 - RADIO && c.x < fv.x1 + RADIO && Math.abs(c.z - o.zv) < o.ancho/2 + RADIO) sacarDeCaja(c, (fv.x0 + fv.x1)/2, o.zv, (fv.x1 - fv.x0)/2 + RADIO, o.ancho/2 + RADIO);
+  }
   else if(o.tipo === 'cabras' || o.tipo === 'asturcones'){ for(j = 0; j < o.cabras.length; j++){ var g = cabraEn(o, o.cabras[j], e.t); if(!g.corre) sacarDeCaja(c, g.x, g.z, o.largo + RADIO, o.ancho + RADIO); } }
   else if(o.tipo === 'balagares'){
     /* ¡boing!: quien choca con un balagar sale despedido por donde chocó (hacia atrás, si venía de frente) */
@@ -3464,7 +3945,7 @@ function enCaida(e, c){
   if(e.t - c.tEst >= T_CAIDA - 1e-9){
     /* reaparece en el último punto de control, cayendo desde 0,8 m y ya a toda velocidad (con los mandos, quieta) */
     var zc = controlDe(tr, c.zCaida), lado = c.xCaida >= 0 ? 1 : -1;
-    c.est = 'corre'; c.z = zc + 0.3; c.x = tr.obst.tipo === 'rodillos' ? 0 : lado*(tr.obst.tipo === 'baldosas' || tr.obst.tipo === 'vau' ? 1.5 : 2);
+    c.est = 'corre'; c.z = zc + 0.3; c.x = tr.obst.tipo === 'rodillos' ? 0 : lado*(tr.obst.tipo === 'baldosas' || tr.obst.tipo === 'vau' ? 1.5 : (tr.obst.tipo === 'cucana' ? 4 : 2));
     c.y = 0.8; c.vy = 0; c.suelo = false; c.vz = esManual(e, c) ? 0 : V; c.vx = 0; c.kx = 0; c.kz = 0; c.fantasma = 0.6; c.aturdido = 0; c.corte = true;
     c.px = c.x; c.py = c.y; c.pz = c.z;
     evento(e, 'reaparicion', { i:c.i, motivo:'caida', x:c.x, z:c.z });
@@ -3627,6 +4108,11 @@ function controlIA(e, c, zona, tr, ctl){
     else if(o.tipo === 'balagares') ox = iaBalagares(e, c, tr, o, ox);
     else if(o.tipo === 'asturcones') iaAsturcones(e, c, tr, o, ctl);
     else if(o.tipo === 'salmones') ox = iaSalmones(e, c, tr, o, ox);
+    else if(o.tipo === 'vagonetes') iaVagonetes(e, c, tr, o, ctl);
+    else if(o.tipo === 'mazu') ox = iaMazu(e, c, tr, o, ox, ctl);
+    else if(o.tipo === 'bufones') ox = iaBufones(e, c, tr, o, ox);
+    else if(o.tipo === 'cucana') ox = iaCucana(e, c, tr, o, ox);
+    else if(o.tipo === 'feve') iaFeve(e, c, tr, o, ctl);
     if(tr.vaca) ox = iaVaca(e, c, tr, ox);
     if(Math.abs(c.x) > MEDIO - 0.6 && !(o.tipo === 'gaita' && c.soplado)) ox = c.x > 0 ? MEDIO - 1.6 : -(MEDIO - 1.6);   /* se aparta del borde (salvo si la racha lo pilla desprevenido) */
     ox = limitar(ox, -5.3, 5.3);
@@ -3794,6 +4280,81 @@ function iaAsturcones(e, c, tr, o, ctl){
     return;
   }
 }
+/* vagonetas: si al llegar a una vía el tren va a cruzar (o ya toca la campana), espera antes de meterse (según su
+   habilidad, y como mucho 3 s); si ya está en la vía, sigue */
+function iaVagonetes(e, c, tr, o, ctl){
+  for(var j = 0; j < o.vias.length; j++){
+    var via = o.vias[j], dz = via.z - c.z;
+    if(dz < -1.2 || dz > 4.4) continue;
+    if(dz < 1.8) return;
+    var clave = tr.k*16 + j;
+    if(c.cabJ !== clave){ c.cabJ = clave; c.esperaCab = 0; }
+    if(azarBarril(c.i*71 + j*5 + tr.k*83, e.semilla | 0) >= pEsquiva(c.hab) || c.esperaCab > 3) return;
+    var tau = Math.max(0, dz - 1.5)/V, peligro = false;
+    for(var h = 0; h < o.enTren && !peligro; h++) for(var q = 0; q < 6 && !peligro; q++){
+      var qv = vagonetaEn(o, via, h, e.t + tau + 0.15*(q - 1));
+      if((qv.corre || qv.avisa) && Math.abs(c.x - qv.x) < o.largo + 2) peligro = true;
+    }
+    if(peligro){ ctl.parar = true; c.esperaCab += PASO; }
+    return;
+  }
+}
+/* mazos: antes de cada fila, mira cómo estará al llegar el mazo de su calle; si va a caer o está caído, se cambia a la
+   calle de uno que esté arriba y no vaya a caer, y si no hay ninguno, espera (según su habilidad; como mucho 2 s) */
+function iaMazu(e, c, tr, o, ox, ctl){
+  for(var j = 0; j < o.mazos.length; j += 3){
+    var dz = o.mazos[j].z - c.z;
+    if(dz < 0.3 || dz > 3.8) continue;
+    var clave = tr.k*16 + j;
+    if(c.madJ !== clave){ c.madJ = clave; c.esperaMad = 0; }
+    if(azarBarril(c.i*37 + j*11 + tr.k*109, e.semilla | 0) >= pEsquiva(c.hab) || c.esperaMad > 2) return ox;
+    var tau = Math.max(0, dz - o.largo/2 - RADIO)/V, mejor = null;
+    function libre(m, dt){ for(var q = 0; q < 5; q++){ var s = mazoEn(o, m, e.t + dt + 0.12*(q - 1)); if(s.alto < 1.8 || s.avisa) return false; } return true; }
+    for(var h = 0; h < 3; h++){
+      var m = o.mazos[j + h], dt = tau + Math.abs(m.x - c.x)/V_LAT;
+      if(libre(m, dt) && (mejor === null || Math.abs(m.x - c.x) < Math.abs(mejor.x - c.x))) mejor = m;
+    }
+    if(mejor) return mejor.x;
+    ctl.parar = true; c.esperaMad += PASO;
+    return ox;
+  }
+  return ox;
+}
+/* bufones: si uno que va a rugir o a soplar le queda en el camino de los próximos 5 m, se aparta hacia el lado con más
+   sitio (según su habilidad) */
+function iaBufones(e, c, tr, o, ox){
+  var mejor = null;
+  for(var j = 0; j < o.bufones.length; j++){
+    var b = o.bufones[j], dz = b.z - c.z;
+    if(dz < -0.8 || dz > 5) continue;
+    var tau = Math.max(0, dz)/V, q = bufonEn(o, b, e.t + tau);
+    if(q.fase === 'calma' && q.u < 0.9) continue;
+    if(Math.abs(ox - b.x) >= o.radio + RADIO + 0.4 && Math.abs(c.x - b.x) >= o.radio + RADIO + 0.4) continue;
+    if(azarBarril(c.i*43 + j*13 + tr.k*67, e.semilla | 0) >= pEsquiva(c.hab)) continue;
+    if(mejor === null || dz < mejor.dz) mejor = { dz:dz, x:b.x };
+  }
+  if(!mejor) return ox;
+  var libre = o.radio + RADIO + 0.9, izq = mejor.x - libre, der = mejor.x + libre, ir = Math.abs(izq - c.x) < Math.abs(der - c.x) ? izq : der;
+  if(ir > 5.3 || ir < -5.3) ir = ir > 0 ? izq : der;
+  return limitar(ir, -5.3, 5.3);
+}
+/* cucaña: a la viga más cercana, y por su centro (los que la cruzan bien no se salen de ella) */
+function iaCucana(e, c, tr, o, ox){
+  if(c.z > o.z1) return ox;
+  var mejor = o.vigas[0];
+  for(var j = 1; j < o.vigas.length; j++) if(Math.abs(o.vigas[j] - c.x) < Math.abs(mejor - c.x)) mejor = o.vigas[j];
+  return mejor;
+}
+/* FEVE: si las barreras están bajando o bajadas, o el tren va a pasar cuando llegue, espera antes de la barrera; si ya
+   está en la vía, sigue. Los atrevidos (cuanto menos hábiles, más), si las barreras acaban de empezar a bajar y las tienen
+   al lado, se cuelan: a veces pasan y a veces se quedan dentro con el tren encima */
+function iaFeve(e, c, tr, o, ctl){
+  var dz = o.zb[0] - c.z;
+  if(dz < 0 || dz > 4.5) return;
+  var tau = Math.max(0, dz - 0.6)/V, q0 = feveEn(o, e.t), q1 = feveEn(o, e.t + tau + 0.6);
+  if(q0.barreras === 'bajan' && q0.bajada < 0.5 && azarBarril(c.i*89 + tr.k*7 + Math.floor((e.t + o.fase)/o.periodo)*13, e.semilla | 0) < 0.4*(1 - c.hab)) return;
+  if(q0.bajada > 0 || q1.bajada > 0 || q1.x0 !== null) ctl.parar = true;
+}
 /* piedras del vau: antes de cada fila impar, el bot elige piedra. Si alguna está mojada (buena y ya pisada), va a la más
    cercana de esas (según su habilidad); si no, a una sin hundir, la más cercana o, según su azar (siempre el mismo para
    el mismo bot en la misma fila), otra. Si la que pisa empieza a temblar, según su habilidad salta hacia delante */
@@ -3940,7 +4501,7 @@ function restringir(e, c){
   else if(zona !== 'obstaculo' || p.agua){ h = MEDIO - RADIO; c.x = limitar(c.x, -h, h); }   /* en el río, las orillas no se pasan */
   if(!tr){ if(c.z >= p.zMeta) llegarMeta(e, c); return; }
   if(zona === 'obstaculo' && tr.obst.tipo === 'barredoras') postes(c, tr.obst);
-  if(zona === 'obstaculo' && (tr.obst.tipo === 'bolos' || tr.obst.tipo === 'cabras' || tr.obst.tipo === 'asturcones' || tr.obst.tipo === 'balagares')) macizosObstaculo(e, c, tr);
+  if(zona === 'obstaculo' && (tr.obst.tipo === 'bolos' || tr.obst.tipo === 'cabras' || tr.obst.tipo === 'asturcones' || tr.obst.tipo === 'balagares' || tr.obst.tipo === 'mazu' || tr.obst.tipo === 'feve')) macizosObstaculo(e, c, tr);
   if(zona === 'obstaculo' && tr.vaca) cuerpoVaca(e, c, tr);
   if(c.vista < c.muro && c.z >= tr.zArco) sacarCuenta(e, c, tr);
   if(!c.enPlaza && c.z >= tr.zP0){ c.enPlaza = true; if(c.esJugador) evento(e, 'plaza', { i:c.i, muro:c.muro }); }
@@ -4294,6 +4855,7 @@ return {
   tiempoRestante:tiempoRestante, resumen:resumen, opcionesSiguiente:opcionesSiguiente,
   alturaSuelo:alturaSuelo, medioAncho:medioAncho, anguloBarredora:anguloBarredora, rodillos:rodillos, barriles:barriles, madrenas:madrenas, vacaEn:vacaEn, VACA:VACA, manzanas:manzanas, manzanaN:manzanaN, gaitaEn:gaitaEn, enCharco:enCharco, bolas:bolas, estadoBolo:estadoBolo, cabraEn:cabraEn, baldosas:baldosas, estadoBaldosa:estadoBaldosa,
   piedras:piedras, estadoPiedra:estadoPiedra, quesos:quesos, salmones:salmones, salmonN:salmonN, balagarEn:balagarEn,
+  vagonetas:vagonetas, vagonetaEn:vagonetaEn, mazoEn:mazoEn, bufonEn:bufonEn, enViga:enViga, feveEn:feveEn,
   segundosLocucion:segundosLocucion, controlDe:controlDe
 };
 })(FAB);
@@ -4333,17 +4895,17 @@ var POSICION = F.POSICIONES, NOMBRE_PUERTA = F.NOMBRES_PUERTA, LA_PUERTA = F.LA_
 var CLAVE = 'carrerina.v1', CLAVE_ANTES = 'fabarrera.v1';   /* las del nombre de antes se leen y pasan a la nueva */
 /* nivel y ritmo van juntos: la primera vez (o con unas preferencias de antes de los niveles) sale el nivel 1 con su
    ritmo, Pausado; al elegir un nivel en el menú se propone el suyo, y el ritmo se puede cambiar después */
-var PREF = { nivel:1, modo:'show', ritmo:F.nivelDe(1).ritmo, asistencia:false, calidad:'auto', sonido:true, musica:true, subtitulos:false, sensRaton:1, reducir:null, lectura:'pantalla', vistaAlta:false, nombre:'', colorFaba:'verde', gorro:'montera', teclas:null, etiquetas:null };
+var PREF = { nivel:1, modo:'show', ritmo:F.nivelDe(1).ritmo, asistencia:false, calidad:'auto', sonido:true, musica:true, subtitulos:false, sensRaton:1, reducir:null, lectura:'pantalla', vistaAlta:false, nombre:'', colorFaba:'verde', gorro:'montera', teclas:null, etiquetas:null, records:{} };
 /* el nombre del jugador: sin caracteres de control, espacios de sobra ni signos de etiqueta, y de 12 letras como mucho */
 function limpiarNombre(t){ return String(t == null ? '' : t).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 12); }
 function nombreJugador(){ return PREF.nombre || 'TÚ'; }
 /* los colores que puede elegir tu faba (el verde, el de siempre, sigue siendo el primero) */
 var COLORES_FABA = { verde:['#58c24a', 'Verde'], azul:['#3d7fe0', 'Azul'], rojo:['#e04238', 'Rojo'], amarillo:['#f2c02e', 'Amarillo'],
                      morado:['#9a5ae0', 'Morado'], naranja:['#ff8a2a', 'Naranja'], rosa:['#ff6fae', 'Rosa'], turquesa:['#2fc4b6', 'Turquesa'] };
-/* el código de carrera: el nivel (1, 2 o 3) y cuatro letras sin I ni O (no se confunden con 1 y 0) */
+/* el código de carrera: el nivel (del 1 al 4) y cuatro letras sin I ni O (no se confunden con 1 y 0) */
 var LETRAS_CODIGO = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-function limpiarCodigo(t){ return String(t == null ? '' : t).toUpperCase().replace(/[^1-3A-Z]/g, '').slice(0, 5); }
-function codigoValido(c){ return /^[123][A-HJ-NP-Z]{4}$/.test(c); }
+function limpiarCodigo(t){ return String(t == null ? '' : t).toUpperCase().replace(/[^1-4A-Z]/g, '').slice(0, 5); }
+function codigoValido(c){ return /^[1-4][A-HJ-NP-Z]{4}$/.test(c); }
 function semillaDeCodigo(c){ var h = 2166136261; for(var i = 0; i < c.length; i++){ h ^= c.charCodeAt(i); h = Math.imul(h, 16777619); } return h | 0; }
 function codigoNuevo(nivel){ var s = String(nivel); for(var i = 0; i < 4; i++) s += LETRAS_CODIGO.charAt(Math.floor(Math.random()*LETRAS_CODIGO.length)); return s; }
 function leerPrefs(){
@@ -4353,7 +4915,7 @@ function leerPrefs(){
     var o = JSON.parse(s);
     if(!o || typeof o !== 'object') return;
     if(o.modo === 'show' || o.modo === 'clase') PREF.modo = o.modo;
-    if(o.nivel === 1 || o.nivel === 2 || o.nivel === 3){
+    if(o.nivel === 1 || o.nivel === 2 || o.nivel === 3 || o.nivel === 4){
       PREF.nivel = o.nivel;
       PREF.ritmo = (typeof o.ritmo === 'string' && F.RITMOS[o.ritmo]) ? o.ritmo : F.nivelDe(o.nivel).ritmo;
     }
@@ -4372,6 +4934,13 @@ function leerPrefs(){
     if(typeof o.nombre === 'string') PREF.nombre = limpiarNombre(o.nombre);
     if(typeof o.colorFaba === 'string' && COLORES_FABA[o.colorFaba]) PREF.colorFaba = o.colorFaba;
     if(o.gorro === 'montera' || o.gorro === 'boina' || o.gorro === 'casco' || o.gorro === 'pañuelo') PREF.gorro = o.gorro;
+    /* los récords de cada nivel: puntos de su mejor show y Fabas de Oro ganadas */
+    if(o.records && typeof o.records === 'object') for(var kr in o.records){
+      var rr = o.records[kr];
+      if(!/^[1-9]$/.test(kr) || !rr || typeof rr !== 'object') continue;
+      var pu = Math.floor(+rr.puntos), fa = Math.floor(+rr.fabas);
+      PREF.records[kr] = { puntos:isFinite(pu) && pu > 0 ? Math.min(pu, 9999999) : 0, fabas:isFinite(fa) && fa > 0 ? Math.min(fa, 9999) : 0 };
+    }
   } catch(e){}
 }
 function guardarPrefs(){ try { if(win.localStorage){ win.localStorage.setItem(CLAVE, JSON.stringify(PREF)); win.localStorage.removeItem(CLAVE_ANTES); } } catch(e){} }
@@ -4853,6 +5422,53 @@ function crearMallasFijas(){
   tapa(m, 0, 2.86, 0, 0.22, 12, 1, [0.66, 0.5, 0.32], 0); tapa(m, 0, -2.86, 0, 0.22, 12, -1, [0.66, 0.5, 0.32], 0);
   transformar(m, 0, rotZ(PI/2), 0, 0, 0);
   M.tronco = m;
+  /* ---- El Pozu y Los Bufones (2026-09-29) ---- */
+  /* vagoneta de carbón (mira hacia +x): caja de chapa, más ancha arriba y con el borde oxidado, llena de carbón, y cuatro
+     ruedas; 2,1 × 1,3 y 1,4 de alto, con la base en el suelo */
+  var CHAPA = [0.42, 0.37, 0.34], OXIDO = [0.66, 0.34, 0.18], CARBON = [0.13, 0.12, 0.13], RUEDA_V = [0.24, 0.22, 0.22];
+  m = new Malla();
+  extruir(m, [[-0.95, 0.3], [0.95, 0.3], [1.05, 1.22], [-1.05, 1.22]], 0, 0, -0.6, 0.6, 7, CHAPA, 1);
+  caja(m, -1.08, 1.08, -0.63, 1.08, 1.2, 0.63, OXIDO, 0, TODAS & ~YN);
+  for(k = 0; k < 9; k++) elipsoide(m, -0.76 + 0.19*k, 1.24 + 0.05*((k*7) % 3), -0.28 + 0.28*((k*5) % 3), 0.3, 0.15, 0.27, 6, 3, CARBON, 0);
+  [-0.6, 0.6].forEach(function(x){ [-1, 1].forEach(function(l){ var v1 = m.n; cilindroY(m, 0, 0, -0.07, 0.07, 0.25, 10, 1, true, true, RUEDA_V, 1); transformar(m, v1, rotX(PI/2), x, 0.25, l*0.53); }); });
+  M.vagoneta = m;
+  /* mazo de la ferrería: la cabeza de hierro (3,4 × 2,1 y 0,9 de alto, con la cara de abajo en y = 0), con su franja de
+     cobre, y el mango de madera que sube por la guía del pórtico */
+  m = new Malla();
+  cojin(m, 0, 0, 0, 1.7, 0.45, 1.05, 0.12, [0.32, 0.32, 0.35], [0.22, 0.22, 0.24], TODAS, 1);
+  caja(m, -1.72, 0.52, -1.07, 1.72, 0.66, 1.07, [0.72, 0.42, 0.2], 0, XP | XN | ZP | ZN);
+  cilindroY(m, 0, 0, 0.9, 5.4, 0.22, 8, 1, false, true, [0.52, 0.35, 0.2], 0);
+  M.mazo = m;
+  /* chorro de un bufón: columna de agua de 1 m (el dibujo la estira con su fuerza), azul clara abajo y blanca arriba, con
+     una corona de espuma donde rompe. Sus colores pasan de 1: el agua brilla también por el lado de la sombra */
+  m = new Malla();
+  cilindroY(m, 0, 0, 0, 1, 0.48, 12, 3, false, false, function(q){ return q === 3 ? [1.55, 1.65, 1.75] : (q === 2 ? [1.3, 1.5, 1.7] : [1.05, 1.35, 1.6]); }, 0);
+  for(k = 0; k < 7; k++) elipsoide(m, 0.55*Math.cos(TAU*k/7), 1 + 0.03*(k % 2), 0.55*Math.sin(TAU*k/7), 0.42, 0.07, 0.42, 7, 3, [1.6, 1.68, 1.75], 0);
+  elipsoide(m, 0, 1.04, 0, 0.5, 0.08, 0.5, 8, 3, [1.65, 1.7, 1.75], 0);
+  M.chorro = m;
+  m = new Malla();   /* la espuma del bufón que ruge: un anillo de espuma blanca junto al agujero */
+  for(k = 0; k < 8; k++) elipsoide(m, 0.8*Math.cos(TAU*k/8), 0.05, 0.8*Math.sin(TAU*k/8), 0.34, 0.12, 0.34, 6, 3, [1.4, 1.45, 1.5], 0);
+  M.espuma = m;
+  /* el tren de la FEVE: tres coches de 8,4 m (26 m con los enganches), crema con una franja roja, techo gris y ventanas
+     oscuras, sobre sus bogies; la cabina, delante (hacia −x), con la cara amarilla y dos faros */
+  var CREMA = [0.95, 0.9, 0.78], ROJO_F = [0.8, 0.17, 0.14], TECHO_F = [0.56, 0.57, 0.6], VENT = [0.16, 0.2, 0.27];
+  m = new Malla();
+  for(k = 0; k < 3; k++){
+    var xa = -13 + k*8.8, xb = xa + 8.4, w;
+    caja(m, xa, 0.9, -1.3, xb, 3.4, 1.3, CREMA, 0, TODAS & ~YN);
+    caja(m, xa - 0.01, 1.5, -1.31, xb + 0.01, 1.8, 1.31, ROJO_F, 0, ZP | ZN);
+    for(w = 0; w < 5; w++) caja(m, xa + 0.6 + w*1.55, 2.15, -1.31, xa + 1.6 + w*1.55, 2.95, 1.31, VENT, 0, ZP | ZN);
+    cojin(m, (xa + xb)/2, 3.3, 0, 4.15, 0.18, 1.22, 0.16, TECHO_F, TECHO_F, TODAS & ~YN, 0);
+    [xa + 1.3, xb - 1.3].forEach(function(xq){ caja(m, xq - 0.8, 0.3, -1.05, xq + 0.8, 0.9, 1.05, [0.2, 0.2, 0.22], 0, TODAS & ~YN); });
+  }
+  caja(m, -13.25, 0.9, -1.3, -13, 3.4, 1.3, [0.98, 0.8, 0.14], 0, XN | YP | ZP | ZN);
+  caja(m, -13.26, 2.2, -1.05, -13.25, 2.95, 1.05, VENT, 0, XN);
+  [-0.8, 0.8].forEach(function(zf){ elipsoide(m, -13.28, 1.3, zf, 0.05, 0.14, 0.14, 6, 3, [1, 0.98, 0.78], 1); });
+  M.tren = m;
+  /* el brazo de una barrera del paso a nivel: 6 m a franjas rojas y blancas desde su eje (en x = 0), hacia +x */
+  m = new Malla();
+  for(k = 0; k < 6; k++) caja(m, 0.2 + k, -0.09, -0.07, 1.2 + k, 0.09, 0.07, k % 2 ? [0.97, 0.97, 0.95] : [0.86, 0.15, 0.14], 0, TODAS);
+  M.barrera = m;
   M.montes = crearMontes();
   M.nubes = crearNubes();
   return M;
@@ -5169,6 +5785,15 @@ function alturaPrao(x, z){
   }
   if(TEMA === 'brana'){ var bb = suave((ax - 16)/34); return SUELO_PRAO + bb*(6 + 4*Math.sin(x*0.04 + 0.5)*Math.cos(z*0.03 + 1.2) + 2.2*Math.sin((x + z)*0.025) + 1.2*Math.sin(z*0.09)); }
   if(TEMA === 'picu'){ var bp = suave((ax - 18)/26); return SUELO_PRAO + baseMonte(z) + bp*(13 + 7*Math.sin(x*0.035 + 0.3)*Math.cos(z*0.025 + 0.8) + 3.5*Math.sin((x + 2*z)*0.02)); }
+  /* El Pozu: un valle minero estrecho, de laderas altas */
+  if(TEMA === 'pozu'){ var bz = suave((ax - 18)/30); return SUELO_PRAO + bz*(9 + 4*Math.sin(x*0.04 + 0.2)*Math.cos(z*0.03 + 0.9) + 2*Math.sin((x - z)*0.03)); }
+  /* Los Bufones: a un lado (+x, a la izquierda de la pantalla), la rasa costera, casi llana, y a 40 m de la pista el
+     acantilado, que cae al mar; al otro, las lomas que suben a la sierra del Cuera */
+  if(TEMA === 'bufones'){
+    if(x < 0){ var bh = suave((ax - 16)/34); return SUELO_PRAO + bh*(9 + 3*Math.sin(x*0.04 + 0.5)*Math.cos(z*0.03 + 1.2) + 1.5*Math.sin((x + z)*0.025)); }
+    if(ax < 40) return SUELO_PRAO + suave((ax - 12)/28)*(1.5 + 0.8*Math.sin(z*0.04 + x*0.02));
+    return SUELO_PRAO + 2 - suave((ax - 40)/18)*(18 + 2*Math.sin(z*0.05));
+  }
   var b = suave((ax - 20)/40);
   return SUELO_PRAO + b*(3 + 2.6*Math.sin(x*0.045 + 1.1)*Math.cos(z*0.04 + 0.4) + 1.4*Math.sin((x + z)*0.021));
 }
@@ -5177,6 +5802,9 @@ function alturaPrao(x, z){
 function colorTerreno(x, y, z, t){
   if(TEMA === 'sella' && Math.abs(x) < 8.5) return [mezclar(0.52, 0.6, t), mezclar(0.52, 0.58, t), mezclar(0.46, 0.5, t)];
   if(TEMA === 'brana') return [mezclar(0.5, 0.62, t), mezclar(0.7, 0.8, t), mezclar(0.32, 0.4, t)];
+  /* en El Pozu, prao oscuro con manchas de carbón; en Los Bufones, prao junto a la pista y caliza en el acantilado */
+  if(TEMA === 'pozu') return t > 0.78 ? [0.2, 0.2, 0.21] : [mezclar(0.32, 0.42, t), mezclar(0.5, 0.6, t), mezclar(0.3, 0.36, t)];
+  if(TEMA === 'bufones') return y < SUELO_PRAO - 0.5 ? [mezclar(0.6, 0.68, t), mezclar(0.6, 0.67, t), mezclar(0.58, 0.64, t)] : [mezclar(0.42, 0.54, t), mezclar(0.66, 0.76, t), mezclar(0.36, 0.44, t)];
   if(TEMA === 'picu'){
     var alto = y - SUELO_PRAO - baseMonte(z);
     if(alto > 15 + 3*t) return [0.93, 0.95, 0.98];
@@ -5392,6 +6020,157 @@ function paisajePicu(p, trozo){
   capsula(m, 0.42, 0.4, 16, 6, 0.05, [1, 0.8, 0.24], 0);
   transformar(m, v1, mult3(rotY(-0.5), [3, 0, 0, 0, 3, 0, 0, 0, 3]), xF, yM + 1.6, zF);
 }
+/* lo fijo de los obstáculos de El Pozu y Los Bufones, a la altura de siempre (luego se eleva con el tramo) */
+function obstaculoNuevoMalla(m, tr, pie){
+  var o = tr.obst, HA = H_ALTO, ACERO = [0.46, 0.46, 0.5], TRAVIESA = [0.4, 0.28, 0.18], MAD = [0.55, 0.36, 0.2], q;
+  /* una vía de x0 a x1 en z (dos carriles y traviesas cada 0,8 m) */
+  function via(z, x0, x1){
+    [-0.45, 0.45].forEach(function(dz){ caja(m, x0, HA + 0.02, z + dz - 0.05, x1, HA + 0.12, z + dz + 0.05, ACERO, 1, TODAS & ~YN); });
+    for(var x = x0 + 0.3; x < x1; x += 0.8) caja(m, x - 0.12, HA + 0.005, z - 0.7, x + 0.12, HA + 0.03, z + 0.7, TRAVIESA, 0, YP | XP | XN);
+  }
+  if(o.tipo === 'vagonetes') o.vias.forEach(function(v){
+    via(v.z, -13.5, 13.5);
+    /* fuera de la pista, a cada lado, el andén de madera donde esperan, el tope y la bocamina de la galería */
+    [-1, 1].forEach(function(l){
+      caja(m, l > 0 ? 6 : -13.8, HA - 0.5, v.z - 1.1, l > 0 ? 13.8 : -6, HA, v.z + 1.1, MAD, 0, TODAS & ~YN);
+      caja(m, l*13.4 - 0.25, HA, v.z - 0.8, l*13.4 + 0.25, HA + 0.9, v.z + 0.8, [0.86, 0.2, 0.16], 0, TODAS & ~YN);
+      cilindroY(m, l*6.6, v.z - 1.05, pie, HA, 0.25, 8, 1, false, false, MAD, 0); cilindroY(m, l*6.6, v.z + 1.05, pie, HA, 0.25, 8, 1, false, false, MAD, 0);
+      /* la bocamina: dos pies derechos y un cumbrial de madera, con la oscuridad detrás */
+      var xb = l*12.3;
+      caja(m, xb - 0.2, HA, v.z - 1.35, xb + 0.2, HA + 2.6, v.z - 1.05, MAD, 0, TODAS & ~YN);
+      caja(m, xb - 0.2, HA, v.z + 1.05, xb + 0.2, HA + 2.6, v.z + 1.35, MAD, 0, TODAS & ~YN);
+      caja(m, xb - 0.25, HA + 2.6, v.z - 1.5, xb + 0.25, HA + 3, v.z + 1.5, MAD, 0, TODAS);
+      caja(m, l > 0 ? xb + 0.2 : xb - 1.2, HA, v.z - 1.05, l > 0 ? xb + 1.2 : xb - 0.2, HA + 2.6, v.z + 1.05, [0.05, 0.05, 0.06], 0, l > 0 ? XN : XP);
+      caja(m, l > 0 ? xb + 0.2 : xb - 4, HA - 0.5, v.z - 2.2, l > 0 ? xb + 4 : xb - 0.2, HA + 3.8, v.z + 2.2, [0.36, 0.34, 0.33], 0, TODAS & ~YN & (l > 0 ? ~XN : ~XP));
+    });
+  });
+  if(o.tipo === 'mazu') for(q = 0; q < o.mazos.length; q += 3){
+    /* el pórtico de cada fila: dos postes, el travesaño y una guía por mazo, con su rueda de levas encima */
+    var zm = o.mazos[q].z;
+    [-1, 1].forEach(function(l){ caja(m, l*6.6 - 0.3, pie, zm - 0.35, l*6.6 + 0.3, HA + 8.6, zm + 0.35, MAD, 0, TODAS & ~YN); });
+    caja(m, -6.9, HA + 8.1, zm - 0.45, 6.9, HA + 8.8, zm + 0.45, [0.46, 0.3, 0.17], 0, TODAS);
+    [4, 0, -4].forEach(function(xg){
+      caja(m, xg - 0.45, HA + 5.2, zm - 0.45, xg + 0.45, HA + 8.1, zm - 0.3, [0.3, 0.3, 0.32], 1, TODAS);
+      caja(m, xg - 0.45, HA + 5.2, zm + 0.3, xg + 0.45, HA + 8.1, zm + 0.45, [0.3, 0.3, 0.32], 1, TODAS);
+      var v1 = m.n; cilindroY(m, 0, 0, -0.25, 0.25, 0.6, 10, 1, true, true, [0.62, 0.36, 0.2], 0); transformar(m, v1, rotX(PI/2), xg, HA + 9.4, zm);
+    });
+  }
+  if(o.tipo === 'bufones') o.bufones.forEach(function(b){
+    /* el agujero en la roca: oscuro, con su borde de caliza gris */
+    var S = 16, c0 = m.vert(b.x, HA + 0.025, b.z, 0, 1, 0, [0.06, 0.1, 0.14], 0);
+    for(var j = 0; j < S; j++){ var a0 = TAU*j/S, a1 = TAU*(j + 1)/S;
+      m.tri(c0, m.vert(b.x + o.radio*Math.cos(a1), HA + 0.025, b.z + o.radio*Math.sin(a1), 0, 1, 0, [0.12, 0.2, 0.26], 0), m.vert(b.x + o.radio*Math.cos(a0), HA + 0.025, b.z + o.radio*Math.sin(a0), 0, 1, 0, [0.12, 0.2, 0.26], 0)); }
+    for(j = 0; j < 9; j++){ var ab = TAU*j/9; elipsoide(m, b.x + (o.radio + 0.12)*Math.cos(ab), HA + 0.04, b.z + (o.radio + 0.12)*Math.sin(ab), 0.34, 0.12, 0.3, 6, 3, j % 2 ? [0.66, 0.66, 0.64] : [0.58, 0.58, 0.57], 0); }
+  });
+  if(o.tipo === 'cucana'){
+    /* las tres vigas, redondas y engrasadas (brillan), con la cara de arriba a ras del tablado; al final de cada una, en
+       un poste, el premio de la cucaña: una ristra de chorizos */
+    var L = o.z1 - o.z0 + 0.6;
+    o.vigas.forEach(function(xv){
+      var v2 = m.n;
+      cilindroY(m, 0, 0, -L/2, L/2, 0.7, 14, 8, true, true, function(j){ return j % 2 ? [0.62, 0.44, 0.24] : [0.72, 0.52, 0.28]; }, 1);
+      transformar(m, v2, rotX(PI/2), xv, HA - 0.7, (o.z0 + o.z1)/2);
+      cilindroY(m, xv + 0.95, o.z1 + 0.6, HA, HA + 2.6, 0.08, 6, 1, false, true, MAD, 0);
+      for(var ch = 0; ch < 4; ch++) elipsoide(m, xv + 0.95, HA + 2.3 - 0.28*ch, o.z1 + 0.6, 0.1, 0.16, 0.1, 6, 3, [0.72, 0.16, 0.12], 0);
+    });
+  }
+  if(o.tipo === 'feve'){
+    /* la vía de la FEVE, que sigue lejos a los dos lados sobre un terraplén; los postes de las barreras con la cruz de San
+       Andrés (blanca con borde rojo) y su luz roja */
+    via(o.zv, -70, 70);
+    [-1, 1].forEach(function(l){ caja(m, l > 0 ? 6 : -70, pie - 0.3, o.zv - 1.8, l > 0 ? 70 : -6, HA, o.zv + 1.8, [0.52, 0.5, 0.46], 0, TODAS & ~YN & (l > 0 ? ~XN : ~XP)); });
+    o.zb.forEach(function(zbar){ [-1, 1].forEach(function(l){
+      var xp = l*6.5;
+      cilindroY(m, xp, zbar, pie, HA + 3, 0.1, 8, 1, false, true, [0.94, 0.94, 0.92], 0);
+      caja(m, xp - 0.28, HA + 0.8, zbar - 0.28, xp + 0.28, HA + 1.2, zbar + 0.28, [0.3, 0.3, 0.32], 0, TODAS);
+      [-1, 1].forEach(function(dg){ var v3 = m.n; caja(m, -0.9, -0.1, -0.03, 0.9, 0.1, 0.03, [0.97, 0.97, 0.95], 0, TODAS); transformar(m, v3, rotZ(dg*0.6), xp, HA + 2.6, zbar - 0.12*l); });
+      elipsoide(m, xp, HA + 2.05, zbar - 0.14*l, 0.16, 0.16, 0.08, 8, 4, [0.95, 0.12, 0.1], 1);
+    }); });
+  }
+}
+/* ---------------- El Pozu: la cuenca minera, con castilletes, escombreras y la casa de máquinas ---------------- */
+/* el castillete de un pozu: cuatro patas de acero que se juntan arriba, la gran rueda (las poleas) y sus cables */
+function castillete(m, x, z, esc){
+  var v0 = m.n, ACERO_C = [0.46, 0.2, 0.16], y0 = alturaPrao(x, z);
+  [[-3, -2.2], [3, -2.2], [-3, 2.2], [3, 2.2]].forEach(function(p){ churro(m, [p[0], 0, p[1]], [p[0]*0.35, 18, p[1]*0.35], 0.28, ACERO_C, ACERO_C); });
+  for(var h = 3; h < 18; h += 3.5){ var f = 1 - 0.65*h/18; caja(m, -3*f, h, -2.2*f - 0.1, 3*f, h + 0.25, -2.2*f + 0.1, ACERO_C, 0, TODAS); caja(m, -3*f, h, 2.2*f - 0.1, 3*f, h + 0.25, 2.2*f + 0.1, ACERO_C, 0, TODAS); }
+  caja(m, -1.6, 17.6, -1.2, 1.6, 18.4, 1.2, ACERO_C, 0, TODAS);
+  var v1 = m.n; cilindroY(m, 0, 0, -0.18, 0.18, 2.6, 18, 1, true, true, [0.3, 0.3, 0.32], 1); transformar(m, v1, rotX(PI/2), 0, 20, 0);
+  churro(m, [2.4, 20.6, 0], [9, 6, 0], 0.06, [0.15, 0.15, 0.16], [0.15, 0.15, 0.16]);
+  transformar(m, v0, mult3(rotY(esc > 0 ? 0.3 : -0.3), [Math.abs(esc), 0, 0, 0, Math.abs(esc), 0, 0, 0, Math.abs(esc)]), x, y0 - 0.3, z);
+}
+function escombrera(m, x, z, r, alto){ cono(m, x, alturaPrao(x, z) - 0.5, z, r, alto, 12, [0.17, 0.16, 0.17], 0); }
+function casaMaquinas(m, x, z, gira){
+  var v0 = m.n, LADRILLO = [0.66, 0.3, 0.22], TEJA = [0.5, 0.2, 0.16];
+  caja(m, -5, 0, -3.5, 5, 6, 3.5, LADRILLO, 0, TODAS & ~YN);
+  extruir(m, [[-5.4, 6], [5.4, 6], [0, 8.6]], 0, 0, -3.8, 3.8, 7, TEJA, 0);
+  for(var w = 0; w < 4; w++) caja(m, -3.8 + 2.3*w, 2, 3.51, -2.6 + 2.3*w, 4.4, 3.52, [0.18, 0.2, 0.24], 0, ZP);
+  cilindroY(m, 3.6, -1.6, 0, 16, 0.7, 10, 2, false, true, LADRILLO, 0);
+  transformar(m, v0, rotY(gira), x, alturaPrao(x, z) - 0.2, z);
+}
+function paisajePozu(p, trozo){
+  var zp = p.tramos[0].zP0, zm = p.zMeta, m, rnd = F.crearRng(909), z;
+  m = trozo('paisaje', 6, 70);
+  castillete(m, -26, 30, 1); casaMaquinas(m, -24, 52, PI/2); escombrera(m, 30, 22, 11, 9); escombrera(m, 36, 48, 8, 6);
+  m = trozo('paisaje', zp - 10, zp + 30);
+  castillete(m, 27, zp + 10, -0.9); escombrera(m, -30, zp + 4, 10, 8);
+  for(z = 100; z < p.largo; z += 70){
+    m = trozo('paisaje', z - 6, z + 60);
+    for(var q = 0; q < 3; q++){ var lado = (q + Math.floor(z/70)) % 2 ? 1 : -1; escombrera(m, lado*(26 + 14*rnd()), z + 50*rnd(), 6 + 6*rnd(), 4 + 5*rnd()); }
+  }
+  m = trozo('paisaje', zm - 20, zm + 40);
+  castillete(m, -25, zm + 6, 1.1); casaMaquinas(m, 26, zm + 12, -PI/2);
+}
+/* ---------------- Los Bufones: la rasa de Llanes sobre el Cantábrico, con sus peñas, bufones y el faro ---------------- */
+var MAR_Y = -13;
+/* bajo cada obstáculo, en vez de la Pota, una poza de mar entre peñas de caliza, con espuma en la orilla (con la forma de
+   la Pota: quien cae, cae al agua) */
+function poza(m, zc, semiZ){
+  var perfil = [[1.0, SUELO_PRAO, 1, 0], [1.02, 1.62, 1, 0.1], [1.04, 1.82, 0.7, 0.7], [1.02, 1.9, 0, 1], [0.99, 1.82, -0.7, 0.7], [0.98, 1.42, -1, 0],
+                [0.95, 1.33, 0, 1], [0.72, 1.41, 0, 1], [0.47, 1.34, 0, 1], [0.22, 1.4, 0, 1], [0, 1.37, 0, 1]];
+  var ROCA = [0.6, 0.6, 0.58], ROCA2 = [0.7, 0.7, 0.67], FONDO = [0.3, 0.36, 0.38], AGUA = [0.2, 0.5, 0.62], AGUA2 = [0.25, 0.57, 0.67];
+  revolucion(m, perfil, 20, 0, 0, zc, 11.5, 1, semiZ, function(k){ return k <= 1 ? ROCA : (k <= 4 ? ROCA2 : (k === 5 ? FONDO : (k % 2 ? AGUA : AGUA2))); }, 0);
+  var rnd = F.crearRng(Math.round(zc*11) | 0);
+  for(var k = 0; k < 12; k++){ var a = rnd()*TAU; elipsoide(m, 10.6*Math.cos(a), 1.44, zc + (semiZ - 1.2)*Math.sin(a), 0.9, 0.06, 0.5, 6, 2, [1.3, 1.35, 1.4], 0); }
+}
+function marCantabrico(lista, z0, z1){
+  /* el mar: una lámina azul de 600 m de ancho, en trozos de 80 m, que ondea un poco */
+  for(var z = z0; z < z1; z += 80){
+    var m = new Malla(), filas = [], i, j, NX = 12, NZ = 4;
+    for(j = 0; j <= NZ; j++){
+      var fila = [];
+      for(i = 0; i <= NX; i++){
+        var x = -300 + 600*i/NX, zz = z + 80*j/NZ, t = 0.5 + 0.5*Math.sin(x*0.07 + zz*0.05)*Math.sin(zz*0.03 - x*0.02);
+        fila.push(m.vert(x, MAR_Y, zz, 0, 1, 0, [mezclar(0.14, 0.22, t), mezclar(0.42, 0.52, t), mezclar(0.58, 0.68, t)], 0, 0.35));
+      }
+      filas.push(fila);
+    }
+    for(j = 0; j < NZ; j++) for(i = 0; i < NX; i++) m.quad(filas[j][i], filas[j + 1][i], filas[j + 1][i + 1], filas[j][i + 1]);
+    lista.push({ nombre:'mar', z0:z - 2, z1:z + 82, m:m });
+  }
+}
+function faro(m, x, z){
+  var y0 = alturaPrao(x, z), BLANCO = [0.96, 0.95, 0.92];
+  cilindroY(m, x, z, y0 - 0.5, y0 + 13, 1.5, 12, 4, false, false, function(q){ return q % 2 ? BLANCO : [0.86, 0.2, 0.16]; }, 0);
+  cilindroY(m, x, z, y0 + 13, y0 + 15, 1.1, 10, 1, false, false, [0.95, 0.9, 0.55], 1);
+  cono(m, x, y0 + 15, z, 1.5, 1.6, 10, [0.3, 0.3, 0.32], 0);
+}
+function paisajeBufones(p, trozo){
+  var rnd = F.crearRng(1010), zm = p.zMeta, m, z;
+  /* peñas de caliza por la rasa y, junto al acantilado del lado del mar, bufones que soplan espuma (quietos, de adorno) */
+  for(z = 10; z < p.largo; z += 60){
+    m = trozo('paisaje', z - 8, z + 58);
+    for(var q = 0; q < 6; q++){
+      var lado = q % 2 ? 1 : -1, x = lado*(16 + 20*rnd()), zz = z + 50*rnd(), v0 = m.n, sc = 0.8 + 1.4*rnd();
+      elipsoide(m, 0, 0.3*sc, 0, 1.4*sc, 0.8*sc, 1.1*sc, 8, 4, q % 3 ? [0.7, 0.7, 0.68] : [0.62, 0.62, 0.6], 0);
+      transformar(m, v0, rotY(rnd()*TAU), x, alturaPrao(x, zz) - 0.2, zz);
+    }
+    var xb = 36 + 3*rnd(), zb = z + 25 + 10*rnd(), yb = alturaPrao(xb, zb);
+    elipsoide(m, xb, yb + 3, zb, 1.2, 4, 1.2, 8, 5, [0.93, 0.97, 1], 0); elipsoide(m, xb, yb + 7, zb, 2.4, 1.2, 2.4, 8, 4, [0.97, 0.99, 1], 0);
+  }
+  m = trozo('paisaje', zm - 10, zm + 60);
+  faro(m, 33, zm + 30);
+}
 /* todos los trozos de la pista de una manga (en coordenadas del mundo) */
 function construirTrozos(e){
   var p = e.pista, trozos = [], k;
@@ -5415,10 +6194,15 @@ function construirTrozos(e){
         caja(m, x0, H_ALTO - 0.4, zz0, x1, H_ALTO, zz1, col, 0, YP | (c === 0 ? XP : 0) | (c === 3 ? XN : 0) | (f === 0 ? ZN : 0));
       }
     } else if(TEMA === 'sella') sueloAgua(m, tr.zO0, tr.zO1, H_ALTO);   /* en El Sella, el río, sin tablado ni postes */
+    else if(tr.obst.tipo === 'cucana'){
+      /* en la cucaña, tablado solo al principio y al final: en medio, las tres vigas sobre el agua */
+      sueloCojines(m, tr.zO0, tr.obst.z0, H_ALTO, false, false, k*5); sueloCojines(m, tr.obst.z1, tr.zO1, H_ALTO, false, false, k*5 + 2);
+    }
     else if(tr.obst.tipo !== 'vau') sueloCojines(m, tr.zO0, tr.zO1, H_ALTO, false, false, k*5);
     /* en el vau no hay suelo: las piedras, cada una en su columna, son el suelo */
-    if(tr.obst.tipo !== 'vau' && TEMA !== 'sella') caja(m, -6, H_ALTO - 0.9, tr.zO0, 6, H_ALTO - 0.5, tr.zO1, LOSA, 0, XP | XN);
-    for(z = tr.zO0 + 5; z < tr.zO1 && tr.obst.tipo !== 'vau' && TEMA !== 'sella'; z += 10.5){ cilindroY(m, 5.2, z, pie, H_ALTO - 0.9, 0.35, 8, 1, false, false, MADERA, 0); cilindroY(m, -5.2, z, pie, H_ALTO - 0.9, 0.35, 8, 1, false, false, MADERA, 0); }
+    if(tr.obst.tipo === 'cucana' && TEMA !== 'sella'){ caja(m, -6, H_ALTO - 0.9, tr.zO0, 6, H_ALTO - 0.5, tr.obst.z0, LOSA, 0, XP | XN | ZP); caja(m, -6, H_ALTO - 0.9, tr.obst.z1, 6, H_ALTO - 0.5, tr.zO1, LOSA, 0, XP | XN | ZN); }
+    else if(tr.obst.tipo !== 'vau' && TEMA !== 'sella') caja(m, -6, H_ALTO - 0.9, tr.zO0, 6, H_ALTO - 0.5, tr.zO1, LOSA, 0, XP | XN);
+    for(z = tr.zO0 + 5; z < tr.zO1 && tr.obst.tipo !== 'vau' && TEMA !== 'sella'; z += 10.5){ if(tr.obst.tipo === 'cucana' && z > tr.obst.z0 - 0.5 && z < tr.obst.z1 + 0.5) continue; cilindroY(m, 5.2, z, pie, H_ALTO - 0.9, 0.35, 8, 1, false, false, MADERA, 0); cilindroY(m, -5.2, z, pie, H_ALTO - 0.9, 0.35, 8, 1, false, false, MADERA, 0); }
     if(tr.obst.tipo === 'sidra' && TEMA === 'sella') tr.obst.charcos.forEach(function(ch){
       /* en el río, los charcos son remolinos: anillos de agua clara y oscura, uno dentro de otro */
       for(var an = 4; an >= 1; an--){
@@ -5474,7 +6258,10 @@ function construirTrozos(e){
       caja(m, -0.22, pv - 0.14, md.z - 0.22, 0.22, pv + 0.06, md.z + 0.22, [0.3, 0.2, 0.12], 0, TODAS & ~YP);
     });
     if(tr.obst.tipo === 'barredoras') tr.obst.postes.forEach(function(po){ cilindroY(m, 0, po.z, H_ALTO, H_ALTO + 1.2, 0.42, 10, 3, false, true, function(q){ return q % 2 ? [0.95, 0.55, 0.22] : [1, 0.96, 0.86]; }, 0); });
-    if(TEMA !== 'sella') pota(m, (tr.zO0 + tr.zO1)/2, (tr.zO1 - tr.zO0)/2 + 1.5);   /* en El Sella, debajo corre el río */
+    if(tr.obst.tipo === 'vagonetes' || tr.obst.tipo === 'mazu' || tr.obst.tipo === 'bufones' || tr.obst.tipo === 'cucana' || tr.obst.tipo === 'feve') obstaculoNuevoMalla(m, tr, pie);
+    /* en El Sella, debajo corre el río; en Los Bufones, una poza de mar */
+    if(TEMA === 'bufones') poza(m, (tr.zO0 + tr.zO1)/2, (tr.zO1 - tr.zO0)/2 + 1.5);
+    else if(TEMA !== 'sella') pota(m, (tr.zO0 + tr.zO1)/2, (tr.zO1 - tr.zO0)/2 + 1.5);
     if(dyO) elevar(m, 0, dyO);
     /* arco-tómbola */
     m = trozo('arco', tr.zArco - 2, tr.zArco + 2); arcoTombola(m, tr.zArco);
@@ -5508,6 +6295,8 @@ function construirTrozos(e){
   if(TEMA === 'brana') paisajeBrana(p, trozo);
   else if(TEMA === 'sella') paisajeSella(p, trozo);
   else if(TEMA === 'picu') paisajePicu(p, trozo);
+  else if(TEMA === 'pozu') paisajePozu(p, trozo);
+  else if(TEMA === 'bufones'){ paisajeBufones(p, trozo); marCantabrico(trozos, -160, p.largo + 260); }
   else paisaje(p, trozo);
   praoTrozos(-160, p.largo + 260, trozos);
   /* todo, doblado según las curvas de la pista */
@@ -5687,10 +6476,11 @@ var G = {
   cabras:grupo('cabra', 4), cabezasCabra:grupo('cabezaCabra', 4), patasCabra:grupo('pataCabra', 16),
   baldosas:grupo('baldosa', 24), piedras:grupo('piedra', 60), quesos:grupo('queso', 16), balagares:grupo('balagar', 10),
   asturcones:grupo('asturcon', 9), cabezasAsturcon:grupo('cabezaAsturcon', 9), patasAsturcon:grupo('pataAsturcon', 36), piraguas:grupo('piragua', 16), palas:grupo('pala', 16), salmones:grupo('salmon', 12), troncos:grupo('tronco', 24),
+  vagonetas:grupo('vagoneta', 9), mazos:grupo('mazo', 12), chorros:grupo('chorro', 10), espumas:grupo('espuma', 10), trenes:grupo('tren', 1), barreras:grupo('barrera', 4),
   rotores:grupo('rotor', 15), ruedas:grupo('rueda', 5), sombras:grupo('sombra', 64), confeti:grupo('confeti', 90),
   caras:grupo('cara', 27)
 };
-var LISTA_TOON = [G.cuerpos, G.manos, G.gorros[0], G.gorros[1], G.gorros[2], G.gorros[3], G.marcador, G.bombillas, G.guantes, G.brazos, G.rodillos, G.barriles, G.madrenas, G.patasVaca, G.manzanas, G.bolos, G.bolas, G.cabras, G.cabezasCabra, G.patasCabra, G.baldosas, G.piedras, G.quesos, G.balagares, G.asturcones, G.cabezasAsturcon, G.patasAsturcon, G.piraguas, G.palas, G.salmones, G.troncos, G.rotores, G.ruedas];
+var LISTA_TOON = [G.cuerpos, G.manos, G.gorros[0], G.gorros[1], G.gorros[2], G.gorros[3], G.marcador, G.bombillas, G.guantes, G.brazos, G.rodillos, G.barriles, G.madrenas, G.patasVaca, G.manzanas, G.bolos, G.bolas, G.cabras, G.cabezasCabra, G.patasCabra, G.baldosas, G.piedras, G.quesos, G.balagares, G.asturcones, G.cabezasAsturcon, G.patasAsturcon, G.piraguas, G.palas, G.salmones, G.troncos, G.vagonetas, G.mazos, G.chorros, G.espumas, G.trenes, G.barreras, G.rotores, G.ruedas];
 var TODOS_GRUPOS = LISTA_TOON.concat([G.sombras, G.confeti, G.caras]);
 
 /* ---------------- contexto y recursos ---------------- */
@@ -5889,6 +6679,15 @@ function curvarMalla(m){
     v[q] = mk.x + x*mk.c; v[q + 2] = mk.z - x*mk.s;
     v[q + 3] = nx*mk.c + nz*mk.s; v[q + 5] = -nx*mk.s + nz*mk.c;
   }
+}
+/* el centro del tren de la FEVE que se ve (o null): llega de lejos, cruza (donde dice la carrera) y se aleja */
+function trenVisible(o, t){
+  var u = ((t + o.fase) % o.periodo + o.periodo) % o.periodo, s;
+  if(u >= o.espera - 40/o.vel) s = (u - o.espera)*o.vel;
+  else if(u < 3) s = (u + o.periodo - o.espera)*o.vel;
+  else return null;
+  var frente = o.dir*(o.xLado - s);
+  return frente + o.dir*o.largoTren/2;
 }
 function trs(o, k, x, y, z, yaw, pitch, roll, sx, sy, sz){
   if(CURVA){ aMundo(x, z, TRS_W); x = TRS_W[0]; z = TRS_W[1]; yaw += TRS_W[2]; }
@@ -6647,7 +7446,7 @@ function crearPodio(e){
     otros++;
   });
   var nombres = orden.slice(0, 3).map(function(i, q){ var c = e.corredores[i]; return (q + 1) + '.º ' + (i === 0 ? (PREF.nombre ? PREF.nombre + ' (tú)' : 'tú') : c.nombre); });
-  vivo('aviso', 'Podio de la Copa del Prao: ' + nombres.join('; ') + '. El primero se lleva la Faba de Oro. Intro, Espacio o Esc para ver el resultado.');
+  vivo('aviso', 'Podio de la ' + nombreCopa(e.nivel) + ': ' + nombres.join('; ') + '. El primero se lleva la Faba de Oro. Intro, Espacio o Esc para ver el resultado.');
   return { t0:juego.reloj + PODIO_ESPERA, z:z, y:yP, sitios:sitios, voladores:[], tConfeti:0, lanzados:0, fanfarria:false };
 }
 function saltarPodio(){ if(juego && juego.podio && !juego.finMostrado && juego.e.fin) mostrarFin(); }
@@ -6946,6 +7745,7 @@ function actualizarEscena(e, dt){
   tinte(G.marcador.datos, 12, [1, 1, 1], 1);
   /* obstáculos, tornos y ruedas de los tramos que se ven */
   var zi = CUNA.zMin, zf = CUNA.zMax, nbz = 0, nro = 0, nba = 0, nrot = 0, nru = 0, nbr = 0, nmd = 0, nmz = 0, nbo = 0, nbl = 0, ncb = 0, npi = 0, nqu = 0, nbg = 0, nas = 0, nsa = 0, ntr = 0;
+  var nvg = 0, nmzo = 0, nesp = 0, nch = 0, nbar = 0, ntren = 0;
   juego.vacaVisible = false; G.patasVaca.n = 0; juego.gaitas = null;
   for(k = 0; k < e.pista.tramos.length; k++){
     var tr = e.pista.tramos[k];
@@ -7016,6 +7816,32 @@ function actualizarEscena(e, dt){
       trs(G.salmones.datos, nsa*16, q.x, HA + q.y + 0.1, q.z, giro, cab, red ? 0 : 0.35*Math.sin(tR*18 + q.n), 1.3, 1.3, 1.3); tinte(G.salmones.datos, nsa*16 + 12, [1, 1, 1], 1); nsa++;
       if(q.u > 0.35 && G.sombras.n < G.sombras.max){ var sc = 0.3 + 0.6*(q.u - 0.35)/0.65; trs(G.sombras.datos, G.sombras.n*16, q.x, HA + 0.03, q.z, giro, 0, 0, sc*0.7, 1, sc*1.3); tinte(G.sombras.datos, G.sombras.n*16 + 12, [0, 0, 0], 0.1 + 0.3*(q.u - 0.35)/0.65); G.sombras.n++; }
     });
+    else if(o.tipo === 'vagonetes') C.vagonetas(e, k, tR).forEach(function(v){
+      /* la que va a salir se sacude un poco (el aviso, con la campana) */
+      if(nvg >= G.vagonetas.max) return;
+      var dv = v.avisa && !red ? 0.03*Math.sin(tR*40 + v.h) : 0;
+      trs(G.vagonetas.datos, nvg*16, v.x + dv, HA + 0.06, v.z, v.dir > 0 ? 0 : PI, 0, 0, 1, 1, 1); tinte(G.vagonetas.datos, nvg*16 + 12, [1, 1, 1], 1); nvg++;
+    });
+    else if(o.tipo === 'mazu') o.mazos.forEach(function(mzo){
+      /* arriba, antes de caer, tiembla (el aviso); su sombra se oscurece al bajar */
+      if(nmzo >= G.mazos.max) return;
+      var q = C.mazoEn(o, mzo, tR), dm = q.avisa && !red ? 0.05*Math.sin(tR*60 + mzo.x) : 0;
+      trs(G.mazos.datos, nmzo*16, q.x + dm, HA + q.alto, q.z, 0, 0, 0, 1, 1, 1); tinte(G.mazos.datos, nmzo*16 + 12, [1, 1, 1], 1); nmzo++;
+      if(G.sombras.n < G.sombras.max){ var fs = 1 - q.alto/o.alto; trs(G.sombras.datos, G.sombras.n*16, q.x, HA + 0.03, q.z, 0, 0, 0, 2.6, 1, 1.7); tinte(G.sombras.datos, G.sombras.n*16 + 12, [0, 0, 0], 0.08 + 0.32*fs); G.sombras.n++; }
+    });
+    else if(o.tipo === 'bufones') o.bufones.forEach(function(bf){
+      var q = C.bufonEn(o, bf, tR);
+      if(q.fase === 'ruge' && nesp < G.espumas.max){ var ce = red ? 1 : 0.8 + 0.3*Math.sin(tR*25 + bf.x); trs(G.espumas.datos, nesp*16, bf.x, HA, bf.z, tR*0.5, 0, 0, ce, 1, ce); tinte(G.espumas.datos, nesp*16 + 12, [1, 1, 1], 1); nesp++; }
+      if(q.fase === 'sopla' && nch < G.chorros.max){ var hc = 0.4 + 6*q.fuerza; trs(G.chorros.datos, nch*16, bf.x, HA - 0.1, bf.z, 0, 0, 0, 1 + 0.25*q.fuerza, hc, 1 + 0.25*q.fuerza); tinte(G.chorros.datos, nch*16 + 12, [1, 1, 1], 1); nch++; }
+    });
+    else if(o.tipo === 'feve'){
+      /* las cuatro medias barreras (una a cada lado, antes y después de la vía) y el tren, que se ve llegar de lejos y
+         alejarse, aunque para la carrera solo cuenta mientras cruza */
+      var fv = C.feveEn(o, tR), giroB = (1 - fv.bajada)*PI/2;
+      o.zb.forEach(function(zbar){ [-1, 1].forEach(function(l){ if(nbar >= G.barreras.max) return; trs(G.barreras.datos, nbar*16, -l*6.5, HA + 1, zbar, l > 0 ? 0 : PI, 0, giroB, 1, 1, 1); tinte(G.barreras.datos, nbar*16 + 12, [1, 1, 1], 1); nbar++; }); });
+      var tv = trenVisible(o, tR);
+      if(tv !== null && ntren < G.trenes.max){ trs(G.trenes.datos, ntren*16, tv, HA + 0.06, o.zv, o.dir > 0 ? 0 : PI, 0, 0, 1, 1, 1); tinte(G.trenes.datos, ntren*16 + 12, [1, 1, 1], 1); ntren++; }
+    }
     if(tr.vaca && tr.vaca.z + 3 > zi && tr.vaca.z - 3 < zf) ponerVaca(e, tr, tR, red);
     if(tr.zMuro + 1 > zi && tr.zMuro - 1 < zf && !muroTapado(tr.zMuro)) for(var sm = 0; sm < 3 && nrot < G.rotores.max; sm++){ trs(G.rotores.datos, nrot*16, C.TORNOS_X[sm], tr.yPlaza, tr.zMuro, e.tornos[k][sm].ang, 0, 0, 1, 1, 1); tinte(G.rotores.datos, nrot*16 + 12, [1, 1, 1], 1); nrot++; }
     if(tr.zArco + 2 > zi && tr.zArco - 2 < zf && nru < G.ruedas.max){ var pr = posRueda(tr); trs(G.ruedas.datos, nru*16, pr[0], pr[1], pr[2], 0, 0, juego.ruedas[k] ? juego.ruedas[k].ang : 0, 1, 1, 1); tinte(G.ruedas.datos, nru*16 + 12, [1, 1, 1], 1); nru++; }
@@ -7024,6 +7850,7 @@ function actualizarEscena(e, dt){
   G.bolos.n = nbo; G.bolas.n = nbl; G.cabras.n = ncb; G.cabezasCabra.n = ncb; G.patasCabra.n = 4*ncb; G.rotores.n = nrot; G.ruedas.n = nru;
   G.piedras.n = npi; G.quesos.n = nqu; G.balagares.n = nbg; G.asturcones.n = nas; G.cabezasAsturcon.n = nas; G.patasAsturcon.n = 4*nas;
   G.salmones.n = nsa; G.troncos.n = ntr;
+  G.vagonetas.n = nvg; G.mazos.n = nmzo; G.espumas.n = nesp; G.chorros.n = nch; G.barreras.n = nbar; G.trenes.n = ntren;
   /* guantes de los portazos y confeti de los sellos */
   var ng = 0;
   juego.guantes = juego.guantes.filter(function(g){ return tR - g.t0 < 0.5 && tR >= g.t0 - 0.05; });
@@ -7340,12 +8167,19 @@ var Sonido = {
     for(var k = 0; k < n; k++){ var r = Math.random(); ruido(0.035, { filtro:'bandpass', f:1600 + 1600*Math.random(), vol:(0.1 + 0.12*Math.random())*fuerza, retraso:1.6*r*r }); }
   },
   toc: function(){ tono(240, 0.12, { tipo:'square', f2:150, vol:0.16 }); ruido(0.08, { filtro:'bandpass', f:900, vol:0.25 }); },
+  /* El Pozu y Los Bufones: la campana de las vagonetas y del paso a nivel, la vagoneta que te lleva, el mazo que cae, el
+     bufón que sopla y la bocina del tren */
+  campana: function(lejos){ [0, 0.32].forEach(function(r){ tono(1320, 0.3, { tipo:'triangle', vol:lejos ? 0.03 : 0.08, retraso:r }); tono(1980, 0.25, { vol:lejos ? 0.015 : 0.04, retraso:r + 0.01 }); }); },
+  clonc: function(){ tono(180, 0.25, { tipo:'square', f2:90, vol:0.12 }); ruido(0.2, { filtro:'bandpass', f:1200, vol:0.28 }); },
+  mazazo: function(lejos){ tono(70, 0.35, { f2:40, vol:lejos ? 0.1 : 0.42 }); ruido(0.2, { filtro:'lowpass', f:400, vol:lejos ? 0.08 : 0.32 }); },
+  bufido: function(lejos){ ruido(1.0, { filtro:'bandpass', f:900, f2:2400, vol:lejos ? 0.08 : 0.3 }); tono(60, 0.6, { f2:95, vol:lejos ? 0.04 : 0.14 }); },
+  bocina: function(){ tono(415, 0.9, { tipo:'sawtooth', vol:0.06 }); tono(523, 0.9, { tipo:'sawtooth', vol:0.045, retraso:0.02 }); },
   volador: function(){ tono(520, 1.0, { f2:1700, vol:0.04 }); ruido(0.4, { filtro:'lowpass', f:1300, f2:180, vol:0.5, retraso:1.05 }); tono(75, 0.4, { f2:36, vol:0.4, retraso:1.05 }); }
 };
 
 /* ---------------- música ----------------
-   Cada manga del show con su canción, al lado de este archivo, en su carpeta (MUSICAS, por manga: los MP3 originales de
-   192 kbps que aportó el profesor): «One Final Tumble» en la primera (2026-09-26), «Final Lap Pandemonium» en la
+   Cada manga del show con su canción, al lado de este archivo, en su carpeta (MUSICAS, por manga: las canciones que
+   aportó el profesor, en AAC de 96 kbps sacado de sus MP3 de 192 kbps): «One Final Tumble» en la primera (2026-09-26), «Final Lap Pandemonium» en la
    segunda y «Last Lap Dash» en la final (las dos, 2026-09-27), sea cual sea su pista. Es igual en los tres niveles, y
    el entrenamiento, que es una sola manga, suena como la primera. Cada canción se carga en un <audio> en bucle la primera
    vez que hace falta (si falta el archivo, el juego sigue sin música); como se llama desde el clic de «Jugar» o
@@ -7353,7 +8187,7 @@ var Sonido = {
    (2026-09-27), la música sigue sonando hasta que empieza la manga siguiente: en la pausa, al acabar la manga, en la
    repetición y en el menú. Nunca suena con la página oculta o sin foco (así no suenan dos pestañas a la vez). Mientras
    habla la voz del navegador, baja. Es aparte del sonido de los efectos (M). */
-var MUSICAS = ['one-final-tumble.mp3', 'final-lap-pandemonium.mp3', 'last-lap-dash.mp3'];
+var MUSICAS = ['one-final-tumble.m4a', 'final-lap-pandemonium.m4a', 'last-lap-dash.m4a'];
 var Musica = { pistas:{}, errores:{}, manga:-1, volumen:0.45 };
 /* la canción de la última manga (null antes de la primera o si su archivo ha fallado); con crear, la carga si hace falta */
 function pistaMusica(crear){
@@ -7710,6 +8544,25 @@ function sonidoObstaculos(e){
     } else if(o.tipo === 'gaita'){
       var g = C.gaitaEn(o, t), clave = g.lado + g.fase;
       if(clave !== juego.ultGaita){ juego.ultGaita = clave; if(g.fase === 'hincha') Sonido.hincha(); else if(g.fase === 'sopla'){ Sonido.sopla(); subtitulo('¡fuuu! sopla la gaita'); } }
+    } else if(o.tipo === 'vagonetes'){
+      /* la campana del tren de vagonetas que va a salir cerca (una vez por cruce) */
+      var uv = juego.ultVagon || (juego.ultVagon = {});
+      o.vias.forEach(function(via, jv){ var qv = C.vagonetaEn(o, via, 0, t), idV = k*8 + jv; if(qv.avisa && uv[idV] !== qv.dir && Math.abs(via.z - j.z) < 16){ uv[idV] = qv.dir; Sonido.campana(Math.abs(via.z - j.z) > 8); } });
+    } else if(o.tipo === 'mazu'){
+      /* el golpe de cada mazo que cae cerca (como mucho uno cada cuarto de segundo; el más cercano, más fuerte) */
+      if(t - (juego.ultMazo || -9) > 0.25) for(var jm = 0; jm < o.mazos.length; jm++){
+        var mzo = o.mazos[jm], qm = C.mazoEn(o, mzo, t);
+        if(qm.abajo && Math.abs(mzo.z - j.z) < 14 && juego.mazoCaido !== k*64 + jm){ juego.mazoCaido = k*64 + jm; juego.ultMazo = t; Sonido.mazazo(Math.abs(mzo.z - j.z) > 5); break; }
+      }
+    } else if(o.tipo === 'bufones'){
+      /* el bufido del bufón que empieza a soplar cerca */
+      var ub = juego.ultBufon || (juego.ultBufon = {});
+      o.bufones.forEach(function(bf, jb){ var qb = C.bufonEn(o, bf, t), idB = k*16 + jb, dzb = Math.abs(bf.z - j.z); if(qb.fase === 'sopla' && ub[idB] !== true && dzb < 10){ ub[idB] = true; Sonido.bufido(dzb > 4); } else if(qb.fase !== 'sopla') ub[idB] = false; });
+    } else if(o.tipo === 'feve'){
+      /* la campana del paso a nivel al bajar las barreras, y la bocina del tren al llegar (una vez por tren) */
+      var fq = C.feveEn(o, t), vuelta = Math.floor((t + o.fase)/o.periodo);
+      if(fq.barreras === 'bajan' && juego.ultCampanaFeve !== k*1000 + vuelta && Math.abs(o.zv - j.z) < 40){ juego.ultCampanaFeve = k*1000 + vuelta; Sonido.campana(Math.abs(o.zv - j.z) > 15); }
+      if(fq.x0 !== null && juego.ultBocina !== k*1000 + vuelta && Math.abs(o.zv - j.z) < 40){ juego.ultBocina = k*1000 + vuelta; Sonido.bocina(); subtitulo('¡piii! el tren de la FEVE'); }
     }
   }
 }
@@ -7763,7 +8616,7 @@ function htmlFinEntreno(){
            '<span class="le-texto"><span class="le-que">' + it.que + '</span> <span class="le-como">' + (tactil ? it.tactil : it.como()) + '</span></span>' +
            '<span class="solo-lector">' + (ok ? ': hecho.' : ': aún no.') + '</span></li>';
   }).join('');
-  var dicho = n === LISTA_ENTRENO.length ? '¡Lo has probado todo! Tu faba está lista para la Copa del Prao.'
+  var dicho = n === LISTA_ENTRENO.length ? '¡Lo has probado todo! Tu faba está lista para la ' + nombreCopa(PREF.nivel) + '.'
             : 'Has probado ' + n + ' de ' + LISTA_ENTRENO.length + '. Lo que queda (○) se prueba en otro entrenamiento o ya en la carrera.';
   return '<p class="entreno-resumen">' + dicho + '</p><ul class="lista-entreno">' + filas + '</ul>';
 }
@@ -7774,8 +8627,9 @@ function mostrarFinEntreno(){
   FIN.titulo.textContent = '¡Entrenamiento hecho!'; FIN.titulo.className = 'fin-titulo pasa';
   FIN.cuerpo.innerHTML = htmlFinEntreno();
   FIN.desplazable.scrollTop = 0;
-  FIN.siguiente.hidden = false; FIN.siguiente.textContent = 'Jugar la Copa del Prao';
+  FIN.siguiente.hidden = false; FIN.siguiente.textContent = 'Jugar la ' + nombreCopa(PREF.nivel);
   FIN.otra.textContent = 'Repetir el entrenamiento';
+  FIN.nuevo.hidden = true;
   H.rampa.hidden = true; H.veredicto.hidden = true;
   abrirDialogo(FIN.capa, FIN.siguiente);
   callar();
@@ -7881,12 +8735,16 @@ function atender(ev){
       else if(ev.obstaculo === 'balagar'){ Sonido.boing(); subtitulo('¡boing! rebotas en el balagar'); }
       else if(ev.obstaculo === 'asturcon'){ Sonido.relincho(); subtitulo('¡hiii! te arrolla un asturcón'); }
       else if(ev.obstaculo === 'salmon'){ Sonido.plof(false); subtitulo('¡plaf! un salmón en la cabeza'); }
+      else if(ev.obstaculo === 'vagoneta'){ Sonido.clonc(); subtitulo('¡clonc! te lleva la vagoneta'); }
+      else if(ev.obstaculo === 'mazo'){ Sonido.mazazo(false); subtitulo('¡pum! te chafa el mazu'); }
+      else if(ev.obstaculo === 'bufon'){ Sonido.bufido(false); subtitulo('¡fuuush! el bufón te lanza'); }
+      else if(ev.obstaculo === 'tren'){ Sonido.bocina(); subtitulo('¡piii! te arrastra el tren'); }
       else { Sonido.boing(); subtitulo('boing'); }
       break;
     case 'borde': if(esTu && !e.asistencia) aviso(doc.body.classList.contains('tactil') ? '¡Al borde! Mantén AGARRA' : '¡Al borde! Mantén ' + teclaDe('agarrar'), '¡Al borde! Mantén agarrar para colgarte del canto.'); break;
     case 'agarre': if(esTu){ subtitulo('¡agarrada al canto!'); } break;
     case 'caida': if(esTu){ Sonido.caida(); subtitulo('oooh'); } break;
-    case 'chof': if(esTu){ Sonido.chof(); subtitulo(e.pista.tema === 'sella' ? '¡chof! al Sella' : '¡chof! a la Pota'); } break;
+    case 'chof': if(esTu){ Sonido.chof(); subtitulo(e.pista.tema === 'sella' ? '¡chof! al Sella' : (e.pista.tema === 'bufones' ? '¡chof! al mar' : '¡chof! a la Pota')); } break;
     case 'piedra':
       /* una piedra falsa del vau: la tuya suena fuerte; la de otro, si está cerca, más bajo (así se oye dónde no pisar) */
       if(esTu){ Sonido.crac(false); subtitulo('¡crac! piedra falsa'); }
@@ -7940,9 +8798,11 @@ function efectoSello(ev){
 }
 
 /* ---------------- fin de la manga ---------------- */
-var FIN = { capa:$('capaFin'), titulo:$('tFin'), manga:$('finManga'), cuerpo:$('finCuerpo'), desplazable:$('finDesplazable'), siguiente:$('bSiguiente'), otra:$('bOtraVez'), menu:$('bMenuFin') };
+var FIN = { capa:$('capaFin'), titulo:$('tFin'), manga:$('finManga'), cuerpo:$('finCuerpo'), desplazable:$('finDesplazable'), siguiente:$('bSiguiente'), otra:$('bOtraVez'), nuevo:$('bShowNuevo'), menu:$('bMenuFin') };
 function colorHex(c){ return '#' + c.slice(0, 3).map(function(v){ var s = Math.round(limitar(v, 0, 1)*255).toString(16); return s.length < 2 ? '0' + s : s; }).join(''); }
 function nombreNivel(n){ var nv = F.nivelDe(n); return 'Nivel ' + nv.n + ': ' + nv.nombre; }
+/* la copa del nivel n: «Copa del Prao» (niveles 1 a 3) o «Copa del Puerto» (nivel 4) */
+function nombreCopa(n){ return F.COPAS[F.nivelDe(n).copa].nombre; }
 /* el resumen del final: arriba, el veredicto en grande («¡Pasas!», «Te quedas fuera»...) con tu puesto; luego puntos y
    medalla, la clasificación (tu fila destacada, con «TÚ», y la marca de los que pasan) y en qué fallas; lo detallado
    (cada muro resuelto paso a paso, qué pasaba en cada puerta y la cuenta de un bot), plegado */
@@ -7966,6 +8826,7 @@ function htmlFin(){
     filas.push('<tr' + (cl.length ? ' class="' + cl.join(' ') + '"' : '') + '><td class="fc-pos">' + c.puestoFinal + '.º</td><td class="fc-nombre"><span class="fc-color" style="background:' + colorHex(juego.colores[i]) + '" aria-hidden="true"></span>' +
       (yo ? '<strong>' + escapar(nombreJugador()) + (PREF.nombre ? ' <small>(tú)</small>' : '') + '</strong>' : escapar(c.nombre)) + '</td><td class="fc-marca">' + marca + '</td></tr>');
   });
+  if(juego.recordNuevo) h.push('<p class="fin-record">¡Récord del nivel ' + e.nivel + ' en este dispositivo: ' + miles(PREF.records[String(e.nivel)].puntos) + ' puntos!</p>');
   h.push('<table class="fin-tabla"><caption>Clasificación · ' + (e.esFinal ? 'gana el 1.º' : 'pasan ' + e.pasan) + '</caption><tbody>' + filas.join('') + '</tbody></table>');
   if(codigoShow) h.push('<p class="nota">Código de la carrera: <strong>' + codigoShow + '</strong>. Con este código, toda la clase corre los mismos muros.</p>');
   h.push('<h3>En qué fallas</h3>');
@@ -7977,7 +8838,7 @@ function htmlFin(){
   var aPracticar = fallosShow.slice(), variasMangas = e.manga > 0;
   if(aPracticar.length) h.push('<div class="fin-practica"><button type="button" class="boton" data-accion="practicar">Practica lo que fallas</button><p class="nota">Muros nuevos de ' +
     escapar(listaY(aPracticar.map(function(id){ return minuscula(F.plantilla(id).nombre); }))) + (variasMangas ? ' (lo que has fallado en todo el show)' : '') + ', sin correr. Después vuelves aquí.</p></div>');
-  if(r.sugerirRitmo) h.push('<p class="nota">Consejo: prueba el ritmo <strong>' + NOMBRE_RITMO[r.sugerirRitmo] + '</strong> (en el menú). Tendrás más tiempo en cada muro, y los rivales también piensan más despacio.</p>');
+  if(r.sugerirRitmo) h.push('<p class="nota">Consejo: prueba el ritmo <strong>' + NOMBRE_RITMO[r.sugerirRitmo] + '</strong> (en el menú, en «Más opciones»). Tendrás más tiempo en cada muro, y los rivales también piensan más despacio.</p>');
   /* lo detallado, plegado: cada muro resuelto, qué pasaba en las puertas que probaste, tu puerta y la cuenta de un bot */
   var muros = [];
   for(k = 0; k < e.muros.length; k++){
@@ -8035,7 +8896,7 @@ function prepararRepaso(){
   inp.addEventListener('input', function(){ var c = limpiarCodigo(inp.value); if(inp.value !== c) inp.value = c; });
   function ver(){
     var c = limpiarCodigo(inp.value);
-    if(!codigoValido(c)){ cuerpo.innerHTML = '<p class="nota mal">Un código es el nivel (1, 2 o 3) y cuatro letras, sin I ni O. Por ejemplo, 1KFRT.</p>'; return; }
+    if(!codigoValido(c)){ cuerpo.innerHTML = '<p class="nota mal">Un código es el nivel (del 1 al 4) y cuatro letras, sin I ni O. Por ejemplo, 1KFRT.</p>'; return; }
     cuerpo.innerHTML = repasoCodigo(c);
   }
   $('bRepaso').addEventListener('click', ver);
@@ -8057,9 +8918,11 @@ var RIVALES_TXT = {
   Sportinguista:'Aficionado del Sporting de Gijón, de rojo y blanco.',
   Oviedista:'Aficionado del Real Oviedo, de azul.'
 };
-/* un ejemplo de verdad del error de un rival: un muro de las plantillas en el que una puerta sale de su error */
-function ejemploError(nombre){
-  var r = F.crearRng(7777 + nombre.length*131 + nombre.charCodeAt(0)*7), pls = F.PLANTILLAS;
+/* un ejemplo de verdad del error de un rival: un muro de las plantillas de la copa en el que una puerta sale de su
+   error (en la Copa del Puerto, si su manía no sale en las potencias, el de la del Prao) */
+function ejemploError(nombre, copa){
+  copa = copa || 'prao';
+  var r = F.crearRng(7777 + nombre.length*131 + nombre.charCodeAt(0)*7), pls = F.COPAS[copa].plantillas.map(function(id){ return F.plantilla(id); });
   for(var k = 0; k < 600; k++){
     var pl = pls[k % pls.length], muro = F.generarMuro(r, [pl.clase], { plantilla:pl.id });
     if(!muro) continue;
@@ -8068,11 +8931,11 @@ function ejemploError(nombre){
       if(er && er.bot === nombre) return { cuenta:F.textoCuenta(muro).html, bien:F.textoValor(muro.respuesta, muro.fam).html, mal:o.f.html, regla:er.regla };
     }
   }
-  return null;
+  return copa !== 'prao' ? ejemploError(nombre, 'prao') : null;
 }
-function textoRival(b){
+function textoRival(b, copa){
   if(b.mania){
-    var ej = ejemploError(b.nombre);
+    var ej = ejemploError(b.nombre, copa);
     if(!ej) return '<p class="rival-tipo">Manía</p>';
     return '<p class="rival-tipo">Su manía</p><p>' + escapar(mayuscula(ej.regla)) + '.</p><p class="rival-ejemplo">Por ejemplo, ' + ej.cuenta + ' da ' + ej.bien + ', pero a ' + escapar(b.nombre) + ' le sale ' + ej.mal + '.</p>';
   }
@@ -8080,18 +8943,21 @@ function textoRival(b){
   var tipo = b.nombre === 'Rayo' || b.nombre === 'Trasgu' ? 'Rival' : (b.nombre === 'Sportinguista' || b.nombre === 'Oviedista' ? 'De la grada' : 'Mitología asturiana');
   return '<p class="rival-tipo">' + tipo + '</p><p>' + escapar(t) + '</p>';
 }
-var galeriaHecha = false, retratosPendientes = [];
+/* la galería se hace para la copa del nivel elegido (galeriaHecha: esa copa) y se rehace si cambia */
+var galeriaHecha = null, retratosPendientes = [];
 function montarGaleria(){
-  var ul = $('listaRivales');
+  var ul = $('listaRivales'), copa = F.nivelDe(PREF.nivel).copa;
+  while(ul.firstChild) ul.removeChild(ul.firstChild);
+  retratosPendientes = [];
   F.BOTS.forEach(function(b, kb){
     var li = doc.createElement('li'), cv = doc.createElement('canvas'), txt = doc.createElement('div'), gi = GORROS[b.gorro] || 0;
     li.className = 'rival';
     cv.className = 'rival-retrato'; cv.width = cv.height = 192; cv.setAttribute('aria-hidden', 'true');
-    txt.className = 'rival-texto'; txt.innerHTML = '<h3>' + escapar(b.nombre) + '</h3>' + textoRival(b);
+    txt.className = 'rival-texto'; txt.innerHTML = '<h3>' + escapar(b.nombre) + '</h3>' + textoRival(b, copa);
     li.appendChild(cv); li.appendChild(txt); ul.appendChild(li);
     retratosPendientes.push({ cv:cv, o:{ col:COLORES_BOT[kb % COLORES_BOT.length], gi:gi, gcol:GORRO_BOT[b.nombre] || COLORES_GORRO[gi][kb % 4], celda:CELDA_CARA.contenta } });
   });
-  galeriaHecha = true;
+  galeriaHecha = copa;
 }
 /* los retratos, de cuatro en cuatro por fotograma (sin WebGL, las tarjetas se quedan sin retrato) */
 function pintarRetratos(){
@@ -8102,7 +8968,7 @@ function pintarRetratos(){
 function abrirRivales(){
   if(juego) salirAlMenu();
   cambiarPantalla('rivales');
-  if(!galeriaHecha) montarGaleria();
+  if(galeriaHecha !== F.nivelDe(PREF.nivel).copa) montarGaleria();
   (function paso(){ if(pintarRetratos() && pantalla === 'rivales') win.requestAnimationFrame(paso); })();
   $('bMenuRivales').focus();
 }
@@ -8130,6 +8996,19 @@ function volverAlFin(){
   arrancarBucle();
   abrirDialogo(FIN.capa, juego.siguiente || esPrueba() ? FIN.siguiente : FIN.otra);
 }
+/* acabado el show, su récord en este dispositivo: los puntos del show (si superan los del mejor) y la Faba de Oro */
+function apuntarRecord(e){
+  if(juego.recordApuntado) return;
+  juego.recordApuntado = true;
+  var r = e.fin.jugador, n = String(e.nivel), rec = PREF.records[n] || { puntos:0, fabas:0 };
+  var puntos = Math.floor(r.show ? r.show.puntos : r.puntos) || 0;
+  juego.recordNuevo = puntos > rec.puntos;
+  if(juego.recordNuevo) rec.puntos = puntos;
+  if(e.esFinal && r.faba) rec.fabas = (rec.fabas || 0) + 1;
+  PREF.records[n] = rec;
+  guardarPrefs();
+  pintarNiveles();
+}
 /* el veredicto grande y su color (siempre con su texto) */
 function tituloFin(){
   var e = juego.e, r = e.fin.jugador;
@@ -8144,6 +9023,7 @@ function mostrarFin(){
   var e = juego.e, prueba = esPrueba(), sig = prueba ? null : C.opcionesSiguiente(e), t = tituloFin();
   juego.finMostrado = true; juego.siguiente = sig;
   sumarFallos(e);
+  if(!prueba && !sig) apuntarRecord(e);
   soltarRaton(false);
   FIN.manga.textContent = e.config.nombre + ' · ' + nombreNivel(e.nivel) + (e.modo === 'clase' ? ' · modo clase' : '') + (prueba ? ' · prueba de pista' : '');
   FIN.titulo.textContent = t.texto; FIN.titulo.className = 'fin-titulo ' + t.clase;
@@ -8153,6 +9033,9 @@ function mostrarFin(){
   else if(sig){ FIN.siguiente.hidden = false; FIN.siguiente.textContent = 'Seguir: ' + C.pistaDe(sig).nombre + (sig.reserva ? ' (como reserva)' : ''); }
   else FIN.siguiente.hidden = true;
   FIN.otra.textContent = prueba ? 'Elegir otra pista' : 'Otro show';
+  /* con el código de la clase, «Otro show» repetiría el mismo: se dice, y al lado sale uno nuevo, sin código */
+  FIN.nuevo.hidden = prueba || !codigoShow;
+  if(!prueba && codigoShow) FIN.otra.textContent = 'Otra vez con el código ' + codigoShow;
   H.rampa.hidden = true; H.veredicto.hidden = true;
   abrirDialogo(FIN.capa, sig || prueba ? FIN.siguiente : FIN.otra);
   callar();
@@ -8581,9 +9464,18 @@ function cambiarPantalla(n){
   } catch(e){}
 }
 function radios(nombre){ return Array.prototype.slice.call(doc.querySelectorAll('input[name="' + nombre + '"]')); }
-/* ---------------- niveles: tres botones con aria-pressed (uno elegido); al elegir uno se propone su ritmo ---------------- */
+/* ---------------- niveles: cuatro botones con aria-pressed (uno elegido); al elegir uno se propone su ritmo ---------------- */
+function textoRecord(n){
+  var r = PREF.records[n];
+  if(!r || !(r.puntos > 0 || r.fabas > 0)) return '';
+  return 'Récord: ' + miles(r.puntos) + ' puntos' + (r.fabas ? ' · ' + r.fabas + (r.fabas === 1 ? ' Faba de Oro' : ' Fabas de Oro') : '');
+}
 function pintarNiveles(){
   M.niveles.forEach(function(b){ b.setAttribute('aria-pressed', +b.getAttribute('data-nivel') === PREF.nivel ? 'true' : 'false'); });
+  Array.prototype.forEach.call(doc.querySelectorAll('.bn-record'), function(el){
+    var t = textoRecord(el.getAttribute('data-record'));
+    el.textContent = t || 'Sin récord todavía'; el.classList.toggle('sin', !t);
+  });
   M.jugar.textContent = 'Jugar el nivel ' + PREF.nivel;
 }
 function elegirNivel(n){
@@ -8591,7 +9483,8 @@ function elegirNivel(n){
   PREF.nivel = nv.n; PREF.ritmo = nv.ritmo; guardarPrefs();
   radios('ritmo').forEach(function(r){ r.checked = r.value === PREF.ritmo; });
   pintarNiveles();
-  M.notaNivel.textContent = nombreNivel(nv.n) + '. Ritmo ' + NOMBRE_RITMO[PREF.ritmo] + ' (puedes cambiarlo abajo, en «Ritmo»).';
+  M.notaNivel.textContent = nombreNivel(nv.n) + '. Ritmo ' + NOMBRE_RITMO[PREF.ritmo] + ' (puedes cambiarlo abajo, en «Más opciones»).';
+  pintarResumenOpciones();
   if(M.codigo){ var cc = limpiarCodigo(M.codigo.value); if(codigoValido(cc) && +cc.charAt(0) !== nv.n){ M.codigo.value = nv.n + cc.slice(1); pintarCodigo(); } }
 }
 function prepararNiveles(){
@@ -8766,13 +9659,22 @@ function prepararVitrina(){
   }
   pintarVitrina();
 }
+/* «Más opciones», plegadas: su resumen dice cómo están el modo y el ritmo, y las ayudas y la lectura si no son las de
+   siempre */
+function pintarResumenOpciones(){
+  var el = $('resumenOpciones'); if(!el) return;
+  var l = ['modo ' + (PREF.modo === 'clase' ? 'clase' : 'show'), 'ritmo ' + (NOMBRE_RITMO[PREF.ritmo] || PREF.ritmo).toLowerCase()];
+  if(PREF.asistencia) l.push('con asistencia');
+  if(PREF.lectura === 'voz') l.push('con voz'); else if(PREF.lectura === 'lector') l.push('con lector de pantalla');
+  el.textContent = '(' + l.join(' · ') + ')';
+}
 /* el código de carrera: al escribirlo bien, se elige su nivel; «Crear un código» hace uno con el nivel elegido */
 function pintarCodigo(){
   var c = limpiarCodigo(M.codigo.value), ok = codigoValido(c);
   M.notaCodigo.classList.toggle('mal', !!c && !ok);
-  M.notaCodigo.textContent = !c ? 'Con el mismo código, toda la clase corre con los mismos muros. Es el nivel (1, 2 o 3) y cuatro letras. Vacío, cada carrera es nueva.'
+  M.notaCodigo.textContent = !c ? 'Con el mismo código, toda la clase corre con los mismos muros. Es el nivel (del 1 al 4) y cuatro letras. Vacío, cada carrera es nueva.'
     : ok ? 'Código ' + c + ': toda la clase que lo ponga correrá los mismos muros del nivel ' + c.charAt(0) + '.'
-    : 'Un código es el nivel (1, 2 o 3) y cuatro letras, sin I ni O. Por ejemplo, 1KFRT.';
+    : 'Un código es el nivel (del 1 al 4) y cuatro letras, sin I ni O. Por ejemplo, 1KFRT.';
 }
 function prepararCodigo(){
   M.codigo.addEventListener('input', function(){
@@ -8794,6 +9696,7 @@ function prepararMenu(){
   prepararRepaso();
   prepararRivales();
   prepararPistas();
+  $('masOpciones').addEventListener('change', pintarResumenOpciones);
   var conf = { modo:null, ritmo:null, calidad:function(){ calidadInicial(); }, lectura:null };
   Object.keys(conf).forEach(function(nombre){
     radios(nombre).forEach(function(r){
@@ -8832,6 +9735,7 @@ function prepararMenu(){
   H.pausa.addEventListener('click', function(){ activarAudio(); pausar('usuario'); });
   FIN.siguiente.addEventListener('click', function(ev){ if(juego && juego.e.entrenamiento){ empezarShow(clicDeRaton(ev)); return; } if(esPrueba()){ correrPista(juego.op.pista, clicDeRaton(ev)); return; } if(juego && juego.siguiente) empezarManga(juego.siguiente, clicDeRaton(ev)); });
   FIN.otra.addEventListener('click', function(ev){ if(juego && juego.e.entrenamiento){ empezarEntreno(clicDeRaton(ev)); return; } if(esPrueba()){ abrirPistas(); return; } empezarShow(clicDeRaton(ev)); });
+  FIN.nuevo.addEventListener('click', function(ev){ M.codigo.value = ''; pintarCodigo(); empezarShow(clicDeRaton(ev)); });
   FIN.menu.addEventListener('click', function(){ salirAlMenu(); });
   FIN.cuerpo.addEventListener('click', function(ev){ var b = ev.target && ev.target.closest && ev.target.closest('[data-accion="practicar"]'); if(b) practicarFallos(); });
   CP.recargar.addEventListener('click', function(){ try { win.location.reload(); } catch(e){} });
@@ -8840,6 +9744,7 @@ function prepararMenu(){
     try { if(consultaReduce.addEventListener) consultaReduce.addEventListener('change', alCambiar); else if(consultaReduce.addListener) consultaReduce.addListener(alCambiar); } catch(e){}
   }
   pintarMandosSonido();
+  pintarResumenOpciones();
 }
 function aplicarReducir(){
   var r = reducir();
@@ -9156,7 +10061,14 @@ function pintarPractica(){
   $('bVolverFin').hidden = !vuelta;
   $('bDejarPractica').hidden = !practica;
 }
-F.PLANTILLAS.forEach(function(p){ var o = document.createElement('option'); o.value = p.id; o.textContent = p.nombre + ' (' + p.clase + ')'; $('selPlantilla').appendChild(o); });
+/* las plantillas de la copa elegida (la del nivel del menú al abrirlo por primera vez) */
+function pintarPlantillas(){
+  var sel = $('selPlantilla'), copa = F.COPAS[$('selCopa').value] || F.COPAS.prao;
+  while(sel.options.length > 1) sel.remove(1);
+  copa.plantillas.forEach(function(id){ var p = F.plantilla(id), o = document.createElement('option'); o.value = p.id; o.textContent = p.nombre + ' (' + p.clase + ')'; sel.appendChild(o); });
+}
+function elegirCopa(copa){ if(F.COPAS[copa] && $('selCopa').value !== copa){ $('selCopa').value = copa; pintarPlantillas(); } }
+pintarPlantillas();
 function etiquetaPuerta(p, estado){ return mayuscula(p.nombre) + ': ' + p.voz + ' (tecla ' + p.tecla + ').' + (estado ? ' ' + estado : ''); }
 function nuevo(){
   var clases = $('selClase').value.split(',').map(Number), pl = $('selPlantilla').value || undefined;
@@ -9165,7 +10077,7 @@ function nuevo(){
   if(pl){ var P = F.plantilla(pl);
     if(clases.indexOf(P.clase) < 0) aviso += 'Esta plantilla es de clase ' + P.clase + '. ';
     clases = [P.clase]; }
-  muro = F.generarMuro(rng, clases, practica ? { plantillas:practica.plantillas } : { plantilla:pl });
+  muro = F.generarMuro(rng, clases, practica ? { plantillas:practica.plantillas } : pl ? { plantilla:pl } : { plantillas:(F.COPAS[$('selCopa').value] || F.COPAS.prao).plantillas });
   if(!muro){
     orden = null; planRayo = null;
     $('cuenta').innerHTML = ''; $('cuentaVoz').textContent = ''; $('puertasM').innerHTML = ''; $('detalles').hidden = true; $('veredicto').className = 'veredicto';
@@ -9236,7 +10148,8 @@ function mostrarDetalles(){
   $('detalles').innerHTML = h; $('detalles').hidden = false;
 }
 $('bOtro').addEventListener('click', nuevo);
-['selClase','selPlantilla'].forEach(function(id){ $(id).addEventListener('change', function(){ if(practica){ practica = null; pintarPractica(); } nuevo(); }); });
+$('selCopa').addEventListener('change', pintarPlantillas);
+['selCopa','selClase','selPlantilla'].forEach(function(id){ $(id).addEventListener('change', function(){ if(practica){ practica = null; pintarPractica(); } nuevo(); }); });
 $('bDejarPractica').addEventListener('click', function(){ practica = null; pintarPractica(); nuevo(); $('bOtro').focus(); });
 $('bVolverFin').addEventListener('click', function(){ volverAlFin(); });
 document.addEventListener('keydown', function(ev){
@@ -9248,14 +10161,14 @@ document.addEventListener('keydown', function(ev){
   else if(ev.key === 'n' || ev.key === 'N'){ nuevo(); ev.preventDefault(); }
 });
 
-return { nuevo:nuevo, cruzar:cruzar, practicar:practicar, dejarPractica:dejarPractica, pintarPractica:pintarPractica,
+return { nuevo:nuevo, cruzar:cruzar, practicar:practicar, dejarPractica:dejarPractica, pintarPractica:pintarPractica, elegirCopa:elegirCopa,
          estado:function(){ return { muro:muro, orden:orden, planRayo:planRayo, probadas:probadas, practica:practica }; }, empezado:function(){ return !!muro; } };
 })();
 function abrirMuestrario(){
   if(juego) salirAlMenu();
   Muestrario.dejarPractica();
   cambiarPantalla('muestrario');
-  if(!Muestrario.empezado()) Muestrario.nuevo();
+  if(!Muestrario.empezado()){ Muestrario.elegirCopa(F.nivelDe(PREF.nivel).copa); Muestrario.nuevo(); }
   $('bOtro').focus();
 }
 
@@ -9263,7 +10176,7 @@ function abrirMuestrario(){
    LA PANTALLA ESCONDIDA DE LAS PISTAS (el profesor, 2026-09-28: «un modo de prueba solo para mí para poder ver todos
    los niveles… quizá con una combinación de teclas… y jugar a ellas de forma individual»). Se abre tecleando
    PALABRA_PISTAS en el menú, fuera de los campos de texto; ningún botón ni ninguna ayuda la nombra, ni tampoco ella
-   misma (así no se ve si se proyecta en clase). Salen las seis pistas,
+   misma (así no se ve si se proyecta en clase). Salen las ocho pistas,
    por carreras, y cada una se corre suelta, fuera del show: con los rivales, los muros, la canción y la luz de su
    carrera, una semilla nueva cada vez y el nivel que se elija aquí (el ritmo, el modo y las ayudas son los del menú).
    Al acabar, «Otra vez» la repite y «Elegir otra pista» vuelve aquí; en la pausa, «Salir a las pistas». Solo está
@@ -9277,10 +10190,13 @@ var TEXTO_PISTA = {
   toboganes:'La de siempre, en el prao.',
   sella:'El río, en piragua y río abajo: se salta, pero sin plancha, y las orillas no se pasan. Una de sus rampas, a sorteo, es una chorrera.',
   cuesta:'La final de siempre, en el prao.',
-  picu:'La montaña: sube a escalones hasta la cumbre, con la Faba de Oro y el Urriellu.'
+  picu:'La montaña: sube a escalones hasta la cumbre, con la Faba de Oro y el Urriellu.',
+  pozu:'La mina: castilletes, escombreras y bocaminas, con vagonetas de carbón y los mazos de la ferrería.',
+  bufones:'Los acantilados de Llanes, sobre el mar: bufones que soplan, la cucaña y el paso a nivel del tren de la FEVE.'
 };
 var NOMBRE_OBSTACULO = { barredoras:'barredoras', madrenas:'madreñas', baldosas:'baldosas', barriles:'barriles', rodillos:'rodillos', manzanas:'manzanas', gaita:'gaita',
-  sidra:'sidra', bolos:'bolos', cabras:'cabras', vau:'vado', quesos:'quesos', balagares:'balagares', asturcones:'asturcones', salmones:'salmones' };
+  sidra:'sidra', bolos:'bolos', cabras:'cabras', vau:'vado', quesos:'quesos', balagares:'balagares', asturcones:'asturcones', salmones:'salmones',
+  vagonetes:'vagonetas', mazu:'mazos', bufones:'bufones', cucana:'cucaña', feve:'tren de la FEVE' };
 var NOMBRE_OBSTACULO_AGUA = { rodillos:'troncos', sidra:'remolinos' };
 var NUMERO_TEXTO = ['cero', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis'];
 var tecleadoMenu = '', ultimaPista = null;
@@ -9314,7 +10230,7 @@ function pintarPistas(){
 function pintarNivelPistas(){
   radios('nivelPrueba').forEach(function(r){ r.checked = +r.value === PREF.nivel; });
   $('notaPistas').textContent = nombreNivel(PREF.nivel) + ' · ritmo ' + (NOMBRE_RITMO[PREF.ritmo] || PREF.ritmo) + ' · modo ' + (PREF.modo === 'clase' ? 'clase' : 'show') + (PREF.asistencia ? ' · con asistencia' : '') +
-    '. El ritmo, el modo y las ayudas se cambian en el menú.';
+    '. El ritmo, el modo y las ayudas se cambian en el menú, en «Más opciones».';
 }
 function mangaDePista(id){ for(var k = 0; k < C.PISTAS.length; k++) for(var q = 0; q < C.PISTAS[k].length; q++) if(C.PISTAS[k][q].id === id) return k; return -1; }
 function esPrueba(){ return !!(juego && juego.op && juego.op.prueba); }
