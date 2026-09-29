@@ -41,6 +41,7 @@
       --area-geometria: #6ee7b7;
       --area-funciones: #fb923c;
       --area-estadistica: #f472b6;
+      --area-simuladores: #a3e635;
     }
 
     * {
@@ -368,6 +369,11 @@
       animation-delay: -6.3s;
     }
 
+    .estante:nth-of-type(6) h2 {
+      animation-duration: 12.6s;
+      animation-delay: -9.4s;
+    }
+
     .estante h2:hover {
       color: #ffe4f5;
       border-color: #ff6ad5;
@@ -543,6 +549,31 @@
     .boton-jugar:focus-visible {
       background: linear-gradient(180deg, #fff3c4, var(--neon-claro));
       box-shadow: 0 6px 14px rgb(251 191 36 / 0.5);
+    }
+
+    /* ---- Simuladores: no son juegos, sino lugares reales para explorar y medir. Cada uno es un proyecto aparte, con
+       su licencia, que se publica en su propia carpeta del sitio; aquí solo se enlaza ---- */
+
+    .estante-nota {
+      max-width: 44rem;
+      margin: -0.3rem 0 1rem;
+      color: var(--tinta-media);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .chip-simulador {
+      color: var(--area-simuladores);
+      border: 1.5px solid var(--area-simuladores);
+      background: rgb(0 0 0 / 0.25);
+      font-weight: 700;
+    }
+
+    .licencia-cartucho {
+      margin: 0 0 0.75rem;
+      color: var(--tinta-suave);
+      font-size: 0.75rem;
+      line-height: 1.4;
     }
 
     /* ---- Ranura vacía ---- */
@@ -998,6 +1029,41 @@
         </p>
       </div>
     </section>
+
+    <section class="estante" aria-labelledby="area-simuladores">
+      <h2 id="area-simuladores">Simuladores</h2>
+      <p class="estante-nota">
+        No son juegos: son lugares reales para explorar, y más adelante para
+        medir. Van en su propia página, fuera del salón.
+      </p>
+      <div class="estante-rejilla">
+        <article
+          class="cartucho"
+          style="--area: var(--area-simuladores)"
+        >
+          <div class="etiqueta-cartucho">
+            <h3>Gijón 3D</h3>
+            <ul class="chips-cartucho">
+              <li class="chip-simulador">Simulador</li>
+            </ul>
+            <p class="tema-cartucho">Paseo por el Muro de San Lorenzo</p>
+            <p class="licencia-cartucho">
+              Pesa unos 10 MB. © 2026 Mario Rodríguez Boya, todos los
+              derechos reservados; los datos y las fotos, con sus licencias
+              (dentro, en «créditos»).
+            </p>
+            <div class="acciones-cartucho">
+              <a
+                class="boton-jugar"
+                href="../gijon-3d/"
+                aria-label="Entrar en Gijón 3D, paseo virtual por el Muro de San Lorenzo">
+                Entrar
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
   </main>
 
   <footer class="interior">
@@ -1043,7 +1109,7 @@
 
     (() => {
       const botones = [...document.querySelectorAll(".filtro-curso")];
-      const cartuchos = [...document.querySelectorAll(".cartucho")];
+      const cartuchos = [...document.querySelectorAll(".cartucho[data-cursos]")];   // los simuladores no son de un curso
       const estado = document.querySelector(".filtro-estado");
       const NOMBRES = {
         "1eso": "1.º ESO",
