@@ -46,9 +46,15 @@
   cierta (60 = 6 · 10 → 60 = 2 · 3 · 10 → … → 60 = 2² · 3 · 5). Primos y
   compuestos se ven iguales hasta que se les dispara. Al estallar el último
   primo repetido de un número sale su potencia (con el tercer 2 de 72, 2³).
-  Ocho objetos, como en el Pang: doble arpón, arpón fijo, reloj, escudo,
-  dinamita, lupa, criba y la ráfaga, que dispara balitas mientras se
-  mantiene pulsado el disparo. Las pompas gemelas de
+  Diez objetos, casi todos del Pang: doble arpón, arpón fijo, reloj, reloj
+  de arena, escudo, vida extra, dinamita, lupa, criba y la ráfaga, que dispara
+  balitas mientras se mantiene pulsado el disparo; y, una vez por fase, un
+  plato asturiano de premio que solo da puntos. En algunas fases, a partir
+  de Covadonga, hay bloques y escaleras como en el Pang: las pompas botan en
+  los bloques, el arpón se para en ellos, los de cristal se rompen de un
+  disparo (y los del «?» sueltan un premio) y por las escaleras se sube a los
+  bloques fijos, que van pegados a las paredes. Al llegar a un lugar nuevo
+  sale el mapa de Asturias con la ruta, como el mapamundi del Pang. Las pompas gemelas de
   Llanes (dos números pegados, como un diagrama de Venn) se parten en tres: lo
   que solo es del primero, lo común (el m.c.d.) y lo que solo es del segundo;
   las tres multiplicadas dan el m.c.m. Doce lugares de Asturias con cuatro
@@ -131,6 +137,11 @@ canvas:focus-visible{box-shadow:0 0 0 3px #fff}
 #flechas{display:grid; grid-template-columns:1fr 1fr; gap:8px; touch-action:none}
 .mando{min-height:62px; border-radius:10px; border:2px solid var(--borde); background:linear-gradient(#1a1a5a,#0a0a2a); color:var(--sol);
   font:900 24px var(--ui); cursor:pointer; touch-action:none; box-shadow:inset 0 -4px 0 #000}
+#derecha{display:flex; flex-direction:column; gap:8px; min-width:0}
+#derecha .disparo{flex:1 1 auto}
+#sube{display:grid; grid-template-columns:1fr 1fr; gap:8px; touch-action:none}
+#sube[hidden]{display:none}
+.mando.escalon{min-height:44px; font-size:18px}
 .mando.disparo{font:900 18px var(--titulo); letter-spacing:.04em; background:linear-gradient(#ff5a4a,#c01010); color:#fff; border-color:#ffb0a0}
 .mando:active,.mando.pulsado{transform:translateY(2px); box-shadow:inset 0 -1px 0 #000}
 .mando:focus-visible{outline:3px solid #fff; outline-offset:2px}
@@ -206,7 +217,11 @@ canvas:focus-visible{box-shadow:0 0 0 3px #fff}
   #app.tactil #superior{grid-area:sup} #app.tactil #hud{grid-area:hud} #app.tactil #lineas{grid-area:lin} #app.tactil #escenario{grid-area:esc}
   #app.tactil #mandos{display:contents}
   #app.tactil #flechas{grid-area:fle; display:flex; flex-direction:column; justify-content:flex-end; gap:8px; padding:6px}
-  #app.tactil #bDisparo{grid-area:dis; align-self:end; margin:6px; min-height:110px; font-size:15px}
+  #app.tactil #derecha{grid-area:dis; align-self:end; margin:6px; gap:6px}
+  #app.tactil #bDisparo{min-height:110px; font-size:15px}
+  #app.tactil #sube{gap:4px}
+  #app.tactil #sube:not([hidden]) + #bDisparo{min-height:84px}
+  #app.tactil .mando.escalon{min-height:44px; font-size:15px}
   #app.tactil .mando{min-height:64px}
 }
 </style>
@@ -241,7 +256,13 @@ canvas:focus-visible{box-shadow:0 0 0 3px #fff}
       <button type="button" class="mando" id="bIzq" aria-label="Moverse a la izquierda">◀</button>
       <button type="button" class="mando" id="bDer" aria-label="Moverse a la derecha">▶</button>
     </div>
-    <button type="button" class="mando disparo" id="bDisparo" aria-label="Disparar el arpón">¡ARPÓN!</button>
+    <div id="derecha">
+      <div id="sube" hidden>
+        <button type="button" class="mando escalon" id="bSube" aria-label="Subir por la escalera">▲</button>
+        <button type="button" class="mando escalon" id="bBaja" aria-label="Bajar por la escalera">▼</button>
+      </div>
+      <button type="button" class="mando disparo" id="bDisparo" aria-label="Disparar el arpón">¡ARPÓN!</button>
+    </div>
   </div>
 
   <div id="aviso" role="status" aria-live="polite"></div>
@@ -268,14 +289,20 @@ var ARPON_VEL = 800, ARPON_INICIO = SUELO - JUG_ALTO;
 var T_FIJO = 2.5, T_RELOJ = 5, T_LUPA = 8, T_OBJETO = 7, P_OBJETO = 0.14, T_INVULNERABLE = 1.5, T_TRAS_GOLPE = 2.2;
 var T_PREPARADOS = 1.4, T_GOLPE = 1.2;
 var T_RAFAGA = 8, T_BALA = 0.1, BALA_VEL = 900, BALAS_MAX = 8;   /* la ráfaga del Pang: con el disparo pulsado, una balita cada 0,1 s durante 8 s */
+var T_ARENA = 8, FACTOR_ARENA = 0.5;   /* el reloj de arena: las pompas, a la mitad durante 8 s */
+var VEL_ESCALERA = 150, ALCANCE_ESCALERA = 14, BORDE_PIE = 6;   /* subir y bajar escaleras; lo que el pie puede asomar del borde de un bloque */
+var VY_MAX = 700;                  /* ninguna pompa cae más deprisa (del techo al suelo llega a 636) */
+var HUECO_MIN = JUG_ALTO + 8;      /* ningún bloque baja más que esto sobre un sitio por donde se anda */
+var PUNTOS_COMIDA = 500, T_COMIDA_MIN = 6, T_COMIDA_MAX = 16, T_COMIDA_CRIBA = 45;   /* la comida de premio cae una vez por fase */
+var COMIDAS = ['fabada', 'cachopo', 'sidra', 'casadielles', 'cabrales', 'bollu', 'frixuelos', 'arroz'];
 var GRACIA_NACER = 0.25;            /* una pompa recién nacida no hace daño: las hijas pueden nacer rozando al jugador */
 var FACTOR_TRANQUILO = 0.5;         /* el modo tranquilo mueve las pompas a la mitad, quita el reloj y perdona más los roces */
 var HOLGURA_TRANQUILO = 9;
 var SOLAPE_DOBLE = 0.22;            /* las pompas gemelas se solapan un 22 % del radio de la menor */
 var VIDAS_INICIO = 3, VIDAS_MAX = 5;
 var CRIBA_MAX_POMPAS = 6;
-var OBJETOS = ['doble', 'fijo', 'reloj', 'escudo', 'dinamita', 'lupa', 'criba', 'rafaga'];
-var PESO_OBJETO = { doble:20, fijo:14, reloj:14, escudo:12, dinamita:10, lupa:16, criba:12, rafaga:14 };
+var OBJETOS = ['doble', 'fijo', 'reloj', 'escudo', 'dinamita', 'lupa', 'criba', 'rafaga', 'arena', 'vida'];
+var PESO_OBJETO = { doble:20, fijo:14, reloj:14, escudo:12, dinamita:10, lupa:16, criba:12, rafaga:14, arena:12, vida:4 };
 var SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
 
 /* ---------- aritmética ---------- */
@@ -384,10 +411,10 @@ var FASES = [
   { mundo:2, pompas:[{ n:90, x:0.24, dir:-1 }, { n:100, x:0.76, dir:1 }] },
   { mundo:3, pompas:[{ n:14, x:0.2, dir:-1 }, { n:21, x:0.8, dir:1 }] },
   { mundo:3, pompas:[{ n:28, x:0.14, dir:-1 }, { n:35, x:0.34, dir:-1 }, { n:49, x:0.8, dir:1 }] },
-  { mundo:3, pompas:[{ n:42, x:0.22, dir:-1 }, { n:56, x:0.78, dir:1 }] },
+  { mundo:3, pompas:[{ n:42, x:0.22, dir:-1 }, { n:56, x:0.78, dir:1 }], plano:'cristales' },
   { mundo:3, pompas:[{ n:210, x:0.26, dir:-1 }, { n:84, x:0.76, dir:1 }] },
   { mundo:4, pompas:[{ n:91, x:0.24, dir:-1 }, { n:97, x:0.76, dir:1 }] },
-  { mundo:4, pompas:[{ n:77, x:0.16, dir:-1 }, { n:83, x:0.34, dir:-1 }, { n:119, x:0.8, dir:1 }] },
+  { mundo:4, pompas:[{ n:77, x:0.16, dir:-1 }, { n:83, x:0.34, dir:-1 }, { n:119, x:0.8, dir:1 }], plano:'balcones' },
   { mundo:4, pompas:[{ n:121, x:0.2, dir:-1 }, { n:51, x:0.35, dir:-1 }, { n:133, x:0.8, dir:1 }] },
   { mundo:4, pompas:[{ n:1001, x:0.27, dir:-1 }, { n:997, x:0.73, dir:1 }] },
   { mundo:5, pompas:[{ a:12, b:18, x:0.3, dir:-1 }] },
@@ -400,17 +427,17 @@ var FASES = [
   { mundo:6, pompas:[{ n:2310, x:0.26, dir:-1 }] },
   /* Candás: potencias de un solo primo; al estallar el último, sale su potencia */
   { mundo:7, pompas:[{ n:64, x:0.22, dir:-1 }, { n:81, x:0.78, dir:1 }] },
-  { mundo:7, pompas:[{ n:27, x:0.14, dir:-1 }, { n:49, x:0.34, dir:-1 }, { n:32, x:0.8, dir:1 }] },
-  { mundo:7, pompas:[{ n:125, x:0.22, dir:-1 }, { n:128, x:0.78, dir:1 }] },
+  { mundo:7, pompas:[{ n:27, x:0.14, dir:-1 }, { n:49, x:0.34, dir:-1 }, { n:32, x:0.8, dir:1 }], plano:'balcon' },
+  { mundo:7, pompas:[{ n:125, x:0.22, dir:-1 }, { n:128, x:0.78, dir:1 }], plano:'cristalera' },
   { mundo:7, pompas:[{ n:625, x:0.25, dir:-1 }, { n:729, x:0.75, dir:1 }] },
   /* Luanco: cuadrados; de lleno en el centro se parten en dos pompas iguales */
-  { mundo:8, pompas:[{ n:36, x:0.22, dir:-1 }, { n:100, x:0.78, dir:1 }] },
+  { mundo:8, pompas:[{ n:36, x:0.22, dir:-1 }, { n:100, x:0.78, dir:1 }], plano:'alturas' },
   { mundo:8, pompas:[{ n:144, x:0.24, dir:-1 }, { n:196, x:0.76, dir:1 }] },
-  { mundo:8, pompas:[{ n:49, x:0.13, dir:-1 }, { n:81, x:0.33, dir:-1 }, { n:225, x:0.78, dir:1 }] },
+  { mundo:8, pompas:[{ n:49, x:0.13, dir:-1 }, { n:81, x:0.33, dir:-1 }, { n:225, x:0.78, dir:1 }], plano:'cristales' },
   { mundo:8, pompas:[{ n:400, x:0.25, dir:-1 }, { n:900, x:0.75, dir:1 }] },
   /* Luarca: números redondos; cada cero es un 2 y un 5 */
-  { mundo:9, pompas:[{ n:30, x:0.2, dir:-1 }, { n:40, x:0.8, dir:1 }] },
-  { mundo:9, pompas:[{ n:50, x:0.13, dir:-1 }, { n:70, x:0.34, dir:-1 }, { n:110, x:0.8, dir:1 }] },
+  { mundo:9, pompas:[{ n:30, x:0.2, dir:-1 }, { n:40, x:0.8, dir:1 }], plano:'balcones' },
+  { mundo:9, pompas:[{ n:50, x:0.13, dir:-1 }, { n:70, x:0.34, dir:-1 }, { n:110, x:0.8, dir:1 }], plano:'balcon' },
   { mundo:9, pompas:[{ n:200, x:0.24, dir:-1 }, { n:300, x:0.76, dir:1 }] },
   { mundo:9, pompas:[{ n:10000, x:0.21, dir:-1 }] },
   /* Villaviciosa: gemelas más grandes */
@@ -419,12 +446,26 @@ var FASES = [
   { mundo:10, pompas:[{ a:36, b:48, x:0.22, dir:-1 }, { a:30, b:45, x:0.78, dir:1 }] },
   { mundo:10, pompas:[{ a:60, b:90, x:0.22, dir:-1 }, { a:48, b:72, x:0.78, dir:1 }] },
   /* Cangas del Narcea: de todo, y el número del año para acabar */
-  { mundo:11, pompas:[{ n:132, x:0.24, dir:-1 }, { n:150, x:0.76, dir:1 }] },
+  { mundo:11, pompas:[{ n:132, x:0.24, dir:-1 }, { n:150, x:0.76, dir:1 }], plano:'cristalera' },
   { mundo:11, pompas:[{ a:28, b:42, x:0.22, dir:-1 }, { n:105, x:0.78, dir:1 }] },
-  { mundo:11, pompas:[{ n:44, x:0.1, dir:-1 }, { n:45, x:0.3, dir:-1 }, { n:98, x:0.78, dir:1 }] },
+  { mundo:11, pompas:[{ n:44, x:0.1, dir:-1 }, { n:45, x:0.3, dir:-1 }, { n:98, x:0.78, dir:1 }], plano:'alturas' },
   { mundo:11, pompas:[{ anio:true, x:0.26, dir:-1 }] }
 ];
 var FASES_POR_MUNDO = 4;
+/* Planos, como en el Pang: bloques donde botan las pompas y escaleras para subir a ellos. t: 'f' fijo, 'c' de cristal (se rompe de
+   un disparo) y 'p' de cristal con premio (o: el objeto que suelta). Las escaleras van de y1 (abajo) a y0 (arriba, el lomo de un bloque fijo).
+   Los bloques fijos van pegados a las paredes: así no quedan pasillos estrechos donde una pompa se quede encerrada. */
+var PLANOS = {
+  cristales: { bloques:[{ x:240, y:270, w:48, h:16, t:'c' }, { x:336, y:250, w:48, h:16, t:'p', o:'reloj' }, { x:432, y:270, w:48, h:16, t:'c' }], escaleras:[] },
+  balcones:  { bloques:[{ x:0, y:306, w:170, h:16, t:'f' }, { x:550, y:306, w:170, h:16, t:'f' }, { x:336, y:190, w:48, h:16, t:'p', o:'rafaga' }],
+               escaleras:[{ x:140, y0:306, y1:440 }, { x:580, y0:306, y1:440 }] },
+  balcon:    { bloques:[{ x:500, y:300, w:220, h:16, t:'f' }, { x:200, y:280, w:48, h:16, t:'c' }, { x:280, y:280, w:48, h:16, t:'p', o:'doble' }],
+               escaleras:[{ x:530, y0:300, y1:440 }] },
+  cristalera:{ bloques:[{ x:240, y:230, w:48, h:16, t:'c' }, { x:288, y:230, w:48, h:16, t:'c' }, { x:336, y:230, w:48, h:16, t:'p', o:'arena' }, { x:384, y:230, w:48, h:16, t:'c' }, { x:432, y:230, w:48, h:16, t:'c' }],
+               escaleras:[] },
+  alturas:   { bloques:[{ x:0, y:330, w:190, h:16, t:'f' }, { x:530, y:240, w:190, h:16, t:'f' }, { x:336, y:170, w:48, h:16, t:'p', o:'vida' }],
+               escaleras:[{ x:150, y0:330, y1:440 }, { x:570, y0:240, y1:440 }] }
+};
 function numerosDe(def, anio){
   return def.pompas.map(function(q){ return q.anio ? { n:anio, x:q.x, dir:q.dir } : q; });
 }
@@ -472,10 +513,11 @@ function generarReto(semilla){
 function crearMotor(){
   var M = { eventos:[], pompas:[], objetos:[], jugadores:[], familias:[], fase:'menu', modo:'campana', tranquilo:false, nJug:1,
             semilla:1, indice:0, def:null, t:0, limite:0, restante:0, vidas:VIDAS_INICIO, puntos:0, puntosInicioFase:0,
-            reloj:0, lupa:0, tPrep:0, tGolpe:0, intentos:0, anio:2026, estad:null, criba:null, reto:null, cribaActiva:0 };
+            reloj:0, lupa:0, arena:0, tPrep:0, tGolpe:0, intentos:0, anio:2026, estad:null, criba:null, reto:null, cribaActiva:0,
+            bloques:[], escaleras:[], comida:null };
   var rng = mulberry32(1), sigId = 1, sigFam = 1;
   function emitir(tipo, datos){ var e = datos || {}; e.tipo = tipo; M.eventos.push(e); return e; }
-  function estadNueva(){ return { disparos:0, roturas:0, primos:0, familias:0, potencias:0, objetos:0, golpes:0, fases:0 }; }
+  function estadNueva(){ return { disparos:0, roturas:0, primos:0, familias:0, potencias:0, objetos:0, golpes:0, fases:0, bloques:0, comidas:0 }; }
   function quitar(p){ var i = M.pompas.indexOf(p); if(i >= 0) M.pompas.splice(i, 1); }
   function familia(id){ for(var i = 0; i < M.familias.length; i++) if(M.familias[i].id === id) return M.familias[i]; return null; }
 
@@ -493,15 +535,65 @@ function crearMotor(){
     if(p.y + rm > SUELO) p.y = SUELO - rm;
     if(p.y - rm < 0) p.y = rm;
   }
+  /* bloques: ¿hay donde pisar justo a la altura y?; el primer sitio donde pisar de y hacia abajo; el primer bloque que corta un tramo vertical */
+  function soporte(x, y){
+    if(y >= SUELO - 1e-6) return true;
+    for(var k = 0; k < M.bloques.length; k++){ var b = M.bloques[k]; if(!b.roto && Math.abs(b.y - y) < 1e-6 && x >= b.x - BORDE_PIE && x <= b.x + b.w + BORDE_PIE) return true; }
+    return false;
+  }
+  function sueloBajo(x, y, margen){
+    var s = SUELO, m = margen === undefined ? BORDE_PIE : margen;
+    for(var k = 0; k < M.bloques.length; k++){ var b = M.bloques[k]; if(!b.roto && b.y >= y - 1e-6 && b.y < s && x >= b.x - m && x <= b.x + b.w + m) s = b.y; }
+    return s;
+  }
+  function bloqueEnTramo(x, y0, y1){
+    var mejor = null;
+    for(var k = 0; k < M.bloques.length; k++){ var b = M.bloques[k]; if(b.roto || x < b.x || x > b.x + b.w || b.y > y1 || b.y + b.h < y0) continue; if(!mejor || b.y > mejor.y) mejor = b; }
+    return mejor;
+  }
+  /* una pompa que toca un bloque sale de él y rebota: por arriba, como en el suelo; por abajo, hacia abajo; por un lado, se da la vuelta */
+  function chocarBloques(p, soloSacar){
+    if(!M.bloques.length) return;
+    for(var vuelta = 0; vuelta < 2; vuelta++){
+      var toca = false, cs = circulos(p);
+      for(var q = 0; q < cs.length; q++){
+        for(var k = 0; k < M.bloques.length; k++){
+          var b = M.bloques[k]; if(b.roto) continue;
+          var cx = cs[q][0], cy = cs[q][1], r = cs[q][2];
+          var nx = clamp(cx, b.x, b.x + b.w), ny = clamp(cy, b.y, b.y + b.h), dx = cx - nx, dy = cy - ny, d2 = dx * dx + dy * dy;
+          if(d2 >= r * r) continue;
+          var ux, uy, pen;
+          if(d2 > 1e-9){ var d = Math.sqrt(d2); ux = dx / d; uy = dy / d; pen = r - d; }
+          else {
+            var izq = cx - b.x, der = b.x + b.w - cx, arr = cy - b.y, aba = b.y + b.h - cy, m = Math.min(izq, der, arr, aba);
+            if(m === arr){ ux = 0; uy = -1; pen = r + arr; } else if(m === aba){ ux = 0; uy = 1; pen = r + aba; } else if(m === izq){ ux = -1; uy = 0; pen = r + izq; } else { ux = 1; uy = 0; pen = r + der; }
+          }
+          p.x += ux * pen; p.y += uy * pen; toca = true;
+          if(!soloSacar){
+            /* apoyada por arriba (aunque sea en una esquina), bota como en el suelo: así ninguna pompa se queda encajada entre dos bloques;
+               por debajo, rebota hacia abajo; de lado, o en una esquina muy de canto, se da la vuelta */
+            if(uy < -0.2){ if(p.vy >= 0){ p.vy = -velBote(p); p.tBote = M.t; } }
+            else if(uy > 0.2){ if(p.vy < 0) p.vy = -p.vy; }
+            if(Math.abs(ux) > 0.7) p.vx = ux > 0 ? Math.abs(p.vx) : -Math.abs(p.vx);
+          }
+          cs = circulos(p);
+        }
+      }
+      if(!toca) break;
+      var iz = extIzq(p); if(iz < 0) p.x -= iz;
+      var de = extDer(p); if(de > W) p.x -= (de - W);
+      var rm = radioMax(p); if(p.y + rm > SUELO) p.y = SUELO - rm; if(p.y - rm < 0) p.y = rm;
+    }
+  }
   function crearPompa(n, x, y, vx, vy, fam, nd){
     var d = diametro(n), p = { id:sigId++, n:n, doble:false, d:d, r:d / 2, x:x, y:y, vx:vx, vy:vy, fam:fam, nodo:nd, tBote:-9, nace:M.t };
-    encajar(p); M.pompas.push(p); nd.id = p.id; return p;
+    encajar(p); chocarBloques(p, true); M.pompas.push(p); nd.id = p.id; return p;
   }
   function crearDoble(a, b, x, y, vx, vy, fam){
     var dA = diametro(a), dB = diametro(b);
     var p = { id:sigId++, doble:true, a:a, b:b, dA:dA, dB:dB, rA:dA / 2, rB:dB / 2, x:x, y:y, vx:vx, vy:vy, fam:fam, tBote:-9, nace:M.t };
     p.r = Math.max(p.rA, p.rB);
-    encajar(p); M.pompas.push(p); return p;
+    encajar(p); chocarBloques(p, true); M.pompas.push(p); return p;
   }
   function nuevaFamilia(tipo, q){
     var f = { id:sigFam++, tipo:tipo, completa:false, tCompleta:-9, tInicio:M.t };
@@ -526,7 +618,8 @@ function crearMotor(){
   function hojasPendientes(){ return M.pompas.reduce(function(s, p){ return s + (p.doble ? omega(mcm(p.a, p.b)) : omega(p.n)); }, 0); }
 
   /* jugadores */
-  function jugador(i, x){ return { i:i, x:x, dir:0, objetivo:null, vx:0, arma:'simple', arpones:[], escudo:false, invulnerable:0, rafaga:0, gatillo:false, tBala:0, balas:[] }; }
+  /* y es la altura de los pies; estado: 'pie' (anda), 'escalera' (sube o baja) o 'cae'; sube: −1 hacia arriba, 1 hacia abajo */
+  function jugador(i, x){ return { i:i, x:x, y:SUELO, vy:0, estado:'pie', esc:-1, sube:0, dir:0, objetivo:null, vx:0, arma:'simple', arpones:[], escudo:false, invulnerable:0, rafaga:0, gatillo:false, tBala:0, balas:[] }; }
   function crearJugadores(){ return M.nJug === 2 ? [jugador(0, W * 0.4), jugador(1, W * 0.6)] : [jugador(0, W / 2)]; }
 
   /* partidas y fases */
@@ -551,7 +644,8 @@ function crearMotor(){
     var def = defDe(indice); M.indice = indice; M.def = def;
     if(reintento) M.intentos++; else { M.intentos = 0; M.puntosInicioFase = M.puntos; }
     reiniciarSemillas(indice);
-    M.pompas = []; M.objetos = []; M.familias = []; M.reloj = 0; M.lupa = 0;
+    M.pompas = []; M.objetos = []; M.familias = []; M.reloj = 0; M.lupa = 0; M.arena = 0;
+    cargarPlano(def.plano);
     M.jugadores = crearJugadores(); M.t = 0;
     numerosDe(def, M.anio).forEach(function(q){
       if(q.a){
@@ -563,8 +657,21 @@ function crearMotor(){
       }
     });
     M.limite = tiempoDe(def, M.anio); M.restante = M.limite;
+    nuevaComida(0);
     M.fase = 'preparados'; M.tPrep = T_PREPARADOS;
-    emitir('fase', { indice:indice, mundo:def.mundo, reintento:!!reintento, numeros:numerosDe(def, M.anio).map(function(q){ return q.a ? q.a + ' y ' + q.b : String(q.n); }), limite:M.limite });
+    emitir('fase', { indice:indice, mundo:def.mundo, reintento:!!reintento, numeros:numerosDe(def, M.anio).map(function(q){ return q.a ? q.a + ' y ' + q.b : String(q.n); }), limite:M.limite,
+                     escaleras:M.escaleras.length, bloques:M.bloques.length });
+  }
+  function cargarPlano(nombre){
+    var P = PLANOS[nombre] || { bloques:[], escaleras:[] };
+    M.bloques = P.bloques.map(function(b, k){ return { id:k + 1, x:b.x, y:b.y, w:b.w, h:b.h, tipo:b.t === 'f' ? 'fijo' : (b.t === 'p' ? 'premio' : 'cristal'), objeto:b.o || null, roto:false }; });
+    M.escaleras = P.escaleras.map(function(e){ return { x:e.x, y0:e.y0, y1:e.y1 }; });
+  }
+  /* la comida de premio: cae una vez por fase (en la criba, cada cierto tiempo), lejos de los bloques, y solo da puntos */
+  function nuevaComida(t0){
+    var x = W / 2;
+    for(var k = 0; k < 20; k++){ x = 60 + rng() * (W - 120); if(!M.bloques.some(function(b){ return x > b.x - 16 && x < b.x + b.w + 16; })) break; }
+    M.comida = { t:t0 + (M.modo === 'criba' ? T_COMIDA_CRIBA * (0.8 + 0.4 * rng()) : T_COMIDA_MIN + rng() * (T_COMIDA_MAX - T_COMIDA_MIN)), tipo:COMIDAS[Math.floor(rng() * COMIDAS.length)], x:x, suelta:false };
   }
   M.reintentarFase = function(){
     if(M.fase !== 'fin' || M.modo === 'criba') return false;
@@ -579,9 +686,11 @@ function crearMotor(){
   /* modo criba: los números salen en orden, 2, 3, 4, 5…, hasta perder las vidas */
   function empezarCriba(){
     reiniciarSemillas(0);
-    M.pompas = []; M.objetos = []; M.familias = []; M.reloj = 0; M.lupa = 0;
+    M.pompas = []; M.objetos = []; M.familias = []; M.reloj = 0; M.lupa = 0; M.arena = 0;
+    cargarPlano(null);
     M.jugadores = crearJugadores(); M.t = 0; M.limite = 0; M.restante = 0; M.indice = 0; M.def = null;
     M.criba = { siguiente:2, tProx:0.8, estado:{}, max:1 };
+    nuevaComida(0);
     M.fase = 'preparados'; M.tPrep = T_PREPARADOS;
     emitir('fase', { indice:0, mundo:-1, reintento:false, numeros:[], limite:0, criba:true });
   }
@@ -679,6 +788,7 @@ function crearMotor(){
     var pesos = {}, total = 0, k;
     for(k in PESO_OBJETO) pesos[k] = PESO_OBJETO[k];
     if(hojasPendientes() > 10) pesos.dinamita = 0;
+    if(M.vidas >= VIDAS_MAX) pesos.vida = 0;
     if(M.pompas.some(function(p){ return p.doble; }) || !M.pompas.some(function(p){ return !p.doble && !esPrimo(p.n); })) pesos.criba = 0;
     for(k in pesos) total += pesos[k];
     var x = rng() * total;
@@ -693,7 +803,9 @@ function crearMotor(){
   }
   function aplicarObjeto(o, j){
     M.estad.objetos++;
-    emitir('objeto', { objeto:o.tipo, jugador:j.i, x:o.x });
+    if(o.tipo === 'comida'){ M.puntos += PUNTOS_COMIDA; M.estad.comidas++; emitir('objeto', { objeto:'comida', comida:o.comida, puntos:PUNTOS_COMIDA, jugador:j.i, x:o.x, y:o.y }); return; }
+    if(o.tipo === 'vida' && M.vidas < VIDAS_MAX) M.vidas++;
+    emitir('objeto', { objeto:o.tipo, jugador:j.i, x:o.x, y:o.y, vidas:M.vidas });
     switch(o.tipo){
       case 'doble': case 'fijo': j.arma = o.tipo; break;
       case 'reloj': M.reloj = T_RELOJ; break;
@@ -706,37 +818,57 @@ function crearMotor(){
       case 'lupa': M.lupa = T_LUPA; break;
       case 'criba': aplicarCriba(); break;
       case 'rafaga': j.rafaga = T_RAFAGA; j.tBala = 0; break;
+      case 'arena': M.arena = T_ARENA; break;
+    }
+  }
+  /* un bloque de cristal se rompe de un disparo; si lleva premio, lo suelta */
+  function romperBloque(b, j){
+    b.roto = true; M.estad.bloques++;
+    emitir('bloqueRoto', { id:b.id, x:b.x, y:b.y, w:b.w, h:b.h, premio:b.tipo === 'premio' ? b.objeto : null, jugador:j ? j.i : -1 });
+    if(b.tipo === 'premio' && b.objeto){
+      M.objetos.push({ id:sigId++, tipo:b.objeto, x:b.x + b.w / 2, y:b.y + b.h / 2, vy:-90, t:T_OBJETO, suelo:false });
+      emitir('objetoCae', { objeto:b.objeto, x:b.x + b.w / 2, y:b.y + b.h / 2 });
     }
   }
 
   /* mandos */
   M.mover = function(i, dir){ var j = M.jugadores[i]; if(!j) return; j.objetivo = null; j.dir = dir > 0 ? 1 : (dir < 0 ? -1 : 0); };
   M.moverA = function(i, x){ var j = M.jugadores[i]; if(!j || !isFinite(x)) return; j.objetivo = clamp(x, JUG_MIN, JUG_MAX); j.dir = 0; };
+  /* subir (−1) o bajar (1) por una escalera, o dejar de hacerlo (0) */
+  M.subir = function(i, s){ var j = M.jugadores[i]; if(j) j.sube = s > 0 ? 1 : (s < 0 ? -1 : 0); };
+  /* la escalera que el jugador tiene a mano para ir en ese sentido (o en la que ya está): su índice, o −1 */
+  function escaleraAMano(j, s){
+    if(j.estado === 'escalera') return j.esc;
+    if(j.estado !== 'pie') return -1;
+    for(var k = 0; k < M.escaleras.length; k++){ var e = M.escaleras[k]; if(Math.abs(j.x - e.x) <= ALCANCE_ESCALERA && Math.abs(j.y - (s < 0 ? e.y1 : e.y0)) < 0.5) return k; }
+    return -1;
+  }
+  M.escaleraAMano = function(i, s){ var j = M.jugadores[i]; return j ? escaleraAMano(j, s) : -1; };
   M.disparar = function(i){
-    var j = M.jugadores[i]; if(!j || M.fase !== 'jugando') return false;
+    var j = M.jugadores[i]; if(!j || M.fase !== 'jugando' || j.estado !== 'pie') return false;
     if(j.rafaga > 0) return bala(j);
     if(j.arpones.length >= (j.arma === 'doble' ? 2 : 1)) return false;
-    j.arpones.push({ x:j.x, tope:ARPON_INICIO, clavado:false, tFijo:0 });
+    j.arpones.push({ x:j.x, base:j.y, tope:j.y - JUG_ALTO, clavado:false, tFijo:0 });
     M.estad.disparos++; emitir('disparo', { jugador:i, x:j.x });
     return true;
   };
   /* el gatillo: con la ráfaga, mientras está pulsado sale una balita cada T_BALA */
   M.gatillo = function(i, pulsado){ var j = M.jugadores[i]; if(j) j.gatillo = !!pulsado; };
   function bala(j){
-    if(j.balas.length >= BALAS_MAX || j.tBala > 0) return false;
-    j.balas.push({ x:j.x, y:ARPON_INICIO }); j.tBala = T_BALA;
+    if(j.balas.length >= BALAS_MAX || j.tBala > 0 || j.estado !== 'pie') return false;
+    j.balas.push({ x:j.x, y:j.y - JUG_ALTO }); j.tBala = T_BALA;
     M.estad.disparos++; emitir('disparo', { jugador:j.i, x:j.x, bala:true });
     return true;
   }
 
   /* choques */
+  /* el cable del arpón va de su punta (tope) a los pies de quien lo disparó (base; el suelo si no se dice) */
   function tocaArpon(p, h){
-    var cs = circulos(p);
+    var cs = circulos(p), base = h.base === undefined ? SUELO : h.base;
     for(var k = 0; k < cs.length; k++){
       var cx = cs[k][0], cy = cs[k][1], r = cs[k][2], dx = cx - h.x;
       if(Math.abs(dx) > r) continue;
-      if(cy >= h.tope) return true;
-      var dy = cy - h.tope; if(dx * dx + dy * dy <= r * r) return true;
+      var dy = cy - clamp(cy, h.tope, base); if(dx * dx + dy * dy <= r * r) return true;
     }
     return false;
   }
@@ -761,7 +893,7 @@ function crearMotor(){
     return mejor;
   }
   function tocaJugador(p, j){
-    var x0 = j.x - CAJA_ANCHO / 2, x1 = j.x + CAJA_ANCHO / 2, y0 = SUELO - CAJA_ALTO, y1 = SUELO, cs = circulos(p);
+    var pies = j.y === undefined ? SUELO : j.y, x0 = j.x - CAJA_ANCHO / 2, x1 = j.x + CAJA_ANCHO / 2, y0 = pies - CAJA_ALTO, y1 = pies, cs = circulos(p);
     for(var k = 0; k < cs.length; k++){
       var cx = cs[k][0], cy = cs[k][1], rr = cs[k][2] - (M.tranquilo ? HOLGURA_TRANQUILO : HOLGURA);
       var nx = clamp(cx, x0, x1), ny = clamp(cy, y0, y1), dx = cx - nx, dy = cy - ny;
@@ -770,12 +902,13 @@ function crearMotor(){
     return false;
   }
   function moverPompa(p, dt){
-    p.vy += G * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    p.vy = Math.min(p.vy + G * dt, VY_MAX); p.x += p.vx * dt; p.y += p.vy * dt;
     var iz = extIzq(p); if(iz < 0){ p.x -= iz; p.vx = Math.abs(p.vx); }
     var de = extDer(p); if(de > W){ p.x -= (de - W); p.vx = -Math.abs(p.vx); }
     var rm = radioMax(p);
     if(p.y + rm >= SUELO){ p.y = SUELO - rm; p.vy = -velBote(p); p.tBote = M.t; }
     if(p.y - rm < 0){ p.y = rm; if(p.vy < 0) p.vy = -p.vy * 0.5; }
+    chocarBloques(p);
   }
   /* un golpe quita una vida, pero la fase sigue donde estaba (con el jugador parpadeando un momento):
      así no se pierde la descomposición que se estaba viendo. Sin vidas, se acaba la partida */
@@ -821,21 +954,47 @@ function crearMotor(){
     var i, k, j;
     for(i = 0; i < M.jugadores.length; i++){
       j = M.jugadores[i]; var xAntes = j.x;
-      if(j.objetivo !== null){ var dx = j.objetivo - j.x, rec = JUG_VEL * dt; j.x += Math.abs(dx) <= rec ? dx : (dx > 0 ? rec : -rec); }
-      else if(j.dir) j.x += j.dir * JUG_VEL * dt;
-      j.x = clamp(j.x, JUG_MIN, JUG_MAX); j.vx = dt > 0 ? (j.x - xAntes) / dt : 0;
+      if(j.estado === 'escalera'){
+        var es = M.escaleras[j.esc];
+        if(!es) j.estado = 'cae';
+        else {
+          j.y += j.sube * VEL_ESCALERA * dt;
+          if(j.y <= es.y0){ j.y = es.y0; j.estado = 'pie'; }
+          else if(j.y >= es.y1){ j.y = es.y1; j.estado = 'pie'; }
+        }
+      } else if(j.estado === 'cae'){
+        j.vy += G * dt; var yCae = j.y + j.vy * dt, sitio = sueloBajo(j.x, j.y);
+        if(yCae >= sitio){ j.y = sitio; j.vy = 0; j.estado = 'pie'; } else j.y = yCae;
+      } else {
+        if(j.objetivo !== null){ var dx = j.objetivo - j.x, rec = JUG_VEL * dt; j.x += Math.abs(dx) <= rec ? dx : (dx > 0 ? rec : -rec); }
+        else if(j.dir) j.x += j.dir * JUG_VEL * dt;
+        j.x = clamp(j.x, JUG_MIN, JUG_MAX);
+        if(!soporte(j.x, j.y)){ j.estado = 'cae'; j.vy = 0; }
+        else if(j.sube){
+          var ke = escaleraAMano(j, j.sube);
+          if(ke >= 0){ j.estado = 'escalera'; j.esc = ke; j.x = M.escaleras[ke].x; j.objetivo = null; xAntes = j.x; }
+        }
+      }
+      j.vx = dt > 0 ? (j.x - xAntes) / dt : 0;
       if(j.invulnerable > 0) j.invulnerable = Math.max(0, j.invulnerable - dt);
     }
+    if(M.arena > 0){ M.arena = Math.max(0, M.arena - dt); if(M.arena === 0) emitir('finArena', {}); }
     if(M.reloj > 0) M.reloj = Math.max(0, M.reloj - dt);
-    else { var dtP = dt * (M.tranquilo ? FACTOR_TRANQUILO : 1); for(i = 0; i < M.pompas.length; i++) moverPompa(M.pompas[i], dtP); }
+    else { var dtP = dt * (M.tranquilo ? FACTOR_TRANQUILO : 1) * (M.arena > 0 ? FACTOR_ARENA : 1); for(i = 0; i < M.pompas.length; i++) moverPompa(M.pompas[i], dtP); }
     if(M.lupa > 0) M.lupa = Math.max(0, M.lupa - dt);
     for(i = 0; i < M.jugadores.length; i++){
       j = M.jugadores[i];
       for(k = j.arpones.length - 1; k >= 0; k--){
         var h = j.arpones[k];
         if(!h.clavado){
-          h.tope -= ARPON_VEL * dt;
-          if(h.tope <= 0){ h.tope = 0; if(j.arma === 'fijo'){ h.clavado = true; h.tFijo = T_FIJO; } else { j.arpones.splice(k, 1); continue; } }
+          var topeAntes = h.tope; h.tope -= ARPON_VEL * dt;
+          /* un bloque para el arpón: el fijo lo detiene (y el arpón fijo se clava en él); el de cristal se rompe */
+          var bq = bloqueEnTramo(h.x, h.tope, topeAntes);
+          if(bq){
+            if(bq.tipo !== 'fijo'){ romperBloque(bq, j); j.arpones.splice(k, 1); continue; }
+            h.tope = bq.y + bq.h;
+            if(j.arma === 'fijo'){ h.clavado = true; h.tFijo = T_FIJO; } else { j.arpones.splice(k, 1); continue; }
+          } else if(h.tope <= 0){ h.tope = 0; if(j.arma === 'fijo'){ h.clavado = true; h.tFijo = T_FIJO; } else { j.arpones.splice(k, 1); continue; } }
         } else { h.tFijo -= dt; if(h.tFijo <= 0){ j.arpones.splice(k, 1); continue; } }
         var p = pompaTocada(h);
         if(p){ j.arpones.splice(k, 1); golpear(p, j, h); }
@@ -851,16 +1010,28 @@ function crearMotor(){
         var b = j.balas[k], yAntes = b.y; b.y -= BALA_VEL * dt;
         var pb = pompaDeBala(b.x, b.y, yAntes);
         if(pb){ j.balas.splice(k, 1); golpear(pb, j, b); continue; }
+        var bb = bloqueEnTramo(b.x, b.y, yAntes);
+        if(bb){ if(bb.tipo !== 'fijo') romperBloque(bb, j); j.balas.splice(k, 1); continue; }
         if(b.y <= 0) j.balas.splice(k, 1);
       }
     }
+    /* la comida de premio cae del techo cuando le toca */
+    if(M.comida && !M.comida.suelta && M.t >= M.comida.t){
+      M.comida.suelta = true;
+      M.objetos.push({ id:sigId++, tipo:'comida', comida:M.comida.tipo, x:M.comida.x, y:14, vy:0, t:T_OBJETO, suelo:false });
+      emitir('objetoCae', { objeto:'comida', comida:M.comida.tipo, x:M.comida.x, y:14 });
+      if(M.modo === 'criba') nuevaComida(M.t);
+    }
     for(i = M.objetos.length - 1; i >= 0; i--){
       var o = M.objetos[i];
-      if(!o.suelo){ o.vy += G * dt; o.y += o.vy * dt; if(o.y >= SUELO - 12){ o.y = SUELO - 12; o.suelo = true; } }
+      if(!o.suelo){
+        o.vy += G * dt; var yObj = o.y + o.vy * dt, apoyo = sueloBajo(o.x, o.y + 12, 0) - 12;
+        if(yObj >= apoyo){ o.y = apoyo; o.suelo = true; } else o.y = yObj;
+      } else if(o.y + 12 < SUELO - 1e-6 && sueloBajo(o.x, o.y + 12, 0) > o.y + 12 + 1e-6){ o.suelo = false; o.vy = 0; }   /* se rompió el bloque en el que estaba */
       else { o.t -= dt; if(o.t <= 0){ M.objetos.splice(i, 1); continue; } }
       for(k = 0; k < M.jugadores.length; k++){
         j = M.jugadores[k];
-        if(Math.abs(o.x - j.x) < CAJA_ANCHO / 2 + 12 && o.y + 12 >= SUELO - CAJA_ALTO){ M.objetos.splice(i, 1); aplicarObjeto(o, j); break; }
+        if(Math.abs(o.x - j.x) < CAJA_ANCHO / 2 + 12 && o.y + 12 >= j.y - CAJA_ALTO && o.y - 12 <= j.y){ M.objetos.splice(i, 1); aplicarObjeto(o, j); break; }
       }
     }
     for(i = 0; i < M.jugadores.length; i++){
@@ -877,6 +1048,7 @@ function crearMotor(){
 
   /* consultas para la interfaz y las pruebas */
   M.circulos = circulos; M.geomDoble = geomDoble; M.tocaJugador = tocaJugador; M.tocaArpon = tocaArpon; M.tocaBala = tocaBala; M.hojasPendientes = hojasPendientes;
+  M.chocarBloques = chocarBloques; M.soporte = soporte; M.sueloBajo = sueloBajo; M.bloqueEnTramo = bloqueEnTramo;
   M.familiasVisibles = function(){
     if(M.modo !== 'criba') return M.familias;
     return M.familias.filter(function(f){ return !f.completa || M.t - f.tCompleta < 2.5; }).slice(-3);
@@ -885,7 +1057,7 @@ function crearMotor(){
   return M;
 }
 
-return { crearMotor:crearMotor, FASES:FASES, MUNDOS:MUNDOS, OBJETOS:OBJETOS, FASES_POR_MUNDO:FASES_POR_MUNDO,
+return { crearMotor:crearMotor, FASES:FASES, MUNDOS:MUNDOS, OBJETOS:OBJETOS, FASES_POR_MUNDO:FASES_POR_MUNDO, PLANOS:PLANOS, COMIDAS:COMIDAS,
          esPrimo:esPrimo, factoriza:factoriza, primosDe:primosDe, omega:omega, textoFactorizacion:textoFactorizacion, mcd:mcd, mcm:mcm,
          menorPrimo:menorPrimo, parejas:parejas, repartoPorGolpe:repartoPorGolpe, repartoDoble:repartoDoble, diametro:diametro, alturaBote:alturaBote,
          disparosDe:disparosDe, disparosDoble:disparosDoble, disparosFase:disparosFase, tiempoDe:tiempoDe, numerosDe:numerosDe,
@@ -894,7 +1066,9 @@ return { crearMotor:crearMotor, FASES:FASES, MUNDOS:MUNDOS, OBJETOS:OBJETOS, FAS
          constantes:{ W:W, H:H, SUELO:SUELO, G:G, VX:VX, D_A:D_A, D_B:D_B, JUG_VEL:JUG_VEL, JUG_ANCHO:JUG_ANCHO, JUG_ALTO:JUG_ALTO,
                       CAJA_ANCHO:CAJA_ANCHO, CAJA_ALTO:CAJA_ALTO, JUG_MIN:JUG_MIN, JUG_MAX:JUG_MAX, ARPON_VEL:ARPON_VEL, ARPON_INICIO:ARPON_INICIO,
                       T_FIJO:T_FIJO, T_RELOJ:T_RELOJ, T_LUPA:T_LUPA, T_OBJETO:T_OBJETO, P_OBJETO:P_OBJETO, T_PREPARADOS:T_PREPARADOS, T_GOLPE:T_GOLPE,
-                      T_TRAS_GOLPE:T_TRAS_GOLPE, T_INVULNERABLE:T_INVULNERABLE, T_RAFAGA:T_RAFAGA, T_BALA:T_BALA, BALA_VEL:BALA_VEL, BALAS_MAX:BALAS_MAX, HOLGURA:HOLGURA, HOLGURA_TRANQUILO:HOLGURA_TRANQUILO, GRACIA_NACER:GRACIA_NACER,
+                      T_TRAS_GOLPE:T_TRAS_GOLPE, T_INVULNERABLE:T_INVULNERABLE, T_RAFAGA:T_RAFAGA, T_BALA:T_BALA, BALA_VEL:BALA_VEL, BALAS_MAX:BALAS_MAX,
+                      T_ARENA:T_ARENA, FACTOR_ARENA:FACTOR_ARENA, VY_MAX:VY_MAX, VEL_ESCALERA:VEL_ESCALERA, ALCANCE_ESCALERA:ALCANCE_ESCALERA, BORDE_PIE:BORDE_PIE, HUECO_MIN:HUECO_MIN,
+                      PUNTOS_COMIDA:PUNTOS_COMIDA, T_COMIDA_MIN:T_COMIDA_MIN, T_COMIDA_MAX:T_COMIDA_MAX, HOLGURA:HOLGURA, HOLGURA_TRANQUILO:HOLGURA_TRANQUILO, GRACIA_NACER:GRACIA_NACER,
                       FACTOR_TRANQUILO:FACTOR_TRANQUILO, SOLAPE_DOBLE:SOLAPE_DOBLE, VIDAS_INICIO:VIDAS_INICIO, VIDAS_MAX:VIDAS_MAX,
                       CRIBA_MAX_POMPAS:CRIBA_MAX_POMPAS, SALTO_HIJAS:SALTO_HIJAS, MARGEN_TECHO:MARGEN_TECHO } };
 })();
@@ -914,12 +1088,14 @@ var lienzo = $('lienzo'), ctx = lienzo.getContext('2d');
 var M = E.crearMotor();
 var UI = { panel:null, pausa:false, escala:1, efectos:[], particulas:[], fuegos:[], tFuego:1, sacudida:0, destello:0, rojo:0, ola:0,
            teclas:{}, reloj:0, fondoClave:'', tDisparo:[-9, -9], golpeado:-1, recordNuevo:false, focoPrevio:null, panelPrevio:null,
-           tPanelSuperada:-1, superada:null, victoria:null, firmaLineas:null, ultimoSegundo:-1, banner:null, tPanel:0, anim:null, dedos:{} };
-var NOMBRE_OBJETO = { doble:'DOBLE ARPÓN', fijo:'ARPÓN FIJO', reloj:'RELOJ', escudo:'ESCUDO', dinamita:'¡DINAMITA!', lupa:'LUPA', criba:'CRIBA', rafaga:'¡RÁFAGA!' };
+           tPanelSuperada:-1, superada:null, victoria:null, firmaLineas:null, ultimoSegundo:-1, banner:null, tPanel:0, anim:null, dedos:{},
+           mapa:null, mundoVisto:-1, bannerPendiente:null, mapaClave:'', dedoSube:0, dedoDisparo:false };
+var NOMBRE_OBJETO = { doble:'DOBLE ARPÓN', fijo:'ARPÓN FIJO', reloj:'RELOJ', escudo:'ESCUDO', dinamita:'¡DINAMITA!', lupa:'LUPA', criba:'CRIBA', rafaga:'¡RÁFAGA!', arena:'RELOJ DE ARENA', vida:'¡VIDA EXTRA!' };
 var AVISO_OBJETO = { doble:'Doble arpón: puedes tener dos arpones a la vez.', fijo:'Arpón fijo: se queda clavado en el techo un momento.',
   reloj:'Reloj: las pompas se paran cinco segundos.', escudo:'Escudo: te salva de un toque.', dinamita:'¡Dinamita! Todas las pompas se parten hasta sus primos.',
   lupa:'Lupa: durante unos segundos se ven los primos que lleva dentro cada pompa.', criba:'Criba.',
-  rafaga:'¡Ráfaga! Durante ocho segundos, mantén pulsado el disparo y salen balitas sin parar.' };
+  rafaga:'¡Ráfaga! Durante ocho segundos, mantén pulsado el disparo y salen balitas sin parar.',
+  arena:'Reloj de arena: las pompas van a la mitad durante ocho segundos.', vida:'¡Vida extra!' };
 
 /* ---------------- lo que se guarda en el dispositivo ---------------- */
 function cargar(){ try{ var o = JSON.parse(localStorage.getItem('pompas.v1') || '{}'); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }catch(e){ return {}; } }
@@ -988,10 +1164,14 @@ var Sonido = (function(){
         case 'ya': tono(880, 0, 0.09, 'square', 0.08); tono(1320, 0, 0.14, 'square', 0.08, 0.09); break;
         case 'tic': tono(1250, 0, 0.04, 'square', 0.05); break;
         case 'superada': [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5].forEach(function(f4, i){ tono(f4, 0, 0.14, 'square', 0.09, i * 0.1); }); break;
+        case 'mapa': [392, 523.25, 659.25, 783.99, 659.25, 783.99, 1046.5].forEach(function(f7, i){ tono(f7, 0, 0.13, 'square', 0.07, i * 0.12); }); break;
         case 'fin': tono(392, 0, 0.2, 'square', 0.1); tono(330, 0, 0.2, 'square', 0.1, 0.2); tono(262, 0, 0.45, 'square', 0.12, 0.4); break;
         case 'fuego': ruido(0.4, 0.08, 1200, 200); break;
         case 'bala': tono(1700, 900, 0.045, 'square', 0.035); break;
         case 'finRafaga': tono(900, 450, 0.14, 'square', 0.05); break;
+        case 'cristal': ruido(0.18, 0.22, 5200, 2400); tono(2100, 1500, 0.07, 'square', 0.05); tono(2800, 1900, 0.09, 'square', 0.04, 0.04); break;
+        case 'comida': [784, 988, 1175, 1568].forEach(function(f5, i){ tono(f5, 0, 0.09, 'square', 0.07, i * 0.07); }); break;
+        case 'vida': [523.25, 659.25, 783.99, 1046.5].forEach(function(f6, i){ tono(f6, 0, 0.12, 'square', 0.09, i * 0.09); }); break;
       }
     },
     alternar:function(){ activo = !activo; progreso.sonido = activo; guardar(); if(activo) ac(); return activo; },
@@ -1018,7 +1198,7 @@ function ajustar(){
   /* los fondos se pintan con el doble de detalle que las figuras: cada punto del fondo mide la mitad (redondeada) */
   var fondo = Math.max(1, Math.round(k / 2));
   PX = { s:s, k:k, bw:bw, bh:bh, dpr:dpr, fx:f, fy:f, fw:fw, fh:fh, fondo:fondo, sb:s * k / fondo, gw:Math.ceil(fw * k / fondo), gh:Math.ceil(fh * k / fondo) };
-  UI.escala = (bw * k / dpr) / LW; UI.fondoClave = ''; cacheBolas = {}; cacheTexto = {}; nTexto = 0;
+  UI.escala = (bw * k / dpr) / LW; UI.fondoClave = ''; cacheBolas = {}; cacheTexto = {}; nTexto = 0; cacheBloques = {};
   ctx.imageSmoothingEnabled = false;
 }
 /* coordenadas del campo (unidades lógicas) → píxeles del dispositivo, con decimales */
@@ -1200,14 +1380,15 @@ var PAL_HEROE = [
 ];
 var HEROE_W = 24, HEROE_H = 32;
 function rep(ch, n){ return new Array(n + 1).join(ch); }
-/* pose: quieto (fase 1 = parpadeo), anda (fases 0-3, de perfil hacia la derecha; mira -1 lo refleja), dispara (de espaldas) o golpe */
+/* pose: quieto (fase 1 = parpadeo), anda (fases 0-3, de perfil hacia la derecha; mira -1 lo refleja), dispara (de espaldas),
+   sube (de espaldas, trepando: fases 0 y 1), cae (de frente, con los brazos arriba) o golpe */
 function spriteHeroe(pose, fase, mira, i){
   var clave = pose + ':' + fase + ':' + mira + ':' + i; if(cacheHeroe[clave]) return cacheHeroe[clave];
   var g = [], x, y;
   for(y = 0; y < HEROE_H; y++){ g.push([]); for(x = 0; x < HEROE_W; x++) g[y].push(null); }
   function pon(xx, yy, c){ if(xx >= 0 && xx < HEROE_W && yy >= 0 && yy < HEROE_H) g[yy][xx] = c; }
   function seg(yy, xx, s){ for(var n = 0; n < s.length; n++){ var ch = s.charAt(n); if(ch !== '.') pon(xx + n, yy, ch); } }
-  var perfil = pose === 'anda', espalda = pose === 'dispara', brazosArriba = pose === 'dispara' || pose === 'golpe';
+  var perfil = pose === 'anda', trepa = pose === 'sube', espalda = pose === 'dispara' || trepa, brazosArriba = pose === 'dispara' || pose === 'golpe' || pose === 'cae';
   /* coletas de la prima, por detrás de la cabeza */
   if(i === 1){
     if(perfil){ seg(9, 5, 'FF'); seg(10, 4, 'RRR'); seg(11, 4, 'RRr'); seg(12, 5, 'RR'); seg(13, 5, 'R'); }
@@ -1260,6 +1441,11 @@ function spriteHeroe(pose, fase, mira, i){
     if(br < 0){ seg(16, 10, 'LD'); seg(17, 10, 'LD'); seg(18, 9, 'LD'); seg(19, 9, 'LD'); seg(20, 8, 'Ss'); }
     else if(br > 0){ seg(16, 12, 'LD'); seg(17, 12, 'LD'); seg(18, 13, 'LD'); seg(19, 13, 'LD'); seg(20, 14, 'Ss'); }
     else { for(y = 16; y <= 19; y++) seg(y, 11, 'LD'); seg(20, 11, 'Ss'); }
+  } else if(trepa){
+    /* trepando: un brazo arriba y el otro a media altura, alternando */
+    seg(16, 5, 'LD'); seg(16, 17, 'BD');
+    if(fase % 2 === 0){ for(y = 12; y <= 15; y++) seg(y, 4, 'LB'); seg(10, 3, 'SS'); seg(11, 3, 'Ss'); seg(14, 18, 'BD'); seg(15, 18, 'BD'); seg(13, 19, 'Ss'); }
+    else { for(y = 12; y <= 15; y++) seg(y, 18, 'BD'); seg(10, 19, 'SS'); seg(11, 19, 'sS'); seg(14, 4, 'LB'); seg(15, 4, 'LB'); seg(13, 3, 'SS'); }
   } else if(brazosArriba){
     seg(16, 5, 'LD'); seg(16, 17, 'BD');
     for(y = 12; y <= 15; y++){ seg(y, 4, 'LB'); seg(y, 18, 'BD'); }
@@ -1275,8 +1461,10 @@ function spriteHeroe(pose, fase, mira, i){
     var F = [[12, 13, 13, 0, 10, 9, 7, 0], [11, 11, 11, 1, 10, 10, 10, 0], [10, 9, 7, 0, 12, 13, 13, 0], [11, 11, 11, 0, 10, 10, 10, 1]][fase % 4];
     pierna(F[4], F[5], F[6], F[7], true); pierna(F[0], F[1], F[2], F[3], false);
   } else {
-    seg(25, 8, 'SSs'); seg(26, 8, 'WWw'); seg(27, 6, 'PPPOO'); seg(28, 6, 'POOOO'); seg(29, 6, 'QQQQQ');
-    seg(25, 13, 'SSs'); seg(26, 13, 'WWw'); seg(27, 13, 'PPOOO'); seg(28, 13, 'OOOOO'); seg(29, 13, 'QQQQQ');
+    /* de frente o de espaldas; trepando, una pierna encogida cada vez */
+    var eI = trepa && fase % 2 === 1 ? 2 : 0, eD = trepa && fase % 2 === 0 ? 2 : 0;
+    if(!eI) seg(25, 8, 'SSs'); seg(26 - eI, 8, 'WWw'); seg(27 - eI, 6, 'PPPOO'); seg(28 - eI, 6, 'POOOO'); seg(29 - eI, 6, 'QQQQQ');
+    if(!eD) seg(25, 13, 'SSs'); seg(26 - eD, 13, 'WWw'); seg(27 - eD, 13, 'PPOOO'); seg(28 - eD, 13, 'OOOOO'); seg(29 - eD, 13, 'QQQQQ');
   }
   /* contorno oscuro alrededor de toda la figura */
   var bor = [];
@@ -1290,10 +1478,12 @@ function spriteHeroe(pose, fase, mira, i){
 function pintarJugador(j){
   var t = UI.reloj, corre = Math.abs(j.vx) > 5 && M.fase === 'jugando', golpeado = M.fase === 'golpe' && UI.golpeado === j.i, pose, fase = 0, mira = 0;
   if(golpeado) pose = 'golpe';
+  else if(j.estado === 'escalera'){ pose = 'sube'; fase = Math.floor(j.y / 9) % 2; }
+  else if(j.estado === 'cae') pose = 'cae';
   else if(t - UI.tDisparo[j.i] < 0.22) pose = 'dispara';
   else if(corre){ pose = 'anda'; mira = j.vx > 0 ? 1 : -1; fase = REDUCIDO ? 0 : Math.floor(t * 10) % 4; }
   else { pose = 'quieto'; fase = (!REDUCIDO && (t + j.i * 1.7) % 3.4 < 0.14) ? 1 : 0; }
-  var spr = spriteHeroe(pose, fase, mira, j.i), k = PX.k, x = dX(j.x) - 12 * k, y = dY(K.SUELO) - 30 * k;
+  var spr = spriteHeroe(pose, fase, mira, j.i), k = PX.k, x = dX(j.x) - 12 * k, pies = dY(j.y), y = pies - 30 * k;
   ctx.save();
   if(j.invulnerable > 0 && !golpeado) ctx.globalAlpha = REDUCIDO ? 0.6 : (Math.floor(t * 10) % 2 ? 0.35 : 1);
   if(golpeado && !REDUCIDO){
@@ -1302,21 +1492,21 @@ function pintarJugador(j){
     ctx.rotate(Math.round(q * 8) * Math.PI / 2 * (j.i ? -1 : 1)); pegar(spr, -12 * k, -15 * k);
   } else pegar(spr, x, y);
   ctx.restore();
-  if(j.escudo){ ctx.strokeStyle = '#8cf0ff'; ctx.lineWidth = Math.max(1, Math.round(k / 2)); ctx.beginPath(); ctx.arc(dX(j.x), dY(K.SUELO) - 15 * k, 19 * k, 0, Math.PI * 2); ctx.stroke(); }
+  if(j.escudo){ ctx.strokeStyle = '#8cf0ff'; ctx.lineWidth = Math.max(1, Math.round(k / 2)); ctx.beginPath(); ctx.arc(dX(j.x), pies - 15 * k, 19 * k, 0, Math.PI * 2); ctx.stroke(); }
   /* la ráfaga: una barrita con el tiempo que le queda (parpadea al final) y un fogonazo con cada balita */
   if(j.rafaga > 0){
-    var anchoR = Math.max(1, Math.round(16 * j.rafaga / K.T_RAFAGA)), xR = dX(j.x) - 8 * k, yR = dY(K.SUELO) - 34 * k;
+    var anchoR = Math.max(1, Math.round(16 * j.rafaga / K.T_RAFAGA)), xR = dX(j.x) - 8 * k, yR = pies - 34 * k;
     if(!(j.rafaga < 2 && !REDUCIDO && Math.floor(t * 6) % 2)){
       ctx.fillStyle = '#1a1a24'; ctx.fillRect(Math.round(xR - k), Math.round(yR - k), 18 * k, 4 * k);
       ctx.fillStyle = '#ffd400'; ctx.fillRect(Math.round(xR), Math.round(yR), anchoR * k, 2 * k);
     }
-    if(t - UI.tDisparo[j.i] < 0.05 && !REDUCIDO){ var fx = dX(j.x), fy = dY(K.ARPON_INICIO); punto(fx - 3 * k, fy, '#fff6b0'); punto(fx + 2 * k, fy, '#fff6b0'); punto(fx - k, fy - 2 * k, '#ffffff', 2 * k); }
+    if(t - UI.tDisparo[j.i] < 0.05 && !REDUCIDO){ var fx = dX(j.x), fy = dY(j.y - K.JUG_ALTO); punto(fx - 3 * k, fy, '#fff6b0'); punto(fx + 2 * k, fy, '#fff6b0'); punto(fx - k, fy - 2 * k, '#ffffff', 2 * k); }
   }
-  if(M.nJug === 2) escribir(String(j.i + 1), dX(j.x), dY(K.SUELO) - 42 * k, escalaMinima(8), j.i ? '#ff6b5a' : '#6ba8ff', '#101018');
+  if(M.nJug === 2) escribir(String(j.i + 1), dX(j.x), pies - 42 * k, escalaMinima(8), j.i ? '#ff6b5a' : '#6ba8ff', '#101018');
 }
 var PUNTA = ['...o...', '..oWo..', '.oWWWo.', 'oWWWWWo', '..oWo..', '..oWo..'];
 function pintarArpon(h){
-  var k = PX.k, x = dX(h.x), y0 = dY(K.SUELO) - 2 * k, y1 = dY(h.tope), clav = h.clavado;
+  var k = PX.k, x = dX(h.x), y0 = dY(h.base === undefined ? K.SUELO : h.base) - 2 * k, y1 = dY(h.tope), clav = h.clavado;
   var aviso = clav && h.tFijo < 0.8 && !REDUCIDO && Math.floor(UI.reloj * 10) % 2;
   var c1 = clav ? '#ffd400' : '#eef2f8', c2 = clav ? '#9a7400' : '#6f7888';
   ctx.globalAlpha = aviso ? 0.45 : 1;
@@ -1333,7 +1523,9 @@ var ICONOS = {
   dinamita:['......y.', '.....y.y', '....#...', '..rrrr..', '..rrrr..', '..rwwr..', '..rrrr..', '..rrrr..'],
   lupa:['.####...', '#....#..', '#....#..', '#....#..', '#....#..', '.####...', '.....##.', '......##'],
   criba:['.######.', '#.#.#.##', '########', '#.#.#.##', '########', '#.#.#.##', '########', '.######.'],
-  rafaga:['...y....', 'y..w..y.', 'w..w..w.', 'w.....w.', '........', 'rrrrrrr.', 'rrrrrrr.', '.r.r.r..']
+  rafaga:['...y....', 'y..w..y.', 'w..w..w.', 'w.....w.', '........', 'rrrrrrr.', 'rrrrrrr.', '.r.r.r..'],
+  arena:['########', '.#....#.', '..#yy#..', '...##...', '...##...', '..#y.#..', '.#yyyy#.', '########'],
+  vida:['.rr..rr.', 'rwrrrrrr', 'rrrrrrrr', 'rrrrrrrr', '.rrrrrr.', '..rrrr..', '...rr...', '........']
 };
 function spriteIcono(tipo){
   if(cacheIconos[tipo]) return cacheIconos[tipo];
@@ -1357,12 +1549,87 @@ function pintarBala(b){
   if(!REDUCIDO){ ctx.fillStyle = '#ffd400'; ctx.globalAlpha = 0.45; ctx.fillRect(Math.round(x - k / 2), Math.round(y + 6 * k), k, 3 * k); ctx.globalAlpha = 0.2; ctx.fillRect(Math.round(x - k / 2), Math.round(y + 9 * k), k, 3 * k); ctx.globalAlpha = 1; }
   pegar(spriteBala(), x - 1.5 * k, y);
 }
+/* la comida de premio: platos asturianos de 12 × 12 puntos, sin caja */
+var COMIDA = {
+  fabada:      { nombre:'¡FABADA!', decir:'Fabada', pal:{ o:'#2a1408', b:'#b5653a', B:'#d98850', c:'#7a3a1c', w:'#fff6dc', r:'#c8301e', k:'#3a2a20' },
+                 px:['............', '............', '..oooooooo..', '.owwrwwwkwo.', 'owwwwrwwwwwo', 'oBBBBBBBBBBo', 'obBBBBBBBBbo', 'obbBBBBBBbbo', '.obbbbbbbbo.', '..occcccco..', '...oooooo...', '............'] },
+  cachopo:     { nombre:'¡CACHOPO!', decir:'Cachopo', pal:{ o:'#3a2008', g:'#e0a040', G:'#f2c268', d:'#b87820', y:'#ffe890', p:'#e87868' },
+                 px:['............', '............', '..oooooooo..', '.oGGgGGgGGo.', 'oGgGGGgGGgGo', 'ogGGgGGGgGGo', 'oyyppppppydo', 'ogddgddgddgo', '.oddddddddo.', '..oooooooo..', '............', '............'] },
+  sidra:       { nombre:'¡SIDRA!', decir:'Sidra', pal:{ o:'#0c2410', v:'#2f7a3a', V:'#4fa85a', c:'#c9a050', w:'#f4f0dc', y:'#e8c84a' },
+                 px:['.....oo.....', '....occo....', '....ovvo....', '....ovvo....', '...ovVvvo...', '..ovVvvvvo..', '..ovVvvvvo..', '..owwwwwwo..', '..owyywwwo..', '..ovVvvvvo..', '..ovvvvvvo..', '...oooooo...'] },
+  casadielles: { nombre:'¡CASADIELLES!', decir:'Casadielles', pal:{ o:'#3a2008', g:'#e0a040', G:'#f6cc78', d:'#a86a18', w:'#ffffff' },
+                 px:['............', '............', '............', '.oo......oo.', 'odgoooooogdo', 'odGGwGGwGGdo', 'ogGwGGGGwGgo', 'odGGGwGGGGdo', 'odgoooooogdo', '.oo......oo.', '............', '............'] },
+  cabrales:    { nombre:'¡CABRALES!', decir:'Queso de Cabrales', pal:{ o:'#1c2a18', q:'#f2ecc8', Q:'#fffbe6', a:'#5a8a9a', h:'#3f7a3a', H:'#5fa052' },
+                 px:['............', '........oo..', '......ooQqo.', '....ooQQaqo.', '..ooQQaQQqqo', '.oQQaQQQaQqo', 'oQaQQQaQQaqo', 'oqqaqqqqaqqo', 'ohHhhHhhHhho', '.oooooooooo.', '............', '............'] },
+  bollu:       { nombre:'¡BOLLU PREÑÁU!', decir:'Bollu preñáu', pal:{ o:'#3a2008', g:'#d89848', G:'#f0bc70', d:'#a86a20', r:'#c8301e', R:'#e85a40' },
+                 px:['............', '............', '...oooooo...', '..oGGGGGGo..', '.oGGgGGgGGoo', 'oGGGGGGGGgRo', 'oGgGGGGGGgro', 'ogGGGGgGGdoo', '.oggdddddo..', '..oooooooo..', '............', '............'] },
+  frixuelos:   { nombre:'¡FRIXUELOS!', decir:'Frixuelos', pal:{ o:'#3a2408', y:'#f2d078', Y:'#fbe6a8', d:'#c89838', w:'#ffffff', p:'#d8dce8' },
+                 px:['............', '............', '..ooo.......', '.oYyyooo....', '.oyddyYyooo.', '..oooyddyYyo', '.....ooodddo', 'oppppppppooo', 'owwwwwwwwwwo', '.oppppppppo.', '..oooooooo..', '............'] },
+  arroz:       { nombre:'¡ARROZ CON LECHE!', decir:'Arroz con leche', pal:{ o:'#2a1a10', w:'#fffaf0', W:'#f0e6d0', c:'#a85a20', C:'#d08838', b:'#6fa0d8', B:'#9cc4f0' },
+                 px:['............', '............', '............', '..oooooooo..', '.ocCccCccCo.', 'owwcwwcwwwwo', 'oBBBBBBBBBBo', 'obBBBBBBBBbo', '.obbBBBBbbo.', '..obbbbbbo..', '...oooooo...', '............'] }
+};
+function spriteComida(tipo){
+  var clave = 'comida:' + tipo; if(cacheIconos[clave]) return cacheIconos[clave];
+  var D = COMIDA[tipo] || COMIDA.fabada, c = document.createElement('canvas'); c.width = c.height = 12; var g = c.getContext('2d');
+  for(var y = 0; y < 12; y++) for(var x = 0; x < 12; x++){ var ch = D.px[y].charAt(x); if(ch !== '.' && D.pal[ch]){ g.fillStyle = D.pal[ch]; g.fillRect(x, y, 1, 1); } }
+  cacheIconos[clave] = c; return c;
+}
 function pintarObjeto(o){
   var guino = o.suelo && o.t < 1.5;
   if(guino && !REDUCIDO && Math.floor(UI.reloj * 8) % 2) return;
   ctx.globalAlpha = guino && REDUCIDO ? 0.55 : 1;
-  pegar(spriteIcono(o.tipo), dX(o.x) - 6 * PX.k, dY(o.y) - 6 * PX.k);
+  pegar(o.tipo === 'comida' ? spriteComida(o.comida) : spriteIcono(o.tipo), dX(o.x) - 6 * PX.k, dY(o.y) - 6 * PX.k);
   ctx.globalAlpha = 1;
+}
+
+/* ---------------- bloques y escaleras, como en el Pang: piedra del color del marco, cristal, cristal con «?» ---------------- */
+var cacheBloques = {};
+function spriteBloque(tipo, w, h, id){
+  var clave = tipo + ':' + w + 'x' + h + ':' + id; if(cacheBloques[clave]) return cacheBloques[clave];
+  var c = document.createElement('canvas'); c.width = w; c.height = h; var g = c.getContext('2d'), x;
+  if(tipo === 'fijo'){
+    var P = MARCOS[id] || ['#c9c4bb', '#ebe7df', '#8a857b'], n = Math.max(1, Math.round(w / h)), t = w / n;
+    for(var q = 0; q < n; q++){
+      var x0 = Math.round(q * t), x1 = Math.round((q + 1) * t);
+      g.fillStyle = P[0]; g.fillRect(x0, 0, x1 - x0, h);
+      g.fillStyle = P[1]; g.fillRect(x0, 0, x1 - x0, 1); g.fillRect(x0, 0, 1, h);
+      g.fillStyle = P[2]; g.fillRect(x0, h - 1, x1 - x0, 1); g.fillRect(x1 - 1, 0, 1, h);
+      if(h >= 6){ g.fillStyle = P[1]; g.fillRect(x0 + 2, 2, 1, 1); }
+    }
+  } else {
+    g.fillStyle = '#1c4a78'; g.fillRect(0, 0, w, h);
+    g.fillStyle = 'rgba(150,215,255,0.92)'; g.fillRect(1, 1, w - 2, h - 2);
+    g.fillStyle = '#e8f8ff'; g.fillRect(1, 1, w - 2, 1); g.fillRect(1, 1, 1, h - 2);
+    g.fillStyle = '#6aa8d8'; g.fillRect(1, h - 2, w - 2, 1); g.fillRect(w - 2, 1, 1, h - 2);
+    g.fillStyle = '#ffffff'; for(x = 0; x < 3; x++) g.fillRect(3 + x, Math.max(2, h - 4 - x), 1, 1);
+    for(x = 0; x < 2; x++) g.fillRect(w - 6 + x, 2 + (1 - x), 1, 1);
+    if(tipo === 'premio'){
+      var G = glifo('?'), ox = Math.floor((w - 5) / 2), oy = Math.max(0, Math.floor((h - 7) / 2));
+      for(var gy = 0; gy < 7 && oy + gy < h; gy++) for(var gx = 0; gx < 5; gx++) if(G[gy + 2].charAt(gx) === '#'){ g.fillStyle = '#1c2a50'; g.fillRect(ox + gx + 1, oy + gy, 1, 1); g.fillStyle = '#ffd400'; g.fillRect(ox + gx, oy + gy, 1, 1); }
+    }
+  }
+  cacheBloques[clave] = c; return c;
+}
+function spriteEscalera(h){
+  var clave = 'escalera:' + h; if(cacheBloques[clave]) return cacheBloques[clave];
+  var c = document.createElement('canvas'); c.width = 12; c.height = h; var g = c.getContext('2d');
+  g.fillStyle = '#3a2412'; g.fillRect(0, 0, 3, h); g.fillRect(9, 0, 3, h);
+  g.fillStyle = '#b07a3c'; g.fillRect(1, 0, 1, h); g.fillRect(10, 0, 1, h);
+  g.fillStyle = '#e0aa60'; g.fillRect(0, 0, 1, h); g.fillRect(9, 0, 1, h);
+  for(var y = 3; y < h - 1; y += 4){ g.fillStyle = '#3a2412'; g.fillRect(2, y + 1, 8, 1); g.fillStyle = '#d09a50'; g.fillRect(2, y, 8, 1); }
+  cacheBloques[clave] = c; return c;
+}
+function pintarBloques(){
+  var k = PX.k, id = E.MUNDOS[mundoActual()].id, i;
+  for(i = 0; i < M.bloques.length; i++){
+    var b = M.bloques[i]; if(b.roto) continue;
+    pegar(spriteBloque(b.tipo, Math.max(4, Math.round(b.w * PX.s)), Math.max(3, Math.round(b.h * PX.s)), id), dX(b.x), dY(b.y));
+  }
+  /* la escalera asoma un poco por encima del bloque, para agarrarse */
+  for(i = 0; i < M.escaleras.length; i++){
+    var e = M.escaleras[i], alto = Math.max(4, Math.round((e.y1 - e.y0 + 14) * PX.s));
+    pegar(spriteEscalera(alto), dX(e.x) - 6 * k, dY(e.y1) - alto * k);
+  }
 }
 
 /* ---------------- fondos: doce lugares de Asturias, con el doble de detalle, cielos tramados, bordes iluminados y textura ---------------- */
@@ -2140,6 +2407,87 @@ function pintarBanner(){
   escribir(B.titulo, cx, cy, fT, '#ffd400', '#7a0000');
   if(B.sub) escribir(B.sub, cx, cy + 12 * fT * k, fS, '#ffffff', '#101018');
 }
+/* ---------------- el mapa de Asturias entre lugar y lugar, como el mapamundi con el avión del Pang ---------------- */
+var GEO = { gijon:[-5.662, 43.545], aviles:[-5.925, 43.556], oviedo:[-5.849, 43.362], covadonga:[-5.055, 43.308], picos:[-4.84, 43.21], llanes:[-4.756, 43.421], noche:[-5.662, 43.545],
+            candas:[-5.762, 43.588], luanco:[-5.793, 43.615], luarca:[-6.536, 43.544], villaviciosa:[-5.435, 43.481], cangas:[-6.55, 43.178] };
+/* la costa, de la ría del Eo a Tina Mayor, y la frontera, de vuelta por la cordillera (longitud y latitud) */
+var COSTA = [[-7.03, 43.56], [-6.94, 43.57], [-6.84, 43.57], [-6.72, 43.56], [-6.62, 43.56], [-6.53, 43.55], [-6.4, 43.57], [-6.27, 43.57], [-6.15, 43.57], [-6.07, 43.56], [-5.97, 43.58], [-5.92, 43.59],
+             [-5.88, 43.63], [-5.85, 43.66], [-5.81, 43.63], [-5.79, 43.62], [-5.76, 43.59], [-5.7, 43.56], [-5.66, 43.55], [-5.58, 43.55], [-5.47, 43.55], [-5.39, 43.53], [-5.27, 43.53], [-5.19, 43.49],
+             [-5.06, 43.47], [-4.92, 43.45], [-4.75, 43.42], [-4.62, 43.4], [-4.51, 43.39]];
+var FRONTERA = [[-4.53, 43.33], [-4.56, 43.27], [-4.63, 43.26], [-4.72, 43.22], [-4.74, 43.18], [-4.85, 43.18], [-4.96, 43.19], [-5.02, 43.15], [-5.12, 43.1], [-5.22, 43.1], [-5.38, 43.06], [-5.5, 43.03],
+                [-5.77, 42.99], [-5.93, 43.01], [-6, 43.05], [-6.1, 43.03], [-6.25, 43], [-6.38, 42.98], [-6.42, 42.99], [-6.52, 42.92], [-6.63, 42.9], [-6.75, 42.92], [-6.82, 42.92], [-6.87, 42.95],
+                [-6.9, 43.02], [-6.95, 43.1], [-7.02, 43.15], [-7.05, 43.22], [-7.12, 43.3], [-7.18, 43.39], [-7.08, 43.46], [-7.05, 43.52]];
+/* un grado de longitud mide aquí 81 km y uno de latitud, 111: de ahí las dos escalas */
+function geoXY(q){ return [40 + (q[0] + 7.18) * 240, 96 + (43.67 - q[1]) * 330]; }
+var capaMapa = document.createElement('canvas');
+function capaDelMapa(){
+  var clave = PX.gw + 'x' + PX.gh; if(UI.mapaClave === clave) return capaMapa;
+  UI.mapaClave = clave; capaMapa = document.createElement('canvas'); capaMapa.width = PX.gw; capaMapa.height = PX.gh;
+  var c = capaMapa.getContext('2d'), P = COSTA.map(geoXY), F = FRONTERA.map(geoXY), u = unPunto();
+  franjasTramadas(c, 0, PX.gh, ['#2c70ba', '#3a82c8', '#4a94d4', '#5ea6de']);
+  c.setTransform(PX.sb, 0, 0, PX.sb, 0, 0);
+  /* las tierras vecinas, apagadas */
+  c.fillStyle = '#cfc8a6'; c.beginPath(); c.moveTo(0, geoXY([-7.4, 43.7])[1]); P.forEach(function(q){ c.lineTo(q[0], q[1]); }); c.lineTo(K.W, geoXY([-4.2, 43.41])[1]); c.lineTo(K.W, K.H); c.lineTo(0, K.H); c.closePath(); c.fill();
+  /* Asturias */
+  c.fillStyle = '#5aa84a'; c.beginPath(); P.concat(F).forEach(function(q, i){ if(i) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); c.closePath(); c.fill();
+  c.strokeStyle = '#2a5a22'; c.lineWidth = 2 * u; c.stroke();
+  c.fillStyle = '#74bd5e'; c.beginPath(); P.forEach(function(q, i){ if(i) c.lineTo(q[0], q[1] + 3); else c.moveTo(q[0], q[1] + 3); }); for(var i = P.length - 1; i >= 0; i--) c.lineTo(P[i][0], P[i][1] + 22); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,0.9)'; c.lineWidth = 1.5 * u; c.beginPath(); P.forEach(function(q, i){ if(i) c.lineTo(q[0], q[1] - 1.5); else c.moveTo(q[0], q[1] - 1.5); }); c.stroke();
+  /* la cordillera y los Picos de Europa */
+  function monte(g, tam, nieve){
+    var q = geoXY(g), x = q[0], y = q[1];
+    c.fillStyle = '#6e7c5c'; c.beginPath(); c.moveTo(x - tam, y); c.lineTo(x, y - tam * 1.3); c.lineTo(x + tam, y); c.closePath(); c.fill();
+    c.fillStyle = '#505e46'; c.beginPath(); c.moveTo(x, y - tam * 1.3); c.lineTo(x + tam, y); c.lineTo(x + tam * 0.25, y); c.closePath(); c.fill();
+    if(nieve){ c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(x - tam * 0.35, y - tam * 0.85); c.lineTo(x, y - tam * 1.3); c.lineTo(x + tam * 0.35, y - tam * 0.85); c.closePath(); c.fill(); }
+  }
+  [[-5.2, 43.13], [-5.45, 43.09], [-5.7, 43.05], [-5.95, 43.08], [-6.18, 43.06], [-6.38, 43.04], [-6.58, 42.97], [-6.8, 42.99], [-6.98, 43.2], [-5.35, 43.2], [-6.3, 43.2]].forEach(function(g){ monte(g, 9, false); });
+  [[-4.98, 43.22], [-4.7, 43.25], [-4.84, 43.22]].forEach(function(g, k2){ monte(g, k2 === 2 ? 15 : 11, true); });
+  texturar(c, 0.07);
+  return capaMapa;
+}
+function finMapa(){
+  if(!UI.mapa) return;
+  UI.mapa = null;
+  if(UI.bannerPendiente){ banner(UI.bannerPendiente[0], UI.bannerPendiente[1], 1.6); UI.bannerPendiente = null; }
+}
+function pintarMapa(){
+  var Mp = UI.mapa, k = PX.k, fp = PX.fondo, ids = E.MUNDOS.map(function(m){ return m.id; }), i;
+  function pt(n){ return geoXY(GEO[ids[n]]); }
+  /* el viaje: medio segundo quieto, el camino y un rato en el destino */
+  var viaja = Mp.de >= 0 && !REDUCIDO, q = viaja ? clamp((Mp.t - 0.5) / Math.max(0.1, Mp.dur - 1.7), 0, 1) : 1;
+  ctx.save(); ctx.beginPath(); ctx.rect(PX.fx * k, PX.fy * k, PX.fw * k, PX.fh * k); ctx.clip();
+  ctx.drawImage(capaDelMapa(), PX.fx * k, PX.fy * k, PX.gw * fp, PX.gh * fp);
+  /* la ruta hecha, a puntos; el último tramo crece con el viaje */
+  for(i = 1; i <= Mp.a; i++){
+    var A = pt(i - 1), B = pt(i), hasta = (i === Mp.a && Mp.de >= 0) ? q : 1, largo = Math.hypot(B[0] - A[0], B[1] - A[1]);
+    if(i === Mp.a && Mp.de < 0) continue;
+    for(var d = 6; d < largo * hasta; d += 9) punto(dX(A[0] + (B[0] - A[0]) * d / largo) - fp, dY(A[1] + (B[1] - A[1]) * d / largo) - fp, '#ffd400', 2 * fp);
+  }
+  /* los lugares: visitados en amarillo, los que faltan en blanco y el destino, más grande y parpadeando */
+  var vistos = {};
+  for(i = 0; i < ids.length; i++){
+    var L = pt(i), clave = L[0] + ',' + L[1], destino = i === Mp.a, hecho = i < Mp.a;
+    if(vistos[clave] && !destino) continue; vistos[clave] = 1;
+    var tam = (destino ? 4 : 3) * fp, cx = dX(L[0]), cy = dY(L[1]);
+    ctx.fillStyle = '#1a1408'; ctx.fillRect(Math.round(cx - tam - fp), Math.round(cy - tam - fp), 2 * (tam + fp), 2 * (tam + fp));
+    ctx.fillStyle = destino ? ((REDUCIDO || Math.floor(UI.reloj * 4) % 2) ? '#ff5a3c' : '#ffd400') : (hecho ? '#ffd400' : '#ffffff');
+    ctx.fillRect(Math.round(cx - tam), Math.round(cy - tam), 2 * tam, 2 * tam);
+  }
+  /* el explorador, de camino o ya en su sitio */
+  var D = pt(Mp.a), O = Mp.de >= 0 ? pt(Mp.de) : D, ex = O[0] + (D[0] - O[0]) * q, ey = O[1] + (D[1] - O[1]) * q, anda = viaja && q > 0 && q < 1;
+  var spr = anda ? spriteHeroe('anda', Math.floor(UI.reloj * 10) % 4, D[0] >= O[0] ? 1 : -1, 0) : spriteHeroe('quieto', 0, 0, 0);
+  pegar(spr, dX(ex) - 12 * k, dY(ey) - 31 * k);
+  /* los rótulos */
+  var cxT = (PX.fx + PX.fw / 2) * k, f = Math.max(escalaMinima(15), Math.round(PX.fw / 170)), mu = E.MUNDOS[Mp.a];
+  function cabe(txt, g){ while(g > 1 && Array.from(txt).length * 6 * g > PX.fw - 8) g--; return g; }
+  escribir('LA VUELTA A ASTURIAS', cxT, dY(40), cabe('LA VUELTA A ASTURIAS', f), '#ffd400', '#7a0000');
+  escribir('MAR CANTÁBRICO', dX(520), dY(80), escalaMinima(8), '#cfe6ff', '#1c4a86');
+  var nombre = (Mp.a + 1) + '. ' + mu.lugar, tema = mu.tema.replace(/: m\.c\.d\. y m\.c\.m\./, ''), fN = cabe(nombre, f);
+  escribir(nombre, cxT, dY(386), fN, '#ffffff', '#101018');
+  escribir(tema, cxT, dY(386) + 11 * fN * k, cabe(tema, Math.max(escalaMinima(10), fN - 1)), '#ffd400', '#101018');
+  ctx.restore();
+}
+
 var DECOR = [];
 function pintarDecor(dt){
   if(!DECOR.length){ [12, 7, 30, 97, 64, 5, 18, 2].forEach(function(n, i){ var d = E.diametro(n); DECOR.push({ n:n, r:d / 2, x:60 + i * 85, y:120 + (i % 3) * 70, vx:(i % 2 ? 1 : -1) * 30, vy:-40 - i * 8, c:ORDEN_COLOR[i % 4] }); }); }
@@ -2156,6 +2504,7 @@ function dibujar(dt){
   var k = PX.k, fp = PX.fondo;
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false;
   ctx.drawImage(capaMarco, 0, 0, PX.bw * k, PX.bh * k);
+  if(UI.mapa){ pintarMapa(); return; }
   ctx.save(); ctx.beginPath(); ctx.rect(PX.fx * k, PX.fy * k, PX.fw * k, PX.fh * k); ctx.clip();
   if(UI.sacudida > 0 && !REDUCIDO) ctx.translate(Math.round((Math.random() - 0.5) * UI.sacudida * 6 * k), Math.round((Math.random() - 0.5) * UI.sacudida * 6 * k));
   ctx.drawImage(capaCielo, PX.fx * k, PX.fy * k, PX.gw * fp, PX.gh * fp);
@@ -2165,6 +2514,7 @@ function dibujar(dt){
   if(E.MUNDOS[mundoActual()].id === 'noche' && M.fase !== 'menu') pintarFuegos(dt, 2.2);
   else if(UI.panel === 'victoria') pintarFuegos(dt, 0.5);
   pintarSombras();
+  if(M.fase !== 'menu') pintarBloques();
   var i;
   for(i = 0; i < M.objetos.length; i++) pintarObjeto(M.objetos[i]);
   for(i = 0; i < M.jugadores.length; i++){ M.jugadores[i].arpones.forEach(pintarArpon); M.jugadores[i].balas.forEach(pintarBala); }
@@ -2320,7 +2670,12 @@ function anunciarPompas(){
     var alto = K.SUELO - p.y - p.r, altura = alto > 180 ? 'alta' : (alto > 70 ? 'a media altura' : 'baja');
     return nombre + ', ' + lado + ', ' + altura;
   });
-  anunciar('Pompas: ' + L.join('; ') + '.');
+  var esc = '';
+  if(M.escaleras.length && j){
+    var cerca = M.escaleras.slice().sort(function(a, b){ return Math.abs(a.x - jx) - Math.abs(b.x - jx); })[0];
+    esc = j.estado === 'escalera' ? ' Estás en una escalera.' : (j.y < K.SUELO - 1 ? ' Estás encima de un bloque.' : (Math.abs(cerca.x - jx) <= K.ALCANCE_ESCALERA ? ' Tienes una escalera aquí mismo.' : ' La escalera más cercana está a tu ' + (cerca.x < jx ? 'izquierda' : 'derecha') + '.'));
+  }
+  anunciar('Pompas: ' + L.join('; ') + '.' + esc);
 }
 
 /* ---------------- vuelos de los primos hasta su línea ---------------- */
@@ -2351,13 +2706,27 @@ function procesarEventos(){
         else {
           var mu = E.MUNDOS[ev.mundo], titulo = M.modo === 'reto' ? 'RETO ' + (M.indice + 1) + '/' + M.totalFases() : (ev.mundo + 1) + '-' + (M.indice % E.FASES_POR_MUNDO + 1) + ' ' + mu.lugar;
           var sub = ev.reintento ? 'OTRA VEZ' : (M.modo === 'reto' ? mu.lugar : mu.tema.replace(/: m\.c\.d\. y m\.c\.m\./, ''));
-          banner(titulo, sub, 1.6);
-          anunciar(nombreFase().replace(' · ', ', fase ') + (ev.reintento ? ', otra vez' : '') + '. Pompas: ' + ev.numeros.join(', ') + '. ¡Preparados!');
+          if(M.modo === 'campana' && !ev.reintento && UI.mundoVisto !== ev.mundo){
+            UI.mapa = { de:UI.mundoVisto === ev.mundo - 1 ? ev.mundo - 1 : -1, a:ev.mundo, t:0, dur:REDUCIDO ? 2.4 : 3.6 };
+            UI.bannerPendiente = [titulo, sub]; UI.banner = null; Sonido.sfx('mapa');
+            anunciar('Mapa de Asturias: ' + (UI.mapa.de >= 0 ? 'de ' + E.MUNDOS[UI.mapa.de].lugar + ' a ' : 'empiezas en ') + mu.lugar + '.');
+          } else banner(titulo, sub, 1.6);
+          UI.mundoVisto = M.modo === 'campana' ? ev.mundo : -1;
+          anunciar(nombreFase().replace(' · ', ', fase ') + (ev.reintento ? ', otra vez' : '') + '. Pompas: ' + ev.numeros.join(', ') + '.'
+            + (ev.escaleras ? ' Hay bloques y escaleras: sube con la flecha arriba.' : (ev.bloques ? ' Hay bloques de cristal: se rompen de un disparo.' : '')) + ' ¡Preparados!');
         }
+        /* en el móvil, los botones de subir y bajar solo salen en las fases con escaleras */
+        if($('sube').hidden !== !(TACTIL && ev.escaleras)){ $('sube').hidden = !(TACTIL && ev.escaleras); ajustar(); }
+        UI.dedoSube = 0;
         break;
       case 'ya': banner('¡YA!', '', 0.6); Sonido.sfx('ya'); break;
       case 'disparo': UI.tDisparo[ev.jugador] = UI.reloj; Sonido.sfx(ev.bala ? 'bala' : 'disparo'); break;
       case 'finRafaga': Sonido.sfx('finRafaga'); anunciar('Se acabó la ráfaga.'); break;
+      case 'finArena': anunciar('Las pompas vuelven a su paso.'); break;
+      case 'bloqueRoto':
+        Sonido.sfx('cristal'); gotas(ev.x + ev.w / 2, ev.y + ev.h / 2, ev.w / 2, 10, '#bfe6ff'); chispas(ev.x + ev.w / 2, ev.y + ev.h / 2, 4, '#ffffff');
+        anunciar(ev.premio ? 'Cristal roto: suelta un premio.' : 'Cristal roto.');
+        break;
       case 'rotura':
         lineas = true;
         if(ev.causa === 'arpon'){ var xg = ev.x + (ev.lado || 0) * (ev.golpe || 0) * ev.r * 0.8; estallido(xg, ev.y, ev.r * 0.55, colorFam(ev.fam)); gotas(ev.x, ev.y, ev.r, 8, PALETAS[colorFam(ev.fam)].claro); Sonido.sfx('rotura', ev.r); anunciar(ev.n + ' se parte en ' + ev.a + ' por ' + ev.b + '.'); }
@@ -2383,8 +2752,11 @@ function procesarEventos(){
         break;
       case 'objetoCae': Sonido.sfx('objetoCae'); break;
       case 'objeto': {
-        Sonido.sfx('objeto'); var jo = M.jugadores[ev.jugador];
-        if(ev.objeto !== 'criba'){ texto(jo ? jo.x : ev.x, K.SUELO - 90, NOMBRE_OBJETO[ev.objeto] || '', '#ffd400', 1.2); anunciar(AVISO_OBJETO[ev.objeto]); }
+        var jo = M.jugadores[ev.jugador], xo = jo ? jo.x : ev.x, yo = (jo ? jo.y : K.SUELO) - 90;
+        /* la comida de premio: su nombre y sus puntos al marcador, sin cifras en el campo */
+        if(ev.objeto === 'comida'){ var Cm = COMIDA[ev.comida] || COMIDA.fabada; Sonido.sfx('comida'); texto(xo, yo, Cm.nombre, '#ffd400', 1.3); chispas(xo, yo + 60, 8, '#ffd400'); anunciar(Cm.decir + ': ' + ev.puntos + ' puntos.'); break; }
+        Sonido.sfx(ev.objeto === 'vida' ? 'vida' : 'objeto');
+        if(ev.objeto !== 'criba'){ texto(xo, yo, NOMBRE_OBJETO[ev.objeto] || '', '#ffd400', 1.2); anunciar(AVISO_OBJETO[ev.objeto]); }
         break; }
       case 'dinamita': lineas = true; UI.destello = REDUCIDO ? 0 : 1; UI.sacudida = 0.7; Sonido.sfx('dinamita'); break;
       case 'criba':
@@ -2483,13 +2855,15 @@ function abrirPanel(nombre, focoId){
       + '<h3>La idea</h3><p>Cada pompa lleva un número. Dispárale con el arpón: si el número es <b>compuesto</b>, la pompa se parte en dos pompas cuyo producto es él; si es <b>primo</b>, estalla. Revienta todas las pompas para pasar de fase. Arriba ves cómo va quedando cada número: 60 = 6 · 10 = 2 · 3 · 2 · 5 = 2² · 3 · 5.</p>'
       + '<p>Cuanto mayor es el número, mayor es la pompa, pero el tamaño no dice si es primo: el 61 y el 60 miden casi lo mismo. El 61 estalla entero; el 60 acaba en cuatro primos.</p>'
       + '<h3>Por el centro o por un lado</h3><p>Depende de dónde le dé el arpón. <b>Por el centro</b>, la pompa se parte en los dos números más cercanos: 72 = 8 · 9, y los cuadrados en dos iguales, 36 = 6 · 6. <b>Por un lado</b>, sale por ese lado una pompa más pequeña, y cuanto más al borde, más pequeña, hasta el primo más pequeño: 72 = 2 · 36, como en la división sucesiva del cuaderno. Da igual cómo se parta: al final salen siempre los mismos primos.</p>'
+      + '<h3>Escaleras y bloques</h3><p>En algunas fases hay bloques, como en el Pang: las pompas botan en ellos y el arpón se para al tocarlos. Los de <b>cristal</b> se rompen de un disparo, y los que llevan un «?» sueltan un premio. Por las <b>escaleras</b> subes a los bloques fijos: arriba puedes andar y disparar, y si te sales del borde caes al suelo. En la escalera no se dispara.</p>'
       + '<h3>Pompas gemelas (Llanes)</h3><p>Dos números pegados. Al darles, se parten en tres: lo que solo es del primero, lo que tienen en común (su <b>m.c.d.</b>) y lo que solo es del segundo. Las tres multiplicadas dan su <b>m.c.m.</b>: 12 y 18 se parten en 2, 6 y 3; m.c.d. = 6 y m.c.m. = 2 · 6 · 3 = 36.</p>'
-      + '<h3>Objetos</h3><ul><li><b>Doble arpón</b>: dos arpones a la vez.</li><li><b>Arpón fijo</b>: se queda clavado en el techo un momento.</li><li><b>Reloj</b>: las pompas se paran cinco segundos.</li><li><b>Escudo</b>: te salva de un toque.</li><li><b>Dinamita</b>: todas las pompas se parten hasta sus primos.</li><li><b>Lupa</b>: se ven los primos que lleva dentro cada pompa.</li><li><b>Criba</b>: todas las pompas que son múltiplo de un primo sueltan ese primo.</li><li><b>Ráfaga</b>: durante ocho segundos, mientras mantienes pulsado el disparo, salen balitas sin parar. Cada una parte la pompa según dónde le dé, como el arpón.</li></ul>'
+      + '<h3>Objetos</h3><ul><li><b>Doble arpón</b>: dos arpones a la vez.</li><li><b>Arpón fijo</b>: se queda clavado en el techo un momento.</li><li><b>Reloj</b>: las pompas se paran cinco segundos.</li><li><b>Escudo</b>: te salva de un toque.</li><li><b>Dinamita</b>: todas las pompas se parten hasta sus primos.</li><li><b>Lupa</b>: se ven los primos que lleva dentro cada pompa.</li><li><b>Criba</b>: todas las pompas que son múltiplo de un primo sueltan ese primo.</li><li><b>Ráfaga</b>: durante ocho segundos, mientras mantienes pulsado el disparo, salen balitas sin parar. Cada una parte la pompa según dónde le dé, como el arpón.</li><li><b>Reloj de arena</b>: las pompas van a la mitad durante ocho segundos.</li><li><b>Vida extra</b>: una vida más (hasta cinco).</li></ul>'
+      + '<p>Una vez por fase cae del cielo un <b>plato asturiano</b> (fabada, cachopo, sidra, casadielles…): cógelo antes de que desaparezca y ganas 500 puntos.</p>'
       + '<h3>Vidas y tiempo</h3><p>Si una pompa te toca, pierdes una vida, pero la fase sigue donde estaba: parpadeas un momento y nada te hace daño. Si se acaba el tiempo, también pierdes una vida y el reloj vuelve a empezar. Al terminar cada mundo ganas una vida (hasta cinco). El modo tranquilo mueve las pompas más despacio y quita el reloj.</p>'
       + '<h3>Puntos</h3><p>10 por partir una pompa y 50 por hacer estallar un primo. Cuando estalla el último primo que se repite en un número, sale su potencia y ganas lo que vale: en 72 = 2³ · 3², con el último 2 sale 2³ (8 puntos) y con el último 3, 3² (9 puntos). Al terminar un número, ganas lo que vale, y al acabar la fase, 10 por cada segundo que sobra.</p>'
       + '<h3>Modos</h3><ul><li><b>Criba infinita</b>: los números salen en orden (2, 3, 4, 5…) hasta que se acaban las vidas; al final ves tu criba de Eratóstenes.</li><li><b>Reto del día</b>: cinco fases que cambian cada día.</li><li><b>Dos jugadores</b>: en el mismo teclado, con las vidas compartidas.</li></ul>'
-      + '<h3>Teclado</h3><p>← y → (o A y D) mueven; Espacio, ↑, W o Z disparan (una pulsación, un disparo; con la ráfaga, mantenlos pulsados); L dice qué pompas hay y dónde; P o Esc pausan; M quita el sonido. Con dos jugadores, el primo usa A, D y W (o Espacio), y la prima, ← → y ↑ (o Intro).</p>'
-      + '<h3>Móvil</h3><p>Botones ◀, ▶ y ¡ARPÓN! (puedes deslizar el dedo de una flecha a la otra; con la ráfaga, deja el dedo en ¡ARPÓN!), o arrastra el dedo por el campo para moverte.</p>'
+      + '<h3>Teclado</h3><p>← y → (o A y D) mueven; Espacio o Z disparan (una pulsación, un disparo; con la ráfaga, mantenlos pulsados). ↑ y W también disparan, salvo al pie de una escalera, donde suben; ↓ o S bajan. L dice qué pompas hay y dónde; P o Esc pausan; M quita el sonido. Con dos jugadores, el primo usa A, D, W, S y Espacio, y la prima, las flechas e Intro.</p>'
+      + '<h3>Móvil</h3><p>Botones ◀, ▶ y ¡ARPÓN! (puedes deslizar el dedo de una flecha a la otra; con la ráfaga, deja el dedo en ¡ARPÓN!), o arrastra el dedo por el campo para moverte. En las fases con escaleras aparecen ▲ y ▼ para subir y bajar.</p>'
       + '<div class="fila"><button type="button" class="btn principal" id="mVolver">Volver</button></div>' + pie();
   } else if(nombre === 'pausa'){
     h = '<h2 id="panelTitulo">Pausa</h2><p class="sub">' + nombreFase() + ' · ' + E.fmtPuntos(M.puntos) + ' puntos</p>'
@@ -2571,7 +2945,7 @@ function cerrarPanelVolver(){
   cerrarPanel();
   if(M.fase === 'menu') abrirPanel('menu'); else enfocarLienzo();
 }
-function irAlMenu(){ M.fase = 'menu'; M.pompas = []; M.objetos = []; M.familias = []; M.jugadores = []; UI.pausa = false; UI.tPanelSuperada = -1; UI.banner = null; limpiarEfectos(); $('lineas').style.minHeight = ''; UI.altoLineas = 0; UI.firmaLineas = null; renderLineas(); ajustar(); abrirPanel('menu'); }
+function irAlMenu(){ M.fase = 'menu'; M.pompas = []; M.objetos = []; M.familias = []; M.jugadores = []; M.bloques = []; M.escaleras = []; UI.pausa = false; UI.tPanelSuperada = -1; UI.banner = null; UI.mapa = null; UI.bannerPendiente = null; UI.mundoVisto = -1; $('sube').hidden = true; limpiarEfectos(); $('lineas').style.minHeight = ''; UI.altoLineas = 0; UI.firmaLineas = null; renderLineas(); ajustar(); abrirPanel('menu'); }
 function abrirAyudaDesdeJuego(){
   if(UI.panel === 'ayuda') return;
   UI.panelPrevio = UI.panel || 'juego';
@@ -2581,7 +2955,7 @@ function abrirAyudaDesdeJuego(){
 function limpiarEfectos(){ UI.efectos.length = 0; UI.particulas.length = 0; UI.fuegos.length = 0; UI.sacudida = 0; UI.destello = 0; UI.rojo = 0; UI.ola = 0; Array.prototype.forEach.call(document.querySelectorAll('.vuelo'), function(el){ el.parentNode.removeChild(el); }); }
 function enfocarLienzo(){ try{ lienzo.focus({ preventScroll:true }); }catch(e){ lienzo.focus(); } }
 function iniciar(modo, indice){
-  Sonido.despertar(); cerrarPanel(); UI.pausa = false; limpiarEfectos(); UI.recordNuevo = false; hudPrev = {}; UI.teclas = {}; UI.dedos = {}; UI.dedoDisparo = false; UI.firmaLineas = null; UI.tPanelSuperada = -1; UI.victoria = null;
+  Sonido.despertar(); cerrarPanel(); UI.pausa = false; limpiarEfectos(); UI.recordNuevo = false; hudPrev = {}; UI.teclas = {}; UI.dedos = {}; UI.dedoDisparo = false; UI.dedoSube = 0; UI.firmaLineas = null; UI.tPanelSuperada = -1; UI.victoria = null; UI.mapa = null; UI.bannerPendiente = null; UI.mundoVisto = -1;
   var sem = modo === 'reto' ? semillaDia() : (((Date.now() % 2147483647) | 0) || 17);
   M.nuevaPartida(modo, { tranquilo:progreso.tranquilo, jugadores:progreso.jugadores, semilla:sem, indice:indice || 0, anio:new Date().getFullYear() });
   procesarEventos(); enfocarLienzo();
@@ -2600,8 +2974,9 @@ $('bPausa').addEventListener('click', alternarPausa);
 $('bAyuda').addEventListener('click', abrirAyudaDesdeJuego);
 
 /* ---------------- teclado ---------------- */
-var TECLAS_UNO = [{ izq:['ArrowLeft', 'a'], der:['ArrowRight', 'd'], fuego:[' ', 'ArrowUp', 'w', 'z'] }];
-var TECLAS_DOS = [{ izq:['a'], der:['d'], fuego:['w', ' '] }, { izq:['ArrowLeft'], der:['ArrowRight'], fuego:['ArrowUp', 'Enter'] }];
+/* «sube» dispara, como siempre, salvo al pie de una escalera (o en ella), donde sube; «baja» baja por la escalera */
+var TECLAS_UNO = [{ izq:['ArrowLeft', 'a'], der:['ArrowRight', 'd'], sube:['ArrowUp', 'w'], baja:['ArrowDown', 's'], fuego:[' ', 'z'] }];
+var TECLAS_DOS = [{ izq:['a'], der:['d'], sube:['w'], baja:['s'], fuego:[' '] }, { izq:['ArrowLeft'], der:['ArrowRight'], sube:['ArrowUp'], baja:['ArrowDown'], fuego:['Enter'] }];
 function mapaTeclas(){ return M.nJug === 2 ? TECLAS_DOS : TECLAS_UNO; }
 function teclaNorm(ev){ return (ev.key && ev.key.length === 1) ? ev.key.toLowerCase() : ev.key; }
 function actualizarDir(i){
@@ -2623,6 +2998,7 @@ document.addEventListener('keydown', function(ev){
   /* en plena partida, Espacio e Intro son del juego aunque el foco se haya quedado en un botón de la cabecera */
   if((tag === 'BUTTON' || tag === 'A') && (k === 'Enter' || k === ' ') && !jugable()) return;
   if(k === 'p' || k === 'Escape'){ ev.preventDefault(); alternarPausa(); return; }
+  if(UI.mapa && (k === ' ' || k === 'Enter' || k === 'z' || k === 'w' || k === 'ArrowUp')){ ev.preventDefault(); if(!ev.repeat) finMapa(); return; }
   if(k === 'm'){ alternarSonido(); return; }
   if(k === '?'){ abrirAyudaDesdeJuego(); return; }
   if(k === 'l'){ anunciarPompas(); return; }
@@ -2632,14 +3008,33 @@ document.addEventListener('keydown', function(ev){
     var m = mapa[i];
     if(m.izq.indexOf(k) >= 0 || m.der.indexOf(k) >= 0){ ev.preventDefault(); Sonido.despertar(); UI.teclas[i + ':' + k] = true; actualizarDir(i); return; }
     if(m.fuego.indexOf(k) >= 0){ ev.preventDefault(); if(tag === 'BUTTON') enfocarLienzo(); UI.teclas[i + ':' + k] = true; M.gatillo(i, true); if(ev.repeat) return; Sonido.despertar(); disparar(i); return; }
+    if(m.baja.indexOf(k) >= 0){ ev.preventDefault(); UI.teclas[i + ':' + k] = true; actualizarSubir(i); return; }
+    if(m.sube.indexOf(k) >= 0){
+      ev.preventDefault(); if(tag === 'BUTTON') enfocarLienzo(); Sonido.despertar();
+      var teniaEscalera = M.escaleraAMano(i, -1) >= 0;
+      UI.teclas[i + ':' + k] = true; actualizarSubir(i); actualizarGatillo(i);
+      if(!teniaEscalera && !ev.repeat) disparar(i);
+      return;
+    }
   }
 });
 document.addEventListener('keyup', function(ev){
   var k = teclaNorm(ev), mapa = mapaTeclas();
-  for(var i = 0; i < mapa.length; i++){ if(UI.teclas[i + ':' + k]){ delete UI.teclas[i + ':' + k]; actualizarDir(i); actualizarGatillo(i); } }
+  for(var i = 0; i < mapa.length; i++){ if(UI.teclas[i + ':' + k]){ delete UI.teclas[i + ':' + k]; actualizarDir(i); actualizarGatillo(i); actualizarSubir(i); } }
 });
-/* con la ráfaga, las balitas salen mientras siga pulsada alguna tecla de disparo (o el dedo en ¡ARPÓN!) */
-function actualizarGatillo(i){ var m = mapaTeclas()[i]; if(!m) return; M.gatillo(i, m.fuego.some(function(q){ return UI.teclas[i + ':' + q]; }) || (i === 0 && !!UI.dedoDisparo)); }
+/* con la ráfaga, las balitas salen mientras siga pulsada alguna tecla de disparo (o el dedo en ¡ARPÓN!); las de subir cuentan si no hay escalera a mano */
+function actualizarGatillo(i){
+  var m = mapaTeclas()[i]; if(!m) return;
+  function pulsada(q){ return UI.teclas[i + ':' + q]; }
+  M.gatillo(i, m.fuego.some(pulsada) || (m.sube.some(pulsada) && M.escaleraAMano(i, -1) < 0) || (i === 0 && !!UI.dedoDisparo));
+}
+/* subir o bajar mientras siga pulsada la tecla (o el dedo en ▲ o ▼): si se llega al pie de una escalera con ella pulsada, se sube */
+function actualizarSubir(i){
+  var m = mapaTeclas()[i]; if(!m) return;
+  function pulsada(q){ return UI.teclas[i + ':' + q]; }
+  var arriba = m.sube.some(pulsada) || (i === 0 && UI.dedoSube < 0), abajo = m.baja.some(pulsada) || (i === 0 && UI.dedoSube > 0);
+  M.subir(i, arriba && !abajo ? -1 : (abajo && !arriba ? 1 : 0));
+}
 
 /* ---------------- mandos táctiles: se puede deslizar el dedo de una flecha a la otra ---------------- */
 function dirBajo(x, y){ var el = document.elementFromPoint(x, y); if(!el) return 0; if(el.closest && el.closest('#bIzq')) return -1; if(el.closest && el.closest('#bDer')) return 1; return 0; }
@@ -2655,11 +3050,17 @@ flechas.addEventListener('pointermove', function(ev){ if(!(ev.pointerId in UI.de
 function soltarDedo(ev){ if(!(ev.pointerId in UI.dedos)) return; delete UI.dedos[ev.pointerId]; aplicarDedos(); }
 flechas.addEventListener('pointerup', soltarDedo); flechas.addEventListener('pointercancel', soltarDedo); flechas.addEventListener('lostpointercapture', soltarDedo);
 var bDisparo = $('bDisparo');
-bDisparo.addEventListener('pointerdown', function(ev){ ev.preventDefault(); Sonido.despertar(); bDisparo.classList.add('pulsado'); UI.dedoDisparo = true; actualizarGatillo(0); disparar(0); });
+bDisparo.addEventListener('pointerdown', function(ev){ ev.preventDefault(); Sonido.despertar(); bDisparo.classList.add('pulsado'); if(UI.mapa && !UI.panel){ finMapa(); return; } UI.dedoDisparo = true; actualizarGatillo(0); disparar(0); });
 ['pointerup', 'pointercancel', 'pointerleave'].forEach(function(t){ bDisparo.addEventListener(t, function(){ bDisparo.classList.remove('pulsado'); UI.dedoDisparo = false; actualizarGatillo(0); }); });
 bDisparo.addEventListener('click', function(ev){ if(ev.detail === 0){ Sonido.despertar(); disparar(0); } });
+[['bSube', -1], ['bBaja', 1]].forEach(function(q){
+  var bt = $(q[0]);
+  bt.addEventListener('pointerdown', function(ev){ ev.preventDefault(); Sonido.despertar(); bt.classList.add('pulsado'); UI.dedoSube = q[1]; actualizarSubir(0); });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function(t){ bt.addEventListener(t, function(){ bt.classList.remove('pulsado'); if(UI.dedoSube === q[1]){ UI.dedoSube = 0; actualizarSubir(0); } }); });
+});
 lienzo.addEventListener('pointerdown', function(ev){
   Sonido.despertar();
+  if(UI.mapa && !UI.panel){ ev.preventDefault(); finMapa(); return; }
   if(!jugable()) return;
   ev.preventDefault(); enfocarLienzo();
   UI.guia = ev.pointerId; try{ lienzo.setPointerCapture(ev.pointerId); }catch(e){}
@@ -2673,9 +3074,10 @@ $('mandos').hidden = !TACTIL;
 $('app').classList.toggle('tactil', TACTIL);
 
 document.addEventListener('visibilitychange', function(){ if(document.hidden && !UI.panel && enJuego()) alternarPausa(); });
-window.addEventListener('resize', ajustar);
+/* al cambiar el tamaño de la ventana o girar el móvil, se vuelve a medir el sitio de las líneas */
+window.addEventListener('resize', function(){ if(M.fase !== 'menu' && M.fase !== 'victoria' && M.fase !== 'fin') reservarLineas(); else ajustar(); });
 if(window.ResizeObserver){ try{ new ResizeObserver(function(){ ajustar(); }).observe($('escenario')); }catch(e){} }
-window.addEventListener('blur', function(){ UI.teclas = {}; UI.dedos = {}; UI.guia = null; UI.dedoDisparo = false; M.jugadores.forEach(function(j){ M.gatillo(j.i, false); if(j.objetivo === null) M.mover(j.i, 0); }); });
+window.addEventListener('blur', function(){ UI.teclas = {}; UI.dedos = {}; UI.guia = null; UI.dedoDisparo = false; UI.dedoSube = 0; M.jugadores.forEach(function(j){ M.gatillo(j.i, false); M.subir(j.i, 0); if(j.objetivo === null) M.mover(j.i, 0); }); });
 
 /* ---------------- bucle ---------------- */
 var prevTs = 0, acc = 0, PASO = 1 / 120;
@@ -2685,12 +3087,13 @@ function temporizadores(dt){
   if(UI.rojo > 0) UI.rojo = Math.max(0, UI.rojo - dt * 2);
   if(UI.ola > 0) UI.ola = Math.max(0, UI.ola - dt);
   if(UI.banner){ UI.banner.t -= dt; if(UI.banner.t <= 0) UI.banner = null; }
+  if(UI.mapa && !UI.panel && !UI.pausa){ UI.mapa.t += dt; if(UI.mapa.t >= UI.mapa.dur) finMapa(); }
   if(UI.tPanelSuperada > 0 && !UI.panel && !UI.pausa){ UI.tPanelSuperada -= dt; if(UI.tPanelSuperada <= 0){ UI.tPanelSuperada = -1; if(M.fase === 'superada') abrirPanel('superada'); } }
 }
 function tic(ts){
   requestAnimationFrame(tic);
   if(!prevTs) prevTs = ts; var dt = Math.min(0.05, (ts - prevTs) / 1000); prevTs = ts; UI.reloj += dt;
-  if(!UI.pausa && !UI.panel && enJuego()){
+  if(!UI.pausa && !UI.panel && enJuego() && !UI.mapa){
     acc += dt; var n = 0;
     while(acc >= PASO && n < 12){ M.paso(PASO); acc -= PASO; n++; }
     if(n >= 12) acc = 0;
@@ -2706,12 +3109,13 @@ requestAnimationFrame(tic);
 
 /* ganchos de verificación: avanzar la física a mano cuando el panel del navegador está oculto */
 function avanzar(segundos){
+  finMapa();
   var n = Math.max(1, Math.round((segundos || 1) / PASO));
   for(var i = 0; i < n; i++){ if(!enJuego()) break; M.paso(PASO); if(M.eventos.length > 40) procesarEventos(); }
   procesarEventos(); if(M.modo === 'criba') renderLineas(); UI.reloj += segundos || 1; temporizadores(segundos || 1); dibujar(Math.min(segundos || 1, 0.1)); actualizarHUD(); tUltimoAviso = -9; vaciarAvisos(UI.reloj);
 }
 window.__pompas = { M:M, E:E, UI:UI, PX:function(){ return PX; }, iniciar:iniciar, avanzar:avanzar, dibujar:dibujar, procesarEventos:procesarEventos, abrirPanel:abrirPanel, cerrarPanel:cerrarPanel,
-  ajustar:ajustar, Sonido:Sonido, progreso:progreso, renderLineas:renderLineas, disparar:disparar, irAlMenu:irAlMenu, arbolSVG:arbolSVG, vennSVG:vennSVG, spriteHeroe:spriteHeroe, spriteTexto:spriteTexto };
+  ajustar:ajustar, Sonido:Sonido, progreso:progreso, renderLineas:renderLineas, disparar:disparar, irAlMenu:irAlMenu, arbolSVG:arbolSVG, vennSVG:vennSVG, spriteHeroe:spriteHeroe, spriteTexto:spriteTexto, spriteComida:spriteComida, spriteIcono:spriteIcono, spriteBloque:spriteBloque };
 })();
 </script>
 </body>
