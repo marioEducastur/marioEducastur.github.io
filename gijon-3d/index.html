@@ -79,7 +79,7 @@ canvas{display:block;touch-action:none}
 <div id="barra"><div id="irw" title="Ir a un sitio emblemático de Gijón"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2A6.5 6.5 0 0 1 18.5 9.8C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg><span>Ir a</span><svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg><select id="ira" aria-label="Ir a un sitio emblemático de Gijón"></select></div><div id="estado" title="Hora de Gijón y altura de la marea sobre el cero hidrográfico (la de las tablas de mareas); la flecha dice si sube o baja"></div><button id="foto" class="ico" title="Hacer una foto (P)" aria-label="Hacer una foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></svg></button><button id="pantalla" class="ico" title="Pantalla completa" aria-label="Pantalla completa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="abrir" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="cerrar" style="display:none" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button><span id="optsw"><button id="opts" class="ico" title="Opciones (O)" aria-label="Opciones" aria-expanded="false" aria-controls="hud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><span id="fpsmini" title="Fotogramas por segundo"></span></span></div><div id="flash"></div>
 <div id="volante"></div>
 <div id="ficha" role="status" aria-live="polite"><button id="fichax" title="Cerrar" aria-label="Cerrar la ficha">×</button><h3></h3><div class="que"></div><div class="txt"></div><div class="mas"></div></div>
-<div id="ayuda"><span class="desk">Clic en la escena y ratón para mirar · WASD para andar · E para hablar · O para las opciones</span><span class="touch">Joystick para andar · arrastra a la derecha para mirar · engranaje: opciones</span></div>
+<div id="ayuda"><span class="desk">Clic en la escena y ratón para mirar · WASD para andar · E para hablar o conducir · O para las opciones</span><span class="touch">Joystick para andar · arrastra a la derecha para mirar · engranaje: opciones</span></div>
 <div id="hud">
 <h1>Gijón · Paseo del Muro <small>v3</small></h1>
 <p class="autor">© 2026 Mario Rodríguez Boya · Todos los derechos reservados</p>
@@ -3051,7 +3051,7 @@ const [BX0, BY0, BX1, BY1] = D.bbox, BW = BX1 - BX0, BH = BY1 - BY0;
 const SAND0 = D.sand0, [TIDE_LO, TIDE_HI] = D.tide || [-8.4, -4.3], RIVER_Y = -1.0;
 const EYE = 1.65, STEP = 0.55, RAD = 0.3, STAIR_W = 2.4, GC = 20;
 let TRAFICO = null;   // lo que setupTraffic deja a la vista: vehículos, semáforos y quién hay cerca (para conducir y no atravesar coches)
-const COCHE = { on: false, c: null, x: 0, y: 0, a: 0, v: 0, look: 0, rojo: false };   // el coche que conduce el jugador (ver «Conducir»)
+const COCHE = { on: false, c: null, K: null, x: 0, y: 0, a: 0, v: 0, look: 0, base: 0, rojo: false };   // lo que conduce el jugador (ver «Conducir»): el vehículo, su puesto (K) y dónde está
 const LAT0 = D.origin[0], LON0 = D.origin[1];
 const rnd = n => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
 // Distancias (m): det, hasta dónde se dibuja lo menudo (farolas, barandillas, balcones, bancos, marcas del suelo…); arb, los
@@ -3320,8 +3320,9 @@ function proaH(x, y) {   // lo alto de la proa: la rampa y, en los lados, el pre
   const w = Math.abs(dx * Pr.v[0] + dy * Pr.v[1]), hw = Pr.ancho(s); if (w > hw) return -Infinity;
   const z = Pr.rampa(s); return w > hw - Pr.grueso - 0.3 && s > 2 ? z + Pr.pretil : z;   // (con el radio del cuerpo, 0,3 m: no se cuela entre dos fotogramas)
 }
-// Aparcamientos que se reparten a medida (el área de autocaravanas del Rinconín): sus plazas de coche van en APARCA.plazas
-const APARCA = { excluye: [], plazas: [] };
+// Aparcamientos que se reparten a medida (el área de autocaravanas del Rinconín): sus plazas de coche van en APARCA.plazas y su
+// contorno, en APARCA.zonas (por donde puede ir un coche conducido, además de la calzada y los aparcamientos de OSM)
+const APARCA = { excluye: [], plazas: [], zonas: [] };
 W.buildings.forEach(b => b.bb = bboxOf(b.pts));
 const bldAt = gridIndex(W.buildings, b => [b.bb[0] - 1, b.bb[1] - 1, b.bb[2] + 1, b.bb[3] + 1]);
 // barandillas: postes consecutivos + pretiles de los puentes
@@ -7672,10 +7673,13 @@ const ESTE_VIDA = { areneros: [], columpios: [], sentados: [], zonas: [] };
   const LONAS = ['#2f6fb0', '#e8752a', '#c8322b', '#3f8a4a', '#8a8f94', '#1f4f8a', '#f2c230'], LONAS_F = ['#7d8a78', '#6f8096', '#c9b996', '#8e9a8a', '#a0a4a8'];
   const BLANCOS = ['#f5f4f0', '#eeeae0', '#e6e7e5', '#f7f6f2'], AVANCES = ['#d8c9a3', '#5d7896', '#9a9d9c', '#8c9a86', '#c4b28e'], FURGOS = ['#f5f4f0', '#c4c6c8', '#7e8488', '#f5f4f0', '#d8792b', '#2f5f8a', '#9fcfb8', '#e9e6dc'];
   const TABLAS = ['#ffffff', '#f2d23c', '#7fc4e8', '#e8563c', '#ffffff'];
-  // qué hay hoy: el camping abre del 1 de junio al 30 de septiembre (web del camping); ocupación por parcelas de los campings de
-  // Asturias (INE: junio ≈ 34 %, julio ≈ 60 %, agosto ≈ 70–90 %, septiembre ≈ 35 % y luego menos), algo más los fines de semana
+  // qué hay hoy: el camping de verdad abre del 1 de junio al 30 de septiembre (web del camping); ocupación por parcelas de los
+  // campings de Asturias (INE: junio ≈ 34 %, julio ≈ 60 %, agosto ≈ 70–90 %, septiembre ≈ 35 % y luego menos), algo más los fines
+  // de semana. De octubre a mayo, aquí también hay algo de gente (lo pidió el profesor el 01/10/2026): un 22 %, casi todo caravanas
+  // y autocaravanas en los meses fríos (FRIO: la mitad de tiendas)
   const hoy = gijonParts(new Date()), finde = [0, 6].includes(new Date(Date.UTC(hoy.year, hoy.month - 1, hoy.day)).getUTCDay());
-  const OCUP = (() => { const m = hoy.month, d = hoy.day, o = m === 6 ? 0.34 : m === 7 ? 0.6 : m === 8 ? (d >= 8 && d <= 22 ? 0.92 : 0.78) : m === 9 ? (d <= 15 ? 0.35 : 0.18) : 0; return o ? Math.min(1, o + (finde ? 0.05 : 0)) : 0; })();
+  const OCUP = (() => { const m = hoy.month, d = hoy.day, o = m === 6 ? 0.34 : m === 7 ? 0.6 : m === 8 ? (d >= 8 && d <= 22 ? 0.92 : 0.78) : m === 9 ? (d <= 15 ? 0.35 : 0.18) : 0.22; return Math.min(1, o + (finde ? 0.05 : 0)); })();
+  const FRIO = hoy.month >= 11 || hoy.month <= 3;
   // las autocaravanas del aparcamiento del Parque del Rinconín, todo el año (más en verano)
   const OCUP_AC = [0.12, 0.12, 0.2, 0.3, 0.3, 0.45, 0.6, 0.7, 0.55, 0.3, 0.15, 0.15][hoy.month - 1];
   const U = { caravana: [], avance: [], perfilada: [], capuchina: [], furgo: [], tabla: [], iglu: [], tunel: [], mesa: [] };
@@ -7713,7 +7717,7 @@ const ESTE_VIDA = { areneros: [], columpios: [], sentados: [], zonas: [] };
     const PRADERA = [[1765, 563], [1787, 578], [1812, 561], [1811, 548], [1806, 536], [1796, 529], [1767, 553]];
     for (let i = -8; i <= 8; i++) for (let j = -8; j <= 8; j++) {
       const x = 1789 + d1[0] * i * 6.2 + e1[0] * j * 6.2 + (rnd(sem * 1.3) - 0.5) * 2, y = 553 + d1[1] * i * 6.2 + e1[1] * j * 6.2 + (rnd(sem * 2.1) - 0.5) * 2; sem++;
-      if (!pip(x, y, PRADERA) || rnd(sem * 5.7) >= OCUP * (finde ? 1.1 : 0.9)) continue;
+      if (!pip(x, y, PRADERA) || rnd(sem * 5.7) >= OCUP * (finde ? 1.1 : 0.9) * (FRIO ? 0.5 : 1)) continue;
       const tipo = rnd(sem * 9.1) < 0.58 ? 'iglu' : 'tunel', a = rnd(sem * 4.4) * TAU;
       if (cabe(x, y, a, tipo === 'iglu' ? 2.6 : 4.6, tipo === 'iglu' ? 2.3 : 2.6, PRADERA, 0.8)) pon(tipo, x, y, a, sem);
     }
@@ -7757,6 +7761,7 @@ const ESTE_VIDA = { areneros: [], columpios: [], sentados: [], zonas: [] };
   // campers en espiga a lo largo del borde este y alrededor de las dos isletas de seto en T; coches en batería en el borde oeste. En
   // OSM (w4608520) es parking=street_side, que build.py no toma como aparcamiento: su contorno va aquí, con su asfalto
   const APC = [[[1939.4, 93.3], [1929.9, 90.1], [1919.9, 90.8], [1910.3, 93.5], [1903.5, 98.9], [1919.4, 203.2], [1952.2, 197.9], [1951.5, 194.3]]];
+  APARCA.zonas.push(APC);
   {
     const G = new THREE.Group(); scene.add(G);
     { const B = buf(); flat(B, APC[0], 0.03, null, 0, [], false, true); conClase('suelo', () => mesh(B, blendOrtho(mat({ color: '#6b6d70', polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })))); }   // (con mesh: lleva la ortofoto)
@@ -7780,7 +7785,7 @@ const ESTE_VIDA = { areneros: [], columpios: [], sentados: [], zonas: [] };
   }
   copias(VEH.caravana, VC, U.caravana); copias(VEH.avance, VC, U.avance); copias(VEH.perfilada, VC, U.perfilada); copias(VEH.capuchina, VC, U.capuchina);
   copias(VEH.furgo, VC, U.furgo); copias(VEH.tabla, VC, U.tabla, false); copias(VEH.iglu, VC, U.iglu); copias(VEH.tunel, VC, U.tunel); copias(VEH.mesa, VC, U.mesa);
-  if (CAMP) { const pol = []; for (let i = 0; i < CAMP[2].length; i += 2) pol.push([CAMP[2][i], CAMP[2][i + 1]]); if (OCUP > 0) ESTE_VIDA.zonas.push({ pol, n: Math.round(4 + 10 * OCUP) }); }
+  if (CAMP) { const pol = []; for (let i = 0; i < CAMP[2].length; i += 2) pol.push([CAMP[2][i], CAMP[2][i + 1]]); ESTE_VIDA.zonas.push({ pol, n: Math.round(4 + 10 * OCUP) }); }
   Object.assign(ESTE_VIDA, { U, OCUP, OCUP_AC });   // (para las pruebas)
 
   // ---- Los juegos del Rinconín. El del sur: un arenero redondo de 21,6 m con juegos de madera de piratas (el barco con la proa al ESE,
@@ -8234,7 +8239,7 @@ function blocked(x, y, ox, oy) {
   return false;
 }
 function place(x, y, faceX, faceY) {
-  if (COCHE.on) { COCHE.on = false; TRAFICO.soltar(COCHE.c); COCHE.c = null; $('volante').style.display = 'none'; MORRO.visible = false; TRAFICO.repick = true; }
+  if (COCHE.on) dejarVehiculo();
   st.x = x; st.y = y; st.feet = groundAt(x, y); st.vy = 0; st.ground = true; st.fly = false; $('fly').textContent = 'Volar: no';
   if (faceX != null && Math.hypot(faceX - x, faceY - y) > 1) st.yaw = Math.atan2(-(faceX - x), faceY - y);
 }
@@ -8577,7 +8582,7 @@ vec3 lifeXf(vec3 v, bool nrm) { return v; }`,
   perro: `attribute float aPart; attribute vec4 aMove; attribute vec3 aBody; uniform float uTime; varying vec3 vLifeCol;
 mat3 dRotX(float a) { float c = cos(a), s = sin(a); return mat3(1.0, 0.0, 0.0, 0.0, c, s, 0.0, -s, c); }
 mat3 dRotY(float a) { float c = cos(a), s = sin(a); return mat3(c, 0.0, -s, 0.0, 1.0, 0.0, s, 0.0, c); }
-vec3 lifeXf(vec3 v, bool nrm) {   // perro mirando a +z. aMove: x fase, y pasos por segundo, z andando (0–1), w postura (0 de pie o andando, 1 sentado, 2 olfateando)
+vec3 lifeXf(vec3 v, bool nrm) {   // perro mirando a +z. aMove: x fase, y pasos por segundo, z andando (0–1), w postura (0 de pie o andando, 1 sentado, 2 olfateando, 3 ladrando, 4 aullando)
   float p = aPart, ph = aMove.x + uTime * aMove.y * 6.2832, amp = aMove.z, pose = aMove.w, s = sin(ph);
   if (p > 0.5 && p < 4.5) {   // patas: 1 y 2 delanteras (izquierda y derecha), 3 y 4 traseras; al trote, en diagonal
     bool del = p < 2.5; float sg = (p < 1.5 || p > 3.5) ? 1.0 : -1.0, ang = amp * 0.5 * s * sg;
@@ -8585,12 +8590,14 @@ vec3 lifeXf(vec3 v, bool nrm) {   // perro mirando a +z. aMove: x fase, y pasos 
     vec3 piv = nrm ? vec3(0.0) : (del ? vec3(0.0, 0.42, 0.22) : vec3(0.0, 0.42, -0.21));
     v = dRotX(ang) * (v - piv) + piv;
   }
-  if (p > 4.5 && p < 5.5) { vec3 piv = nrm ? vec3(0.0) : vec3(0.0, 0.5, -0.32); v = dRotY(0.55 * sin(uTime * 11.0 + aMove.x) * (pose > 0.5 ? 0.6 : 1.0)) * (v - piv) + piv; }   // el rabo
-  if (pose > 1.5 && (p < 0.5 || p > 5.5)) {   // olfateando: la cabeza y el cuello, hacia el suelo
+  if (p > 4.5 && p < 5.5) { vec3 piv = nrm ? vec3(0.0) : vec3(0.0, 0.5, -0.32); v = dRotY(0.55 * sin(uTime * 11.0 + aMove.x) * (pose > 2.5 ? 1.5 : pose > 0.5 ? 0.6 : 1.0)) * (v - piv) + piv; }   // el rabo (ladrando, más)
+  float guau = abs(sin(uTime * 8.0 + aMove.x));
+  if (pose > 1.5 && (p < 0.5 || p > 5.5)) {   // olfateando: la cabeza y el cuello, hacia el suelo; ladrando: arriba, a golpes; aullando: el hocico al cielo
     vec3 piv = nrm ? vec3(0.0) : vec3(0.0, 0.52, 0.22); float k = nrm ? 1.0 : smoothstep(0.18, 0.34, v.z);
-    v = mix(v, dRotX(1.05) * (v - piv) + piv, k);
+    v = mix(v, dRotX(pose > 3.5 ? -0.85 : pose > 2.5 ? -0.25 - 0.3 * guau : 1.05) * (v - piv) + piv, k);
   }
-  if (!nrm) { if (pose > 0.5 && pose < 1.5) v.y -= 0.16 * smoothstep(0.1, -0.3, v.z); v.y += 0.012 * abs(s) * amp; }   // sentado: el culo al suelo
+  if (!nrm) { if (pose > 0.5 && pose < 1.5) v.y -= 0.16 * smoothstep(0.1, -0.3, v.z); v.y += 0.012 * abs(s) * amp;   // sentado: el culo al suelo
+    if (pose > 2.5 && pose < 3.5) v.y += 0.06 * guau * smoothstep(-0.25, 0.3, v.z); }   // ladrando: saltitos con las manos
   return v;
 }`,
   gaviota: `attribute vec2 aAla; varying vec3 vLifeCol;   // x: aleteo (rad), y: plegadas (0 volando, 1 en el suelo)
@@ -8890,6 +8897,20 @@ const ROAD_R = 0.5, ROAD_W = Math.ceil(BW / ROAD_R), ROAD_H = Math.ceil(BH / ROA
   }
 }
 const onRoad = (x, y) => { const i = Math.floor((x - BX0) / ROAD_R), j = Math.floor((BY1 - y) / ROAD_R); if (i < 0 || j < 0 || i >= ROAD_W || j >= ROAD_H) return false; const k = j * ROAD_W + i; return (ROAD_BITS[k >> 3] >> (k & 7) & 1) === 1; };
+// A qué altura rueda un vehículo: la calzada (y los puentes) van 12 cm por debajo de la acera; un aparcamiento, casi a ras
+const rasante = (x, y) => terrainAt(x, y) + (!D.pave ? 0 : onRoad(x, y) || onBridge(x, y) ? -0.12 : 0.02);
+// ¿Es un aparcamiento (de OSM, o de APARCA.zonas)? Por ellos puede ir un coche que se conduce, y por los 2 m de alrededor: el vado
+// hasta la calzada (198 de los 204 de OSM la tocan así)
+const PARKS = [];
+function enAparcamiento(x, y) {
+  if (!PARKS.length) for (const q of [...W.parking, ...APARCA.zonas]) PARKS.push({ r: q[0], h: q.slice(1), bb: bboxOf(q[0]) });
+  for (const o of PARKS) {
+    const b = o.bb; if (x < b[0] - 2 || x > b[2] + 2 || y < b[1] - 2 || y > b[3] + 2) continue;
+    if (pip(x, y, o.r)) { if (!o.h.some(h => pip(x, y, h))) return true; continue; }
+    for (let i = 0, j = o.r.length - 1; i < o.r.length; j = i++) if (segDist(x, y, o.r[j], o.r[i])[0] < 2) return true;
+  }
+  return false;
+}
 const FOOT = new Map();   // memoria de footOK por celdas de 0,25 m (edificios, calzadas y tierra no cambian): los polígonos de las calzadas son grandes
 const pisaBien = (x, y) => inLand(x, y) && footOK(x, y) && inLand(x + 0.6, y) && inLand(x - 0.6, y) && inLand(x, y + 0.6) && inLand(x, y - 0.6);   // pisable y a 0,6 m del borde
 const footOK = (x, y) => {
@@ -8998,7 +9019,7 @@ const people = [], LIFEGUARD_CHAIRS = [], LIFE_BEACH = [];   // { k (tipo), x, y
   const PELOS = ['#f2efe6', '#e8d9c0', '#d9b27c', '#c8a27a', '#b56b3a', '#8a5a32', '#5a3b24', '#1d1a18', '#1d1a18', '#6b6b6b', '#d8cbb3'];
   const NOMBRES = ['Coco', 'Lola', 'Rocky', 'Luna', 'Toby', 'Kira', 'Bimba', 'Nala', 'Thor', 'Canela', 'Chispa', 'Max', 'Nieve', 'Pipo', 'Duna', 'Güelu'];
   const nuevoPerro = () => ({ s: pick([0.4, 0.45, 0.52, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.22, 1.35], R()),   // de un chihuahua a un mastín
-     color: C3(pick(PELOS, R())), nombre: pick(NOMBRES, R()), ph: R() * 6.28, lado: 0.45 + R() * 0.25, del: 0.7 + R() * 0.6, semilla: R() * 100, ladT: 0 });
+     color: C3(pick(PELOS, R())), nombre: pick(NOMBRES, R()), ph: R() * 6.28, lado: 0.45 + R() * 0.25, del: 0.7 + R() * 0.6, semilla: R() * 100, ladT: 0, esPerro: true });
   // Muro: paseantes y corredores a 1,6–9 m del borde, asomados a la barandilla y sentados en los bancos
   for (const w of W.walls) {
     if (w.k !== 1 || w.p.length < 2) continue;
@@ -9238,7 +9259,7 @@ const lifeWalk = (p, dt) => {   // avanza por su recorrido (por la derecha, esqu
     p.x = p.o.x; p.y = p.o.y; p.a = L.dir > 0 ? p.o.a : p.o.a + Math.PI; p.s = L.s; p.dir = L.dir;
     return;
   }
-  if (p.talkUntil > lifeNow) return;   // parado, hablando
+  if (p.talkUntil > lifeNow || p.perroT > lifeNow) return;   // parado: hablando, o mientras el jugador y su perro se ladran
   p.lat = (p.lat || 0) + ((p.latT || 0) - (p.lat || 0)) * Math.min(1, dt * 2.5); p.vf = p.vf ?? 1;
   let s = p.s + p.dir * p.v * p.vf * dt;
   if (s < 0 || s > p.P.len) { p.dir = -p.dir; s = Math.max(0, Math.min(p.P.len, s)); p.latT = 0; }
@@ -10194,7 +10215,7 @@ vec3 faunaXf(vec3 v, bool nrm) { float p = aPart, ph = aAnim.x + uTime * aAnim.y
       if (p.P && p.k !== 'orilla') lifeWalk(p, dtp);
       else if (p.k === 'orilla' && p.d != null) { p.P = p.A.P; lifeWalk(p, dtp); }
       else if (p.k === 'plaza') {
-        if (p.talkUntil > t) continue;
+        if (p.talkUntil > t || p.perroT > t) continue;
         if (p.to) { const dx = p.to[0] - p.x, dy = p.to[1] - p.y, L = Math.hypot(dx, dy); if (L < 0.3) { p.to = null; p.wait = 3 + Math.random() * 10; p.mode = 2; } else {
           let a = Math.atan2(dy, dx), da = a - (p.a ?? a); while (da > Math.PI) da -= 2 * Math.PI; while (da < -Math.PI) da += 2 * Math.PI; p.a = (p.a ?? a) + da * Math.min(1, dtp * 2);   // gira poco a poco (lifeAvoid lo desvía)
           const k = p.v * (p.vf ?? 1) * dtp, nx = p.x + Math.cos(p.a) * k, ny = p.y + Math.sin(p.a) * k; if (pisaBien(nx, ny)) { p.x = nx; p.y = ny; } else p.to = null; } }
@@ -10206,7 +10227,7 @@ vec3 faunaXf(vec3 v, bool nrm) { float p = aPart, ph = aAnim.x + uTime * aAnim.y
       pickT = t;
       shown = people.filter(p => p.x != null && visible(p)).map(p => [p, lifeD2(p.x, p.y)]).sort((a, b) => a[1] - b[1]).slice(0, Math.round(Q.gente * DENS.gente[REND.gente][1])).map(e => e[0]); lifeShown = shown;
       let dirty = false;
-      const em = p => p.talkUntil > t ? ((p.mode === 0 || p.mode === 2) ? 12 : p.mode) + 20 : p.mode;   // hablando: de pie, con gestos
+      const em = p => p.talkUntil > t ? ((p.mode === 0 || p.mode === 2) ? 12 : p.mode) + 20 : p.perroT > t && p.mode === 0 ? 2 : p.mode;   // hablando: de pie, con gestos (esperando a su perro: de pie)
       shown.forEach((p, i) => { const m = em(p); if (slotOf[i] !== p || p.lastMode !== m) { slotOf[i] = p; p.lastMode = m; setPerson(...hueco(i), p, m); dirty = true; } });
       if (dirty) { touch(gente); touch(genteLejos); }
       gente.count = Math.min(NC, shown.length); genteLejos.count = Math.max(0, shown.length - NC);
@@ -10225,7 +10246,7 @@ vec3 faunaXf(vec3 v, bool nrm) { float p = aPart, ph = aAnim.x + uTime * aAnim.y
       if (p.k === 'orilla') y = Math.max(y, waterY - 0.25);
       if (p.k === 'arena' && p.mode === 5) { tilt = -Math.PI / 2; y = p.h0 + 0.13; }   // tumbado boca arriba
       let a = p.a, px = p.x, py = p.y;
-      if (p.talkUntil > t && (p.mode === 0 || p.mode === 2 || p.k === 'musico')) a = Math.atan2(st.y - p.y, st.x - p.x);   // mira a quien le habla
+      if ((p.talkUntil > t || p.perroT > t) && (p.mode === 0 || p.mode === 2 || p.k === 'musico')) a = Math.atan2(st.y - p.y, st.x - p.x);   // mira a quien le habla (o le ladra a su perro)
       if (p.k === 'agua') { y = p.mode === 3 ? seaSurfaceAt(p.x, p.y, tt) - 0.12 : waterY - p.depth; if (p.mode === 3) tilt = Math.PI / 2; }
       if (p.k === 'surf') {   // en la tabla: sentado, tumbado remando o de pie (de lado)
         const ys = seaSurfaceAt(p.x, p.y, tt) + 0.03, BA = boards.instanceMatrix.array;
@@ -10249,18 +10270,22 @@ vec3 faunaXf(vec3 v, bool nrm) { float p = aPart, ph = aAnim.x + uTime * aAnim.y
       if (p.carrito) { const m = cochecitos[p.carrito], k = p.carrito === 'bebe' ? npr++ : nsi++; if (k < 24) { const x = px + Math.cos(a) * 0.36 * p.h, yy = py + Math.sin(a) * 0.36 * p.h; M16(m.instanceMatrix.array, k, x, terrainAt(x, yy), yy, a, 1); m.geometry.attributes.aBody.setXYZ(k, ...p.cochecito); } }
       if (p.baston && nba < 60) M16(bastones.instanceMatrix.array, nba++, px, y, py, a, p.h, tilt);
       if (p.perro && npe < 60) {   // el perro: delante y a la derecha, curioseando; si el dueño se para, se sienta u olfatea
-        const d = p.perro, fx = Math.cos(p.a), fy = Math.sin(p.a), rx = Math.sin(p.a), ry = -Math.cos(p.a), andando = (p.mode === 0 || p.mode === 16 || p.mode === 18) && !(p.talkUntil > t);
+        const d = p.perro, fx = Math.cos(p.a), fy = Math.sin(p.a), rx = Math.sin(p.a), ry = -Math.cos(p.a), andando = (p.mode === 0 || p.mode === 16 || p.mode === 18) && !(p.talkUntil > t) && !(p.perroT > t);
         const w1 = Math.sin(t * 0.37 + d.semilla), w2 = Math.sin(t * 0.23 + d.semilla * 1.7), del = (d.del + 0.3 * w1) * (andando ? 1 : 0.6), la = d.lado + 0.2 * w2;
         let dx = p.x + fx * del + rx * la, dy = p.y + fy * del + ry * la;
         if (!footOK(dx, dy)) { dx = p.x - fx * 0.8 + rx * 0.3; dy = p.y - fy * 0.8 + ry * 0.3; }
-        const da = p.a + (andando ? 0.22 : 0.6) * Math.sin(t * 0.5 + d.semilla), dz = terrainAt(dx, dy);
+        let da = p.a + (andando ? 0.22 : 0.6) * Math.sin(t * 0.5 + d.semilla), pose = andando ? 0 : (d.semilla % 1 < 0.5 ? 1 : 2);
+        if (d.charla > t) { dx = d.x; dy = d.y; da = Math.atan2(st.y - dy, st.x - dx); pose = t < d.ladra0 ? 0 : t < d.ladra1 ? d.gesto : d.pose; }   // el jugador le ha ladrado: quieto donde estaba, le mira y contesta
+        const dz = terrainAt(dx, dy);
+        d.x = dx; d.y = dy; d.z = dz; d.t = t;   // (dónde está: para ladrarle)
         M16(perros.instanceMatrix.array, npe, dx, dz, dy, da, d.s);
-        perros.geometry.attributes.aMove.setXYZW(npe, d.ph, (d.s < 0.7 ? 2.8 : d.s < 0.95 ? 2.1 : 1.7) * (p.v || 1.2) / 1.2, andando ? 1 : 0, andando ? 0 : (d.semilla % 1 < 0.5 ? 1 : 2));
+        perros.geometry.attributes.aMove.setXYZW(npe, d.ph, (d.s < 0.7 ? 2.8 : d.s < 0.95 ? 2.1 : 1.7) * (p.v || 1.2) / 1.2, andando ? 1 : 0, pose);
         perros.geometry.attributes.aBody.setXYZ(npe, ...d.color);
         const hx = px + rx * 0.23 * p.h + fx * 0.1, hy = py + ry * 0.23 * p.h + fy * 0.1, cx = dx + Math.cos(da) * 0.27 * d.s, cy = dy + Math.sin(da) * 0.27 * d.s;
         correas.geometry.attributes.position.array.set([hx, y + 0.82 * p.h, -hy, cx, dz + 0.54 * d.s, -cy], npe * 6);
         const dj = Math.hypot(dx - st.x, dy - st.y);   // ladra si te acercas (a veces) y, muy de vez en cuando, porque sí
-        if (t > d.ladT && ((dj < 2.3 && Math.random() < 0.5) || (dj < 30 && Math.random() < dt * 0.015))) { sonLadrido(dx, dy, d.s); d.ladT = t + 6 + Math.random() * 8; }
+        if (d.charla > t) d.ladT = Math.max(d.ladT, t + 6);
+        else if (t > d.ladT && ((dj < 2.3 && Math.random() < 0.5) || (dj < 30 && Math.random() < dt * 0.015))) { sonLadrido(dx, dy, d.s); d.ladT = t + 6 + Math.random() * 8; }
         else if (dj < 2.3 && t > d.ladT) d.ladT = t + 6;
         npe++;
       }
@@ -10436,11 +10461,11 @@ function setupTraffic() {
   function cicloPaso(c, dt) {
     const K = c.carril; along(K.P, K.s, 0, c.o);
     const hx = Math.cos(c.o.a) * K.dir, hy = Math.sin(c.o.a) * K.dir; let vt = c.v0;
-    for (const e of CIC) if (e !== c && e.r < FT.trafico && e.carril.P === K.P && e.carril.dir === K.dir) { const d = (e.carril.s - K.s) * K.dir; if (d > 0 && d < 9) vt = Math.min(vt, Math.max(0, (d - 2.4) / 1.0), e.v + 0.3); }
+    for (const e of CIC) if (e !== c && !e.jugador && !e.aparcado && e.r < FT.trafico && e.carril.P === K.P && e.carril.dir === K.dir) { const d = (e.carril.s - K.s) * K.dir; if (d > 0 && d < 9) vt = Math.min(vt, Math.max(0, (d - 2.4) / 1.0), e.v + 0.3); }
     c.bloqYo = false;
     if (!st.fly) {   // el jugador (o su coche) en el carril, delante
-      const px = (COCHE.on ? COCHE.x : st.x) - c.o.x, py = (COCHE.on ? COCHE.y : st.y) - c.o.y, fw = px * hx + py * hy, lat = Math.abs(-px * hy + py * hx), r = COCHE.on ? 2.6 : 0.4;
-      if (fw > 0 && fw < 10 && lat < 1.1 + (COCHE.on ? 1 : 0)) { vt = Math.min(vt, Math.max(0, (fw - r - 1.6) / 1.2)); c.bloqYo = fw < r + 3.5; }
+      const px = (COCHE.on ? COCHE.x : st.x) - c.o.x, py = (COCHE.on ? COCHE.y : st.y) - c.o.y, fw = px * hx + py * hy, lat = Math.abs(-px * hy + py * hx), r = COCHE.on ? COCHE.K.hl + 0.45 : 0.4;
+      if (fw > 0 && fw < 10 + r && lat < 1.1 + (COCHE.on ? COCHE.K.hw : 0)) { vt = Math.min(vt, Math.max(0, (fw - r - 1.6) / 1.2)); c.bloqYo = fw < r + 3.5; }
     }
     c.v += Math.max(-4 * dt, Math.min(1.4 * dt, vt - c.v)); K.s += c.v * dt * K.dir;
     c.bloq = c.bloqYo && c.v < 0.8 ? (c.bloq || 0) + dt : Math.max(0, (c.bloq || 0) - dt * 3);
@@ -10450,6 +10475,7 @@ function setupTraffic() {
       else { K.dir = -K.dir; K.s = Math.max(0, Math.min(K.P.len, K.s)); }
     }
     along(K.P, K.s, -K.dir * 0.55, c.o); c.x = c.o.x; c.y = c.o.y; c.a = K.dir > 0 ? c.o.a : c.o.a + Math.PI;
+    if (c.une) unir(c);
   }
   lifeV = V; const meshes = {}, porModelo = {};
   const malla = (geo, n, material) => { const g = geo.clone(), aBody = new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3); aBody.setUsage(THREE.DynamicDrawUsage); g.setAttribute('aBody', aBody);
@@ -10459,9 +10485,15 @@ function setupTraffic() {
     if (type === 'coche') { lifeCarMat = material; meshes.coche = {}; for (const [k, M] of Object.entries(MODELOS)) meshes.coche[k] = malla(M.geo, LIFE_Q[2].coches, material); }
     else { meshes[type] = malla(T.geo, LIFE_Q[2].dos, material); if (type === 'bus') lifeBusMat = material; }
   }
-  { // dos autocares de ALSA aparcados en las dársenas (entre los andenes 1 y 2 y entre el 2 y el 3), de cara al noreste
-    const m = malla(alsaGeo, 2, meshes.alsa.material), A = m.geometry.attributes.aBody, o = new THREE.Object3D(), blanco = C3('#f4f4f2'), a = Math.atan2(0.848, 0.53);
-    [[-558.2, -757.4], [-554.05, -759.95]].forEach((q, i) => { o.position.set(q[0], groundAt(q[0], q[1]), -q[1]); o.rotation.set(0, a + Math.PI / 2, 0); o.updateMatrix(); m.setMatrixAt(i, o.matrix); A.setXYZ(i, ...blanco); });
+  // dos autocares de ALSA aparcados en las dársenas (entre los andenes 1 y 2 y entre el 2 y el 3), de cara al noreste. Son decorado
+  // (FIJOS) hasta que el jugador se sube a uno: entonces pasa a ser un vehículo más (saca)
+  const FIJOS = [];
+  { const m = malla(alsaGeo, 2, meshes.alsa.material), A = m.geometry.attributes.aBody, o = new THREE.Object3D(), blanco = C3('#f4f4f2'), a = Math.atan2(0.848, 0.53);
+    [[-558.2, -757.4], [-554.05, -759.95]].forEach((q, i) => { o.position.set(q[0], groundAt(q[0], q[1]), -q[1]); o.rotation.set(0, a + Math.PI / 2, 0); o.updateMatrix(); m.setMatrixAt(i, o.matrix); A.setXYZ(i, ...blanco);
+      FIJOS.push({ x: q[0], y: q[1], a, len: 13, hw: 1.28, fuera: false, saca() {
+        this.fuera = true; m.setMatrixAt(i, new THREE.Matrix4().makeScale(0, 0, 0)); m.instanceMatrix.needsUpdate = true;
+        const c = { type: 'alsa', T: TYPES.alsa, modelo: null, ln: ALSA.ln || lanes[0], s: 0, v: 0, v0: 7, len: 13, big: true, alsa: true, color: blanco, rider: null, r: 0, o: {}, tr: null, next: null, wait: 0, x: q[0], y: q[1], a };
+        V.push(c); ALSA.V.push(c); return c; } }); });
     m.count = 2; m.frustumCulled = true; m.computeBoundingSphere(); A.needsUpdate = true; m.instanceMatrix.needsUpdate = true;
   }
   const turn = (h0, h1) => { let d = h1 - h0; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
@@ -10469,7 +10501,7 @@ function setupTraffic() {
     const ln = c.ln, node = NODES[ln.to];
     if (!inMap(node)) return null;
     let opts = node.outL.filter(o => o.edge !== ln.edge); if (!opts.length) opts = node.outL;
-    if (c.type === 'bus' && busLanes.length) opts = opts.filter(o => o.bus);   // el autobús, por su recorrido (si se acaba, sale por otro sitio)
+    if (c.type === 'bus' && busLanes.length) { const b = opts.filter(o => o.bus); if (b.length || ln.bus) opts = b; }   // el autobús, por su recorrido (si se acaba, sale por otro sitio); el que el jugador dejó fuera de él, por donde pueda hasta dar con uno
     if (!opts.length) return null;
     const wts = opts.map(o => { const t = Math.abs(turn(ln.h1, o.h0)); return (t < 0.5 ? 4 : t < 2.2 ? 1.4 : 0.3) * (1 + 0.4 * o.cls) * (o.side === 1 && c.T.side && o.w < 5 ? 0.5 : 1) * (c.type === 'bus' ? (o.cls >= 1 ? 3 : 0.1) * (o.paradas ? 2 : 1) : c.type === 'alsa' ? (o.cls >= 1 ? 4 : 0.2) : 1); });
     let u = Math.random() * wts.reduce((a, b) => a + b, 0); for (let i = 0; i < opts.length; i++) { u -= wts[i]; if (u <= 0) return opts[i]; }
@@ -10495,7 +10527,7 @@ function setupTraffic() {
   }
   const ANCHO = { coche: 0.9, moto: 0.42, bici: 0.35, patinete: 0.3, bus: 1.28, alsa: 1.28 };
   function ocupado(x, y, a, hl, hw, yo, ign) {   // ¿hay alguien (otro vehículo, el jugador o su coche) en ese rectángulo?
-    if (!st.fly) { if (COCHE.on) { if (COCHE.c !== yo && rectsChocan(x, y, a, hl, hw, COCHE.x, COCHE.y, COCHE.a, 2.15, 0.92)) return true; }
+    if (!st.fly) { if (COCHE.on) { if (COCHE.c !== yo && rectsChocan(x, y, a, hl, hw, COCHE.x, COCHE.y, COCHE.a, COCHE.K.hl, COCHE.K.hw)) return true; }
       else if (rectsChocan(x, y, a, hl, hw, st.x, st.y, 0, 0.35, 0.35)) return true; }
     let hit = false;
     if (TRAFICO) TRAFICO.cerca(x, y, e => { if (hit || e === yo || e.x == null || (ign && ign(e))) return; if (rectsChocan(x, y, a, hl, hw, e.x, e.y, e.a, e.len / 2, ANCHO[e.type])) hit = true; });
@@ -10532,7 +10564,11 @@ function setupTraffic() {
   const SIGS = NODES.filter(n => n.sig && n.deg > 2);
   const HASH = new Map(), celda = (x, y) => Math.floor(x / 10) * 4096 + Math.floor(y / 10);
   TRAFICO = {
-    V, ancho: c => ANCHO[c.type],
+    V, ancho: c => ANCHO[c.type], fijos: FIJOS,
+    nuevo(q) {   // un coche aparcado (una plaza de APARCADOS) pasa a ser un vehículo: lo coge el jugador
+      const M = MODELOS[q.modelo], c = { type: 'coche', T: TYPES.coche, modelo: q.modelo, ln: lanes[0], s: 0, v: 0, v0: M.v[0] + Math.random() * (M.v[1] - M.v[0]), len: q.len, big: true, color: q.color, rider: null, r: 0, o: {}, tr: null, next: null, wait: 0, x: q.x, y: q.y, a: q.a };
+      V.push(c); return c;
+    },
     cerca(x, y, fn) { const cx = Math.floor(x / 10), cy = Math.floor(y / 10); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const l = HASH.get((cx + i) * 4096 + cy + j); if (l) for (const c of l) fn(c); } },
     rojoDelante(x, y, a, t) {   // ¿el coche en (x, y) con rumbo a está en la línea de parada de un semáforo en rojo?
       const u = t % 40, sA = u < 17 ? 2 : u < 20 ? 1 : 0, sB = u < 20 ? 0 : u < 37 ? 2 : 1, hx = Math.cos(a), hy = Math.sin(a), luz = Math.abs(hx) >= Math.abs(hy) ? sA : sB;
@@ -10540,12 +10576,21 @@ function setupTraffic() {
       for (const n of SIGS) { const dx = n.x - x, dy = n.y - y, r = radius(n), f = dx * hx + dy * hy; if (f < r + 1.4 || f > r + 6.5) continue; if (Math.abs(-dx * hy + dy * hx) < r + 1.5) return true; }
       return false;
     },
-    soltar(c) {   // el coche vuelve al tráfico: al carril más cercano que vaya en su sentido
+    // Lo que deja el jugador: si queda en la calzada junto a un carril (o en un carril bici, los que salieron de uno), vuelve al
+    // tráfico y se incorpora poco a poco desde donde está (une); si no, se queda aparcado ahí y se puede volver a coger
+    soltar(c) {
       let best = null; const o = {};
-      for (const ln of lanes) { const bb = ln.bb || (ln.bb = bboxOf(ln.P.pts)); if (c.x < bb[0] - 6 || c.x > bb[2] + 6 || c.y < bb[1] - 6 || c.y > bb[3] + 6) continue;
-        for (let s2 = 0; s2 <= ln.P.len; s2 += 1.5) { along(ln.P, s2, 0, o); const d = Math.hypot(o.x - c.x, o.y - c.y), da = Math.abs(Math.atan2(Math.sin(o.a - c.a), Math.cos(o.a - c.a))); if (d < 5 && da < 1.2 && (!best || d + da * 2 < best.k)) best = { k: d + da * 2, ln, s: s2 }; } }
-      c.jugador = false; c.tr = null; c.next = null; c.v = 0; c.wait = 0;
-      if (best) { c.ln = best.ln; c.s = Math.max(c.len / 2, best.s); } else respawn(c);
+      c.jugador = false; c.tr = null; c.next = null; c.v = 0; c.wait = 0; c.bloq = 0; TRAFICO.repick = true;
+      if (c.carril) {
+        for (const P of CICLO) { const bb = P.bb || (P.bb = bboxOf(P.pts)); if (c.x < bb[0] - 4 || c.x > bb[2] + 4 || c.y < bb[1] - 4 || c.y > bb[3] + 4) continue;
+          for (let s2 = 0; s2 <= P.len; s2 += 1) { along(P, s2, 0, o); const d = Math.hypot(o.x - c.x, o.y - c.y); if (d < 3 && (!best || d < best.d)) best = { d, P, s: s2, dir: Math.cos(o.a - c.a) >= 0 ? 1 : -1 }; } }
+        if (best) Object.assign(c.carril, { P: best.P, s: best.s, dir: best.dir });
+      } else if (onRoad(c.x, c.y) || onBridge(c.x, c.y)) {   // al carril más cercano, mejor si va en su sentido
+        for (const ln of lanes) { const bb = ln.bb || (ln.bb = bboxOf(ln.P.pts)); if (c.x < bb[0] - 6 || c.x > bb[2] + 6 || c.y < bb[1] - 6 || c.y > bb[3] + 6) continue;
+          for (let s2 = 0; s2 <= ln.P.len; s2 += 1.5) { along(ln.P, s2, 0, o); const d = Math.hypot(o.x - c.x, o.y - c.y), da = Math.abs(Math.atan2(Math.sin(o.a - c.a), Math.cos(o.a - c.a))); if (d < 6 && (!best || d + da * 2 < best.k)) best = { k: d + da * 2, ln, s: s2 }; } }
+        if (best) { c.ln = best.ln; c.s = Math.max(c.len / 2, Math.min(best.ln.P.len - 0.1, best.s)); }
+      }
+      if (best) c.une = [c.x, c.y, c.a, lifeNow]; else c.aparcado = true;
     }
   };
   // Quejas: el coche que tienes delante pita (y cada vez más), la bici toca el timbre y motos y patinetes, su pito; si no te
@@ -10601,6 +10646,10 @@ function setupTraffic() {
     if (v.z > 1 || k < 1) { PROT.el.style.display = 'none'; return; }
     PROT.el.style.display = 'block'; PROT.el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; PROT.el.style.top = ((1 - v.y) / 2 * innerHeight - 6) + 'px';
   }
+  const unir = c => {   // el que vuelve al tráfico desde donde lo dejó el jugador: 1,5 s para ponerse en su carril, sin saltos
+    const u = c.une, k = (lifeNow - u[3]) / 1.5; if (k >= 1) { c.une = null; return; }
+    const e = k * k * (3 - 2 * k); c.x = u[0] + (c.x - u[0]) * e; c.y = u[1] + (c.y - u[1]) * e; c.a = u[2] + turn(u[2], c.a) * e;
+  };
   let FT = { trafico: 1 }, fr = 0;
   return (t, dt, Q, jinetes, setPerson, touch, M16) => {
     const paso = ++fr % 3 === 0;
@@ -10608,7 +10657,8 @@ function setupTraffic() {
     const u = t % 40, sA = u < 17 ? 2 : u < 20 ? 1 : 0, sB = u < 20 ? 0 : u < 37 ? 2 : 1, F = FT = lifeFactors();
     for (const ln of lanes) { ln.cars.length = 0; ln.exiting.length = 0; ln.entering.length = 0; }
     for (const n of NODES) n.inside.length = 0;
-    for (const c of V) { if (c.jugador || c.carril) continue; if (c.tr) { c.tr.from.exiting.push(c); c.tr.nx.entering.push(c); c.tr.node.inside.push(c); } else if (c.r < F.trafico) c.ln.cars.push(c); }
+    const JX = COCHE.on ? COCHE.x : st.x, JY = COCHE.on ? COCHE.y : st.y, JL = COCHE.on ? COCHE.K.hl : 0, JW = COCHE.on ? Math.max(0, COCHE.K.hw - 0.92) : 0;   // el jugador, o lo que conduce (su centro, su semilargo y lo que pasa de ancho de un coche)
+    for (const c of V) { if (c.jugador || c.aparcado || c.carril) continue; if (c.tr) { c.tr.from.exiting.push(c); c.tr.nx.entering.push(c); c.tr.node.inside.push(c); } else if (c.r < F.trafico) c.ln.cars.push(c); }
     for (const ln of lanes) {   // los carriles lejanos (a más de 350 m), cada 3 fotogramas con el tiempo acumulado
       if (!ln.cars.length) { ln.acc = 0; continue; }
       ln.acc = (ln.acc || 0) + dt;
@@ -10650,11 +10700,11 @@ function setupTraffic() {
             c.otro = s2 > c.s + 0.05 && ocupado(o2.x, o2.y, o2.a, hl, hw, c, e => e.r >= F.trafico || (!e.tr && e.ln === ln) || rectsChocan(c.x, c.y, c.a, hl, hw, e.x, e.y, e.a, e.len / 2, ANCHO[e.type])); }
           if (c.otro) vt = 0;
         } else c.otro = false;
-        const o = along(ln.P, c.s, 0, c.o), ax = Math.cos(o.a), ay = Math.sin(o.a), px = st.x - o.x, py = st.y - o.y, fw = px * ax + py * ay, lat = Math.abs(-px * ay + py * ax);
-        const yo = !st.fly && fw > 0 && fw < 30 && lat < (c.big ? 2.2 : 1.4);
-        if (yo) vt = Math.min(vt, Math.max(0, (fw - (c.big ? 5 : 2.8)) / 1.4));   // alguien en la calzada, delante
+        const o = along(ln.P, c.s, 0, c.o), ax = Math.cos(o.a), ay = Math.sin(o.a), px = JX - o.x, py = JY - o.y, fw = px * ax + py * ay - JL - c.len / 2, lat = Math.abs(-px * ay + py * ax);   // fw: del morro al jugador (o a la trasera de lo que conduce)
+        const yo = !st.fly && fw > -JL - c.len / 2 && fw < 28 && lat < (c.big ? 2.2 : 1.4) + JW;
+        if (yo) vt = Math.min(vt, Math.max(0, (fw - (COCHE.on ? 1.1 : c.big ? 2.9 : 1.9)) / 1.4));   // alguien en la calzada, delante
         c.v += Math.max(-7 * dtl, Math.min(2.4 * dtl, vt - c.v)); c.s += c.v * dtl;
-        c.bloq = yo && fw < (c.big ? 9 : 6) && c.v < 1.2 ? (c.bloq || 0) + dtl : Math.max(0, (c.bloq || 0) - dtl * 3);   // parado por el jugador (s)
+        c.bloq = yo && fw < (COCHE.on ? 5 : c.big ? 7 : 5) && c.v < 1.2 ? (c.bloq || 0) + dtl : Math.max(0, (c.bloq || 0) - dtl * 3);   // parado por el jugador (s)
         if (c.s + c.len / 2 >= ln.P.len) {
           if (!c.next) c.next = chooseNext(c);
           if (!c.next) respawn(c);
@@ -10664,7 +10714,7 @@ function setupTraffic() {
       }
     }
     for (const c of V) {   // posición: en el carril o en la curva del cruce (los lejanos, cada 3 fotogramas)
-      if (c.jugador) continue;
+      if (c.jugador || c.aparcado) continue;
       if (c.carril) { if (c.r < F.trafico || c.x == null) cicloPaso(c, dt); continue; }   // los del carril bici que no salen, quietos
       if (c.r >= F.trafico && !c.tr && c.x != null) continue;   // los que no salen (ni están cruzando), quietos en su sitio
       c.acc = (c.acc || 0) + dt;
@@ -10684,49 +10734,57 @@ function setupTraffic() {
       }
       if (!c.tr) { along(c.ln.P, Math.min(c.s, c.ln.P.len), 0, c.o); c.x = c.o.x; c.y = c.o.y; c.a = c.o.a; }
       if (c.T.side) { c.x += Math.sin(c.a) * c.T.side * (c.ln.w < 5 ? 0.4 : 1); c.y -= Math.cos(c.a) * c.T.side * (c.ln.w < 5 ? 0.4 : 1); }   // pegados a la derecha
+      if (c.une) unir(c);
     }
-    HASH.clear(); for (const c of V) if (c.x != null && (c.jugador || c.r < F.trafico) && Math.abs(c.x - st.x) < 330 && Math.abs(c.y - st.y) < 330) { const k = celda(c.x, c.y); let l = HASH.get(k); if (!l) HASH.set(k, l = []); l.push(c); }   // solo cerca: para los choques
+    HASH.clear(); for (const c of V) if (c.x != null && (c.jugador || c.aparcado || c.r < F.trafico) && Math.abs(c.x - st.x) < 330 && Math.abs(c.y - st.y) < 330) { const k = celda(c.x, c.y); let l = HASH.get(k); if (!l) HASH.set(k, l = []); l.push(c); }   // solo cerca: para los choques
     quejas(t, dt, M16);
     if (t - pickT > 0.35 || TRAFICO.repick) {   // los más cercanos de cada tipo (repick: al subir o bajar del coche)
       TRAFICO.repick = false;
       pickT = t; shown = {};
       for (const type of Object.keys(TYPES)) {
         const n = Math.round((type === 'coche' ? Q.coches : Q.dos) * DENS.trafico[REND.trafico][1]);
-        shown[type] = V.filter(c => c.type === type && c.r < F.trafico && c.x != null && !c.jugador).map(c => [c, lifeD2(c.x, c.y)]).sort((a, b) => a[1] - b[1]).slice(0, n).map(e => e[0]);
+        // (lo que conduce el jugador no se dibuja, salvo las motos, bicis y patinetes: se ve el manillar; lo que dejó aparcado, siempre)
+        const L = V.filter(c => c.type === type && c.x != null && (c.jugador ? !!c.rider : c.aparcado || c.r < F.trafico)).map(c => [c, c.jugador || c.aparcado ? -1 : lifeD2(c.x, c.y)]).sort((a, b) => a[1] - b[1]);
+        shown[type] = L.slice(0, Math.min(type === 'coche' ? 1e9 : meshes[type].instanceMatrix.count, Math.max(n, L.filter(e => e[1] < 0).length))).map(e => e[0]);
         if (type === 'coche') {   // cada modelo, en su malla
           for (const k in porModelo) delete porModelo[k]; for (const c of shown.coche) (porModelo[c.modelo] ??= []).push(c);
-          for (const [k, m] of Object.entries(meshes.coche)) { const L = porModelo[k] || [], A = m.geometry.attributes.aBody; L.forEach((c, i) => A.setXYZ(i, ...c.color)); A.needsUpdate = true; m.count = L.length; }
+          for (const [k, m] of Object.entries(meshes.coche)) { const L = porModelo[k] || [], A = m.geometry.attributes.aBody; if (L.length > m.instanceMatrix.count) L.length = m.instanceMatrix.count; L.forEach((c, i) => A.setXYZ(i, ...c.color)); A.needsUpdate = true; m.count = L.length; }
           continue;
         }
         const m = meshes[type], A = m.geometry.attributes.aBody; shown[type].forEach((c, i) => A.setXYZ(i, ...c.color)); A.needsUpdate = true; m.count = shown[type].length;
       }
-      let j = 0; for (const type of ['moto', 'bici', 'patinete']) for (const c of shown[type]) { if (j < jinetes.instanceMatrix.count) { setPerson(jinetes, j, c.rider, c.T.pose); j++; } }
+      let j = 0; for (const type of ['moto', 'bici', 'patinete']) for (const c of shown[type]) { if (!c.jugador && !c.aparcado && j < jinetes.instanceMatrix.count) { setPerson(jinetes, j, c.rider, c.T.pose); j++; } }   // (sin nadie encima, lo que lleva el jugador o dejó aparcado)
       jinetes.count = j; touch(jinetes);
     }
     let j = 0; const JA = jinetes.instanceMatrix.array;
     for (const type of Object.keys(TYPES)) {
       if (type === 'coche') {
-        for (const [k, m] of Object.entries(meshes.coche)) { const MA = m.instanceMatrix.array; (porModelo[k] || []).forEach((c, i) => M16(MA, i, c.x, terrainAt(c.x, c.y) - (D.pave ? 0.12 : 0), c.y, c.a, 1)); m.instanceMatrix.needsUpdate = true; }
+        for (const [k, m] of Object.entries(meshes.coche)) { const MA = m.instanceMatrix.array; (porModelo[k] || []).forEach((c, i) => M16(MA, i, c.x, c.aparcado ? c.z ?? rasante(c.x, c.y) : terrainAt(c.x, c.y) - (D.pave ? 0.12 : 0), c.y, c.a, 1)); m.instanceMatrix.needsUpdate = true; }
         continue;
       }
       const m = meshes[type], MA = m.instanceMatrix.array;
       shown[type].forEach((c, i) => {
-        const y = terrainAt(c.x, c.y) - (D.pave ? 0.12 : 0);
+        const y = c.jugador ? COCHE.base : c.aparcado ? c.z ?? rasante(c.x, c.y) : c.carril ? rasante(c.x, c.y) : terrainAt(c.x, c.y) - (D.pave ? 0.12 : 0);   // (el carril bici, fuera de la calzada, va a ras de la acera)
         M16(MA, i, c.x, y, c.y, c.a, 1);
-        if (c.rider && j < jinetes.count) { const atras = type === 'patinete' ? -0.12 : type === 'bici' ? 0.12 : 0.05; M16(JA, j, c.x - Math.cos(c.a) * atras, y + (c.T.saddle ? c.T.saddle - 0.92 * c.rider.h : c.T.rise), c.y - Math.sin(c.a) * atras, c.a, c.rider.h); j++; }
+        if (c.rider && !c.jugador && !c.aparcado && j < jinetes.count) { const atras = type === 'patinete' ? -0.12 : type === 'bici' ? 0.12 : 0.05; M16(JA, j, c.x - Math.cos(c.a) * atras, y + (c.T.saddle ? c.T.saddle - 0.92 * c.rider.h : c.T.rise), c.y - Math.sin(c.a) * atras, c.a, c.rider.h); j++; }
       });
       m.instanceMatrix.needsUpdate = true;
     }
     jinetes.instanceMatrix.needsUpdate = true;
   };
 }
-window.__vida = { people, n: () => people.length, shown: () => lifeShown, vehiculos: () => lifeV, gaviotas: () => window.__gaviotas, paso: (t, dt) => updateLife(t, dt), molinon: () => MOL, sonidos: { sonAfi, sonPitido, sonBalon, sonPato, sonPavo, afiCanto: () => afiCanto(1) } };   // paso y sonidos: para las pruebas
+window.__vida = { people, n: () => people.length, shown: () => lifeShown, vehiculos: () => lifeV, gaviotas: () => window.__gaviotas, paso: (t, dt) => updateLife(t, dt), molinon: () => MOL, sonidos: { sonAfi, sonPitido, sonBalon, sonPato, sonPavo, sonLadrido, sonAullido, sonGrunido, afiCanto: () => afiCanto(1) } };   // paso y sonidos: para las pruebas
 
 // ---------- Conducir ----------
-// Con E al lado de un coche parado (o casi) se sube uno al asiento del conductor: W/S aceleran y frenan (marcha atrás, despacio),
-// A/D giran (como una bici: radio = batalla / giro) y el ratón mira alrededor. Solo por la calzada, hasta unos 40 km/h, sin
-// atravesar vehículos ni gente, y en la línea de un semáforo en rojo no se mueve. Los demás paran detrás y, si se atasca sin
-// semáforo, pitan suave. Con E, parado, se baja por la acera y el coche vuelve al tráfico.
+// Con E al lado de un vehículo parado (o casi) se sube uno a conducirlo: W/S aceleran y frenan (marcha atrás, despacio), A/D giran
+// (como una bici: radio = batalla / giro) y el ratón mira alrededor. Sin atravesar vehículos ni gente, y en la línea de un
+// semáforo en rojo no se mueve. Los demás paran detrás y, si se atasca sin semáforo, pitan suave.
+// Desde el 01/10/2026 (lo pidió el profesor) se conduce cualquiera: los coches del tráfico y los aparcados (y los taxis de las
+// paradas), los autobuses (cuando paran: en una parada o en un semáforo), los autocares de ALSA (también los de las dársenas) y
+// las motos, bicis y patinetes (se paran si uno se les pone delante). Coches, autobuses y motos van por la calzada y los
+// aparcamientos, hasta unos 40 km/h; bicis y patinetes, hasta 25 km/h, por donde se anda (no por la arena, las escaleras ni el
+// agua). Con E, parado, se baja: lo que queda en la calzada junto a un carril vuelve al tráfico; lo demás se queda aparcado donde
+// está y se puede volver a coger.
 function rectsChocan(ax, ay, aa, al, aw, bx, by, ba, bl, bw) {   // dos rectángulos (centro, rumbo, semilargo y semiancho): ¿se tocan?
   const A = [Math.cos(aa), Math.sin(aa)], B = [Math.cos(ba), Math.sin(ba)], dx = bx - ax, dy = by - ay;
   for (const [ux, uy] of [A, [-A[1], A[0]], B, [-B[1], B[0]]]) {
@@ -10739,7 +10797,7 @@ function rectsChocan(ax, ay, aa, al, aw, bx, by, ba, bl, bw) {   // dos rectáng
 // En los aparcamientos en superficie de OSM (D.parking): filas de plazas de 2,5 × 5 m, dos espalda con espalda y un pasillo de
 // 6 m, orientadas con el lado más largo de cada aparcamiento, con sus rayas blancas. Cada plaza está ocupada o no según la hora
 // (de día, más); los coches, de los mismos modelos que los del tráfico y con las luces apagadas. Solo se dibujan los más
-// cercanos a la cámara (según la calidad) y chocan como los demás vehículos.
+// cercanos a la cámara (según la calidad) y chocan como los demás vehículos. Se pueden coger y conducir (ver «Conducir»).
 const APARCADOS = (() => {
   if (!W.parking.length) return null;
   const plazas = [], rayas = buf(); let semilla = 91; const R = () => (semilla = (semilla * 16807) % 2147483647) / 2147483647;
@@ -10752,11 +10810,17 @@ const APARCADOS = (() => {
     let best = 0, ang = 0; for (let i = 0; i < ring.length; i++) { const a = ring[i], b = ring[(i + 1) % ring.length], L = dist(a, b); if (L > best) { best = L; ang = Math.atan2(b[1] - a[1], b[0] - a[0]); } }
     const ux = Math.cos(ang), uy = Math.sin(ang), vx = -uy, vy = ux, P = (u, v) => [u * ux + v * vx, u * uy + v * vy];
     let u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity; for (const [x, y] of ring) { const u = x * ux + y * uy, v = x * vx + y * vy; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
-    for (let vf = v0 + 0.3; vf + 5 < v1; vf += 16) for (const [vc, cara] of [[vf + 2.5, -1], [vf + 7.5, 1]]) {   // dos filas espalda con espalda (morro al pasillo)
+    // Dos filas espalda con espalda (morro al pasillo). Desde el 01/10/2026 se pueden conducir, así que cada coche tiene que poder
+    // salir por delante (3 m más allá del morro sigue el aparcamiento o hay calzada): si la primera fila daría de morro a un muro o a
+    // la acera, las filas se corren una (la primera queda de espaldas a ese borde, con el pasillo delante), y la plaza que aun así
+    // no tiene salida no se pone
+    const cabe = (u, vc) => [[-1.2, -2.4], [1.2, -2.4], [1.2, 2.4], [-1.2, 2.4], [0, 0]].every(([a, b]) => dentro(...P(u + a, vc + b)));
+    const sale = (u, vc, cara) => { const [x, y] = P(u, vc + cara * 5.5); return dentro(x, y) || onRoad(x, y); };
+    let con = 0, sin = 0; for (let u = u0 + 1.3; u + 1.25 < u1; u += 2.5) if (cabe(u, v0 + 2.8)) sale(u, v0 + 2.8, -1) ? con++ : sin++;
+    for (let vf = v0 + 0.3 - (sin > con ? 5 : 0); vf + 5 < v1; vf += 16) for (const [vc, cara] of [[vf + 2.5, -1], [vf + 7.5, 1]]) {
       if (vc + 2.5 > v1) break;
       for (let u = u0 + 1.3; u + 1.25 < u1; u += 2.5) {
-        const esq = [[-1.2, -2.4], [1.2, -2.4], [1.2, 2.4], [-1.2, 2.4], [0, 0]].map(([a, b]) => P(u + a, vc + b));
-        if (!esq.every(q => dentro(q[0], q[1]))) continue;
+        if (!cabe(u, vc) || !sale(u, vc, cara)) continue;
         const [x, y] = P(u, vc), r = R(), mod = pm(R()), M = MODELOS[mod];
         plazas.push({ x, y, a: Math.atan2(vy * cara, vx * cara), r, modelo: mod, len: M.len, color: C3(mod === 'furgo' && R() < 0.7 ? '#f3f3f1' : pick(CARS, R())) });
         for (const du of [-1.25, 1.25]) { const [a0, b0] = P(u + du, vc - 2.5), [a1, b1] = P(u + du, vc + 2.5); raya(a0, b0, a1, b1); }
@@ -10780,9 +10844,11 @@ const APARCADOS = (() => {
   let ocup = -1, tSel = -10;
   return {
     plazas,
+    cerca(x, y, fn, n = 1) { for (let i = -n; i <= n; i++) for (let j = -n; j <= n; j++) for (const q of celda.get(key(x + i * K, y + j * K)) || []) if (q.r < ocup && !q.fuera) fn(q); },   // los coches aparcados de alrededor
+    saca(q) { q.fuera = true; tSel = -10; return TRAFICO.nuevo(q); },   // el jugador se lleva el de esa plaza: pasa a ser un vehículo
     en(x, y, r) {   // ¿hay un coche aparcado (ocupado) en (x, y)?
       for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const q of celda.get(key(x + i * K, y + j * K)) || []) {
-        if (q.r >= ocup) continue; const dx = x - q.x, dy = y - q.y, hx = Math.cos(q.a), hy = Math.sin(q.a);
+        if (q.r >= ocup || q.fuera) continue; const dx = x - q.x, dy = y - q.y, hx = Math.cos(q.a), hy = Math.sin(q.a);
         if (Math.abs(dx * hx + dy * hy) < q.len / 2 + r && Math.abs(-dx * hy + dy * hx) < 0.9 + r) return true;
       }
       return false;
@@ -10791,11 +10857,11 @@ const APARCADOS = (() => {
       if (t - tSel < 0.5) return; tSel = t;
       ocup = 0.3 + 0.45 * lifeFactors().trafico;   // cuántas plazas están ocupadas
       const cx = camera.position.x, cz = -camera.position.z, n = [36, 72, 110][qLevel];
-      const cerca = plazas.filter(q => q.r < ocup && Math.abs(q.x - cx) < 400 && Math.abs(q.y - cz) < 400).map(q => [q, (q.x - cx) ** 2 + (q.y - cz) ** 2]).sort((a, b) => a[1] - b[1]).slice(0, n);
+      const cerca = plazas.filter(q => q.r < ocup && !q.fuera && Math.abs(q.x - cx) < 400 && Math.abs(q.y - cz) < 400).map(q => [q, (q.x - cx) ** 2 + (q.y - cz) ** 2]).sort((a, b) => a[1] - b[1]).slice(0, n);
       const cuenta = {}; for (const k in mallas) cuenta[k] = 0;
       for (const [q] of cerca) {
         const m = mallas[q.modelo], i = cuenta[q.modelo]++; if (i >= m.instanceMatrix.count) continue;
-        o.position.set(q.x, terrainAt(q.x, q.y) - (D.pave ? 0.12 : 0), -q.y); o.rotation.set(0, q.a + Math.PI / 2, 0); o.updateMatrix(); m.setMatrixAt(i, o.matrix);
+        o.position.set(q.x, q.z ??= rasante(q.x, q.y), -q.y); o.rotation.set(0, q.a + Math.PI / 2, 0); o.updateMatrix(); m.setMatrixAt(i, o.matrix);   // (en la calzada, 12 cm por debajo de la acera; en un aparcamiento, a ras)
         m.geometry.attributes.aBody.setXYZ(i, ...q.color);
       }
       for (const [k, m] of Object.entries(mallas)) { m.count = Math.min(m.instanceMatrix.count, cuenta[k]); m.instanceMatrix.needsUpdate = true; m.geometry.attributes.aBody.needsUpdate = true; }
@@ -10808,16 +10874,45 @@ function vehiculoEn(x, y, r) {   // ¿hay un vehículo (su planta, con margen r)
   TRAFICO.cerca(x, y, c => { if (hit || c.x == null) return; const dx = x - c.x, dy = y - c.y, hx = Math.cos(c.a), hy = Math.sin(c.a); if (Math.abs(dx * hx + dy * hy) < c.len / 2 + r && Math.abs(-dx * hy + dy * hx) < TRAFICO.ancho(c) + r) hit = true; });
   return hit;
 }
-function cochePuede(x, y, a, v) {   // ¿puede estar el coche del jugador ahí? Por la calzada, sin tocar a nadie
-  const hx = Math.cos(a), hy = Math.sin(a), sg = v >= 0 ? 1 : -1;
-  for (const [f, l] of [[0, 0], [sg * 1.1, 0], [sg * 2.05, 0.8], [sg * 2.05, -0.8]]) {
+// De cada cosa que se conduce (su puesto): dónde va la cabeza (z hacia delante desde el centro del vehículo, x a la izquierda, y
+// de alto), la velocidad máxima (m/s), la aceleración, la frenada (fr), la batalla (da el radio de giro: batalla / 0,6; la del
+// autobús y el autocar, más corta que la de verdad, para que doblen las esquinas) y cómo se dice (subir,
+// bajar y el nombre). De los coches, cuánto sube y se adelanta el capó que se ve (capo); del autobús y del autocar, dónde tienen
+// el frente (cab: se ve la cabina). lat: lo más que tira en las curvas (m/s²; a los coches no se les limita, como siempre).
+// dos: dos ruedas (se sigue viendo, sin nadie encima, y la cabeza va algo atrás y arriba, para que se vea el manillar); acera: va
+// por donde se anda y no solo por la calzada.
+const PUESTOS = (() => {
+  const coche = { z: -0.3, x: 0.36, y: 1.18, vmax: 11, ac: 3.4, bat: 2.7, capo: [0, 0], n: ['Subir al coche', 'Bajar del coche', 'el coche'] };
+  return { turismo: coche, berlina: coche, taxi: { ...coche, n: ['Subir al taxi', 'Bajar del taxi', 'el taxi'] }, suv: { ...coche, x: 0.38, y: 1.45, capo: [0.3, 0.15] },
+    furgo: { ...coche, z: 0.35, x: 0.42, y: 1.6, vmax: 10, ac: 2.8, bat: 3.1, capo: [0.3, 0.55], n: ['Subir a la furgoneta', 'Bajar de la furgoneta', 'la furgoneta'] },
+    bus: { z: 4.45, x: 0.72, y: 2.05, vmax: 11, ac: 1.7, fr: 5, bat: 4.4, lat: 7, cab: 6.0, n: ['Conducir el autobús', 'Bajar del autobús', 'el autobús'] },
+    alsa: { z: 4.95, x: 0.72, y: 2.05, vmax: 11, ac: 1.7, fr: 5, bat: 5, lat: 7, cab: 6.5, n: ['Conducir el autocar', 'Bajar del autocar', 'el autocar'] },
+    moto: { z: -0.5, x: 0, y: 1.5, vmax: 11, ac: 4.2, bat: 1.4, lat: 7, dos: true, n: ['Subir a la moto', 'Bajar de la moto', 'la moto'] },
+    bici: { z: -0.6, x: 0, y: 1.7, vmax: 6.9, ac: 2.2, bat: 1.05, lat: 6, dos: true, acera: true, n: ['Coger la bici', 'Dejar la bici', 'la bici'] },
+    patinete: { z: -0.5, x: 0, y: 1.76, vmax: 6.9, ac: 2.6, bat: 0.8, lat: 6, dos: true, acera: true, n: ['Coger el patinete', 'Dejar el patinete', 'el patinete'] } };
+})();
+const puestoDe = o => PUESTOS[o.type && o.type !== 'coche' ? o.type : o.modelo || 'alsa'] || PUESTOS.turismo;   // de un vehículo, de una plaza de aparcamiento o de un autocar de las dársenas
+const rodable = (x, y) => onRoad(x, y) || onBridge(x, y) || (enAparcamiento(x, y) && !inBuilding(x, y, 0.2));   // por donde va un coche: la calzada y los aparcamientos
+const pisaRueda = (x, y) => (inLand(x, y) || onBridge(x, y)) && !inBuilding(x, y, 0.25) && !((maskAt(x, y) & 4) && !onBridge(x, y));   // por donde va una bici: tierra firme, fuera de los edificios y del agua
+function cochePuede(x, y, a, v) {   // ¿puede estar ahí lo que conduce el jugador? Por donde le toca y sin tocar a nadie
+  const C = COCHE, K = C.K, hx = Math.cos(a), hy = Math.sin(a), sg = v >= 0 ? 1 : -1;
+  const f1 = K.hl - (K.cab ? 0.5 : 0.1), l1 = K.cab ? 0.7 : Math.max(0, K.hw - 0.12);   // (al autobús se le perdona la esquina: al girar pisa el bordillo)
+  const suelto = K.acera || !rodable(C.x, C.y);   // una bici, o un coche que no está en la calzada (un taxi de una parada en la acera): por donde se anda, hasta llegar a ella
+  for (const [f, l] of [[0, 0], [sg * f1 * 0.52, 0], [sg * f1, l1], [sg * f1, -l1]]) {
     const px = x + hx * f - hy * l, py = y + hy * f + hx * l;
-    if (px < BX0 + 4 || px > BX1 - 4 || py < BY0 + 4 || py > BY1 - 4 || (!onRoad(px, py) && !onBridge(px, py))) return false;
+    if (px < BX0 + 4 || px > BX1 - 4 || py < BY0 + 4 || py > BY1 - 4 || !(suelto ? pisaRueda(px, py) : rodable(px, py))) return false;
   }
+  if (suelto && (railCross(C.x, C.y, x, y) || Math.abs(groundAt(x, y) - groundAt(C.x, C.y)) > 0.3)) return false;   // ni barandillas ni escalones
+  // a lo que ya se toca y de lo que uno se aleja no se le hace caso: así se sale de una plaza justa (o de un golpe)
+  const lejos = (bx, by) => Math.hypot(bx - x, by - y) > Math.hypot(bx - C.x, by - C.y);
+  const toca = (bx, by, ba, bl, bw) => rectsChocan(x, y, a, K.hl, K.hw, bx, by, ba, bl, bw) && !(lejos(bx, by) && rectsChocan(C.x, C.y, C.a, K.hl, K.hw, bx, by, ba, bl, bw));
   let ok = true;
-  TRAFICO.cerca(x, y, c => { if (ok && c !== COCHE.c && c.x != null && rectsChocan(x, y, a, 2.15, 0.92, c.x, c.y, c.a, c.len / 2 + 0.05, TRAFICO.ancho(c) + 0.05)) ok = false; });
+  TRAFICO.cerca(x, y, c => { if (ok && c !== C.c && c.x != null && toca(c.x, c.y, c.a, c.len / 2 + 0.05, TRAFICO.ancho(c) + 0.05)) ok = false; });
+  if (ok && APARCADOS) APARCADOS.cerca(x, y, q => { if (ok && toca(q.x, q.y, q.a, q.len / 2, 0.9)) ok = false; }, K.cab ? 2 : 1);
+  for (const f of TRAFICO.fijos) if (ok && !f.fuera && toca(f.x, f.y, f.a, f.len / 2, f.hw)) ok = false;
   if (!ok) return false;
-  for (const p of lifeShown || []) { if (p.x == null) continue; const dx = p.x - x, dy = p.y - y; if (Math.abs(dx * hx + dy * hy) < 2.5 && Math.abs(-dx * hy + dy * hx) < 1.25) return false; }
+  const pisa = (p, cx, cy, ca) => { const dx = p.x - cx, dy = p.y - cy, ux = Math.cos(ca), uy = Math.sin(ca); return Math.abs(dx * ux + dy * uy) < K.hl + 0.35 && Math.abs(-dx * uy + dy * ux) < K.hw + 0.33; };
+  for (const p of lifeShown || []) if (p.x != null && pisa(p, x, y, a) && !(lejos(p.x, p.y) && pisa(p, C.x, C.y, C.a))) return false;
   return true;
 }
 let volT = 0, avisoT = 0, avisoTxt = '';
@@ -10825,71 +10920,91 @@ function avisoVolante(txt) { avisoTxt = txt; avisoT = clock.elapsedTime + 2.5; v
 function volanteUI() {
   const t = clock.elapsedTime; if (t - volT < 0.2) return; volT = t;
   const tactil = matchMedia('(pointer:coarse)').matches, km = Math.round(Math.abs(COCHE.v) * 3.6);
-  $('volante').innerHTML = t < avisoT ? avisoTxt : `${km} km/h${COCHE.v < -0.2 ? ' (marcha atrás)' : ''}${COCHE.rojo ? ' · <span class="rojo">semáforo en rojo</span>' : ''}${tactil ? '' : ' · E: bajar'}`;
+  $('volante').innerHTML = t < avisoT ? avisoTxt : `${km} km/h${COCHE.v < -0.2 ? ' (marcha atrás)' : ''}${COCHE.rojo ? ' · <span class="rojo">semáforo en rojo</span>' : ''}${tactil ? '' : ' · E: ' + COCHE.K.n[1].split(' ')[0].toLowerCase()}`;
 }
 function conducir(dt) {
-  const C = COCHE, k = c => keys.has(c) ? 1 : 0, t = clock.elapsedTime;
+  const C = COCHE, K = C.K, k = c => keys.has(c) ? 1 : 0, t = clock.elapsedTime;
   const gas = Math.max(-1, Math.min(1, k('KeyW') + k('ArrowUp') - k('KeyS') - k('ArrowDown') - joyV[1]));
   const giro = Math.max(-1, Math.min(1, k('KeyD') + k('ArrowRight') - k('KeyA') - k('ArrowLeft') + joyV[0]));
-  C.rojo = TRAFICO.rojoDelante(C.x, C.y, C.a, t);
-  if (gas > 0.1) C.v = C.v < -0.2 ? Math.min(0, C.v + 9 * dt) : Math.min(11, C.v + 3.4 * gas * dt);
-  else if (gas < -0.1) C.v = C.v > 0.2 ? Math.max(0, C.v + 9 * gas * dt) : Math.max(-3, C.v + 2.2 * gas * dt);
+  C.rojo = (!K.acera || onRoad(C.x, C.y)) && TRAFICO.rojoDelante(C.x, C.y, C.a, t);   // (la bici por la acera no mira los semáforos)
+  if (gas > 0.1) C.v = C.v < -0.2 ? Math.min(0, C.v + 9 * dt) : Math.min(K.vmax, C.v + K.ac * gas * dt);
+  else if (gas < -0.1) C.v = C.v > 0.2 ? Math.max(0, C.v + (K.fr || 9) * gas * dt) : Math.max(K.dos ? -1 : -3, C.v + 2.2 * gas * dt);
   else C.v -= Math.sign(C.v) * Math.min(Math.abs(C.v), 1.6 * dt);
   if (C.rojo) C.v = 0;   // en la línea de un semáforo en rojo, quieto
   if (Math.abs(C.v) > 0.01) {
-    const na = C.a - giro * C.v / 2.7 * 0.6 * dt, nx = C.x + Math.cos(na) * C.v * dt, ny = C.y + Math.sin(na) * C.v * dt;
+    const w = Math.min(Math.abs(C.v) / K.bat * 0.6, K.lat ? K.lat / Math.max(1, Math.abs(C.v)) : 9) * Math.sign(C.v);   // giro por segundo
+    const na = C.a - giro * w * dt, nx = C.x + Math.cos(na) * C.v * dt, ny = C.y + Math.sin(na) * C.v * dt;
     if (cochePuede(nx, ny, na, C.v)) { C.x = nx; C.y = ny; C.a = na; } else C.v = 0;   // si choca, se para
   }
   if (Math.abs(C.v) > 1) C.look *= 1 - Math.min(1, dt * 0.8);   // al moverse, la vista vuelve al frente
-  const hx = Math.cos(C.a), hy = Math.sin(C.a), base = terrainAt(C.x, C.y) - (D.pave ? 0.12 : 0);
-  st.x = C.x - hy * 0.36 - hx * 0.3; st.y = C.y + hx * 0.36 - hy * 0.3; st.feet = base + 1.18 - EYE; st.vy = 0; st.ground = true;   // en el asiento del conductor
+  const hx = Math.cos(C.a), hy = Math.sin(C.a), suelo = K.acera && !onRoad(C.x, C.y) && !onBridge(C.x, C.y) ? groundAt(C.x, C.y) + 0.02 : rasante(C.x, C.y);
+  C.base += (suelo - C.base) * Math.min(1, dt * 14);   // (el bordillo, sin saltos)
+  st.x = C.x + hx * K.z - hy * K.x; st.y = C.y + hy * K.z + hx * K.x; st.feet = C.base + K.y - EYE; st.vy = 0; st.ground = true;   // en el puesto del conductor
   st.yaw = C.a - Math.PI / 2 + C.look;
   camera.position.set(st.x, st.feet + EYE, -st.y); camera.rotation.set(st.pitch, st.yaw, 0);
   const c = C.c; c.x = C.x; c.y = C.y; c.a = C.a; c.v = Math.abs(C.v);
-  { const f = C.a + Math.PI / 2, ca = Math.cos(f), sa = Math.sin(f);   // el morro, con el coche (mira a +z; misma matriz que M16)
-    MORRO.matrix.set(ca, 0, sa, C.x, 0, 1, 0, base, -sa, 0, ca, -C.y, 0, 0, 0, 1); MORRO.matrixWorldNeedsUpdate = true; }
+  if (MORRO.visible) { const f = C.a + Math.PI / 2, ca = Math.cos(f), sa = Math.sin(f);   // el capó o la cabina, con el vehículo (miran a +z; misma matriz que M16)
+    MORRO.matrix.set(ca, 0, sa, C.x, 0, 1, 0, C.base, -sa, 0, ca, -C.y, 0, 0, 0, 1); MORRO.matrixWorldNeedsUpdate = true; }
   volanteUI();
 }
-function cocheCerca() {   // un coche parado (o casi) a menos de 1,4 m de su carrocería; d, esa distancia
+function vehiculoCerca() {   // un vehículo parado (o casi) a mano: del tráfico, aparcado o un autocar de las dársenas. d: la distancia a su carrocería; coge(): lo deja listo para conducir
   if (!TRAFICO || st.fly || COCHE.on) return null;
   const F = lifeFactors(); let best = null;
-  TRAFICO.cerca(st.x, st.y, c => {
-    if (c.type !== 'coche' || c.x == null || c.v > 0.8 || c.r >= F.trafico) return;
-    const dx = st.x - c.x, dy = st.y - c.y, hx = Math.cos(c.a), hy = Math.sin(c.a), f = Math.max(0, Math.abs(dx * hx + dy * hy) - c.len / 2), l = Math.max(0, Math.abs(-dx * hy + dy * hx) - 0.9), d = Math.hypot(f, l);
-    if (d < 1.4 && (!best || d < best.d)) best = { c, d };
-  });
+  const mira = (o, len, hw, alc, coge) => { const dx = st.x - o.x, dy = st.y - o.y, hx = Math.cos(o.a), hy = Math.sin(o.a), d = Math.hypot(Math.max(0, Math.abs(dx * hx + dy * hy) - len / 2), Math.max(0, Math.abs(-dx * hy + dy * hx) - hw)); if (d < alc && (!best || d < best.d)) best = { d, o, coge }; };
+  TRAFICO.cerca(st.x, st.y, c => { if (c.x != null && c.v <= 0.8 && (c.aparcado || c.r < F.trafico)) mira(c, c.len, TRAFICO.ancho(c), c.rider ? 1.7 : 1.4, () => c); });
+  for (const f of TRAFICO.fijos) if (!f.fuera) mira(f, f.len, f.hw, 1.4, () => f.saca());
+  if (APARCADOS) APARCADOS.cerca(st.x, st.y, q => mira(q, q.len, 0.9, 1.4, () => APARCADOS.saca(q)));
   return best;
 }
-function queHacerE() {   // con E: subir al coche o hablar, lo que esté más cerca (bajar, si se conduce)
+function queHacerE() {   // con E: subir a un vehículo, hablar o ladrarle a un perro, lo que esté más cerca (bajar, si se conduce)
   if (COCHE.on) return 'bajar';
-  const c = cocheCerca(), p = talkCandidate();
-  if (c && p && Math.hypot(p.x - st.x, p.y - st.y) - 0.3 < c.d) return 'hablar';
-  return c ? 'subir' : p ? 'hablar' : null;
+  const c = vehiculoCerca(), p = talkCandidate(), g = perroCerca();
+  const dp = p ? Math.hypot(p.x - st.x, p.y - st.y) - 0.3 : Infinity, dg = g ? g.l - 0.45 : Infinity;   // (el perro va por delante de su dueño: con algo de ventaja)
+  if (c && c.d <= Math.min(dp, dg)) return 'subir';
+  return dg < dp ? 'ladrar' : p ? 'hablar' : null;
 }
-const MORRO = (() => {   // desde el asiento solo se ve el capó (del parabrisas, z = 0,8, al frente, z = 2,1)
+// Lo que se ve desde el puesto. Del coche, el capó (del parabrisas, z = 0,8, al frente, z = 2,1), que sube y se adelanta en el
+// todoterreno y la furgoneta. Del autobús y el autocar, la cabina (con el frente en z = 6): el frontal bajo el parabrisas, el
+// salpicadero con el cuadro, el volante casi tumbado, los montantes, el letrero de arriba y los retrovisores «de orejas».
+// De las motos, bicis y patinetes se ve el propio vehículo (el manillar), sin nadie encima.
+const MORRO = (() => {
   const g = new THREE.BoxGeometry(1.74, 0.6, 1.3).translate(0, 0.5, 1.45), q = g.attributes.position;
   for (let i = 0; i < q.count; i++) if (q.getY(i) > 0.5) q.setY(i, 0.8 - 0.12 * (q.getZ(i) + 2.1) / 4.2);   // la misma caída que el coche
   g.computeVertexNormals();
   const G = new THREE.Group(), capo = new THREE.Mesh(g, mat({ color: '#ffffff', roughness: 0.35, metalness: 0.25 }));
-  G.add(capo); G.matrixAutoUpdate = false; G.visible = false; scene.add(G); G.userData.capo = capo; return G;
+  const cab = new THREE.Group(), negro = mat({ color: '#18191b', roughness: 0.6 }), gris = mat({ color: '#2d2f33', roughness: 0.85 });
+  const pz = (g, m, x, y, z) => { const me = new THREE.Mesh(g, m); me.position.set(x, y, z); cab.add(me); };
+  pz(new THREE.BoxGeometry(2.46, 1.1, 0.1), gris, 0, 0.55, 6.0); pz(new THREE.BoxGeometry(2.42, 0.44, 0.7), gris, 0, 1.16, 5.62); pz(new THREE.BoxGeometry(0.8, 0.2, 0.36), negro, 0.72, 1.46, 5.52);
+  pz(new THREE.TorusGeometry(0.235, 0.022, 8, 28).rotateX(1.13), negro, 0.72, 1.42, 5.16); pz(new THREE.BoxGeometry(0.44, 0.05, 0.025).rotateX(1.13), negro, 0.72, 1.42, 5.16);
+  pz(new THREE.CylinderGeometry(0.035, 0.045, 0.42, 8).rotateX(-0.44), negro, 0.72, 1.24, 5.245);
+  pz(new THREE.BoxGeometry(2.5, 0.5, 0.3), negro, 0, 2.84, 5.9);
+  for (const sx of [-1, 1]) { pz(new THREE.BoxGeometry(0.07, 1.9, 0.1), negro, sx * 1.24, 2.05, 6.0);
+    pz(new THREE.BoxGeometry(0.04, 0.04, 0.44), negro, sx * 1.24, 2.8, 6.25); pz(new THREE.BoxGeometry(0.04, 0.34, 0.04), negro, sx * 1.3, 2.65, 6.45); pz(new THREE.BoxGeometry(0.09, 0.36, 0.2), negro, sx * 1.34, 2.33, 6.46); }
+  cab.visible = false; G.add(capo, cab); G.matrixAutoUpdate = false; G.visible = false; scene.add(G); G.userData = { capo, cab }; return G;
 })();
 function subirCoche(c) {
-  COCHE.on = true; COCHE.c = c; c.jugador = true; c.tr = null; c.next = null; c.bloq = 0; TRAFICO.repick = true;
-  MORRO.userData.capo.material.color.setRGB(...c.color); MORRO.visible = true;
-  Object.assign(COCHE, { x: c.x, y: c.y, a: c.a, v: 0, look: 0 }); st.pitch = -0.1;
+  const C = COCHE, P = puestoDe(c), u = MORRO.userData;
+  C.K = { ...P, hl: c.len / 2 + (P.dos ? 0 : 0.1), hw: TRAFICO.ancho(c) + 0.02 };   // su puesto y la planta con la que choca
+  C.on = true; C.c = c; c.jugador = true; c.aparcado = false; c.une = null; c.r = 0; c.tr = null; c.next = null; c.bloq = 0; TRAFICO.repick = true;
+  u.capo.visible = !!P.capo; u.cab.visible = !!P.cab; MORRO.visible = !P.dos;
+  if (P.capo) { u.capo.position.set(0, P.capo[0], P.capo[1]); u.capo.material.color.setRGB(...c.color); } else if (P.cab) u.cab.position.z = P.cab - 6;
+  Object.assign(C, { x: c.x, y: c.y, a: c.a, v: 0, look: 0, base: c.z ?? rasante(c.x, c.y) }); st.pitch = P.cab ? -0.18 : P.dos ? -0.22 : -0.1;
   if (talk.who) { talk.who.talkUntil = 0; talk.who = null; }
   $('volante').style.display = 'block'; volT = 0; soundStart();
 }
+function dejarVehiculo() {   // el jugador deja lo que conduce: vuelve al tráfico o se queda aparcado donde está (TRAFICO.soltar)
+  const C = COCHE, c = C.c; C.on = false; C.c = null; c.x = C.x; c.y = C.y; c.a = C.a; c.z = C.base; TRAFICO.soltar(c); $('volante').style.display = 'none'; MORRO.visible = false;
+}
 function bajarCoche() {
-  const C = COCHE; if (Math.abs(C.v) > 0.6) { avisoVolante('Para el coche para bajar'); return; }
-  const hx = Math.cos(C.a), hy = Math.sin(C.a); let sitio = null;
-  for (const d of [2.1, 2.8, 3.6, 4.6, 6]) for (const sd of [-1, 1]) {   // primero por la derecha (la acera)
-    if (sitio) break; const px = C.x - hy * sd * d, py = C.y + hx * sd * d; if (walkable(px, py) && !vehiculoEn(px, py, 0.4)) sitio = [px, py];
+  const C = COCHE, K = C.K; if (Math.abs(C.v) > 0.6) { avisoVolante(`Para ${K.n[2]} para bajar`); return; }
+  const hx = Math.cos(C.a), hy = Math.sin(C.a), f = K.cab ? K.z + 0.5 : 0; let sitio = null;   // (del autobús, por la puerta de delante)
+  for (const d of K.dos ? [0.6, 1.2, 2, 3] : [1.2, 1.9, 2.7, 3.7, 5.1]) for (const sd of [-1, 1]) {   // primero por la derecha (la acera)
+    if (sitio) break; const px = C.x + hx * f - hy * sd * (K.hw + d), py = C.y + hy * f + hx * sd * (K.hw + d); if (walkable(px, py) && !vehiculoEn(px, py, 0.4)) sitio = [px, py];
   }
   if (!sitio) { avisoVolante('Aquí no hay sitio para bajar'); return; }
   const a = C.a; place(sitio[0], sitio[1]); st.yaw = a - Math.PI / 2; st.pitch = -0.05;
 }
-function accionE() { const q = queHacerE(); if (q === 'bajar') bajarCoche(); else if (q === 'subir') subirCoche(cocheCerca().c); else if (q === 'hablar') talkNearest(); }
+function accionE() { const q = queHacerE(); if (q === 'bajar') bajarCoche(); else if (q === 'subir') subirCoche(vehiculoCerca().coge()); else if (q === 'ladrar') ladrar(); else if (q === 'hablar') talkNearest(); }
 
 // ---------- Músicos, sonidos de la calle y hablar con la gente ----------
 // Tres músicos callejeros (un gaitero en el Muro, un guitarrista en la Plaza Mayor y un acordeonista junto a Pelayo) que
@@ -11192,17 +11307,33 @@ function sonTabla(x, y, fuerte) {   // el «clac» del skate: la cola contra el 
   const o2 = ctx.createOscillator(), e = ctx.createGain(); o2.frequency.setValueAtTime(fuerte ? 150 : 330, t0); o2.frequency.exponentialRampToValueAtTime(55, t0 + 0.08);
   e.gain.setValueAtTime(fuerte ? 0.55 : 0.25, t0); e.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11); o2.connect(e).connect(g); o2.start(t0); o2.stop(t0 + 0.13);
 }
-function sonLadrido(x, y, s) {   // «¡guau!» (grande, más grave) o «¡yip!» (pequeño, agudo): un tono con dos formantes y un golpe de ruido
+function sonLadrido(x, y, s, veces, cuando = 0, duda = false) {   // «¡guau!» (grande, más grave) o «¡yip!» (pequeño, agudo): un tono con dos formantes y un golpe de ruido. duda: «¿guau?», hacia arriba
   const S = sonidoEn(x, y, 0.8); if (!S) return;
-  const { ctx, g, t0 } = S, f0 = s > 0.95 ? 170 : s > 0.7 ? 280 : 520, n = Math.random() < 0.55 ? 1 : 2;
+  const { ctx, g, t0 } = S, f0 = s > 0.95 ? 170 : s > 0.7 ? 280 : 520, n = veces || (Math.random() < 0.55 ? 1 : 2);
   for (let k = 0; k < n; k++) {
-    const a = t0 + k * (0.24 + Math.random() * 0.08), o = ctx.createOscillator(), e = ctx.createGain(), f1 = city.filt('bandpass', f0 * 3, 2.5), f2 = city.filt('bandpass', f0 * 5.5, 3.5);
-    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * 1.3, a); o.frequency.exponentialRampToValueAtTime(f0 * 0.75, a + 0.13);
+    const a = t0 + cuando + k * (0.24 + Math.random() * 0.08), o = ctx.createOscillator(), e = ctx.createGain(), f1 = city.filt('bandpass', f0 * 3, 2.5), f2 = city.filt('bandpass', f0 * 5.5, 3.5);
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * (duda ? 0.85 : 1.3), a); o.frequency.exponentialRampToValueAtTime(f0 * (duda ? 1.4 : 0.75), a + 0.13);
     e.gain.setValueAtTime(0, a); e.gain.linearRampToValueAtTime(0.9, a + 0.01); e.gain.exponentialRampToValueAtTime(0.001, a + 0.17);
     o.connect(f1).connect(e); o.connect(f2).connect(e); e.connect(g); o.start(a); o.stop(a + 0.19);
     const b = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.05), ctx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.012));
     const src = ctx.createBufferSource(), bp = city.filt('bandpass', f0 * 4, 1.2), ge = ctx.createGain(); ge.gain.value = 0.35; src.buffer = b; src.connect(bp).connect(ge).connect(g); src.start(a);
   }
+}
+function sonAullido(x, y, s, cuando = 0) {   // «¡auuuu!»: un tono que sube, se sostiene con algo de temblor y cae despacio
+  const S = sonidoEn(x, y, 0.7); if (!S) return;
+  const { ctx, g, t0 } = S, a = t0 + cuando, f0 = s > 0.95 ? 300 : s > 0.7 ? 420 : 640, o = ctx.createOscillator(), e = ctx.createGain(), f1 = city.filt('bandpass', f0 * 1.6, 2), f2 = city.filt('bandpass', f0 * 3.2, 3), vib = ctx.createOscillator(), vg = ctx.createGain();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * 0.6, a); o.frequency.exponentialRampToValueAtTime(f0, a + 0.35); o.frequency.setValueAtTime(f0, a + 1.0); o.frequency.exponentialRampToValueAtTime(f0 * 0.7, a + 1.6);
+  vib.frequency.value = 6; vg.gain.value = f0 * 0.015; vib.connect(vg).connect(o.frequency);
+  e.gain.setValueAtTime(0, a); e.gain.linearRampToValueAtTime(0.7, a + 0.25); e.gain.setValueAtTime(0.7, a + 1.0); e.gain.exponentialRampToValueAtTime(0.001, a + 1.65);
+  o.connect(f1).connect(e); o.connect(f2).connect(e); e.connect(g); o.start(a); vib.start(a); o.stop(a + 1.7); vib.stop(a + 1.7);
+}
+function sonGrunido(x, y, s, cuando = 0) {   // «grrr…»: un tono grave y áspero, que tiembla
+  const S = sonidoEn(x, y, 0.6); if (!S) return;
+  const { ctx, g, t0 } = S, a = t0 + cuando, f0 = s > 0.95 ? 62 : s > 0.7 ? 85 : 130, o = ctx.createOscillator(), e = ctx.createGain(), lp = city.filt('lowpass', f0 * 9, 1.5), tr = ctx.createOscillator(), tg = ctx.createGain();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, a); o.frequency.linearRampToValueAtTime(f0 * 1.15, a + 0.7);
+  e.gain.setValueAtTime(0, a); e.gain.linearRampToValueAtTime(0.5, a + 0.08); e.gain.setValueAtTime(0.5, a + 0.55); e.gain.linearRampToValueAtTime(0, a + 0.75);
+  tr.type = 'square'; tr.frequency.value = 27; tg.gain.value = 0.3; tr.connect(tg).connect(e.gain);
+  o.connect(lp).connect(e).connect(g); o.start(a); tr.start(a); o.stop(a + 0.8); tr.stop(a + 0.8);
 }
 function sonTimbre(x, y) {   // timbre de bici: «rin-rin», una campanita (parciales metálicos que se apagan deprisa)
   const S = sonidoEn(x, y, 0.55); if (!S) return;
@@ -11257,7 +11388,7 @@ function cityUpdate(t) {
   }
   if (t - city.t < 0.1) return; city.t = t;
   // vehículos: los cinco más cercanos (menos de 45 m) con motor
-  const F = lifeFactors(), V = (lifeV || []).filter(c => c.x != null && c.r < F.trafico && c.type !== 'bici').map(c => [c, Math.hypot(c.x - st.x, c.y - st.y)]).filter(e => e[1] < 45).sort((a, b) => a[1] - b[1]).slice(0, 5);
+  const F = lifeFactors(), V = (lifeV || []).filter(c => c.x != null && c.r < F.trafico && !c.aparcado && c.type !== 'bici').map(c => [c, Math.hypot(c.x - st.x, c.y - st.y)]).filter(e => e[1] < 45).sort((a, b) => a[1] - b[1]).slice(0, 5);
   const busyV = new Set(V.map(e => e[0]));
   for (const e of city.eng) if (e.who && !busyV.has(e.who)) e.who = null;
   for (const [c] of V) if (!city.eng.some(e => e.who === c)) { const e = city.eng.find(e => !e.who); if (e) { e.who = c; e.type = ''; } }
@@ -11412,11 +11543,41 @@ function phraseFor(p) {
   p.ultima = txt;
   return paso === 0 && !p.nino && !p.jog && p.k !== 'musico' ? `${saludo} ${txt}` : txt;
 }
+// Ladrarle a un perro (01/10/2026, idea del profesor): con E (o el botón «Ladrar») junto a uno, tú ladras y él contesta a su manera,
+// cada vez una cosa: te mira extrañado, ladra, gruñe jugando, aúlla, te olfatea… Mientras, se queda quieto mirándote y su dueño espera.
+// De cada respuesta: lo que «dice» (los pequeños, «yip»; los grandes, en mayúsculas), cuántos ladridos, cómo se queda después
+// (0 de pie, 1 sentado, 2 olfateando) y si antes duda, gruñe o aúlla
+const PERRO_DICE = [['¿Guau?', 1, 0, 'duda'], ['¡Guau, guau!', 2, 0], ['¡Guau! ¡Guau! ¡Guau!', 3, 0], ['Grrr… ¡guau!', 1, 0, 'gruñe'], ['¡Auuuuu!', 0, 1, 'aulla'], ['¡Guau, guau, guau, guau!', 4, 0],
+  ['Snif, snif… ¡guau!', 1, 2], ['¡Guau!', 1, 1]];
+function perroCerca() {   // el perro más cercano delante (a menos de 2,8 m) o muy cerca (1,4 m); l: a qué distancia
+  if (st.fly) return null;
+  let best = null; const fx = -Math.sin(st.yaw), fy = Math.cos(st.yaw), t = clock.elapsedTime;
+  for (const p of lifeShown || []) {
+    const d = p.perro; if (!d || d.x == null || t - d.t > 0.5) continue;   // (solo los que se están dibujando)
+    const dx = d.x - st.x, dy = d.y - st.y, l = Math.hypot(dx, dy); if (l > 2.8) continue;
+    const front = (dx * fx + dy * fy) / (l || 1); if (l > 1.4 && front < 0.5) continue;
+    if (!best || l - front < best.sc) best = { d, p, l, sc: l - front };
+  }
+  return best;
+}
+function ladrar() {
+  const c = perroCerca(); if (!c) return;
+  const { d, p } = c, t = clock.elapsedTime; if (t < (d.ladra1 || 0)) return;   // (aún está contestando)
+  d.paso = (d.paso || 0) + 1;
+  let i = d.paso === 1 ? 0 : d.dijo; while (d.paso > 1 && i === d.dijo) i = 1 + Math.floor(Math.random() * (PERRO_DICE.length - 1));   // la primera vez, extrañado; luego, cada vez una cosa
+  d.dijo = i;
+  const [txt, n, pose, antes] = PERRO_DICE[i], t1 = 0.75, tl = antes === 'gruñe' ? 0.8 : 0, dur = antes === 'aulla' ? 1.7 : tl + n * 0.3 + 0.2;   // él contesta un momento después
+  soundStart(); sonLadrido(st.x, st.y, 0.85, 1 + d.paso % 2); aviso(d.paso % 2 ? 'Tú: «¡Guau, guau!»' : 'Tú: «¡Guau!»');   // tú (también por escrito, por si no hay sonido)
+  if (antes === 'aulla') sonAullido(d.x, d.y, d.s, t1); else { if (antes === 'gruñe') sonGrunido(d.x, d.y, d.s, t1); sonLadrido(d.x, d.y, d.s, n, t1 + tl, antes === 'duda'); }
+  Object.assign(d, { ladra0: t + t1 + tl, ladra1: t + t1 + dur, gesto: antes === 'aulla' ? 4 : 3, pose, charla: t + t1 + dur + 2.2 }); p.perroT = d.charla;
+  if (talk.who && talk.who !== d) talk.who.talkUntil = 0;
+  talk.who = d; talk.desde = t + t1; talk.until = d.charla - 0.4; talk.el.textContent = d.s < 0.7 ? txt.replace(/Guau/g, 'Yip').replace(/guau/g, 'yip') : d.s > 1.05 ? txt.toUpperCase() : txt;
+}
 function talkNearest() {
   const p = talkCandidate(); if (!p) return;
   const t = clock.elapsedTime, txt = phraseFor(p), dur = Math.min(8, 2.5 + txt.length * 0.06);
   if (talk.who && talk.who !== p) talk.who.talkUntil = 0;
-  talk.who = p; talk.until = t + dur; p.talkUntil = t + dur; talk.el.textContent = txt; talk.el.style.display = 'block';
+  talk.who = p; talk.desde = 0; talk.until = t + dur; p.talkUntil = t + dur; talk.el.textContent = txt; talk.el.style.display = 'block';
   p.voz = false;
   if (window.speechSynthesis && snd.on) {   // voz del sistema, solo si es local (sin red)
     const vs = speechSynthesis.getVoices().filter(v => v.localService && /^es/i.test(v.lang)), v = vs.find(v => /es[-_]ES/i.test(v.lang)) || vs[0];
@@ -11426,12 +11587,12 @@ function talkNearest() {
 }
 function talkUpdate(t) {
   const tactil = matchMedia('(pointer:coarse)').matches, q = queHacerE();
-  if (q === 'bajar' || q === 'subir') { const txt = (q === 'bajar' ? 'Bajar del coche' : 'Subir al coche') + (tactil ? '' : ' (E)'); if (talk.btn.textContent !== txt) talk.btn.textContent = txt; talk.btn.style.display = 'block'; talk.el.style.display = 'none'; talk.who = null; return; }
-  const hab = tactil ? 'Hablar' : 'Hablar (E)'; if (talk.btn.textContent !== hab) talk.btn.textContent = hab;
-  const c = talkCandidate(); talk.btn.style.display = c && !(talk.who && talk.until > t) ? 'block' : 'none';
+  if (q === 'bajar' || q === 'subir') { const txt = (q === 'bajar' ? COCHE.K.n[1] : puestoDe(vehiculoCerca().o).n[0]) + (tactil ? '' : ' (E)'); if (talk.btn.textContent !== txt) talk.btn.textContent = txt; talk.btn.style.display = 'block'; talk.el.style.display = 'none'; talk.who = null; return; }
+  const hab = (q === 'ladrar' ? 'Ladrar' : 'Hablar') + (tactil ? '' : ' (E)'); if (talk.btn.textContent !== hab) talk.btn.textContent = hab;
+  const c = q === 'ladrar' || talkCandidate(); talk.btn.style.display = c && !(talk.who && talk.until > t) ? 'block' : 'none';
   if (!talk.who || talk.until < t) { talk.el.style.display = 'none'; talk.who = null; return; }
-  const p = talk.who, v = new THREE.Vector3(p.x, (p.k === 'arena' ? seabedAt(p.x, p.y) : terrainAt(p.x, p.y)) + (p.mode === 1 ? 1.45 : p.mode === 5 ? 0.6 : 2.0) * (p.h || 1), -p.y).project(camera);
-  if (v.z > 1) { talk.el.style.display = 'none'; return; }
+  const p = talk.who, v = p.esPerro ? new THREE.Vector3(p.x, p.z + 0.78 * p.s + 0.12, -p.y).project(camera) : new THREE.Vector3(p.x, (p.k === 'arena' ? seabedAt(p.x, p.y) : terrainAt(p.x, p.y)) + (p.mode === 1 ? 1.45 : p.mode === 5 ? 0.6 : 2.0) * (p.h || 1), -p.y).project(camera);
+  if (v.z > 1 || talk.desde > t) { talk.el.style.display = 'none'; return; }
   talk.el.style.display = 'block'; talk.el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; talk.el.style.top = ((1 - v.y) / 2 * innerHeight - 8) + 'px';
 }
 
@@ -11513,7 +11674,7 @@ msg('');
 }
 if (window.__vida) Object.assign(window.__vida, { city, talk, musicos: MUSICOS, talkNearest, campanas: CAMPANAS, campana: i => { if (cityInit()) sonCampana(CAMPANAS[i], city.ctx.currentTime + 0.05); } });
 ayudaT = setTimeout(quitaAyuda, 15000);   // la ayuda del principio se va sola
-window.__sp = { st, W, keys, update, place, ready: true, escena: () => ({ scene, camera, THREE, renderer }), tiempo: () => ({ modo: TIEMPO.modo, estado: TIEMPO.estado, lluvia: TIEMPO.lluvia, vis: TIEMPO.vis, ola: TIEMPO.ola, real: TIEMPO.real, err: TIEMPO.err, texto: $('tiempov').textContent }), pideTiempo, coche: COCHE, trafico: () => TRAFICO, accionE, groundAt, inLand, stairH, terrainAt, seabedAt, inBuilding, blocked, railCross, maskAt, onBridge, snd, shoreNear, tideAt, tideExtremes, setReal, gijonDate, MAREA, water: () => waterY, info: () => ({ suelo: TERN, rendijas: TERF, buildings: W.buildings.length, stairs: W.stairs.length, pois: pois.length, q: qLevel, balcones: BALC.length, terrazas: TERR.length, miradores: MIRA.length, lejos: LEJOS ? LEJOS.n : 0, arbolesLejos: LEJOS ? LEJOS.arboles : 0, laboral: LAB ? LAB.LA.partes.length : 0 }), sueloAt, enZona, VUELO, lejosH: (x, y) => LEJOS ? LEJOS.H(x, y) : null, lab: () => LAB,
+window.__sp = { st, W, keys, update, place, ready: true, escena: () => ({ scene, camera, THREE, renderer }), tiempo: () => ({ modo: TIEMPO.modo, estado: TIEMPO.estado, lluvia: TIEMPO.lluvia, vis: TIEMPO.vis, ola: TIEMPO.ola, real: TIEMPO.real, err: TIEMPO.err, texto: $('tiempov').textContent }), pideTiempo, coche: COCHE, trafico: () => TRAFICO, aparcados: () => APARCADOS, accionE, queHacerE, vehiculoCerca, perroCerca, rodable, onRoad, bocadillo: () => talk, groundAt, inLand, stairH, terrainAt, seabedAt, inBuilding, blocked, railCross, maskAt, onBridge, snd, shoreNear, tideAt, tideExtremes, setReal, gijonDate, MAREA, water: () => waterY, info: () => ({ suelo: TERN, rendijas: TERF, buildings: W.buildings.length, stairs: W.stairs.length, pois: pois.length, q: qLevel, balcones: BALC.length, terrazas: TERR.length, miradores: MIRA.length, lejos: LEJOS ? LEJOS.n : 0, arbolesLejos: LEJOS ? LEJOS.arboles : 0, laboral: LAB ? LAB.LA.partes.length : 0 }), sueloAt, enZona, VUELO, lejosH: (x, y) => LEJOS ? LEJOS.H(x, y) : null, lab: () => LAB,
   este: () => ({ ESTE, U: ESTE_VIDA.U, ocupacion: [ESTE_VIDA.OCUP, ESTE_VIDA.OCUP_AC] }),
   teselas: () => { const cx = camera.position.x, cz = camera.position.z, o = { far: scene.fog.far, q: qLevel }; for (const m of TESELAS) { const d = m.userData.tes, e = o[d.k] ??= { n: 0, vis: 0, lejos: 0 }; e.n++; if (m.visible) { e.vis++; e.lejos = Math.max(e.lejos, Math.round(Math.hypot(d.cx - cx, d.cz - cz) - d.r)); } } return o; } };   // teselas por clase: cuántas, cuántas se ven y la más lejana (m)
 </script>
