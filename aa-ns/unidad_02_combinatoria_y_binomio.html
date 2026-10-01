@@ -3011,6 +3011,18 @@
       font-family: "Times New Roman", Times, serif;
     }
 
+    /* Curso IB: soluciones paso a paso (regla 14 de AGENTS.md). En las
+       respuestas, la fórmula centrada de un paso va siempre debajo de la
+       frase que la presenta. La regla general de «li > .math.display» como
+       único hijo la pondría al lado de la frase cuando cabe y la frase no
+       lleva ninguna otra fórmula, y unas quedarían debajo y otras al lado.
+       Las respuestas de este curso no tienen apartados que sean solo una
+       fórmula, que es el caso para el que nació aquella regla. */
+    #contenido-unidad .resultado li > .math.display:first-child:last-child {
+      display: block;
+      width: 100%;
+    }
+
   </style>
 
   </head>
@@ -3088,12 +3100,12 @@ Enfoques NS</p>
                 <h2 class="ejercicios solo-web" data-number="0"><span
                 class="header-section-number">0</span> Antes de
                 empezar</h2>
-                <p>El triángulo de Pascal y los desarrollos de <span
-                class="math inline">\((a+b)^2\)</span> y <span
-                class="math inline">\((a+b)^3\)</span> están en la
-                unidad 2 de <a
+                <p>El cuadrado de un binomio es una identidad notable de
+                la unidad 2 de <a
                 href="https://marioeducastur.github.io/mat1/">Matemáticas
-                I</a>, y el binomio de Newton, allí como ampliación; la
+                I</a>, que solo trae como ampliación el cubo, el
+                triángulo de Pascal y el binomio de Newton: por eso el
+                apartado 3 los explica desde el principio. La
                 combinatoria es nueva. Haz estas cuestiones sin mirar
                 nada y comprueba después tus respuestas.</p>
                 <ol type="1">
@@ -3119,9 +3131,33 @@ Enfoques NS</p>
                 <h4 class="unnumbered">Comprueba tus respuestas</h4>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">
-                <li><span
-                class="math inline">\(x^3+12x^2+48x+64\)</span>.</li>
-                <li><span class="math inline">\(1\)</span>, <span
+                <li>Con el cubo de un binomio, <span
+                class="math inline">\((a+b)^3=a^3+3a^2b+3ab^2+b^3\)</span>,
+                y <span class="math inline">\(a=x\)</span>, <span
+                class="math inline">\(b=4\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (x+4)^3&amp;=x^3+3\cdot x^2\cdot4+3\cdot x\cdot4^2+4^3\\
+                &amp;=x^3+12x^2+48x+64
+                \end{aligned}
+                \]</span></li>
+                <li>La fila que empieza por <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(6\)</span> es la fila <span
+                class="math inline">\(6\)</span>. Cada número de dentro
+                es la suma de los dos que tiene encima, así que se
+                escribe a partir de la fila <span
+                class="math inline">\(5\)</span>, que es <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(5\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(5\)</span>, <span
+                class="math inline">\(1\)</span>: <span
+                class="math display">\[
+                1,\quad1+5,\quad5+10,\quad10+10,\quad10+5,\quad5+1,\quad1
+                \]</span> La fila es <span
+                class="math inline">\(1\)</span>, <span
                 class="math inline">\(6\)</span>, <span
                 class="math inline">\(15\)</span>, <span
                 class="math inline">\(20\)</span>, <span
@@ -3129,23 +3165,45 @@ Enfoques NS</p>
                 class="math inline">\(6\)</span>, <span
                 class="math inline">\(1\)</span>.</li>
                 <li><ol type="a">
-                <li><span class="math inline">\(\frac{8}{x^3}\cdot
-                x^5=8x^2\)</span>. b) <span
-                class="math inline">\(x^8\cdot x^{-5}=x^3\)</span>.</li>
+                <li>La potencia de un cociente eleva el numerador y el
+                denominador, y al dividir potencias de <span
+                class="math inline">\(x\)</span> se restan los
+                exponentes: <span class="math display">\[
+                \left(\frac{2}{x}\right)^3x^5=\frac{2^3}{x^3}\cdot
+                x^5=8x^{5-3}=8x^2
+                \]</span></li>
+                <li>En una potencia de potencia se multiplican los
+                exponentes, y <span
+                class="math inline">\(\frac1x=x^{-1}\)</span>: <span
+                class="math display">\[
+                \left(x^2\right)^4\left(\frac1x\right)^5=x^8\cdot
+                x^{-5}=x^3
+                \]</span></li>
                 </ol></li>
-                <li>SOL, SLO, OSL, OLS, LSO y LOS: son <span
-                class="math inline">\(6\)</span>.</li>
-                <li><ol type="a">
-                <li><span class="math inline">\(x^{-3}\)</span>.
-                b) <span class="math inline">\(x^{1/2}\)</span>.
-                c) <span class="math inline">\(x^{-1/3}\)</span>.</li>
+                <li>Se escriben con orden, fijando la primera letra: con
+                S delante, SOL y SLO; con O, OSL y OLS; con L, LSO y
+                LOS. Son <span class="math inline">\(6\)</span>: tres
+                opciones para la primera letra por dos formas de colocar
+                las otras dos.</li>
+                <li>Se usa que <span
+                class="math inline">\(\frac{1}{x^n}=x^{-n}\)</span> y
+                que <span
+                class="math inline">\(\sqrt[n]{x}=x^{1/n}\)</span>.
+                <ol type="a">
+                <li><span
+                class="math inline">\(\frac{1}{x^3}=x^{-3}\)</span>.</li>
+                <li><span
+                class="math inline">\(\sqrt{x}=x^{1/2}\)</span>.</li>
+                <li><span
+                class="math inline">\(\frac{1}{\sqrt[3]{x}}=\frac{1}{x^{1/3}}=x^{-1/3}\)</span>.</li>
                 </ol></li>
                 </ol>
                 </div>
-                <p>Si has fallado la 1 o la 2, repasa la potencia de un
-                polinomio en la unidad 2 de Matemáticas I; si has
-                fallado la 3 o la 5, las potencias y los radicales en su
-                unidad 1.</p>
+                <p>Si has fallado la 1 o la 2, el cubo de un binomio y
+                el triángulo de Pascal se explican al empezar el
+                apartado 3; si has fallado la 3 o la 5, repasa las
+                potencias y los radicales en la unidad 1 de Matemáticas
+                I.</p>
                 </section>
                 </section>
                 <section id="contar-sin-enumerar" class="level2"
@@ -3259,36 +3317,70 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
-                <li><ol type="a">
-                <li><span
+                <li>Cada número se forma rellenando tres casillas, y se
+                multiplican las opciones de cada una.
+                <ol type="a">
+                <li>Las cifras se pueden repetir, así que cada casilla
+                admite las <span class="math inline">\(7\)</span>: <span
                 class="math inline">\(7\cdot7\cdot7=343\)</span>.</li>
-                <li><span
+                <li>Sin repetir, cada casilla tiene una opción menos que
+                la anterior: <span
                 class="math inline">\(7\cdot6\cdot5=210\)</span>.</li>
-                <li>La última cifra es <span
+                <li>Un número es par si acaba en cifra par. Se rellena
+                primero la última casilla, con <span
                 class="math inline">\(2\)</span>, <span
                 class="math inline">\(4\)</span> o <span
-                class="math inline">\(6\)</span>: <span
+                class="math inline">\(6\)</span> (<span
+                class="math inline">\(3\)</span> opciones), y después
+                las otras dos, con <span
+                class="math inline">\(6\)</span> y <span
+                class="math inline">\(5\)</span> opciones: <span
                 class="math inline">\(3\cdot6\cdot5=90\)</span>.</li>
                 </ol></li>
-                <li><ol type="a">
-                <li>La primera cifra no puede ser <span
-                class="math inline">\(0\)</span> y la última es <span
-                class="math inline">\(0\)</span> o <span
-                class="math inline">\(5\)</span>: <span
+                <li>Un número es múltiplo de <span
+                class="math inline">\(5\)</span> si acaba en <span
+                class="math inline">\(0\)</span> o en <span
+                class="math inline">\(5\)</span>, y un número de tres
+                cifras no puede empezar por <span
+                class="math inline">\(0\)</span>.
+                <ol type="a">
+                <li>La primera cifra tiene <span
+                class="math inline">\(9\)</span> opciones (del <span
+                class="math inline">\(1\)</span> al <span
+                class="math inline">\(9\)</span>); la segunda, <span
+                class="math inline">\(10\)</span>, y la última, <span
+                class="math inline">\(2\)</span>: <span
                 class="math inline">\(9\cdot10\cdot2=180\)</span>.</li>
-                <li>Si acaba en <span class="math inline">\(0\)</span>:
-                <span class="math inline">\(9\cdot8=72\)</span>. Si
-                acaba en <span class="math inline">\(5\)</span>, la
-                primera no puede ser ni <span
-                class="math inline">\(0\)</span> ni <span
-                class="math inline">\(5\)</span>: <span
-                class="math inline">\(8\cdot8=64\)</span>. En total,
-                <span class="math inline">\(72+64=136\)</span>.</li>
+                <li>Las opciones de la primera cifra dependen de cuál
+                sea la última, así que se separan dos casos. Si acaba en
+                <span class="math inline">\(0\)</span>, la primera tiene
+                <span class="math inline">\(9\)</span> opciones y la
+                segunda, las <span class="math inline">\(8\)</span>
+                cifras que quedan: <span
+                class="math inline">\(9\cdot8=72\)</span>. Si acaba en
+                <span class="math inline">\(5\)</span>, la primera no
+                puede ser ni <span class="math inline">\(0\)</span> ni
+                <span class="math inline">\(5\)</span> (<span
+                class="math inline">\(8\)</span> opciones), y la segunda
+                tiene las <span class="math inline">\(8\)</span> que
+                quedan: <span class="math inline">\(8\cdot8=64\)</span>.
+                En total, <span
+                class="math inline">\(72+64=136\)</span>.</li>
                 </ol></li>
-                <li><span
-                class="math inline">\(4\cdot6\cdot2=48\)</span>.</li>
-                <li><span
-                class="math inline">\(3+3\cdot2+3\cdot2\cdot1=15\)</span>.</li>
+                <li>Un modelo se decide en tres etapas: la talla (<span
+                class="math inline">\(4\)</span> opciones), el color
+                (<span class="math inline">\(6\)</span>) y si lleva
+                capucha o no (<span class="math inline">\(2\)</span>).
+                Por el principio de multiplicación, hay <span
+                class="math inline">\(4\cdot6\cdot2=48\)</span>
+                modelos.</li>
+                <li>Se separan los casos por el número de cifras, que no
+                tienen números comunes, y se suman: de una cifra hay
+                <span class="math inline">\(3\)</span>; de dos, <span
+                class="math inline">\(3\cdot2=6\)</span>, y de tres,
+                <span class="math inline">\(3\cdot2\cdot1=6\)</span>. En
+                total, <span
+                class="math inline">\(3+6+6=15\)</span>.</li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1H,
@@ -3369,24 +3461,60 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="5" type="1">
-                <li><ol type="a">
-                <li><span class="math inline">\(12\cdot11=132\)</span>.
-                b) <span
-                class="math inline">\(\frac{120\cdot6}{720}=1\)</span>.
-                c) <span
-                class="math inline">\(\frac{100\cdot99}{2}=4950\)</span>.</li>
+                <li>En cada uno se escribe el factorial mayor hasta
+                llegar al menor y se simplifica antes de multiplicar.
+                <ol type="a">
+                <li>Como <span
+                class="math inline">\(12!=12\cdot11\cdot10!\)</span>:
+                <span class="math display">\[
+                \frac{12!}{10!}=\frac{12\cdot11\cdot10!}{10!}=12\cdot11=132
+                \]</span></li>
+                <li>Como <span
+                class="math inline">\(6!=6\cdot5!\)</span> y <span
+                class="math inline">\(3!=6\)</span>: <span
+                class="math display">\[
+                \frac{5!\,3!}{6!}=\frac{5!\cdot6}{6\cdot5!}=1
+                \]</span></li>
+                <li>Como <span
+                class="math inline">\(100!=100\cdot99\cdot98!\)</span> y
+                <span class="math inline">\(2!=2\)</span>: <span
+                class="math display">\[
+                \frac{100!}{98!\,2!}=\frac{100\cdot99\cdot98!}{98!\cdot2}=\frac{100\cdot99}{2}=4950
+                \]</span></li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\(\frac{(n+2)(n+1)\,n!}{n\cdot
-                n!}=\frac{(n+2)(n+1)}{n}\)</span>. b) <span
-                class="math inline">\(2n\,(2n-1)\)</span>.</li>
+                <li>Como <span
+                class="math inline">\((n+2)!=(n+2)(n+1)\,n!\)</span>, se
+                simplifica <span class="math inline">\(n!\)</span>:
+                <span class="math display">\[
+                \frac{(n+2)!}{n\cdot n!}=\frac{(n+2)(n+1)\,n!}{n\cdot
+                n!}=\frac{(n+2)(n+1)}{n}
+                \]</span></li>
+                <li>Como <span
+                class="math inline">\((2n)!=2n\,(2n-1)\,(2n-2)!\)</span>,
+                se simplifica <span
+                class="math inline">\((2n-2)!\)</span>: <span
+                class="math display">\[
+                \frac{(2n)!}{(2n-2)!}=\frac{2n\,(2n-1)\,(2n-2)!}{(2n-2)!}=2n\,(2n-1)
+                \]</span></li>
                 </ol></li>
-                <li><span class="math inline">\((n+1)\,n=90\)</span>, es
-                decir, <span class="math inline">\(n^2+n-90=0\)</span>,
-                con soluciones <span class="math inline">\(9\)</span> y
-                <span class="math inline">\(-10\)</span>. Solo vale
-                <span class="math inline">\(n=9\)</span>.</li>
+                <li>Como <span
+                class="math inline">\((n+1)!=(n+1)\,n\,(n-1)!\)</span>,
+                el cociente es <span
+                class="math inline">\((n+1)\,n\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                &amp;(n+1)\,n=90\\
+                \Rightarrow{}&amp;n^2+n-90=0\\
+                \Rightarrow{}&amp;(n-9)(n+10)=0
+                \end{aligned}
+                \]</span> Las soluciones son <span
+                class="math inline">\(9\)</span> y <span
+                class="math inline">\(-10\)</span>. Un factorial solo
+                tiene sentido con enteros que no sean negativos, así que
+                <span class="math inline">\(n=9\)</span>. Comprobación:
+                <span
+                class="math inline">\(\frac{10!}{8!}=10\cdot9=90\)</span>.</li>
                 </ol>
                 </div>
                 </section>
@@ -3435,7 +3563,8 @@ Enfoques NS</p>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1H,
                 preguntas 1 a 4 y 6 (pág. 57). Soluciones del libro en
-                la página 761.</p>
+                la página 761. Las páginas son las impresas al pie del
+                libro.</p>
                 </section>
                 </section>
                 </section>
@@ -3459,7 +3588,7 @@ Enfoques NS</p>
                 cualquiera de las <span class="math inline">\(2\)</span>
                 que quedan, y la tercera, la única que sobra:</p>
                 <p><span class="math display">\[
-                \underbrace{3}_{\text{1.ª}}\cdot\underbrace{2}_{\text{2.ª}}\cdot\underbrace{1}_{\text{3.ª}}=6=3!
+                \underbrace{3}_{\text{1.}^{\text{a}}}\cdot\underbrace{2}_{\text{2.}^{\text{a}}}\cdot\underbrace{1}_{\text{3.}^{\text{a}}}=6=3!
                 \]</span></p>
                 <div class="definicion bloque-didactico">
                 <p><span class="etiqueta-bloque">Definición</span></p>
@@ -3615,7 +3744,7 @@ Enfoques NS</p>
                 </ul>
                 <p><span class="math display">\[
                 \begin{array}{cccccc}
-                \text{1.ª}&amp;\text{2.ª}&amp;\text{3.ª}&amp;\text{4.ª}&amp;\text{5.ª}&amp;\text{6.ª}\\
+                \text{1.}^{\text{a}}&amp;\text{2.}^{\text{a}}&amp;\text{3.}^{\text{a}}&amp;\text{4.}^{\text{a}}&amp;\text{5.}^{\text{a}}&amp;\text{6.}^{\text{a}}\\
                 \text{vocal}&amp;&amp;&amp;&amp;&amp;\text{vocal}\\
                 3&amp;4&amp;3&amp;2&amp;1&amp;2
                 \end{array}
@@ -3773,7 +3902,7 @@ Enfoques NS</p>
                 formar?</li>
                 <li>¿Cuántos de ellos son mayores que <span
                 class="math inline">\(5000\)</span>?</li>
-                <li>¿Cuántos de ellos son pares?</li>
+                <li>¿Cuántos de los de a) son pares?</li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Seis personas se sientan en fila. ¿De cuántas formas
@@ -3787,34 +3916,38 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="9" type="1">
-                <li>Cinco casillas, del primer puesto al quinto, con
-                <span class="math inline">\(12\)</span>, <span
+                <li>No se ordenan los <span
+                class="math inline">\(12\)</span> participantes, sino
+                solo cinco puestos: son cinco casillas, del primer
+                puesto al quinto, con <span
+                class="math inline">\(12\)</span>, <span
                 class="math inline">\(11\)</span>, <span
                 class="math inline">\(10\)</span>, <span
                 class="math inline">\(9\)</span> y <span
-                class="math inline">\(8\)</span> opciones: <span
+                class="math inline">\(8\)</span> opciones. <span
                 class="math display">\[
                 {}^{12}P_{5}=12\cdot11\cdot10\cdot9\cdot8=95\,040
                 \]</span></li>
                 <li><ol type="a">
                 <li>Son <span class="math inline">\(4\)</span> letras
-                distintas: <span
+                distintas y se ordenan todas: <span
                 class="math inline">\(4!=4\cdot3\cdot2\cdot1=24\)</span>.</li>
-                <li>Tipo 1: la primera casilla es una de las <span
-                class="math inline">\(2\)</span> vocales (U o E), y las
-                otras <span class="math inline">\(3\)</span> letras se
-                ordenan detrás de <span
+                <li>Es el tipo 1 del método. La primera casilla es una
+                de las <span class="math inline">\(2\)</span> vocales (U
+                o E), y las otras <span class="math inline">\(3\)</span>
+                letras se ordenan detrás de <span
                 class="math inline">\(3!\)</span> formas: <span
                 class="math inline">\(2\cdot3!=12\)</span>.</li>
-                <li>Tipo 2: el bloque de las dos vocales, con N y B, son
-                <span class="math inline">\(3\)</span> objetos, que se
-                ordenan de <span class="math inline">\(3!\)</span>
-                formas; el bloque, por dentro, de <span
-                class="math inline">\(2!\)</span> (UE o EU): <span
-                class="math inline">\(3!\cdot2!=12\)</span>.</li>
+                <li>Es el tipo 2. Las dos vocales se pegan en un bloque,
+                que con N y B forma <span
+                class="math inline">\(3\)</span> objetos: se ordenan de
+                <span class="math inline">\(3!\)</span> formas. Dentro
+                del bloque, las vocales se ordenan de <span
+                class="math inline">\(2!\)</span> formas (UE o EU):
+                <span class="math inline">\(3!\cdot2!=12\)</span>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Tipo 1: la primera cifra no puede ser <span
+                <li>Es el tipo 1. La primera cifra no puede ser <span
                 class="math inline">\(0\)</span> (<span
                 class="math inline">\(5\)</span> opciones); en las otras
                 tres casillas el <span class="math inline">\(0\)</span>
@@ -3823,26 +3956,29 @@ Enfoques NS</p>
                 class="math inline">\(4\)</span> y <span
                 class="math inline">\(3\)</span> cifras: <span
                 class="math inline">\(5\cdot5\cdot4\cdot3=300\)</span>.</li>
-                <li>Tipo 1: la primera cifra es <span
-                class="math inline">\(6\)</span>, <span
+                <li>Es el tipo 1. Un número de cuatro cifras es mayor
+                que <span class="math inline">\(5000\)</span> si empieza
+                por <span class="math inline">\(6\)</span>, <span
                 class="math inline">\(7\)</span> o <span
                 class="math inline">\(9\)</span> (<span
                 class="math inline">\(3\)</span> opciones), y quedan
                 <span class="math inline">\(5\)</span>, <span
                 class="math inline">\(4\)</span> y <span
-                class="math inline">\(3\)</span> para las demás: <span
+                class="math inline">\(3\)</span> cifras para las demás:
+                <span
                 class="math inline">\(3\cdot5\cdot4\cdot3=180\)</span>.</li>
                 <li>Hay dos lugares con condición: la última cifra es
                 <span class="math inline">\(0\)</span>, <span
                 class="math inline">\(2\)</span> o <span
                 class="math inline">\(6\)</span>, y la primera no puede
-                ser <span class="math inline">\(0\)</span>. Si la última
-                es el <span class="math inline">\(0\)</span>, la primera
-                tiene una opción más, así que se separan casos. Si acaba
-                en <span class="math inline">\(0\)</span>, la primera
-                tiene <span class="math inline">\(5\)</span> opciones y
-                las de en medio, <span class="math inline">\(4\)</span>
-                y <span class="math inline">\(3\)</span>: <span
+                ser <span class="math inline">\(0\)</span>. Las opciones
+                de la primera dependen de si el <span
+                class="math inline">\(0\)</span> ya está colocado al
+                final, así que se separan casos. Si acaba en <span
+                class="math inline">\(0\)</span>, la primera tiene <span
+                class="math inline">\(5\)</span> opciones y las de en
+                medio, <span class="math inline">\(4\)</span> y <span
+                class="math inline">\(3\)</span>: <span
                 class="math inline">\(5\cdot4\cdot3=60\)</span>. Si
                 acaba en <span class="math inline">\(2\)</span> o en
                 <span class="math inline">\(6\)</span> (<span
@@ -3857,21 +3993,22 @@ Enfoques NS</p>
                 class="math inline">\(60+96=156\)</span>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Tipo 3, con dos. Sin condiciones hay <span
-                class="math inline">\(6!=720\)</span> formas. Con esas
-                dos juntas, su bloque y las otras <span
+                <li>Es el tipo 3, con dos personas. Sin condiciones hay
+                <span class="math inline">\(6!=720\)</span> formas. Con
+                esas dos juntas, su bloque y las otras <span
                 class="math inline">\(4\)</span> personas son <span
-                class="math inline">\(5\)</span> objetos, <span
-                class="math inline">\(5!\)</span> formas, por <span
-                class="math inline">\(2!\)</span> dentro del bloque:
-                <span class="math inline">\(5!\cdot2!=240\)</span>.
-                Separadas: <span
+                class="math inline">\(5\)</span> objetos, que se ordenan
+                de <span class="math inline">\(5!\)</span> formas, por
+                <span class="math inline">\(2!\)</span> dentro del
+                bloque: <span
+                class="math inline">\(5!\cdot2!=240\)</span>. Separadas
+                quedan las demás: <span
                 class="math inline">\(720-240=480\)</span>.</li>
-                <li>Tipo 3, con tres: huecos. Los otros <span
-                class="math inline">\(6\)</span> amigos se sientan de
-                <span class="math inline">\(6!=720\)</span> formas y
-                dejan <span class="math inline">\(7\)</span> huecos.
-                Cada hermano va a un hueco distinto, con <span
+                <li>Es el tipo 3, con tres: se cuenta con huecos. Los
+                otros <span class="math inline">\(6\)</span> amigos se
+                sientan de <span class="math inline">\(6!=720\)</span>
+                formas y dejan <span class="math inline">\(7\)</span>
+                huecos. Cada hermano va a un hueco distinto, con <span
                 class="math inline">\(7\)</span>, <span
                 class="math inline">\(6\)</span> y <span
                 class="math inline">\(5\)</span> opciones: <span
@@ -3993,19 +4130,43 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="13" type="1">
-                <li>Hay dos T: <span
-                class="math inline">\(\frac{6!}{2!}=360\)</span>.</li>
-                <li><ol type="a">
-                <li>Hay tres A y dos C: <span
-                class="math inline">\(\frac{7!}{3!\,2!}=420\)</span>.</li>
-                <li>Tras la C quedan seis letras, con tres A: <span
-                class="math inline">\(\frac{6!}{3!}=120\)</span>.</li>
+                <li>TOMATE tiene <span class="math inline">\(6\)</span>
+                letras, con la T repetida dos veces. Se divide <span
+                class="math inline">\(6!\)</span> por <span
+                class="math inline">\(2!\)</span>, las formas de
+                intercambiar las dos T, que no cambian la palabra: <span
+                class="math display">\[
+                \frac{6!}{2!}=\frac{720}{2}=360
+                \]</span></li>
+                <li>CASCADA tiene <span class="math inline">\(7\)</span>
+                letras: tres A, dos C, una S y una D.
+                <ol type="a">
+                <li>Se divide <span class="math inline">\(7!\)</span>
+                por <span class="math inline">\(3!\)</span>, por las
+                tres A, y por <span class="math inline">\(2!\)</span>,
+                por las dos C: <span class="math display">\[
+                \frac{7!}{3!\,2!}=\frac{5040}{6\cdot2}=420
+                \]</span></li>
+                <li>Con una C fija en el primer lugar, quedan por
+                ordenar seis letras: A, A, A, C, S y D. Solo se repite
+                la A, tres veces: <span class="math display">\[
+                \frac{6!}{3!}=\frac{720}{6}=120
+                \]</span></li>
                 </ol></li>
-                <li>Cada secuencia es una ordenación de dos caras y
-                siete cruces: <span
-                class="math inline">\(\frac{9!}{2!\,7!}=36\)</span>.</li>
-                <li><span
-                class="math inline">\(\frac{7!}{4!\,2!\,1!}=105\)</span>.</li>
+                <li>Cada secuencia es una ordenación de <span
+                class="math inline">\(9\)</span> letras: dos C, de cara,
+                y siete X, de cruz. <span class="math display">\[
+                \frac{9!}{2!\,7!}=\frac{9\cdot8}{2}=36
+                \]</span> Es el número combinatorio <span
+                class="math inline">\({}^{9}C_{2}\)</span> del
+                subapartado siguiente: se eligen los dos lanzamientos en
+                los que sale cara.</li>
+                <li>Son <span class="math inline">\(7\)</span> banderas,
+                con <span class="math inline">\(4\)</span> rojas iguales
+                y <span class="math inline">\(2\)</span> azules iguales;
+                la verde no se repite: <span class="math display">\[
+                \frac{7!}{4!\,2!\,1!}=\frac{7\cdot6\cdot5}{2}=105
+                \]</span></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> El Oxford no trae
@@ -4136,34 +4297,145 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="17" type="1">
-                <li><ol type="a">
-                <li><span
-                class="math inline">\({}^{10}C_{7}=120\)</span>.</li>
-                <li>Se restan las elecciones que no incluyen ninguna de
-                las dos primeras, que toman las <span
+                <li>En las dos el orden no importa: son combinaciones.
+                <ol type="a">
+                <li>Se eligen <span class="math inline">\(7\)</span>
+                preguntas entre <span class="math inline">\(10\)</span>.
+                Como <span
+                class="math inline">\({}^{10}C_{7}={}^{10}C_{3}\)</span>:
+                <span class="math display">\[
+                {}^{10}C_{7}=\frac{10\cdot9\cdot8}{3!}=120
+                \]</span></li>
+                <li>«Al menos una» se cuenta restando del total el caso
+                contrario: las elecciones que no incluyen ninguna de las
+                dos primeras, que toman las <span
                 class="math inline">\(7\)</span> entre las otras <span
-                class="math inline">\(8\)</span>: <span
-                class="math inline">\(120-{}^{8}C_{7}=120-8=112\)</span>.</li>
+                class="math inline">\(8\)</span>. <span
+                class="math display">\[
+                {}^{10}C_{7}-{}^{8}C_{7}=120-8=112
+                \]</span></li>
                 </ol></li>
-                <li>Cuerdas: <span
-                class="math inline">\({}^{7}C_{2}=21\)</span>.
-                Triángulos: <span
-                class="math inline">\({}^{7}C_{3}=35\)</span>.</li>
+                <li>Una cuerda queda determinada por sus dos extremos y
+                un triángulo, por sus tres vértices, sin importar el
+                orden: <span class="math display">\[
+                \begin{aligned}
+                \text{Cuerdas: }&amp;{}^{7}C_{2}=\frac{7\cdot6}{2}=21\\
+                \text{Triángulos:
+                }&amp;{}^{7}C_{3}=\frac{7\cdot6\cdot5}{3!}=35
+                \end{aligned}
+                \]</span></li>
                 <li>Cada camino tiene <span
-                class="math inline">\(10\)</span> pasos, <span
-                class="math inline">\(6\)</span> a la derecha y <span
-                class="math inline">\(4\)</span> hacia arriba, y queda
-                determinado al elegir cuáles son hacia arriba: <span
-                class="math inline">\({}^{10}C_{4}=210\)</span>.</li>
-                <li><span
-                class="math inline">\(\frac{n(n-1)}{2}=45\)</span>, es
-                decir, <span class="math inline">\(n^2-n-90=0\)</span>:
-                <span class="math inline">\(n=10\)</span> (la otra
-                solución, <span class="math inline">\(-9\)</span>, no
-                vale).</li>
-                <li><span
-                class="math inline">\(r\cdot\frac{n!}{r!\,(n-r)!}=\frac{n!}{(r-1)!\,(n-r)!}
-                =n\cdot\frac{(n-1)!}{(r-1)!\,\bigl((n-1)-(r-1)\bigr)!}=n\cdot{}^{n-1}C_{r-1}\)</span>.</li>
+                class="math inline">\(10\)</span> pasos: <span
+                class="math inline">\(6\)</span> hacia la derecha y
+                <span class="math inline">\(4\)</span> hacia arriba.
+                Queda determinado al elegir cuáles de los <span
+                class="math inline">\(10\)</span> pasos son hacia
+                arriba: <span class="math display">\[
+                {}^{10}C_{4}=\frac{10\cdot9\cdot8\cdot7}{4!}=210
+                \]</span></li>
+                <li>El número combinatorio se escribe como producto,
+                <span
+                class="math inline">\({}^{n}C_{2}=\frac{n!}{2!\,(n-2)!}=\frac{n(n-1)}{2}\)</span>:
+                <span class="math display">\[
+                \begin{aligned}
+                &amp;\frac{n(n-1)}{2}=45\\
+                \Rightarrow{}&amp;n^2-n-90=0\\
+                \Rightarrow{}&amp;(n-10)(n+9)=0
+                \end{aligned}
+                \]</span> Las soluciones son <span
+                class="math inline">\(10\)</span> y <span
+                class="math inline">\(-9\)</span>. Como <span
+                class="math inline">\(n\)</span> es natural, <span
+                class="math inline">\(n=10\)</span>.</li>
+                <li>Se parte del primer miembro. La <span
+                class="math inline">\(r\)</span> se simplifica con el
+                primer factor de <span
+                class="math inline">\(r!=r\cdot(r-1)!\)</span>, y de
+                <span class="math inline">\(n!=n\cdot(n-1)!\)</span> se
+                saca la <span class="math inline">\(n\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                r\cdot{}^{n}C_{r}&amp;=r\cdot\frac{n!}{r!\,(n-r)!}\\
+                &amp;=\frac{n!}{(r-1)!\,(n-r)!}\\
+                &amp;=n\cdot\frac{(n-1)!}{(r-1)!\,(n-r)!}
+                \end{aligned}
+                \]</span> Como <span
+                class="math inline">\(n-r=(n-1)-(r-1)\)</span>, la
+                última fracción es <span
+                class="math inline">\({}^{n-1}C_{r-1}\)</span>, y queda
+                <span
+                class="math inline">\(r\cdot{}^{n}C_{r}=n\cdot{}^{n-1}C_{r-1}\)</span>.</li>
+                </ol>
+                </div>
+                </section>
+                <section id="ejercicios-de-clase-1"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios de
+                clase</h4>
+                <ol start="22" type="1">
+                <li><ol type="a">
+                <li>Simplifique <span
+                class="math inline">\(\binom{n}{3}-\binom{2n}{2}\)</span>,
+                donde <span class="math inline">\(n\geq3\)</span>.</li>
+                <li>A partir de lo anterior, resuelva la inecuación
+                <span
+                class="math inline">\(\binom{n}{3}-\binom{2n}{2}&gt;32n\)</span>,
+                donde <span class="math inline">\(n\geq3\)</span>.</li>
+                </ol></li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <ol start="22" type="1">
+                <li><ol type="a">
+                <li>Cada número combinatorio se escribe como producto:
+                al simplificar <span
+                class="math inline">\((n-3)!\)</span> en el primero y
+                <span class="math inline">\((2n-2)!\)</span> en el
+                segundo quedan tres y dos factores. <span
+                class="math display">\[
+                \begin{aligned}
+                \binom{n}{3}&amp;=\frac{n!}{3!\,(n-3)!}=\frac{n(n-1)(n-2)}{6}\\
+                \binom{2n}{2}&amp;=\frac{(2n)!}{2!\,(2n-2)!}=\frac{2n\,(2n-1)}{2}
+                \end{aligned}
+                \]</span> Se resta con denominador común <span
+                class="math inline">\(6\)</span> y se desarrolla: <span
+                class="math display">\[
+                \begin{aligned}
+                \binom{n}{3}-\binom{2n}{2}&amp;=\frac{n(n-1)(n-2)-3\cdot2n\,(2n-1)}{6}\\
+                &amp;=\frac{\left(n^3-3n^2+2n\right)-\left(12n^2-6n\right)}{6}\\
+                &amp;=\frac{n^3-15n^2+8n}{6}
+                \end{aligned}
+                \]</span></li>
+                <li>Con el resultado de a), se multiplica por <span
+                class="math inline">\(6\)</span> y se pasa todo a un
+                miembro: <span class="math display">\[
+                \begin{aligned}
+                &amp;\frac{n^3-15n^2+8n}{6}&gt;32n\\
+                \Rightarrow{}&amp;n^3-15n^2+8n&gt;192n\\
+                \Rightarrow{}&amp;n^3-15n^2-184n&gt;0\\
+                \Rightarrow{}&amp;n\left(n^2-15n-184\right)&gt;0
+                \end{aligned}
+                \]</span> Las raíces de <span
+                class="math inline">\(n^2-15n-184\)</span> son <span
+                class="math inline">\(n=\frac{15\pm\sqrt{225+736}}{2}=\frac{15\pm31}{2}\)</span>,
+                es decir, <span class="math inline">\(23\)</span> y
+                <span class="math inline">\(-8\)</span>, así que la
+                inecuación es <span
+                class="math inline">\(n\,(n-23)(n+8)&gt;0\)</span>. El
+                producto es positivo en <span
+                class="math inline">\((-8,0)\)</span>, donde hay dos
+                factores negativos, y en <span
+                class="math inline">\((23,+\infty)\)</span>, donde los
+                tres son positivos. Como <span
+                class="math inline">\(n\)</span> es un entero con <span
+                class="math inline">\(n\geq3\)</span>, solo vale la
+                segunda parte: <span
+                class="math inline">\(n\geq24\)</span>. Comprobación:
+                con <span class="math inline">\(n=23\)</span> los dos
+                miembros valen <span class="math inline">\(736\)</span>,
+                y con <span class="math inline">\(n=24\)</span>, <span
+                class="math inline">\(2024-1128=896&gt;768\)</span>.</li>
+                </ol></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1H,
@@ -4183,6 +4455,40 @@ Enfoques NS</p>
                 <h3 data-number="3.1"><span
                 class="header-section-number">3.1</span> El desarrollo
                 con números combinatorios</h3>
+                <p>Al elevar <span class="math inline">\(a+b\)</span> al
+                cuadrado, al cubo, a la cuarta… los coeficientes forman
+                el <strong>triángulo de Pascal</strong>. Cada fila
+                empieza y acaba en <span
+                class="math inline">\(1\)</span>, y cada número de
+                dentro es la suma de los dos que tiene encima: el <span
+                class="math inline">\(6\)</span> de la última fila
+                escrita es <span class="math inline">\(3+3\)</span>. La
+                fila <span class="math inline">\(n\)</span>, contando
+                como fila <span class="math inline">\(0\)</span> la del
+                vértice, da los coeficientes de <span
+                class="math inline">\((a+b)^n\)</span>:</p>
+                <p><span class="math display">\[
+                \begin{array}{ccccccccc}
+                &amp; &amp; &amp; &amp; 1 &amp; &amp; &amp; &amp; \\
+                &amp; &amp; &amp; 1 &amp; &amp; 1 &amp; &amp; &amp; \\
+                &amp; &amp; 1 &amp; &amp; 2 &amp; &amp; 1 &amp; &amp; \\
+                &amp; 1 &amp; &amp; 3 &amp; &amp; 3 &amp; &amp; 1 &amp;
+                \\
+                1 &amp; &amp; 4 &amp; &amp; 6 &amp; &amp; 4 &amp; &amp;
+                1
+                \end{array}
+                \]</span></p>
+                <p>Así, con la fila <span
+                class="math inline">\(4\)</span>:</p>
+                <p><span class="math display">\[
+                (a+b)^4=a^4+4a^3b+6a^2b^2+4ab^3+b^4
+                \]</span></p>
+                <p>De un término al siguiente, el exponente de <span
+                class="math inline">\(a\)</span> baja una unidad y el de
+                <span class="math inline">\(b\)</span> sube una. El
+                triángulo basta con exponentes pequeños; con los demás
+                hace falta saber qué número ocupa cada lugar sin
+                escribir las filas anteriores.</p>
                 <p>Los números de cada fila del triángulo de Pascal son
                 los <span class="math inline">\({}^{n}C_{r}\)</span>: la
                 fila <span class="math inline">\(n\)</span> es <span
@@ -4382,7 +4688,7 @@ Enfoques NS</p>
                 <section id="ejercicios-5"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="22" type="1">
+                <ol start="23" type="1">
                 <li>Desarrolle: a) <span
                 class="math inline">\((1-5x)^4\)</span>. b) <span
                 class="math inline">\((y+3)^5\)</span>.</li>
@@ -4410,39 +4716,104 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="22" type="1">
+                <ol start="23" type="1">
                 <li><ol type="a">
-                <li><span
-                class="math inline">\(1-20x+150x^2-500x^3+625x^4\)</span>.</li>
-                <li><span
-                class="math inline">\(y^5+15y^4+90y^3+270y^2+405y+243\)</span>.</li>
+                <li>Con los coeficientes <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(4\)</span>, <span
+                class="math inline">\(6\)</span>, <span
+                class="math inline">\(4\)</span> y <span
+                class="math inline">\(1\)</span> de <span
+                class="math inline">\(n=4\)</span>, y <span
+                class="math inline">\(1\)</span> y <span
+                class="math inline">\(-5x\)</span>, con su signo, como
+                términos del binomio: <span class="math display">\[
+                \begin{aligned}
+                (1-5x)^4&amp;=1+4(-5x)+6(-5x)^2\\
+                &amp;\quad+4(-5x)^3+(-5x)^4\\
+                &amp;=1-20x+150x^2-500x^3+625x^4
+                \end{aligned}
+                \]</span></li>
+                <li>Con los coeficientes <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(5\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(5\)</span> y <span
+                class="math inline">\(1\)</span> de <span
+                class="math inline">\(n=5\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (y+3)^5&amp;=y^5+5y^4\cdot3+10y^3\cdot3^2\\
+                &amp;\quad+10y^2\cdot3^3+5y\cdot3^4+3^5\\
+                &amp;=y^5+15y^4+90y^3+270y^2+405y+243
+                \end{aligned}
+                \]</span></li>
                 </ol></li>
-                <li><span
-                class="math inline">\({}^{7}C_{4}\cdot5^3\cdot(-2)^4=35\cdot125\cdot16=70\,000\)</span>.</li>
+                <li>El término general es <span class="math display">\[
+                {}^{7}C_{r}\,5^{7-r}(-2x)^{r}={}^{7}C_{r}\,5^{7-r}\,(-2)^{r}\,x^{r}
+                \]</span> El término en <span
+                class="math inline">\(x^4\)</span> es el de <span
+                class="math inline">\(r=4\)</span>, con <span
+                class="math inline">\({}^{7}C_{4}={}^{7}C_{3}=\frac{7\cdot6\cdot5}{3!}=35\)</span>:
+                <span class="math display">\[
+                {}^{7}C_{4}\cdot5^{3}\cdot(-2)^{4}=35\cdot125\cdot16=70\,000
+                \]</span></li>
+                <li>El término general es <span class="math display">\[
+                \begin{aligned}
+                {}^{5}C_{r}\left(x^2\right)^{5-r}\left(\frac{1}{3x}\right)^{r}&amp;={}^{5}C_{r}\,x^{10-2r}\cdot\frac{1}{3^{r}}\,x^{-r}\\
+                &amp;=\frac{{}^{5}C_{r}}{3^{r}}\,x^{10-3r}
+                \end{aligned}
+                \]</span>
+                <ol type="a">
+                <li>El término independiente es el de <span
+                class="math inline">\(x^0\)</span>, y <span
+                class="math inline">\(10-3r=0\)</span> da <span
+                class="math inline">\(r=\frac{10}{3}\)</span>, que no es
+                entero: el desarrollo no tiene término
+                independiente.</li>
+                <li>El término en <span
+                class="math inline">\(x^4\)</span> tiene <span
+                class="math inline">\(10-3r=4\)</span>, es decir, <span
+                class="math inline">\(r=2\)</span>: <span
+                class="math display">\[
+                \frac{{}^{5}C_{2}}{3^{2}}=\frac{10}{9}
+                \]</span></li>
+                </ol></li>
                 <li><ol type="a">
                 <li>El término general es <span
-                class="math inline">\({}^{5}C_{r}\left(x^2\right)^{5-r}\left(\frac{1}{3x}\right)^{r}={}^{5}C_{r}\,3^{-r}\,x^{10-3r}\)</span>,
-                y <span class="math inline">\(10-3r=0\)</span> no tiene
-                solución entera.</li>
-                <li><span class="math inline">\(10-3r=4\)</span> da
-                <span class="math inline">\(r=2\)</span>: <span
-                class="math inline">\({}^{5}C_{2}\cdot\frac19=\frac{10}{9}\)</span>.</li>
-                </ol></li>
-                <li><ol type="a">
-                <li><span
-                class="math inline">\({}^{7}C_{5}\cdot2^2\left(-\frac13\right)^5x^5=21\cdot4\cdot\left(-\frac{1}{243}\right)x^5=-\frac{28}{81}\,x^5\)</span>.</li>
-                <li>Es el de <span class="math inline">\(r=3\)</span>:
+                class="math inline">\({}^{7}C_{r}\,2^{7-r}\left(-\frac
+                x3\right)^{r}={}^{7}C_{r}\,2^{7-r}\left(-\frac13\right)^{r}x^{r}\)</span>.
+                El término en <span class="math inline">\(x^5\)</span>
+                es el de <span class="math inline">\(r=5\)</span>, con
                 <span
-                class="math inline">\({}^{9}C_{3}\,x^6(-2)^3=84\cdot(-8)\,x^6=-672x^6\)</span>.</li>
+                class="math inline">\({}^{7}C_{5}={}^{7}C_{2}=21\)</span>:
+                <span class="math display">\[
+                \begin{aligned}
+                {}^{7}C_{5}\cdot2^{2}\left(-\frac13\right)^{5}x^5&amp;=21\cdot4\cdot\left(-\frac{1}{243}\right)x^5\\
+                &amp;=-\frac{84}{243}\,x^5=-\frac{28}{81}\,x^5
+                \end{aligned}
+                \]</span></li>
+                <li>En potencias descendentes de <span
+                class="math inline">\(x\)</span>, el desarrollo empieza
+                por <span class="math inline">\(x^9\)</span>, y el
+                cuarto término es el de <span
+                class="math inline">\(r=3\)</span>, porque el primero es
+                el de <span class="math inline">\(r=0\)</span>. Con
+                <span
+                class="math inline">\({}^{9}C_{3}=\frac{9\cdot8\cdot7}{3!}=84\)</span>:
+                <span class="math display">\[
+                {}^{9}C_{3}\,x^{6}\,(-2)^{3}=84\cdot(-8)\,x^6=-672x^6
+                \]</span></li>
                 </ol></li>
                 </ol>
                 </div>
                 </section>
-                <section id="ejercicios-de-clase-1"
+                <section id="ejercicios-de-clase-2"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios de
                 clase</h4>
-                <ol start="26" type="1">
+                <ol start="27" type="1">
                 <li>Halle el coeficiente de <span
                 class="math inline">\(x^7\)</span> en el desarrollo de
                 <span class="math inline">\((2+3x)^{10}\)</span>. Dé la
@@ -4459,10 +4830,12 @@ Enfoques NS</p>
                 class="math inline">\(x^3\)</span> en el desarrollo de
                 <span
                 class="math inline">\(\left(2-\frac{3x}{2}\right)^6\)</span>.</li>
+                <li>Desarrolle y simplifique <span
+                class="math inline">\(\left(x^2-\frac{2}{x}\right)^4\)</span>.</li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="26" type="1">
+                <ol start="27" type="1">
                 <li>El término general es <span class="math display">\[
                 {}^{10}C_{r}\,2^{10-r}(3x)^{r}={}^{10}C_{r}\,2^{10-r}\,3^{r}\,x^{r}
                 \]</span> El término en <span
@@ -4511,6 +4884,23 @@ Enfoques NS</p>
                 &amp;=-540
                 \end{aligned}
                 \]</span></li>
+                <li>Con <span class="math inline">\(a=x^2\)</span> y
+                <span class="math inline">\(b=-\frac2x\)</span>, con su
+                signo, y los coeficientes <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(4\)</span>, <span
+                class="math inline">\(6\)</span>, <span
+                class="math inline">\(4\)</span> y <span
+                class="math inline">\(1\)</span> de <span
+                class="math inline">\(n=4\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                \left(x^2-\frac2x\right)^4={}&amp;\left(x^2\right)^4+4\left(x^2\right)^3\left(-\frac2x\right)\\
+                &amp;+6\left(x^2\right)^2\left(-\frac2x\right)^2+4\,x^2\left(-\frac2x\right)^3+\left(-\frac2x\right)^4\\
+                ={}&amp;x^8-\frac{8x^6}{x}+\frac{24x^4}{x^2}-\frac{32x^2}{x^3}+\frac{16}{x^4}\\
+                ={}&amp;x^8-8x^5+24x^2-\frac{32}{x}+\frac{16}{x^4}
+                \end{aligned}
+                \]</span></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1I,
@@ -4539,18 +4929,18 @@ Enfoques NS</p>
                 <li>Se halla el término del que habla el enunciado como
                 en el método del subapartado anterior, con la incógnita
                 escrita como una letra más.</li>
-                <li>Se iguala su coeficiente al dato y se resuelve la
-                ecuación.</li>
-                <li>Si la incógnita es <span
-                class="math inline">\(n\)</span>, <span
+                <li>Se iguala su coeficiente al dato. Si la incógnita es
+                <span class="math inline">\(n\)</span>, <span
                 class="math inline">\({}^{n}C_{r}\)</span> se escribe
-                como producto y <span class="math inline">\(n\)</span>
-                tiene que ser natural: con <span
-                class="math inline">\(r=2\)</span> sale una ecuación de
-                segundo grado; con <span
-                class="math inline">\(r=3\)</span>, se buscan tres
-                naturales consecutivos con el producto que pide la
-                ecuación, o se usa la tabla de la calculadora.</li>
+                antes como producto.</li>
+                <li>Se resuelve la ecuación. Si la incógnita es <span
+                class="math inline">\(n\)</span>, tiene que ser natural:
+                con <span class="math inline">\(r=2\)</span> sale una
+                ecuación de segundo grado y se descarta la solución
+                negativa; con <span class="math inline">\(r=3\)</span>,
+                se buscan tres naturales consecutivos con el producto
+                que pide la ecuación, o se usa la tabla de la
+                calculadora.</li>
                 </ol>
                 </div>
                 <div class="ejemplo bloque-didactico">
@@ -4577,15 +4967,66 @@ Enfoques NS</p>
                 6a^2=24\ \Rightarrow\ a^2=4\ \Rightarrow\ a=\pm2
                 \]</span></p>
                 </div>
-                <p>Si lo que falta es el exponente, por ejemplo porque
-                el coeficiente de <span
-                class="math inline">\(x^2\)</span> en <span
-                class="math inline">\((1+x)^n\)</span> es <span
-                class="math inline">\(28\)</span>:</p>
-                <p><span class="math display">\[
-                \frac{n(n-1)}{2}=28\ \Rightarrow\ n(n-1)=56=8\cdot7\
-                \Rightarrow\ n=8
-                \]</span></p>
+                <p>Cuando lo que falta es el exponente, la clave es ver
+                de dónde sale el coeficiente, que queda en función de
+                <span class="math inline">\(n\)</span>:</p>
+                <div class="ejemplo bloque-didactico">
+                <p><span class="etiqueta-bloque">Ejemplo</span></p>
+                <p><strong>El coeficiente de <span
+                class="math inline">\(x^2\)</span> en el desarrollo de
+                <span class="math inline">\((1+x)^n\)</span>, con <span
+                class="math inline">\(n\in\mathbb N\)</span>, es <span
+                class="math inline">\(28\)</span>. Halle <span
+                class="math inline">\(n\)</span>.</strong></p>
+                <ol type="1">
+                <li>El término en <span
+                class="math inline">\(x^2\)</span> es <span
+                class="math inline">\({}^{n}C_{2}\,x^2\)</span> (el de
+                <span class="math inline">\(r=2\)</span>), y se entiende
+                contando: <span class="math inline">\((1+x)^n\)</span>
+                es el producto de <span class="math inline">\(n\)</span>
+                factores <span class="math inline">\((1+x)\)</span>, y
+                sale <span class="math inline">\(x^2\)</span> cada vez
+                que se toma la <span class="math inline">\(x\)</span> de
+                dos de ellos y el <span class="math inline">\(1\)</span>
+                de todos los demás. Hay tantos como maneras de elegir
+                esos dos factores, <span
+                class="math inline">\({}^{n}C_{2}\)</span>: en <span
+                class="math inline">\((1+x)^4\)</span>, las <span
+                class="math inline">\(6\)</span> parejas de factores
+                (1.º y 2.º, 1.º y 3.º…) dan el <span
+                class="math inline">\(6x^2\)</span> del desarrollo.</li>
+                <li>Su coeficiente es el dato, y como la incógnita es
+                <span class="math inline">\(n\)</span>, <span
+                class="math inline">\({}^{n}C_{2}\)</span> se escribe
+                como producto. El <span
+                class="math inline">\((n-2)!\)</span> se simplifica,
+                porque <span
+                class="math inline">\(n!=n(n-1)\cdot(n-2)!\)</span>:
+                <span class="math display">\[
+                {}^{n}C_{2}=\frac{n!}{2!\,(n-2)!}=\frac{n(n-1)}{2}=28
+                \]</span></li>
+                <li>Multiplicando por <span
+                class="math inline">\(2\)</span>, la ecuación es de
+                segundo grado: <span class="math display">\[
+                \begin{aligned}
+                &amp;n(n-1)=56\ \Rightarrow\ n^2-n-56=0\\
+                \Rightarrow{}&amp;n=\frac{1\pm\sqrt{1+224}}{2}=\frac{1\pm15}{2}
+                \end{aligned}
+                \]</span> Las soluciones son <span
+                class="math inline">\(8\)</span> y <span
+                class="math inline">\(-7\)</span>, y como <span
+                class="math inline">\(n\)</span> es natural, <span
+                class="math inline">\(n=8\)</span>.</li>
+                </ol>
+                <p>Sin resolverla también se ve: <span
+                class="math inline">\(n(n-1)=56=8\cdot7\)</span>, el
+                producto de dos naturales consecutivos. Comprobación:
+                <span
+                class="math inline">\({}^{8}C_{2}=\frac{8\cdot7}{2}=28\)</span>,
+                las parejas que salen con <span
+                class="math inline">\(8\)</span> factores.</p>
+                </div>
                 <p>Los <strong>primeros términos de un producto</strong>
                 de dos binomios se hallan sin desarrollarlos enteros:
                 cada factor, en potencias ascendentes de <span
@@ -4669,7 +5110,7 @@ Enfoques NS</p>
                 <section id="ejercicios-6"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="30" type="1">
+                <ol start="32" type="1">
                 <li>Halle los valores de <span
                 class="math inline">\(k\)</span> si el coeficiente de
                 <span class="math inline">\(x^2\)</span> en <span
@@ -4718,60 +5159,145 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="30" type="1">
-                <li><span
-                class="math inline">\({}^{5}C_{2}\,k^2=10k^2=160\)</span>,
-                así que <span class="math inline">\(k^2=16\)</span> y
-                <span class="math inline">\(k=\pm4\)</span>.</li>
-                <li>El término general es <span
-                class="math inline">\({}^{9}C_{r}\,x^{9-r}\left(\frac{k}{x^2}\right)^{r}={}^{9}C_{r}\,k^{r}\,x^{9-3r}\)</span>,
-                y <span class="math inline">\(9-3r=3\)</span> da <span
+                <ol start="32" type="1">
+                <li>El término en <span
+                class="math inline">\(x^2\)</span> es el de <span
                 class="math inline">\(r=2\)</span>: <span
-                class="math inline">\(36k^2=9\)</span>, así que <span
-                class="math inline">\(k^2=\frac14\)</span> y <span
-                class="math inline">\(k=\pm\frac12\)</span>.</li>
+                class="math inline">\({}^{5}C_{2}\,(kx)^2=10k^2x^2\)</span>.
+                Su coeficiente es el dato: <span class="math display">\[
+                10k^2=160\ \Rightarrow\ k^2=16\ \Rightarrow\ k=\pm4
+                \]</span></li>
+                <li>El término general es <span class="math display">\[
+                {}^{9}C_{r}\,x^{9-r}\left(\frac{k}{x^2}\right)^{r}={}^{9}C_{r}\,k^{r}\,x^{9-3r}
+                \]</span> El término en <span
+                class="math inline">\(x^3\)</span> tiene <span
+                class="math inline">\(9-3r=3\)</span>, es decir, <span
+                class="math inline">\(r=2\)</span>, y su coeficiente es
+                <span
+                class="math inline">\({}^{9}C_{2}\,k^2=36k^2\)</span>:
+                <span class="math display">\[
+                36k^2=9\ \Rightarrow\ k^2=\frac14\ \Rightarrow\
+                k=\pm\frac12
+                \]</span></li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\({}^{n}C_{3}\cdot\frac{1}{125}=\frac{4}{25}\)</span>
-                da <span class="math inline">\({}^{n}C_{3}=20\)</span>,
-                es decir, <span
-                class="math inline">\(n(n-1)(n-2)=120=6\cdot5\cdot4\)</span>:
-                <span class="math inline">\(n=6\)</span>.</li>
-                <li><span
-                class="math inline">\({}^{6}C_{2}\cdot\frac{1}{25}=\frac{15}{25}=\frac35\)</span>.</li>
+                <li>El término general es <span
+                class="math inline">\({}^{n}C_{r}\left(\frac
+                x5\right)^{r}=\frac{{}^{n}C_{r}}{5^{r}}\,x^{r}\)</span>,
+                así que el coeficiente de <span
+                class="math inline">\(x^3\)</span> es <span
+                class="math inline">\(\frac{{}^{n}C_{3}}{125}\)</span>:
+                <span class="math display">\[
+                \begin{aligned}
+                \frac{{}^{n}C_{3}}{125}=\frac{4}{25}\ &amp;\Rightarrow\
+                {}^{n}C_{3}=20\\
+                \frac{n(n-1)(n-2)}{6}=20\ &amp;\Rightarrow\
+                n(n-1)(n-2)=120
+                \end{aligned}
+                \]</span> Son tres naturales consecutivos cuyo producto
+                es <span class="math inline">\(120\)</span>. Como <span
+                class="math inline">\(5^3=125\)</span> se acerca mucho,
+                se prueba con <span class="math inline">\(6\)</span>,
+                <span class="math inline">\(5\)</span> y <span
+                class="math inline">\(4\)</span>: <span
+                class="math inline">\(6\cdot5\cdot4=120\)</span>, así
+                que <span class="math inline">\(n=6\)</span>.</li>
+                <li>Con <span class="math inline">\(n=6\)</span> y <span
+                class="math inline">\(r=2\)</span>, y <span
+                class="math inline">\({}^{6}C_{2}=\frac{6\cdot5}{2}=15\)</span>:
+                <span class="math display">\[
+                \frac{{}^{6}C_{2}}{5^2}=\frac{15}{25}=\frac35
+                \]</span></li>
                 </ol></li>
-                <li><span
-                class="math inline">\((1+2x)^6=1+12x+60x^2+\cdots\)</span>
-                y <span
-                class="math inline">\((1-x)^5=1-5x+10x^2-\cdots\)</span>.
-                El término en <span class="math inline">\(x\)</span> es
-                <span class="math inline">\(12x-5x=7x\)</span>, y el de
-                <span class="math inline">\(x^2\)</span>, <span
-                class="math inline">\(60x^2-60x^2+10x^2=10x^2\)</span>:
-                el desarrollo empieza por <span
+                <li>Cada factor se desarrolla hasta <span
+                class="math inline">\(x^2\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (1+2x)^6&amp;=1+6(2x)+15(2x)^2+\cdots\\
+                &amp;=1+12x+60x^2+\cdots\\
+                (1-x)^5&amp;=1+5(-x)+10(-x)^2+\cdots\\
+                &amp;=1-5x+10x^2-\cdots
+                \end{aligned}
+                \]</span> Del producto solo cuentan los pares que dan
+                grado <span class="math inline">\(2\)</span> o menos:
+                <span class="math display">\[
+                \begin{aligned}
+                \text{En }x\text{: }&amp;1\cdot(-5x)+12x\cdot1=7x\\
+                \text{En }x^2\text{:
+                }&amp;1\cdot10x^2+12x\cdot(-5x)+60x^2\cdot1\\
+                &amp;=10x^2-60x^2+60x^2=10x^2
+                \end{aligned}
+                \]</span> El desarrollo empieza por <span
                 class="math inline">\(1+7x+10x^2\)</span>.</li>
-                <li><span
-                class="math inline">\(1+5\sqrt2+10\cdot2+10\cdot2\sqrt2+5\cdot4+4\sqrt2=41+29\sqrt2\)</span>.</li>
-                <li><span
-                class="math inline">\(1+9\cdot0{,}003+36\cdot0{,}003^2=1{,}027324\)</span>;
-                la calculadora da <span
+                <li>Con los coeficientes <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(5\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(10\)</span>, <span
+                class="math inline">\(5\)</span> y <span
+                class="math inline">\(1\)</span> de <span
+                class="math inline">\(n=5\)</span>, y las potencias
+                <span class="math inline">\((\sqrt2)^2=2\)</span>, <span
+                class="math inline">\((\sqrt2)^3=2\sqrt2\)</span>, <span
+                class="math inline">\((\sqrt2)^4=4\)</span> y <span
+                class="math inline">\((\sqrt2)^5=4\sqrt2\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (1+\sqrt2)^5&amp;=1+5\sqrt2+10\cdot2+10\cdot2\sqrt2+5\cdot4+4\sqrt2\\
+                &amp;=(1+20+20)+(5+20+4)\sqrt2\\
+                &amp;=41+29\sqrt2
+                \end{aligned}
+                \]</span> Así, <span class="math inline">\(a=41\)</span>
+                y <span class="math inline">\(b=29\)</span>.</li>
+                <li>Los tres primeros términos son <span
+                class="math inline">\(1+9x+{}^{9}C_{2}\,x^2=1+9x+36x^2\)</span>.
+                Como <span
+                class="math inline">\(1{,}003=1+0{,}003\)</span>, se
+                sustituye <span
+                class="math inline">\(x=0{,}003\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                1{,}003^9&amp;\approx1+9\cdot0{,}003+36\cdot0{,}003^2\\
+                &amp;=1+0{,}027+0{,}000324=1{,}027324
+                \end{aligned}
+                \]</span> La calculadora da <span
                 class="math inline">\(1{,}0273262\ldots\)</span>:
                 coinciden las cinco primeras cifras decimales.</li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\(10\,000+4000x+600x^2+40x^3+x^4\)</span>.</li>
-                <li>Con <span class="math inline">\(x=0{,}1\)</span>:
-                <span
-                class="math inline">\(10\,000+400+6+0{,}04+0{,}0001=10\,406{,}0401\)</span>.</li>
+                <li>Con los coeficientes <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(4\)</span>, <span
+                class="math inline">\(6\)</span>, <span
+                class="math inline">\(4\)</span> y <span
+                class="math inline">\(1\)</span> de <span
+                class="math inline">\(n=4\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (10+x)^4&amp;=10^4+4\cdot10^3x+6\cdot10^2x^2\\
+                &amp;\quad+4\cdot10x^3+x^4\\
+                &amp;=10\,000+4000x+600x^2+40x^3+x^4
+                \end{aligned}
+                \]</span></li>
+                <li>Como <span
+                class="math inline">\(10{,}1=10+0{,}1\)</span>, se
+                sustituye <span class="math inline">\(x=0{,}1\)</span>
+                en el desarrollo de a), con todos los términos para que
+                el resultado sea exacto: <span class="math display">\[
+                \begin{aligned}
+                10{,}1^4&amp;=10\,000+4000\cdot0{,}1+600\cdot0{,}1^2\\
+                &amp;\quad+40\cdot0{,}1^3+0{,}1^4\\
+                &amp;=10\,000+400+6+0{,}04+0{,}0001\\
+                &amp;=10\,406{,}0401
+                \end{aligned}
+                \]</span></li>
                 </ol></li>
                 </ol>
                 </div>
                 </section>
-                <section id="ejercicios-de-clase-2"
+                <section id="ejercicios-de-clase-3"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios de
                 clase</h4>
-                <ol start="37" type="1">
+                <ol start="39" type="1">
                 <li><ol type="a">
                 <li>Desarrolle <span
                 class="math inline">\((2+x)^5\)</span>.</li>
@@ -4812,7 +5338,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="37" type="1">
+                <ol start="39" type="1">
                 <li><ol type="a">
                 <li>Con <span class="math inline">\(n=5\)</span>, los
                 <span class="math inline">\({}^{5}C_{r}\)</span> son
@@ -4883,7 +5409,7 @@ Enfoques NS</p>
                 class="math display">\[
                 \begin{aligned}
                 (1-2x)^5&amp;=1+5(-2x)+10(-2x)^2+\cdots\\
-                &amp;=1-10x+40x^2+\cdots\\
+                &amp;=1-10x+40x^2-\cdots\\
                 (1+x)^7&amp;=1+7x+21x^2+\cdots
                 \end{aligned}
                 \]</span> Del producto solo cuentan los pares que dan
@@ -4942,12 +5468,15 @@ Enfoques NS</p>
                 <p>En el Nivel Superior el binomio se extiende a
                 cualquier exponente racional, con dos diferencias: el
                 desarrollo no termina nunca y solo vale para algunos
-                valores de <span class="math inline">\(x\)</span>.</p>
+                valores de <span class="math inline">\(x\)</span>, que
+                se dan con un valor absoluto (las inecuaciones con valor
+                absoluto están en la unidad 2 de Matemáticas I).</p>
                 <div class="definicion bloque-didactico">
                 <p><span class="etiqueta-bloque">Definición</span></p>
                 <p>Para <span class="math inline">\(n\in\mathbb
                 Q\)</span> y <span
-                class="math inline">\(|x|&lt;1\)</span>:</p>
+                class="math inline">\(|x|&lt;1\)</span>, es decir, <span
+                class="math inline">\(-1&lt;x&lt;1\)</span>:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 (1+x)^n={}&amp;1+nx+\frac{n(n-1)}{2!}\,x^2\\
@@ -4957,7 +5486,7 @@ Enfoques NS</p>
                 <p>Si <span class="math inline">\(n\)</span> es natural,
                 los coeficientes acaban siendo <span
                 class="math inline">\(0\)</span> y se recupera el
-                desarrollo del subapartado anterior.</p>
+                desarrollo del subapartado 3.1.</p>
                 </div>
                 <div class="aviso bloque-didactico">
                 <p><span class="etiqueta-bloque">Atención</span></p>
@@ -4982,12 +5511,17 @@ Enfoques NS</p>
                 \begin{aligned}
                 (1+3x)^{1/3}&amp;=1+\tfrac13(3x)+\frac{\frac13\left(-\frac23\right)}{2}(3x)^2\\
                 &amp;\quad+\frac{\frac13\left(-\frac23\right)\left(-\frac53\right)}{6}(3x)^3+\cdots\\
-                &amp;=1+x-x^2+\frac53x^3+\cdots
+                &amp;=1+x-x^2+\frac53x^3-\cdots
                 \end{aligned}
                 \]</span></p>
                 <p>Vale para <span
                 class="math inline">\(|3x|&lt;1\)</span>, es decir, para
-                <span class="math inline">\(|x|&lt;\frac13\)</span>.</p>
+                <span class="math inline">\(-1&lt;3x&lt;1\)</span>:
+                dividiendo entre <span class="math inline">\(3\)</span>,
+                <span
+                class="math inline">\(-\frac13&lt;x&lt;\frac13\)</span>,
+                que se escribe <span
+                class="math inline">\(|x|&lt;\frac13\)</span>.</p>
                 </div>
                 <div class="metodo bloque-didactico">
                 <p><span class="etiqueta-bloque">Método</span></p>
@@ -5001,7 +5535,12 @@ Enfoques NS</p>
                 class="math inline">\(a\)</span>: <span
                 class="math inline">\((a+bx)^n=a^n\left(1+\frac{b}{a}x\right)^n\)</span>,
                 que vale para <span
-                class="math inline">\(\left|\frac{b}{a}x\right|&lt;1\)</span>.</p>
+                class="math inline">\(\left|\frac{b}{a}x\right|&lt;1\)</span>.
+                Después se desarrolla el paréntesis con <span
+                class="math inline">\(\frac{b}{a}x\)</span> en el lugar
+                de <span class="math inline">\(x\)</span>, y se
+                multiplica todo por <span
+                class="math inline">\(a^n\)</span>.</p>
                 </div>
                 <p><span class="math display">\[
                 \begin{aligned}
@@ -5011,7 +5550,7 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span></p>
                 <p>La calculadora da <span
-                class="math inline">\(\sqrt{4{,}1}=2{,}024846\ldots\)</span>:
+                class="math inline">\(\sqrt{4{,}1}=2{,}024845\ldots\)</span>:
                 con tres términos coinciden las cinco primeras cifras
                 decimales.</p>
                 <div class="error-tipico bloque-didactico">
@@ -5041,7 +5580,7 @@ Enfoques NS</p>
                 <section id="ejercicios-7"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="42" type="1">
+                <ol start="44" type="1">
                 <li>Desarrolle hasta <span
                 class="math inline">\(x^3\)</span> e indique para qué
                 valores de <span class="math inline">\(x\)</span> es
@@ -5061,27 +5600,82 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="42" type="1">
-                <li><ol type="a">
-                <li><span
-                class="math inline">\(1-8x+48x^2-256x^3+\cdots\)</span>,
-                para <span class="math inline">\(|4x|&lt;1\)</span>, es
-                decir, <span
+                <ol start="44" type="1">
+                <li>Se aplica el desarrollo de <span
+                class="math inline">\((1+x)^n\)</span> con lo que
+                acompaña al <span class="math inline">\(1\)</span> en el
+                lugar de <span class="math inline">\(x\)</span>.
+                <ol type="a">
+                <li>Con <span class="math inline">\(n=-2\)</span> y
+                <span class="math inline">\(4x\)</span> en el lugar de
+                <span class="math inline">\(x\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (1+4x)^{-2}&amp;=1+(-2)(4x)+\frac{(-2)(-3)}{2}(4x)^2\\
+                &amp;\quad+\frac{(-2)(-3)(-4)}{6}(4x)^3+\cdots\\
+                &amp;=1-8x+3\cdot16x^2-4\cdot64x^3+\cdots\\
+                &amp;=1-8x+48x^2-256x^3+\cdots
+                \end{aligned}
+                \]</span> Vale para <span
+                class="math inline">\(|4x|&lt;1\)</span>, es decir, para
+                <span
                 class="math inline">\(|x|&lt;\frac14\)</span>.</li>
-                <li><span
-                class="math inline">\(1+2x-6x^2+28x^3+\cdots\)</span>,
-                para <span class="math inline">\(|8x|&lt;1\)</span>, es
-                decir, <span
+                <li>Como <span
+                class="math inline">\(\sqrt[4]{1+8x}=(1+8x)^{1/4}\)</span>,
+                con <span class="math inline">\(n=\frac14\)</span> y
+                <span class="math inline">\(8x\)</span> en el lugar de
+                <span class="math inline">\(x\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (1+8x)^{1/4}&amp;=1+\tfrac14(8x)+\frac{\frac14\left(-\frac34\right)}{2}(8x)^2\\
+                &amp;\quad+\frac{\frac14\left(-\frac34\right)\left(-\frac74\right)}{6}(8x)^3+\cdots\\
+                &amp;=1+2x-\frac{3}{32}\cdot64x^2+\frac{7}{128}\cdot512x^3-\cdots\\
+                &amp;=1+2x-6x^2+28x^3-\cdots
+                \end{aligned}
+                \]</span> Vale para <span
+                class="math inline">\(|8x|&lt;1\)</span>, es decir, para
+                <span
                 class="math inline">\(|x|&lt;\frac18\)</span>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\((9+x)^{-1/2}=\frac13\left(1+\frac
-                x9\right)^{-1/2}=\frac13-\frac{x}{54}+\frac{x^2}{648}-\cdots\)</span>,
-                para <span class="math inline">\(|x|&lt;9\)</span>.</li>
-                <li>Con <span class="math inline">\(x=0{,}09\)</span>:
-                <span
-                class="math inline">\(\frac13-\frac{0{,}09}{54}+\frac{0{,}0081}{648}\approx0{,}331679\)</span>.</li>
+                <li>Como <span
+                class="math inline">\(\frac{1}{\sqrt{9+x}}=(9+x)^{-1/2}\)</span>
+                y el desarrollo es el de <span
+                class="math inline">\((1+x)^n\)</span>, primero se saca
+                factor común <span class="math inline">\(9\)</span>:
+                <span class="math display">\[
+                (9+x)^{-1/2}=9^{-1/2}\left(1+\frac
+                x9\right)^{-1/2}=\frac13\left(1+\frac x9\right)^{-1/2}
+                \]</span> Con <span
+                class="math inline">\(n=-\frac12\)</span> y <span
+                class="math inline">\(\frac x9\)</span> en el lugar de
+                <span class="math inline">\(x\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                \left(1+\frac x9\right)^{-1/2}&amp;=1-\frac12\cdot\frac
+                x9\\
+                &amp;\quad+\frac{\left(-\frac12\right)\left(-\frac32\right)}{2}\left(\frac
+                x9\right)^2-\cdots\\
+                &amp;=1-\frac{x}{18}+\frac{x^2}{216}-\cdots
+                \end{aligned}
+                \]</span> Al multiplicar por <span
+                class="math inline">\(\frac13\)</span>: <span
+                class="math display">\[
+                \frac{1}{\sqrt{9+x}}=\frac13-\frac{x}{54}+\frac{x^2}{648}-\cdots
+                \]</span> Vale para <span
+                class="math inline">\(\left|\frac
+                x9\right|&lt;1\)</span>, es decir, para <span
+                class="math inline">\(|x|&lt;9\)</span>.</li>
+                <li>Como <span
+                class="math inline">\(9{,}09=9+0{,}09\)</span>, se
+                sustituye <span class="math inline">\(x=0{,}09\)</span>
+                en el desarrollo de a): <span class="math display">\[
+                \begin{aligned}
+                \frac{1}{\sqrt{9{,}09}}&amp;\approx\frac13-\frac{0{,}09}{54}+\frac{0{,}0081}{648}\\
+                &amp;=0{,}333333\ldots-0{,}001666\ldots+0{,}0000125\\
+                &amp;\approx0{,}331679
+                \end{aligned}
+                \]</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -5121,7 +5715,7 @@ Enfoques NS</p>
                 <section id="ejercicios-8"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="44" type="1">
+                <ol start="46" type="1">
                 <li><strong>[Puntuación máxima: 6]</strong> El
                 desarrollo de <span
                 class="math inline">\((1+kx)^n\)</span>, con <span
@@ -5156,75 +5750,107 @@ Enfoques NS</p>
                 </ol></li>
                 <li><strong>[Puntuación máxima: 5]</strong> Demuestre
                 que <span
-                class="math inline">\({}^{2n}C_{2}=2\cdot{}^{n}C_{2}+n^2\)</span>
+                class="math inline">\({}^{3n}C_{2}=3\cdot{}^{n}C_{2}+3n^2\)</span>
                 para todo entero <span
                 class="math inline">\(n\geq2\)</span>.</li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="44" type="1">
-                <li><span class="math inline">\(nk=24\)</span>
-                <strong>A1</strong> y <span
-                class="math inline">\({}^{n}C_{2}\,k^2=\frac{n(n-1)}{2}\,k^2=252\)</span>
-                <strong>A1</strong>. Sustituyendo <span
-                class="math inline">\(nk=24\)</span>
+                <ol start="46" type="1">
+                <li>El término en <span class="math inline">\(x\)</span>
+                es <span
+                class="math inline">\({}^{n}C_{1}\,kx=nkx\)</span>, y el
+                de <span class="math inline">\(x^2\)</span>, <span
+                class="math inline">\({}^{n}C_{2}\,k^2x^2\)</span>. Se
+                igualan sus coeficientes a los del enunciado: <span
+                class="math inline">\(nk=24\)</span> <strong>A1</strong>
+                y <span
+                class="math inline">\(\frac{n(n-1)}{2}\,k^2=252\)</span>
+                <strong>A1</strong>. En la segunda se agrupa <span
+                class="math inline">\(nk\cdot(n-1)k\)</span> y se
+                sustituye <span class="math inline">\(nk=24\)</span>
                 <strong>M1</strong>: <span
-                class="math inline">\(\frac{(n-1)k\cdot24}{2}=252\)</span>,
+                class="math inline">\(\frac{24\,(n-1)k}{2}=252\)</span>,
                 así que <span class="math inline">\((n-1)k=21\)</span>
                 <strong>A1</strong>. Restando de <span
-                class="math inline">\(nk=24\)</span>: <span
-                class="math inline">\(k=3\)</span> <strong>A1</strong> y
-                <span class="math inline">\(n=8\)</span>
+                class="math inline">\(nk=24\)</span> queda <span
+                class="math inline">\(k=3\)</span> <strong>A1</strong>,
+                y entonces <span
+                class="math inline">\(n=\frac{24}{3}=8\)</span>
                 <strong>A1</strong>.</li>
-                <li><ol type="a">
-                <li>Hay <span class="math inline">\(4\)</span> vocales y
-                <span class="math inline">\(3\)</span> consonantes:
+                <li>ESTADIO tiene <span class="math inline">\(7\)</span>
+                letras distintas: <span class="math inline">\(4\)</span>
+                vocales (E, A, I, O) y <span
+                class="math inline">\(3\)</span> consonantes (S, T, D).
+                <ol type="a">
+                <li>Se rellenan primero las dos casillas con condición:
+                la primera, con una de las <span
+                class="math inline">\(4\)</span> vocales, y la última,
+                con una de las <span class="math inline">\(3\)</span>
+                que quedan. Las otras <span
+                class="math inline">\(5\)</span> letras se ordenan en
+                medio de <span class="math inline">\(5!\)</span> formas:
                 <span class="math inline">\(4\cdot3\cdot5!\)</span>
                 <strong>M1</strong> <span
-                class="math inline">\(=1440\)</span>
+                class="math inline">\(=12\cdot120=1440\)</span>
                 <strong>A1</strong>.</li>
-                <li>El bloque de consonantes y las <span
-                class="math inline">\(4\)</span> vocales son <span
-                class="math inline">\(5\)</span> objetos: <span
+                <li>Las tres consonantes se pegan en un bloque, que con
+                las <span class="math inline">\(4\)</span> vocales forma
+                <span class="math inline">\(5\)</span> objetos: se
+                ordenan de <span class="math inline">\(5!\)</span>
+                formas, por <span class="math inline">\(3!\)</span> de
+                ordenar el bloque por dentro. Son <span
                 class="math inline">\(5!\cdot3!\)</span>
                 <strong>M1</strong> <span
-                class="math inline">\(=720\)</span>
+                class="math inline">\(=120\cdot6=720\)</span>
                 <strong>A1</strong>.</li>
-                <li>La primera es una de las <span
+                <li>La primera casilla es una de las <span
                 class="math inline">\(3\)</span> consonantes
-                <strong>(M1)</strong> y el resto se ordena de <span
-                class="math inline">\(6!\)</span> maneras
-                <strong>M1</strong>: <span
-                class="math inline">\(3\cdot6!=2160\)</span>
+                <strong>(M1)</strong>, y las otras <span
+                class="math inline">\(6\)</span> letras se ordenan
+                detrás de <span class="math inline">\(6!\)</span>
+                maneras <strong>M1</strong>: <span
+                class="math inline">\(3\cdot6!=3\cdot720=2160\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
+                <li>Con <span class="math inline">\(n=-3\)</span> y
+                <span class="math inline">\(\frac x2\)</span> en el
+                lugar de <span class="math inline">\(x\)</span>: <span
                 class="math inline">\(1+(-3)\frac{x}{2}+\frac{(-3)(-4)}{2}\left(\frac
-                x2\right)^2\)</span> <strong>M1</strong> <span
-                class="math inline">\(=1-\frac32x+\frac32x^2+\cdots\)</span>
-                <strong>A1</strong> <strong>A1</strong>, para <span
+                x2\right)^2-\cdots\)</span> <strong>M1</strong> <span
+                class="math inline">\(=1-\frac32x+6\cdot\frac{x^2}{4}-\cdots=1-\frac32x+\frac32x^2-\cdots\)</span>
+                <strong>A1</strong> <strong>A1</strong>. Vale para <span
                 class="math inline">\(\left|\frac
-                x2\right|&lt;1\)</span>, es decir, <span
+                x2\right|&lt;1\)</span>, es decir, para <span
                 class="math inline">\(|x|&lt;2\)</span>
                 <strong>A1</strong>.</li>
-                <li><span
-                class="math inline">\((1+3x)\left(1-\frac32x+\frac32x^2+\cdots\right)\)</span>:
-                el término en <span class="math inline">\(x^2\)</span>
-                sale de <span
-                class="math inline">\(1\cdot\frac32x^2\)</span> y de
-                <span
-                class="math inline">\(3x\cdot\left(-\frac32x\right)\)</span>
-                <strong>M1</strong> <strong>A1</strong>: <span
+                <li>Se multiplica <span
+                class="math inline">\(1+3x\)</span> por el desarrollo de
+                a), <span
+                class="math inline">\(1-\frac32x+\frac32x^2-\cdots\)</span>.
+                El término en <span class="math inline">\(x^2\)</span>
+                reúne los dos productos que dan <span
+                class="math inline">\(x^2\)</span>: <span
+                class="math inline">\(1\cdot\frac32x^2\)</span> y <span
+                class="math inline">\(3x\cdot\left(-\frac32x\right)=-\frac92x^2\)</span>
+                <strong>M1</strong> <strong>A1</strong>. El coeficiente
+                es <span
                 class="math inline">\(\frac32-\frac92=-3\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
-                <li><span
-                class="math inline">\({}^{2n}C_{2}=\frac{2n\,(2n-1)}{2}=2n^2-n\)</span>
-                <strong>M1</strong> <strong>A1</strong> y <span
-                class="math inline">\(2\cdot\frac{n(n-1)}{2}+n^2=n^2-n+n^2=2n^2-n\)</span>
+                <li>Cada miembro se escribe como un polinomio en <span
+                class="math inline">\(n\)</span>, con <span
+                class="math inline">\({}^{m}C_{2}=\frac{m(m-1)}{2}\)</span>.
+                El primero: <span
+                class="math inline">\({}^{3n}C_{2}=\frac{3n\,(3n-1)}{2}=\frac{9n^2-3n}{2}\)</span>
+                <strong>M1</strong> <strong>A1</strong>. El segundo:
+                <span
+                class="math inline">\(3\cdot\frac{n(n-1)}{2}+3n^2=\frac{3n^2-3n+6n^2}{2}=\frac{9n^2-3n}{2}\)</span>
                 <strong>M1</strong> <strong>A1</strong>. Los dos
-                miembros son iguales <strong>R1</strong>.</li>
+                miembros dan la misma expresión, así que son iguales
+                para todo <span class="math inline">\(n\geq2\)</span>
+                <strong>R1</strong>.</li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: repaso del capítulo
@@ -5240,7 +5866,7 @@ Enfoques NS</p>
                 <section id="ejercicios-9"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="48" type="1">
+                <ol start="50" type="1">
                 <li><strong>[Puntuación máxima: 7]</strong> Un club
                 tiene <span class="math inline">\(10\)</span> chicas y
                 <span class="math inline">\(8\)</span> chicos, y se
@@ -5267,40 +5893,57 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="48" type="1">
-                <li><ol type="a">
-                <li><span
+                <ol start="50" type="1">
+                <li>En un equipo no importa el orden: son combinaciones.
+                <ol type="a">
+                <li>Se eligen <span class="math inline">\(6\)</span>
+                personas entre <span class="math inline">\(18\)</span>:
+                <span
                 class="math inline">\({}^{18}C_{6}=18\,564\)</span>
                 <strong>A1</strong>.</li>
-                <li><span
+                <li>Con exactamente <span
+                class="math inline">\(3\)</span> chicas hay también
+                <span class="math inline">\(3\)</span> chicos. Se eligen
+                las chicas y, aparte, los chicos: <span
                 class="math inline">\({}^{10}C_{3}\cdot{}^{8}C_{3}\)</span>
                 <strong>M1</strong> <span
                 class="math inline">\(=120\cdot56=6720\)</span>
                 <strong>A1</strong>.</li>
-                <li>Se restan del total los equipos con <span
-                class="math inline">\(0\)</span> chicos y con <span
-                class="math inline">\(1\)</span> chico
-                <strong>M1</strong>: <span
-                class="math inline">\({}^{10}C_{6}=210\)</span> y <span
-                class="math inline">\(8\cdot{}^{10}C_{5}=2016\)</span>
-                <strong>A1</strong> <strong>A1</strong>, así que <span
+                <li>«Al menos <span class="math inline">\(2\)</span>
+                chicos» se cuenta restando del total los equipos con
+                <span class="math inline">\(0\)</span> chicos y con
+                <span class="math inline">\(1\)</span> chico
+                <strong>M1</strong>. Sin chicos, las <span
+                class="math inline">\(6\)</span> son chicas: <span
+                class="math inline">\({}^{10}C_{6}=210\)</span>
+                <strong>A1</strong>. Con un chico, se elige el chico y
+                <span class="math inline">\(5\)</span> chicas: <span
+                class="math inline">\(8\cdot{}^{10}C_{5}=8\cdot252=2016\)</span>
+                <strong>A1</strong>. Quedan <span
                 class="math inline">\(18\,564-210-2016=16\,338\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\({}^{8}C_{r}\,4^{8-r}\,3^{r}\,x^{r}\)</span>
+                <li>Con <span class="math inline">\(a=4\)</span> y <span
+                class="math inline">\(b=3x\)</span> en el término
+                general: <span
+                class="math inline">\({}^{8}C_{r}\,4^{8-r}(3x)^{r}={}^{8}C_{r}\,4^{8-r}\,3^{r}\,x^{r}\)</span>
                 <strong>A1</strong> <strong>A1</strong>.</li>
-                <li>Con la tabla de la calculadora para <span
+                <li>El coeficiente es <span
+                class="math inline">\({}^{8}C_{r}\,4^{8-r}\,3^{r}\)</span>.
+                Se escribe como función de <span
+                class="math inline">\(r\)</span> en la calculadora y se
+                mira su tabla para <span
                 class="math inline">\(r=0,1,\ldots,8\)</span>
-                <strong>M1</strong>, los mayores son <span
+                <strong>M1</strong>: los mayores son <span
                 class="math inline">\(1\,032\,192\)</span> con <span
                 class="math inline">\(r=2\)</span>, <span
                 class="math inline">\(1\,548\,288\)</span> con <span
                 class="math inline">\(r=3\)</span> y <span
                 class="math inline">\(1\,451\,520\)</span> con <span
                 class="math inline">\(r=4\)</span> <strong>A1</strong>.
-                El término es <span
+                El mayor es el de <span
+                class="math inline">\(r=3\)</span>, y el término, <span
                 class="math inline">\(1\,548\,288\,x^3\)</span>
                 <strong>A1</strong> <strong>A1</strong>.</li>
                 </ol></li>
@@ -5319,7 +5962,7 @@ Enfoques NS</p>
                 <section id="ejercicios-10"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="50" type="1">
+                <ol start="52" type="1">
                 <li><strong>[Puntuación máxima: 15]</strong> Newton
                 calculaba raíces con su desarrollo del binomio. En esta
                 pregunta se aproximan <span
@@ -5343,8 +5986,10 @@ Enfoques NS</p>
                 <li>A partir de lo anterior, halle un valor aproximado
                 de <span class="math inline">\(\sqrt2\)</span> con los
                 cuatro términos de a). <strong>[3]</strong></li>
-                <li>Halle el error absoluto de la aproximación de d).
-                <strong>[2]</strong></li>
+                <li>Halle el error absoluto de la aproximación de d), es
+                decir, la diferencia, en valor absoluto, entre <span
+                class="math inline">\(\sqrt2\)</span> y el valor
+                aproximado. <strong>[2]</strong></li>
                 <li>Muestre que <span
                 class="math inline">\(\sqrt5=\frac94\left(1-\frac{1}{81}\right)^{1/2}\)</span>
                 y halle un valor aproximado de <span
@@ -5354,39 +5999,53 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="50" type="1">
+                <ol start="52" type="1">
                 <li><ol type="a">
-                <li><span
+                <li>Con <span class="math inline">\(n=\frac12\)</span>
+                en el desarrollo de <span
+                class="math inline">\((1+x)^n\)</span>: <span
+                class="math inline">\(1+\frac12x+\frac{\frac12\left(-\frac12\right)}{2}x^2+\frac{\frac12\left(-\frac12\right)\left(-\frac32\right)}{6}x^3\)</span>,
+                es decir, <span
                 class="math inline">\(1+\frac12x-\frac18x^2+\frac{1}{16}x^3\)</span>
-                <strong>A1</strong> <strong>A1</strong>, para <span
+                <strong>A1</strong> <strong>A1</strong>. Vale para <span
                 class="math inline">\(|x|&lt;1\)</span>
                 <strong>A1</strong>.</li>
-                <li><span class="math inline">\(x=1\)</span> no cumple
-                <span class="math inline">\(|x|&lt;1\)</span>: los
-                términos no se hacen pequeños y la suma se acerca muy
-                despacio a <span class="math inline">\(\sqrt2\)</span>
+                <li><span
+                class="math inline">\(\sqrt2=(1+1)^{1/2}\)</span>
+                pediría <span class="math inline">\(x=1\)</span>, que no
+                cumple <span class="math inline">\(|x|&lt;1\)</span>:
+                las potencias de <span class="math inline">\(x\)</span>
+                ya no se hacen pequeñas, los términos disminuyen muy
+                despacio y la suma tarda mucho en acercarse a <span
+                class="math inline">\(\sqrt2\)</span>
                 <strong>R1</strong>.</li>
                 <li><span
-                class="math inline">\(\frac{49}{25}\cdot\frac{50}{49}=\frac{50}{25}=2\)</span>
-                <strong>A1</strong>. Como <span
+                class="math inline">\(\left(\frac75\right)^2\left(1+\frac{1}{49}\right)=\frac{49}{25}\cdot\frac{50}{49}=\frac{50}{25}=2\)</span>
+                <strong>A1</strong>. Al tomar la raíz cuadrada en los
+                dos miembros, y como <span
                 class="math inline">\(\frac75&gt;0\)</span>, <span
-                class="math inline">\(\sqrt2=\frac75\sqrt{1+\frac{1}{49}}\)</span>
+                class="math inline">\(\sqrt2=\frac75\left(1+\frac{1}{49}\right)^{1/2}\)</span>
                 <strong>R1</strong> <strong>AG</strong>.</li>
-                <li><span
+                <li>Se sustituye <span
+                class="math inline">\(x=\frac{1}{49}\)</span> en el
+                desarrollo de a): <span
                 class="math inline">\(\frac75\left(1+\frac{1}{98}-\frac{1}{19\,208}+\frac{1}{1\,882\,384}\right)\)</span>
                 <strong>M1</strong> <strong>A1</strong> <span
                 class="math inline">\(\approx1{,}41421357\)</span>
                 <strong>A1</strong>.</li>
-                <li>La calculadora da <span
-                class="math inline">\(\sqrt2=1{,}41421356\ldots\)</span>
-                <strong>(M1)</strong>, así que el error es de unos <span
+                <li>Con diez decimales, la calculadora da <span
+                class="math inline">\(\sqrt2\approx1{,}4142135624\)</span>
+                y el valor de d) es <span
+                class="math inline">\(1{,}4142135717\)</span>
+                <strong>(M1)</strong>. La diferencia es de unos <span
                 class="math inline">\(9\cdot10^{-9}\)</span>
                 <strong>A1</strong>.</li>
                 <li><span
-                class="math inline">\(\frac{81}{16}\cdot\frac{80}{81}=\frac{80}{16}=5\)</span>
-                <strong>A1</strong>, y con <span
-                class="math inline">\(x=-\frac{1}{81}\)</span>
-                <strong>M1</strong>: <span
+                class="math inline">\(\left(\frac94\right)^2\left(1-\frac{1}{81}\right)=\frac{81}{16}\cdot\frac{80}{81}=\frac{80}{16}=5\)</span>
+                <strong>A1</strong>, así que <span
+                class="math inline">\(\sqrt5=\frac94\left(1-\frac{1}{81}\right)^{1/2}\)</span>.
+                Con <span class="math inline">\(x=-\frac{1}{81}\)</span>
+                en el desarrollo de a) <strong>M1</strong>: <span
                 class="math inline">\(\frac94\left(1-\frac{1}{162}-\frac{1}{52\,488}-\frac{1}{8\,503\,056}\right)\)</span>
                 <strong>A1</strong> <span
                 class="math inline">\(\approx2{,}23606798\)</span>

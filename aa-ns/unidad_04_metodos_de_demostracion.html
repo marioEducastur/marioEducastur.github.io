@@ -3011,6 +3011,18 @@
       font-family: "Times New Roman", Times, serif;
     }
 
+    /* Curso IB: soluciones paso a paso (regla 14 de AGENTS.md). En las
+       respuestas, la fórmula centrada de un paso va siempre debajo de la
+       frase que la presenta. La regla general de «li > .math.display» como
+       único hijo la pondría al lado de la frase cuando cabe y la frase no
+       lleva ninguna otra fórmula, y unas quedarían debajo y otras al lado.
+       Las respuestas de este curso no tienen apartados que sean solo una
+       fórmula, que es el caso para el que nació aquella regla. */
+    #contenido-unidad .resultado li > .math.display:first-child:last-child {
+      display: block;
+      width: 100%;
+    }
+
   </style>
 
   </head>
@@ -3108,9 +3120,9 @@ Enfoques NS</p>
                 <li>Saque factor común y simplifique <span
                 class="math inline">\(k(k+1)+2(k+1)\)</span>.</li>
                 <li>¿Qué hay que sumar a <span
-                class="math inline">\(\sum_{r=1}^{k}(2r+5)\)</span> para
-                obtener <span
-                class="math inline">\(\sum_{r=1}^{k+1}(2r+5)\)</span>?</li>
+                class="math inline">\(\sum\limits_{r=1}^{k}(2r+5)\)</span>
+                para obtener <span
+                class="math inline">\(\sum\limits_{r=1}^{k+1}(2r+5)\)</span>?</li>
                 <li>¿Verdadero o falso? a) Todo múltiplo de <span
                 class="math inline">\(6\)</span> es múltiplo de <span
                 class="math inline">\(3\)</span>. b) Todo múltiplo de
@@ -3123,25 +3135,43 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(4k+4\)</span>. b) <span
-                class="math inline">\(4m^2+12m+9\)</span>.</li>
+                <li>Se desarrolla el cuadrado del binomio y se resta:
+                <span class="math display">\[
+                (k+2)^2-k^2=k^2+4k+4-k^2=4k+4
+                \]</span></li>
+                <li>Con el cuadrado de una suma, <span
+                class="math inline">\((a+b)^2=a^2+2ab+b^2\)</span>:
+                <span class="math display">\[
+                (2m+3)^2=(2m)^2+2\cdot2m\cdot3+3^2=4m^2+12m+9
+                \]</span></li>
                 </ol></li>
-                <li><ol type="a">
-                <li><span class="math inline">\(10\cdot10^k\)</span>.
-                b) <span class="math inline">\(9\cdot3^{2k}\)</span>,
-                porque <span
-                class="math inline">\(3^{2k+2}=3^2\cdot3^{2k}\)</span>.</li>
-                </ol></li>
+                <li>Al sumar exponentes se multiplican las potencias.
+                <ol type="a">
                 <li><span
-                class="math inline">\((k+1)(k+2)\)</span>.</li>
-                <li>El término <span
+                class="math inline">\(10^{k+1}=10^k\cdot10^1=10\cdot10^k\)</span>.</li>
+                <li><span
+                class="math inline">\(3^{2(k+1)}=3^{2k+2}=3^{2k}\cdot3^2=9\cdot3^{2k}\)</span>.</li>
+                </ol></li>
+                <li>Los dos sumandos llevan el factor <span
+                class="math inline">\(k+1\)</span>, que sale fuera:
+                <span class="math display">\[
+                k(k+1)+2(k+1)=(k+1)(k+2)
+                \]</span></li>
+                <li>La segunda suma tiene los mismos términos que la
+                primera y uno más, el de <span
                 class="math inline">\(r=k+1\)</span>, que vale <span
-                class="math inline">\(2(k+1)+5=2k+7\)</span>.</li>
+                class="math inline">\(2(k+1)+5=2k+7\)</span>. Hay que
+                sumar <span class="math inline">\(2k+7\)</span>.</li>
                 <li><ol type="a">
-                <li>Verdadero: <span
-                class="math inline">\(6k=3\cdot(2k)\)</span>. b) Falso:
-                <span class="math inline">\(3\)</span> es múltiplo de
-                <span class="math inline">\(3\)</span> y no de <span
+                <li>Verdadero. Un múltiplo de <span
+                class="math inline">\(6\)</span> es <span
+                class="math inline">\(6k\)</span>, con <span
+                class="math inline">\(k\)</span> entero, y <span
+                class="math inline">\(6k=3\cdot(2k)\)</span>, que es
+                múltiplo de <span class="math inline">\(3\)</span>.</li>
+                <li>Falso. Basta un contraejemplo: <span
+                class="math inline">\(3\)</span> es múltiplo de <span
+                class="math inline">\(3\)</span> y no de <span
                 class="math inline">\(6\)</span>.</li>
                 </ol></li>
                 </ol>
@@ -3283,36 +3313,88 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
-                <li><ol type="a">
-                <li><span
-                class="math inline">\(n^2+10n+25-\left(n^2-10n+25\right)=20n\)</span>.</li>
-                <li><span
-                class="math inline">\(\frac{4(x+3)-4(x-1)}{(x-1)(x+3)}=\frac{16}{(x-1)(x+3)}\)</span>.</li>
-                <li><span
-                class="math inline">\(x^3+3x^2+3x+1-\left(x^3-3x^2+3x-1\right)=6x^2+2\)</span>.</li>
+                <li>En las tres se parte del miembro izquierdo y se
+                llega al derecho.
+                <ol type="a">
+                <li>Se desarrollan los dos cuadrados; al restar, cambian
+                los signos del segundo: <span class="math display">\[
+                \begin{aligned}
+                (n+5)^2-(n-5)^2&amp;=n^2+10n+25-\left(n^2-10n+25\right)\\
+                &amp;=n^2+10n+25-n^2+10n-25\\
+                &amp;=20n
+                \end{aligned}
+                \]</span></li>
+                <li>Se resta con denominador común <span
+                class="math inline">\((x-1)(x+3)\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                \frac{4}{x-1}-\frac{4}{x+3}&amp;=\frac{4(x+3)-4(x-1)}{(x-1)(x+3)}\\
+                &amp;=\frac{4x+12-4x+4}{(x-1)(x+3)}\\
+                &amp;=\frac{16}{(x-1)(x+3)}
+                \end{aligned}
+                \]</span></li>
+                <li>Se desarrollan los dos cubos; al restar, cambian los
+                signos del segundo: <span class="math display">\[
+                \begin{aligned}
+                (x+1)^3-(x-1)^3&amp;=x^3+3x^2+3x+1-\left(x^3-3x^2+3x-1\right)\\
+                &amp;=6x^2+2
+                \end{aligned}
+                \]</span></li>
                 </ol></li>
-                <li>Sacando factor común <span
-                class="math inline">\(n(n+1)\)</span>: <span
-                class="math inline">\(n(n+1)\bigl[(n+2)-(n-1)\bigr]=3n(n+1)\)</span>.</li>
+                <li>Los dos productos del miembro izquierdo llevan los
+                factores <span class="math inline">\(n\)</span> y <span
+                class="math inline">\(n+1\)</span>, que se sacan como
+                factor común: <span class="math display">\[
+                \begin{aligned}
+                n(n+1)(n+2)-(n-1)\,n(n+1)&amp;=n(n+1)\bigl[(n+2)-(n-1)\bigr]\\
+                &amp;=n(n+1)\cdot3\\
+                &amp;=3n(n+1)
+                \end{aligned}
+                \]</span></li>
                 <li><ol type="a">
-                <li>Multiplicando por el conjugado: <span
-                class="math inline">\(\frac{5\left(\sqrt{21}+4\right)}{21-16}=\sqrt{21}+4\)</span>.</li>
-                <li><span
-                class="math inline">\(\left(2+\sqrt3\right)^2=4+4\sqrt3+3=7+4\sqrt3\)</span>
-                y <span class="math inline">\(2+\sqrt3&gt;0\)</span>,
-                así que <span class="math inline">\(2+\sqrt3\)</span> es
-                la raíz cuadrada positiva de <span
+                <li>Se multiplican el numerador y el denominador por el
+                conjugado del denominador, <span
+                class="math inline">\(\sqrt{21}+4\)</span>, y abajo
+                queda una suma por diferencia: <span
+                class="math display">\[
+                \begin{aligned}
+                \frac{5}{\sqrt{21}-4}&amp;=\frac{5\left(\sqrt{21}+4\right)}{\left(\sqrt{21}-4\right)\left(\sqrt{21}+4\right)}\\
+                &amp;=\frac{5\left(\sqrt{21}+4\right)}{21-16}\\
+                &amp;=\sqrt{21}+4
+                \end{aligned}
+                \]</span></li>
+                <li>La raíz cuadrada de un número es el número positivo
+                cuyo cuadrado es ese número. Se eleva al cuadrado <span
+                class="math inline">\(2+\sqrt3\)</span>: <span
+                class="math display">\[
+                \left(2+\sqrt3\right)^2=4+4\sqrt3+3=7+4\sqrt3
+                \]</span> Como además <span
+                class="math inline">\(2+\sqrt3&gt;0\)</span>, es la raíz
+                cuadrada de <span
                 class="math inline">\(7+4\sqrt3\)</span>.</li>
-                <li><span
-                class="math inline">\(\log_3\frac{162}{2}=\log_3
-                81=4\)</span>.</li>
+                <li>La resta de logaritmos es el logaritmo del cociente,
+                y <span class="math inline">\(81=3^4\)</span>: <span
+                class="math display">\[
+                \log_3 162-\log_3 2=\log_3\frac{162}{2}=\log_3 81=4
+                \]</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Parte de la igualdad que hay que demostrar y la da
-                por cierta: llegar a algo verdadero no prueba que la
-                primera línea lo sea.</li>
-                <li><span
-                class="math inline">\(\frac{a}{a-1}-\frac{1}{a+1}=\frac{a(a+1)-(a-1)}{(a-1)(a+1)}=\frac{a^2+1}{a^2-1}\)</span>.</li>
+                por cierta desde la primera línea. Llegar a algo
+                verdadero, como <span
+                class="math inline">\(a^2+1=a^2+1\)</span>, no prueba
+                que la primera línea lo sea: de una igualdad falsa
+                también se puede llegar a una verdadera.</li>
+                <li>Se parte del miembro izquierdo y se resta con
+                denominador común <span
+                class="math inline">\((a-1)(a+1)=a^2-1\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                \frac{a}{a-1}-\frac{1}{a+1}&amp;=\frac{a(a+1)-(a-1)}{(a-1)(a+1)}\\
+                &amp;=\frac{a^2+a-a+1}{a^2-1}\\
+                &amp;=\frac{a^2+1}{a^2-1}
+                \end{aligned}
+                \]</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -3426,8 +3508,8 @@ Enfoques NS</p>
                 resulta de invertir sus cifras es siempre múltiplo de
                 <span class="math inline">\(11\)</span>.</li>
                 <li>Demuestre que el producto de tres enteros
-                consecutivos más el del medio es el cubo del del
-                medio.</li>
+                consecutivos, más el entero del medio, es el cubo de ese
+                entero.</li>
                 <li><ol type="a">
                 <li>Demuestre que el producto de dos enteros
                 consecutivos es par.</li>
@@ -3440,41 +3522,207 @@ Enfoques NS</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="5" type="1">
                 <li><ol type="a">
-                <li><span
-                class="math inline">\(3k+3(k+1)+3(k+2)=9k+9=9(k+1)\)</span>,
-                que es múltiplo de <span
-                class="math inline">\(9\)</span>.</li>
-                <li>Con <span class="math inline">\(a=2k\)</span> y
-                <span class="math inline">\(b=2m+1\)</span>: <span
-                class="math inline">\(a^2+b^2=4k^2+4m^2+4m+1=2\left(2k^2+2m^2+2m\right)+1\)</span>,
-                que es impar.</li>
+                <li>Tres múltiplos de <span
+                class="math inline">\(3\)</span> consecutivos son <span
+                class="math inline">\(3k\)</span>, <span
+                class="math inline">\(3k+3\)</span> y <span
+                class="math inline">\(3k+6\)</span>, con <span
+                class="math inline">\(k\in\mathbb Z\)</span>: <span
+                class="math display">\[
+                3k+(3k+3)+(3k+6)=9k+9=9(k+1)
+                \]</span> Es múltiplo de <span
+                class="math inline">\(9\)</span>, porque <span
+                class="math inline">\(k+1\)</span> es entero.</li>
+                <li>Se escriben <span
+                class="math inline">\(a=2k\)</span> y <span
+                class="math inline">\(b=2m+1\)</span>, con <span
+                class="math inline">\(k,m\in\mathbb Z\)</span> y letras
+                distintas, porque son dos números cualesquiera: <span
+                class="math display">\[
+                \begin{aligned}
+                a^2+b^2&amp;=(2k)^2+(2m+1)^2\\
+                &amp;=4k^2+4m^2+4m+1\\
+                &amp;=2\left(2k^2+2m^2+2m\right)+1
+                \end{aligned}
+                \]</span> Es un par más <span
+                class="math inline">\(1\)</span>, es decir, impar.</li>
                 </ol></li>
-                <li>Si las cifras son <span
-                class="math inline">\(a\)</span> y <span
-                class="math inline">\(b\)</span>, los números son <span
-                class="math inline">\(10a+b\)</span> y <span
-                class="math inline">\(10b+a\)</span>, y su suma es <span
-                class="math inline">\(11a+11b=11(a+b)\)</span>.</li>
-                <li>Con <span class="math inline">\(n-1\)</span>, <span
-                class="math inline">\(n\)</span> y <span
-                class="math inline">\(n+1\)</span>: <span
-                class="math inline">\((n-1)\,n\,(n+1)+n=n\left(n^2-1\right)+n=n^3\)</span>.</li>
+                <li>Si la cifra de las decenas es <span
+                class="math inline">\(a\)</span> y la de las unidades,
+                <span class="math inline">\(b\)</span>, el número es
+                <span class="math inline">\(10a+b\)</span>, y el que
+                resulta de invertir las cifras, <span
+                class="math inline">\(10b+a\)</span>: <span
+                class="math display">\[
+                (10a+b)+(10b+a)=11a+11b=11(a+b)
+                \]</span> Es múltiplo de <span
+                class="math inline">\(11\)</span>, porque <span
+                class="math inline">\(a+b\)</span> es entero.</li>
+                <li>Conviene llamar <span
+                class="math inline">\(n\)</span> al del medio: los tres
+                enteros son <span class="math inline">\(n-1\)</span>,
+                <span class="math inline">\(n\)</span> y <span
+                class="math inline">\(n+1\)</span>. Con la suma por
+                diferencia, <span
+                class="math inline">\((n-1)(n+1)=n^2-1\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                (n-1)\,n\,(n+1)+n&amp;=n\left(n^2-1\right)+n\\
+                &amp;=n^3-n+n\\
+                &amp;=n^3
+                \end{aligned}
+                \]</span></li>
                 <li><ol type="a">
-                <li>De <span class="math inline">\(n\)</span> y <span
-                class="math inline">\(n+1\)</span>, uno es par, así que
-                el producto también lo es.</li>
-                <li><span
-                class="math inline">\((2m+1)^2=4m^2+4m+1=4m(m+1)+1\)</span>.
-                Por el apartado a), <span
+                <li>Dos enteros consecutivos son <span
+                class="math inline">\(n\)</span> y <span
+                class="math inline">\(n+1\)</span>. Si <span
+                class="math inline">\(n\)</span> es par, el producto
+                <span class="math inline">\(n(n+1)\)</span> lleva un
+                factor par; si <span class="math inline">\(n\)</span> es
+                impar, el par es <span
+                class="math inline">\(n+1\)</span>. En los dos casos el
+                producto es par.</li>
+                <li>Un impar es <span
+                class="math inline">\(2m+1\)</span>, con <span
+                class="math inline">\(m\in\mathbb Z\)</span>: <span
+                class="math display">\[
+                (2m+1)^2=4m^2+4m+1=4m(m+1)+1
+                \]</span> Por el apartado a), <span
+                class="math inline">\(m(m+1)\)</span> es par: <span
                 class="math inline">\(m(m+1)=2j\)</span> con <span
-                class="math inline">\(j\in\mathbb Z\)</span>, así que
-                <span class="math inline">\((2m+1)^2=8j+1\)</span>.</li>
+                class="math inline">\(j\in\mathbb Z\)</span>. Entonces
+                <span
+                class="math inline">\((2m+1)^2=4\cdot2j+1=8j+1\)</span>,
+                una unidad más que un múltiplo de <span
+                class="math inline">\(8\)</span>.</li>
                 </ol></li>
+                </ol>
+                </div>
+                </section>
+                <section id="ejercicios-de-clase"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios de
+                clase</h4>
+                <ol start="9" type="1">
+                <li>Demuestre que, si <span
+                class="math inline">\(a\)</span> y <span
+                class="math inline">\(b\)</span> son dos enteros
+                consecutivos, <span
+                class="math inline">\(a^2+b^2+(ab)^2\)</span> es un
+                cuadrado perfecto.</li>
+                <li>Investigue en qué cifras pueden terminar los
+                cuadrados y los cubos de los enteros.</li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <p>Son los ejercicios 3 y 4 de la ficha de potencias y
+                radicales de clase.</p>
+                <ol start="9" type="1">
+                <li><p>La expresión no cambia al intercambiar <span
+                class="math inline">\(a\)</span> y <span
+                class="math inline">\(b\)</span>, así que se puede
+                suponer que <span class="math inline">\(b\)</span> es el
+                siguiente de <span class="math inline">\(a\)</span>:
+                <span class="math inline">\(b=a+1\)</span>. Se
+                desarrolla la suma de los dos cuadrados y se saca factor
+                común: <span class="math display">\[
+                \begin{aligned}
+                a^2+b^2&amp;=a^2+(a+1)^2\\
+                &amp;=2a^2+2a+1\\
+                &amp;=2a(a+1)+1=2ab+1
+                \end{aligned}
+                \]</span> Entonces la expresión es el cuadrado de un
+                binomio: <span class="math display">\[
+                a^2+b^2+(ab)^2=(ab)^2+2ab+1=(ab+1)^2
+                \]</span> Como <span class="math inline">\(ab+1\)</span>
+                es entero, es un cuadrado perfecto. Por ejemplo, con
+                <span class="math inline">\(a=2\)</span> y <span
+                class="math inline">\(b=3\)</span>: <span
+                class="math inline">\(4+9+36=49=7^2\)</span>.</p></li>
+                <li><p>La última cifra de un producto solo depende de
+                las últimas cifras de los factores. Si <span
+                class="math inline">\(n=10q+c\)</span>, donde <span
+                class="math inline">\(c\)</span> es la cifra de las
+                unidades, <span
+                class="math inline">\(n^2=100q^2+20qc+c^2\)</span> es un
+                múltiplo de <span class="math inline">\(10\)</span> más
+                <span class="math inline">\(c^2\)</span>: termina igual
+                que <span class="math inline">\(c^2\)</span>. Del mismo
+                modo, <span class="math inline">\(n^3\)</span> termina
+                igual que <span class="math inline">\(c^3\)</span>.
+                Basta mirar las diez cifras:</p>
+                <table>
+                <thead>
+                <tr>
+                <th scope="col">Última cifra de <span
+                class="math inline">\(n\)</span></th>
+                <th scope="col">0</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
+                <th scope="col">6</th>
+                <th scope="col">7</th>
+                <th scope="col">8</th>
+                <th scope="col">9</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>Última cifra de <span
+                class="math inline">\(n^2\)</span></td>
+                <td>0</td>
+                <td>1</td>
+                <td>4</td>
+                <td>9</td>
+                <td>6</td>
+                <td>5</td>
+                <td>6</td>
+                <td>9</td>
+                <td>4</td>
+                <td>1</td>
+                </tr>
+                <tr>
+                <td>Última cifra de <span
+                class="math inline">\(n^3\)</span></td>
+                <td>0</td>
+                <td>1</td>
+                <td>8</td>
+                <td>7</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>3</td>
+                <td>2</td>
+                <td>9</td>
+                </tr>
+                </tbody>
+                </table>
+                <p>Un cuadrado solo puede terminar en <span
+                class="math inline">\(0\)</span>, <span
+                class="math inline">\(1\)</span>, <span
+                class="math inline">\(4\)</span>, <span
+                class="math inline">\(5\)</span>, <span
+                class="math inline">\(6\)</span> o <span
+                class="math inline">\(9\)</span>: nunca en <span
+                class="math inline">\(2\)</span>, <span
+                class="math inline">\(3\)</span>, <span
+                class="math inline">\(7\)</span> ni <span
+                class="math inline">\(8\)</span>. Un cubo puede terminar
+                en cualquier cifra, y cada una sale de una sola cifra de
+                <span class="math inline">\(n\)</span>. En los dos
+                casos, el resultado es par si <span
+                class="math inline">\(n\)</span> es par e impar si <span
+                class="math inline">\(n\)</span> es impar. Con los
+                enteros negativos pasa lo mismo, mirando la última cifra
+                de su valor absoluto.</p></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1E,
                 preguntas 2, 3 y 6 (pág. 40). Soluciones del libro en la
-                página 756.</p>
+                página 756. Las páginas son las impresas al pie del
+                libro.</p>
                 </section>
                 </section>
                 </section>
@@ -3634,7 +3882,7 @@ Enfoques NS</p>
                 <section id="ejercicios-2"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="9" type="1">
+                <ol start="11" type="1">
                 <li>Utilice la inducción matemática para demostrar que,
                 para todo <span class="math inline">\(n\in\mathbb
                 Z^+\)</span>: <span class="math display">\[
@@ -3661,70 +3909,329 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <p>En todas, la conclusión es la frase del método: la
-                fórmula es cierta para <span
-                class="math inline">\(n=1\)</span> y, si lo es para
-                <span class="math inline">\(n=k\)</span>, también para
-                <span class="math inline">\(n=k+1\)</span>, así que por
-                inducción es cierta para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>.</p>
-                <ol start="9" type="1">
+                <ol start="11" type="1">
                 <li><ol type="a">
-                <li>Caso base: <span
-                class="math inline">\(4+1=5=1\cdot5\)</span>. Paso: si
-                la suma hasta <span class="math inline">\(k\)</span>
-                vale <span class="math inline">\(k(2k+3)\)</span>, la
-                suma hasta <span class="math inline">\(k+1\)</span> vale
-                <span
-                class="math inline">\(k(2k+3)+4k+5=2k^2+7k+5=(k+1)(2k+5)\)</span>,
-                que es <span class="math inline">\(n(2n+3)\)</span> con
-                <span class="math inline">\(n=k+1\)</span>.</li>
-                <li>Caso base: <span
-                class="math inline">\(2=3-1\)</span>. Paso: <span
-                class="math inline">\(3^k-1+2\cdot3^k=3\cdot3^k-1=3^{k+1}-1\)</span>.</li>
-                </ol></li>
-                <li>Caso base: <span
-                class="math inline">\(1\cdot3=3\)</span> y <span
-                class="math inline">\(\frac{1\cdot2\cdot9}{6}=3\)</span>.
-                Paso: <span class="math display">\[
-                \begin{aligned}
-                \frac{k(k+1)(2k+7)}{6}+(k+1)(k+3)&amp;=\frac{(k+1)\left(2k^2+13k+18\right)}{6}\\
-                &amp;=\frac{(k+1)(k+2)(2k+9)}{6}
-                \end{aligned}
-                \]</span> Es la fórmula con <span
-                class="math inline">\(n=k+1\)</span>, porque <span
-                class="math inline">\(2(k+1)+7=2k+9\)</span>.</li>
-                <li>Caso base: el miembro izquierdo es <span
-                class="math inline">\(\frac{3}{1\cdot4}=\frac34\)</span>
-                y el derecho, <span
-                class="math inline">\(1-\frac14=\frac34\)</span>. Paso:
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(4\cdot1+1=5\)</span> y
+                el derecho, <span
+                class="math inline">\(1\cdot(2+3)=5\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \sum_{r=1}^{k}(4r+1)=k(2k+3)
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\((k+1)(2k+5)\)</span>, que es
+                el miembro derecho con <span
+                class="math inline">\(n=k+1\)</span>. La suma hasta
+                <span class="math inline">\(k+1\)</span> es la suma
+                hasta <span class="math inline">\(k\)</span> más el
+                término <span class="math inline">\(r=k+1\)</span>, que
+                vale <span class="math inline">\(4(k+1)+1=4k+5\)</span>:
                 <span class="math display">\[
                 \begin{aligned}
-                1-\frac{1}{(k+1)^2}+\frac{2k+3}{(k+1)^2(k+2)^2}&amp;=1-\frac{(k+2)^2-(2k+3)}{(k+1)^2(k+2)^2}\\
-                &amp;=1-\frac{(k+1)^2}{(k+1)^2(k+2)^2}\\
+                \sum_{r=1}^{k+1}(4r+1)&amp;=k(2k+3)+4k+5\\
+                &amp;=2k^2+7k+5\\
+                &amp;=(k+1)(2k+5)
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(2\cdot3^0=2\)</span> y
+                el derecho, <span
+                class="math inline">\(3^1-1=2\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \sum_{r=1}^{k}2\cdot3^{\,r-1}=3^k-1
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\(3^{k+1}-1\)</span>. A la
+                suma hasta <span class="math inline">\(k\)</span> se le
+                añade el término <span
+                class="math inline">\(r=k+1\)</span>, que vale <span
+                class="math inline">\(2\cdot3^k\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                \sum_{r=1}^{k+1}2\cdot3^{\,r-1}&amp;=3^k-1+2\cdot3^k\\
+                &amp;=3\cdot3^k-1\\
+                &amp;=3^{k+1}-1
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                </ol></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(1\cdot3=3\)</span> y el
+                derecho, <span
+                class="math inline">\(\frac{1\cdot2\cdot9}{6}=3\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \sum_{r=1}^{k}r(r+2)=\frac{k(k+1)(2k+7)}{6}
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span
+                class="math inline">\(\frac{(k+1)(k+2)(2k+9)}{6}\)</span>,
+                porque <span
+                class="math inline">\(2(k+1)+7=2k+9\)</span>. A la suma
+                hasta <span class="math inline">\(k\)</span> se le añade
+                el término <span class="math inline">\(r=k+1\)</span>,
+                que vale <span
+                class="math inline">\((k+1)(k+3)\)</span>, y se saca
+                factor común <span class="math inline">\(k+1\)</span>:
+                <span class="math display">\[
+                \begin{aligned}
+                \sum_{r=1}^{k+1}r(r+2)&amp;=\frac{k(k+1)(2k+7)}{6}+(k+1)(k+3)\\
+                &amp;=\frac{(k+1)\bigl[k(2k+7)+6(k+3)\bigr]}{6}\\
+                &amp;=\frac{(k+1)\left(2k^2+13k+18\right)}{6}\\
+                &amp;=\frac{(k+1)(k+2)(2k+9)}{6}
+                \end{aligned}
+                \]</span> En el último paso, <span
+                class="math inline">\(2k^2+13k+18=(k+2)(2k+9)\)</span>.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span
+                class="math inline">\(\frac{3}{1^2\cdot2^2}=\frac34\)</span>
+                y el derecho, <span
+                class="math inline">\(1-\frac14=\frac34\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \sum_{r=1}^{k}\frac{2r+1}{r^2(r+1)^2}=1-\frac{1}{(k+1)^2}
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span
+                class="math inline">\(1-\frac{1}{(k+2)^2}\)</span>. A la
+                suma hasta <span class="math inline">\(k\)</span> se le
+                añade el término <span
+                class="math inline">\(r=k+1\)</span>, que vale <span
+                class="math inline">\(\frac{2k+3}{(k+1)^2(k+2)^2}\)</span>,
+                y las dos fracciones se juntan con denominador común:
+                <span class="math display">\[
+                \begin{aligned}
+                \sum_{r=1}^{k+1}\frac{2r+1}{r^2(r+1)^2}&amp;=1-\frac{1}{(k+1)^2}+\frac{2k+3}{(k+1)^2(k+2)^2}\\
+                &amp;=1-\frac{(k+2)^2-(2k+3)}{(k+1)^2(k+2)^2}\\
+                &amp;=1-\frac{k^2+2k+1}{(k+1)^2(k+2)^2}\\
                 &amp;=1-\frac{1}{(k+2)^2}
                 \end{aligned}
-                \]</span> Es la fórmula con <span
-                class="math inline">\(n=k+1\)</span>.</li>
-                <li>Caso base: <span
-                class="math inline">\(1\cdot3=3\)</span> y <span
-                class="math inline">\(\frac{1\cdot9+3}{4}=3\)</span>.
-                Paso: <span class="math display">\[
+                \]</span> En el último paso, <span
+                class="math inline">\(k^2+2k+1=(k+1)^2\)</span>, que se
+                simplifica.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(1\cdot3=3\)</span> y el
+                derecho, <span
+                class="math inline">\(\frac{1\cdot9+3}{4}=3\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \sum_{r=1}^{k}r\cdot3^{\,r}=\frac{(2k-1)\,3^{\,k+1}+3}{4}
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span
+                class="math inline">\(\frac{(2k+1)\,3^{\,k+2}+3}{4}\)</span>,
+                porque <span
+                class="math inline">\(2(k+1)-1=2k+1\)</span>. A la suma
+                hasta <span class="math inline">\(k\)</span> se le añade
+                el término <span class="math inline">\(r=k+1\)</span>,
+                que vale <span
+                class="math inline">\((k+1)\,3^{\,k+1}\)</span>, y se
+                agrupan las potencias de <span
+                class="math inline">\(3\)</span>: <span
+                class="math display">\[
                 \begin{aligned}
-                \frac{(2k-1)\,3^{\,k+1}+3}{4}+(k+1)\,3^{\,k+1}&amp;=\frac{(6k+3)\,3^{\,k+1}+3}{4}\\
+                \sum_{r=1}^{k+1}r\cdot3^{\,r}&amp;=\frac{(2k-1)\,3^{\,k+1}+3}{4}+(k+1)\,3^{\,k+1}\\
+                &amp;=\frac{(2k-1)\,3^{\,k+1}+4(k+1)\,3^{\,k+1}+3}{4}\\
+                &amp;=\frac{(6k+3)\,3^{\,k+1}+3}{4}\\
                 &amp;=\frac{(2k+1)\,3^{\,k+2}+3}{4}
                 \end{aligned}
-                \]</span> Es la fórmula con <span
-                class="math inline">\(n=k+1\)</span>, porque <span
-                class="math inline">\(2(k+1)-1=2k+1\)</span>.</li>
+                \]</span> En el último paso, <span
+                class="math inline">\(6k+3=3(2k+1)\)</span> y <span
+                class="math inline">\(3\cdot3^{\,k+1}=3^{\,k+2}\)</span>.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                </ol>
+                </div>
+                </section>
+                <section id="ejercicios-de-clase-1"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios de
+                clase</h4>
+                <ol start="15" type="1">
+                <li>Utilice la inducción matemática para demostrar que,
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>, <span class="math display">\[
+                1^3+2^3+3^3+\cdots+n^3=\frac{n^2(n+1)^2}{4}
+                \]</span></li>
+                <li>Utilice la inducción matemática para demostrar que,
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>, <span class="math display">\[
+                \left(1+\frac11\right)\left(1+\frac12\right)\left(1+\frac13\right)\cdots\left(1+\frac1n\right)=n+1
+                \]</span></li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <p>Son los ejercicios 15 y 16 de la ficha de sucesiones
+                e inducción de clase, con las cuatro partes del método.
+                La ficha escribe <span class="math inline">\(n\in\mathbb
+                N\)</span>: en clase, <span
+                class="math inline">\(\mathbb N\)</span> empieza en
+                <span class="math inline">\(1\)</span>.</p>
+                <ol start="15" type="1">
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(1^3=1\)</span> y el
+                derecho, <span
+                class="math inline">\(\frac{1^2\cdot2^2}{4}=1\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                1^3+2^3+\cdots+k^3=\frac{k^2(k+1)^2}{4}
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span
+                class="math inline">\(\frac{(k+1)^2(k+2)^2}{4}\)</span>.
+                A la suma hasta <span class="math inline">\(k\)</span>
+                se le añade el término siguiente, <span
+                class="math inline">\((k+1)^3\)</span>, y se saca factor
+                común <span class="math inline">\((k+1)^2\)</span>:
+                <span class="math display">\[
+                \begin{aligned}
+                1^3+\cdots+k^3+(k+1)^3&amp;=\frac{k^2(k+1)^2}{4}+(k+1)^3\\
+                &amp;=\frac{(k+1)^2\left(k^2+4(k+1)\right)}{4}\\
+                &amp;=\frac{(k+1)^2\left(k^2+4k+4\right)}{4}\\
+                &amp;=\frac{(k+1)^2(k+2)^2}{4}
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, el miembro izquierdo
+                vale <span class="math inline">\(1+\frac11=2\)</span> y
+                el derecho, <span class="math inline">\(1+1=2\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>: <span class="math display">\[
+                \left(1+\frac11\right)\left(1+\frac12\right)\cdots\left(1+\frac1k\right)=k+1
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\(k+2\)</span>. Al producto
+                hasta <span class="math inline">\(k\)</span>, que vale
+                <span class="math inline">\(k+1\)</span>, se le añade el
+                factor siguiente: <span class="math display">\[
+                \begin{aligned}
+                (k+1)\left(1+\frac{1}{k+1}\right)&amp;=(k+1)\cdot\frac{k+2}{k+1}\\
+                &amp;=k+2
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1G,
                 pregunta 1 y pregunta 2, apartados a, b, e, g, j, k y l
                 (págs. 50 y 51), y repaso del capítulo 1, preguntas 10,
                 12 y 14 (pág. 68); la 10 usa el factorial y la 14 el
-                binomio, de la unidad 2. Soluciones del libro en las
-                páginas 758 y 762.</p>
+                binomio, de la unidad 2. El apartado e de la pregunta 2
+                es la suma de cubos del ejercicio 15, de clase.
+                Soluciones del libro en las páginas 758 y 762.</p>
                 </section>
                 </section>
                 <section id="divisibilidad" class="level3"
@@ -3801,7 +4308,7 @@ Enfoques NS</p>
                 <section id="ejercicios-3"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="13" type="1">
+                <ol start="17" type="1">
                 <li>Utilice la inducción matemática para demostrar que,
                 para todo <span class="math inline">\(n\in\mathbb
                 Z^+\)</span>:
@@ -3821,63 +4328,238 @@ Enfoques NS</p>
                 para todo <span class="math inline">\(n\in\mathbb
                 Z^+\)</span>.</li>
                 <li>Utilice la inducción matemática para demostrar que
-                <span class="math inline">\(4^n+6n-1\)</span> es
+                <span class="math inline">\(7^n+3n-1\)</span> es
                 divisible por <span class="math inline">\(9\)</span>
                 para todo <span class="math inline">\(n\in\mathbb
                 Z^+\)</span>.</li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <p>En todas, la conclusión es la del ejemplo: por
-                inducción, la expresión es divisible para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>.</p>
-                <ol start="13" type="1">
+                <ol start="17" type="1">
                 <li><ol type="a">
-                <li>Caso base: <span
-                class="math inline">\(9+4=13\)</span>. Paso: si <span
-                class="math inline">\(3^{k+1}+4^{2k-1}=13A\)</span>,
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(3^{n+1}+4^{2n-1}\)</span> es
+                divisible por <span class="math inline">\(13\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(3^2+4^1=13=13\cdot1\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(3^{k+1}+4^{2k-1}=13A\)</span> con
+                <span class="math inline">\(A\in\mathbb Z\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Con <span
+                class="math inline">\(n=k+1\)</span> la expresión es
+                <span class="math inline">\(3^{k+2}+4^{2k+1}\)</span>.
+                Como <span
+                class="math inline">\(3^{k+2}=3\cdot3^{k+1}\)</span> y
+                <span
+                class="math inline">\(4^{2k+1}=16\cdot4^{2k-1}\)</span>,
+                se escribe de modo que aparezca la de la hipótesis:
                 <span class="math display">\[
                 \begin{aligned}
                 3^{k+2}+4^{2k+1}&amp;=3\cdot3^{k+1}+16\cdot4^{2k-1}\\
                 &amp;=3\left(3^{k+1}+4^{2k-1}\right)+13\cdot4^{2k-1}\\
+                &amp;=3\cdot13A+13\cdot4^{2k-1}\\
                 &amp;=13\left(3A+4^{2k-1}\right)
                 \end{aligned}
-                \]</span></li>
-                <li>Caso base: <span
-                class="math inline">\(1+8+27=36=9\cdot4\)</span>. Paso:
-                si <span
-                class="math inline">\(k^3+(k+1)^3+(k+2)^3=9A\)</span>,
-                la suma siguiente quita <span
-                class="math inline">\(k^3\)</span> y añade <span
-                class="math inline">\((k+3)^3\)</span>: <span
-                class="math display">\[
+                \]</span> Es múltiplo de <span
+                class="math inline">\(13\)</span>, porque <span
+                class="math inline">\(3A+4^{2k-1}\)</span> es
+                entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(3^{n+1}+4^{2n-1}\)</span> es
+                divisible por <span class="math inline">\(13\)</span>
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(n^3+(n+1)^3+(n+2)^3\)</span> es
+                divisible por <span class="math inline">\(9\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(1+8+27=36=9\cdot4\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(k^3+(k+1)^3+(k+2)^3=9A\)</span>
+                con <span class="math inline">\(A\in\mathbb
+                Z\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Con <span
+                class="math inline">\(n=k+1\)</span> la suma es <span
+                class="math inline">\((k+1)^3+(k+2)^3+(k+3)^3\)</span>:
+                la de la hipótesis sin <span
+                class="math inline">\(k^3\)</span> y con <span
+                class="math inline">\((k+3)^3\)</span>. Como <span
+                class="math inline">\((k+3)^3=k^3+9k^2+27k+27\)</span>:
+                <span class="math display">\[
                 \begin{aligned}
                 (k+1)^3+(k+2)^3+(k+3)^3&amp;=9A-k^3+(k+3)^3\\
                 &amp;=9A+9k^2+27k+27\\
                 &amp;=9\left(A+k^2+3k+3\right)
                 \end{aligned}
-                \]</span></li>
+                \]</span> Es múltiplo de <span
+                class="math inline">\(9\)</span>, porque <span
+                class="math inline">\(A+k^2+3k+3\)</span> es
+                entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(n^3+(n+1)^3+(n+2)^3\)</span> es
+                divisible por <span class="math inline">\(9\)</span>
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
                 </ol></li>
-                <li>Caso base: <span
-                class="math inline">\(5+22=27=3\cdot9\)</span>. Paso: si
-                <span class="math inline">\(5^k+2\cdot11^k=3A\)</span>,
-                <span class="math display">\[
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(5^n+2\cdot11^n\)</span> es
+                divisible por <span class="math inline">\(3\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(5+22=27=3\cdot9\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(5^k+2\cdot11^k=3A\)</span> con
+                <span class="math inline">\(A\in\mathbb Z\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Como <span
+                class="math inline">\(5^{k+1}=5\cdot5^k\)</span> y <span
+                class="math inline">\(2\cdot11^{k+1}=22\cdot11^k\)</span>,
+                la expresión siguiente se escribe de modo que aparezca
+                la de la hipótesis: <span class="math display">\[
                 \begin{aligned}
                 5^{k+1}+2\cdot11^{k+1}&amp;=5\cdot5^k+22\cdot11^k\\
                 &amp;=5\left(5^k+2\cdot11^k\right)+12\cdot11^k\\
+                &amp;=5\cdot3A+12\cdot11^k\\
                 &amp;=3\left(5A+4\cdot11^k\right)
                 \end{aligned}
-                \]</span></li>
-                <li>Caso base: <span
-                class="math inline">\(4+6-1=9\)</span>. Paso: si <span
-                class="math inline">\(4^k+6k-1=9A\)</span>, <span
+                \]</span> Es múltiplo de <span
+                class="math inline">\(3\)</span>, porque <span
+                class="math inline">\(5A+4\cdot11^k\)</span> es
+                entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(5^n+2\cdot11^n\)</span> es
+                divisible por <span class="math inline">\(3\)</span>
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(7^n+3n-1\)</span> es divisible por
+                <span class="math inline">\(9\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(7+3-1=9=9\cdot1\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(7^k+3k-1=9A\)</span> con <span
+                class="math inline">\(A\in\mathbb Z\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Como <span
+                class="math inline">\(7^{k+1}=7\cdot7^k\)</span>, la
+                expresión siguiente se escribe de modo que aparezca la
+                de la hipótesis, y lo que sobra se compensa: <span
                 class="math display">\[
                 \begin{aligned}
-                4^{k+1}+6(k+1)-1&amp;=4\cdot4^k+6k+5\\
-                &amp;=4\left(4^k+6k-1\right)-18k+9\\
-                &amp;=9\,(4A-2k+1)
+                7^{k+1}+3(k+1)-1&amp;=7\cdot7^k+3k+2\\
+                &amp;=7\left(7^k+3k-1\right)-18k+9\\
+                &amp;=7\cdot9A-18k+9\\
+                &amp;=9\,(7A-2k+1)
                 \end{aligned}
-                \]</span></li>
+                \]</span> Es múltiplo de <span
+                class="math inline">\(9\)</span>, porque <span
+                class="math inline">\(7A-2k+1\)</span> es entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(7^n+3n-1\)</span> es divisible por
+                <span class="math inline">\(9\)</span> para todo <span
+                class="math inline">\(n\in\mathbb Z^+\)</span>.</li>
+                </ul></li>
+                </ol>
+                </div>
+                </section>
+                <section id="ejercicios-de-clase-2"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios de
+                clase</h4>
+                <ol start="20" type="1">
+                <li>Utilice la inducción matemática para demostrar que
+                <span class="math inline">\(2^{2n}-3n-1\)</span> es
+                divisible por <span class="math inline">\(9\)</span>
+                para todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <p>Es el ejercicio 17 de la ficha de sucesiones e
+                inducción de clase.</p>
+                <ol start="20" type="1">
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(2^{2n}-3n-1\)</span> es divisible
+                por <span class="math inline">\(9\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(2^2-3-1=0=9\cdot0\)</span>: es
+                divisible por <span class="math inline">\(9\)</span>,
+                así que <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(2^{2k}-3k-1=9A\)</span> con <span
+                class="math inline">\(A\in\mathbb Z\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Como <span
+                class="math inline">\(2^{2(k+1)}=4\cdot2^{2k}\)</span>,
+                la expresión siguiente se escribe de modo que aparezca
+                la de la hipótesis: <span class="math display">\[
+                \begin{aligned}
+                2^{2(k+1)}-3(k+1)-1&amp;=4\cdot2^{2k}-3k-4\\
+                &amp;=4\left(2^{2k}-3k-1\right)+9k\\
+                &amp;=4\cdot9A+9k\\
+                &amp;=9\,(4A+k)
+                \end{aligned}
+                \]</span> Es múltiplo de <span
+                class="math inline">\(9\)</span>, porque <span
+                class="math inline">\(4A+k\)</span> es entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(2^{2n}-3n-1\)</span> es divisible
+                por <span class="math inline">\(9\)</span> para todo
+                <span class="math inline">\(n\in\mathbb Z^+\)</span>.
+                También lo es para <span
+                class="math inline">\(n=0\)</span>, porque <span
+                class="math inline">\(1-0-1=0\)</span>.</li>
+                </ul></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1G,
@@ -3937,9 +4619,12 @@ Enfoques NS</p>
                 class="math inline">\(\mathbb
                 N=\{0,1,2,3,\ldots\}\)</span> incluye el <span
                 class="math inline">\(0\)</span>, a diferencia de
-                Matemáticas I, y <span class="math inline">\(\mathbb
-                Z^+=\{1,2,3,\ldots\}\)</span>. Si el enunciado dice
-                «para todo <span class="math inline">\(n\in\mathbb
+                Matemáticas I y de lo que se escribe en clase, donde
+                <span class="math inline">\(\mathbb N\)</span> empieza
+                en <span class="math inline">\(1\)</span>, y <span
+                class="math inline">\(\mathbb
+                Z^+=\{1,2,3,\ldots\}\)</span>. Si un enunciado del IB
+                dice «para todo <span class="math inline">\(n\in\mathbb
                 N\)</span>», el caso base es <span
                 class="math inline">\(n=0\)</span>; si dice «para todo
                 entero <span class="math inline">\(n\geq4\)</span>», es
@@ -3967,7 +4652,7 @@ Enfoques NS</p>
                 <section id="ejercicios-4"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="16" type="1">
+                <ol start="21" type="1">
                 <li>Una sucesión cumple <span
                 class="math inline">\(u_1=6\)</span> y <span
                 class="math inline">\(u_{n+1}=2u_n-5\)</span>.
@@ -3999,49 +4684,223 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="16" type="1">
+                <ol start="21" type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(u_2=7\)</span>, <span
-                class="math inline">\(u_3=9\)</span> y <span
-                class="math inline">\(u_4=13\)</span>.</li>
-                <li>Restando <span class="math inline">\(5\)</span>
-                quedan <span class="math inline">\(1\)</span>, <span
+                <li>Con la ley de recurrencia: <span
+                class="math inline">\(u_2=2\cdot6-5=7\)</span>, <span
+                class="math inline">\(u_3=2\cdot7-5=9\)</span> y <span
+                class="math inline">\(u_4=2\cdot9-5=13\)</span>.</li>
+                <li>Restando <span class="math inline">\(5\)</span> a
+                cada término quedan <span
+                class="math inline">\(1\)</span>, <span
                 class="math inline">\(2\)</span>, <span
-                class="math inline">\(4\)</span>, <span
-                class="math inline">\(8\)</span>: <span
+                class="math inline">\(4\)</span> y <span
+                class="math inline">\(8\)</span>, las potencias de <span
+                class="math inline">\(2\)</span> desde <span
+                class="math inline">\(2^0\)</span>: <span
                 class="math inline">\(u_n=2^{\,n-1}+5\)</span>.</li>
-                <li>Caso base: <span
-                class="math inline">\(2^0+5=6=u_1\)</span>. Paso: si
-                <span class="math inline">\(u_k=2^{\,k-1}+5\)</span>,
-                <span
-                class="math inline">\(u_{k+1}=2\left(2^{\,k-1}+5\right)-5=2^k+5\)</span>.
-                Por inducción, es cierta para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>.</li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad <span
+                class="math inline">\(u_n=2^{\,n-1}+5\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(2^0+5=6=u_1\)</span>: <span
+                class="math inline">\(P(1)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(u_k=2^{\,k-1}+5\)</span> para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\(u_{k+1}=2^k+5\)</span>. Con
+                la ley de recurrencia y la hipótesis: <span
+                class="math display">\[
+                \begin{aligned}
+                u_{k+1}&amp;=2u_k-5\\
+                &amp;=2\left(2^{\,k-1}+5\right)-5\\
+                &amp;=2^k+10-5=2^k+5
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
                 </ol></li>
-                <li>Caso base: <span
-                class="math inline">\(u_1=\frac12=\frac{1}{1+1}\)</span>.
-                Paso: si <span
-                class="math inline">\(u_k=\frac{1}{k+1}\)</span>, <span
-                class="math inline">\(u_{k+1}=\frac{1/(k+1)}{1+1/(k+1)}=\frac{1/(k+1)}{(k+2)/(k+1)}=\frac{1}{k+2}\)</span>.
-                Por inducción, es cierta para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>.</li>
-                <li>Caso base, <span class="math inline">\(n=0\)</span>:
-                <span class="math inline">\(7^0-1=0=6\cdot0\)</span>.
-                Paso: si <span class="math inline">\(7^k-1=6A\)</span>,
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad <span
+                class="math inline">\(u_n=\frac{1}{n+1}\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(\frac{1}{1+1}=\frac12=u_1\)</span>:
+                <span class="math inline">\(P(1)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(u_k=\frac{1}{k+1}\)</span> para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
                 <span
-                class="math inline">\(7^{k+1}-1=7\,(6A+1)-1=42A+6=6\,(7A+1)\)</span>.
-                Por inducción, es divisible para todo <span
+                class="math inline">\(u_{k+1}=\frac{1}{k+2}\)</span>.
+                Con la ley de recurrencia y la hipótesis: <span
+                class="math display">\[
+                \begin{aligned}
+                u_{k+1}&amp;=\frac{u_k}{1+u_k}=\frac{\frac{1}{k+1}}{1+\frac{1}{k+1}}\\
+                &amp;=\frac{\frac{1}{k+1}}{\frac{k+2}{k+1}}=\frac{1}{k+2}
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(1)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo <span class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</li>
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span class="math inline">\(7^n-1\)</span>
+                es divisible por <span
+                class="math inline">\(6\)</span>». Como el enunciado
+                dice <span class="math inline">\(n\in\mathbb N\)</span>,
+                el caso base es <span
+                class="math inline">\(n=0\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=0\)</span>, <span
+                class="math inline">\(7^0-1=0=6\cdot0\)</span>: <span
+                class="math inline">\(P(0)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                N\)</span>, <span
+                class="math inline">\(7^k-1=6A\)</span> con <span
+                class="math inline">\(A\in\mathbb Z\)</span>, es decir,
+                <span class="math inline">\(7^k=6A+1\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Como <span
+                class="math inline">\(7^{k+1}=7\cdot7^k\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                7^{k+1}-1&amp;=7\,(6A+1)-1\\
+                &amp;=42A+6\\
+                &amp;=6\,(7A+1)
+                \end{aligned}
+                \]</span> Es múltiplo de <span
+                class="math inline">\(6\)</span>, porque <span
+                class="math inline">\(7A+1\)</span> es entero.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(0)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(7^n-1\)</span> es divisible por
+                <span class="math inline">\(6\)</span> para todo <span
                 class="math inline">\(n\in\mathbb N\)</span>.</li>
-                <li>Caso base, <span class="math inline">\(n=2\)</span>:
-                <span class="math inline">\(1-\frac12=\frac12\)</span>.
-                Paso: si el producto hasta <span
-                class="math inline">\(k\)</span> vale <span
-                class="math inline">\(\frac1k\)</span>, el producto
-                hasta <span class="math inline">\(k+1\)</span> vale
-                <span
-                class="math inline">\(\frac1k\left(1-\frac{1}{k+1}\right)=\frac1k\cdot\frac{k}{k+1}=\frac{1}{k+1}\)</span>.
-                Por inducción, es cierta para todo entero <span
+                </ul></li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad del enunciado. Empieza en <span
+                class="math inline">\(n=2\)</span>, así que ese es el
+                caso base.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=2\)</span>, el miembro izquierdo
+                vale <span
+                class="math inline">\(1-\frac12=\frac12\)</span> y el
+                derecho, <span class="math inline">\(\frac12\)</span>:
+                <span class="math inline">\(P(2)\)</span> es
+                verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(P(k)\)</span> es verdadera para
+                algún entero <span
+                class="math inline">\(k\geq2\)</span>: <span
+                class="math display">\[
+                \left(1-\frac12\right)\left(1-\frac13\right)\cdots\left(1-\frac1k\right)=\frac1k
+                \]</span></li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\(\frac{1}{k+1}\)</span>. Al
+                producto hasta <span class="math inline">\(k\)</span>,
+                que vale <span class="math inline">\(\frac1k\)</span>,
+                se le añade el factor siguiente: <span
+                class="math display">\[
+                \begin{aligned}
+                \frac1k\left(1-\frac{1}{k+1}\right)&amp;=\frac1k\cdot\frac{k}{k+1}\\
+                &amp;=\frac{1}{k+1}
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(2)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(P(n)\)</span> es verdadera para
+                todo entero <span
                 class="math inline">\(n\geq2\)</span>.</li>
+                </ul></li>
+                </ol>
+                </div>
+                </section>
+                <section id="ejercicios-de-clase-3"
+                class="level4 ejercicios unnumbered">
+                <h4 class="ejercicios unnumbered">Ejercicios de
+                clase</h4>
+                <ol start="25" type="1">
+                <li>En cierto país solo hay monedas de <span
+                class="math inline">\(3\)</span> y de <span
+                class="math inline">\(5\)</span> unidades monetarias.
+                Demuestre que con ellas se puede pagar cualquier
+                cantidad entera mayor o igual que <span
+                class="math inline">\(8\)</span>.</li>
+                </ol>
+                <div class="resultado plegable bloque-didactico">
+                <p><span class="etiqueta-bloque">Soluciones</span></p>
+                <p>Es el ejercicio 14 de la ficha de sucesiones e
+                inducción de clase. Se demuestra por inducción, con el
+                caso base en <span
+                class="math inline">\(n=8\)</span>.</p>
+                <ol start="25" type="1">
+                <li>Pagar <span class="math inline">\(n\)</span> es
+                escribir <span class="math inline">\(n=3a+5b\)</span>,
+                con <span class="math inline">\(a\)</span> monedas de
+                <span class="math inline">\(3\)</span> y <span
+                class="math inline">\(b\)</span> de <span
+                class="math inline">\(5\)</span>, donde <span
+                class="math inline">\(a\)</span> y <span
+                class="math inline">\(b\)</span> son enteros no
+                negativos.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=8\)</span>: <span
+                class="math inline">\(8=3+5\)</span>, una moneda de
+                cada.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún entero <span
+                class="math inline">\(k\geq8\)</span>, <span
+                class="math inline">\(k=3a+5b\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Hay que pagar <span
+                class="math inline">\(k+1\)</span>, y hay dos casos. Si
+                <span class="math inline">\(b\geq1\)</span>, se cambia
+                una moneda de <span class="math inline">\(5\)</span> por
+                dos de <span class="math inline">\(3\)</span>, que suman
+                una unidad más: <span
+                class="math inline">\(k+1=3(a+2)+5(b-1)\)</span>. Si
+                <span class="math inline">\(b=0\)</span>, entonces <span
+                class="math inline">\(k=3a\geq8\)</span> y hay al menos
+                tres monedas de <span class="math inline">\(3\)</span>;
+                se cambian tres de ellas por dos de <span
+                class="math inline">\(5\)</span>, que también suman una
+                unidad más: <span
+                class="math inline">\(k+1=3(a-3)+5\cdot2\)</span>.</li>
+                <li><strong>Conclusión.</strong> Se puede pagar <span
+                class="math inline">\(8\)</span> y, si se puede pagar
+                <span class="math inline">\(k\)</span>, también <span
+                class="math inline">\(k+1\)</span>. Por el principio de
+                inducción matemática, se puede pagar cualquier cantidad
+                entera <span class="math inline">\(n\geq8\)</span>.</li>
+                </ul></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1G,
@@ -4121,7 +4980,7 @@ Enfoques NS</p>
                 <section id="ejercicios-5"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="20" type="1">
+                <ol start="26" type="1">
                 <li>Utilice la inducción matemática para demostrar que
                 <span class="math inline">\(2^n\geq n+1\)</span> para
                 todo <span class="math inline">\(n\in\mathbb
@@ -4138,31 +4997,85 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="20" type="1">
-                <li>Caso base, <span class="math inline">\(n=0\)</span>:
-                <span class="math inline">\(2^0=1\geq0+1\)</span>. Paso:
-                si <span class="math inline">\(2^k\geq k+1\)</span>,
-                <span
-                class="math inline">\(2^{k+1}=2\cdot2^k\geq2(k+1)=2k+2\geq
-                k+2\)</span>, que es la desigualdad con <span
-                class="math inline">\(n=k+1\)</span>. Por inducción, es
-                cierta para todo <span class="math inline">\(n\in\mathbb
-                N\)</span>.</li>
-                <li><ol type="a">
-                <li><span class="math inline">\(5^2=25\)</span> y <span
-                class="math inline">\(4^2+3^2=25\)</span>: no es
-                mayor.</li>
-                <li>Caso base, <span class="math inline">\(n=3\)</span>:
-                <span class="math inline">\(125&gt;64+27=91\)</span>.
-                Paso: si <span
-                class="math inline">\(5^k&gt;4^k+3^k\)</span>, <span
+                <ol start="26" type="1">
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                desigualdad <span class="math inline">\(2^n\geq
+                n+1\)</span>. Como el enunciado dice <span
+                class="math inline">\(n\in\mathbb N\)</span>, el caso
+                base es <span class="math inline">\(n=0\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=0\)</span>, <span
+                class="math inline">\(2^0=1\)</span> y <span
+                class="math inline">\(0+1=1\)</span>: se cumple <span
+                class="math inline">\(1\geq1\)</span>, así que <span
+                class="math inline">\(P(0)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(2^k\geq k+1\)</span> para algún
+                <span class="math inline">\(k\in\mathbb N\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span class="math inline">\(2^{k+1}\geq k+2\)</span>. Se
+                encadenan comparaciones en el mismo sentido: <span
                 class="math display">\[
                 \begin{aligned}
-                5^{k+1}&amp;=5\cdot5^k&gt;5\cdot4^k+5\cdot3^k\\
-                &amp;&gt;4\cdot4^k+3\cdot3^k=4^{k+1}+3^{k+1}
+                2^{k+1}&amp;=2\cdot2^k\\
+                &amp;\geq2(k+1)\\
+                &amp;=2k+2\geq k+2
                 \end{aligned}
-                \]</span> Por inducción, es cierta para todo entero
-                <span class="math inline">\(n\geq3\)</span>.</li>
+                \]</span> La primera comparación es la hipótesis
+                multiplicada por <span class="math inline">\(2\)</span>,
+                y la última vale porque <span
+                class="math inline">\(2k\geq k\)</span> cuando <span
+                class="math inline">\(k\geq0\)</span>.</li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(0)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(2^n\geq n+1\)</span> para todo
+                <span class="math inline">\(n\in\mathbb N\)</span>.</li>
+                </ul></li>
+                <li><ol type="a">
+                <li>Para <span class="math inline">\(n=2\)</span>, <span
+                class="math inline">\(5^2=25\)</span> y <span
+                class="math inline">\(4^2+3^2=16+9=25\)</span>: los dos
+                miembros son iguales, así que <span
+                class="math inline">\(25&gt;25\)</span> es falso.</li>
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                desigualdad <span
+                class="math inline">\(5^n&gt;4^n+3^n\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=3\)</span>, <span
+                class="math inline">\(5^3=125\)</span> y <span
+                class="math inline">\(4^3+3^3=64+27=91\)</span>: como
+                <span class="math inline">\(125&gt;91\)</span>, <span
+                class="math inline">\(P(3)\)</span> es verdadera.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
+                class="math inline">\(5^k&gt;4^k+3^k\)</span> para algún
+                entero <span class="math inline">\(k\geq3\)</span>.</li>
+                <li><strong>Paso inductivo.</strong> Hay que llegar a
+                <span
+                class="math inline">\(5^{k+1}&gt;4^{k+1}+3^{k+1}\)</span>.
+                Se multiplica la hipótesis por <span
+                class="math inline">\(5\)</span> y después se cambian
+                los dos cincos por números menores: <span
+                class="math display">\[
+                \begin{aligned}
+                5^{k+1}&amp;=5\cdot5^k\\
+                &amp;&gt;5\cdot4^k+5\cdot3^k\\
+                &amp;&gt;4\cdot4^k+3\cdot3^k\\
+                &amp;=4^{k+1}+3^{k+1}
+                \end{aligned}
+                \]</span></li>
+                <li><strong>Conclusión.</strong> <span
+                class="math inline">\(P(3)\)</span> es verdadera y, si
+                <span class="math inline">\(P(k)\)</span> lo es, también
+                lo es <span class="math inline">\(P(k+1)\)</span>. Por
+                el principio de inducción matemática, <span
+                class="math inline">\(5^n&gt;4^n+3^n\)</span> para todo
+                entero <span class="math inline">\(n\geq3\)</span>.</li>
+                </ul></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -4258,12 +5171,13 @@ Enfoques NS</p>
                 <section id="ejercicios-6"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="22" type="1">
+                <ol start="28" type="1">
                 <li>Demuestre por contradicción que son irracionales:
                 a) <span class="math inline">\(\log_5 2\)</span>.
                 b) <span class="math inline">\(\log_3 5\)</span>.</li>
                 <li><ol type="a">
                 <li>Demuestre por contradicción que, si <span
+                class="math inline">\(n\)</span> es entero y <span
                 class="math inline">\(n^3\)</span> es múltiplo de <span
                 class="math inline">\(3\)</span>, <span
                 class="math inline">\(n\)</span> es múltiplo de <span
@@ -4294,83 +5208,153 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="22" type="1">
+                <ol start="28" type="1">
                 <li><ol type="a">
-                <li>Si <span class="math inline">\(\log_5 2=\frac
-                pq\)</span> con <span
-                class="math inline">\(p,q\in\mathbb Z^+\)</span>,
-                entonces <span class="math inline">\(5^p=2^q\)</span>:
-                un impar igual a un par, imposible.</li>
-                <li>Si <span class="math inline">\(\log_3 5=\frac
-                pq\)</span>, entonces <span
-                class="math inline">\(3^p=5^q\)</span>: el primero es
-                múltiplo de <span class="math inline">\(3\)</span> y el
-                segundo no, imposible. En los dos casos la suposición es
-                falsa.</li>
+                <li>Supongamos que <span class="math inline">\(\log_5
+                2\)</span> es racional. Como es positivo, <span
+                class="math inline">\(\log_5 2=\frac pq\)</span> con
+                <span class="math inline">\(p,q\in\mathbb Z^+\)</span>,
+                y por la definición de logaritmo: <span
+                class="math display">\[
+                5^{p/q}=2\ \Rightarrow\ 5^p=2^q
+                \]</span> Pero <span class="math inline">\(5^p\)</span>
+                es impar y <span class="math inline">\(2^q\)</span> es
+                par, así que no pueden ser iguales. La suposición es
+                falsa: <span class="math inline">\(\log_5 2\)</span> es
+                irracional.</li>
+                <li>Supongamos que <span class="math inline">\(\log_3
+                5\)</span> es racional. Como es positivo, <span
+                class="math inline">\(\log_3 5=\frac pq\)</span> con
+                <span class="math inline">\(p,q\in\mathbb Z^+\)</span>,
+                y entonces: <span class="math display">\[
+                3^{p/q}=5\ \Rightarrow\ 3^p=5^q
+                \]</span> Pero <span class="math inline">\(3^p\)</span>
+                es múltiplo de <span class="math inline">\(3\)</span> y
+                <span class="math inline">\(5^q\)</span> no lo es,
+                porque su único factor primo es el <span
+                class="math inline">\(5\)</span>. No pueden ser iguales,
+                así que la suposición es falsa: <span
+                class="math inline">\(\log_3 5\)</span> es
+                irracional.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Si <span class="math inline">\(n\)</span> no fuera
-                múltiplo de <span class="math inline">\(3\)</span>,
-                sería <span class="math inline">\(3k+1\)</span> o <span
-                class="math inline">\(3k+2\)</span>, y <span
+                <li>Supongamos que <span
+                class="math inline">\(n^3\)</span> es múltiplo de <span
+                class="math inline">\(3\)</span> y que <span
+                class="math inline">\(n\)</span> no lo es. Entonces
+                <span class="math inline">\(n\)</span> es <span
+                class="math inline">\(3k+1\)</span> o <span
+                class="math inline">\(3k+2\)</span>, con <span
+                class="math inline">\(k\in\mathbb Z\)</span>, y se
+                desarrolla el cubo en los dos casos: <span
                 class="math display">\[
                 \begin{aligned}
-                (3k+1)^3&amp;=3\left(9k^3+9k^2+3k\right)+1\\
-                (3k+2)^3&amp;=3\left(9k^3+18k^2+12k+2\right)+2
+                (3k+1)^3&amp;=27k^3+27k^2+9k+1\\
+                &amp;=3\left(9k^3+9k^2+3k\right)+1\\[4pt]
+                (3k+2)^3&amp;=27k^3+54k^2+36k+8\\
+                &amp;=3\left(9k^3+18k^2+12k+2\right)+2
                 \end{aligned}
-                \]</span> Ninguno de los dos es múltiplo de <span
-                class="math inline">\(3\)</span>, en contra de lo que se
-                sabe.</li>
-                <li>Si <span class="math inline">\(\sqrt[3]{3}=\frac
-                pq\)</span>, fracción irreducible, <span
-                class="math inline">\(p^3=3q^3\)</span> es múltiplo de
-                <span class="math inline">\(3\)</span> y, por a), <span
-                class="math inline">\(p\)</span> también: <span
-                class="math inline">\(p=3m\)</span>. Entonces <span
-                class="math inline">\(27m^3=3q^3\)</span>, es decir,
-                <span class="math inline">\(q^3=9m^3\)</span>, que es
-                múltiplo de <span class="math inline">\(3\)</span>, y
-                <span class="math inline">\(q\)</span> también. Pero
-                <span class="math inline">\(p\)</span> y <span
+                \]</span> En los dos casos <span
+                class="math inline">\(n^3\)</span> deja resto <span
+                class="math inline">\(1\)</span> o <span
+                class="math inline">\(2\)</span> al dividirlo entre
+                <span class="math inline">\(3\)</span>: no es múltiplo
+                de <span class="math inline">\(3\)</span>, en contra de
+                lo supuesto. Por tanto, <span
+                class="math inline">\(n\)</span> es múltiplo de <span
+                class="math inline">\(3\)</span>.</li>
+                <li>Supongamos que <span
+                class="math inline">\(\sqrt[3]{3}\)</span> es racional:
+                <span class="math inline">\(\sqrt[3]{3}=\frac
+                pq\)</span>, con <span
+                class="math inline">\(p,q\in\mathbb Z^+\)</span> y la
+                fracción irreducible. Elevando al cubo, <span
+                class="math inline">\(\frac{p^3}{q^3}=3\)</span>, es
+                decir, <span class="math inline">\(p^3=3q^3\)</span>.
+                Entonces <span class="math inline">\(p^3\)</span> es
+                múltiplo de <span class="math inline">\(3\)</span> y,
+                por a), <span class="math inline">\(p\)</span> también:
+                <span class="math inline">\(p=3m\)</span>. Se sustituye:
+                <span class="math display">\[
+                (3m)^3=3q^3\ \Rightarrow\ 27m^3=3q^3\ \Rightarrow\
+                q^3=9m^3
+                \]</span> Así, <span class="math inline">\(q^3\)</span>
+                es múltiplo de <span class="math inline">\(3\)</span> y,
+                por a), <span class="math inline">\(q\)</span> también.
+                Pero <span class="math inline">\(p\)</span> y <span
                 class="math inline">\(q\)</span> no podían ser múltiplos
-                de <span class="math inline">\(3\)</span> a la vez.</li>
+                de <span class="math inline">\(3\)</span> a la vez,
+                porque la fracción era irreducible. La suposición es
+                falsa: <span class="math inline">\(\sqrt[3]{3}\)</span>
+                es irracional.</li>
                 </ol></li>
-                <li>Si <span
-                class="math inline">\(x+\frac1x&lt;2\)</span> para algún
-                <span class="math inline">\(x&gt;0\)</span>,
-                multiplicando por <span
-                class="math inline">\(x&gt;0\)</span> queda <span
-                class="math inline">\(x^2+1&lt;2x\)</span>, es decir,
-                <span class="math inline">\((x-1)^2&lt;0\)</span>: un
-                cuadrado negativo, imposible.</li>
-                <li>Si <span class="math inline">\(n^2+n+1=m^2\)</span>
+                <li>Supongamos que hay algún <span
+                class="math inline">\(x&gt;0\)</span> con <span
+                class="math inline">\(x+\frac1x&lt;2\)</span>. Se
+                multiplica por <span class="math inline">\(x\)</span>,
+                que es positivo, de modo que la desigualdad no cambia de
+                sentido: <span class="math display">\[
+                \begin{aligned}
+                &amp;x^2+1&lt;2x\\
+                \Rightarrow{}&amp;x^2-2x+1&lt;0\\
+                \Rightarrow{}&amp;(x-1)^2&lt;0
+                \end{aligned}
+                \]</span> Pero un cuadrado no puede ser negativo. La
+                suposición es falsa: <span
+                class="math inline">\(x+\frac1x\geq2\)</span> para todo
+                <span class="math inline">\(x&gt;0\)</span>.</li>
+                <li>Supongamos que <span
+                class="math inline">\(n^2+n+1=m^2\)</span> para algún
+                <span class="math inline">\(n\in\mathbb Z^+\)</span>,
                 con <span class="math inline">\(m\in\mathbb
-                Z^+\)</span>, como <span
-                class="math inline">\(n^2&lt;n^2+n+1&lt;n^2+2n+1=(n+1)^2\)</span>,
-                sería <span
-                class="math inline">\(n&lt;m&lt;n+1\)</span>, y entre
-                dos enteros consecutivos no hay ningún entero.
-                Contradicción.</li>
+                Z^+\)</span>. Se compara con los cuadrados de <span
+                class="math inline">\(n\)</span> y de <span
+                class="math inline">\(n+1\)</span>: como <span
+                class="math inline">\(n\)</span> es positivo, <span
+                class="math inline">\(n+1&gt;0\)</span> y <span
+                class="math inline">\(n+1&lt;2n+1\)</span>, así que
+                <span class="math display">\[
+                n^2&lt;n^2+n+1&lt;n^2+2n+1=(n+1)^2
+                \]</span> Entonces <span
+                class="math inline">\(n^2&lt;m^2&lt;(n+1)^2\)</span> y,
+                como los tres números son positivos, <span
+                class="math inline">\(n&lt;m&lt;n+1\)</span>. Pero entre
+                dos enteros consecutivos no hay ningún entero. La
+                suposición es falsa: <span
+                class="math inline">\(n^2+n+1\)</span> no es un cuadrado
+                perfecto.</li>
                 <li><ol type="a">
-                <li><span
-                class="math inline">\(\frac{p^3}{q^3}+\frac{3p}{q}+1=0\)</span>,
-                y multiplicando por <span
-                class="math inline">\(q^3\)</span> queda <span
-                class="math inline">\(p^3+3pq^2+q^3=0\)</span>.</li>
-                <li><span class="math inline">\(p\)</span> y <span
-                class="math inline">\(q\)</span> no son pares a la vez,
-                porque la fracción es irreducible. Si los dos son
-                impares, los tres sumandos son impares; si <span
+                <li>Se sustituye <span class="math inline">\(x=\frac
+                pq\)</span> en la ecuación y se multiplica por <span
+                class="math inline">\(q^3\)</span> para quitar los
+                denominadores: <span class="math display">\[
+                \begin{aligned}
+                &amp;\frac{p^3}{q^3}+\frac{3p}{q}+1=0\\
+                \Rightarrow{}&amp;p^3+3pq^2+q^3=0
+                \end{aligned}
+                \]</span></li>
+                <li>Como la fracción es irreducible, <span
+                class="math inline">\(p\)</span> y <span
+                class="math inline">\(q\)</span> no son pares a la vez.
+                Quedan tres casos, y en cada uno se mira la paridad de
+                los tres sumandos, <span
+                class="math inline">\(p^3\)</span>, <span
+                class="math inline">\(3pq^2\)</span> y <span
+                class="math inline">\(q^3\)</span>. Si <span
+                class="math inline">\(p\)</span> y <span
+                class="math inline">\(q\)</span> son impares, los tres
+                sumandos son impares. Si <span
                 class="math inline">\(p\)</span> es par y <span
                 class="math inline">\(q\)</span> impar, solo <span
-                class="math inline">\(q^3\)</span> es impar; si <span
+                class="math inline">\(q^3\)</span> es impar. Si <span
                 class="math inline">\(p\)</span> es impar y <span
                 class="math inline">\(q\)</span> par, solo <span
                 class="math inline">\(p^3\)</span> es impar. En los tres
                 casos hay un número impar de sumandos impares, así que
                 la suma es impar y no puede valer <span
-                class="math inline">\(0\)</span>. Contradicción: la
-                ecuación no tiene soluciones racionales.</li>
+                class="math inline">\(0\)</span>, que es par.
+                Contradicción: la ecuación no tiene soluciones
+                racionales.</li>
                 </ol></li>
                 </ol>
                 </div>
@@ -4437,7 +5421,7 @@ Enfoques NS</p>
                 <section id="ejercicios-7"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="27" type="1">
+                <ol start="33" type="1">
                 <li>Utilice un contraejemplo para mostrar que cada
                 afirmación es falsa:
                 <ol type="a">
@@ -4482,63 +5466,95 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <p>Hay otros contraejemplos válidos.</p>
-                <ol start="27" type="1">
-                <li><ol type="a">
-                <li><span class="math inline">\(a=3\)</span> y <span
-                class="math inline">\(b=-3\)</span>.</li>
-                <li><span class="math inline">\(a=1\)</span> y <span
-                class="math inline">\(b=-1\)</span>: <span
+                <ol start="33" type="1">
+                <li>En cada una basta un caso en el que se cumple lo que
+                se supone y falla lo que se afirma.
+                <ol type="a">
+                <li>Con <span class="math inline">\(a=3\)</span> y <span
+                class="math inline">\(b=-3\)</span>: <span
+                class="math inline">\(a^2=b^2=9\)</span>, pero <span
+                class="math inline">\(a\neq b\)</span>.</li>
+                <li>Con <span class="math inline">\(a=1\)</span> y <span
+                class="math inline">\(b=-1\)</span>: se cumple <span
+                class="math inline">\(a&gt;b\)</span>, pero <span
+                class="math inline">\(\frac1a=1\)</span> y <span
+                class="math inline">\(\frac1b=-1\)</span>, y <span
                 class="math inline">\(1&lt;-1\)</span> es falso.</li>
-                <li><span class="math inline">\(x=-4\)</span>: <span
-                class="math inline">\(\sqrt{16}=4\neq-4\)</span>.</li>
-                <li><span
-                class="math inline">\(\left(2+\sqrt7\right)+\left(2-\sqrt7\right)=4\)</span>.</li>
-                <li><span class="math inline">\(a=b=10\)</span>: <span
-                class="math inline">\(\log20\approx1{,}30\)</span> y
+                <li>Con <span class="math inline">\(x=-4\)</span>: <span
+                class="math inline">\(\sqrt{(-4)^2}=\sqrt{16}=4\)</span>,
+                que no es <span class="math inline">\(-4\)</span>.</li>
+                <li><span class="math inline">\(2+\sqrt7\)</span> y
+                <span class="math inline">\(2-\sqrt7\)</span> son
+                irracionales, y su suma es <span
+                class="math inline">\(\left(2+\sqrt7\right)+\left(2-\sqrt7\right)=4\)</span>,
+                que es racional.</li>
+                <li>Con <span class="math inline">\(a=b=10\)</span>:
                 <span
-                class="math inline">\(\log10+\log10=2\)</span>.</li>
+                class="math inline">\(\log(10+10)=\log20\approx1{,}30\)</span>,
+                y <span
+                class="math inline">\(\log10+\log10=1+1=2\)</span>.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li><span
+                <li>Se calculan los dos miembros: <span
                 class="math inline">\(2^{11}-1=2048-1=2047\)</span> y
                 <span
                 class="math inline">\(23\cdot89=2047\)</span>.</li>
-                <li><span class="math inline">\(11\)</span> es primo y
-                <span class="math inline">\(2^{11}-1\)</span> no lo es:
+                <li><span class="math inline">\(11\)</span> es primo y,
+                por a), <span
+                class="math inline">\(2^{11}-1=23\cdot89\)</span> no lo
+                es, porque tiene divisores distintos de <span
+                class="math inline">\(1\)</span> y de sí mismo. Así,
                 <span class="math inline">\(n=11\)</span> es un
                 contraejemplo.</li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Cierta. Si <span
+                <li>Cierta. Se estudian los casos según el resto de
+                <span class="math inline">\(n\)</span> al dividirlo
+                entre <span class="math inline">\(3\)</span>. Si <span
                 class="math inline">\(n=3k\)</span>, <span
-                class="math inline">\(n^2+1=3\cdot3k^2+1\)</span>. Si
-                <span class="math inline">\(n\)</span> no es múltiplo de
-                <span class="math inline">\(3\)</span>, <span
+                class="math inline">\(n^2+1=9k^2+1=3\cdot3k^2+1\)</span>,
+                que deja resto <span class="math inline">\(1\)</span>.
+                Si <span class="math inline">\(n\)</span> no es múltiplo
+                de <span class="math inline">\(3\)</span>, <span
                 class="math inline">\(n^2\)</span> es una unidad mayor
                 que un múltiplo de <span
                 class="math inline">\(3\)</span> (segundo ejemplo del
-                subapartado 1.2) y <span
+                subapartado 1.2), así que <span
                 class="math inline">\(n^2+1\)</span> deja resto <span
                 class="math inline">\(2\)</span>. En ningún caso es
                 múltiplo de <span class="math inline">\(3\)</span>.</li>
-                <li>Falsa: con <span class="math inline">\(n=3\)</span>
-                queda <span class="math inline">\(8&gt;9\)</span>.
+                <li>Falsa. Con <span class="math inline">\(n=3\)</span>
+                queda <span class="math inline">\(2^3=8\)</span> y <span
+                class="math inline">\(3^2=9\)</span>, y <span
+                class="math inline">\(8&gt;9\)</span> es falso: <span
+                class="math inline">\(n=3\)</span> es un contraejemplo.
                 También fallan <span class="math inline">\(n=2\)</span>
-                y <span class="math inline">\(n=4\)</span>; desde <span
+                y <span class="math inline">\(n=4\)</span>, donde los
+                dos miembros son iguales; desde <span
                 class="math inline">\(n=5\)</span> es cierta, y se
                 demuestra por inducción como las del subapartado
                 2.4.</li>
-                <li>Falsa: <span class="math inline">\(\sqrt2\)</span> y
+                <li>Falsa. <span class="math inline">\(\sqrt2\)</span> y
                 <span class="math inline">\(\sqrt{18}\)</span> son
-                irracionales y <span
-                class="math inline">\(\sqrt2\cdot\sqrt{18}=\sqrt{36}=6\)</span>.</li>
-                <li>Cierta. Con <span
-                class="math inline">\(t=n^2+3n\)</span>: <span
-                class="math inline">\(n(n+3)=t\)</span> y <span
-                class="math inline">\((n+1)(n+2)=t+2\)</span>, así que
-                el producto más <span class="math inline">\(1\)</span>
-                es <span
-                class="math inline">\(t(t+2)+1=(t+1)^2=\left(n^2+3n+1\right)^2\)</span>.</li>
+                irracionales, y su producto es <span
+                class="math inline">\(\sqrt2\cdot\sqrt{18}=\sqrt{36}=6\)</span>,
+                que es racional.</li>
+                <li>Cierta. Cuatro enteros consecutivos son <span
+                class="math inline">\(n\)</span>, <span
+                class="math inline">\(n+1\)</span>, <span
+                class="math inline">\(n+2\)</span> y <span
+                class="math inline">\(n+3\)</span>. Se multiplican el
+                primero por el último y los dos del medio: <span
+                class="math inline">\(n(n+3)=n^2+3n\)</span> y <span
+                class="math inline">\((n+1)(n+2)=n^2+3n+2\)</span>. Con
+                <span class="math inline">\(t=n^2+3n\)</span>: <span
+                class="math display">\[
+                \begin{aligned}
+                n(n+1)(n+2)(n+3)+1&amp;=t\,(t+2)+1\\
+                &amp;=t^2+2t+1\\
+                &amp;=(t+1)^2=\left(n^2+3n+1\right)^2
+                \end{aligned}
+                \]</span> Es el cuadrado de un entero.</li>
                 </ol></li>
                 </ol>
                 </div>
@@ -4650,7 +5666,7 @@ Enfoques NS</p>
                 <section id="ejercicios-8"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="30" type="1">
+                <ol start="36" type="1">
                 <li><strong>[Puntuación máxima: 7]</strong> Utilice la
                 inducción matemática para demostrar que <span
                 class="math inline">\(5^{2n}-3^n\)</span> es divisible
@@ -4691,14 +5707,27 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="30" type="1">
-                <li>Caso base: <span
-                class="math inline">\(25-3=22=11\cdot2\)</span>
-                <strong>A1</strong>. Supongamos que <span
-                class="math inline">\(5^{2k}-3^k=11A\)</span> para algún
-                <span class="math inline">\(k\in\mathbb Z^+\)</span>,
-                con <span class="math inline">\(A\in\mathbb Z\)</span>
-                <strong>M1</strong>. Entonces <span
+                <ol start="36" type="1">
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                afirmación «<span
+                class="math inline">\(5^{2n}-3^n\)</span> es divisible
+                por <span class="math inline">\(11\)</span>».
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
+                class="math inline">\(5^2-3=22=11\cdot2\)</span>
+                <strong>A1</strong>.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que, para
+                algún <span class="math inline">\(k\in\mathbb
+                Z^+\)</span>, <span
+                class="math inline">\(5^{2k}-3^k=11A\)</span> con <span
+                class="math inline">\(A\in\mathbb Z\)</span>
+                <strong>M1</strong>.</li>
+                <li><strong>Paso inductivo.</strong> Como <span
+                class="math inline">\(5^{2(k+1)}=25\cdot5^{2k}\)</span>
+                y <span
+                class="math inline">\(3^{k+1}=3\cdot3^k\)</span>, la
+                expresión siguiente es <span
                 class="math inline">\(5^{2k+2}-3^{k+1}=25\cdot5^{2k}-3\cdot3^k\)</span>
                 <strong>M1</strong> <span
                 class="math inline">\(=25\left(5^{2k}-3^k\right)+22\cdot3^k\)</span>
@@ -4707,65 +5736,81 @@ Enfoques NS</p>
                 <strong>A1</strong>, que es divisible por <span
                 class="math inline">\(11\)</span> porque <span
                 class="math inline">\(25A+2\cdot3^k\)</span> es entero
-                <strong>R1</strong>. Es cierto para <span
+                <strong>R1</strong>.</li>
+                <li><strong>Conclusión.</strong> Es cierto para <span
                 class="math inline">\(n=1\)</span> y, si lo es para
                 <span class="math inline">\(n=k\)</span>, también para
-                <span class="math inline">\(n=k+1\)</span>; por
-                inducción matemática, lo es para todo <span
+                <span class="math inline">\(n=k+1\)</span>. Por el
+                principio de inducción matemática, lo es para todo <span
                 class="math inline">\(n\in\mathbb Z^+\)</span>
                 <strong>R1</strong>.</li>
-                <li>Supongamos que <span
-                class="math inline">\(a^2-b^2=6\)</span> con <span
-                class="math inline">\(a,b\in\mathbb Z^+\)</span>
-                <strong>M1</strong>. Entonces <span
+                </ul></li>
+                <li>Supongamos que existen <span
+                class="math inline">\(a,b\in\mathbb Z^+\)</span> con
+                <span class="math inline">\(a^2-b^2=6\)</span>
+                <strong>M1</strong>. Por la suma por diferencia, <span
                 class="math inline">\((a-b)(a+b)=6\)</span>
                 <strong>A1</strong>. Los dos factores se diferencian en
-                <span class="math inline">\(2b\)</span>, que es par, así
-                que son los dos pares o los dos impares
+                <span class="math inline">\((a+b)-(a-b)=2b\)</span>, que
+                es par, así que son los dos pares o los dos impares
                 <strong>R1</strong>. Si son impares, su producto es
                 impar y no puede ser <span
                 class="math inline">\(6\)</span>; si son pares, su
                 producto es múltiplo de <span
                 class="math inline">\(4\)</span>, y <span
                 class="math inline">\(6\)</span> no lo es
-                <strong>R1</strong>. Contradicción: no existen
-                <strong>R1</strong>.</li>
+                <strong>R1</strong>. En los dos casos hay contradicción,
+                así que no existen <strong>R1</strong>.</li>
                 <li><ol type="a">
-                <li><span class="math inline">\(u_2=5\)</span>, <span
-                class="math inline">\(u_3=13\)</span> y <span
-                class="math inline">\(u_4=25\)</span>
+                <li>Con la ley de recurrencia: <span
+                class="math inline">\(u_2=u_1+4\cdot1=5\)</span>, <span
+                class="math inline">\(u_3=u_2+4\cdot2=13\)</span> y
+                <span class="math inline">\(u_4=u_3+4\cdot3=25\)</span>
                 <strong>A2</strong> (<strong>A1</strong> por dos de los
                 tres).</li>
-                <li>Caso base: <span
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad <span
+                class="math inline">\(u_n=2n^2-2n+1\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
                 class="math inline">\(2-2+1=1=u_1\)</span>
-                <strong>A1</strong>. Supongamos que <span
+                <strong>A1</strong>.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
                 class="math inline">\(u_k=2k^2-2k+1\)</span> para algún
                 <span class="math inline">\(k\in\mathbb Z^+\)</span>
-                <strong>M1</strong>. Entonces <span
+                <strong>M1</strong>.</li>
+                <li><strong>Paso inductivo.</strong> Con la ley de
+                recurrencia y la hipótesis, <span
                 class="math inline">\(u_{k+1}=u_k+4k\)</span>
                 <strong>M1</strong> <span
-                class="math inline">\(=2k^2+2k+1\)</span>
-                <strong>A1</strong>, y con <span
-                class="math inline">\(n=k+1\)</span> la fórmula da <span
-                class="math inline">\(2(k+1)^2-2(k+1)+1=2k^2+2k+1\)</span>
-                <strong>A1</strong>. Es cierta para <span
+                class="math inline">\(=2k^2-2k+1+4k=2k^2+2k+1\)</span>
+                <strong>A1</strong>. Es lo que da la fórmula con <span
+                class="math inline">\(n=k+1\)</span>, porque <span
+                class="math inline">\(2(k+1)^2-2(k+1)+1=2k^2+4k+2-2k-2+1=2k^2+2k+1\)</span>
+                <strong>A1</strong>.</li>
+                <li><strong>Conclusión.</strong> Es cierta para <span
                 class="math inline">\(n=1\)</span> y, si lo es para
                 <span class="math inline">\(n=k\)</span>, también para
-                <span class="math inline">\(n=k+1\)</span>; por
-                inducción matemática, lo es para todo <span
+                <span class="math inline">\(n=k+1\)</span>. Por el
+                principio de inducción matemática, lo es para todo <span
                 class="math inline">\(n\in\mathbb Z^+\)</span>
                 <strong>R1</strong>.</li>
-                <li><span
+                </ul></li>
+                <li>Se desarrolla el miembro derecho: <span
                 class="math inline">\(n^2+(n-1)^2=n^2+n^2-2n+1=2n^2-2n+1=u_n\)</span>
                 <strong>A1</strong> <strong>AG</strong>.</li>
-                <li><span
+                <li>Se saca factor común <span
+                class="math inline">\(2\)</span>: <span
                 class="math inline">\(u_n=2\left(n^2-n\right)+1\)</span>
-                <strong>M1</strong>, un par más <span
-                class="math inline">\(1\)</span>: es impar
+                <strong>M1</strong>. Es un par más <span
+                class="math inline">\(1\)</span>, es decir, impar
                 <strong>R1</strong>.</li>
-                <li><span class="math inline">\(u_4=25=5^2\)</span>
-                <strong>A1</strong>, que no es primo, así que la
-                conjetura es falsa <strong>R1</strong>.</li>
+                <li>Con <span class="math inline">\(n=4\)</span>, <span
+                class="math inline">\(u_4=25=5^2\)</span>
+                <strong>A1</strong>, que no es primo: <span
+                class="math inline">\(n=4\)</span> es un contraejemplo y
+                la conjetura es falsa <strong>R1</strong>.</li>
                 </ol></li>
                 </ol>
                 </div>
@@ -4784,7 +5829,7 @@ Enfoques NS</p>
                 <section id="ejercicios-9"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="33" type="1">
+                <ol start="39" type="1">
                 <li><strong>[Puntuación máxima: 13]</strong> Una
                 sucesión cumple <span
                 class="math inline">\(u_1=3\)</span> y <span
@@ -4804,53 +5849,67 @@ Enfoques NS</p>
                 <strong>[3]</strong></li>
                 <li>Halle el menor valor de <span
                 class="math inline">\(n\)</span> para el que <span
-                class="math inline">\(\sum_{r=1}^{n}u_r&gt;10\,000\)</span>.
+                class="math inline">\(\sum\limits_{r=1}^{n}u_r&gt;10\,000\)</span>.
                 <strong>[2]</strong></li>
                 </ol></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="33" type="1">
+                <ol start="39" type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(u_2=6{,}5\)</span>
+                <li>Con la ley de recurrencia: <span
+                class="math inline">\(u_2=1{,}5\cdot3+2=6{,}5\)</span>
                 <strong>A1</strong> y <span
-                class="math inline">\(u_3=11{,}75\)</span>
+                class="math inline">\(u_3=1{,}5\cdot6{,}5+2=11{,}75\)</span>
                 <strong>A1</strong>.</li>
-                <li>Caso base: <span
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad <span
+                class="math inline">\(u_n=7\cdot1{,}5^{\,n-1}-4\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
                 class="math inline">\(7\cdot1{,}5^0-4=3=u_1\)</span>
-                <strong>A1</strong>. Supongamos que <span
+                <strong>A1</strong>.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
                 class="math inline">\(u_k=7\cdot1{,}5^{\,k-1}-4\)</span>
                 para algún <span class="math inline">\(k\in\mathbb
-                Z^+\)</span> <strong>M1</strong>. Entonces <span
+                Z^+\)</span> <strong>M1</strong>.</li>
+                <li><strong>Paso inductivo.</strong> Con la ley de
+                recurrencia y la hipótesis, <span
                 class="math inline">\(u_{k+1}=1{,}5\left(7\cdot1{,}5^{\,k-1}-4\right)+2\)</span>
                 <strong>M1</strong> <span
                 class="math inline">\(=7\cdot1{,}5^{\,k}-6+2\)</span>
                 <strong>A1</strong> <span
                 class="math inline">\(=7\cdot1{,}5^{\,k}-4\)</span>
                 <strong>A1</strong>, que es la fórmula con <span
-                class="math inline">\(n=k+1\)</span>. Es cierta para
-                <span class="math inline">\(n=1\)</span> y, si lo es
-                para <span class="math inline">\(n=k\)</span>, también
-                para <span class="math inline">\(n=k+1\)</span>; por
-                inducción matemática, lo es para todo <span
+                class="math inline">\(n=k+1\)</span>.</li>
+                <li><strong>Conclusión.</strong> Es cierta para <span
+                class="math inline">\(n=1\)</span> y, si lo es para
+                <span class="math inline">\(n=k\)</span>, también para
+                <span class="math inline">\(n=k+1\)</span>. Por el
+                principio de inducción matemática, lo es para todo <span
                 class="math inline">\(n\in\mathbb Z^+\)</span>
                 <strong>R1</strong>.</li>
-                <li><span
+                </ul></li>
+                <li>Se plantea <span
                 class="math inline">\(7\cdot1{,}5^{\,n-1}-4&gt;1000\)</span>
-                <strong>M1</strong> da <span
-                class="math inline">\(n-1&gt;12{,}24\ldots\)</span>
-                <strong>A1</strong>: <span
-                class="math inline">\(n=14\)</span> <strong>A1</strong>
-                (<span class="math inline">\(u_{13}\approx904\)</span> y
-                <span
-                class="math inline">\(u_{14}\approx1358\)</span>).</li>
-                <li>Con la calculadora, sumando los términos
+                <strong>M1</strong>, es decir, <span
+                class="math inline">\(1{,}5^{\,n-1}&gt;\frac{1004}{7}\)</span>.
+                Tomando logaritmos, <span
+                class="math inline">\(n-1&gt;\frac{\ln\frac{1004}{7}}{\ln1{,}5}\approx12{,}2\)</span>
+                <strong>A1</strong>, así que <span
+                class="math inline">\(n=14\)</span> <strong>A1</strong>.
+                Comprobación: <span
+                class="math inline">\(u_{13}\approx904\)</span> y <span
+                class="math inline">\(u_{14}\approx1358\)</span>.</li>
+                <li>Con la calculadora se van sumando los términos
                 <strong>(M1)</strong>: la suma de los <span
                 class="math inline">\(16\)</span> primeros es <span
                 class="math inline">\(9117{,}77\ldots\)</span> y la de
                 los <span class="math inline">\(17\)</span> primeros,
                 <span class="math inline">\(13\,711{,}6\ldots\)</span>
-                Es <span class="math inline">\(n=17\)</span>
+                El menor valor es <span
+                class="math inline">\(n=17\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -4865,7 +5924,7 @@ Enfoques NS</p>
                 <section id="ejercicios-10"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="34" type="1">
+                <ol start="40" type="1">
                 <li><p><strong>[Puntuación máxima: 15]</strong> Se
                 trazan <span class="math inline">\(n\)</span> rectas en
                 el plano de modo que no haya dos paralelas ni tres que
@@ -4909,13 +5968,17 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="34" type="1">
+                <ol start="40" type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(R_1=2\)</span> y <span
+                <li>Una recta divide el plano en dos regiones y dos
+                rectas que se cortan, en cuatro: <span
+                class="math inline">\(R_1=2\)</span> y <span
                 class="math inline">\(R_2=4\)</span>
                 <strong>A1</strong>.</li>
-                <li><span class="math inline">\(R_3=7\)</span> y <span
-                class="math inline">\(2^3=8\)</span>: <span
+                <li>Con <span class="math inline">\(n=3\)</span> la
+                conjetura daría <span
+                class="math inline">\(2^3=8\)</span>, pero <span
+                class="math inline">\(R_3=7\)</span>: <span
                 class="math inline">\(n=3\)</span> es un contraejemplo
                 <strong>R1</strong>.</li>
                 <li>La recta nueva no es paralela a ninguna, así que
@@ -4930,38 +5993,50 @@ Enfoques NS</p>
                 class="math inline">\(n+1\)</span> regiones: <span
                 class="math inline">\(R_{n+1}=R_n+n+1\)</span>
                 <strong>R1</strong> <strong>AG</strong>.</li>
-                <li><span class="math inline">\(R_4=7+4=11\)</span>
+                <li>Con la relación de c): <span
+                class="math inline">\(R_4=R_3+4=11\)</span>
                 <strong>A1</strong> y <span
-                class="math inline">\(R_5=11+5=16\)</span>
+                class="math inline">\(R_5=R_4+5=16\)</span>
                 <strong>A1</strong>.</li>
-                <li>Caso base: <span
+                <li>Sea <span class="math inline">\(P(n)\)</span> la
+                igualdad <span
+                class="math inline">\(R_n=\frac{n^2+n+2}{2}\)</span>.
+                <ul>
+                <li><strong>Caso base.</strong> Para <span
+                class="math inline">\(n=1\)</span>, <span
                 class="math inline">\(\frac{1+1+2}{2}=2=R_1\)</span>
-                <strong>A1</strong>. Supongamos que <span
+                <strong>A1</strong>.</li>
+                <li><strong>Hipótesis.</strong> Supongamos que <span
                 class="math inline">\(R_k=\frac{k^2+k+2}{2}\)</span>
                 para algún <span class="math inline">\(k\in\mathbb
-                Z^+\)</span> <strong>M1</strong>. Entonces <span
+                Z^+\)</span> <strong>M1</strong>.</li>
+                <li><strong>Paso inductivo.</strong> Con la relación de
+                c) y la hipótesis, <span
                 class="math inline">\(R_{k+1}=\frac{k^2+k+2}{2}+k+1\)</span>
                 <strong>M1</strong> <span
                 class="math inline">\(=\frac{k^2+3k+4}{2}\)</span>
-                <strong>A1</strong>, y con <span
-                class="math inline">\(n=k+1\)</span> la fórmula da <span
+                <strong>A1</strong>. Es lo que da la fórmula con <span
+                class="math inline">\(n=k+1\)</span>, porque <span
                 class="math inline">\(\frac{(k+1)^2+(k+1)+2}{2}=\frac{k^2+3k+4}{2}\)</span>
-                <strong>A1</strong>. Es cierta para <span
+                <strong>A1</strong>.</li>
+                <li><strong>Conclusión.</strong> Es cierta para <span
                 class="math inline">\(n=1\)</span> y, si lo es para
                 <span class="math inline">\(n=k\)</span>, también para
-                <span class="math inline">\(n=k+1\)</span>; por
-                inducción matemática, lo es para todo <span
+                <span class="math inline">\(n=k+1\)</span>. Por el
+                principio de inducción matemática, lo es para todo <span
                 class="math inline">\(n\in\mathbb Z^+\)</span>
                 <strong>R1</strong>.</li>
-                <li><span
+                </ul></li>
+                <li>Se plantea <span
                 class="math inline">\(\frac{n^2+n+2}{2}\geq1000\)</span>
                 <strong>(M1)</strong>, es decir, <span
-                class="math inline">\(n^2+n-1998\geq0\)</span>, que da
-                <span class="math inline">\(n\geq44{,}2\ldots\)</span>:
-                <span class="math inline">\(n=45\)</span>
-                <strong>A1</strong> (<span
+                class="math inline">\(n^2+n-1998\geq0\)</span>. La
+                solución positiva de la ecuación es <span
+                class="math inline">\(n=\frac{-1+\sqrt{7993}}{2}\approx44{,}2\)</span>,
+                así que <span class="math inline">\(n=45\)</span>
+                <strong>A1</strong>. Comprobación: <span
                 class="math inline">\(R_{44}=991\)</span> y <span
-                class="math inline">\(R_{45}=1036\)</span>).</li>
+                class="math inline">\(R_{45}=1036\)</span>.</li>
                 </ol></li>
                 </ol>
                 </div>
