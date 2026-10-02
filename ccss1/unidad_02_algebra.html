@@ -2976,6 +2976,360 @@
       }
     }
 
+    /* Adornos temáticos (órdenes del profesor del 2 de octubre de 2026:
+       «quiero que me des ideas para hacer más atractivas visualmente las
+       webs, por ejemplo haciendo que cada una tenga pequeños detalles de lo
+       que va el tema, incluso por medio (los apuntes pdf no)» y, vistas
+       cinco ideas renderizadas, «me encantan las 5 ideas que propones.
+       Impleméntalas también»). La portada lleva un dibujo del tema de la
+       unidad; cada apartado, un emblema a la derecha de su título y un friso
+       debajo; y unas cápsulas «¿Sabías que…?» abren un aparte de dos líneas
+       entre dos bloques. Los dibujos los pone el guion de más abajo, de su
+       colección; aquí se reserva su sitio, para que al pintarlos no se
+       mueva nada. Solo en pantalla y fuera del modo clase: ni el aula ni la
+       impresión los ven, y el PDF no sabe que existen. */
+    @media screen {
+      /* El lienzo de un dibujo: el SVG y, encima, sus rótulos, en las
+         medidas del diseño; el guion lo escala entero a su hueco. */
+      .lienzo-adorno {
+        position: relative;
+        flex: none;
+        transform-origin: 0 0;
+      }
+
+      .lienzo-adorno > svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .rotulo-adorno {
+        position: absolute;
+        line-height: 1;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+      }
+
+      .rotulo-adorno.de-texto {
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+
+      .rotulo-adorno.fundido {
+        -webkit-mask-image: linear-gradient(90deg, #000000 35%, transparent 98%);
+        mask-image: linear-gradient(90deg, #000000 35%, transparent 98%);
+      }
+
+      /* La portada: el dibujo sustituye al aro. Con sitio, va a la derecha
+         del título, detrás del texto, y el guion lo ajusta a lo que el
+         título deja libre; en pantallas estrechas baja a su propia franja,
+         bajo el subtítulo, con el tamaño que le da el ancho. Muy pequeño,
+         pierde los rótulos. */
+      .portada-unidad[data-portada]::after {
+        display: none;
+      }
+
+      .adorno-portada {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        overflow: hidden;
+        color: #ffffff;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .adorno-portada .lienzo-adorno {
+        transform-origin: 100% 50%;
+      }
+
+      .adorno-portada.sin-rotulos .rotulo-adorno,
+      .adorno-portada.sin-sitio,
+      html:not(.js) .adorno-portada {
+        display: none;
+      }
+
+      /* El tono de la unidad: el metadato `tono` cambia el azul de la
+         portada por otro color, el mismo de su tarjeta en el portal. */
+      .portada-unidad[data-tono="violeta"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+      }
+
+      .portada-unidad[data-tono="turquesa"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #0b4a45 0%, #0f766e 66%, #2aa79b 100%);
+      }
+
+      .portada-unidad[data-tono="granate"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #6b1626 0%, #b4233a 66%, #d95a6c 100%);
+      }
+
+      .portada-unidad[data-tono="ambar"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
+      }
+
+      @media (max-width: 64rem) {
+        .adorno-portada {
+          position: relative;
+          top: auto;
+          right: auto;
+          bottom: auto;
+          left: auto;
+          z-index: auto;
+          display: block;
+          width: min(100%, 26rem);
+          height: 9.14rem;
+          margin: 1rem 0 -0.4rem auto;
+          overflow: visible;
+          border-radius: 0;
+        }
+
+        @supports (aspect-ratio: 1) {
+          .adorno-portada {
+            height: auto;
+            aspect-ratio: 640 / 225;
+          }
+        }
+
+        .adorno-portada .lienzo-adorno {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform-origin: 0 0;
+        }
+      }
+
+      /* El emblema: a la derecha del título del apartado, con su color. El
+         sitio lo reserva el atributo que deja Pandoc, antes de que el guion
+         lo dibuje. */
+      :where(html:not(.modo-clase)) #contenido-unidad > section.level2 > h2[data-emblema] {
+        position: relative;
+        padding-right: calc(var(--relleno-tarjeta) + 4.3rem);
+      }
+
+      .emblema-apartado {
+        position: absolute;
+        top: 50%;
+        right: calc(var(--relleno-tarjeta) - 0.4rem);
+        width: 3.3rem;
+        height: 3.3rem;
+        margin-top: -1.65rem;
+        color: var(--apartado, var(--acento));
+        line-height: 0;
+        text-indent: 0;
+        pointer-events: none;
+      }
+
+      .emblema-apartado svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* El friso: una franja a todo lo ancho de la tarjeta, bajo el título.
+         Su alto lo fija un calzo con la proporción del dibujo, sin esperar
+         al guion, que solo pone el lienzo encima y a su escala. Cuando la
+         tarjeta es más estrecha que el dibujo a su tamaño mínimo (un
+         móvil), la franja se desplaza de lado. */
+      .friso-apartado {
+        position: relative;
+        margin: -1.65rem calc(-1 * var(--relleno-tarjeta)) 1.65rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        color: var(--apartado, var(--acento));
+        background: #ffffff;
+        background:
+          linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--apartado, var(--acento)) 5%, #ffffff),
+            #ffffff 85%);
+        border-bottom: 1px solid var(--borde);
+      }
+
+      .friso-apartado::-webkit-scrollbar {
+        display: none;
+      }
+
+      .friso-apartado::before {
+        display: block;
+        width: 100%;
+        min-width: 41rem;
+        max-width: 62.75rem;
+        height: 6.75rem;
+        margin: 0 auto;
+        content: "";
+      }
+
+      @supports (aspect-ratio: 1) {
+        .friso-apartado::before {
+          height: auto;
+          aspect-ratio: 1004 / 108;
+        }
+      }
+
+      .friso-apartado .lienzo-adorno {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .friso-apartado.sin-dibujo,
+      html:not(.js) .friso-apartado {
+        display: none;
+      }
+
+      /* La cápsula «¿Sabías que…?»: un dibujo en su círculo y dos líneas. */
+      .curiosidad {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: 1.1rem;
+        align-items: center;
+        margin: 1.5rem 0;
+        padding: 0.6rem 1.9rem 0.6rem 0.6rem;
+        background: #ffffff;
+        border: 1.5px solid var(--borde);
+        border-color: color-mix(in srgb, var(--apartado, var(--acento)) 30%, #ffffff);
+        border-radius: 3rem;
+        box-shadow: 0 6px 18px rgb(22 59 114 / 0.06);
+      }
+
+      .curiosidad > p {
+        grid-column: 2;
+        margin: 0;
+        color: var(--texto-suave);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .curiosidad > p + p {
+        margin-top: 0.4rem;
+      }
+
+      .curiosidad strong {
+        color: var(--texto);
+      }
+
+      .rotulo-curiosidad {
+        display: block;
+        margin-bottom: 0.1rem;
+        color: var(--apartado, var(--acento));
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .dibujo-curiosidad {
+        display: grid;
+        grid-row: 1 / span 6;
+        grid-column: 1;
+        place-items: center;
+        width: 4.4rem;
+        height: 4.4rem;
+        color: var(--apartado, var(--acento));
+        background: var(--apartado-suave, var(--acento-suave));
+        border-radius: 50%;
+      }
+
+      .dibujo-curiosidad svg {
+        width: 3.1rem;
+        height: 3.1rem;
+      }
+
+      .dibujo-curiosidad .formula-dibujo {
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .dibujo-curiosidad .letras-dibujo {
+        font-family: "Geeza Pro", "Noto Naskh Arabic", "Times New Roman", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      @media (max-width: 42rem) {
+        :where(html:not(.modo-clase)) #contenido-unidad > section.level2 > h2[data-emblema] {
+          padding-right: calc(var(--relleno-tarjeta) + 3rem);
+        }
+
+        .emblema-apartado {
+          width: 2.5rem;
+          height: 2.5rem;
+          margin-top: -1.25rem;
+        }
+
+        .friso-apartado {
+          margin-top: -1.2rem;
+          margin-bottom: 1.2rem;
+        }
+
+        /* En un móvil el dibujo no encoge tanto: se lee mejor y se
+           desplaza de lado. */
+        .friso-apartado::before {
+          min-width: 46.5rem;
+        }
+
+        .curiosidad {
+          column-gap: 0.8rem;
+          align-items: start;
+          padding: 0.7rem 1rem 0.75rem 0.7rem;
+          border-radius: 1.5rem;
+        }
+
+        .dibujo-curiosidad {
+          width: 3.2rem;
+          height: 3.2rem;
+        }
+
+        .dibujo-curiosidad svg {
+          width: 2.3rem;
+          height: 2.3rem;
+        }
+
+        .dibujo-curiosidad .formula-dibujo {
+          font-size: 0.8rem;
+        }
+
+        .dibujo-curiosidad .letras-dibujo {
+          font-size: 1.05rem;
+        }
+      }
+
+      /* En el aula solo queda lo que se usa en clase. */
+      html.modo-clase .emblema-apartado,
+      html.modo-clase .friso-apartado,
+      html.modo-clase .curiosidad {
+        display: none;
+      }
+    }
+
+    @media print {
+      .adorno-portada,
+      .emblema-apartado,
+      .friso-apartado,
+      .curiosidad {
+        display: none !important;
+      }
+    }
+
     /* Subapartados en el índice (orden del profesor del 1 de octubre de
        2026: «deberíamos hacer un menú desplegable en las webs para poder
        seleccionar los subapartados»). El guion añade a cada apartado del
@@ -3102,7 +3456,7 @@
         border-left: 2px solid transparent;
         border-radius: 0 0.4rem 0.4rem 0;
         font-size: 0.83rem;
-        font-weight: 600;
+        font-weight: 500;
         line-height: 1.3;
       }
 
@@ -3122,6 +3476,49 @@
           color: var(--apartado, var(--acento-oscuro));
           background: var(--apartado-suave, var(--acento-suave));
           border-left-color: var(--apartado, var(--acento));
+        }
+      }
+
+      /* El apartado manda sobre sus subapartados (órdenes del profesor del
+         2 de octubre de 2026: «el apartado algo más grande para que se
+         distinga bien de los subapartados» y, vistas siete opciones, «me
+         gusta el estilo de "más grande y más oscuro"»). Con el índice a un
+         lado, el apartado va a 1rem, más grueso y en tinta oscura, y sus
+         subapartados, más finos y en gris. Una letra mayor añadiría una
+         línea a los títulos que caben justos («Fracciones algebraicas.
+         Operaciones» cabía por menos de un píxel): el índice recupera
+         unos 18 px de ancho entre el relleno de la caja, el del enlace y
+         los huecos, y junta un poco las letras. `:where()` no suma
+         especificidad: el apartado en pantalla conserva su color. Ni el
+         índice en fila ni el modo clase cambian. */
+      @media (min-width: 64.01rem) {
+        :where(html:not(.modo-clase)) .indice-unidad {
+          padding: 0.9rem;
+        }
+
+        :where(html:not(.modo-clase)) #TOC > ul > li > a {
+          gap: 0.4rem;
+          padding-right: 0.15rem;
+          padding-left: 0.55rem;
+          color: var(--texto);
+          font-size: 1rem;
+          font-weight: 700;
+          line-height: 1.3;
+          letter-spacing: -0.012em;
+        }
+
+        /* Cifras del mismo ancho: todos los títulos empiezan en la misma
+           vertical. */
+        :where(html:not(.modo-clase)) #TOC > ul > li > a > .toc-section-number {
+          font-variant-numeric: tabular-nums;
+        }
+
+        /* La flecha sigue en el sitio del punto y centrada con la primera
+           línea del título. */
+        :where(html:not(.modo-clase)) #TOC .conmutador-subapartados {
+          top: 0.3rem;
+          left: 0.39rem;
+          width: 1.2rem;
         }
       }
 
@@ -4252,7 +4649,7 @@
       </h1>
             <p class="subtitulo-unidad">Matemáticas CCSS I — 1.º
 Bachillerato</p>
-          </header>
+                </header>
 
     <div class="disposicion-unidad">
             <aside class="indice-unidad" aria-label="Índice de la unidad">
@@ -14952,6 +15349,743 @@ void main() {
       }
 
       window.PaisajePotencias = { montar: montar, hayWebGL: hayWebGL };
+    })();
+  </script>
+
+  <script>
+    // Adornos temáticos (órdenes del profesor del 2 de octubre de 2026: «quiero
+    // que me des ideas para hacer más atractivas visualmente las webs, por
+    // ejemplo haciendo que cada una tenga pequeños detalles de lo que va el
+    // tema, incluso por medio (los apuntes pdf no)» y, vistas cinco ideas
+    // renderizadas, «me encantan las 5 ideas que propones. Impleméntalas
+    // también»). Cuatro piezas, solo en la web y fuera del modo clase:
+    //
+    // - la portada lleva el dibujo que nombra el metadato `portada`;
+    // - cada apartado, el emblema y el friso de `{emblema=… friso=…}`;
+    // - cada cápsula `curiosidad`, el dibujo de su atributo `dibujo`.
+    //
+    // Aquí vive la colección, con nombres que pueden usar los tres cursos.
+    // Todo es SVG calculado: las curvas y las posiciones salen de las
+    // fórmulas. Los datos de los dibujos son los de los ejemplos de la teoría
+    // de su apartado, nunca los de un ejercicio (regla 4). Los rótulos con
+    // fórmula los compone KaTeX; el guion no lleva ningún dólar, que Pandoc
+    // leería como variable.
+    (function () {
+      "use strict";
+
+      function r(n) {
+        return Math.round(n * 100) / 100;
+      }
+      // Camino de una curva: f devuelve el punto [x, y] de cada valor.
+      function trazo(f, desde, hasta, paso) {
+        var d = "";
+        for (var v = desde; v <= hasta + 1e-9; v += paso) {
+          var p = f(v);
+          d += (d ? "L" : "M") + r(p[0]) + " " + r(p[1]);
+        }
+        return d;
+      }
+      function svg(ancho, alto, dentro, grosor) {
+        return '<svg viewBox="0 0 ' + ancho + " " + alto + '" aria-hidden="true" focusable="false" fill="none" ' +
+          'stroke="currentColor" stroke-width="' + (grosor || 1.8) + '" stroke-linecap="round" stroke-linejoin="round">' +
+          dentro + "</svg>";
+      }
+
+      // ------------------------------------------------------------ portadas
+      // Lienzo de 640 × 225, a la derecha de la portada, en blanco sobre el
+      // azul. Cada una devuelve su dibujo y sus rótulos.
+      var FUNDIDO =
+        '<defs><linearGradient id="adorno-fundido" x1="0" x2="1" y1="0" y2="0">' +
+        '<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.11" stop-color="#fff" stop-opacity="1"/>' +
+        '<stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>' +
+        '<mask id="adorno-mascara"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido)"/></mask>';
+
+      var PORTADAS = {
+        // La recta real, con la construcción de la raíz de 2 (la diagonal
+        // del cuadrado de lado 1, llevada con el compás) y los puntos e y π.
+        "recta-real": function () {
+          var U = 96, X0 = 150, Y = 152;
+          var x = function (v) { return r(X0 + v * U); };
+          var marcas = "";
+          for (var k = -13; k <= 44; k++) {
+            if (k % 10 === 0) {
+              continue;
+            }
+            var alto = k % 5 === 0 ? 5 : 3;
+            marcas += '<line x1="' + x(k / 10) + '" y1="' + (Y - alto) + '" x2="' + x(k / 10) + '" y2="' + (Y + alto) +
+              '" stroke-opacity="' + (k % 5 === 0 ? 0.42 : 0.26) + '" stroke-width="1"/>';
+          }
+          for (k = -1; k <= 4; k++) {
+            marcas += '<line x1="' + x(k) + '" y1="' + (Y - 9) + '" x2="' + x(k) + '" y2="' + (Y + 9) +
+              '" stroke-opacity="0.9" stroke-width="1.7"/>';
+          }
+          var raiz = Math.SQRT2;
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<rect x="' + x(0) + '" y="' + (Y - U) + '" width="' + U + '" height="' + U +
+              '" fill="#fff" fill-opacity="0.07" stroke-opacity="0.5" stroke-width="1.3"/>' +
+            '<path d="M' + x(0) + " " + Y + "L" + x(1) + " " + (Y - U) + '" stroke-opacity="0.98" stroke-width="2.2"/>' +
+            '<path d="M' + x(1) + " " + (Y - U) + "A" + r(raiz * U) + " " + r(raiz * U) + " 0 0 1 " + x(raiz) + " " + Y +
+              '" stroke-opacity="0.85" stroke-width="1.6" stroke-dasharray="1.5 5.5"/>' +
+            '<line x1="6" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.9"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.9"/>' +
+            marcas +
+            '<circle cx="' + x(raiz) + '" cy="' + Y + '" r="11" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+            '<circle cx="' + x(raiz) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(Math.E) + '" cy="' + Y + '" r="3.6" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(Math.PI) + '" cy="' + Y + '" r="3.6" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(0) + '" cy="' + Y + '" r="2.6" fill="#fff" stroke="none"/>' +
+            "</g>";
+          var rotulos = [-1, 0, 1, 2, 3, 4].map(function (n) {
+            return { x: x(n), y: Y + 27, tex: String(n).replace("-", "{-}"), cuerpo: 15, opacidad: 0.82 };
+          });
+          rotulos.push(
+            { x: x(raiz) + 1, y: Y + 30, tex: "\\sqrt{2}", cuerpo: 19 },
+            { x: x(Math.E), y: Y - 24, tex: "e", cuerpo: 19, opacidad: 0.95 },
+            { x: x(Math.PI) + 2, y: Y - 24, tex: "\\pi", cuerpo: 19, opacidad: 0.95 },
+            { x: x(0) - 13, y: Y - U / 2, tex: "1", cuerpo: 14, opacidad: 0.7 },
+            { x: x(0.5), y: Y - U - 13, tex: "1", cuerpo: 14, opacidad: 0.7 },
+            { x: x(0.5) - 15, y: Y - U / 2 - 15, tex: "\\sqrt{2}", cuerpo: 15, opacidad: 0.92, giro: -45 },
+            {
+              x: 468, y: 31, cuerpo: 13.5, opacidad: 0.5, fundido: true,
+              tex: "\\sqrt{2}=1{,}414\\,213\\,562\\,373\\,095\\,048\\,801\\,688\\,724\\,209\\,698\\,078\\ldots"
+            }
+          );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        // Un polinomio con sus raíces y los tramos en que es positivo:
+        // p(x) = x⁴ − 20x² + 64 = (x + 4)(x + 2)(x − 2)(x − 4), el bicuadrado
+        // de los ejemplos de factorización.
+        "polinomio": function () {
+          var U = 62, X0 = 335, Y = 128, S = 1.05;
+          var p = function (v) { return (v * v - 16) * (v * v - 4); };
+          var x = function (v) { return r(X0 + v * U); };
+          var punto = function (v) { return [X0 + v * U, Y - p(v) * S]; };
+          var lobulo = function (a, b) {
+            return trazo(punto, a, b, 0.04) + "L" + x(b) + " " + Y + "L" + x(a) + " " + Y + "Z";
+          };
+          var rejilla = "";
+          for (var k = -5; k <= 4; k++) {
+            rejilla += "M" + x(k) + " 8V217";
+          }
+          for (k = -2; k <= 5; k++) {
+            if (k !== 0) {
+              rejilla += "M24 " + r(Y - k * 20 * S) + "H616";
+            }
+          }
+          var curva = trazo(punto, -4.8, 4.8, 0.04);
+          var dibujo = FUNDIDO +
+            '<linearGradient id="adorno-lobulo-d" gradientUnits="userSpaceOnUse" x1="' + x(4) + '" x2="' + x(4.8) + '" y1="0" y2="0">' +
+            '<stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+            '<linearGradient id="adorno-lobulo-i" gradientUnits="userSpaceOnUse" x1="' + x(-4) + '" x2="' + x(-4.8) + '" y1="0" y2="0">' +
+            '<stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+            "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<path d="' + lobulo(-2, 2) + '" fill="#fff" fill-opacity="0.13" stroke="none"/>' +
+            '<path d="' + lobulo(4, 4.8) + '" fill="url(#adorno-lobulo-d)" stroke="none"/>' +
+            '<path d="' + lobulo(-4.8, -4) + '" fill="url(#adorno-lobulo-i)" stroke="none"/>' +
+            '<line x1="' + x(0) + '" y1="12" x2="' + x(0) + '" y2="' + (Y + 42) + '" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            [-4, -2, 2, 4].map(function (n) {
+              return '<circle cx="' + x(n) + '" cy="' + Y + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(n) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(-4) - 19, y: Y + 22, tex: "{-}4", cuerpo: 17, opacidad: 0.95 },
+              { x: x(-2) + 20, y: Y + 22, tex: "{-}2", cuerpo: 17, opacidad: 0.95 },
+              { x: x(2) - 15, y: Y + 22, tex: "2", cuerpo: 17, opacidad: 0.95 },
+              { x: x(4) + 15, y: Y + 22, tex: "4", cuerpo: 17, opacidad: 0.95 },
+              { x: X0, y: Y + 71, tex: "p(x)=(x+4)(x+2)(x-2)(x-4)", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
+        }
+      };
+
+      // ------------------------------------------------------------ emblemas
+      // Dibujos de línea de 48 × 48, con el color de su apartado. Sin letras:
+      // van dentro del título, cuyo texto leen otros guiones.
+      var EMBLEMAS = {
+        // Antes de empezar: la lista de lo que hay que traer sabido.
+        "lista":
+          '<path d="M8 12.5l3.2 3.2 6-6.4M8 24.5l3.2 3.2 6-6.4M8 36.5l3.2 3.2 6-6.4"/>' +
+          '<path d="M24 13h16M24 25h16M24 37h11"/>',
+        // Números reales: la recta, con la raíz de 2 llevada desde la
+        // diagonal del cuadrado.
+        "recta":
+          '<path d="M2 32h44M42 28l4 4-4 4"/><path d="M8 28.5v7M24 28.5v7" stroke-width="1.9"/>' +
+          '<path d="M8 32V16h16v16" stroke-width="1.6" opacity="0.7"/><path d="M8 32L24 16" stroke-width="2.1"/>' +
+          '<path d="M24 16A22.63 22.63 0 0 1 30.63 32" stroke-width="1.6" stroke-dasharray="0.6 3.4"/>' +
+          '<circle cx="30.63" cy="32" r="3.4" fill="currentColor" stroke="none"/>',
+        // Potencias. Notación científica: 10 elevado a n.
+        "potencia":
+          '<path d="M6.5 17.5l5.5-4.5v23.5"/><ellipse cx="24" cy="24.8" rx="6.8" ry="11.7"/>' +
+          '<path d="M35.8 19v-8.6M35.8 13.6c1.3-3.9 7.2-4 7.2.7V19" stroke-width="2"/>',
+        // Radicales: el signo de la raíz.
+        "raiz":
+          '<path d="M4 26.5h5.5l5.5 13 8.5-30H45" stroke-width="2.4"/>' +
+          '<path d="M28 22.5l10.5 14M38.5 22.5L28 36.5" stroke-width="2.1"/>',
+        // Logaritmos: la curva y = ln x, que pasa por (1, 0).
+        "logaritmo": function () {
+          return '<path d="M9 5v39M4 30h41" stroke-width="1.7" opacity="0.7"/>' +
+            '<path d="' + trazo(function (v) { return [9 + 5.6 * v, 30 - 7.2 * Math.log(v)]; }, 0.16, 6.3, 0.07) + '"/>' +
+            '<circle cx="14.6" cy="30" r="2.9" fill="currentColor" stroke="none"/>';
+        },
+        // Síntesis y práctica: la cumbre.
+        "cumbre":
+          '<path d="M3 41l13.5-22 7 10.5 5-7.5L45 41z"/><path d="M16.5 19V7.5l9 3.3-9 3.4"/>',
+        // Polinomios: una cúbica y sus tres raíces.
+        "polinomio": function () {
+          return '<path d="M3 26h42" stroke-width="1.7" opacity="0.7"/>' +
+            '<path d="' + trazo(function (v) { return [v, 26 - 0.0142 * (v - 11) * (v - 24) * (v - 37)]; }, 8.3, 39.7, 0.4) + '"/>' +
+            '<circle cx="11" cy="26" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="24" cy="26" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="37" cy="26" r="2.6" fill="currentColor" stroke="none"/>';
+        },
+        // Fracciones algebraicas: un polinomio entre otro, P sobre Q.
+        "fraccion":
+          '<path d="M8 24.5h32" stroke-width="2.4"/>' +
+          '<path d="M19.5 19.5V5h5.4a4.3 4.3 0 0 1 0 8.6h-5.4" stroke-width="2.2"/>' +
+          '<ellipse cx="24" cy="36.2" rx="5.7" ry="6.7" stroke-width="2.2"/><path d="M27.2 40.6l4.3 4.4" stroke-width="2.2"/>',
+        // Ecuaciones: la balanza en equilibrio.
+        "balanza":
+          '<path d="M17 42h14M24 42V9.5M8.5 13.5h31"/><circle cx="24" cy="8" r="2.2" fill="currentColor" stroke="none"/>' +
+          '<path d="M8.5 13.5L3.5 27M8.5 13.5l5 13.5M39.5 13.5l-5 13.5M39.5 13.5l5 13.5" stroke-width="1.6"/>' +
+          '<path d="M2 27h13a6.5 5.5 0 0 1-13 0zM33 27h13a6.5 5.5 0 0 1-13 0z" fill="currentColor" fill-opacity="0.18"/>',
+        // Sistemas: dos rectas y su punto de corte.
+        "rectas":
+          '<path d="M5 36L43 16M12 6l22 36"/><circle cx="24.17" cy="25.91" r="6.6" stroke-width="1.5" opacity="0.55"/>' +
+          '<circle cx="24.17" cy="25.91" r="3.3" fill="currentColor" stroke="none"/>',
+        // Inecuaciones: una semirrecta con el extremo abierto.
+        "intervalo":
+          '<path d="M2 25h44M41.5 20.5L46 25l-4.5 4.5" stroke-width="2"/><path d="M21 25h17" stroke-width="7.5"/>' +
+          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>'
+      };
+      function emblema(nombre) {
+        var dentro = EMBLEMAS[nombre];
+        if (typeof dentro === "function") {
+          dentro = dentro();
+        }
+        return dentro ? svg(48, 48, dentro, 2.3) : "";
+      }
+
+      // -------------------------------------------------------------- frisos
+      // Franjas de 1004 × 108 bajo el título de un apartado, con su color.
+      // `foco` es la abscisa que queda centrada cuando la franja no cabe.
+      var FRISOS = {
+        // Tres números y sus decimales (la definición de 1.1): exacto,
+        // periódico y ni lo uno ni lo otro, cada uno en su sitio de la recta.
+        "decimales": function () {
+          var Y = 84, X0 = 170, U = 340;
+          var x = function (v) { return r(X0 + v * U); };
+          var numeros = [
+            { valor: 5 / 11, tex: "\\tfrac{5}{11}=0{,}\\overline{45}", nota: "periódico", rx: 300 },
+            { valor: 7 / 8, tex: "\\tfrac{7}{8}=0{,}875", nota: "exacto", rx: 478 },
+            { valor: Math.SQRT2, tex: "\\sqrt{2}=1{,}41421356\\ldots", nota: "ni exacto ni periódico: irracional", rx: 690 }
+          ];
+          var d = '<path d="M' + x(-0.22) + " " + Y + "H" + x(2.2) + "M" + (x(2.2) - 8) + " " + (Y - 5) + "l8 5-8 5" + '" stroke-width="1.6"/>';
+          for (var k = -2; k <= 21; k++) {
+            var entero = k % 10 === 0;
+            d += '<path d="M' + x(k / 10) + " " + (Y - (entero ? 7 : 3.5)) + "v" + (entero ? 14 : 7) +
+              '" stroke-width="' + (entero ? 1.8 : 1.1) + '" opacity="' + (entero ? 1 : 0.5) + '"/>';
+          }
+          var rotulos = [0, 1, 2].map(function (n) {
+            return { x: x(n), y: Y + 18, tex: String(n), cuerpo: 13.5 };
+          });
+          numeros.forEach(function (n) {
+            d += '<path d="M' + x(n.valor) + " " + (Y - 6) + "L" + n.rx + ' 52" stroke-width="1.1" opacity="0.6" stroke-dasharray="1 4"/>' +
+              '<circle cx="' + x(n.valor) + '" cy="' + Y + '" r="4.6" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: n.rx, y: 22, tex: n.tex, cuerpo: 17 });
+            rotulos.push({ x: n.rx, y: 43, texto: n.nota, cuerpo: 11.5 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 500 };
+        },
+
+        // La regla de las potencias de 10, del átomo a la distancia de la
+        // Tierra al Sol (tamaños en metros, en orden de magnitud).
+        "potencias-de-diez": function () {
+          var Y = 66;
+          var x = function (e) { return r(92 + (e + 10) * 39); };
+          var hitos = [
+            { e: -10, nombre: "un átomo", dibujo: "atomo" },
+            { e: -6, nombre: "una bacteria", dibujo: "bacteria" },
+            { e: 0, nombre: "tú", dibujo: "persona" },
+            { e: 7, nombre: "la Tierra", dibujo: "tierra" },
+            { e: 9, nombre: "el Sol", dibujo: "sol" },
+            { e: 11, nombre: "de la Tierra al Sol", dibujo: "distancia" }
+          ];
+          var dibujos = {
+            atomo: function (cx, cy) {
+              return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="12" ry="4.6" transform="rotate(-32 ' + cx + " " + cy + ')" stroke-width="1.4"/>' +
+                '<ellipse cx="' + cx + '" cy="' + cy + '" rx="12" ry="4.6" transform="rotate(32 ' + cx + " " + cy + ')" stroke-width="1.4"/>' +
+                '<circle cx="' + cx + '" cy="' + cy + '" r="2.4" fill="currentColor" stroke="none"/>';
+            },
+            bacteria: function (cx, cy) {
+              return '<rect x="' + (cx - 11) + '" y="' + (cy - 5.5) + '" width="19" height="11" rx="5.5" stroke-width="1.5" transform="rotate(-18 ' + cx + " " + cy + ')"/>' +
+                '<path d="M' + (cx + 8.5) + " " + (cy - 2.8) + 'c4-3 3 3 6 0s2-4 5-2" stroke-width="1.3"/>' +
+                '<path d="M' + (cx - 5) + " " + (cy + 0.5) + "h2M" + cx + " " + (cy - 1) + 'h2" stroke-width="1.3"/>';
+            },
+            persona: function (cx, cy) {
+              return '<circle cx="' + cx + '" cy="' + (cy - 9) + '" r="3.4" stroke-width="1.6"/>' +
+                '<path d="M' + cx + " " + (cy - 5.5) + "v9.5M" + (cx - 6) + " " + (cy - 1.5) + "h12M" + cx + " " + (cy + 4) + "l-4.5 8M" + cx + " " + (cy + 4) + 'l4.5 8" stroke-width="1.6"/>';
+            },
+            tierra: function (cx, cy) {
+              return '<circle cx="' + cx + '" cy="' + cy + '" r="11" stroke-width="1.6"/>' +
+                '<path d="M' + (cx - 11) + " " + cy + "h22M" + cx + " " + (cy - 11) + "c-6.5 6-6.5 16 0 22M" + cx + " " + (cy - 11) + 'c6.5 6 6.5 16 0 22" stroke-width="1.2"/>';
+            },
+            sol: function (cx, cy) {
+              var rayos = "";
+              for (var k = 0; k < 8; k++) {
+                var a = (k * Math.PI) / 4;
+                rayos += "M" + r(cx + 9.5 * Math.cos(a)) + " " + r(cy + 9.5 * Math.sin(a)) + "L" + r(cx + 13.5 * Math.cos(a)) + " " + r(cy + 13.5 * Math.sin(a));
+              }
+              return '<circle cx="' + cx + '" cy="' + cy + '" r="6.2" fill="currentColor" fill-opacity="0.25" stroke-width="1.6"/>' +
+                '<path d="' + rayos + '" stroke-width="1.5"/>';
+            },
+            distancia: function (cx, cy) {
+              return '<circle cx="' + (cx - 15) + '" cy="' + cy + '" r="2.6" fill="currentColor" stroke="none"/>' +
+                '<path d="M' + (cx - 10) + " " + cy + 'h17" stroke-width="1.3" stroke-dasharray="0.5 3.6"/>' +
+                '<circle cx="' + (cx + 14) + '" cy="' + cy + '" r="5.6" fill="currentColor" fill-opacity="0.25" stroke-width="1.5"/>';
+            }
+          };
+          var d = '<path d="M56 ' + Y + "h896M944 " + (Y - 5) + 'l8 5-8 5" stroke-width="1.6"/>';
+          var rotulos = [];
+          for (var e = -10; e <= 11; e++) {
+            var hito = hitos.filter(function (h) { return h.e === e; })[0];
+            d += '<path d="M' + x(e) + " " + (Y - (hito ? 8 : 4)) + "v" + (hito ? 16 : 8) + '" stroke-width="' + (hito ? 1.9 : 1.2) + '" opacity="' + (hito ? 1 : 0.5) + '"/>';
+            if (hito) {
+              d += dibujos[hito.dibujo](x(e), 34);
+              rotulos.push({ x: x(e), y: 12, texto: hito.nombre, cuerpo: 11.5 });
+              rotulos.push({ x: x(e), y: Y + 24, tex: "10^{" + e + "}\\,\\text{m}", cuerpo: 14 });
+            }
+          }
+          return { dibujo: d, rotulos: rotulos, foco: x(0) };
+        },
+
+        // El lado de un cuadrado de área n mide la raíz de n, y la espiral
+        // de Teodoro, que encadena las raíces de 2, de 3, de 4… como la
+        // construcción de 1.2.
+        "raices": function () {
+          var u = 17.5, base = 74, px = 64;
+          var lados = ["1", "\\sqrt2", "\\sqrt3", "2", "\\sqrt5", "\\sqrt6", "\\sqrt7", "\\sqrt8", "3"];
+          var d = "";
+          var rotulos = [];
+          for (var n = 1; n <= 9; n++) {
+            var lado = Math.sqrt(n) * u;
+            var entero = Math.round(Math.sqrt(n)) * Math.round(Math.sqrt(n)) === n;
+            d += '<rect x="' + r(px) + '" y="' + r(base - lado) + '" width="' + r(lado) + '" height="' + r(lado) + '" rx="1.5" fill="currentColor" fill-opacity="' +
+              (entero ? 0.2 : 0.08) + '" stroke-width="' + (entero ? 1.9 : 1.5) + '"/>';
+            rotulos.push({ x: r(px + lado / 2), y: r(base - lado / 2), tex: String(n), cuerpo: n === 1 ? 11 : 13.5, opacidad: 0.9 });
+            rotulos.push({ x: r(px + lado / 2), y: base + 17, tex: lados[n - 1], cuerpo: 13.5 });
+            px += lado + 24;
+          }
+          var cx = 800, cy = 60, k = 10.6, angulo = 0;
+          var p = function (m, a) { return [r(cx + Math.sqrt(m) * k * Math.cos(a)), r(cy - Math.sqrt(m) * k * Math.sin(a))]; };
+          var primero = p(1, 0);
+          var radios = "M" + cx + " " + cy + "L" + primero[0] + " " + primero[1];
+          var borde = "M" + primero[0] + " " + primero[1];
+          for (n = 1; n <= 16; n++) {
+            angulo += Math.atan(1 / Math.sqrt(n));
+            var q = p(n + 1, angulo);
+            radios += "M" + cx + " " + cy + "L" + q[0] + " " + q[1];
+            borde += "L" + q[0] + " " + q[1];
+          }
+          d += '<path d="' + radios + '" stroke-width="1" opacity="0.55"/><path d="' + borde + '"/>';
+          rotulos.push(
+            { x: 906, y: 50, texto: "espiral de Teodoro", cuerpo: 11.5 },
+            { x: 906, y: 70, tex: "\\sqrt2,\\ \\sqrt3,\\ \\ldots,\\ \\sqrt{17}", cuerpo: 13 },
+            { x: 36, y: 46, texto: "área", cuerpo: 11.5, giro: -90 },
+            { x: 36, y: base + 17, texto: "lado", cuerpo: 11.5 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 330 };
+        },
+
+        // Una escala logarítmica: cada paso multiplica por 10 y el logaritmo
+        // los cuenta (log 1000 = 3 y log 0,01 = −2, como en 4.2).
+        "escala-logaritmica": function () {
+          var x = function (e) { return r(170 + (e + 2) * 150); };
+          var d = '<path d="M' + (x(-2) - 34) + " 40H" + (x(3) + 34) + "M" + (x(-2) - 34) + " 76H" + (x(3) + 34) + '" stroke-width="1.5"/>';
+          var rotulos = [
+            { x: 70, y: 22, tex: "x", cuerpo: 16 },
+            { x: 70, y: 94, tex: "\\log x", cuerpo: 15 }
+          ];
+          var nombres = ["0{,}01", "0{,}1", "1", "10", "100", "1000"];
+          for (var e = -2; e <= 3; e++) {
+            d += '<path d="M' + x(e) + ' 31V85" stroke-width="1.9"/>';
+            rotulos.push({ x: x(e), y: 19, tex: nombres[e + 2], cuerpo: 15 });
+            rotulos.push({ x: x(e), y: 97, tex: String(e).replace("-", "{-}"), cuerpo: 15 });
+            if (e < 3) {
+              for (var m = 2; m <= 9; m++) {
+                var px = r(x(e) + 150 * Math.log(m) / Math.LN10);
+                d += '<path d="M' + px + " 40v" + (m === 5 ? 9 : 6) + '" stroke-width="1.1" opacity="0.6"/>';
+              }
+              d += '<path d="M' + (x(e) + 16) + " 60q59-13 118 0M" + (x(e) + 127) + ' 55.5l7 4.5-8 2.5" stroke-width="1.2" opacity="0.75"/>';
+              rotulos.push({ x: x(e) + 75, y: 64, tex: "\\times 10", cuerpo: 11.5, opacidad: 0.85 });
+            }
+          }
+          return { dibujo: d, rotulos: rotulos, foco: x(0.5) };
+        },
+
+        // La tabla de Ruffini del ejemplo de 1.1 y la identidad de la
+        // división que sale de ella.
+        "ruffini": function () {
+          var col = [278, 344, 398, 452, 506];
+          var fila = [27, 55, 88];
+          var d = '<path d="M312 12V100M250 71H544" stroke-width="1.7"/>' +
+            '<rect x="484" y="74" width="46" height="28" rx="14" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          var celdas = [
+            [null, "1", "{-}2", "0", "3"],
+            ["3", null, "3", "3", "9"],
+            [null, "1", "1", "3", "12"]
+          ];
+          var rotulos = [];
+          celdas.forEach(function (linea, i) {
+            linea.forEach(function (valor, j) {
+              if (valor !== null) {
+                rotulos.push({ x: col[j], y: fila[i], tex: valor, cuerpo: 16.5 });
+              }
+            });
+          });
+          d += '<path d="M572 56h34M599 50.5l7 5.5-7 5.5" stroke-width="1.6"/>';
+          rotulos.push(
+            { x: 128, y: 56, tex: "(x^3-2x^2+3):(x-3)", cuerpo: 17 },
+            { x: 790, y: 56, tex: "x^3-2x^2+3=(x-3)(x^2+x+3)+12", cuerpo: 16 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 400 };
+        },
+
+        // Simplificar es cancelar factores, con las condiciones anotadas
+        // antes: la fracción de «La lupa del dominio».
+        "simplificar": function () {
+          var d = '<rect x="640" y="31" width="104" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 190, y: 54, tex: "\\dfrac{x^3-8x^2+16x}{x^2-4x}", cuerpo: 17 },
+              { x: 310, y: 54, tex: "=", cuerpo: 19 },
+              { x: 455, y: 54, tex: "\\dfrac{\\cancel{x}\\,\\cancel{(x-4)}\\,(x-4)}{\\cancel{x}\\,\\cancel{(x-4)}}", cuerpo: 17 },
+              { x: 600, y: 54, tex: "=", cuerpo: 19 },
+              { x: 692, y: 54, tex: "x-4", cuerpo: 20 },
+              { x: 858, y: 54, tex: "(x\\neq0,\\ x\\neq4)", cuerpo: 15, opacidad: 0.85 }
+            ],
+            foco: 470
+          };
+        },
+
+        // Resolver es transformar: la cadena de la ecuación incompleta de 3.1.
+        "resolver": function () {
+          var cx = 132;
+          var d = '<path d="M' + (cx - 16) + " 94h32M" + cx + " 94V22M" + (cx - 46) + ' 28h92" stroke-width="2"/>' +
+            '<circle cx="' + cx + '" cy="20" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<path d="M' + (cx - 46) + " 28l-12 30M" + (cx - 46) + " 28l12 30M" + (cx + 46) + " 28l-12 30M" + (cx + 46) + ' 28l12 30" stroke-width="1.3"/>' +
+            '<path d="M' + (cx - 61) + " 58h30a15 11 0 0 1-30 0zM" + (cx + 31) + ' 58h30a15 11 0 0 1-30 0z" fill="currentColor" fill-opacity="0.16" stroke-width="1.7"/>' +
+            '<rect x="778" y="33" width="130" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 362, y: 56, tex: "x^2-9=0", cuerpo: 22 },
+              { x: 487, y: 56, tex: "\\iff", cuerpo: 20 },
+              { x: 610, y: 56, tex: "x^2=9", cuerpo: 22 },
+              { x: 718, y: 56, tex: "\\iff", cuerpo: 20 },
+              { x: 843, y: 56, tex: "x=\\pm3", cuerpo: 22 }
+            ],
+            foco: 600
+          };
+        },
+
+        // Dos condiciones a la vez, un punto de corte: el sistema del
+        // ejemplo de 4.1.
+        "sistema": function () {
+          var U = 16.5, X0 = 124, Y0 = 88;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (v) { return r(Y0 - v * U); };
+          var rejilla = "";
+          for (var k = -2; k <= 5; k++) {
+            rejilla += "M" + x(k) + " 7V104";
+          }
+          for (k = 0; k <= 4; k++) {
+            rejilla += "M" + x(-2.6) + " " + y(k) + "H" + x(5.6);
+          }
+          var d = '<path d="' + rejilla + '" stroke-width="1" opacity="0.14"/>' +
+            '<path d="M' + x(-2.6) + " " + y(0) + "H" + x(5.6) + "M" + x(0) + ' 104V7" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="M' + x(-2.4) + " " + y(12.8 / 3) + "L" + x(5.3) + " " + y(-2.6 / 3) + '" stroke-width="2.2"/>' +
+            '<path d="M' + x(-1.85) + " " + y(-0.85) + "L" + x(3.75) + " " + y(4.75) + '" stroke-width="2.2" opacity="0.6"/>' +
+            '<circle cx="' + x(1) + '" cy="' + y(2) + '" r="8.5" stroke-width="1.3" opacity="0.5"/>' +
+            '<circle cx="' + x(1) + '" cy="' + y(2) + '" r="4.2" fill="currentColor" stroke="none"/>' +
+            '<path d="M592 56h62M646 50l8 6-8 6" stroke-width="1.7"/>' +
+            '<rect x="698" y="33" width="190" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: x(1) + 38, y: y(2) + 1, tex: "(1,\\,2)", cuerpo: 14 },
+              { x: 468, y: 56, tex: "\\left\\{\\begin{aligned}2x+3y&=8\\\\x-y&=-1\\end{aligned}\\right.", cuerpo: 18 },
+              { x: 793, y: 56, tex: "x=1,\\ \\ y=2", cuerpo: 20 }
+            ],
+            foco: 500
+          };
+        },
+
+        // La solución de una inecuación es un tramo entero: la del primer
+        // ejemplo de 5.1.
+        "inecuacion": function () {
+          var U = 40, X0 = 560, Y = 56;
+          var x = function (v) { return r(X0 + v * U); };
+          var marcas = "";
+          for (var k = -5; k <= 4; k++) {
+            marcas += "M" + x(k) + " " + (Y - 6) + "v12";
+          }
+          var d = '<path d="M' + x(-5.6) + " " + Y + "H" + x(4.75) + '" stroke-width="1.5" opacity="0.55"/>' +
+            '<path d="' + marcas + '" stroke-width="1.3" opacity="0.55"/>' +
+            '<path d="M' + x(-2) + " " + Y + "H" + x(4.55) + '" stroke-width="6.5"/>' +
+            '<path d="M' + x(4.45) + " " + (Y - 7) + 'l9 7-9 7" stroke-width="2.2"/>' +
+            '<circle cx="' + x(-2) + '" cy="' + Y + '" r="6.6" fill="currentColor" stroke="none"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 178, y: Y, tex: "3(x-1)\\leq 5x+1", cuerpo: 19 },
+              { x: x(-2), y: Y + 26, tex: "{-}2", cuerpo: 14 },
+              { x: x(0), y: Y + 26, tex: "0", cuerpo: 14, opacidad: 0.7 },
+              { x: 884, y: Y, tex: "[-2,+\\infty)", cuerpo: 19 }
+            ],
+            foco: 520
+          };
+        },
+
+        // La cumbre: el camino de la unidad, con el emblema de cada apartado
+        // en su parada. Vale para cualquier unidad.
+        "cumbre": function (seccion) {
+          var apartados = [];
+          var hermanas = seccion && seccion.parentElement ? seccion.parentElement.children : [];
+          for (var i = 0; i < hermanas.length; i++) {
+            var otra = hermanas[i];
+            if (otra !== seccion && otra.matches("section.level2[data-emblema]") && otra.getAttribute("data-number") !== "0") {
+              apartados.push(otra);
+            }
+          }
+          var camino = function (t) {
+            return [72 + 770 * t, 80 - 44 * Math.pow(t, 1.3) + 3.5 * Math.sin(t * 9)];
+          };
+          var d = '<path d="' + trazo(camino, 0, 1, 0.01) + '" stroke-width="1.7" stroke-dasharray="1 6" opacity="0.8"/>';
+          var cima = camino(1);
+          d += '<path d="M' + r(cima[0] - 2) + " 107L" + r(cima[0] + 44) + " " + r(cima[1] - 2) + "l24 34 15-20 50 67z" +
+            '" fill="currentColor" fill-opacity="0.1" stroke-width="1.8"/>' +
+            '<path d="M' + r(cima[0] + 44) + " " + r(cima[1] - 2) + "V" + r(cima[1] - 21) + 'l14 5-14 5" stroke-width="1.8"/>';
+          var rotulos = [];
+          apartados.forEach(function (apartado, j) {
+            var t = apartados.length === 1 ? 0.45 : 0.05 + (0.83 * j) / (apartados.length - 1);
+            var p = camino(t);
+            var color = window.getComputedStyle(apartado).getPropertyValue("--apartado").trim() || "currentColor";
+            var dentro = EMBLEMAS[apartado.getAttribute("data-emblema")];
+            if (typeof dentro === "function") {
+              dentro = dentro();
+            }
+            d += '<g color="' + color + '" stroke="' + color + '">' +
+              '<circle cx="' + r(p[0]) + '" cy="' + r(p[1]) + '" r="18" fill="#ffffff" stroke-width="1.6"/>' +
+              (dentro
+                ? '<svg x="' + r(p[0] - 12.5) + '" y="' + r(p[1] - 12.5) + '" width="25" height="25" viewBox="0 0 48 48" stroke-width="2.7">' + dentro + "</svg>"
+                : "") +
+              "</g>";
+            rotulos.push({ x: r(p[0] + 27), y: r(p[1] - 14), texto: apartado.getAttribute("data-number") || "", cuerpo: 12.5, color: color });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 620 };
+        }
+      };
+
+      // ------------------------------------------- dibujos de las cápsulas
+      // De 48 × 48, en un círculo con el tono suave del apartado.
+      var DIBUJOS = {
+        // La diagonal del cuadrado de lado 1.
+        "diagonal": svg(48, 48,
+          '<rect x="11" y="11" width="26" height="26" rx="1" fill="currentColor" fill-opacity="0.12" stroke-width="1.8"/>' +
+          '<path d="M11 37L37 11" stroke-width="2.6"/>', 2.2),
+        // Un gúgol: 10 elevado a 100.
+        "gugol": '<span class="formula-dibujo" data-tex="10^{100}"></span>',
+        // «Al-ŷabr», la palabra que dio nombre al álgebra.
+        "al-yabr": '<span class="letras-dibujo" lang="ar" dir="rtl">الجبر</span>',
+        // El signo igual de Recorde: dos rayas paralelas.
+        "igual": svg(48, 48, '<path d="M7 20h34M7 28h34" stroke-width="2.8"/>', 2.2),
+        // Sin dibujo propio: un destello.
+        "": svg(48, 48, '<path d="M24 8v8M24 32v8M8 24h8M32 24h8M13 13l5 5M30 30l5 5M35 13l-5 5M18 30l-5 5" stroke-width="2.2"/>', 2.2)
+      };
+
+      // -------------------------------------------------------------- montaje
+      function componer(tex) {
+        if (!window.katex) {
+          return null;
+        }
+        try {
+          return window.katex.renderToString(tex, { throwOnError: false });
+        } catch (error) {
+          return null;
+        }
+      }
+      // El lienzo: el dibujo y, encima, sus rótulos, en las medidas del diseño.
+      function lienzo(ancho, alto, pieza) {
+        var caja = document.createElement("div");
+        caja.className = "lienzo-adorno";
+        caja.style.width = ancho + "px";
+        caja.style.height = alto + "px";
+        caja.innerHTML = svg(ancho, alto, pieza.dibujo);
+        (pieza.rotulos || []).forEach(function (rotulo) {
+          var texto = rotulo.tex ? componer(rotulo.tex) : null;
+          if (rotulo.tex && texto === null) {
+            return;
+          }
+          var e = document.createElement("span");
+          e.className = "rotulo-adorno" + (rotulo.fundido ? " fundido" : "") + (rotulo.tex ? "" : " de-texto");
+          e.style.left = rotulo.x + "px";
+          e.style.top = rotulo.y + "px";
+          e.style.fontSize = rotulo.cuerpo + "px";
+          if (rotulo.opacidad) {
+            e.style.opacity = rotulo.opacidad;
+          }
+          if (rotulo.color) {
+            e.style.color = rotulo.color;
+          }
+          if (rotulo.giro) {
+            e.style.transform = "translate(-50%, -50%) rotate(" + rotulo.giro + "deg)";
+          }
+          if (texto !== null) {
+            e.innerHTML = texto;
+          } else {
+            e.textContent = rotulo.texto;
+          }
+          caja.appendChild(e);
+        });
+        return caja;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var contenido = document.getElementById("contenido-unidad");
+        var ajustes = [];
+
+        // La portada: su hueco viene en la página. Con el dibujo a un lado
+        // (escritorio), se ajusta a lo que el título deja libre; bajo el
+        // texto (pantallas estrechas), al ancho de su franja.
+        var marco = document.querySelector(".adorno-portada[data-portada]");
+        var pieza = marco ? PORTADAS[marco.getAttribute("data-portada")] : null;
+        if (marco && !pieza) {
+          marco.classList.add("sin-sitio");
+        }
+        if (pieza) {
+          var tela = lienzo(640, 225, pieza());
+          marco.appendChild(tela);
+          var portada = marco.parentElement;
+          var titulo = portada.querySelector("h1");
+          ajustes.push(function () {
+            var escala;
+            if (window.getComputedStyle(marco).position === "absolute") {
+              var caja = portada.getBoundingClientRect();
+              if (!caja.width) {
+                return;
+              }
+              var libre = caja.width;
+              if (titulo) {
+                var rango = document.createRange();
+                rango.selectNodeContents(titulo);
+                libre = caja.right - rango.getBoundingClientRect().right - 28;
+              }
+              escala = Math.min(1, caja.height / 225, libre / 640);
+              marco.classList.toggle("sin-sitio", escala < 0.3);
+            } else {
+              if (!marco.clientWidth) {
+                return;
+              }
+              escala = marco.clientWidth / 640;
+              marco.classList.remove("sin-sitio");
+            }
+            marco.classList.toggle("sin-rotulos", escala < 0.55);
+            tela.style.transform = "scale(" + r(escala) + ")";
+          });
+        }
+
+        if (contenido) {
+          // El emblema, dentro del título del apartado, a su derecha.
+          contenido.querySelectorAll(":scope > section.level2[data-emblema] > h2").forEach(function (h2) {
+            var dibujo = emblema(h2.parentElement.getAttribute("data-emblema"));
+            if (!dibujo) {
+              return;
+            }
+            var e = document.createElement("span");
+            e.className = "emblema-apartado";
+            e.setAttribute("aria-hidden", "true");
+            e.innerHTML = dibujo;
+            h2.appendChild(e);
+            h2.classList.add("con-emblema");
+          });
+
+          // El friso: su hueco viene reservado bajo el título.
+          contenido.querySelectorAll(".friso-apartado[data-friso]").forEach(function (hueco) {
+            var crear = FRISOS[hueco.getAttribute("data-friso")];
+            if (!crear) {
+              hueco.classList.add("sin-dibujo");
+              return;
+            }
+            var friso = crear(hueco.closest("section.level2"));
+            var tela = lienzo(1004, 108, friso);
+            hueco.appendChild(tela);
+            var centrado = false;
+            ajustes.push(function () {
+              var ancho = hueco.clientWidth;
+              if (!ancho) {
+                return;
+              }
+              // El ancho del dibujo es el del calzo que le reserva el sitio
+              // en la plantilla: el de la franja, entre sus dos cotas.
+              var calzo = window.getComputedStyle(hueco, "::before");
+              var dibujo = Math.min(parseFloat(calzo.maxWidth) || 1004, Math.max(parseFloat(calzo.minWidth) || 0, ancho));
+              var escala = dibujo / 1004;
+              tela.style.transform = "scale(" + r(escala) + ")";
+              tela.style.left = Math.max(0, r((ancho - dibujo) / 2)) + "px";
+              if (dibujo > ancho + 1 && !centrado) {
+                hueco.scrollLeft = Math.max(0, (friso.foco || 502) * escala - ancho / 2);
+                centrado = true;
+              }
+            });
+          });
+
+          // El dibujo de cada cápsula.
+          contenido.querySelectorAll(".curiosidad").forEach(function (capsula) {
+            var nombre = capsula.getAttribute("data-dibujo") || "";
+            var e = document.createElement("span");
+            e.className = "dibujo-curiosidad";
+            e.setAttribute("aria-hidden", "true");
+            e.innerHTML = DIBUJOS[nombre] || DIBUJOS[""];
+            var formula = e.querySelector(".formula-dibujo");
+            if (formula) {
+              var compuesta = componer(formula.getAttribute("data-tex"));
+              if (compuesta === null) {
+                e.innerHTML = DIBUJOS[""];
+              } else {
+                formula.innerHTML = compuesta;
+              }
+            }
+            capsula.insertBefore(e, capsula.firstChild);
+          });
+        }
+
+        function ajustar() {
+          ajustes.forEach(function (ajuste) {
+            ajuste();
+          });
+        }
+        if (ajustes.length) {
+          ajustar();
+          window.addEventListener("resize", ajustar);
+          // Al salir del modo clase vuelven a verse, quizá con otra medida.
+          new MutationObserver(ajustar).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(ajustar);
+          }
+        }
+      });
     })();
   </script>
 
