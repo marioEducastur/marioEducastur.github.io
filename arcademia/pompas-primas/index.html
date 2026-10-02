@@ -56,8 +56,8 @@
   plato asturiano de premio que solo da puntos. Con el reloj, las pompas se
   paran y, a diferencia del Pang, no hacen daño mientras están paradas (así
   se puede disparar desde debajo a las que se han quedado bajas); al volver a
-  moverse dejan un momento para apartarse. En algunas fases, a partir
-  de Covadonga, hay bloques y escaleras como en el Pang: las pompas botan en
+  moverse dejan un momento para apartarse. En algunas fases, desde la
+  tercera de Gijón, hay bloques y escaleras como en el Pang: las pompas botan en
   los bloques, el arpón se para en ellos, los de cristal se rompen de un
   disparo (y los del «?» sueltan un premio) y por las escaleras se sube a los
   bloques fijos, que van pegados a las paredes. Al llegar a un lugar nuevo
@@ -408,15 +408,15 @@ var MUNDOS = [
 var FASES = [
   { mundo:0, pompas:[{ n:8, x:0.25, dir:-1 }] },
   { mundo:0, pompas:[{ n:4, x:0.2, dir:-1 }, { n:8, x:0.8, dir:1 }] },
-  { mundo:0, pompas:[{ n:16, x:0.25, dir:-1 }] },
+  { mundo:0, pompas:[{ n:16, x:0.25, dir:-1 }], plano:'mirador' },
   { mundo:0, pompas:[{ n:32, x:0.25, dir:-1 }] },
   { mundo:1, pompas:[{ n:6, x:0.2, dir:-1 }, { n:9, x:0.8, dir:1 }] },
-  { mundo:1, pompas:[{ n:12, x:0.22, dir:-1 }, { n:18, x:0.78, dir:1 }] },
+  { mundo:1, pompas:[{ n:12, x:0.22, dir:-1 }, { n:18, x:0.78, dir:1 }], plano:'palco' },
   { mundo:1, pompas:[{ n:27, x:0.22, dir:-1 }, { n:24, x:0.78, dir:1 }] },
   { mundo:1, pompas:[{ n:72, x:0.25, dir:-1 }, { n:54, x:0.75, dir:1 }] },
   { mundo:2, pompas:[{ n:10, x:0.2, dir:-1 }, { n:15, x:0.8, dir:1 }] },
   { mundo:2, pompas:[{ n:20, x:0.14, dir:-1 }, { n:25, x:0.36, dir:-1 }, { n:30, x:0.8, dir:1 }] },
-  { mundo:2, pompas:[{ n:45, x:0.22, dir:-1 }, { n:60, x:0.78, dir:1 }] },
+  { mundo:2, pompas:[{ n:45, x:0.22, dir:-1 }, { n:60, x:0.78, dir:1 }], plano:'gradas' },
   { mundo:2, pompas:[{ n:90, x:0.24, dir:-1 }, { n:100, x:0.76, dir:1 }] },
   { mundo:3, pompas:[{ n:14, x:0.2, dir:-1 }, { n:21, x:0.8, dir:1 }] },
   { mundo:3, pompas:[{ n:28, x:0.14, dir:-1 }, { n:35, x:0.34, dir:-1 }, { n:49, x:0.8, dir:1 }] },
@@ -463,8 +463,16 @@ var FASES = [
 var FASES_POR_MUNDO = 4;
 /* Planos, como en el Pang: bloques donde botan las pompas y escaleras para subir a ellos. t: 'f' fijo, 'c' de cristal (se rompe de
    un disparo) y 'p' de cristal con premio (o: el objeto que suelta). Las escaleras van de y1 (abajo) a y0 (arriba, el lomo de un bloque fijo).
-   Los bloques fijos van pegados a las paredes: así no quedan pasillos estrechos donde una pompa se quede encerrada. */
+   Los bloques fijos van pegados a las paredes: así no quedan pasillos estrechos donde una pompa se quede encerrada.
+   Los tres primeros (mirador, palco y gradas) son los de Gijón, Avilés y Oviedo: un balcón bajo con su escalera y, encima y pegado
+   a la pared, un «?» que desde el suelo tapa el balcón, así que solo se rompe subiendo. */
 var PLANOS = {
+  mirador:   { bloques:[{ x:540, y:320, w:180, h:16, t:'f' }, { x:656, y:214, w:64, h:16, t:'p', o:'reloj' }],
+               escaleras:[{ x:570, y0:320, y1:440 }] },
+  palco:     { bloques:[{ x:0, y:310, w:180, h:16, t:'f' }, { x:0, y:204, w:64, h:16, t:'p', o:'doble' }],
+               escaleras:[{ x:150, y0:310, y1:440 }] },
+  gradas:    { bloques:[{ x:0, y:336, w:170, h:16, t:'f' }, { x:540, y:280, w:180, h:16, t:'f' }, { x:656, y:174, w:64, h:16, t:'p', o:'lupa' }],
+               escaleras:[{ x:140, y0:336, y1:440 }, { x:570, y0:280, y1:440 }] },
   cristales: { bloques:[{ x:240, y:270, w:48, h:16, t:'c' }, { x:336, y:250, w:48, h:16, t:'p', o:'reloj' }, { x:432, y:270, w:48, h:16, t:'c' }], escaleras:[] },
   balcones:  { bloques:[{ x:0, y:306, w:170, h:16, t:'f' }, { x:550, y:306, w:170, h:16, t:'f' }, { x:336, y:190, w:48, h:16, t:'p', o:'rafaga' }],
                escaleras:[{ x:140, y0:306, y1:440 }, { x:580, y0:306, y1:440 }] },
@@ -560,7 +568,14 @@ function crearMotor(){
     for(var k = 0; k < M.bloques.length; k++){ var b = M.bloques[k]; if(b.roto || x < b.x || x > b.x + b.w || b.y > y1 || b.y + b.h < y0) continue; if(!mejor || b.y > mejor.y) mejor = b; }
     return mejor;
   }
-  /* una pompa que toca un bloque sale de él y rebota: por arriba, como en el suelo; por abajo, hacia abajo; por un lado, se da la vuelta */
+  /* lo que queda libre debajo de un bloque, hasta el suelo o hasta el lomo del bloque que tenga debajo */
+  function huecoBajo(b){
+    var s = SUELO;
+    for(var k = 0; k < M.bloques.length; k++){ var c = M.bloques[k]; if(c !== b && !c.roto && c.y >= b.y + b.h && c.y < s && c.x < b.x + b.w && b.x < c.x + c.w) s = c.y; }
+    return s - (b.y + b.h);
+  }
+  /* una pompa que toca un bloque sale de él y rebota: por arriba, como en el suelo; por abajo, hacia abajo; por un lado, se da la
+     vuelta, y también si toca por debajo un bloque bajo el que no cabe */
   function chocarBloques(p, soloSacar){
     if(!M.bloques.length) return;
     for(var vuelta = 0; vuelta < 2; vuelta++){
@@ -580,10 +595,21 @@ function crearMotor(){
           p.x += ux * pen; p.y += uy * pen; toca = true;
           if(!soloSacar){
             /* apoyada por arriba (aunque sea en una esquina), bota como en el suelo: así ninguna pompa se queda encajada entre dos bloques;
-               por debajo, rebota hacia abajo; de lado, o en una esquina muy de canto, se da la vuelta */
+               por debajo, rebota hacia abajo; solo se da la vuelta si da de lado de verdad. En una esquina sigue su camino, por encima o
+               por debajo: si también se diera la vuelta ahí, las grandes se quedarían yendo y viniendo entre dos bloques sin avanzar */
+            var vuelve = Math.abs(uy) <= 0.2, haciaDerecha = ux > 0;
             if(uy < -0.2){ if(p.vy >= 0){ p.vy = -velBote(p); p.tBote = M.t; } }
-            else if(uy > 0.2){ if(p.vy < 0) p.vy = -p.vy; }
-            if(Math.abs(ux) > 0.7) p.vx = ux > 0 ? Math.abs(p.vx) : -Math.abs(p.vx);
+            else if(uy > 0.2){
+              if(p.vy < 0) p.vy = -p.vy;
+              /* si toca por debajo un bloque bajo el que no cabe, también se da la vuelta: si no, se quedaría encajada entre la
+                 esquina del bloque y el suelo, vibrando. De un bloque pegado a la pared sale siempre hacia el lado abierto */
+              if(2 * r > huecoBajo(b)){
+                if(b.x <= 0){ vuelve = true; haciaDerecha = true; }
+                else if(b.x + b.w >= W){ vuelve = true; haciaDerecha = false; }
+                else if(Math.abs(ux) >= 0.05) vuelve = true;
+              }
+            }
+            if(vuelve) p.vx = haciaDerecha ? Math.abs(p.vx) : -Math.abs(p.vx);
           }
           cs = circulos(p);
         }
@@ -2926,7 +2952,7 @@ function abrirPanel(nombre, focoId){
       + '<h3>La idea</h3><p>Cada pompa lleva un número. Dispárale con el arpón: si el número es <b>compuesto</b>, la pompa se parte en dos pompas cuyo producto es él; si es <b>primo</b>, estalla. Revienta todas las pompas para pasar de fase. Arriba ves cómo va quedando cada número: 60 = 6 · 10 = 2 · 3 · 2 · 5 = 2² · 3 · 5.</p>'
       + '<p>Cuanto mayor es el número, mayor es la pompa, pero el tamaño no dice si es primo: el 61 y el 60 miden casi lo mismo. El 61 estalla entero; el 60 acaba en cuatro primos.</p>'
       + '<h3>Por el centro o por un lado</h3><p>Depende de dónde le dé el arpón. <b>Por el centro</b>, la pompa se parte en los dos números más cercanos: 72 = 8 · 9, y los cuadrados en dos iguales, 36 = 6 · 6. <b>Por un lado</b>, sale por ese lado una pompa más pequeña, y cuanto más al borde, más pequeña, hasta el primo más pequeño: 72 = 2 · 36, como en la división sucesiva del cuaderno. Da igual cómo se parta: al final salen siempre los mismos primos.</p>'
-      + '<h3>Escaleras y bloques</h3><p>En algunas fases hay bloques, como en el Pang: las pompas botan en ellos y el arpón se para al tocarlos. Los de <b>cristal</b> se rompen de un disparo, y los que llevan un «?» sueltan un premio. Por las <b>escaleras</b> subes a los bloques fijos: arriba puedes andar y disparar, y si te sales del borde caes al suelo. En la escalera no se dispara.</p>'
+      + '<h3>Escaleras y bloques</h3><p>En algunas fases hay bloques, como en el Pang: las pompas botan en ellos y el arpón se para al tocarlos. Los de <b>cristal</b> se rompen de un disparo, y los que llevan un «?» sueltan un premio. Por las <b>escaleras</b> subes a los bloques fijos: arriba puedes andar y disparar, y si te sales del borde caes al suelo. En la escalera no se dispara. Algunos «?» están encima de un balcón: solo se rompen subiendo.</p>'
       + '<h3>Pompas gemelas (Llanes)</h3><p>Dos números pegados. Al darles, se parten en tres: lo que solo es del primero, lo que tienen en común (su <b>m.c.d.</b>) y lo que solo es del segundo. Las tres multiplicadas dan su <b>m.c.m.</b>: 12 y 18 se parten en 2, 6 y 3; m.c.d. = 6 y m.c.m. = 2 · 6 · 3 = 36.</p>'
       + '<h3>Objetos</h3><ul><li><b>Doble arpón</b>: dos arpones a la vez.</li><li><b>Arpón fijo</b>: se queda clavado en el techo un momento.</li><li><b>Reloj</b>: las pompas se paran cinco segundos y, mientras están paradas, no hacen daño: puedes ponerte debajo y dispararles. Antes de volver a moverse avisan con su color, y entonces parpadeas un momento para apartarte.</li><li><b>Escudo</b>: te salva de un toque.</li><li><b>Dinamita</b>: todas las pompas se parten hasta sus primos.</li><li><b>Lupa</b>: se ven los primos que lleva dentro cada pompa.</li><li><b>Criba</b>: todas las pompas que son múltiplo de un primo sueltan ese primo.</li><li><b>Ráfaga</b>: durante ocho segundos, mientras mantienes pulsado el disparo, salen balitas sin parar. Cada una parte la pompa según dónde le dé, como el arpón.</li><li><b>Reloj de arena</b>: las pompas van a la mitad durante ocho segundos.</li><li><b>Vida extra</b>: una vida más (hasta cinco).</li></ul>'
       + '<p>Una vez por fase cae del cielo un <b>plato asturiano</b> (fabada, cachopo, sidra, casadielles…): cógelo antes de que desaparezca y ganas 500 puntos.</p>'
