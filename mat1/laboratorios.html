@@ -6646,21 +6646,48 @@ teoría que lo acompaña.</p>
         return partes;
       }
       // Soluciones de una lista de ejercicios: el bloque plegable que la
-      // sigue en su sección, con el número de cada respuesta.
+      // sigue en su sección, con el número de cada respuesta. El «Soluciones»
+      // de segundo nivel conserva su título y queda en una sección aparte,
+      // justo detrás de la de sus ejercicios (la síntesis de las unidades 1):
+      // si la sección de la lista no lleva bloque, se toma el de esa.
       function solucionesDeLaLista(unidad) {
         var seccion = unidad.tagName === "OL" ? unidad.closest("section.ejercicios") : null;
         if (!seccion || unidad.parentElement.closest(".resultado")) {
           return null;
         }
+        var bloque = null;
         var bloques = seccion.querySelectorAll(".resultado.plegable");
-        for (var i = 0; i < bloques.length; i++) {
+        for (var i = 0; i < bloques.length && !bloque; i++) {
           if (unidad.compareDocumentPosition(bloques[i]) & Node.DOCUMENT_POSITION_FOLLOWING) {
-            var lista = bloques[i].querySelector(":scope > ol");
-            return lista ? numerosDe(lista, false) : null;
+            bloque = bloques[i];
           }
         }
-        return null;
+        if (!bloque) {
+          bloque = solucionesAparte(seccion);
+        }
+        var lista = bloque ? bloque.querySelector(":scope > ol") : null;
+        return lista ? numerosDe(lista, false) : null;
       }
+      // El bloque de la sección «Soluciones» que va justo detrás de la sección
+      // de ejercicios más exterior, dentro del mismo apartado (la pantalla de
+      // la ampliación es un apartado: de otro no podría traer las respuestas).
+      function solucionesAparte(seccion) {
+        var exterior = seccion;
+        for (var madre = seccion; madre; madre = madre.parentElement.closest("section.ejercicios")) {
+          exterior = madre;
+        }
+        var detras = exterior.nextElementSibling;
+        if (!detras || exterior.parentElement === contenido || !detras.matches("section:not(.ejercicios)")) {
+          return null;
+        }
+        return detras.querySelector(":scope > .resultado.plegable");
+      }
+      // Respuestas de los ejercicios de una parte. Sus números salen solo de
+      // los ejercicios: con las respuestas a la vista, `a.numeros` lleva
+      // también los pares de las soluciones, y con la unidad entera como
+      // única parte (una lista de un solo ejercicio, como la competencial que
+      // va tras su laboratorio) entrarían todas las del bloque, también las
+      // de las otras listas con las que lo comparte.
       function respuestasDe(parte) {
         var a = ampliacion;
         if (!a.soluciones) {
@@ -6668,7 +6695,10 @@ teoría que lo acompaña.</p>
         }
         var numeros = a.numeros
           .filter(function (par) {
-            return parte.piezas.indexOf(par[0]) !== -1 || parte.piezas[0] === a.unidades[a.indice];
+            return (
+              a.soluciones.indexOf(par) === -1 &&
+              (parte.piezas.indexOf(par[0]) !== -1 || parte.piezas[0] === a.unidades[a.indice])
+            );
           })
           .map(function (par) {
             return par[1];

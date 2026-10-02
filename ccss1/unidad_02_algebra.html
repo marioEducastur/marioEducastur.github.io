@@ -10161,37 +10161,13 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(x(20-x)\)</span>.</span></p></li>
                 </ol></li>
-                <li><p><strong>El plan del taller.</strong> Un taller
-                artesano fabrica sillas y mesas. Cada silla lleva <span
-                class="math inline">\(2\)</span> horas de trabajo y cada
-                mesa <span class="formula-con-signo"><span
-                class="math inline">\(4\)</span>,</span> con un máximo
-                de <span class="math inline">\(40\)</span> horas
-                semanales. Además, un pedido fijo obliga a fabricar al
-                menos <span class="math inline">\(4\)</span> sillas cada
-                semana.</p>
-                <ol type="a">
-                <li><p>Si <span class="math inline">\(x\)</span> es el
-                número de sillas e <span
-                class="math inline">\(y\)</span> el de mesas, que son
-                números enteros, escribe el sistema de inecuaciones que
-                describe la producción semanal posible.</p></li>
-                <li><p>Describe la región del plano correspondiente y da
-                sus vértices.</p></li>
-                <li><p>¿Puede el taller fabricar <span
-                class="math inline">\(10\)</span> sillas y <span
-                class="math inline">\(5\)</span> mesas en una semana? ¿Y
-                <span class="math inline">\(6\)</span> sillas y <span
-                class="math inline">\(8\)</span> mesas?</p></li>
-                </ol></li>
                 </ol>
                 <div id="huerto-areas"
                 class="interactivo bloque-didactico"
                 data-componente="huerto-areas"
                 data-titulo="Laboratorio: el huerto de la valla justa">
                 <p><span class="etiqueta-bloque">Explora</span></p>
-                <p><strong>Guía de resolución del ejercicio
-                82.</strong></p>
+                <p><strong>Guía de resolución.</strong></p>
                 <ol type="1">
                 <li>Con <span class="math inline">\(40\
                 \text{m}\)</span> de perímetro, los lados cumplen <span
@@ -10221,13 +10197,37 @@ Bachillerato</p>
                 el cuadrado es el rectángulo más eficiente.</li>
                 </ol>
                 </div>
+                <ol start="83" type="1">
+                <li><p><strong>El plan del taller.</strong> Un taller
+                artesano fabrica sillas y mesas. Cada silla lleva <span
+                class="math inline">\(2\)</span> horas de trabajo y cada
+                mesa <span class="formula-con-signo"><span
+                class="math inline">\(4\)</span>,</span> con un máximo
+                de <span class="math inline">\(40\)</span> horas
+                semanales. Además, un pedido fijo obliga a fabricar al
+                menos <span class="math inline">\(4\)</span> sillas cada
+                semana.</p>
+                <ol type="a">
+                <li><p>Si <span class="math inline">\(x\)</span> es el
+                número de sillas e <span
+                class="math inline">\(y\)</span> el de mesas, que son
+                números enteros, escribe el sistema de inecuaciones que
+                describe la producción semanal posible.</p></li>
+                <li><p>Describe la región del plano correspondiente y da
+                sus vértices.</p></li>
+                <li><p>¿Puede el taller fabricar <span
+                class="math inline">\(10\)</span> sillas y <span
+                class="math inline">\(5\)</span> mesas en una semana? ¿Y
+                <span class="math inline">\(6\)</span> sillas y <span
+                class="math inline">\(8\)</span> mesas?</p></li>
+                </ol></li>
+                </ol>
                 <div id="region-produccion"
                 class="interactivo bloque-didactico"
                 data-componente="region-plano"
                 data-titulo="Laboratorio: el plan del taller">
                 <p><span class="etiqueta-bloque">Explora</span></p>
-                <p><strong>Guía de resolución del ejercicio
-                83.</strong></p>
+                <p><strong>Guía de resolución.</strong></p>
                 <ol type="1">
                 <li>Traduce cada límite a una inecuación: horas, <span
                 class="formula-con-signo"><span
@@ -12240,21 +12240,48 @@ Bachillerato</p>
         return partes;
       }
       // Soluciones de una lista de ejercicios: el bloque plegable que la
-      // sigue en su sección, con el número de cada respuesta.
+      // sigue en su sección, con el número de cada respuesta. El «Soluciones»
+      // de segundo nivel conserva su título y queda en una sección aparte,
+      // justo detrás de la de sus ejercicios (la síntesis de las unidades 1):
+      // si la sección de la lista no lleva bloque, se toma el de esa.
       function solucionesDeLaLista(unidad) {
         var seccion = unidad.tagName === "OL" ? unidad.closest("section.ejercicios") : null;
         if (!seccion || unidad.parentElement.closest(".resultado")) {
           return null;
         }
+        var bloque = null;
         var bloques = seccion.querySelectorAll(".resultado.plegable");
-        for (var i = 0; i < bloques.length; i++) {
+        for (var i = 0; i < bloques.length && !bloque; i++) {
           if (unidad.compareDocumentPosition(bloques[i]) & Node.DOCUMENT_POSITION_FOLLOWING) {
-            var lista = bloques[i].querySelector(":scope > ol");
-            return lista ? numerosDe(lista, false) : null;
+            bloque = bloques[i];
           }
         }
-        return null;
+        if (!bloque) {
+          bloque = solucionesAparte(seccion);
+        }
+        var lista = bloque ? bloque.querySelector(":scope > ol") : null;
+        return lista ? numerosDe(lista, false) : null;
       }
+      // El bloque de la sección «Soluciones» que va justo detrás de la sección
+      // de ejercicios más exterior, dentro del mismo apartado (la pantalla de
+      // la ampliación es un apartado: de otro no podría traer las respuestas).
+      function solucionesAparte(seccion) {
+        var exterior = seccion;
+        for (var madre = seccion; madre; madre = madre.parentElement.closest("section.ejercicios")) {
+          exterior = madre;
+        }
+        var detras = exterior.nextElementSibling;
+        if (!detras || exterior.parentElement === contenido || !detras.matches("section:not(.ejercicios)")) {
+          return null;
+        }
+        return detras.querySelector(":scope > .resultado.plegable");
+      }
+      // Respuestas de los ejercicios de una parte. Sus números salen solo de
+      // los ejercicios: con las respuestas a la vista, `a.numeros` lleva
+      // también los pares de las soluciones, y con la unidad entera como
+      // única parte (una lista de un solo ejercicio, como la competencial que
+      // va tras su laboratorio) entrarían todas las del bloque, también las
+      // de las otras listas con las que lo comparte.
       function respuestasDe(parte) {
         var a = ampliacion;
         if (!a.soluciones) {
@@ -12262,7 +12289,10 @@ Bachillerato</p>
         }
         var numeros = a.numeros
           .filter(function (par) {
-            return parte.piezas.indexOf(par[0]) !== -1 || parte.piezas[0] === a.unidades[a.indice];
+            return (
+              a.soluciones.indexOf(par) === -1 &&
+              (parte.piezas.indexOf(par[0]) !== -1 || parte.piezas[0] === a.unidades[a.indice])
+            );
           })
           .map(function (par) {
             return par[1];
