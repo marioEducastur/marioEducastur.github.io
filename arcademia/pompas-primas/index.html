@@ -49,7 +49,10 @@
   Diez objetos, casi todos del Pang: doble arpón, arpón fijo, reloj, reloj
   de arena, escudo, vida extra, dinamita, lupa, criba y la ráfaga, que dispara
   balitas mientras se mantiene pulsado el disparo; y, una vez por fase, un
-  plato asturiano de premio que solo da puntos. En algunas fases, a partir
+  plato asturiano de premio que solo da puntos. Con el reloj, las pompas se
+  paran y, a diferencia del Pang, no hacen daño mientras están paradas (así
+  se puede disparar desde debajo a las que se han quedado bajas); al volver a
+  moverse dejan un momento para apartarse. En algunas fases, a partir
   de Covadonga, hay bloques y escaleras como en el Pang: las pompas botan en
   los bloques, el arpón se para en ellos, los de cristal se rompen de un
   disparo (y los del «?» sueltan un premio) y por las escaleras se sube a los
@@ -290,6 +293,7 @@ var T_FIJO = 2.5, T_RELOJ = 5, T_LUPA = 8, T_OBJETO = 7, P_OBJETO = 0.14, T_INVU
 var T_PREPARADOS = 1.4, T_GOLPE = 1.2;
 var T_RAFAGA = 8, T_BALA = 0.1, BALA_VEL = 900, BALAS_MAX = 8;   /* la ráfaga del Pang: con el disparo pulsado, una balita cada 0,1 s durante 8 s */
 var T_ARENA = 8, FACTOR_ARENA = 0.5;   /* el reloj de arena: las pompas, a la mitad durante 8 s */
+var T_TRAS_RELOJ = 1.5;            /* las pompas paradas por el reloj no hacen daño; al volver a moverse dejan este respiro para salir de debajo */
 var VEL_ESCALERA = 150, ALCANCE_ESCALERA = 14, BORDE_PIE = 6;   /* subir y bajar escaleras; lo que el pie puede asomar del borde de un bloque */
 var VY_MAX = 700;                  /* ninguna pompa cae más deprisa (del techo al suelo llega a 636) */
 var HUECO_MIN = JUG_ALTO + 8;      /* ningún bloque baja más que esto sobre un sitio por donde se anda */
@@ -979,7 +983,14 @@ function crearMotor(){
       if(j.invulnerable > 0) j.invulnerable = Math.max(0, j.invulnerable - dt);
     }
     if(M.arena > 0){ M.arena = Math.max(0, M.arena - dt); if(M.arena === 0) emitir('finArena', {}); }
-    if(M.reloj > 0) M.reloj = Math.max(0, M.reloj - dt);
+    if(M.reloj > 0){
+      M.reloj = Math.max(0, M.reloj - dt);
+      /* se acaba el reloj: las pompas vuelven a moverse y todos tienen un respiro para salir de debajo de ellas */
+      if(M.reloj === 0){
+        for(i = 0; i < M.jugadores.length; i++) M.jugadores[i].invulnerable = Math.max(M.jugadores[i].invulnerable, T_TRAS_RELOJ);
+        emitir('finReloj', {});
+      }
+    }
     else { var dtP = dt * (M.tranquilo ? FACTOR_TRANQUILO : 1) * (M.arena > 0 ? FACTOR_ARENA : 1); for(i = 0; i < M.pompas.length; i++) moverPompa(M.pompas[i], dtP); }
     if(M.lupa > 0) M.lupa = Math.max(0, M.lupa - dt);
     for(i = 0; i < M.jugadores.length; i++){
@@ -1034,7 +1045,9 @@ function crearMotor(){
         if(Math.abs(o.x - j.x) < CAJA_ANCHO / 2 + 12 && o.y + 12 >= j.y - CAJA_ALTO && o.y - 12 <= j.y){ M.objetos.splice(i, 1); aplicarObjeto(o, j); break; }
       }
     }
-    for(i = 0; i < M.jugadores.length; i++){
+    /* las pompas paradas por el reloj no hacen daño ni gastan el escudo: se puede pasar por ellas y dispararles desde debajo
+       (decisión del profesor: si no, no se aprovecha el reloj con las que se han quedado bajas) */
+    for(i = 0; M.reloj <= 0 && i < M.jugadores.length; i++){
       j = M.jugadores[i]; if(j.invulnerable > 0) continue;
       for(k = 0; k < M.pompas.length; k++){
         if(M.t - M.pompas[k].nace < GRACIA_NACER || !tocaJugador(M.pompas[k], j)) continue;
@@ -1067,7 +1080,7 @@ return { crearMotor:crearMotor, FASES:FASES, MUNDOS:MUNDOS, OBJETOS:OBJETOS, FAS
                       CAJA_ANCHO:CAJA_ANCHO, CAJA_ALTO:CAJA_ALTO, JUG_MIN:JUG_MIN, JUG_MAX:JUG_MAX, ARPON_VEL:ARPON_VEL, ARPON_INICIO:ARPON_INICIO,
                       T_FIJO:T_FIJO, T_RELOJ:T_RELOJ, T_LUPA:T_LUPA, T_OBJETO:T_OBJETO, P_OBJETO:P_OBJETO, T_PREPARADOS:T_PREPARADOS, T_GOLPE:T_GOLPE,
                       T_TRAS_GOLPE:T_TRAS_GOLPE, T_INVULNERABLE:T_INVULNERABLE, T_RAFAGA:T_RAFAGA, T_BALA:T_BALA, BALA_VEL:BALA_VEL, BALAS_MAX:BALAS_MAX,
-                      T_ARENA:T_ARENA, FACTOR_ARENA:FACTOR_ARENA, VY_MAX:VY_MAX, VEL_ESCALERA:VEL_ESCALERA, ALCANCE_ESCALERA:ALCANCE_ESCALERA, BORDE_PIE:BORDE_PIE, HUECO_MIN:HUECO_MIN,
+                      T_ARENA:T_ARENA, FACTOR_ARENA:FACTOR_ARENA, T_TRAS_RELOJ:T_TRAS_RELOJ, VY_MAX:VY_MAX, VEL_ESCALERA:VEL_ESCALERA, ALCANCE_ESCALERA:ALCANCE_ESCALERA, BORDE_PIE:BORDE_PIE, HUECO_MIN:HUECO_MIN,
                       PUNTOS_COMIDA:PUNTOS_COMIDA, T_COMIDA_MIN:T_COMIDA_MIN, T_COMIDA_MAX:T_COMIDA_MAX, HOLGURA:HOLGURA, HOLGURA_TRANQUILO:HOLGURA_TRANQUILO, GRACIA_NACER:GRACIA_NACER,
                       FACTOR_TRANQUILO:FACTOR_TRANQUILO, SOLAPE_DOBLE:SOLAPE_DOBLE, VIDAS_INICIO:VIDAS_INICIO, VIDAS_MAX:VIDAS_MAX,
                       CRIBA_MAX_POMPAS:CRIBA_MAX_POMPAS, SALTO_HIJAS:SALTO_HIJAS, MARGEN_TECHO:MARGEN_TECHO } };
@@ -1092,7 +1105,7 @@ var UI = { panel:null, pausa:false, escala:1, efectos:[], particulas:[], fuegos:
            mapa:null, mundoVisto:-1, bannerPendiente:null, mapaClave:'', dedoSube:0, dedoDisparo:false };
 var NOMBRE_OBJETO = { doble:'DOBLE ARPÓN', fijo:'ARPÓN FIJO', reloj:'RELOJ', escudo:'ESCUDO', dinamita:'¡DINAMITA!', lupa:'LUPA', criba:'CRIBA', rafaga:'¡RÁFAGA!', arena:'RELOJ DE ARENA', vida:'¡VIDA EXTRA!' };
 var AVISO_OBJETO = { doble:'Doble arpón: puedes tener dos arpones a la vez.', fijo:'Arpón fijo: se queda clavado en el techo un momento.',
-  reloj:'Reloj: las pompas se paran cinco segundos.', escudo:'Escudo: te salva de un toque.', dinamita:'¡Dinamita! Todas las pompas se parten hasta sus primos.',
+  reloj:'Reloj: las pompas se paran cinco segundos y, mientras están paradas, no hacen daño.', escudo:'Escudo: te salva de un toque.', dinamita:'¡Dinamita! Todas las pompas se parten hasta sus primos.',
   lupa:'Lupa: durante unos segundos se ven los primos que lleva dentro cada pompa.', criba:'Criba.',
   rafaga:'¡Ráfaga! Durante ocho segundos, mantén pulsado el disparo y salen balitas sin parar.',
   arena:'Reloj de arena: las pompas van a la mitad durante ocho segundos.', vida:'¡Vida extra!' };
@@ -1169,6 +1182,7 @@ var Sonido = (function(){
         case 'fuego': ruido(0.4, 0.08, 1200, 200); break;
         case 'bala': tono(1700, 900, 0.045, 'square', 0.035); break;
         case 'finRafaga': tono(900, 450, 0.14, 'square', 0.05); break;
+        case 'finReloj': tono(1250, 0, 0.05, 'square', 0.05); tono(830, 0, 0.11, 'square', 0.05, 0.07); break;
         case 'cristal': ruido(0.18, 0.22, 5200, 2400); tono(2100, 1500, 0.07, 'square', 0.05); tono(2800, 1900, 0.09, 'square', 0.04, 0.04); break;
         case 'comida': [784, 988, 1175, 1568].forEach(function(f5, i){ tono(f5, 0, 0.09, 'square', 0.07, i * 0.07); }); break;
         case 'vida': [523.25, 659.25, 783.99, 1046.5].forEach(function(f6, i){ tono(f6, 0, 0.12, 'square', 0.09, i * 0.09); }); break;
@@ -1311,7 +1325,11 @@ function spriteBola(d, color){
   cacheBolas[clave] = c; return c;
 }
 function aplastado(p){ if(REDUCIDO) return [1, 1]; var d = M.t - p.tBote; if(d < 0 || d > 0.16) return [1, 1]; var k = Math.sin(d / 0.16 * Math.PI); return [1 + 0.1 * k, 1 - 0.12 * k]; }
-function congeladas(){ return M.reloj > 0 && (REDUCIDO || !(M.reloj < 1 && Math.floor(UI.reloj * 8) % 2)); }
+/* con el reloj, las pompas están paradas y no hacen daño: se ven de hielo y medio transparentes, para que se vea al explorador
+   cuando se mete debajo. En el último segundo avisan de que vuelven a moverse: parpadean con su color (y, si se pidió menos
+   movimiento, lo recuperan sin parpadear) */
+var ALFA_PARADA = 0.5;
+function congeladas(){ return M.reloj > 0 && !(M.reloj < 1 && (REDUCIDO || Math.floor(UI.reloj * 8) % 2)); }
 function pintarBola(x, y, r, color, sq){
   var d = Math.max(6, Math.round(2 * r * PX.s)), spr = spriteBola(d, color), w = d * sq[0] * PX.k, h = d * sq[1] * PX.k;
   pegar(spr, dX(x) - w / 2, dY(y + r) - h, w, h);
@@ -1334,15 +1352,15 @@ function semillas(x, y, r, primos){
   for(var i = 0; i < k; i++){ var a = -Math.PI / 2 + i * 2 * Math.PI / k; semilla(x + anillo * Math.cos(a), y + anillo * Math.sin(a), rs, primos[i]); }
 }
 function pintarPompa(p){
-  var color = congeladas() ? 'hielo' : colorFam(p.fam), sq = aplastado(p);
-  if(p.doble){ pintarDoble(p, color, sq); return; }
-  pintarBola(p.x, p.y, p.r, color, sq);
+  var color = congeladas() ? 'hielo' : colorFam(p.fam), sq = aplastado(p), alfa = M.reloj > 0 ? ALFA_PARADA : 1;
+  if(p.doble){ pintarDoble(p, color, sq, alfa); return; }
+  ctx.globalAlpha = alfa; pintarBola(p.x, p.y, p.r, color, sq); ctx.globalAlpha = 1;
   if(M.lupa > 0){ var pr = E.primosDe(p.n); semillas(p.x, p.y, p.r, pr); if(pr.length > 1) numeroBola(p.x, p.y, p.r * 0.5, p.n); }
   else numeroBola(p.x, p.y, p.r, p.n);
 }
-function pintarDoble(p, color, sq){
+function pintarDoble(p, color, sq, alfa){
   var g = M.geomDoble(p);
-  pintarBola(g.xA, p.y, p.rA, color, sq); pintarBola(g.xB, p.y, p.rB, color, sq);
+  ctx.globalAlpha = alfa === undefined ? 1 : alfa; pintarBola(g.xA, p.y, p.rA, color, sq); pintarBola(g.xB, p.y, p.rB, color, sq); ctx.globalAlpha = 1;
   /* la pared común: una raya clara donde se tocan las dos bolas */
   var d = g.D, a = (p.rA * p.rA - p.rB * p.rB + d * d) / (2 * d), hh = Math.sqrt(Math.max(0, p.rA * p.rA - a * a)), xm = g.xA + a;
   var n = Math.max(2, Math.round(2 * hh * 0.9 * PX.s)), y0 = dY(p.y - hh * 0.9);
@@ -1475,6 +1493,7 @@ function spriteHeroe(pose, fase, mira, i){
   for(y = 0; y < HEROE_H; y++) for(x = 0; x < HEROE_W; x++){ var ch = g[y][x]; if(ch){ gc.fillStyle = P[ch] || '#ff00ff'; gc.fillRect(perfil && mira < 0 ? HEROE_W - 1 - x : x, y, 1, 1); } }
   cacheHeroe[clave] = c; return c;
 }
+function porEncima(j){ return j.invulnerable > 0 && M.fase !== 'golpe'; }
 function pintarJugador(j){
   var t = UI.reloj, corre = Math.abs(j.vx) > 5 && M.fase === 'jugando', golpeado = M.fase === 'golpe' && UI.golpeado === j.i, pose, fase = 0, mira = 0;
   if(golpeado) pose = 'golpe';
@@ -2518,8 +2537,10 @@ function dibujar(dt){
   var i;
   for(i = 0; i < M.objetos.length; i++) pintarObjeto(M.objetos[i]);
   for(i = 0; i < M.jugadores.length; i++){ M.jugadores[i].arpones.forEach(pintarArpon); M.jugadores[i].balas.forEach(pintarBala); }
-  for(i = 0; i < M.jugadores.length; i++) pintarJugador(M.jugadores[i]);
+  for(i = 0; i < M.jugadores.length; i++) if(!porEncima(M.jugadores[i])) pintarJugador(M.jugadores[i]);
   for(i = 0; i < M.pompas.length; i++) pintarPompa(M.pompas[i]);
+  /* quien parpadea porque nada le hace daño va por encima de las pompas: así se le ve salir de debajo de ellas */
+  for(i = 0; i < M.jugadores.length; i++) if(porEncima(M.jugadores[i])) pintarJugador(M.jugadores[i]);
   if(M.fase === 'menu') pintarDecor(dt);
   pintarEfectos(dt);
   pintarBanner();
@@ -2675,7 +2696,7 @@ function anunciarPompas(){
     var cerca = M.escaleras.slice().sort(function(a, b){ return Math.abs(a.x - jx) - Math.abs(b.x - jx); })[0];
     esc = j.estado === 'escalera' ? ' Estás en una escalera.' : (j.y < K.SUELO - 1 ? ' Estás encima de un bloque.' : (Math.abs(cerca.x - jx) <= K.ALCANCE_ESCALERA ? ' Tienes una escalera aquí mismo.' : ' La escalera más cercana está a tu ' + (cerca.x < jx ? 'izquierda' : 'derecha') + '.'));
   }
-  anunciar('Pompas: ' + L.join('; ') + '.' + esc);
+  anunciar('Pompas: ' + L.join('; ') + '.' + (M.reloj > 0 ? ' Están paradas y no hacen daño.' : '') + esc);
 }
 
 /* ---------------- vuelos de los primos hasta su línea ---------------- */
@@ -2723,6 +2744,7 @@ function procesarEventos(){
       case 'disparo': UI.tDisparo[ev.jugador] = UI.reloj; Sonido.sfx(ev.bala ? 'bala' : 'disparo'); break;
       case 'finRafaga': Sonido.sfx('finRafaga'); anunciar('Se acabó la ráfaga.'); break;
       case 'finArena': anunciar('Las pompas vuelven a su paso.'); break;
+      case 'finReloj': Sonido.sfx('finReloj'); anunciar('Las pompas vuelven a moverse.'); break;
       case 'bloqueRoto':
         Sonido.sfx('cristal'); gotas(ev.x + ev.w / 2, ev.y + ev.h / 2, ev.w / 2, 10, '#bfe6ff'); chispas(ev.x + ev.w / 2, ev.y + ev.h / 2, 4, '#ffffff');
         anunciar(ev.premio ? 'Cristal roto: suelta un premio.' : 'Cristal roto.');
@@ -2857,7 +2879,7 @@ function abrirPanel(nombre, focoId){
       + '<h3>Por el centro o por un lado</h3><p>Depende de dónde le dé el arpón. <b>Por el centro</b>, la pompa se parte en los dos números más cercanos: 72 = 8 · 9, y los cuadrados en dos iguales, 36 = 6 · 6. <b>Por un lado</b>, sale por ese lado una pompa más pequeña, y cuanto más al borde, más pequeña, hasta el primo más pequeño: 72 = 2 · 36, como en la división sucesiva del cuaderno. Da igual cómo se parta: al final salen siempre los mismos primos.</p>'
       + '<h3>Escaleras y bloques</h3><p>En algunas fases hay bloques, como en el Pang: las pompas botan en ellos y el arpón se para al tocarlos. Los de <b>cristal</b> se rompen de un disparo, y los que llevan un «?» sueltan un premio. Por las <b>escaleras</b> subes a los bloques fijos: arriba puedes andar y disparar, y si te sales del borde caes al suelo. En la escalera no se dispara.</p>'
       + '<h3>Pompas gemelas (Llanes)</h3><p>Dos números pegados. Al darles, se parten en tres: lo que solo es del primero, lo que tienen en común (su <b>m.c.d.</b>) y lo que solo es del segundo. Las tres multiplicadas dan su <b>m.c.m.</b>: 12 y 18 se parten en 2, 6 y 3; m.c.d. = 6 y m.c.m. = 2 · 6 · 3 = 36.</p>'
-      + '<h3>Objetos</h3><ul><li><b>Doble arpón</b>: dos arpones a la vez.</li><li><b>Arpón fijo</b>: se queda clavado en el techo un momento.</li><li><b>Reloj</b>: las pompas se paran cinco segundos.</li><li><b>Escudo</b>: te salva de un toque.</li><li><b>Dinamita</b>: todas las pompas se parten hasta sus primos.</li><li><b>Lupa</b>: se ven los primos que lleva dentro cada pompa.</li><li><b>Criba</b>: todas las pompas que son múltiplo de un primo sueltan ese primo.</li><li><b>Ráfaga</b>: durante ocho segundos, mientras mantienes pulsado el disparo, salen balitas sin parar. Cada una parte la pompa según dónde le dé, como el arpón.</li><li><b>Reloj de arena</b>: las pompas van a la mitad durante ocho segundos.</li><li><b>Vida extra</b>: una vida más (hasta cinco).</li></ul>'
+      + '<h3>Objetos</h3><ul><li><b>Doble arpón</b>: dos arpones a la vez.</li><li><b>Arpón fijo</b>: se queda clavado en el techo un momento.</li><li><b>Reloj</b>: las pompas se paran cinco segundos y, mientras están paradas, no hacen daño: puedes ponerte debajo y dispararles. Antes de volver a moverse avisan con su color, y entonces parpadeas un momento para apartarte.</li><li><b>Escudo</b>: te salva de un toque.</li><li><b>Dinamita</b>: todas las pompas se parten hasta sus primos.</li><li><b>Lupa</b>: se ven los primos que lleva dentro cada pompa.</li><li><b>Criba</b>: todas las pompas que son múltiplo de un primo sueltan ese primo.</li><li><b>Ráfaga</b>: durante ocho segundos, mientras mantienes pulsado el disparo, salen balitas sin parar. Cada una parte la pompa según dónde le dé, como el arpón.</li><li><b>Reloj de arena</b>: las pompas van a la mitad durante ocho segundos.</li><li><b>Vida extra</b>: una vida más (hasta cinco).</li></ul>'
       + '<p>Una vez por fase cae del cielo un <b>plato asturiano</b> (fabada, cachopo, sidra, casadielles…): cógelo antes de que desaparezca y ganas 500 puntos.</p>'
       + '<h3>Vidas y tiempo</h3><p>Si una pompa te toca, pierdes una vida, pero la fase sigue donde estaba: parpadeas un momento y nada te hace daño. Si se acaba el tiempo, también pierdes una vida y el reloj vuelve a empezar. Al terminar cada mundo ganas una vida (hasta cinco). El modo tranquilo mueve las pompas más despacio y quita el reloj.</p>'
       + '<h3>Puntos</h3><p>10 por partir una pompa y 50 por hacer estallar un primo. Cuando estalla el último primo que se repite en un número, sale su potencia y ganas lo que vale: en 72 = 2³ · 3², con el último 2 sale 2³ (8 puntos) y con el último 3, 3² (9 puntos). Al terminar un número, ganas lo que vale, y al acabar la fase, 10 por cada segundo que sobra.</p>'
