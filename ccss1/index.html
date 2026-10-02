@@ -10,8 +10,8 @@
       color-scheme: light;
       --texto: #182033;
       --texto-suave: #4b5568;
-      --fondo: #ffffff;
-      --fondo-suave: #f4f7fb;
+      --fondo: #f2f5fa;
+      --superficie: #ffffff;
       --borde: #d6dce7;
       --acento: #2557a7;
     }
@@ -53,37 +53,139 @@
       font-size: clamp(1.05rem, 2.5vw, 1.3rem);
     }
 
-    section {
-      padding: clamp(1.25rem, 4vw, 2rem);
-      border: 1px solid var(--borde);
-      border-radius: 0.75rem;
-      background: var(--fondo-suave);
+    main {
+      display: grid;
+      gap: 2.2rem;
     }
 
     h2 {
-      margin: 0 0 1rem;
-      color: #111827;
-      font-size: 1.6rem;
-    }
-
-    .lista-unidades {
-      margin: 0;
-      padding-left: 1.25rem;
-    }
-
-    .lista-unidades:empty {
-      display: none;
-    }
-
-    .sin-unidades {
-      margin: 0;
-      color: var(--texto-suave);
+      margin: 0 0 0.9rem;
+      color: #163b72;
+      font-size: 0.86rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
     }
 
     a {
       color: var(--acento);
       font-weight: 650;
       text-underline-offset: 0.16em;
+    }
+
+    /* Una tarjeta por unidad, con el dibujo de su portada y su tono. Los
+       dibujos son una copia de los que pinta la plantilla de las unidades
+       (AGENTS.md, «Adornos temáticos»): al añadir una unidad se añade su
+       tarjeta. */
+    .rejilla-unidades {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+      gap: 1.5rem;
+    }
+
+    .tarjeta-unidad {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: inherit;
+      font-weight: 400;
+      text-decoration: none;
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: 1.1rem;
+      box-shadow: 0 14px 34px rgb(22 59 114 / 0.1);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .tarjeta-unidad:focus-visible {
+      outline: 3px solid var(--tono);
+      outline-offset: 3px;
+    }
+
+    @media (hover: hover) {
+      .tarjeta-unidad:hover {
+        box-shadow: 0 18px 40px rgb(22 59 114 / 0.16);
+        transform: translateY(-2px);
+      }
+    }
+
+    .tono-azul {
+      --tono: #1d4ed8;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #163b72 0%, #1d4ed8 68%, #4778de 100%);
+    }
+
+    .tono-violeta {
+      --tono: #6d28d9;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+    }
+
+    .lienzo-tarjeta {
+      display: block;
+      flex: none;
+      aspect-ratio: 640 / 225;
+      color: #ffffff;
+      background: var(--lienzo);
+    }
+
+    .lienzo-tarjeta svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .lienzo-tarjeta .rotulos {
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    .cuerpo-tarjeta {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 1.15rem 1.4rem 1.35rem;
+    }
+
+    .antetitulo {
+      color: var(--tono);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .titulo-tarjeta {
+      margin: 0.1rem 0 0.4rem;
+      color: #111827;
+      font-size: 1.55rem;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+    }
+
+    .resumen {
+      margin-bottom: 0.9rem;
+      color: var(--texto-suave);
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .fichas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: auto;
+    }
+
+    .fichas span {
+      padding: 0.22rem 0.7rem;
+      color: #3b4a63;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #eef2f8;
+      border-radius: 999px;
     }
   </style>
 </head>
@@ -98,19 +200,30 @@
   <main>
     <section aria-labelledby="titulo-unidades">
       <h2 id="titulo-unidades">Unidades</h2>
-      <ul class="lista-unidades">
-        <li>
-          <a href="unidad_01_numeros_reales.html">Unidad 1: Números reales</a>
-          — números reales, potencias, radicales, logaritmos y recta real, con
-          los repasos de la ESO señalados y seis laboratorios interactivos.
-        </li>
-        <li>
-          <a href="unidad_02_algebra.html">Unidad 2: Álgebra</a>
-          — polinomios y factorización, fracciones algebraicas, ecuaciones,
-          sistemas de ecuaciones y método de Gauss, e inecuaciones y sistemas
-          de inecuaciones, con diez laboratorios interactivos.
-        </li>
-      </ul>
+      <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-azul" href="unidad_01_numeros_reales.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u1" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u1"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u1)"></rect></mask></defs><g mask="url(#adorno-mascara-u1)" stroke="#fff"><rect x="150" y="56" width="96" height="96" fill="#fff" fill-opacity="0.07" stroke-opacity="0.5" stroke-width="1.3"></rect><path d="M150 152L246 56" stroke-opacity="0.98" stroke-width="2.2"></path><path d="M246 56A135.76 135.76 0 0 1 285.76 152" stroke-opacity="0.85" stroke-width="1.6" stroke-dasharray="1.5 5.5"></path><line x1="6" y1="152" x2="622" y2="152" stroke-opacity="0.9"></line><path d="M614 146L624 152L614 158" stroke-opacity="0.9"></path><line x1="25.2" y1="149" x2="25.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="34.8" y1="149" x2="34.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="44.4" y1="149" x2="44.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="63.6" y1="149" x2="63.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="73.2" y1="149" x2="73.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="82.8" y1="149" x2="82.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="92.4" y1="149" x2="92.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="102" y1="147" x2="102" y2="157" stroke-opacity="0.42" stroke-width="1"></line><line x1="111.6" y1="149" x2="111.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="121.2" y1="149" x2="121.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="130.8" y1="149" x2="130.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="140.4" y1="149" x2="140.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="159.6" y1="149" x2="159.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="169.2" y1="149" x2="169.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="178.8" y1="149" x2="178.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="188.4" y1="149" x2="188.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="198" y1="147" x2="198" y2="157" stroke-opacity="0.42" stroke-width="1"></line><line x1="207.6" y1="149" x2="207.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="217.2" y1="149" x2="217.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="226.8" y1="149" x2="226.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="236.4" y1="149" x2="236.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="255.6" y1="149" x2="255.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="265.2" y1="149" x2="265.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="274.8" y1="149" x2="274.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="284.4" y1="149" x2="284.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="294" y1="147" x2="294" y2="157" stroke-opacity="0.42" stroke-width="1"></line><line x1="303.6" y1="149" x2="303.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="313.2" y1="149" x2="313.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="322.8" y1="149" x2="322.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="332.4" y1="149" x2="332.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="351.6" y1="149" x2="351.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="361.2" y1="149" x2="361.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="370.8" y1="149" x2="370.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="380.4" y1="149" x2="380.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="390" y1="147" x2="390" y2="157" stroke-opacity="0.42" stroke-width="1"></line><line x1="399.6" y1="149" x2="399.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="409.2" y1="149" x2="409.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="418.8" y1="149" x2="418.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="428.4" y1="149" x2="428.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="447.6" y1="149" x2="447.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="457.2" y1="149" x2="457.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="466.8" y1="149" x2="466.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="476.4" y1="149" x2="476.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="486" y1="147" x2="486" y2="157" stroke-opacity="0.42" stroke-width="1"></line><line x1="495.6" y1="149" x2="495.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="505.2" y1="149" x2="505.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="514.8" y1="149" x2="514.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="524.4" y1="149" x2="524.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="543.6" y1="149" x2="543.6" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="553.2" y1="149" x2="553.2" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="562.8" y1="149" x2="562.8" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="572.4" y1="149" x2="572.4" y2="155" stroke-opacity="0.26" stroke-width="1"></line><line x1="54" y1="143" x2="54" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><line x1="150" y1="143" x2="150" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><line x1="246" y1="143" x2="246" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><line x1="342" y1="143" x2="342" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><line x1="438" y1="143" x2="438" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><line x1="534" y1="143" x2="534" y2="161" stroke-opacity="0.9" stroke-width="1.7"></line><circle cx="285.76" cy="152" r="11" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="285.76" cy="152" r="5" fill="#fff" stroke="none"></circle><circle cx="410.96" cy="152" r="3.6" fill="#fff" stroke="none"></circle><circle cx="451.59" cy="152" r="3.6" fill="#fff" stroke="none"></circle><circle cx="150" cy="152" r="2.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text x="54.0" y="184.1" font-size="15" opacity="0.82">−1</text><text x="150.0" y="184.1" font-size="15" opacity="0.82">0</text><text x="246.0" y="184.1" font-size="15" opacity="0.82">1</text><text x="342.0" y="184.1" font-size="15" opacity="0.82">2</text><text x="438.0" y="184.1" font-size="15" opacity="0.82">3</text><text x="534.0" y="184.1" font-size="15" opacity="0.82">4</text><g transform="translate(286.8 182.0) scale(1.000)"><path d="M-11.5 0.8l2.2-1.4 3.3 7.2 4.6-16.2h11.4" fill="none" stroke="#fff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="4.3" y="6.3" font-size="19">2</text></g><text x="411.0" y="134.5" font-size="19" opacity="0.95" font-style="italic">e</text><text x="453.6" y="134.5" font-size="19" opacity="0.95" font-style="italic">π</text><text x="137.0" y="108.8" font-size="14" opacity="0.7">1</text><text x="198.0" y="47.8" font-size="14" opacity="0.7">1</text><g transform="translate(183.0 89.0) rotate(-45) scale(0.789)" opacity="0.92"><path d="M-11.5 0.8l2.2-1.4 3.3 7.2 4.6-16.2h11.4" fill="none" stroke="#fff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><text x="4.3" y="6.3" font-size="19">2</text></g></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 1</span>
+            <strong class="titulo-tarjeta">Números reales</strong>
+            <span class="resumen">Números reales, potencias, radicales, logaritmos y recta real, con los repasos de la ESO señalados.</span>
+            <span class="fichas"><span>6 laboratorios</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-violeta" href="unidad_02_algebra.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u2" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u2"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u2)"></rect></mask><linearGradient id="adorno-lobulo-d-u2" gradientUnits="userSpaceOnUse" x1="583" x2="632.6" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0.15"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></linearGradient><linearGradient id="adorno-lobulo-i-u2" gradientUnits="userSpaceOnUse" x1="87" x2="37.4" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0.15"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></linearGradient></defs><g mask="url(#adorno-mascara-u2)" stroke="#fff"><path d="M25 8V217M87 8V217M149 8V217M211 8V217M273 8V217M335 8V217M397 8V217M459 8V217M521 8V217M583 8V217M24 170H616M24 149H616M24 107H616M24 86H616M24 65H616M24 44H616M24 23H616" stroke-opacity="0.085" stroke-width="1"></path><path d="M211 128L213.48 125.98L215.96 123.95L218.44 121.91L220.92 119.86L223.4 117.82L225.88 115.77L228.36 113.74L230.84 111.71L233.32 109.69L235.8 107.68L238.28 105.69L240.76 103.71L243.24 101.76L245.72 99.83L248.2 97.93L250.68 96.05L253.16 94.2L255.64 92.39L258.12 90.61L260.6 88.86L263.08 87.16L265.56 85.49L268.04 83.87L270.52 82.29L273 80.75L275.48 79.26L277.96 77.82L280.44 76.43L282.92 75.09L285.4 73.81L287.88 72.58L290.36 71.4L292.84 70.29L295.32 69.23L297.8 68.22L300.28 67.28L302.76 66.4L305.24 65.58L307.72 64.83L310.2 64.13L312.68 63.5L315.16 62.94L317.64 62.44L320.12 62.01L322.6 61.64L325.08 61.34L327.56 61.1L330.04 60.93L332.52 60.83L335 60.8L337.48 60.83L339.96 60.93L342.44 61.1L344.92 61.34L347.4 61.64L349.88 62.01L352.36 62.44L354.84 62.94L357.32 63.5L359.8 64.13L362.28 64.83L364.76 65.58L367.24 66.4L369.72 67.28L372.2 68.22L374.68 69.23L377.16 70.29L379.64 71.4L382.12 72.58L384.6 73.81L387.08 75.09L389.56 76.43L392.04 77.82L394.52 79.26L397 80.75L399.48 82.29L401.96 83.87L404.44 85.49L406.92 87.16L409.4 88.86L411.88 90.61L414.36 92.39L416.84 94.2L419.32 96.05L421.8 97.93L424.28 99.83L426.76 101.76L429.24 103.71L431.72 105.69L434.2 107.68L436.68 109.69L439.16 111.71L441.64 113.74L444.12 115.77L446.6 117.82L449.08 119.86L451.56 121.91L454.04 123.95L456.52 125.98L459 128L459 128L211 128Z" fill="#fff" fill-opacity="0.13" stroke="none"></path><path d="M583 128L585.48 123.84L587.96 119.42L590.44 114.73L592.92 109.76L595.4 104.51L597.88 98.98L600.36 93.14L602.84 87.01L605.32 80.57L607.8 73.81L610.28 66.73L612.76 59.32L615.24 51.57L617.72 43.47L620.2 35.03L622.68 26.22L625.16 17.05L627.64 7.5L630.12 -2.43L632.6 -12.74L632.6 128L583 128Z" fill="url(#adorno-lobulo-d-u2)" stroke="none"></path><path d="M37.4 -12.74L39.88 -2.43L42.36 7.5L44.84 17.05L47.32 26.22L49.8 35.03L52.28 43.47L54.76 51.57L57.24 59.32L59.72 66.73L62.2 73.81L64.68 80.57L67.16 87.01L69.64 93.14L72.12 98.98L74.6 104.51L77.08 109.76L79.56 114.73L82.04 119.42L84.52 123.84L87 128L87 128L37.4 128Z" fill="url(#adorno-lobulo-i-u2)" stroke="none"></path><line x1="335" y1="12" x2="335" y2="170" stroke-opacity="0.5" stroke-width="1.4"></line><line x1="14" y1="128" x2="622" y2="128" stroke-opacity="0.85" stroke-width="1.7"></line><path d="M614 122L624 128L614 134" stroke-opacity="0.85" stroke-width="1.7"></path><path d="M37.4 -12.74L39.88 -2.43L42.36 7.5L44.84 17.05L47.32 26.22L49.8 35.03L52.28 43.47L54.76 51.57L57.24 59.32L59.72 66.73L62.2 73.81L64.68 80.57L67.16 87.01L69.64 93.14L72.12 98.98L74.6 104.51L77.08 109.76L79.56 114.73L82.04 119.42L84.52 123.84L87 128L89.48 131.91L91.96 135.56L94.44 138.98L96.92 142.15L99.4 145.1L101.88 147.82L104.36 150.33L106.84 152.62L109.32 154.71L111.8 156.6L114.28 158.29L116.76 159.8L119.24 161.12L121.72 162.27L124.2 163.24L126.68 164.05L129.16 164.7L131.64 165.2L134.12 165.54L136.6 165.74L139.08 165.8L141.56 165.73L144.04 165.52L146.52 165.2L149 164.75L151.48 164.19L153.96 163.52L156.44 162.75L158.92 161.87L161.4 160.9L163.88 159.84L166.36 158.69L168.84 157.46L171.32 156.16L173.8 154.78L176.28 153.33L178.76 151.81L181.24 150.24L183.72 148.61L186.2 146.92L188.68 145.19L191.16 143.41L193.64 141.59L196.12 139.73L198.6 137.84L201.08 135.92L203.56 133.97L206.04 132L208.52 130.01L211 128L213.48 125.98L215.96 123.95L218.44 121.91L220.92 119.86L223.4 117.82L225.88 115.77L228.36 113.74L230.84 111.71L233.32 109.69L235.8 107.68L238.28 105.69L240.76 103.71L243.24 101.76L245.72 99.83L248.2 97.93L250.68 96.05L253.16 94.2L255.64 92.39L258.12 90.61L260.6 88.86L263.08 87.16L265.56 85.49L268.04 83.87L270.52 82.29L273 80.75L275.48 79.26L277.96 77.82L280.44 76.43L282.92 75.09L285.4 73.81L287.88 72.58L290.36 71.4L292.84 70.29L295.32 69.23L297.8 68.22L300.28 67.28L302.76 66.4L305.24 65.58L307.72 64.83L310.2 64.13L312.68 63.5L315.16 62.94L317.64 62.44L320.12 62.01L322.6 61.64L325.08 61.34L327.56 61.1L330.04 60.93L332.52 60.83L335 60.8L337.48 60.83L339.96 60.93L342.44 61.1L344.92 61.34L347.4 61.64L349.88 62.01L352.36 62.44L354.84 62.94L357.32 63.5L359.8 64.13L362.28 64.83L364.76 65.58L367.24 66.4L369.72 67.28L372.2 68.22L374.68 69.23L377.16 70.29L379.64 71.4L382.12 72.58L384.6 73.81L387.08 75.09L389.56 76.43L392.04 77.82L394.52 79.26L397 80.75L399.48 82.29L401.96 83.87L404.44 85.49L406.92 87.16L409.4 88.86L411.88 90.61L414.36 92.39L416.84 94.2L419.32 96.05L421.8 97.93L424.28 99.83L426.76 101.76L429.24 103.71L431.72 105.69L434.2 107.68L436.68 109.69L439.16 111.71L441.64 113.74L444.12 115.77L446.6 117.82L449.08 119.86L451.56 121.91L454.04 123.95L456.52 125.98L459 128L461.48 130.01L463.96 132L466.44 133.97L468.92 135.92L471.4 137.84L473.88 139.73L476.36 141.59L478.84 143.41L481.32 145.19L483.8 146.92L486.28 148.61L488.76 150.24L491.24 151.81L493.72 153.33L496.2 154.78L498.68 156.16L501.16 157.46L503.64 158.69L506.12 159.84L508.6 160.9L511.08 161.87L513.56 162.75L516.04 163.52L518.52 164.19L521 164.75L523.48 165.2L525.96 165.52L528.44 165.73L530.92 165.8L533.4 165.74L535.88 165.54L538.36 165.2L540.84 164.7L543.32 164.05L545.8 163.24L548.28 162.27L550.76 161.12L553.24 159.8L555.72 158.29L558.2 156.6L560.68 154.71L563.16 152.62L565.64 150.33L568.12 147.82L570.6 145.1L573.08 142.15L575.56 138.98L578.04 135.56L580.52 131.91L583 128L585.48 123.84L587.96 119.42L590.44 114.73L592.92 109.76L595.4 104.51L597.88 98.98L600.36 93.14L602.84 87.01L605.32 80.57L607.8 73.81L610.28 66.73L612.76 59.32L615.24 51.57L617.72 43.47L620.2 35.03L622.68 26.22L625.16 17.05L627.64 7.5L630.12 -2.43L632.6 -12.74" stroke-opacity="0.16" stroke-width="8"></path><path d="M37.4 -12.74L39.88 -2.43L42.36 7.5L44.84 17.05L47.32 26.22L49.8 35.03L52.28 43.47L54.76 51.57L57.24 59.32L59.72 66.73L62.2 73.81L64.68 80.57L67.16 87.01L69.64 93.14L72.12 98.98L74.6 104.51L77.08 109.76L79.56 114.73L82.04 119.42L84.52 123.84L87 128L89.48 131.91L91.96 135.56L94.44 138.98L96.92 142.15L99.4 145.1L101.88 147.82L104.36 150.33L106.84 152.62L109.32 154.71L111.8 156.6L114.28 158.29L116.76 159.8L119.24 161.12L121.72 162.27L124.2 163.24L126.68 164.05L129.16 164.7L131.64 165.2L134.12 165.54L136.6 165.74L139.08 165.8L141.56 165.73L144.04 165.52L146.52 165.2L149 164.75L151.48 164.19L153.96 163.52L156.44 162.75L158.92 161.87L161.4 160.9L163.88 159.84L166.36 158.69L168.84 157.46L171.32 156.16L173.8 154.78L176.28 153.33L178.76 151.81L181.24 150.24L183.72 148.61L186.2 146.92L188.68 145.19L191.16 143.41L193.64 141.59L196.12 139.73L198.6 137.84L201.08 135.92L203.56 133.97L206.04 132L208.52 130.01L211 128L213.48 125.98L215.96 123.95L218.44 121.91L220.92 119.86L223.4 117.82L225.88 115.77L228.36 113.74L230.84 111.71L233.32 109.69L235.8 107.68L238.28 105.69L240.76 103.71L243.24 101.76L245.72 99.83L248.2 97.93L250.68 96.05L253.16 94.2L255.64 92.39L258.12 90.61L260.6 88.86L263.08 87.16L265.56 85.49L268.04 83.87L270.52 82.29L273 80.75L275.48 79.26L277.96 77.82L280.44 76.43L282.92 75.09L285.4 73.81L287.88 72.58L290.36 71.4L292.84 70.29L295.32 69.23L297.8 68.22L300.28 67.28L302.76 66.4L305.24 65.58L307.72 64.83L310.2 64.13L312.68 63.5L315.16 62.94L317.64 62.44L320.12 62.01L322.6 61.64L325.08 61.34L327.56 61.1L330.04 60.93L332.52 60.83L335 60.8L337.48 60.83L339.96 60.93L342.44 61.1L344.92 61.34L347.4 61.64L349.88 62.01L352.36 62.44L354.84 62.94L357.32 63.5L359.8 64.13L362.28 64.83L364.76 65.58L367.24 66.4L369.72 67.28L372.2 68.22L374.68 69.23L377.16 70.29L379.64 71.4L382.12 72.58L384.6 73.81L387.08 75.09L389.56 76.43L392.04 77.82L394.52 79.26L397 80.75L399.48 82.29L401.96 83.87L404.44 85.49L406.92 87.16L409.4 88.86L411.88 90.61L414.36 92.39L416.84 94.2L419.32 96.05L421.8 97.93L424.28 99.83L426.76 101.76L429.24 103.71L431.72 105.69L434.2 107.68L436.68 109.69L439.16 111.71L441.64 113.74L444.12 115.77L446.6 117.82L449.08 119.86L451.56 121.91L454.04 123.95L456.52 125.98L459 128L461.48 130.01L463.96 132L466.44 133.97L468.92 135.92L471.4 137.84L473.88 139.73L476.36 141.59L478.84 143.41L481.32 145.19L483.8 146.92L486.28 148.61L488.76 150.24L491.24 151.81L493.72 153.33L496.2 154.78L498.68 156.16L501.16 157.46L503.64 158.69L506.12 159.84L508.6 160.9L511.08 161.87L513.56 162.75L516.04 163.52L518.52 164.19L521 164.75L523.48 165.2L525.96 165.52L528.44 165.73L530.92 165.8L533.4 165.74L535.88 165.54L538.36 165.2L540.84 164.7L543.32 164.05L545.8 163.24L548.28 162.27L550.76 161.12L553.24 159.8L555.72 158.29L558.2 156.6L560.68 154.71L563.16 152.62L565.64 150.33L568.12 147.82L570.6 145.1L573.08 142.15L575.56 138.98L578.04 135.56L580.52 131.91L583 128L585.48 123.84L587.96 119.42L590.44 114.73L592.92 109.76L595.4 104.51L597.88 98.98L600.36 93.14L602.84 87.01L605.32 80.57L607.8 73.81L610.28 66.73L612.76 59.32L615.24 51.57L617.72 43.47L620.2 35.03L622.68 26.22L625.16 17.05L627.64 7.5L630.12 -2.43L632.6 -12.74" stroke-width="2.6"></path><circle cx="87" cy="128" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="87" cy="128" r="5" fill="#fff" stroke="none"></circle><circle cx="211" cy="128" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="211" cy="128" r="5" fill="#fff" stroke="none"></circle><circle cx="459" cy="128" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="459" cy="128" r="5" fill="#fff" stroke="none"></circle><circle cx="583" cy="128" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="583" cy="128" r="5" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text x="68.0" y="155.8" font-size="17" opacity="0.95">−4</text><text x="231.0" y="155.8" font-size="17" opacity="0.95">−2</text><text x="444.0" y="155.8" font-size="17" opacity="0.95">2</text><text x="598.0" y="155.8" font-size="17" opacity="0.95">4</text><text x="335.0" y="204.8" font-size="17" opacity="0.97"><tspan font-style="italic">p</tspan>(<tspan font-style="italic">x</tspan>) = (<tspan font-style="italic">x</tspan> + 4)(<tspan font-style="italic">x</tspan> + 2)(<tspan font-style="italic">x</tspan> − 2)(<tspan font-style="italic">x</tspan> − 4)</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 2</span>
+            <strong class="titulo-tarjeta">Álgebra</strong>
+            <span class="resumen">Polinomios y factorización, fracciones algebraicas, ecuaciones, sistemas de ecuaciones y método de Gauss, e inecuaciones y sistemas de inecuaciones.</span>
+            <span class="fichas"><span>10 laboratorios</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+      </div>
     </section>
   </main>
 </body>

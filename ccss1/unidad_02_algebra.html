@@ -3354,6 +3354,7 @@
 
       #TOC .conmutador-subapartados {
         --flecha-indice: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        --pastilla-flecha: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 46'%3E%3Crect x='1' y='1' width='28' height='44' rx='11' fill='white' stroke='%23172033' stroke-opacity='0.24' stroke-width='1.6'/%3E%3C/svg%3E");
         position: absolute;
         top: 0.27rem;
         left: 0.38rem;
@@ -3364,12 +3365,12 @@
         min-height: 0;
         padding: 0;
         color: var(--apartado, var(--acento));
-        background: transparent;
+        background: transparent center / 0.95rem 1.45rem no-repeat;
         border: 0;
         border-radius: 0.4rem;
         box-shadow: none;
         transform: none;
-        transition: background 160ms ease;
+        transition: none;
       }
 
       /* Cerrada mira a la derecha y abierta, hacia abajo, donde se abre la
@@ -3401,8 +3402,11 @@
         transform: none;
       }
 
+      /* Con el ratón o el foco encima, la flecha se apoya en una pastilla
+         blanca, más pequeña que la zona que responde: un recuadro del
+         tamaño de esa zona tocaba el número del apartado. */
       #TOC .conmutador-subapartados:focus-visible {
-        background: #ffffff;
+        background-image: var(--pastilla-flecha);
         transform: none;
       }
 
@@ -3412,13 +3416,31 @@
 
       @media (hover: hover) {
         #TOC .conmutador-subapartados:hover {
-          background: #ffffff;
-          box-shadow: 0 0 0 1px var(--apartado, var(--acento));
+          background-image: var(--pastilla-flecha);
           transform: none;
         }
 
         #TOC .conmutador-subapartados:hover::before {
           opacity: 1;
+        }
+      }
+
+      /* El ratón no hace parpadear el índice (aviso del profesor del 2 de
+         octubre de 2026: «cuando paso con el ratón es como que parpadea o
+         se ve la mano y el puntero pasando de uno a otro muy rápido»). La
+         flecha no es parte del enlace de su apartado: al pasar por ella el
+         realce del apartado se apagaba, y volvía en cuanto el ratón tocaba
+         el título. Ahora el apartado sigue realzado con el ratón sobre su
+         flecha. `:where()` y `:any-link` dejan la regla con la misma
+         especificidad que la del enlace bajo el ratón, de modo que en cada
+         modo gana lo mismo que ganaba. Solo donde hay un puntero que se
+         posa: en una pantalla táctil el realce se quedaría pegado tras el
+         toque. */
+      @media (hover: hover) {
+        #TOC > ul > li:where(:has(> .conmutador-subapartados:hover)) > a:any-link {
+          color: var(--apartado, var(--acento-oscuro));
+          background: var(--apartado-suave, var(--acento-suave));
+          border-left-color: var(--apartado, var(--acento));
         }
       }
 
@@ -3497,6 +3519,7 @@
         }
 
         :where(html:not(.modo-clase)) #TOC > ul > li > a {
+          position: relative;
           gap: 0.4rem;
           padding-right: 0.15rem;
           padding-left: 0.55rem;
@@ -3505,6 +3528,17 @@
           font-weight: 700;
           line-height: 1.3;
           letter-spacing: -0.012em;
+        }
+
+        /* Entre un apartado y el siguiente no queda hueco para el ratón:
+           cada enlace responde también en la mitad del hueco que lo separa
+           de sus vecinos. Sin esto, al recorrer el índice el cursor pasaba
+           de la mano a la flecha y de vuelta en cada hueco, y el realce se
+           apagaba entre un apartado y otro. */
+        :where(html:not(.modo-clase)) #TOC > ul > li > a::after {
+          position: absolute;
+          inset: -0.11rem 0 -0.11rem -0.22rem;
+          content: "";
         }
 
         /* Cifras del mismo ancho: todos los títulos empiezan en la misma
@@ -4642,14 +4676,15 @@
   </header>
 
   <div id="root">
-    <header class="portada-unidad">
+    <header class="portada-unidad" data-portada="polinomio" data-tono="violeta">
       <p class="etiqueta-asignatura">Matemáticas CCSS I · Humanidades y Ciencias Sociales</p>
       <h1 id="titulo-unidad">
         Unidad 2: Álgebra
       </h1>
             <p class="subtitulo-unidad">Matemáticas CCSS I — 1.º
 Bachillerato</p>
-                </header>
+                  <div class="adorno-portada" data-portada="polinomio" aria-hidden="true"></div>
+          </header>
 
     <div class="disposicion-unidad">
             <aside class="indice-unidad" aria-label="Índice de la unidad">
@@ -4702,8 +4737,10 @@ Bachillerato</p>
         aria-labelledby="titulo-unidad">
         <!-- INICIO_CONTENIDO_UNIDAD -->
                 <section id="antes-de-empezar"
-                class="level2 ejercicios solo-web" data-number="0">
-                <h2 class="ejercicios solo-web" data-number="0"><span
+                class="level2 ejercicios solo-web" data-number="0"
+                data-emblema="lista">
+                <h2 class="ejercicios solo-web" data-number="0"
+                data-emblema="lista"><span
                 class="header-section-number">0</span> Antes de
                 empezar</h2>
                 <p>Estas ocho cuestiones repasan herramientas de la ESO
@@ -4844,15 +4881,25 @@ Bachillerato</p>
                 </section>
                 </section>
                 <section id="polinomios.-operaciones" class="level2"
-                data-number="1">
-                <h2 data-number="1"><span
+                data-number="1" data-emblema="polinomio"
+                data-friso="ruffini">
+                <h2 data-number="1" data-emblema="polinomio"
+                data-friso="ruffini"><span
                 class="header-section-number">1</span> Polinomios.
                 Operaciones</h2>
+                <div class="friso-apartado" data-friso="ruffini" aria-hidden="true"></div>
                 <p>Los polinomios son las expresiones algebraicas más
                 simples: solo usan sumas, restas y productos. Bastan
                 para describir costes, ingresos o patrones, y
                 factorizarlos será la herramienta central de toda la
                 unidad.</p>
+                <div class="curiosidad" data-dibujo="al-yabr">
+                <p><span class="rotulo-curiosidad">¿Sabías que…?</span>
+                La palabra <strong>álgebra</strong> viene de
+                <em>al-ŷabr</em>, del título del libro que al-Juarismi
+                escribió en Bagdad hacia el año 820. De su nombre vienen
+                también «algoritmo» y «guarismo».</p>
+                </div>
                 <section id="del-patrón-a-la-expresión"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Del patrón a la expresión</h3>
@@ -5969,10 +6016,13 @@ Bachillerato</p>
                 </section>
                 </section>
                 <section id="fracciones-algebraicas.-operaciones"
-                class="level2" data-number="2">
-                <h2 data-number="2"><span
+                class="level2" data-number="2" data-emblema="fraccion"
+                data-friso="simplificar">
+                <h2 data-number="2" data-emblema="fraccion"
+                data-friso="simplificar"><span
                 class="header-section-number">2</span> Fracciones
                 algebraicas. Operaciones</h2>
+                <div class="friso-apartado" data-friso="simplificar" aria-hidden="true"></div>
                 <p>Si la división de un polinomio entre otro se deja
                 indicada, aparecen expresiones nuevas, las fracciones
                 algebraicas, que se manejan con las mismas reglas que
@@ -6482,9 +6532,12 @@ Bachillerato</p>
                 </section>
                 </section>
                 </section>
-                <section id="ecuaciones" class="level2" data-number="3">
-                <h2 data-number="3"><span
+                <section id="ecuaciones" class="level2" data-number="3"
+                data-emblema="balanza" data-friso="resolver">
+                <h2 data-number="3" data-emblema="balanza"
+                data-friso="resolver"><span
                 class="header-section-number">3</span> Ecuaciones</h2>
+                <div class="friso-apartado" data-friso="resolver" aria-hidden="true"></div>
                 <p>Una ecuación es una pregunta: ¿qué valores de la
                 incógnita hacen cierta la igualdad? En este apartado
                 aprenderemos a responderla para cinco familias de
@@ -6492,6 +6545,13 @@ Bachillerato</p>
                 transformar la ecuación en otra más sencilla, vigilando
                 que por el camino no entren soluciones falsas ni se
                 escapen las verdaderas.</p>
+                <div class="curiosidad" data-dibujo="igual">
+                <p><span class="rotulo-curiosidad">¿Sabías que…?</span>
+                El signo <strong>=</strong> es de 1557. El galés Robert
+                Recorde, cansado de escribir «es igual a», eligió dos
+                rayas paralelas «porque no hay dos cosas que puedan ser
+                más iguales».</p>
+                </div>
                 <section id="resolver-es-transformar"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Resolver es transformar</h3>
@@ -8161,10 +8221,13 @@ Bachillerato</p>
                 </section>
                 </section>
                 <section id="sistemas-de-ecuaciones" class="level2"
-                data-number="4">
-                <h2 data-number="4"><span
+                data-number="4" data-emblema="rectas"
+                data-friso="sistema">
+                <h2 data-number="4" data-emblema="rectas"
+                data-friso="sistema"><span
                 class="header-section-number">4</span> Sistemas de
                 ecuaciones</h2>
+                <div class="friso-apartado" data-friso="sistema" aria-hidden="true"></div>
                 <p>Hasta ahora cada problema imponía una única
                 condición. En muchos problemas reales hay varias
                 condiciones que deben cumplirse a la vez, cada una con
@@ -9162,10 +9225,13 @@ Bachillerato</p>
                 </section>
                 </section>
                 <section id="inecuaciones.-sistemas-de-inecuaciones"
-                class="level2" data-number="5">
-                <h2 data-number="5"><span
+                class="level2" data-number="5" data-emblema="intervalo"
+                data-friso="inecuacion">
+                <h2 data-number="5" data-emblema="intervalo"
+                data-friso="inecuacion"><span
                 class="header-section-number">5</span> Inecuaciones.
                 Sistemas de inecuaciones</h2>
+                <div class="friso-apartado" data-friso="inecuacion" aria-hidden="true"></div>
                 <p>No todas las condiciones son igualdades. «Al menos 2
                 metros», «como mucho 60 €», «más rentable que»: el
                 lenguaje de las restricciones son las desigualdades. Una
@@ -10293,10 +10359,13 @@ Bachillerato</p>
                 </section>
                 </section>
                 <section id="síntesis-y-práctica" class="level2"
-                data-number="6">
-                <h2 data-number="6"><span
+                data-number="6" data-emblema="cumbre"
+                data-friso="cumbre">
+                <h2 data-number="6" data-emblema="cumbre"
+                data-friso="cumbre"><span
                 class="header-section-number">6</span> Síntesis y
                 práctica</h2>
+                <div class="friso-apartado" data-friso="cumbre" aria-hidden="true"></div>
                 <p>Toda la unidad cabe en una idea: resolver es
                 transformar sin traicionar a la condición original. Esta
                 síntesis reúne las primeras jugadas de cada familia, los
@@ -15566,7 +15635,10 @@ void main() {
         // Inecuaciones: una semirrecta con el extremo abierto.
         "intervalo":
           '<path d="M2 25h44M41.5 20.5L46 25l-4.5 4.5" stroke-width="2"/><path d="M21 25h17" stroke-width="7.5"/>' +
-          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>'
+          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>',
+        // Aproximaciones y errores: el signo «aproximadamente igual».
+        "aproximacion":
+          '<path d="M7 19.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0M7 31.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0" stroke-width="2.6"/>'
       };
       function emblema(nombre) {
         var dentro = EMBLEMAS[nombre];

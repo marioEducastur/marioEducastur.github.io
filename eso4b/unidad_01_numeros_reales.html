@@ -3354,6 +3354,7 @@
 
       #TOC .conmutador-subapartados {
         --flecha-indice: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        --pastilla-flecha: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 46'%3E%3Crect x='1' y='1' width='28' height='44' rx='11' fill='white' stroke='%23172033' stroke-opacity='0.24' stroke-width='1.6'/%3E%3C/svg%3E");
         position: absolute;
         top: 0.27rem;
         left: 0.38rem;
@@ -3364,12 +3365,12 @@
         min-height: 0;
         padding: 0;
         color: var(--apartado, var(--acento));
-        background: transparent;
+        background: transparent center / 0.95rem 1.45rem no-repeat;
         border: 0;
         border-radius: 0.4rem;
         box-shadow: none;
         transform: none;
-        transition: background 160ms ease;
+        transition: none;
       }
 
       /* Cerrada mira a la derecha y abierta, hacia abajo, donde se abre la
@@ -3401,8 +3402,11 @@
         transform: none;
       }
 
+      /* Con el ratón o el foco encima, la flecha se apoya en una pastilla
+         blanca, más pequeña que la zona que responde: un recuadro del
+         tamaño de esa zona tocaba el número del apartado. */
       #TOC .conmutador-subapartados:focus-visible {
-        background: #ffffff;
+        background-image: var(--pastilla-flecha);
         transform: none;
       }
 
@@ -3412,13 +3416,31 @@
 
       @media (hover: hover) {
         #TOC .conmutador-subapartados:hover {
-          background: #ffffff;
-          box-shadow: 0 0 0 1px var(--apartado, var(--acento));
+          background-image: var(--pastilla-flecha);
           transform: none;
         }
 
         #TOC .conmutador-subapartados:hover::before {
           opacity: 1;
+        }
+      }
+
+      /* El ratón no hace parpadear el índice (aviso del profesor del 2 de
+         octubre de 2026: «cuando paso con el ratón es como que parpadea o
+         se ve la mano y el puntero pasando de uno a otro muy rápido»). La
+         flecha no es parte del enlace de su apartado: al pasar por ella el
+         realce del apartado se apagaba, y volvía en cuanto el ratón tocaba
+         el título. Ahora el apartado sigue realzado con el ratón sobre su
+         flecha. `:where()` y `:any-link` dejan la regla con la misma
+         especificidad que la del enlace bajo el ratón, de modo que en cada
+         modo gana lo mismo que ganaba. Solo donde hay un puntero que se
+         posa: en una pantalla táctil el realce se quedaría pegado tras el
+         toque. */
+      @media (hover: hover) {
+        #TOC > ul > li:where(:has(> .conmutador-subapartados:hover)) > a:any-link {
+          color: var(--apartado, var(--acento-oscuro));
+          background: var(--apartado-suave, var(--acento-suave));
+          border-left-color: var(--apartado, var(--acento));
         }
       }
 
@@ -3497,6 +3519,7 @@
         }
 
         :where(html:not(.modo-clase)) #TOC > ul > li > a {
+          position: relative;
           gap: 0.4rem;
           padding-right: 0.15rem;
           padding-left: 0.55rem;
@@ -3505,6 +3528,17 @@
           font-weight: 700;
           line-height: 1.3;
           letter-spacing: -0.012em;
+        }
+
+        /* Entre un apartado y el siguiente no queda hueco para el ratón:
+           cada enlace responde también en la mitad del hueco que lo separa
+           de sus vecinos. Sin esto, al recorrer el índice el cursor pasaba
+           de la mano a la flecha y de vuelta en cada hueco, y el realce se
+           apagaba entre un apartado y otro. */
+        :where(html:not(.modo-clase)) #TOC > ul > li > a::after {
+          position: absolute;
+          inset: -0.11rem 0 -0.11rem -0.22rem;
+          content: "";
         }
 
         /* Cifras del mismo ancho: todos los títulos empiezan en la misma
@@ -4642,13 +4676,14 @@
   </header>
 
   <div id="root">
-    <header class="portada-unidad">
+    <header class="portada-unidad" data-portada="recta-real">
       <p class="etiqueta-asignatura">Matemáticas B · 4.º ESO</p>
       <h1 id="titulo-unidad">
         Unidad 1: Números reales
       </h1>
             <p class="subtitulo-unidad">Matemáticas B — 4.º ESO</p>
-                </header>
+                  <div class="adorno-portada" data-portada="recta-real" aria-hidden="true"></div>
+          </header>
 
     <div class="disposicion-unidad">
             <aside class="indice-unidad" aria-label="Índice de la unidad">
@@ -4701,8 +4736,10 @@
         aria-labelledby="titulo-unidad">
         <!-- INICIO_CONTENIDO_UNIDAD -->
                 <section id="antes-de-empezar"
-                class="level2 ejercicios solo-web" data-number="0">
-                <h2 class="ejercicios solo-web" data-number="0"><span
+                class="level2 ejercicios solo-web" data-number="0"
+                data-emblema="lista">
+                <h2 class="ejercicios solo-web" data-number="0"
+                data-emblema="lista"><span
                 class="header-section-number">0</span> Antes de
                 empezar</h2>
                 <p>Estas ocho cuestiones repasan contenidos de 3.º de
@@ -4803,10 +4840,13 @@
                 </section>
                 </section>
                 <section id="los-conjuntos-numéricos" class="level2"
-                data-number="1">
-                <h2 data-number="1"><span
+                data-number="1" data-emblema="recta"
+                data-friso="decimales">
+                <h2 data-number="1" data-emblema="recta"
+                data-friso="decimales"><span
                 class="header-section-number">1</span> Los conjuntos
                 numéricos</h2>
+                <div class="friso-apartado" data-friso="decimales" aria-hidden="true"></div>
                 <p>Cada ampliación de los números responde a una
                 necesidad: contar, anotar deudas, repartir, medir. El
                 resultado es una familia de conjuntos encajados unos
@@ -5713,8 +5753,8 @@
                 </section>
                 <section
                 id="la-recta-real-orden-intervalos-y-valor-absoluto"
-                class="level2" data-number="2">
-                <h2 data-number="2"><span
+                class="level2" data-number="2" data-emblema="intervalo">
+                <h2 data-number="2" data-emblema="intervalo"><span
                 class="header-section-number">2</span> La recta real:
                 orden, intervalos y valor absoluto</h2>
                 <p>Sobre la recta real se comparan números, se describen
@@ -6679,8 +6719,8 @@
                 </section>
                 </section>
                 <section id="aproximaciones-y-errores" class="level2"
-                data-number="3">
-                <h2 data-number="3"><span
+                data-number="3" data-emblema="aproximacion">
+                <h2 data-number="3" data-emblema="aproximacion"><span
                 class="header-section-number">3</span> Aproximaciones y
                 errores</h2>
                 <p>Aproximar es quedarse con las cifras que tienen
@@ -7070,9 +7110,12 @@
                 </section>
                 </section>
                 </section>
-                <section id="potencias" class="level2" data-number="4">
-                <h2 data-number="4"><span
+                <section id="potencias" class="level2" data-number="4"
+                data-emblema="potencia" data-friso="potencias-de-diez">
+                <h2 data-number="4" data-emblema="potencia"
+                data-friso="potencias-de-diez"><span
                 class="header-section-number">4</span> Potencias</h2>
+                <div class="friso-apartado" data-friso="potencias-de-diez" aria-hidden="true"></div>
                 <p>Una potencia abrevia un producto de factores iguales,
                 y las potencias de <span
                 class="math inline">\(10\)</span> permiten escribir con
@@ -7695,9 +7738,12 @@
                 </section>
                 </section>
                 </section>
-                <section id="radicales" class="level2" data-number="5">
-                <h2 data-number="5"><span
+                <section id="radicales" class="level2" data-number="5"
+                data-emblema="raiz" data-friso="raices">
+                <h2 data-number="5" data-emblema="raiz"
+                data-friso="raices"><span
                 class="header-section-number">5</span> Radicales</h2>
+                <div class="friso-apartado" data-friso="raices" aria-hidden="true"></div>
                 <p>Una parcela cuadrada de cuatro hectáreas, <span
                 class="math inline">\(40\,000\)</span> m², tiene <span
                 class="math inline">\(200\)</span> m de lado, porque
@@ -8659,8 +8705,9 @@
                 </section>
                 </section>
                 </section>
-                <section id="logaritmos" class="level2" data-number="6">
-                <h2 data-number="6"><span
+                <section id="logaritmos" class="level2" data-number="6"
+                data-emblema="logaritmo">
+                <h2 data-number="6" data-emblema="logaritmo"><span
                 class="header-section-number">6</span> Logaritmos</h2>
                 <p>En un torneo por eliminatorias, cada ronda deja fuera
                 a la mitad de los jugadores. Con <span
@@ -9330,10 +9377,13 @@
                 </section>
                 </section>
                 <section id="síntesis-y-práctica" class="level2"
-                data-number="7">
-                <h2 data-number="7"><span
+                data-number="7" data-emblema="cumbre"
+                data-friso="cumbre">
+                <h2 data-number="7" data-emblema="cumbre"
+                data-friso="cumbre"><span
                 class="header-section-number">7</span> Síntesis y
                 práctica</h2>
+                <div class="friso-apartado" data-friso="cumbre" aria-hidden="true"></div>
                 <section id="lo-esencial" class="level3"
                 data-number="7.1">
                 <h3 data-number="7.1"><span
@@ -14486,7 +14536,10 @@ void main() {
         // Inecuaciones: una semirrecta con el extremo abierto.
         "intervalo":
           '<path d="M2 25h44M41.5 20.5L46 25l-4.5 4.5" stroke-width="2"/><path d="M21 25h17" stroke-width="7.5"/>' +
-          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>'
+          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>',
+        // Aproximaciones y errores: el signo «aproximadamente igual».
+        "aproximacion":
+          '<path d="M7 19.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0M7 31.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0" stroke-width="2.6"/>'
       };
       function emblema(nombre) {
         var dentro = EMBLEMAS[nombre];
