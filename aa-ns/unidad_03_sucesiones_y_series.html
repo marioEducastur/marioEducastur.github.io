@@ -1882,7 +1882,13 @@
         padding: 0.45rem;
       }
 
+      /* La tabla que no cabe se desplaza dentro de su caja. Con
+         `position: relative` es además el bloque contenedor de lo que sus
+         celdas llevan con posición absoluta: KaTeX guarda así, oculto, el
+         MathML de cada fórmula, y sin esto el de las celdas que quedan
+         fuera de la vista no se recortaba y ensanchaba la página. */
       table {
+        position: relative;
         display: block;
         max-width: 100%;
         overflow-x: auto;
