@@ -339,6 +339,26 @@
       border-color: var(--violeta);
     }
 
+    /* Propio de este curso (3 de octubre de 2026): bajo las pastillas de
+       los PDF, un enlace a la página principal de Matemáticas I, el curso
+       que estos apuntes completan (regla 14 de AGENTS.md). Lleva su rótulo
+       y una raya que lo separa, como «En PDF» del índice; en pantallas
+       estrechas es una pastilla más de la tira, en su propia fila. Va
+       dentro del bloque de las descargas, así que ni el modo clase ni la
+       impresión lo ven. */
+    .descargas-unidad .titulo-portal {
+      margin-top: 0.9rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--borde);
+    }
+
+    .pastilla-descarga.portal {
+      flex-basis: 100%;
+      color: var(--texto);
+      background: var(--superficie);
+      border-color: var(--texto-suave);
+    }
+
     .pastilla-descarga:focus-visible {
       outline: 2px solid currentColor;
       outline-offset: 2px;
@@ -763,11 +783,30 @@
     /* Un elemento de lista cuyo único contenido es una fórmula centrada
        perdía su número visible: la fórmula es un bloque y el marcador
        quedaba huérfano, sin línea que compartir. Como elemento en línea
-       la fórmula acompaña al número, igual que en el PDF. */
-    #contenido-unidad li > .math.display:first-child:last-child {
+       la fórmula acompaña al número, igual que en el PDF. Si lleva texto
+       delante («Calcula:» y la fila de apartados), la fórmula va debajo y
+       centrada, también como en el PDF: `:first-child` no ve el texto
+       suelto, así que el guion marca esos elementos con
+       `.formula-tras-texto`. */
+    #contenido-unidad li:not(.formula-tras-texto):not(.formula-abre) > .math.display:first-child:last-child {
       display: inline-block;
       width: auto;
       max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* Si la fórmula abre el elemento pero no va sola (una solución que
+       sigue con «porque…») o va dentro de un párrafo (los apartados de una
+       lista suelta), Safari tampoco pinta el número: lo mete en la primera
+       línea de dentro de la fórmula, que recorta lo que se sale porque se
+       desplaza a lo ancho. El guion marca esos elementos con
+       `.formula-abre` y la fórmula va en línea a todo el ancho: el número
+       comparte su línea y lo que sigue baja a la siguiente, como en
+       Chrome. */
+    #contenido-unidad li.formula-abre > .math.display:first-child,
+    #contenido-unidad li.formula-abre > p:first-child > .math.display:first-child {
+      display: inline-block;
+      width: 100%;
       vertical-align: middle;
     }
 
@@ -3289,16 +3328,362 @@
       font-family: "Times New Roman", Times, serif;
     }
 
-    /* Curso IB: soluciones paso a paso (regla 14 de AGENTS.md). En las
-       respuestas, la fórmula centrada de un paso va siempre debajo de la
-       frase que la presenta. La regla general de «li > .math.display» como
-       único hijo la pondría al lado de la frase cuando cabe y la frase no
-       lleva ninguna otra fórmula, y unas quedarían debajo y otras al lado.
-       Las respuestas de este curso no tienen apartados que sean solo una
-       fórmula, que es el caso para el que nació aquella regla. */
-    #contenido-unidad .resultado li > .math.display:first-child:last-child {
+    /* Curso IB: laboratorios propios (regla 14 de AGENTS.md). Piezas de los
+       componentes que solo tiene este curso; no se portan a los demás. */
+    .controles-intervalos.de-tres {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .leyenda-ib {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 1.1rem;
+      margin: 0.7rem 0 0;
+      color: var(--texto-suave);
+      font-size: 0.92rem;
+    }
+
+    .leyenda-ib span::before {
+      content: "";
+      display: inline-block;
+      width: 1.1rem;
+      height: 0.26rem;
+      margin-right: 0.4rem;
+      vertical-align: middle;
+      border-radius: 1rem;
+      background: var(--color-leyenda, var(--texto-suave));
+    }
+
+    .leyenda-ib + .zona-grafica {
+      margin-top: 0.45rem;
+    }
+
+    /* En un teléfono, una gráfica reducida al ancho de la pantalla deja
+       los números ilegibles: conserva un ancho mínimo y su caja se desplaza
+       a lo ancho, como una tabla. */
+    .zona-grafica svg.grafica-ib {
+      min-width: 27rem;
+    }
+
+    .fichas-interactivo button .punto-ficha {
+      display: inline-block;
+      width: 0.72rem;
+      height: 0.72rem;
+      margin-right: 0.45rem;
+      border: 1.5px solid #ffffff;
+      border-radius: 50%;
+      background: var(--color-fila, #94a3b8);
+      box-shadow: 0 0 0 1px var(--color-fila, #94a3b8);
+    }
+
+    /* Notación sigma: un cartón por cada valor del índice. */
+    .chips-sumatorio {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.9rem 0 0;
+    }
+
+    .chip-sumatorio {
+      display: grid;
+      gap: 0.12rem;
+      min-width: 4.4rem;
+      padding: 0.42rem 0.65rem 0.5rem;
+      text-align: center;
+      border: 1px solid #d6dfec;
+      border-top: 0.24rem solid var(--violeta);
+      border-radius: 0.6rem;
+      background: #ffffff;
+      box-shadow: 0 3px 8px rgb(23 32 51 / 0.05);
+      animation: entrar-detalle 220ms ease-out;
+    }
+
+    .chip-sumatorio.pulsable {
+      cursor: pointer;
+    }
+
+    .chip-sumatorio.elegido {
+      border-color: var(--violeta);
+      background: var(--violeta-suave);
+      box-shadow: 0 0 0 0.14rem var(--violeta);
+    }
+
+    .chip-sumatorio .indice-chip {
+      color: var(--violeta);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    /* Inducción: las dos partes de la demostración, una al lado de otra. */
+    .partes-induccion {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin: 0.9rem 0 0;
+    }
+
+    .parte-induccion {
+      --color-parte: var(--verde);
+      padding: 0.7rem 0.85rem;
+      border: 1px solid #d6dfec;
+      border-left: 0.32rem solid var(--color-parte);
+      border-radius: 0.7rem;
+      background: #ffffff;
+    }
+
+    .parte-induccion.falla {
+      --color-parte: var(--rojo);
+    }
+
+    .parte-induccion strong {
       display: block;
-      width: 100%;
+      margin-bottom: 0.15rem;
+      color: var(--color-parte);
+    }
+
+    .domino-induccion svg .ficha-domino {
+      cursor: pointer;
+    }
+
+    .domino-induccion .acciones-interactivo button:disabled {
+      opacity: 0.45;
+      box-shadow: none;
+      cursor: default;
+      transform: none;
+    }
+
+    /* Ordenaciones: todas las filas a la vista, en una caja que se
+       desplaza. */
+    .barra-clases-ib {
+      display: flex;
+      height: 1.9rem;
+      margin: 0.9rem 0 0;
+      overflow: hidden;
+      border-radius: 0.6rem;
+    }
+
+    .barra-clases-ib > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      overflow: hidden;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 750;
+      white-space: nowrap;
+      background: var(--color-fila);
+      transition: opacity 200ms ease;
+    }
+
+    .barra-clases-ib > span.apagada {
+      opacity: 0.3;
+    }
+
+    .lista-filas-ib {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(6.2rem, 1fr));
+      gap: 0.35rem;
+      max-height: 15.5rem;
+      margin: 0.9rem 0 0;
+      padding: 0.6rem;
+      overflow-y: auto;
+      border: 1px solid var(--borde);
+      border-radius: 0.6rem;
+      background: var(--fondo);
+    }
+
+    .fila-ib {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.16rem;
+      padding: 0.2rem 0.3rem;
+      border: 1px solid #d6dfec;
+      border-left: 0.3rem solid var(--color-fila, #94a3b8);
+      border-radius: 0.45rem;
+      background: #ffffff;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .fila-ib .letra-fila {
+      min-width: 0.8rem;
+      text-align: center;
+    }
+
+    .fila-ib .electrica {
+      color: #c2410c;
+      font-weight: 800;
+    }
+
+    .fila-ib .bloque-fila {
+      display: inline-flex;
+      gap: 0.16rem;
+      padding: 0 0.14rem;
+      border-radius: 0.3rem;
+      background: #ffedd5;
+      box-shadow: inset 0 0 0 1.5px #fdba74;
+    }
+
+    /* Combinaciones: cada grupo con todas sus ordenaciones. */
+    .grupos-orden-ib {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(18.5rem, 1fr));
+      gap: 0.4rem;
+      max-height: 26rem;
+      margin: 0.9rem 0 0;
+      padding: 0.5rem;
+      overflow-y: auto;
+      border: 1px solid var(--borde);
+      border-radius: 0.6rem;
+      background: var(--fondo);
+    }
+
+    .grupo-orden-ib {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.32rem 0.45rem;
+      border: 1.5px solid transparent;
+      border-radius: 0.6rem;
+      transition:
+        background 200ms ease,
+        border-color 200ms ease;
+    }
+
+    .grupo-orden-ib .conjunto-ib {
+      flex: 0 0 100%;
+      color: var(--texto-suave);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .grupo-orden-ib .orden-ib {
+      padding: 0.08rem 0.3rem;
+      color: var(--acento-oscuro);
+      border: 1px solid #cbd8e8;
+      border-radius: 0.4rem;
+      background: #ffffff;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.93rem;
+      letter-spacing: 0.08em;
+    }
+
+    .grupos-orden-ib.sin-orden .grupo-orden-ib {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .grupos-orden-ib.sin-orden .conjunto-ib {
+      color: #166534;
+    }
+
+    .grupos-orden-ib.sin-orden .orden-ib {
+      color: #64748b;
+      border-style: dashed;
+      background: transparent;
+    }
+
+    /* Binomio: el triángulo de Pascal con casillas que se pulsan. */
+    .triangulo-ib {
+      display: grid;
+      gap: 0.22rem;
+      justify-items: center;
+      margin: 0.3rem 0 0.2rem;
+    }
+
+    .fila-triangulo {
+      display: flex;
+      gap: 0.22rem;
+    }
+
+    .fila-triangulo button {
+      min-width: 2.1rem;
+      min-height: 2.1rem;
+      padding: 0.1rem 0.15rem;
+      color: var(--acento-oscuro);
+      border: 1px solid #cbd8e8;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      box-shadow: none;
+      font-size: 0.98rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .fila-triangulo button.de-la-fila {
+      border-color: #c4b5fd;
+      background: var(--violeta-suave);
+    }
+
+    .fila-triangulo button.es-padre {
+      color: #7c2d12;
+      border-color: #fdba74;
+      background: #ffedd5;
+    }
+
+    .fila-triangulo button:focus-visible {
+      color: #ffffff;
+      border-color: var(--acento);
+      background: var(--acento);
+    }
+
+    @media (hover: hover) {
+      .fila-triangulo button:hover {
+        color: #ffffff;
+        border-color: var(--acento);
+        background: var(--acento);
+      }
+    }
+
+    .fila-triangulo button[aria-pressed="true"] {
+      color: #ffffff;
+      border-color: var(--violeta);
+      background: var(--violeta);
+      box-shadow:
+        0 0 0 0.14rem #ffffff,
+        0 0 0 0.28rem var(--violeta);
+    }
+
+    .palabras-ib {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.5rem 0 0;
+    }
+
+    .palabras-ib span {
+      padding: 0.08rem 0.5rem;
+      border: 1px solid #d6dfec;
+      border-radius: 0.4rem;
+      background: #ffffff;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 1.08rem;
+      font-style: italic;
+      letter-spacing: 0.07em;
+    }
+
+    @media (max-width: 42rem) {
+      .controles-intervalos.de-tres,
+      .partes-induccion {
+        grid-template-columns: 1fr;
+      }
+
+      .fila-triangulo button {
+        min-width: 1.95rem;
+        min-height: 1.95rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media print {
+      .lista-filas-ib,
+      .grupos-orden-ib {
+        max-height: none;
+      }
     }
 
   </style>
@@ -3360,13 +3745,18 @@ Enfoques NS</p>
                                     <a class="pastilla-descarga soluciones" href="salida/Mat_IB_Metodos_de_demostracion_soluciones.pdf" target="_blank" rel="noopener" aria-label="Soluciones de los ejercicios en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones</span></a>
                                     <a class="pastilla-descarga formulas" href="https://www.iesjovellanos.com/archivos/cuadernillo_formulas_matematicas_AyE_NM_y_NS.1610560626.pdf" target="_blank" rel="noopener" aria-label="Cuadernillo de fórmulas del IB en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Cuadernillo de fórmulas</span></a>
                       </div>
+          <p class="titulo-indice titulo-portal">Matemáticas I</p>
+          <div class="fila-descargas">
+            <a class="pastilla-descarga portal" href="https://marioeducastur.github.io/mat1/" target="_blank" rel="noopener noreferrer" aria-label="Página principal de Matemáticas I"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 9.8v9.7h12V9.8"/><path d="M10 19.5v-5.2h4v5.2"/></svg><span>Página principal</span></a>
+          </div>
         </div>
               </aside>
                   <div class="descargas-movil">
                 <a class="pastilla-descarga apuntes" href="salida/Mat_IB_Metodos_de_demostracion.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Apuntes en PDF</span></a>
                         <a class="pastilla-descarga soluciones" href="salida/Mat_IB_Metodos_de_demostracion_soluciones.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones en PDF</span></a>
                         <a class="pastilla-descarga formulas" href="https://www.iesjovellanos.com/archivos/cuadernillo_formulas_matematicas_AyE_NM_y_NS.1610560626.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Cuadernillo de fórmulas del IB</span></a>
-              </div>
+                <a class="pastilla-descarga portal" href="https://marioeducastur.github.io/mat1/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 9.8v9.7h12V9.8"/><path d="M10 19.5v-5.2h4v5.2"/></svg><span>Página principal de Matemáticas I</span></a>
+      </div>
       
       <main
         id="contenido-unidad"
@@ -4129,6 +4519,42 @@ Enfoques NS</p>
                 class="math inline">\(n\)</span>: <span
                 class="math inline">\(n^2+n=n(n+1)\)</span> siempre es
                 par (ejercicio 8).</p>
+                </div>
+                <div id="domino-induccion"
+                class="interactivo bloque-didactico"
+                data-componente="domino-induccion"
+                data-titulo="El dominó de la inducción">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p><strong>Las dos partes, en fichas de dominó.</strong>
+                Cada ficha es una afirmación: la primera es <span
+                class="math inline">\(P(1)\)</span>; la segunda, <span
+                class="math inline">\(P(2)\)</span>, y así sin fin. El
+                caso base empuja la primera ficha, y el paso inductivo
+                asegura que cada ficha tira a la siguiente.</p>
+                <ul>
+                <li>Con la suma del ejemplo se cumplen las dos partes:
+                caen todas las fichas.</li>
+                <li>Con «<span class="math inline">\(n^2+n\)</span> es
+                impar», cada ficha tiraría a la siguiente, pero la
+                primera no cae, porque <span
+                class="math inline">\(1^2+1=2\)</span> es par: no cae
+                ninguna.</li>
+                <li>Con «<span class="math inline">\(n^2-n+11\)</span>
+                es primo», la primera ficha cae y las diez primeras
+                afirmaciones son verdaderas, pero de <span
+                class="math inline">\(P(10)\)</span> no se sigue <span
+                class="math inline">\(P(11)\)</span>, porque <span
+                class="math inline">\(11^2-11+11=121=11^2\)</span> no es
+                primo: la caída se para en la ficha <span
+                class="math inline">\(11\)</span>.</li>
+                <li>Con «<span
+                class="math inline">\(3^n&gt;2n+1\)</span>», <span
+                class="math inline">\(P(1)\)</span> es falsa, porque
+                <span class="math inline">\(3&gt;3\)</span> no es
+                cierto, y la fila empieza en la ficha <span
+                class="math inline">\(2\)</span>: el caso base es <span
+                class="math inline">\(n=2\)</span>.</li>
+                </ul>
                 </div>
                 <div class="error-tipico bloque-didactico">
                 <p><span class="etiqueta-bloque">Errores
@@ -6852,6 +7278,43 @@ Enfoques NS</p>
       if (!contenido || !window.renderMathInElement) {
         return;
       }
+
+      // Una fórmula centrada que es el único elemento de un elemento de
+      // lista va junto a su número (véase la plantilla), salvo si lleva
+      // texto suelto delante: entonces va debajo, como en el PDF.
+      contenido.querySelectorAll("li > .math.display:only-child").forEach(function (formula) {
+        for (var nodo = formula.previousSibling; nodo; nodo = nodo.previousSibling) {
+          if (nodo.nodeType === Node.TEXT_NODE && nodo.textContent.trim() !== "") {
+            formula.parentElement.classList.add("formula-tras-texto");
+            return;
+          }
+        }
+      });
+
+      // Una fórmula centrada que abre un elemento de lista sin ir sola
+      // (detrás lleva algo más, o va dentro de un párrafo) también va en
+      // línea, a todo el ancho, para que Safari pinte el número (véase la
+      // plantilla).
+      function nodoConContenido(nodo) {
+        while (nodo && nodo.nodeType !== Node.ELEMENT_NODE &&
+               !(nodo.nodeType === Node.TEXT_NODE && nodo.textContent.trim() !== "")) {
+          nodo = nodo.nextSibling;
+        }
+        return nodo;
+      }
+      contenido.querySelectorAll("li").forEach(function (elemento) {
+        var formula = nodoConContenido(elemento.firstChild);
+        var sola = false;
+        if (formula && formula.tagName === "P") {
+          formula = nodoConContenido(formula.firstChild);
+        } else if (formula) {
+          sola = !nodoConContenido(formula.nextSibling);
+        }
+        if (formula && !sola && formula.nodeType === Node.ELEMENT_NODE &&
+            formula.matches(".math.display")) {
+          elemento.classList.add("formula-abre");
+        }
+      });
 
       window.renderMathInElement(contenido, {
         delimiters: [
@@ -15267,6 +15730,3689 @@ Enfoques NS</p>
         );
       }
 
+      // ====================================================================
+      // Laboratorios propios del curso IB (regla 14 de AGENTS.md). No son
+      // del motor compartido y no se portan a los otros cursos. Este tramo
+      // no lleva ningún signo de dólar, ni en el código ni en los
+      // comentarios: Pandoc lo leería como una variable de la plantilla.
+      // ====================================================================
+
+      const COLORES_IB = {
+        azul: "#2563eb",
+        naranja: "#ea580c",
+        verde: "#16a34a",
+        rojo: "#dc2626",
+        violeta: "#6d28d9",
+        turquesa: "#0f766e",
+        gris: "#94a3b8"
+      };
+
+      function partesDeNumeroIB(valor, decimales) {
+        let fijo = Math.abs(valor).toFixed(
+          decimales === undefined ? 2 : decimales
+        );
+        if (fijo.indexOf(".") >= 0) {
+          while (fijo.charAt(fijo.length - 1) === "0") {
+            fijo = fijo.slice(0, -1);
+          }
+          if (fijo.charAt(fijo.length - 1) === ".") {
+            fijo = fijo.slice(0, -1);
+          }
+        }
+        const trozos = fijo.split(".");
+        return {
+          negativo: valor < 0 && Number(fijo) !== 0,
+          entero: trozos[0],
+          decimal: trozos.length > 1 ? trozos[1] : ""
+        };
+      }
+
+      // La parte entera, de tres en tres cifras a partir de cinco, como en
+      // los apuntes: 5040, pero 14 400.
+      function agruparMilesIB(entero, separador) {
+        if (entero.length < 5) {
+          return entero;
+        }
+        let agrupado = "";
+        for (let lugar = 0; lugar < entero.length; lugar += 1) {
+          if (lugar > 0 && (entero.length - lugar) % 3 === 0) {
+            agrupado += separador;
+          }
+          agrupado += entero.charAt(lugar);
+        }
+        return agrupado;
+      }
+
+      // Un número para leer: coma decimal, sin ceros de relleno.
+      function numeroIB(valor, decimales) {
+        const partes = partesDeNumeroIB(valor, decimales);
+        return (
+          (partes.negativo ? "−" : "") +
+          agruparMilesIB(partes.entero, " ") +
+          (partes.decimal ? "," + partes.decimal : "")
+        );
+      }
+
+      // El mismo número, escrito para KaTeX.
+      function texIB(valor, decimales) {
+        const partes = partesDeNumeroIB(valor, decimales);
+        return (
+          (partes.negativo ? "-" : "") +
+          agruparMilesIB(partes.entero, "\\,") +
+          (partes.decimal ? "{,}" + partes.decimal : "")
+        );
+      }
+
+      // «=» si el valor cabe exacto en esas cifras decimales; si no, «≈».
+      function igualIB(valor, decimales) {
+        const factor = Math.pow(10, decimales);
+        return Math.abs(valor * factor - Math.round(valor * factor)) < 1e-6
+          ? "="
+          : "\\approx ";
+      }
+
+      // Cuántas cifras decimales merece un número según su tamaño.
+      function cifrasIB(valor) {
+        const tamano = Math.abs(valor);
+        return tamano >= 10000 ? 0 : tamano >= 100 ? 2 : 4;
+      }
+
+      function escalaIB(minimo, maximo, desde, hasta) {
+        return (valor) =>
+          desde + ((valor - minimo) / (maximo - minimo)) * (hasta - desde);
+      }
+
+      // Marcas redondas (de 1, 2 o 5 en 5) para un eje.
+      function marcasIB(minimo, maximo, cuantas) {
+        const bruto = (maximo - minimo) / Math.max(1, cuantas);
+        const potencia = Math.pow(10, Math.floor(Math.log10(bruto)));
+        const fraccion = bruto / potencia;
+        const paso =
+          (fraccion <= 1 ? 1 : fraccion <= 2 ? 2 : fraccion <= 5 ? 5 : 10) *
+          potencia;
+        const marcas = [];
+        const primera = Math.ceil(minimo / paso - 1e-9) * paso;
+        for (
+          let valor = primera;
+          valor <= maximo + paso * 1e-9;
+          valor += paso
+        ) {
+          marcas.push(Math.abs(valor) < paso * 1e-9 ? 0 : valor);
+        }
+        return marcas;
+      }
+
+      // Ejes de una gráfica: rejilla horizontal, marcas y rótulos. `x` e
+      // `y` pasan de valores a unidades del viewBox.
+      function EjesIB({
+        area,
+        x,
+        y,
+        marcasX,
+        marcasY,
+        textoX,
+        textoY,
+        rotuloX,
+        rotuloY,
+        ceroX,
+        ceroY
+      }) {
+        return (
+          <g>
+            {marcasY.map((valor) => (
+              <g key={"y" + valor}>
+                <line
+                  x1={area.izq}
+                  y1={y(valor)}
+                  x2={area.der}
+                  y2={y(valor)}
+                  stroke="var(--borde)"
+                  strokeWidth="1"
+                />
+                <text
+                  x={area.izq - 7}
+                  y={y(valor) + 5}
+                  textAnchor="end"
+                  fontSize="14"
+                  fill="var(--texto-suave)"
+                >
+                  {textoY ? textoY(valor) : numeroIB(valor, 2)}
+                </text>
+              </g>
+            ))}
+            {marcasX.map((valor) => (
+              <g key={"x" + valor}>
+                <line
+                  x1={x(valor)}
+                  y1={area.aba}
+                  x2={x(valor)}
+                  y2={area.aba + 5}
+                  stroke="var(--texto-suave)"
+                  strokeWidth="1"
+                />
+                <text
+                  x={x(valor)}
+                  y={area.aba + 20}
+                  textAnchor="middle"
+                  fontSize="14"
+                  fill="var(--texto-suave)"
+                >
+                  {textoX ? textoX(valor) : numeroIB(valor, 2)}
+                </text>
+              </g>
+            ))}
+            <line
+              x1={area.izq}
+              y1={area.aba}
+              x2={area.der}
+              y2={area.aba}
+              stroke="var(--texto-suave)"
+              strokeWidth="1.5"
+            />
+            <line
+              x1={area.izq}
+              y1={area.arr}
+              x2={area.izq}
+              y2={area.aba}
+              stroke="var(--texto-suave)"
+              strokeWidth="1.5"
+            />
+            {ceroY !== undefined && (
+              <line
+                x1={area.izq}
+                y1={ceroY}
+                x2={area.der}
+                y2={ceroY}
+                stroke="var(--texto)"
+                strokeWidth="1.5"
+              />
+            )}
+            {ceroX !== undefined && (
+              <line
+                x1={ceroX}
+                y1={area.arr}
+                x2={ceroX}
+                y2={area.aba}
+                stroke="var(--texto)"
+                strokeWidth="1.5"
+              />
+            )}
+            {rotuloX && (
+              <text
+                x={area.der}
+                y={area.aba + 38}
+                textAnchor="end"
+                fontSize="14"
+                fill="var(--texto-suave)"
+              >
+                {rotuloX}
+              </text>
+            )}
+            {rotuloY && (
+              <text
+                x={area.izq - 4}
+                y={area.arr - 8}
+                textAnchor="start"
+                fontSize="14"
+                fill="var(--texto-suave)"
+              >
+                {rotuloY}
+              </text>
+            )}
+          </g>
+        );
+      }
+
+      // ---- Unidad 3: notación sigma ----
+
+      const TERMINOS_SUMATORIO = [
+        {
+          clave: "lineal",
+          rotuloTex: "2k+1",
+          sumandoTex: "(2k+1)",
+          valor: (k) => 2 * k + 1,
+          sustitucionTex: (k) => "2\\cdot" + k + "+1"
+        },
+        {
+          clave: "cuadrado",
+          rotuloTex: "k^2",
+          sumandoTex: "k^2",
+          valor: (k) => k * k,
+          sustitucionTex: (k) => k + "^2"
+        },
+        {
+          clave: "potencia",
+          rotuloTex: "2^k",
+          sumandoTex: "2^k",
+          valor: (k) => Math.pow(2, k),
+          sustitucionTex: (k) => "2^{" + k + "}"
+        },
+        {
+          clave: "alterna",
+          rotuloTex: "(-1)^k\\,k",
+          sumandoTex: "(-1)^k\\,k",
+          valor: (k) => (k % 2 === 0 ? k : -k),
+          sustitucionTex: (k) => "(-1)^{" + k + "}\\cdot" + k
+        },
+        {
+          clave: "constante",
+          rotuloTex: "5",
+          sumandoTex: "5",
+          valor: () => 5,
+          sustitucionTex: null
+        }
+      ];
+
+      function AbreSumatorioInteractivo({ configuracion, alPreparar }) {
+        const [clave, setClave] = React.useState("lineal");
+        const [desde, setDesde] = React.useState(1);
+        const [hasta, setHasta] = React.useState(4);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const termino = TERMINOS_SUMATORIO.find(
+          (candidato) => candidato.clave === clave
+        );
+        const indices = [];
+        for (let k = desde; k <= hasta; k += 1) {
+          indices.push(k);
+        }
+        const valores = indices.map((k) => termino.valor(k));
+        const cuantos = valores.length;
+        const total = valores.reduce((suma, valor) => suma + valor, 0);
+        const sumaTex = valores
+          .map((valor, lugar) =>
+            lugar === 0
+              ? String(valor)
+              : valor < 0
+                ? "-" + Math.abs(valor)
+                : "+" + valor
+          )
+          .join("");
+
+        const cambiarDesde = (nuevo) => {
+          setDesde(nuevo);
+          if (nuevo > hasta) {
+            setHasta(nuevo);
+          }
+        };
+        const cambiarHasta = (nuevo) => {
+          setHasta(nuevo);
+          if (nuevo < desde) {
+            setDesde(nuevo);
+          }
+        };
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "Abre el sumatorio"}
+            </p>
+            <p className="instruccion-interactivo">
+              Elige qué se suma y entre qué valores se mueve el índice k.
+              Debajo aparece cada término con el valor de k que lo produce.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Expresión que se suma"
+            >
+              {TERMINOS_SUMATORIO.map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion.clave}
+                  aria-pressed={opcion.clave === clave}
+                  onClick={() => setClave(opcion.clave)}
+                >
+                  <MatematicaEnLinea tex={opcion.rotuloTex} />
+                </button>
+              ))}
+            </div>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>El índice empieza en k =</span>
+                  <output>{desde}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value={desde}
+                    onChange={(evento) =>
+                      cambiarDesde(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>El índice termina en k =</span>
+                  <output>{hasta}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value={hasta}
+                    onChange={(evento) =>
+                      cambiarHasta(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <FormulaViva
+              tex={
+                "\\sum_{k=" +
+                desde +
+                "}^{" +
+                hasta +
+                "}" +
+                termino.sumandoTex +
+                "=" +
+                sumaTex +
+                (cuantos > 1 ? "=" + total : "")
+              }
+            />
+
+            <div
+              className="chips-sumatorio"
+              role="list"
+              aria-label="Términos del sumatorio, uno por cada valor de k"
+            >
+              {indices.map((k, lugar) => (
+                <div className="chip-sumatorio" role="listitem" key={k}>
+                  <span className="indice-chip">{"k = " + k}</span>
+                  <MatematicaEnLinea
+                    tex={
+                      termino.sustitucionTex
+                        ? termino.sustitucionTex(k) + "=" + valores[lugar]
+                        : String(valores[lugar])
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {(cuantos === 1 ? "1 término" : cuantos + " términos") +
+                  ", que suman " +
+                  numeroIB(total, 0)}
+              </strong>
+              <p>
+                {"De k = " +
+                  desde +
+                  " a k = " +
+                  hasta +
+                  " hay " +
+                  hasta +
+                  " − " +
+                  desde +
+                  " + 1 = " +
+                  cuantos +
+                  (cuantos === 1 ? " valor" : " valores") +
+                  " de k: se cuentan los dos extremos."}
+              </p>
+              {clave === "constante" && (
+                <p>
+                  {"Lo que se suma no depende de k: es 5 sumado " +
+                    cuantos +
+                    (cuantos === 1 ? " vez" : " veces") +
+                    ", es decir, " +
+                    cuantos +
+                    " · 5 = " +
+                    total +
+                    "."}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 3: la suma de una progresión aritmética ----
+
+      // El n\u00famero, con cifras de sub\u00edndice: u\u2081, u\u2081\u2080.
+      function subindiceIB(numero) {
+        const cifras = "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089";
+        return String(numero)
+          .split("")
+          .map((cifra) => cifras.charAt(Number(cifra)))
+          .join("");
+      }
+
+      function EscaleraGaussInteractivo({ configuracion, alPreparar }) {
+        const [primero, setPrimero] = React.useState(6);
+        const [diferencia, setDiferencia] = React.useState(4);
+        const [cuantos, setCuantos] = React.useState(5);
+        const [doble, setDoble] = React.useState(false);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const terminos = [];
+        for (let lugar = 0; lugar < cuantos; lugar += 1) {
+          terminos.push(primero + lugar * diferencia);
+        }
+        const ultimo = terminos[cuantos - 1];
+        const pareja = primero + ultimo;
+        const suma = (cuantos * pareja) / 2;
+        const base = 262;
+        const techo = 44;
+        const porUnidad = (base - techo) / pareja;
+        const paso = 540 / cuantos;
+        const ancho = paso * 0.78;
+        const equis = (lugar) => 30 + paso * lugar + (paso - ancho) / 2;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "La escalera de Gauss"}
+            </p>
+            <p className="instruccion-interactivo">
+              Cada columna es un término de la progresión. Pon encima otra
+              escalera igual, dada la vuelta, y mira qué figura sale.
+            </p>
+
+            <div className="controles-intervalos de-tres">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Primer término u₁</span>
+                  <output>{primero}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    step="1"
+                    value={primero}
+                    onChange={(evento) =>
+                      setPrimero(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Diferencia d</span>
+                  <output>{diferencia}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max="5"
+                    step="1"
+                    value={diferencia}
+                    onChange={(evento) =>
+                      setDiferencia(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Número de términos n</span>
+                  <output>{cuantos}</output>
+                  <input
+                    type="range"
+                    min="2"
+                    max="10"
+                    step="1"
+                    value={cuantos}
+                    onChange={(evento) =>
+                      setCuantos(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 300"
+                role="img"
+                aria-label={
+                  "Escalera de " +
+                  cuantos +
+                  " columnas de alturas " +
+                  terminos.join(", ") +
+                  (doble
+                    ? ". Con la segunda escalera encima, todas las " +
+                      "columnas miden " +
+                      pareja +
+                      "."
+                    : ".")
+                }
+              >
+                <line
+                  x1="20"
+                  y1={base}
+                  x2="580"
+                  y2={base}
+                  stroke="var(--texto-suave)"
+                  strokeWidth="1.5"
+                />
+                {terminos.map((termino, lugar) => {
+                  const altoAzul = termino * porUnidad;
+                  const altoNaranja = terminos[cuantos - 1 - lugar] * porUnidad;
+                  return (
+                    <g key={"columna" + lugar}>
+                      <rect
+                        x={equis(lugar)}
+                        y={base - altoAzul}
+                        width={ancho}
+                        height={altoAzul}
+                        rx="3"
+                        fill={COLORES_IB.azul}
+                      />
+                      <rect
+                        x={equis(lugar)}
+                        y={techo}
+                        width={ancho}
+                        height={altoNaranja}
+                        rx="3"
+                        fill={COLORES_IB.naranja}
+                        style={{
+                          opacity: doble ? 0.9 : 0,
+                          transition: "opacity 0.45s ease"
+                        }}
+                      />
+                      {altoNaranja >= 22 && (
+                        <text
+                          x={equis(lugar) + ancho / 2}
+                          y={techo + altoNaranja / 2 + 6}
+                          textAnchor="middle"
+                          fontSize="16"
+                          fontWeight="700"
+                          fill="#ffffff"
+                          style={{
+                            opacity: doble ? 1 : 0,
+                            transition: "opacity 0.45s ease"
+                          }}
+                        >
+                          {terminos[cuantos - 1 - lugar]}
+                        </text>
+                      )}
+                      {altoAzul >= 22 ? (
+                        <text
+                          x={equis(lugar) + ancho / 2}
+                          y={base - altoAzul / 2 + 6}
+                          textAnchor="middle"
+                          fontSize="16"
+                          fontWeight="700"
+                          fill="#ffffff"
+                        >
+                          {termino}
+                        </text>
+                      ) : (
+                        <text
+                          x={equis(lugar) + ancho / 2}
+                          y={base - altoAzul - 6}
+                          textAnchor="middle"
+                          fontSize="16"
+                          fontWeight="700"
+                          fill={COLORES_IB.azul}
+                          style={{
+                            opacity: doble ? 0 : 1,
+                            transition: "opacity 0.45s ease"
+                          }}
+                        >
+                          {termino}
+                        </text>
+                      )}
+                      <text
+                        x={equis(lugar) + ancho / 2}
+                        y={base + 23}
+                        textAnchor="middle"
+                        fontSize="17"
+                        fill="var(--texto-suave)"
+                      >
+                        {"u" + subindiceIB(lugar + 1)}
+                      </text>
+                    </g>
+                  );
+                })}
+                <g
+                  style={{
+                    opacity: doble ? 1 : 0,
+                    transition: "opacity 0.45s ease"
+                  }}
+                >
+                  <line
+                    x1="20"
+                    y1={techo}
+                    x2="580"
+                    y2={techo}
+                    stroke="var(--texto)"
+                    strokeWidth="1.5"
+                    strokeDasharray="6 5"
+                  />
+                  <text
+                    x="300"
+                    y={techo - 14}
+                    textAnchor="middle"
+                    fontSize="17"
+                    fontWeight="700"
+                    fill="var(--texto)"
+                  >
+                    {"Todas las columnas miden " +
+                      primero +
+                      " + " +
+                      ultimo +
+                      " = " +
+                      pareja}
+                  </text>
+                </g>
+              </svg>
+            </div>
+
+            <div className="opciones-interactivo">
+              <button type="button" onClick={() => setDoble(!doble)}>
+                {doble
+                  ? "Quitar la segunda escalera"
+                  : "Poner encima otra escalera, dada la vuelta"}
+              </button>
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {doble
+                  ? "Dos escaleras forman un rectángulo"
+                  : "Una escalera de " + cuantos + " columnas"}
+              </strong>
+              <FormulaViva
+                tex={
+                  doble
+                    ? "2S_{" +
+                      cuantos +
+                      "}=" +
+                      cuantos +
+                      "\\cdot(" +
+                      primero +
+                      "+" +
+                      ultimo +
+                      ")=" +
+                      cuantos * pareja +
+                      "\\quad\\Longrightarrow\\quad S_{" +
+                      cuantos +
+                      "}=\\frac{" +
+                      cuantos +
+                      "\\cdot" +
+                      pareja +
+                      "}{2}=" +
+                      suma
+                    : "S_{" +
+                      cuantos +
+                      "}=" +
+                      terminos.join("+") +
+                      "=" +
+                      suma
+                }
+              />
+              <p>
+                {doble
+                  ? "Lo que le falta a cada columna lo pone su pareja, " +
+                    "así que todas miden lo mismo: el primer término más " +
+                    "el último. El rectángulo tiene " +
+                    cuantos +
+                    " columnas de " +
+                    pareja +
+                    ", y la escalera es justo la mitad."
+                  : "Los términos suben de " +
+                    diferencia +
+                    " en " +
+                    diferencia +
+                    ". Sumarlos uno a uno es largo cuando hay muchos: " +
+                    "con dos escaleras se cuenta de golpe."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 3: la suma infinita de una progresión geométrica ----
+
+      const RAZONES_SERIE = [
+        -1.5, -1.2, -1, -0.9, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 0.9, 1,
+        1.2, 1.5
+      ];
+      const PRIMERO_SERIE = 12;
+
+      function SumaInfinitaInteractivo({ configuracion, alPreparar }) {
+        const [lugarRazon, setLugarRazon] = React.useState(
+          RAZONES_SERIE.indexOf(0.5)
+        );
+        const [cuantos, setCuantos] = React.useState(6);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const razon = RAZONES_SERIE[lugarRazon];
+        const converge = Math.abs(razon) < 1;
+        const limite = converge ? PRIMERO_SERIE / (1 - razon) : null;
+        const terminos = [];
+        const sumas = [];
+        let termino = PRIMERO_SERIE;
+        let acumulado = 0;
+        for (let lugar = 1; lugar <= cuantos; lugar += 1) {
+          terminos.push(termino);
+          acumulado += termino;
+          sumas.push(acumulado);
+          termino *= razon;
+        }
+        const sumaActual = sumas[cuantos - 1];
+
+        const area = { izq: 62, der: 585, arr: 22, aba: 268 };
+        const ultimoLugar = Math.max(10, cuantos);
+        const candidatos = sumas.concat([0, PRIMERO_SERIE]);
+        if (converge) {
+          candidatos.push(limite);
+        }
+        let minimo = Math.min.apply(null, candidatos);
+        let maximo = Math.max.apply(null, candidatos);
+        const margen = (maximo - minimo) * 0.09;
+        maximo += margen;
+        if (minimo < 0) {
+          minimo -= margen;
+        }
+        const x = escalaIB(0.5, ultimoLugar + 0.5, area.izq, area.der);
+        const y = escalaIB(minimo, maximo, area.aba, area.arr);
+        const marcasY = marcasIB(minimo, maximo, 5);
+        const pasoY = marcasY.length > 1 ? marcasY[1] - marcasY[0] : 1;
+        const textoY = (valor) =>
+          Math.abs(valor) >= 1e6
+            ? numeroIB(valor / 1e6, 1) + " M"
+            : numeroIB(valor, pasoY >= 1 ? 0 : pasoY >= 0.1 ? 1 : 2);
+        const saltoX = ultimoLugar <= 12 ? 1 : ultimoLugar <= 24 ? 2 : 5;
+        const marcasX = [];
+        for (let lugar = 1; lugar <= ultimoLugar; lugar += 1) {
+          if (lugar === 1 || lugar % saltoX === 0) {
+            marcasX.push(lugar);
+          }
+        }
+        const trazo = sumas
+          .map(
+            (valor, lugar) =>
+              x(lugar + 1).toFixed(1) + "," + y(valor).toFixed(1)
+          )
+          .join(" ");
+
+        const visibles = terminos.slice(0, 4);
+        const terminosTex = visibles
+          .map((valor, lugar) =>
+            lugar === 0
+              ? texIB(valor, 4)
+              : valor < 0
+                ? "-" + texIB(Math.abs(valor), 4)
+                : "+" + texIB(valor, 4)
+          )
+          .join("");
+        const sumaTex =
+          cuantos <= 4
+            ? "S_{" +
+              cuantos +
+              "}=" +
+              terminosTex +
+              (cuantos > 1
+                ? igualIB(sumaActual, cifrasIB(sumaActual)) +
+                  texIB(sumaActual, cifrasIB(sumaActual))
+                : "")
+            : "S_{" +
+              cuantos +
+              "}=\\underbrace{" +
+              terminosTex +
+              "+\\cdots}_{" +
+              cuantos +
+              "\\text{ términos}}" +
+              igualIB(sumaActual, cifrasIB(sumaActual)) +
+              texIB(sumaActual, cifrasIB(sumaActual));
+        const razonTex = texIB(razon, 2);
+        const limiteTex = converge
+          ? "S_\\infty=\\frac{12}{1-" +
+            (razon < 0 ? "(" + razonTex + ")" : razonTex) +
+            "}" +
+            igualIB(limite, 4) +
+            texIB(limite, 4)
+          : "";
+
+        let titular;
+        let explicacion;
+        if (converge && razon > 0) {
+          titular = "Las sumas se acercan a " + numeroIB(limite, 4);
+          explicacion =
+            "Con " +
+            cuantos +
+            (cuantos === 1 ? " término" : " términos") +
+            " falta " +
+            numeroIB(limite - sumaActual, 4) +
+            " para llegar. En cada paso, lo que falta se multiplica por " +
+            numeroIB(razon, 2) +
+            ": nunca se llega, pero se está tan cerca como se quiera.";
+        } else if (converge) {
+          titular = "Las sumas se acercan a " + numeroIB(limite, 4);
+          explicacion =
+            "Como la razón es negativa, los términos cambian de signo y " +
+            "las sumas saltan a un lado y a otro de ese número, cada vez " +
+            "más cerca. Ahora están a " +
+            numeroIB(Math.abs(limite - sumaActual), 4) +
+            ".";
+        } else if (razon === 1) {
+          titular = "No hay suma infinita";
+          explicacion =
+            "Con r = 1 todos los términos valen 12: la suma de n términos " +
+            "es 12n y crece sin límite.";
+        } else if (razon > 1) {
+          titular = "No hay suma infinita";
+          explicacion =
+            "Cada término es mayor que el anterior, así que las sumas " +
+            "crecen sin límite: no se acercan a ningún número.";
+        } else if (razon === -1) {
+          titular = "No hay suma infinita";
+          explicacion =
+            "Las sumas valen 12, 0, 12, 0… y no se acercan a ningún " +
+            "número: con r = −1 tampoco se cumple |r| < 1.";
+        } else {
+          titular = "No hay suma infinita";
+          explicacion =
+            "Los términos crecen y cambian de signo: las sumas saltan de " +
+            "un lado a otro, cada vez más lejos. La condición es |r| < 1, " +
+            "no r < 1.";
+        }
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "¿Hacia dónde van las sumas?"}
+            </p>
+            <p className="instruccion-interactivo">
+              La progresión empieza en 12. Elige la razón, ve sumando
+              términos y mira si las sumas se acercan a algún número.
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Razón r</span>
+                  <output>{numeroIB(razon, 2)}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max={RAZONES_SERIE.length - 1}
+                    step="1"
+                    value={lugarRazon}
+                    aria-valuetext={"r = " + numeroIB(razon, 2)}
+                    onChange={(evento) =>
+                      setLugarRazon(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Términos que se suman, n</span>
+                  <output>{cuantos}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max="40"
+                    step="1"
+                    value={cuantos}
+                    onChange={(evento) =>
+                      setCuantos(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="leyenda-ib" aria-hidden="true">
+              <span style={{ "--color-leyenda": COLORES_IB.azul }}>
+                Sumas de 1, 2, 3… términos
+              </span>
+              {converge && (
+                <span style={{ "--color-leyenda": COLORES_IB.verde }}>
+                  Suma infinita
+                </span>
+              )}
+            </div>
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 310"
+                role="img"
+                aria-label={
+                  "Sumas parciales de la progresión geométrica que empieza " +
+                  "en 12 con razón " +
+                  numeroIB(razon, 2) +
+                  ". La suma de " +
+                  cuantos +
+                  " términos vale " +
+                  numeroIB(sumaActual, cifrasIB(sumaActual)) +
+                  (converge
+                    ? " y la suma infinita, " + numeroIB(limite, 4) + "."
+                    : "; no hay suma infinita.")
+                }
+              >
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={marcasX}
+                  marcasY={marcasY}
+                  textoX={(valor) => String(valor)}
+                  textoY={textoY}
+                  rotuloX="n"
+                  rotuloY="Suma de n términos"
+                  ceroY={minimo < 0 ? y(0) : undefined}
+                />
+                {converge && (
+                  <g>
+                    <line
+                      x1={area.izq}
+                      y1={y(limite)}
+                      x2={area.der}
+                      y2={y(limite)}
+                      stroke={COLORES_IB.verde}
+                      strokeWidth="2.5"
+                      strokeDasharray="8 5"
+                    />
+                    <line
+                      x1={x(cuantos)}
+                      y1={y(sumaActual)}
+                      x2={x(cuantos)}
+                      y2={y(limite)}
+                      stroke={COLORES_IB.naranja}
+                      strokeWidth="2"
+                      strokeDasharray="3 3"
+                    />
+                    <text
+                      x={area.der - 6}
+                      y={y(limite) + (razon > 0 ? 21 : -9)}
+                      textAnchor="end"
+                      fontSize="16"
+                      fontWeight="700"
+                      fill="#166534"
+                    >
+                      {"Suma infinita: " + numeroIB(limite, 4)}
+                    </text>
+                  </g>
+                )}
+                {cuantos > 1 && (
+                  <polyline
+                    points={trazo}
+                    fill="none"
+                    stroke={COLORES_IB.azul}
+                    strokeWidth="1.5"
+                    strokeOpacity="0.45"
+                  />
+                )}
+                {sumas.map((valor, lugar) => (
+                  <circle
+                    key={"suma" + lugar}
+                    cx={x(lugar + 1)}
+                    cy={y(valor)}
+                    r={lugar === cuantos - 1 ? 7 : cuantos > 24 ? 3.5 : 5}
+                    fill={
+                      lugar === cuantos - 1
+                        ? COLORES_IB.naranja
+                        : COLORES_IB.azul
+                    }
+                  />
+                ))}
+              </svg>
+            </div>
+
+            <div className="resumen-operaciones" aria-live="polite">
+              <div className="resultado-operacion">
+                <strong>
+                  {"Suma de " +
+                    cuantos +
+                    (cuantos === 1 ? " término" : " términos")}
+                </strong>
+                <span className="valor-resultado">
+                  {numeroIB(sumaActual, cifrasIB(sumaActual))}
+                </span>
+              </div>
+              <div className="resultado-operacion">
+                <strong>Suma infinita</strong>
+                <span className="valor-resultado">
+                  {converge ? numeroIB(limite, 4) : "No existe"}
+                </span>
+              </div>
+            </div>
+
+            <FormulaViva tex={sumaTex} />
+            {converge && <FormulaViva tex={limiteTex} />}
+
+            <div
+              className={
+                "veredicto-interactivo" + (converge ? "" : " es-fallo")
+              }
+              aria-live="polite"
+            >
+              <strong>{titular}</strong>
+              <p>{explicacion}</p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 4: el principio de inducción ----
+
+      function menorDivisorIB(numero) {
+        for (let divisor = 2; divisor * divisor <= numero; divisor += 1) {
+          if (numero % divisor === 0) {
+            return divisor;
+          }
+        }
+        return numero;
+      }
+
+      const FICHAS_DOMINO = 12;
+
+      // Cada afirmación dice dónde empieza la fila (`primera`), si el caso
+      // base se cumple y en qué ficha deja de valer el paso inductivo
+      // (`rompeEn`: esa ficha cae, pero no tira a la siguiente).
+      const AFIRMACIONES_DOMINO = [
+        {
+          clave: "suma",
+          rotuloTex: "",
+          rotuloTexto: "La suma del ejemplo",
+          enunciadoTex:
+            "P(n):\\ \\ \\sum_{r=1}^{n}(3r-2)=\\frac{n(3n-1)}{2}",
+          primera: 1,
+          baseVale: true,
+          rompeEn: null,
+          baseTexto: "P(1) es verdadera: los dos miembros valen 1.",
+          pasoVale: true,
+          pasoTexto:
+            "Se demuestra para cualquier k: si la suma hasta k vale " +
+            "k(3k − 1)/2, al añadirle el término siguiente, 3k + 1, " +
+            "sale (k + 1)(3k + 2)/2.",
+          titular: "Caen todas las fichas",
+          conclusion:
+            "La primera cae y cada una tira a la siguiente: la fila " +
+            "sigue más allá de la ficha 12 y no deja de caer. La " +
+            "afirmación es verdadera para todo entero n ≥ 1.",
+          comprobar: (n) => {
+            const sumandos = [];
+            for (let r = 1; r <= n; r += 1) {
+              sumandos.push(3 * r - 2);
+            }
+            const total = (n * (3 * n - 1)) / 2;
+            return {
+              vale: true,
+              tex:
+                (n <= 5
+                  ? sumandos.join("+")
+                  : "1+4+7+\\cdots+" + (3 * n - 2)) +
+                "=" +
+                total +
+                "\\qquad\\frac{" +
+                n +
+                "\\cdot" +
+                (3 * n - 1) +
+                "}{2}=" +
+                total,
+              nota: "Los dos miembros valen lo mismo."
+            };
+          }
+        },
+        {
+          clave: "impar",
+          rotuloTex: "n^2+n",
+          rotuloTexto: " es impar",
+          enunciadoTex: "P(n):\\ \\  n^2+n\\ \\text{ es impar}",
+          primera: 1,
+          baseVale: false,
+          rompeEn: null,
+          baseTexto: "P(1) es falsa: 1² + 1 = 2, que es par.",
+          pasoVale: true,
+          pasoTexto:
+            "Se demuestra para cualquier k: si k² + k fuera impar, " +
+            "(k + 1)² + (k + 1) también lo sería, porque es k² + k más " +
+            "el número par 2(k + 1).",
+          titular: "No cae ninguna ficha",
+          conclusion:
+            "Cada ficha tiraría a la siguiente, pero la primera no cae " +
+            "y nadie empieza la caída: sin caso base no hay " +
+            "demostración. De hecho, la afirmación es falsa para todo n.",
+          comprobar: (n) => ({
+            vale: false,
+            tex: n + "^2+" + n + "=" + (n * n + n),
+            nota: n * n + n + " es par."
+          })
+        },
+        {
+          clave: "primo",
+          rotuloTex: "n^2-n+11",
+          rotuloTexto: " es primo",
+          enunciadoTex: "P(n):\\ \\  n^2-n+11\\ \\text{ es primo}",
+          primera: 1,
+          baseVale: true,
+          rompeEn: 10,
+          baseTexto: "P(1) es verdadera: 1² − 1 + 11 = 11, que es primo.",
+          pasoVale: false,
+          pasoTexto:
+            "No se puede demostrar para cualquier k: de P(10) no se " +
+            "sigue P(11).",
+          titular: "Caen diez fichas y la caída se para",
+          conclusion:
+            "Las diez primeras afirmaciones son verdaderas, pero la " +
+            "undécima no: 11² − 11 + 11 = 121 = 11 · 11. " +
+            "Comprobar casos, por muchos que sean, no sustituye al paso " +
+            "inductivo.",
+          comprobar: (n) => {
+            const valor = n * n - n + 11;
+            const divisor = menorDivisorIB(valor);
+            const esPrimo = divisor === valor;
+            return {
+              vale: esPrimo,
+              tex:
+                n +
+                "^2-" +
+                n +
+                "+11=" +
+                valor +
+                (esPrimo ? "" : "=" + divisor + "\\cdot" + valor / divisor),
+              nota: valor + (esPrimo ? " es primo." : " no es primo.")
+            };
+          }
+        },
+        {
+          clave: "desigualdad",
+          rotuloTex: "3^n>2n+1",
+          rotuloTexto: "",
+          enunciadoTex: "P(n):\\ \\  3^n>2n+1",
+          primera: 2,
+          baseVale: true,
+          rompeEn: null,
+          baseTexto:
+            "P(1) es falsa, porque 3 no es mayor que 3, así que la fila " +
+            "empieza en la ficha 2: P(2) es verdadera, 9 > 5.",
+          pasoVale: true,
+          pasoTexto:
+            "Se demuestra para cualquier k ≥ 2: si 3 elevado a k es " +
+            "mayor que 2k + 1, al multiplicar por 3 queda algo mayor " +
+            "que 6k + 3, que a su vez es mayor que 2k + 3.",
+          titular: "Caen todas las fichas desde la segunda",
+          conclusion:
+            "El caso base no tiene por qué ser n = 1: es el primer valor " +
+            "del enunciado. Aquí la fila empieza en la ficha 2, y la " +
+            "afirmación es verdadera para todo entero n ≥ 2.",
+          comprobar: (n) => {
+            const potencia = Math.pow(3, n);
+            const lineal = 2 * n + 1;
+            return {
+              vale: potencia > lineal,
+              tex:
+                "3^{" +
+                n +
+                "}=" +
+                texIB(potencia, 0) +
+                "\\qquad2\\cdot" +
+                n +
+                "+1=" +
+                lineal,
+              nota:
+                potencia > lineal
+                  ? numeroIB(potencia, 0) + " es mayor que " + lineal + "."
+                  : potencia + " no es mayor que " + lineal + "."
+            };
+          }
+        }
+      ];
+
+      // Durante la caída el componente se repinta en cada fotograma: con
+      // estas dos versiones, KaTeX solo vuelve a componer una fórmula
+      // cuando cambia su texto.
+      const FormulaFijaIB = React.memo(FormulaViva);
+      const MatematicaFijaIB = React.memo(MatematicaEnLinea);
+
+      const DOMINO = {
+        ancho: 14,
+        alto: 64,
+        paso: 40,
+        base: 106,
+        margen: 26,
+        hueco: 44,
+        retraso: 220,
+        duracion: 380
+      };
+
+      function DominoInduccionInteractivo({ configuracion, alPreparar }) {
+        const [clave, setClave] = React.useState("suma");
+        const [ficha, setFicha] = React.useState(1);
+        // null: las fichas están de pie; un número: milisegundos desde el
+        // empujón.
+        const [tiempo, setTiempo] = React.useState(null);
+        const cuadro = React.useRef(null);
+        const tope = React.useRef(null);
+        const zona = React.useRef(null);
+
+        const detener = () => {
+          if (cuadro.current !== null) {
+            window.cancelAnimationFrame(cuadro.current);
+            cuadro.current = null;
+          }
+          if (tope.current !== null) {
+            window.clearTimeout(tope.current);
+            tope.current = null;
+          }
+        };
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+          return detener;
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const afirmacion = AFIRMACIONES_DOMINO.find(
+          (candidata) => candidata.clave === clave
+        );
+        const ultimaQueCae = !afirmacion.baseVale
+          ? 0
+          : afirmacion.rompeEn === null
+            ? FICHAS_DOMINO
+            : afirmacion.rompeEn;
+        const caen = Math.max(0, ultimaQueCae - afirmacion.primera + 1);
+        const total =
+          caen === 0 ? 0 : (caen - 1) * DOMINO.retraso + DOMINO.duracion;
+        const terminado = tiempo !== null && tiempo >= total;
+        const izquierda = (numero) =>
+          DOMINO.margen +
+          (numero - 1) * DOMINO.paso +
+          (afirmacion.rompeEn !== null && numero > afirmacion.rompeEn
+            ? DOMINO.hueco
+            : 0);
+
+        // En una pantalla estrecha la fila no cabe entera y la caja se
+        // desplaza a lo ancho: se lleva hasta la ficha que está cayendo.
+        const seguir = (numero) => {
+          const caja = zona.current;
+          if (!caja || caja.scrollWidth <= caja.clientWidth + 1) {
+            return;
+          }
+          const escala = caja.scrollWidth / 600;
+          caja.scrollLeft = Math.max(
+            0,
+            izquierda(numero) * escala - caja.clientWidth * 0.6
+          );
+        };
+
+        const levantar = () => {
+          detener();
+          setTiempo(null);
+          seguir(afirmacion.primera);
+        };
+
+        const empujar = () => {
+          detener();
+          const sinMovimiento =
+            window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (caen === 0 || sinMovimiento) {
+            setTiempo(total);
+            seguir(Math.max(afirmacion.primera, ultimaQueCae));
+            return;
+          }
+          const inicio = window.performance.now();
+          const avanzar = (ahora) => {
+            const transcurrido = ahora - inicio;
+            if (transcurrido >= total) {
+              cuadro.current = null;
+              setTiempo(total);
+              seguir(ultimaQueCae);
+              return;
+            }
+            setTiempo(transcurrido);
+            seguir(
+              Math.min(
+                ultimaQueCae,
+                afirmacion.primera +
+                  Math.floor(transcurrido / DOMINO.retraso)
+              )
+            );
+            cuadro.current = window.requestAnimationFrame(avanzar);
+          };
+          cuadro.current = window.requestAnimationFrame(avanzar);
+          // Si el navegador deja de dar fotogramas (la pestaña pasa a
+          // segundo plano), la caída se da por terminada igualmente.
+          tope.current = window.setTimeout(() => {
+            tope.current = null;
+            if (cuadro.current !== null) {
+              window.cancelAnimationFrame(cuadro.current);
+              cuadro.current = null;
+            }
+            setTiempo(total);
+          }, total + 600);
+        };
+
+        const elegir = (nueva) => {
+          detener();
+          setTiempo(null);
+          setClave(nueva);
+          if (zona.current) {
+            zona.current.scrollLeft = 0;
+          }
+        };
+
+        // Giro de cada ficha, en grados: acelera como una caída y se queda
+        // apoyada en la siguiente (70°) o tumbada del todo (90°).
+        const giro = (numero) => {
+          if (
+            tiempo === null ||
+            numero < afirmacion.primera ||
+            numero > ultimaQueCae
+          ) {
+            return 0;
+          }
+          const orden = numero - afirmacion.primera;
+          const avance = limitar(
+            (tiempo - orden * DOMINO.retraso) / DOMINO.duracion,
+            0,
+            1
+          );
+          const final = numero === ultimaQueCae ? 90 : 70;
+          return final * avance * avance;
+        };
+
+        const comprobacion = afirmacion.comprobar(ficha);
+        const fichas = [];
+        for (let numero = 1; numero <= FICHAS_DOMINO; numero += 1) {
+          fichas.push(numero);
+        }
+        const primeraX = izquierda(afirmacion.primera);
+
+        return (
+          <div className="componente-interactivo domino-induccion">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "El dominó de la inducción"}
+            </p>
+            <p className="instruccion-interactivo">
+              Cada ficha es una afirmación: la ficha n es P(n). Elige una
+              afirmación, empuja la primera ficha y mira hasta dónde llega
+              la caída.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Afirmación que se quiere demostrar"
+            >
+              {AFIRMACIONES_DOMINO.map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion.clave}
+                  aria-pressed={opcion.clave === clave}
+                  onClick={() => elegir(opcion.clave)}
+                >
+                  {opcion.rotuloTex && (
+                    <MatematicaFijaIB tex={opcion.rotuloTex} />
+                  )}
+                  {opcion.rotuloTexto}
+                </button>
+              ))}
+            </div>
+
+            <FormulaFijaIB tex={afirmacion.enunciadoTex} />
+
+            <div className="partes-induccion">
+              <div
+                className={
+                  "parte-induccion" + (afirmacion.baseVale ? "" : " falla")
+                }
+              >
+                <strong>
+                  {(afirmacion.baseVale ? "✓ " : "✗ ") +
+                    "Caso base: el empujón"}
+                </strong>
+                {afirmacion.baseTexto}
+              </div>
+              <div
+                className={
+                  "parte-induccion" + (afirmacion.pasoVale ? "" : " falla")
+                }
+              >
+                <strong>
+                  {(afirmacion.pasoVale ? "✓ " : "✗ ") +
+                    "Paso inductivo: cada ficha tira a la siguiente"}
+                </strong>
+                {afirmacion.pasoTexto}
+              </div>
+            </div>
+
+            <div className="zona-grafica" ref={zona}>
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 142"
+                role="img"
+                aria-label={
+                  "Fila de " +
+                  FICHAS_DOMINO +
+                  " fichas de dominó numeradas. " +
+                  (terminado
+                    ? afirmacion.titular + "."
+                    : "Las fichas están de pie.")
+                }
+              >
+                <line
+                  x1="8"
+                  y1={DOMINO.base}
+                  x2="592"
+                  y2={DOMINO.base}
+                  stroke="var(--texto-suave)"
+                  strokeWidth="2"
+                />
+                {tiempo === null && (
+                  <g
+                    stroke={COLORES_IB.naranja}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  >
+                    <line
+                      x1={primeraX - 21}
+                      y1={DOMINO.base - DOMINO.alto + 12}
+                      x2={primeraX - 5}
+                      y2={DOMINO.base - DOMINO.alto + 12}
+                    />
+                    <polyline
+                      points={
+                        primeraX -
+                        11 +
+                        "," +
+                        (DOMINO.base - DOMINO.alto + 6) +
+                        " " +
+                        (primeraX - 5) +
+                        "," +
+                        (DOMINO.base - DOMINO.alto + 12) +
+                        " " +
+                        (primeraX - 11) +
+                        "," +
+                        (DOMINO.base - DOMINO.alto + 18)
+                      }
+                    />
+                  </g>
+                )}
+                {fichas.map((numero) => {
+                  const x = izquierda(numero);
+                  const angulo = giro(numero);
+                  const fuera = numero < afirmacion.primera;
+                  const noCae =
+                    terminado &&
+                    !fuera &&
+                    numero === ultimaQueCae + 1 &&
+                    numero <= FICHAS_DOMINO;
+                  const relleno = fuera
+                    ? "#e2e8f0"
+                    : angulo > 0
+                      ? COLORES_IB.verde
+                      : noCae
+                        ? COLORES_IB.rojo
+                        : "#163b72";
+                  return (
+                    <g
+                      key={"ficha" + numero}
+                      className="ficha-domino"
+                      onClick={() => setFicha(numero)}
+                    >
+                      <rect
+                        x={x}
+                        y={DOMINO.base - DOMINO.alto}
+                        width={DOMINO.ancho}
+                        height={DOMINO.alto}
+                        rx="3"
+                        fill={relleno}
+                        stroke={
+                          numero === ficha ? COLORES_IB.naranja : "none"
+                        }
+                        strokeWidth="3"
+                        transform={
+                          "rotate(" +
+                          angulo.toFixed(2) +
+                          " " +
+                          (x + DOMINO.ancho) +
+                          " " +
+                          DOMINO.base +
+                          ")"
+                        }
+                      />
+                      <rect
+                        x={x - 12}
+                        y={DOMINO.base - DOMINO.alto}
+                        width={DOMINO.ancho + 24}
+                        height={DOMINO.alto + 32}
+                        fill="transparent"
+                      />
+                      <text
+                        x={x + DOMINO.ancho / 2}
+                        y={DOMINO.base + 24}
+                        textAnchor="middle"
+                        fontSize="17"
+                        fontWeight={numero === ficha ? "800" : "500"}
+                        fill={
+                          numero === ficha
+                            ? COLORES_IB.naranja
+                            : fuera
+                              ? "#94a3b8"
+                              : "var(--texto)"
+                        }
+                      >
+                        {numero}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+
+            <div className="acciones-interactivo">
+              <button
+                type="button"
+                onClick={empujar}
+                disabled={tiempo !== null}
+              >
+                {"Empujar la ficha " + afirmacion.primera}
+              </button>
+              <button
+                type="button"
+                className="secundario"
+                onClick={levantar}
+                disabled={tiempo === null}
+              >
+                Levantar las fichas
+              </button>
+            </div>
+
+            {terminado && (
+              <div
+                className={
+                  "veredicto-interactivo" +
+                  (afirmacion.baseVale && afirmacion.pasoVale
+                    ? ""
+                    : " es-fallo")
+                }
+                aria-live="polite"
+              >
+                <strong>{afirmacion.titular}</strong>
+                <p>{afirmacion.conclusion}</p>
+              </div>
+            )}
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Mira lo que dice la ficha n =</span>
+                  <output>{ficha}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max={FICHAS_DOMINO}
+                    step="1"
+                    value={ficha}
+                    onChange={(evento) =>
+                      setFicha(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="paso-interactivo" aria-live="polite">
+              <span className="kicker-conjunto">
+                {"La ficha " + ficha + " es P(" + ficha + ")"}
+              </span>
+              <FormulaFijaIB tex={comprobacion.tex} />
+              <p>
+                {comprobacion.nota + " "}
+                <strong>
+                  {"P(" +
+                    ficha +
+                    ") es " +
+                    (comprobacion.vale ? "verdadera." : "falsa.")}
+                </strong>
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 2: ordenaciones con condiciones ----
+
+      function permutacionesIB(elementos) {
+        if (elementos.length <= 1) {
+          return [elementos.slice()];
+        }
+        const todas = [];
+        elementos.forEach((elemento, lugar) => {
+          const resto = elementos
+            .slice(0, lugar)
+            .concat(elementos.slice(lugar + 1));
+          permutacionesIB(resto).forEach((cola) => {
+            todas.push([elemento].concat(cola));
+          });
+        });
+        return todas;
+      }
+
+      // Las cinco bicicletas del laboratorio. Cada clase de filas se
+      // reconoce por las parejas de eléctricas pegadas que tiene.
+      const CASOS_FILAS = {
+        dos: {
+          rotulo: "Dos eléctricas: X e Y",
+          letras: ["A", "B", "C", "X", "Y"],
+          electricas: "XY",
+          todasTexto:
+            "Las cinco bicicletas se colocan de 120 formas. En cada fila, " +
+            "X e Y van juntas o van separadas: las dos clases se reparten " +
+            "las 120 filas.",
+          clases: [
+            {
+              clave: "juntas",
+              pegadas: 1,
+              rotulo: "Juntas",
+              color: COLORES_IB.naranja,
+              formulaTex: "4!\\cdot2!=24\\cdot2=48",
+              texto:
+                "X e Y se pegan en un bloque. El bloque y las tres " +
+                "normales son 4 objetos, que se ordenan de 4! = 24 " +
+                "formas, y cada una da dos filas: una con XY y otra " +
+                "con YX."
+            },
+            {
+              clave: "separadas",
+              pegadas: 0,
+              rotulo: "Separadas",
+              color: COLORES_IB.turquesa,
+              formulaTex:
+                "5!-4!\\cdot2!=120-48=72\\qquad3!\\cdot4\\cdot3=72",
+              texto:
+                "Son las filas que quedan al quitar las juntas. Con " +
+                "huecos sale lo mismo: A, B y C se ordenan de 3! = 6 " +
+                "formas y dejan 4 huecos; X elige uno de los 4 e Y, uno " +
+                "de los 3 que quedan."
+            }
+          ]
+        },
+        tres: {
+          rotulo: "Tres eléctricas: X, Y y Z",
+          letras: ["A", "B", "X", "Y", "Z"],
+          electricas: "XYZ",
+          todasTexto:
+            "Las mismas 120 filas, ahora con tres eléctricas, son de " +
+            "tres clases: ya no basta con «juntas» y «separadas».",
+          clases: [
+            {
+              clave: "tres-juntas",
+              pegadas: 2,
+              rotulo: "Las tres juntas",
+              color: COLORES_IB.naranja,
+              formulaTex: "3!\\cdot3!=6\\cdot6=36",
+              texto:
+                "El bloque XYZ y las dos normales son 3 objetos: se " +
+                "ordenan de 3! = 6 formas, y el bloque, por dentro, de " +
+                "otras 3! = 6."
+            },
+            {
+              clave: "dos-juntas",
+              pegadas: 1,
+              rotulo: "Solo dos juntas",
+              color: COLORES_IB.violeta,
+              formulaTex: "120-36-12=72",
+              texto:
+                "Dos eléctricas pegadas y la tercera aparte. Son las " +
+                "filas que se cuelan al restar 120 − 36 = 84: esa " +
+                "resta quita las filas con las tres juntas, pero deja " +
+                "dentro estas 72."
+            },
+            {
+              clave: "ninguna-junta",
+              pegadas: 0,
+              rotulo: "Ninguna junta",
+              color: COLORES_IB.turquesa,
+              formulaTex: "2!\\cdot3\\cdot2\\cdot1=12",
+              texto:
+                "A y B se ordenan de 2! = 2 formas y dejan 3 huecos. " +
+                "Cada eléctrica va a un hueco distinto: X elige entre " +
+                "3, Y entre los 2 que quedan y Z ocupa el último."
+            }
+          ]
+        }
+      };
+
+      function FilasCondicionesInteractivo({ configuracion, alPreparar }) {
+        const [caso, setCaso] = React.useState("dos");
+        const [filtro, setFiltro] = React.useState("todas");
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        const datos = CASOS_FILAS[caso];
+        const filas = React.useMemo(
+          () =>
+            permutacionesIB(datos.letras).map((letras) => {
+              let pegadas = 0;
+              for (let lugar = 0; lugar < letras.length - 1; lugar += 1) {
+                if (
+                  datos.electricas.indexOf(letras[lugar]) >= 0 &&
+                  datos.electricas.indexOf(letras[lugar + 1]) >= 0
+                ) {
+                  pegadas += 1;
+                }
+              }
+              // Los tramos de la fila: una normal suelta o una racha de
+              // eléctricas, que se dibuja como bloque si tiene dos o más.
+              const tramos = [];
+              letras.forEach((letra) => {
+                const esElectrica = datos.electricas.indexOf(letra) >= 0;
+                const ultimo = tramos[tramos.length - 1];
+                if (esElectrica && ultimo && ultimo.electrica) {
+                  ultimo.letras.push(letra);
+                } else {
+                  tramos.push({ electrica: esElectrica, letras: [letra] });
+                }
+              });
+              return { texto: letras.join(""), pegadas, tramos };
+            }),
+          [datos]
+        );
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const cuenta = (clase) =>
+          filas.filter((fila) => fila.pegadas === clase.pegadas).length;
+        const claseElegida = datos.clases.find(
+          (clase) => clase.clave === filtro
+        );
+        const visibles = claseElegida
+          ? filas.filter((fila) => fila.pegadas === claseElegida.pegadas)
+          : filas;
+        const colorDe = (fila) =>
+          datos.clases.find((clase) => clase.pegadas === fila.pegadas).color;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "Juntas o separadas: míralas todas"}
+            </p>
+            <p className="instruccion-interactivo">
+              Cinco bicicletas en fila. Las eléctricas son X e Y (y Z, si
+              eliges tres), y las demás, normales. Son pocas, así que caben
+              todas las filas: elige una condición y mira cuáles la
+              cumplen.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Cuántas bicicletas son eléctricas"
+            >
+              {Object.keys(CASOS_FILAS).map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion}
+                  aria-pressed={opcion === caso}
+                  onClick={() => {
+                    setCaso(opcion);
+                    setFiltro("todas");
+                  }}
+                >
+                  {CASOS_FILAS[opcion].rotulo}
+                </button>
+              ))}
+            </div>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Filas que se muestran"
+            >
+              <button
+                type="button"
+                aria-pressed={filtro === "todas"}
+                onClick={() => setFiltro("todas")}
+              >
+                {"Todas · " + filas.length}
+              </button>
+              {datos.clases.map((clase) => (
+                <button
+                  type="button"
+                  key={clase.clave}
+                  aria-pressed={filtro === clase.clave}
+                  onClick={() => setFiltro(clase.clave)}
+                >
+                  <span
+                    className="punto-ficha"
+                    style={{ "--color-fila": clase.color }}
+                  />
+                  {clase.rotulo + " · " + cuenta(clase)}
+                </button>
+              ))}
+            </div>
+
+            <div
+              className="barra-clases-ib"
+              role="img"
+              aria-label={
+                "Reparto de las " +
+                filas.length +
+                " filas: " +
+                datos.clases
+                  .map((clase) => cuenta(clase) + " " + clase.rotulo.toLowerCase())
+                  .join(", ") +
+                "."
+              }
+            >
+              {datos.clases.map((clase) => (
+                <span
+                  key={clase.clave}
+                  className={
+                    claseElegida && claseElegida !== clase ? "apagada" : ""
+                  }
+                  style={{
+                    "--color-fila": clase.color,
+                    flexGrow: cuenta(clase),
+                    flexBasis: 0
+                  }}
+                >
+                  {cuenta(clase)}
+                </span>
+              ))}
+            </div>
+
+            <div className="paso-interactivo" aria-live="polite">
+              <span className="kicker-conjunto">
+                {claseElegida
+                  ? claseElegida.rotulo + ": " + visibles.length + " filas"
+                  : "Todas las filas: " + filas.length}
+              </span>
+              <FormulaViva
+                tex={claseElegida ? claseElegida.formulaTex : "5!=120"}
+              />
+              <p>{claseElegida ? claseElegida.texto : datos.todasTexto}</p>
+            </div>
+
+            <div
+              className="lista-filas-ib"
+              role="list"
+              aria-label={"Las " + visibles.length + " filas que se muestran"}
+              tabIndex="0"
+            >
+              {visibles.map((fila) => (
+                <span
+                  className="fila-ib"
+                  role="listitem"
+                  key={fila.texto}
+                  style={{ "--color-fila": colorDe(fila) }}
+                >
+                  {fila.tramos.map((tramo, lugar) =>
+                    tramo.electrica && tramo.letras.length > 1 ? (
+                      <span className="bloque-fila" key={lugar}>
+                        {tramo.letras.map((letra) => (
+                          <span className="letra-fila electrica" key={letra}>
+                            {letra}
+                          </span>
+                        ))}
+                      </span>
+                    ) : (
+                      <span
+                        className={
+                          "letra-fila" + (tramo.electrica ? " electrica" : "")
+                        }
+                        key={lugar}
+                      >
+                        {tramo.letras[0]}
+                      </span>
+                    )
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 2: permutaciones y combinaciones ----
+
+      function combinacionesIB(elementos, cuantos) {
+        if (cuantos === 0) {
+          return [[]];
+        }
+        if (elementos.length < cuantos) {
+          return [];
+        }
+        const primero = elementos[0];
+        const resto = elementos.slice(1);
+        return combinacionesIB(resto, cuantos - 1)
+          .map((grupo) => [primero].concat(grupo))
+          .concat(combinacionesIB(resto, cuantos));
+      }
+
+      function OrdenImportaInteractivo({ configuracion, alPreparar }) {
+        const [personas, setPersonas] = React.useState(5);
+        const [plazas, setPlazas] = React.useState(3);
+        const [conOrden, setConOrden] = React.useState(true);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        const grupos = React.useMemo(
+          () =>
+            combinacionesIB("ABCDE".slice(0, personas).split(""), plazas).map(
+              (grupo) => ({
+                nombre: grupo.join(", "),
+                ordenes: permutacionesIB(grupo).map((orden) => orden.join(""))
+              })
+            ),
+          [personas, plazas]
+        );
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const porGrupo = grupos[0].ordenes.length;
+        const ordenaciones = grupos.length * porGrupo;
+        const factores = [];
+        for (let lugar = 0; lugar < plazas; lugar += 1) {
+          factores.push(personas - lugar);
+        }
+        const formulaTex = conOrden
+          ? "{}^{" +
+            personas +
+            "}P_{" +
+            plazas +
+            "}=" +
+            factores.join("\\cdot") +
+            "=" +
+            ordenaciones
+          : "{}^{" +
+            personas +
+            "}C_{" +
+            plazas +
+            "}=\\frac{{}^{" +
+            personas +
+            "}P_{" +
+            plazas +
+            "}}{" +
+            plazas +
+            "!}=\\frac{" +
+            ordenaciones +
+            "}{" +
+            porGrupo +
+            "}=" +
+            grupos.length;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "¿Importa el orden?"}
+            </p>
+            <p className="instruccion-interactivo">
+              Se eligen varias personas de un grupo. Si es para un podio,
+              el orden importa; si es para un equipo, no. Cambia de una
+              cosa a la otra y mira qué les pasa a las ordenaciones.
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Personas entre las que se elige, n</span>
+                  <output>{personas}</output>
+                  <input
+                    type="range"
+                    min="3"
+                    max="5"
+                    step="1"
+                    value={personas}
+                    onChange={(evento) => {
+                      const nuevas = Number(evento.target.value);
+                      setPersonas(nuevas);
+                      if (plazas > Math.min(4, nuevas)) {
+                        setPlazas(Math.min(4, nuevas));
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Personas que se eligen, r</span>
+                  <output>{plazas}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max={Math.min(4, personas)}
+                    step="1"
+                    value={plazas}
+                    onChange={(evento) =>
+                      setPlazas(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Si importa el orden"
+            >
+              <button
+                type="button"
+                aria-pressed={conOrden}
+                onClick={() => setConOrden(true)}
+              >
+                Un podio: importa el orden
+              </button>
+              <button
+                type="button"
+                aria-pressed={!conOrden}
+                onClick={() => setConOrden(false)}
+              >
+                Un equipo: no importa
+              </button>
+            </div>
+
+            <div
+              className={
+                "grupos-orden-ib" + (conOrden ? "" : " sin-orden")
+              }
+              role="list"
+              aria-label={
+                conOrden
+                  ? ordenaciones + " elecciones con orden"
+                  : grupos.length +
+                    " grupos, cada uno con sus " +
+                    porGrupo +
+                    " ordenaciones"
+              }
+            >
+              {grupos.map((grupo) => (
+                <div
+                  className="grupo-orden-ib"
+                  role="listitem"
+                  key={grupo.nombre}
+                >
+                  <span className="conjunto-ib">
+                    {(conOrden ? "Con " : "Un solo equipo: ") +
+                      grupo.nombre}
+                  </span>
+                  {grupo.ordenes.map((orden) => (
+                    <span className="orden-ib" key={orden}>
+                      {orden}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {conOrden
+                  ? ordenaciones + " podios distintos"
+                  : grupos.length + " equipos distintos"}
+              </strong>
+              <FormulaViva tex={formulaTex} />
+              <p>
+                {conOrden
+                  ? "Cada casilla es un podio distinto, porque cambia " +
+                    "quién queda en cada puesto. Las casillas están " +
+                    "agrupadas por las personas que suben: " +
+                    grupos.length +
+                    " grupos de " +
+                    porGrupo +
+                    "."
+                  : "Las " +
+                    porGrupo +
+                    " ordenaciones de cada grupo son ahora el mismo " +
+                    "equipo y dejan de contar por separado: por eso se " +
+                    "divide entre " +
+                    plazas +
+                    "! = " +
+                    porGrupo +
+                    "."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 2: el triángulo de Pascal y el binomio ----
+
+      const FILAS_TRIANGULO = 7;
+
+      function combinatorioIB(n, r) {
+        let valor = 1;
+        for (let lugar = 1; lugar <= r; lugar += 1) {
+          valor = (valor * (n - r + lugar)) / lugar;
+        }
+        return Math.round(valor);
+      }
+
+      // Todas las palabras con ese número de letras a y de letras b.
+      function palabrasIB(letrasA, letrasB) {
+        if (letrasA === 0) {
+          return ["b".repeat(letrasB)];
+        }
+        if (letrasB === 0) {
+          return ["a".repeat(letrasA)];
+        }
+        return palabrasIB(letrasA - 1, letrasB)
+          .map((palabra) => "a" + palabra)
+          .concat(
+            palabrasIB(letrasA, letrasB - 1).map((palabra) => "b" + palabra)
+          );
+      }
+
+      function terminoBinomioIB(n, r) {
+        const potencia = (letra, exponente) =>
+          exponente === 0
+            ? ""
+            : exponente === 1
+              ? letra
+              : letra + "^{" + exponente + "}";
+        const letras = potencia("a", n - r) + potencia("b", r);
+        const coeficiente = combinatorioIB(n, r);
+        if (letras === "") {
+          return "1";
+        }
+        return (coeficiente === 1 ? "" : String(coeficiente)) + letras;
+      }
+
+      function TrianguloBinomioInteractivo({ configuracion, alPreparar }) {
+        const [fila, setFila] = React.useState(4);
+        const [lugar, setLugar] = React.useState(2);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const valor = combinatorioIB(fila, lugar);
+        const enElBorde = lugar === 0 || lugar === fila;
+        const padreIzquierdo = enElBorde
+          ? null
+          : combinatorioIB(fila - 1, lugar - 1);
+        const padreDerecho = enElBorde
+          ? null
+          : combinatorioIB(fila - 1, lugar);
+        const palabras = valor <= 21 ? palabrasIB(fila - lugar, lugar) : [];
+
+        const terminos = [];
+        for (let r = 0; r <= fila; r += 1) {
+          const termino = terminoBinomioIB(fila, r);
+          terminos.push(
+            r === lugar
+              ? "\\textcolor{#6d28d9}{\\boldsymbol{" + termino + "}}"
+              : termino
+          );
+        }
+        const corte = fila >= 5 ? Math.ceil((fila + 1) / 2) : fila + 1;
+        const desarrolloTex =
+          fila >= 5
+            ? "\\begin{aligned}(a+b)^{" +
+              fila +
+              "}={}&" +
+              terminos.slice(0, corte).join("+") +
+              "\\\\&+" +
+              terminos.slice(corte).join("+") +
+              "\\end{aligned}"
+            : "(a+b)^{" + fila + "}=" + terminos.join("+");
+
+        const filas = [];
+        for (let n = 0; n <= FILAS_TRIANGULO; n += 1) {
+          filas.push(n);
+        }
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo ||
+                "El triángulo, las palabras y el desarrollo"}
+            </p>
+            <p className="instruccion-interactivo">
+              Pulsa un número del triángulo de Pascal: verás de dónde
+              sale, qué cuenta y a qué término del desarrollo acompaña.
+            </p>
+
+            <div
+              className="triangulo-ib"
+              role="group"
+              aria-label="Triángulo de Pascal, de la fila 0 a la 7"
+            >
+              {filas.map((n) => (
+                <div className="fila-triangulo" key={"fila" + n}>
+                  {filas.slice(0, n + 1).map((r) => {
+                    const esPadre =
+                      !enElBorde &&
+                      n === fila - 1 &&
+                      (r === lugar - 1 || r === lugar);
+                    return (
+                      <button
+                        type="button"
+                        key={"celda" + r}
+                        className={
+                          esPadre
+                            ? "es-padre"
+                            : n === fila
+                              ? "de-la-fila"
+                              : undefined
+                        }
+                        aria-pressed={n === fila && r === lugar}
+                        aria-label={
+                          "Fila " +
+                          n +
+                          ", lugar " +
+                          r +
+                          ": " +
+                          combinatorioIB(n, r)
+                        }
+                        onClick={() => {
+                          setFila(n);
+                          setLugar(r);
+                        }}
+                      >
+                        {combinatorioIB(n, r)}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            <div className="paso-interactivo" aria-live="polite">
+              <span className="kicker-conjunto">
+                {"Fila " + fila + ", con r = " + lugar}
+              </span>
+              <FormulaViva
+                tex={
+                  "{}^{" +
+                  fila +
+                  "}C_{" +
+                  lugar +
+                  "}=" +
+                  valor +
+                  (enElBorde ? "" : "=" + padreIzquierdo + "+" + padreDerecho)
+                }
+              />
+              <p>
+                {enElBorde
+                  ? "Los extremos de cada fila valen 1: solo hay una " +
+                    "palabra sin ninguna b y una sin ninguna a."
+                  : "Es la suma de los dos números que tiene encima, " +
+                    "los que están en naranja."}
+              </p>
+              <p>
+                {"También cuenta las palabras de " +
+                  fila +
+                  (fila === 1 ? " letra" : " letras") +
+                  " con " +
+                  lugar +
+                  (lugar === 1 ? " letra b" : " letras b") +
+                  " y " +
+                  (fila - lugar) +
+                  (fila - lugar === 1 ? " letra a" : " letras a") +
+                  (palabras.length > 0
+                    ? ":"
+                    : ": son " +
+                      valor +
+                      ", demasiadas para escribirlas, y por eso hace " +
+                      "falta una fórmula que las cuente.")}
+              </p>
+              {palabras.length > 0 && (
+                <div className="palabras-ib">
+                  {palabras.map((palabra) => (
+                    <span key={palabra}>{palabra || "(vacía)"}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {"Y es un coeficiente del desarrollo de (a + b)" +
+                  "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077".charAt(fila)}
+              </strong>
+              <FormulaViva tex={desarrolloTex} />
+              <p>
+                Al multiplicar los factores sin agrupar, cada palabra es
+                un producto: el término marcado sale una vez por cada una
+                de esas palabras.
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 2: un término del desarrollo ----
+
+      // Los binomios de la teoría del subapartado 3.1. `numeroA` y `numeroB`
+      // son los números de los dos términos del binomio, y `exponente`, el
+      // de la x en el término que lleva la potencia r del segundo.
+      const BINOMIOS_TERMINO = [
+        {
+          clave: "independiente",
+          binomioTex: "\\left(x-\\frac{3}{x^2}\\right)^{6}",
+          grado: 6,
+          numeroA: 1,
+          numeroB: -3,
+          generalTex:
+            "{}^{6}C_{r}\\,x^{6-r}\\left(-\\frac{3}{x^2}\\right)^{r}" +
+            "={}^{6}C_{r}\\,(-3)^{r}\\,x^{6-3r}",
+          exponente: (r) => 6 - 3 * r,
+          exponenteTex: (r) => "6-3\\cdot" + r + "=" + (6 - 3 * r)
+        },
+        {
+          clave: "dos",
+          binomioTex: "(2+x)^{6}",
+          grado: 6,
+          numeroA: 2,
+          numeroB: 1,
+          generalTex: "{}^{6}C_{r}\\,2^{6-r}\\,x^{r}",
+          exponente: (r) => r,
+          exponenteTex: null
+        },
+        {
+          clave: "signos",
+          binomioTex: "(3-x)^{4}",
+          grado: 4,
+          numeroA: 3,
+          numeroB: -1,
+          generalTex:
+            "{}^{4}C_{r}\\,3^{4-r}\\,(-x)^{r}" +
+            "={}^{4}C_{r}\\,3^{4-r}\\,(-1)^{r}\\,x^{r}",
+          exponente: (r) => r,
+          exponenteTex: null
+        }
+      ];
+
+      function entreParentesisIB(valor) {
+        return valor < 0 ? "(" + valor + ")" : String(valor);
+      }
+
+      function monomioIB(coeficiente, exponente) {
+        const equis =
+          exponente === 0
+            ? ""
+            : exponente === 1
+              ? "x"
+              : "x^{" + exponente + "}";
+        if (equis === "") {
+          return String(coeficiente);
+        }
+        if (coeficiente === 1) {
+          return equis;
+        }
+        if (coeficiente === -1) {
+          return "-" + equis;
+        }
+        return coeficiente + equis;
+      }
+
+      function TerminoGeneralInteractivo({ configuracion, alPreparar }) {
+        const [clave, setClave] = React.useState("independiente");
+        const [lugar, setLugar] = React.useState(2);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const binomio = BINOMIOS_TERMINO.find(
+          (candidato) => candidato.clave === clave
+        );
+        const grado = binomio.grado;
+        const coeficienteDe = (r) =>
+          combinatorioIB(grado, r) *
+          Math.pow(binomio.numeroA, grado - r) *
+          Math.pow(binomio.numeroB, r);
+        const valores = [];
+        for (let r = 0; r <= grado; r += 1) {
+          valores.push(r);
+        }
+        const coeficiente = coeficienteDe(lugar);
+        const exponente = binomio.exponente(lugar);
+        const factoresTex = ["{}^{" + grado + "}C_{" + lugar + "}"];
+        const factoresNumero = [String(combinatorioIB(grado, lugar))];
+        if (binomio.numeroA !== 1) {
+          factoresTex.push(
+            entreParentesisIB(binomio.numeroA) + "^{" + (grado - lugar) + "}"
+          );
+          factoresNumero.push(
+            entreParentesisIB(Math.pow(binomio.numeroA, grado - lugar))
+          );
+        }
+        if (binomio.numeroB !== 1) {
+          factoresTex.push(
+            entreParentesisIB(binomio.numeroB) + "^{" + lugar + "}"
+          );
+          factoresNumero.push(
+            entreParentesisIB(Math.pow(binomio.numeroB, lugar))
+          );
+        }
+        const cuentaTex =
+          factoresTex.join("\\cdot") +
+          (factoresNumero.length > 1
+            ? "=" + factoresNumero.join("\\cdot")
+            : "") +
+          "=" +
+          coeficiente;
+
+        const elegir = (nueva) => {
+          const siguiente = BINOMIOS_TERMINO.find(
+            (candidato) => candidato.clave === nueva
+          );
+          setClave(nueva);
+          setLugar(Math.min(lugar, siguiente.grado));
+        };
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "El término general, valor a valor"}
+            </p>
+            <p className="instruccion-interactivo">
+              El término general es una fábrica de términos: cada valor de
+              r da uno. Mueve r y mira qué exponente y qué coeficiente
+              salen.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Binomio que se desarrolla"
+            >
+              {BINOMIOS_TERMINO.map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion.clave}
+                  aria-pressed={opcion.clave === clave}
+                  onClick={() => elegir(opcion.clave)}
+                >
+                  <MatematicaEnLinea tex={opcion.binomioTex} />
+                </button>
+              ))}
+            </div>
+
+            <FormulaViva tex={binomio.generalTex} />
+
+            <div className="controles-intervalos">
+              <div className="panel-control" style={{ gridColumn: "1 / -1" }}>
+                <label className="control-rango">
+                  <span>Valor de r</span>
+                  <output>{lugar}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max={grado}
+                    step="1"
+                    value={lugar}
+                    onChange={(evento) =>
+                      setLugar(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div
+              className="chips-sumatorio"
+              role="list"
+              aria-label="Los términos del desarrollo, uno por cada valor de r"
+            >
+              {valores.map((r) => (
+                <div
+                  className={
+                    "chip-sumatorio pulsable" + (r === lugar ? " elegido" : "")
+                  }
+                  role="listitem"
+                  key={r}
+                  onClick={() => setLugar(r)}
+                >
+                  <span className="indice-chip">{"r = " + r}</span>
+                  <MatematicaEnLinea
+                    tex={monomioIB(coeficienteDe(r), binomio.exponente(r))}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="paso-interactivo" aria-live="polite">
+              <span className="kicker-conjunto">
+                {"Con r = " + lugar}
+              </span>
+              <FormulaViva
+                tex={
+                  (binomio.exponenteTex
+                    ? "\\text{Exponente de }x:\\ " +
+                      binomio.exponenteTex(lugar) +
+                      "\\qquad"
+                    : "") +
+                  "\\text{Coeficiente: }" +
+                  cuentaTex
+                }
+              />
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {"El término de r = " + lugar + " es "}
+                <MatematicaEnLinea tex={monomioIB(coeficiente, exponente)} />
+              </strong>
+              <p>
+                {exponente === 0 ? (
+                  "No lleva x: es el término independiente."
+                ) : (
+                  <span>
+                    {"Es el término en "}
+                    <MatematicaEnLinea
+                      tex={exponente === 1 ? "x" : "x^{" + exponente + "}"}
+                    />
+                    {", y su coeficiente es " +
+                      numeroIB(coeficiente, 0) +
+                      "."}
+                  </span>
+                )}
+                {" Ocupa el lugar " +
+                  (lugar + 1) +
+                  " del desarrollo, porque el primero es el de r = 0."}
+              </p>
+              <p>
+                Para hallar un término concreto se hace al revés: se busca
+                el valor de r que da su exponente. Si ningún valor lo da,
+                el desarrollo no tiene ese término.
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 2: el binomio con exponente racional ----
+
+      function mcdIB(a, b) {
+        let mayor = Math.abs(a);
+        let menor = Math.abs(b);
+        while (menor) {
+          const resto = mayor % menor;
+          mayor = menor;
+          menor = resto;
+        }
+        return mayor || 1;
+      }
+
+      function fraccionIB(num, den) {
+        const signo = den < 0 ? -1 : 1;
+        const divisor = mcdIB(num, den);
+        return {
+          num: (signo * num) / divisor,
+          den: (signo * den) / divisor
+        };
+      }
+
+      // Coeficientes de escala · (1 + c·x)^(p/q), como fracciones exactas:
+      // cada uno sale del anterior multiplicando por (p − kq) / (q(k + 1))
+      // y por c.
+      function coeficientesBinomioIB(desarrollo, cuantos) {
+        const coeficientes = [fraccionIB(desarrollo.escala[0], desarrollo.escala[1])];
+        for (let k = 0; k < cuantos - 1; k += 1) {
+          const anterior = coeficientes[k];
+          coeficientes.push(
+            fraccionIB(
+              anterior.num *
+                (desarrollo.exponente[0] - k * desarrollo.exponente[1]) *
+                desarrollo.dentro[0],
+              anterior.den *
+                desarrollo.exponente[1] *
+                (k + 1) *
+                desarrollo.dentro[1]
+            )
+          );
+        }
+        return coeficientes;
+      }
+
+      function terminoPolinomioIB(coeficiente, grado, esPrimero) {
+        const valor = Math.abs(coeficiente.num);
+        const equis =
+          grado === 0 ? "" : grado === 1 ? "x" : "x^{" + grado + "}";
+        let cuerpo;
+        if (coeficiente.den === 1) {
+          cuerpo = (valor === 1 && grado > 0 ? "" : String(valor)) + equis;
+        } else if (valor === 1 && grado > 0) {
+          cuerpo = "\\frac{" + equis + "}{" + coeficiente.den + "}";
+        } else {
+          cuerpo =
+            "\\frac{" + valor + "}{" + coeficiente.den + "}" + equis;
+        }
+        return (coeficiente.num < 0 ? "-" : esPrimero ? "" : "+") + cuerpo;
+      }
+
+      const DESARROLLOS_BINOMIO = [
+        {
+          clave: "inversa",
+          funcionTex: "\\frac{1}{1+x}",
+          formaTex: "(1+x)^{-1}",
+          exponente: [-1, 1],
+          dentro: [1, 1],
+          escala: [1, 1],
+          radio: 1,
+          radioTex: "1",
+          funcion: (x) => (x === -1 ? NaN : 1 / (1 + x)),
+          ventana: { xMin: -2.2, xMax: 2.2, yMin: -2, yMax: 6 },
+          pasoX: 0.05,
+          inicial: 0.5
+        },
+        {
+          clave: "cubica",
+          funcionTex: "\\sqrt[3]{1+3x}",
+          formaTex: "(1+3x)^{1/3}",
+          exponente: [1, 3],
+          dentro: [3, 1],
+          escala: [1, 1],
+          radio: 1 / 3,
+          radioTex: "\\frac13",
+          funcion: (x) => Math.cbrt(1 + 3 * x),
+          ventana: { xMin: -0.8, xMax: 0.8, yMin: -1.5, yMax: 2.5 },
+          pasoX: 0.02,
+          inicial: 0.2
+        },
+        {
+          clave: "raiz",
+          funcionTex: "\\sqrt{4+x}",
+          formaTex: "2\\left(1+\\frac x4\\right)^{1/2}",
+          exponente: [1, 2],
+          dentro: [1, 4],
+          escala: [2, 1],
+          radio: 4,
+          radioTex: "4",
+          funcion: (x) => (x < -4 ? NaN : Math.sqrt(4 + x)),
+          ventana: { xMin: -6, xMax: 8, yMin: -1, yMax: 5 },
+          pasoX: 0.25,
+          inicial: 2
+        }
+      ];
+
+      let recortesIB = 0;
+
+      function BinomioValidezInteractivo({ configuracion, alPreparar }) {
+        const [clave, setClave] = React.useState("inversa");
+        const [cuantos, setCuantos] = React.useState(3);
+        const [equis, setEquis] = React.useState(0.5);
+        const recorte = React.useMemo(() => {
+          recortesIB += 1;
+          return "recorte-ib-" + recortesIB;
+        }, []);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const desarrollo = DESARROLLOS_BINOMIO.find(
+          (candidato) => candidato.clave === clave
+        );
+        const coeficientes = coeficientesBinomioIB(desarrollo, cuantos);
+        const polinomio = (x) =>
+          coeficientes.reduce(
+            (suma, coeficiente, grado) =>
+              suma + (coeficiente.num / coeficiente.den) * Math.pow(x, grado),
+            0
+          );
+
+        const ventana = desarrollo.ventana;
+        const area = { izq: 46, der: 588, arr: 16, aba: 286 };
+        const x = escalaIB(ventana.xMin, ventana.xMax, area.izq, area.der);
+        const y = escalaIB(ventana.yMin, ventana.yMax, area.aba, area.arr);
+        const alto = ventana.yMax - ventana.yMin;
+
+        // Una curva puede tener varios tramos: se corta donde la función
+        // no existe o se sale muy lejos de la ventana.
+        const trazos = (funcion) => {
+          const tramos = [];
+          let actual = [];
+          for (let paso = 0; paso <= 280; paso += 1) {
+            const abscisa =
+              ventana.xMin + ((ventana.xMax - ventana.xMin) * paso) / 280;
+            const ordenada = funcion(abscisa);
+            if (
+              Number.isFinite(ordenada) &&
+              ordenada > ventana.yMin - 3 * alto &&
+              ordenada < ventana.yMax + 3 * alto
+            ) {
+              actual.push(
+                x(abscisa).toFixed(1) + "," + y(ordenada).toFixed(1)
+              );
+            } else if (actual.length > 0) {
+              tramos.push(actual);
+              actual = [];
+            }
+          }
+          if (actual.length > 0) {
+            tramos.push(actual);
+          }
+          return tramos.filter((tramo) => tramo.length > 1);
+        };
+
+        const valorFuncion = desarrollo.funcion(equis);
+        const valorDesarrollo = polinomio(equis);
+        const definida = Number.isFinite(valorFuncion);
+        const dentro = Math.abs(equis) < desarrollo.radio - 1e-9;
+        const error = definida ? Math.abs(valorFuncion - valorDesarrollo) : 0;
+
+        const visibles = coeficientes.slice(0, 5);
+        const polinomioTex =
+          visibles
+            .map((coeficiente, grado) =>
+              terminoPolinomioIB(coeficiente, grado, grado === 0)
+            )
+            .join("") + (cuantos > 5 ? "+\\cdots" : "");
+        const marcasX = marcasIB(ventana.xMin, ventana.xMax, 7);
+        const marcasY = marcasIB(ventana.yMin, ventana.yMax, 6);
+
+        const elegir = (nueva) => {
+          const siguiente = DESARROLLOS_BINOMIO.find(
+            (candidato) => candidato.clave === nueva
+          );
+          setClave(nueva);
+          setEquis(siguiente.inicial);
+        };
+        const enVentana = (valor) =>
+          valor >= ventana.yMin && valor <= ventana.yMax;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "Hasta dónde vale el desarrollo"}
+            </p>
+            <p className="instruccion-interactivo">
+              La curva azul es la función y la naranja, su desarrollo con
+              los términos que elijas. Añade términos y mueve la x: mira
+              dónde se parecen y dónde no.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Función que se desarrolla"
+            >
+              {DESARROLLOS_BINOMIO.map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion.clave}
+                  aria-pressed={opcion.clave === clave}
+                  onClick={() => elegir(opcion.clave)}
+                >
+                  <MatematicaEnLinea tex={opcion.funcionTex} />
+                </button>
+              ))}
+            </div>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Términos del desarrollo</span>
+                  <output>{cuantos}</output>
+                  <input
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value={cuantos}
+                    onChange={(evento) =>
+                      setCuantos(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Valor de x</span>
+                  <output>{numeroIB(equis, 2)}</output>
+                  <input
+                    type="range"
+                    min={ventana.xMin}
+                    max={ventana.xMax}
+                    step={desarrollo.pasoX}
+                    value={equis}
+                    onChange={(evento) =>
+                      setEquis(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <FormulaViva
+              tex={
+                desarrollo.funcionTex +
+                (desarrollo.formaTex ? "=" + desarrollo.formaTex : "") +
+                "\\approx " +
+                polinomioTex +
+                (cuantos > 5
+                  ? "\\quad(" + cuantos + "\\text{ términos})"
+                  : "")
+              }
+            />
+
+            <div className="leyenda-ib" aria-hidden="true">
+              <span style={{ "--color-leyenda": COLORES_IB.azul }}>
+                La función
+              </span>
+              <span style={{ "--color-leyenda": COLORES_IB.naranja }}>
+                {"El desarrollo, con " +
+                  cuantos +
+                  (cuantos === 1 ? " término" : " términos")}
+              </span>
+              <span style={{ "--color-leyenda": "#86efac" }}>
+                Zona en la que vale
+              </span>
+            </div>
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 316"
+                role="img"
+                aria-label={
+                  "Gráfica de la función y de su desarrollo con " +
+                  cuantos +
+                  " términos. El desarrollo solo vale entre " +
+                  numeroIB(-desarrollo.radio, 2) +
+                  " y " +
+                  numeroIB(desarrollo.radio, 2) +
+                  "."
+                }
+              >
+                <defs>
+                  <clipPath id={recorte}>
+                    <rect
+                      x={area.izq}
+                      y={area.arr}
+                      width={area.der - area.izq}
+                      height={area.aba - area.arr}
+                    />
+                  </clipPath>
+                </defs>
+                <rect
+                  x={x(-desarrollo.radio)}
+                  y={area.arr}
+                  width={x(desarrollo.radio) - x(-desarrollo.radio)}
+                  height={area.aba - area.arr}
+                  fill="#dcfce7"
+                />
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={marcasX}
+                  marcasY={marcasY}
+                  ceroX={x(0)}
+                  ceroY={y(0)}
+                />
+                {[-desarrollo.radio, desarrollo.radio].map((borde) => (
+                  <line
+                    key={"borde" + borde}
+                    x1={x(borde)}
+                    y1={area.arr}
+                    x2={x(borde)}
+                    y2={area.aba}
+                    stroke={COLORES_IB.verde}
+                    strokeWidth="2"
+                    strokeDasharray="7 5"
+                  />
+                ))}
+                <g clipPath={"url(#" + recorte + ")"} fill="none">
+                  {trazos(desarrollo.funcion).map((tramo, lugar) => (
+                    <polyline
+                      key={"funcion" + lugar}
+                      points={tramo.join(" ")}
+                      stroke={COLORES_IB.azul}
+                      strokeWidth="4"
+                    />
+                  ))}
+                  {trazos(polinomio).map((tramo, lugar) => (
+                    <polyline
+                      key={"desarrollo" + lugar}
+                      points={tramo.join(" ")}
+                      stroke={COLORES_IB.naranja}
+                      strokeWidth="2.5"
+                    />
+                  ))}
+                  <line
+                    x1={x(equis)}
+                    y1={area.arr}
+                    x2={x(equis)}
+                    y2={area.aba}
+                    stroke="var(--texto-suave)"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 4"
+                  />
+                </g>
+                {definida && enVentana(valorFuncion) && (
+                  <circle
+                    cx={x(equis)}
+                    cy={y(valorFuncion)}
+                    r="7"
+                    fill={COLORES_IB.azul}
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                  />
+                )}
+                {enVentana(valorDesarrollo) && (
+                  <circle
+                    cx={x(equis)}
+                    cy={y(valorDesarrollo)}
+                    r="5.5"
+                    fill={COLORES_IB.naranja}
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                  />
+                )}
+              </svg>
+            </div>
+
+            <div className="resumen-operaciones" aria-live="polite">
+              <div className="resultado-operacion">
+                <strong>{"La función en x = " + numeroIB(equis, 2)}</strong>
+                <span className="valor-resultado">
+                  {definida ? numeroIB(valorFuncion, 5) : "No existe"}
+                </span>
+              </div>
+              <div className="resultado-operacion">
+                <strong>
+                  {"El desarrollo, con " +
+                    cuantos +
+                    (cuantos === 1 ? " término" : " términos")}
+                </strong>
+                <span className="valor-resultado">
+                  {numeroIB(valorDesarrollo, 5)}
+                </span>
+              </div>
+            </div>
+
+            <div
+              className={
+                "veredicto-interactivo" + (dentro ? "" : " es-fallo")
+              }
+              aria-live="polite"
+            >
+              <strong>
+                {dentro
+                  ? "Dentro de la zona válida"
+                  : "Fuera de la zona válida"}
+              </strong>
+              <FormulaViva tex={"|x|<" + desarrollo.radioTex} />
+              <p>
+                {!definida
+                  ? "Aquí la función ni siquiera existe: el desarrollo " +
+                    "da un número, pero no significa nada."
+                  : dentro
+                    ? "El desarrollo se queda a " +
+                      numeroIB(error, 5) +
+                      " del valor de la función. Añade términos: dentro " +
+                      "de la franja verde esa distancia se hace tan " +
+                      "pequeña como se quiera."
+                    : "El desarrollo se queda a " +
+                      numeroIB(error, 5) +
+                      " del valor de la función. Añade términos: fuera " +
+                      "de la franja verde esa distancia no se arregla, y " +
+                      "casi siempre crece."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 1: el número e ----
+
+      const ABONOS_NUMERO_E = [
+        { veces: 1, rotulo: "una vez al año", corto: "año" },
+        { veces: 2, rotulo: "cada seis meses", corto: "6 meses" },
+        { veces: 4, rotulo: "cada trimestre", corto: "3 meses" },
+        { veces: 12, rotulo: "cada mes", corto: "mes" },
+        { veces: 52, rotulo: "cada semana", corto: "semana" },
+        { veces: 365, rotulo: "cada día", corto: "día" },
+        { veces: 8760, rotulo: "cada hora", corto: "hora" },
+        { veces: 525600, rotulo: "cada minuto", corto: "minuto" },
+        { veces: 31536000, rotulo: "cada segundo", corto: "segundo" }
+      ];
+
+      function NumeroEInteractivo({ configuracion, alPreparar }) {
+        const [lugar, setLugar] = React.useState(0);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        // (1 + 1/n)^n, calculado con el logaritmo para no perder cifras
+        // cuando n es enorme.
+        const capital = (veces) => Math.exp(veces * Math.log1p(1 / veces));
+        const abono = ABONOS_NUMERO_E[lugar];
+        const valor = capital(abono.veces);
+        const area = { izq: 60, der: 585, arr: 26, aba: 250 };
+        const x = escalaIB(-0.5, ABONOS_NUMERO_E.length - 0.5, area.izq, area.der);
+        const y = escalaIB(1.95, 2.86, area.aba, area.arr);
+        const marcasY = [2, 2.2, 2.4, 2.6, 2.8];
+        const trazo = ABONOS_NUMERO_E.slice(0, lugar + 1)
+          .map(
+            (opcion, orden) =>
+              x(orden).toFixed(1) + "," + y(capital(opcion.veces)).toFixed(1)
+          )
+          .join(" ");
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "El techo del interés"}
+            </p>
+            <p className="instruccion-interactivo">
+              Un euro al 100 % anual durante un año. Abona los intereses
+              cada vez más a menudo y mira cuánto se tiene al final.
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control" style={{ gridColumn: "1 / -1" }}>
+                <label className="control-rango">
+                  <span>Los intereses se abonan…</span>
+                  <output>{abono.rotulo}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max={ABONOS_NUMERO_E.length - 1}
+                    step="1"
+                    value={lugar}
+                    aria-valuetext={abono.rotulo}
+                    onChange={(evento) =>
+                      setLugar(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 290"
+                role="img"
+                aria-label={
+                  "Capital final de un euro al 100 % anual según cada " +
+                  "cuánto se abonan los intereses. Si se abonan " +
+                  abono.rotulo +
+                  ", se tienen " +
+                  numeroIB(valor, 6) +
+                  " euros; el techo es el número e, 2,718282."
+                }
+              >
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={[]}
+                  marcasY={marcasY}
+                  textoY={(marca) => numeroIB(marca, 1)}
+                  rotuloY="Capital final (€)"
+                />
+                <line
+                  x1={area.izq}
+                  y1={y(Math.E)}
+                  x2={area.der}
+                  y2={y(Math.E)}
+                  stroke={COLORES_IB.verde}
+                  strokeWidth="2.5"
+                  strokeDasharray="8 5"
+                />
+                <text
+                  x={area.der - 6}
+                  y={y(Math.E) + 24}
+                  textAnchor="end"
+                  fontSize="16"
+                  fontWeight="700"
+                  fill="#166534"
+                >
+                  El techo: e = 2,71828…
+                </text>
+                {lugar > 0 && (
+                  <polyline
+                    points={trazo}
+                    fill="none"
+                    stroke={COLORES_IB.azul}
+                    strokeWidth="1.5"
+                    strokeOpacity="0.45"
+                  />
+                )}
+                {ABONOS_NUMERO_E.map((opcion, orden) => (
+                  <g key={"abono" + orden}>
+                    <circle
+                      cx={x(orden)}
+                      cy={y(capital(opcion.veces))}
+                      r={orden === lugar ? 8 : 5}
+                      fill={
+                        orden === lugar
+                          ? COLORES_IB.naranja
+                          : orden < lugar
+                            ? COLORES_IB.azul
+                            : "#cbd5e1"
+                      }
+                    />
+                    <text
+                      x={x(orden)}
+                      y={area.aba + 20}
+                      textAnchor="middle"
+                      fontSize="13"
+                      fontWeight={orden === lugar ? "800" : "500"}
+                      fill={
+                        orden === lugar
+                          ? COLORES_IB.naranja
+                          : "var(--texto-suave)"
+                      }
+                    >
+                      {opcion.corto}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            </div>
+
+            <FormulaViva
+              tex={
+                "\\left(1+\\frac{1}{" +
+                texIB(abono.veces, 0) +
+                "}\\right)^{" +
+                texIB(abono.veces, 0) +
+                "}" +
+                igualIB(valor, 8) +
+                texIB(valor, 8)
+              }
+            />
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {"Si se abonan " +
+                  abono.rotulo +
+                  ": " +
+                  numeroIB(valor, 6) +
+                  " €"}
+              </strong>
+              <p>
+                {"Faltan " +
+                  numeroIB(Math.E - valor, 8) +
+                  " € para llegar a e = 2,71828183… Abonar más a menudo " +
+                  "siempre da algo más, pero cada vez menos: por mucho " +
+                  "que se trocee el año, el capital no pasa de e."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 1: modelos exponenciales ----
+
+      function ModeloExponencialInteractivo({ configuracion, alPreparar }) {
+        const conAsintota = configuracion.tipo === "asintota";
+        const [inicial, setInicial] = React.useState(conAsintota ? 90 : 1200);
+        const [ambiente, setAmbiente] = React.useState(20);
+        const [constante, setConstante] = React.useState(
+          conAsintota ? 0.07 : 0.05
+        );
+        const recorte = React.useMemo(() => {
+          recortesIB += 1;
+          return "recorte-ib-" + recortesIB;
+        }, []);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const area = { izq: 66, der: 585, arr: 24, aba: 262 };
+        const mitad = constante === 0 ? null : Math.LN2 / Math.abs(constante);
+        const tiempoMaximo = conAsintota ? 60 : 30;
+        const valorMaximo = conAsintota ? 100 : constante > 0 ? 10000 : 2200;
+        const diferencia = inicial - ambiente;
+        const modelo = conAsintota
+          ? (t) => ambiente + diferencia * Math.exp(-constante * t)
+          : (t) => inicial * Math.exp(constante * t);
+        const x = escalaIB(0, tiempoMaximo, area.izq, area.der);
+        const y = escalaIB(0, valorMaximo, area.aba, area.arr);
+        const puntos = [];
+        for (let paso = 0; paso <= 120; paso += 1) {
+          const t = (tiempoMaximo * paso) / 120;
+          puntos.push(x(t).toFixed(1) + "," + y(modelo(t)).toFixed(1));
+        }
+        const marcasX = marcasIB(0, tiempoMaximo, 6);
+        const marcasY = marcasIB(0, valorMaximo, 5);
+
+        // Las marcas de «cada cierto tiempo, la mitad o el doble»: los
+        // instantes T, 2T y 3T que caben en la gráfica.
+        const hitos = [];
+        if (mitad !== null && (!conAsintota || diferencia !== 0)) {
+          for (let veces = 0; veces <= 3; veces += 1) {
+            const t = veces * mitad;
+            const valor = modelo(t);
+            if (t <= tiempoMaximo && valor <= valorMaximo && valor >= 0) {
+              hitos.push({ veces, t, valor });
+            }
+          }
+        }
+        const constanteTex = texIB(Math.abs(constante), 2);
+        const signoDiferencia = diferencia < 0 ? "-" : "+";
+        const formulaTex = conAsintota
+          ? diferencia === 0
+            ? "T(t)=" + ambiente
+            : "T(t)=" +
+              (ambiente === 0
+                ? diferencia < 0
+                  ? "-"
+                  : ""
+                : ambiente + signoDiferencia) +
+              Math.abs(diferencia) +
+              "\\,e^{-" +
+              constanteTex +
+              "t}"
+          : "N(t)=" +
+            inicial +
+            (constante === 0
+              ? ""
+              : "\\,e^{" +
+                (constante < 0 ? "-" : "") +
+                constanteTex +
+                "t}");
+
+        let titular;
+        let explicacion;
+        if (conAsintota && diferencia === 0) {
+          titular = "No cambia";
+          explicacion =
+            "El objeto ya está a la temperatura del ambiente: no hay " +
+            "diferencia que se reduzca.";
+        } else if (conAsintota) {
+          titular =
+            "Se acerca a " + ambiente + " °C, la temperatura del ambiente";
+          explicacion =
+            "Lo que decrece de forma exponencial es la diferencia con el " +
+            "ambiente: empieza en " +
+            numeroIB(Math.abs(diferencia), 0) +
+            " °C y se reduce a la mitad cada " +
+            numeroIB(mitad, 1) +
+            " minutos. La temperatura " +
+            (diferencia > 0 ? "baja" : "sube") +
+            " cada vez más despacio y no llega a cruzar la asíntota.";
+        } else if (constante === 0) {
+          titular = "Con k = 0 la cantidad no cambia";
+          explicacion =
+            "La gráfica es una recta horizontal: por eso el modelo pide " +
+            "k distinto de 0.";
+        } else if (constante > 0) {
+          titular =
+            "Crece: se duplica cada " + numeroIB(mitad, 2) + " unidades de tiempo";
+          explicacion =
+            "El tiempo de duplicación no depende de cuánto haya: tarda " +
+            "lo mismo en pasar de " +
+            numeroIB(inicial, 0) +
+            " a " +
+            numeroIB(2 * inicial, 0) +
+            " que de " +
+            numeroIB(2 * inicial, 0) +
+            " a " +
+            numeroIB(4 * inicial, 0) +
+            ". Cuanto mayor es k, antes se duplica.";
+        } else {
+          titular =
+            "Decrece: se reduce a la mitad cada " +
+            numeroIB(mitad, 2) +
+            " unidades de tiempo";
+          explicacion =
+            "La semivida no depende de cuánto quede: tarda lo mismo en " +
+            "pasar de " +
+            numeroIB(inicial, 0) +
+            " a " +
+            numeroIB(inicial / 2, 0) +
+            " que de " +
+            numeroIB(inicial / 2, 0) +
+            " a " +
+            numeroIB(inicial / 4, 0) +
+            ". La cantidad se acerca a 0 sin llegar.";
+        }
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo ||
+                (conAsintota
+                  ? "La temperatura que se acerca al ambiente"
+                  : "El modelo exponencial, en vivo")}
+            </p>
+            <p className="instruccion-interactivo">
+              {conAsintota
+                ? "Un objeto se deja en una habitación. Cambia su " +
+                  "temperatura inicial, la del ambiente y la constante k, " +
+                  "y mira hacia dónde va la curva."
+                : "Mueve el valor inicial A y la constante k. Los puntos " +
+                  "naranjas marcan cada vez que la cantidad se duplica o " +
+                  "se reduce a la mitad."}
+            </p>
+
+            <div
+              className={
+                "controles-intervalos" + (conAsintota ? " de-tres" : "")
+              }
+            >
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>
+                    {conAsintota ? "Temperatura inicial" : "Valor inicial A"}
+                  </span>
+                  <output>
+                    {numeroIB(inicial, 0) + (conAsintota ? " °C" : "")}
+                  </output>
+                  <input
+                    type="range"
+                    min={conAsintota ? 0 : 200}
+                    max={conAsintota ? 100 : 2000}
+                    step={conAsintota ? 5 : 100}
+                    value={inicial}
+                    onChange={(evento) =>
+                      setInicial(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+              {conAsintota && (
+                <div className="panel-control">
+                  <label className="control-rango">
+                    <span>Temperatura ambiente</span>
+                    <output>{ambiente + " °C"}</output>
+                    <input
+                      type="range"
+                      min="0"
+                      max="40"
+                      step="5"
+                      value={ambiente}
+                      onChange={(evento) =>
+                        setAmbiente(Number(evento.target.value))
+                      }
+                    />
+                  </label>
+                </div>
+              )}
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Constante k</span>
+                  <output>{numeroIB(constante, 2)}</output>
+                  <input
+                    type="range"
+                    min={conAsintota ? 0.01 : -0.2}
+                    max="0.2"
+                    step="0.01"
+                    value={constante}
+                    onChange={(evento) =>
+                      setConstante(
+                        Math.round(Number(evento.target.value) * 100) / 100
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <FormulaViva tex={formulaTex} />
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 306"
+                role="img"
+                aria-label={
+                  conAsintota
+                    ? "Gráfica de la temperatura: empieza en " +
+                      inicial +
+                      " grados y se acerca a " +
+                      ambiente +
+                      "."
+                    : "Gráfica del modelo exponencial con valor inicial " +
+                      inicial +
+                      " y constante " +
+                      numeroIB(constante, 2) +
+                      "."
+                }
+              >
+                <defs>
+                  <clipPath id={recorte}>
+                    <rect
+                      x={area.izq}
+                      y={area.arr}
+                      width={area.der - area.izq}
+                      height={area.aba - area.arr}
+                    />
+                  </clipPath>
+                </defs>
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={marcasX}
+                  marcasY={marcasY}
+                  textoX={(marca) => numeroIB(marca, 0)}
+                  textoY={(marca) => numeroIB(marca, 0)}
+                  rotuloX={conAsintota ? "t (minutos)" : "t"}
+                  rotuloY={conAsintota ? "T (°C)" : "N"}
+                />
+                {conAsintota && (
+                  <g>
+                    <line
+                      x1={area.izq}
+                      y1={y(ambiente)}
+                      x2={area.der}
+                      y2={y(ambiente)}
+                      stroke={COLORES_IB.verde}
+                      strokeWidth="2.5"
+                      strokeDasharray="8 5"
+                    />
+                    <text
+                      x={area.der - 6}
+                      y={
+                        y(ambiente) +
+                        (diferencia < 0 || ambiente < 10 ? -9 : 19)
+                      }
+                      textAnchor="end"
+                      fontSize="15"
+                      fontWeight="700"
+                      fill="#166534"
+                    >
+                      {"Asíntota: y = " + ambiente}
+                    </text>
+                  </g>
+                )}
+                <g clipPath={"url(#" + recorte + ")"}>
+                  {hitos.map((hito) => (
+                    <g key={"guia" + hito.veces}>
+                      <line
+                        x1={x(hito.t)}
+                        y1={conAsintota ? y(ambiente) : area.aba}
+                        x2={x(hito.t)}
+                        y2={y(hito.valor)}
+                        stroke={COLORES_IB.naranja}
+                        strokeWidth={conAsintota ? 3 : 1.5}
+                        strokeDasharray={conAsintota ? "none" : "4 4"}
+                      />
+                      {!conAsintota && (
+                        <line
+                          x1={area.izq}
+                          y1={y(hito.valor)}
+                          x2={x(hito.t)}
+                          y2={y(hito.valor)}
+                          stroke={COLORES_IB.naranja}
+                          strokeWidth="1.5"
+                          strokeDasharray="4 4"
+                        />
+                      )}
+                    </g>
+                  ))}
+                  <polyline
+                    points={puntos.join(" ")}
+                    fill="none"
+                    stroke={COLORES_IB.azul}
+                    strokeWidth="3.5"
+                  />
+                </g>
+                {hitos.map((hito) => (
+                  <g key={"hito" + hito.veces}>
+                    <circle
+                      cx={x(hito.t)}
+                      cy={y(hito.valor)}
+                      r="6.5"
+                      fill={COLORES_IB.naranja}
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+                    <text
+                      x={x(hito.t) + 10}
+                      y={Math.min(
+                        area.aba - 6,
+                        y(hito.valor) +
+                          (conAsintota
+                            ? diferencia > 0
+                              ? -9
+                              : 21
+                            : constante > 0
+                              ? 19
+                              : -9)
+                      )}
+                      fontSize="15"
+                      fontWeight="700"
+                      fill="#9a3412"
+                    >
+                      {conAsintota
+                        ? numeroIB(hito.valor, 2) + " °C"
+                        : numeroIB(hito.valor, 1)}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            </div>
+
+            {mitad !== null && (!conAsintota || diferencia !== 0) && (
+              <div className="resumen-operaciones" aria-live="polite">
+                <div className="resultado-operacion">
+                  <strong>
+                    {conAsintota
+                      ? "La diferencia se reduce a la mitad cada"
+                      : constante > 0
+                        ? "Tiempo de duplicación"
+                        : "Semivida"}
+                  </strong>
+                  <span className="valor-resultado">
+                    <MatematicaEnLinea
+                      tex={
+                        "\\frac{\\ln2}{" +
+                        constanteTex +
+                        "}\\approx" +
+                        texIB(mitad, 2)
+                      }
+                    />
+                  </span>
+                </div>
+                <div className="resultado-operacion">
+                  <strong>
+                    {conAsintota
+                      ? "Diferencia con el ambiente"
+                      : "Valores en los puntos naranjas"}
+                  </strong>
+                  <span className="valor-resultado">
+                    {hitos
+                      .map((hito) =>
+                        conAsintota
+                          ? numeroIB(Math.abs(hito.valor - ambiente), 2)
+                          : numeroIB(hito.valor, 1)
+                      )
+                      .join("; ") + "…"}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div
+              className={
+                "veredicto-interactivo" +
+                (!conAsintota && constante === 0 ? " es-fallo" : "")
+              }
+              aria-live="polite"
+            >
+              <strong>{titular}</strong>
+              <p>{explicacion}</p>
+            </div>
+          </div>
+        );
+      }
+
       const COMPONENTES = {
         ejemplo: EjemploInteractivo,
         "conjuntos-numericos": ConjuntosNumericosInteractivo,
@@ -15290,7 +19436,19 @@ Enfoques NS</p>
         escalonador: EscalonadorInteractivo,
         "dosis-medicamento": DosisMedicamentoInteractivo,
         "huerto-areas": HuertoAreasInteractivo,
-        "region-plano": RegionPlanoInteractivo
+        "region-plano": RegionPlanoInteractivo,
+        // Propios del curso IB.
+        "numero-e": NumeroEInteractivo,
+        "modelo-exponencial": ModeloExponencialInteractivo,
+        "filas-condiciones": FilasCondicionesInteractivo,
+        "orden-importa": OrdenImportaInteractivo,
+        "triangulo-binomio": TrianguloBinomioInteractivo,
+        "termino-general": TerminoGeneralInteractivo,
+        "binomio-validez": BinomioValidezInteractivo,
+        "abre-sumatorio": AbreSumatorioInteractivo,
+        "escalera-gauss": EscaleraGaussInteractivo,
+        "suma-infinita": SumaInfinitaInteractivo,
+        "domino-induccion": DominoInduccionInteractivo
       };
 
       document
