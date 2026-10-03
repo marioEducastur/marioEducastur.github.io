@@ -10301,6 +10301,164 @@ void main() {
           };
         },
 
+        // Los intervalos sobre la recta, con las letras de la tabla del
+        // apartado: el extremo incluido, con un punto relleno; el excluido,
+        // con uno hueco; la semirrecta sigue sin fin.
+        "intervalos": function () {
+          var Y = 68, A = 190, B = 414, C = 640, FIN = 944;
+          var d = '<path d="M56 ' + Y + "H" + (FIN + 6) + '" stroke-width="1.5" opacity="0.5"/>' +
+            '<path d="M' + A + " " + Y + "H" + (B - 6) + "M" + (C + 6) + " " + Y + "H" + (FIN - 14) + '" stroke-width="6.5"/>' +
+            '<path d="M' + (FIN - 20) + " " + (Y - 9) + 'l12 9-12 9" stroke-width="2.6"/>' +
+            '<circle cx="' + A + '" cy="' + Y + '" r="7" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + B + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<circle cx="' + C + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<circle cx="497" cy="23" r="5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="497" cy="43" r="4.4" fill="#ffffff" stroke-width="2"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: A, y: Y + 25, tex: "a", cuerpo: 16 },
+              { x: B, y: Y + 25, tex: "b", cuerpo: 16 },
+              { x: C, y: Y + 25, tex: "c", cuerpo: 16 },
+              { x: 248, y: 28, tex: "[a,\\,b)", cuerpo: 21 },
+              { x: 350, y: 29, tex: "a\\leq x<b", cuerpo: 15.5, opacidad: 0.9 },
+              { x: 740, y: 28, tex: "(c,\\,+\\infty)", cuerpo: 21 },
+              { x: 846, y: 29, tex: "x>c", cuerpo: 15.5, opacidad: 0.9 },
+              { x: 540, y: 23, texto: "incluido", cuerpo: 11.5 },
+              { x: 542, y: 43, texto: "excluido", cuerpo: 11.5 }
+            ],
+            foco: 372
+          };
+        },
+
+        // Truncar y redondear: el número del método, visto con lupa entre
+        // las dos centésimas que lo encierran. Truncar se queda siempre con
+        // la de abajo; redondear, con la más cercana.
+        "redondeo": function () {
+          var Y = 55, X0 = 302, X1 = 702;
+          var P = r(X0 + 0.62 * (X1 - X0));
+          var punta = function (cx, cy, ex, ey) {
+            var a = Math.atan2(ey - cy, ex - cx);
+            return "M" + r(ex - 9 * Math.cos(a - 0.45)) + " " + r(ey - 9 * Math.sin(a - 0.45)) + "L" + ex + " " + ey +
+              "L" + r(ex - 9 * Math.cos(a + 0.45)) + " " + r(ey - 9 * Math.sin(a + 0.45));
+          };
+          // La regla entera, de 5,3 a 5,4, con la lupa sobre el tramo ampliado.
+          var d = '<path d="M64 ' + Y + 'H224" stroke-width="1.5" opacity="0.6"/>';
+          for (var k = 0; k <= 10; k++) {
+            d += '<path d="M' + (64 + 16 * k) + " " + (Y - (k % 10 === 0 ? 6 : 3)) + "v" + (k % 10 === 0 ? 12 : 6) +
+              '" stroke-width="1.1" opacity="0.6"/>';
+          }
+          d += '<circle cx="200" cy="' + Y + '" r="12" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+            '<path d="M191.5 ' + (Y + 8.5) + 'l-8 9" stroke-width="2.6"/>' +
+            '<path d="M210 ' + (Y - 7) + "L" + (X0 - 8) + " " + (Y - 10) + "M210 " + (Y + 7) + "L" + (X0 - 8) + " " + (Y + 10) +
+            '" stroke-width="1.1" opacity="0.5" stroke-dasharray="1 4"/>' +
+            '<path d="M' + X0 + " " + Y + "H" + X1 + '" stroke-width="1.8"/>';
+          for (k = 0; k <= 10; k++) {
+            var alto = k % 10 === 0 ? 9 : k === 5 ? 6.5 : 4;
+            d += '<path d="M' + r(X0 + (X1 - X0) * k / 10) + " " + (Y - alto) + "v" + 2 * alto + '" stroke-width="' +
+              (k % 10 === 0 ? 2.1 : 1.2) + '" opacity="' + (k % 5 === 0 ? 1 : 0.55) + '"/>';
+          }
+          var cI = [r((P + X0) / 2), Y - 46], fI = [X0 + 6, Y - 15];
+          var cD = [r((P + X1) / 2), Y - 46], fD = [X1 - 6, Y - 15];
+          d += '<path d="M' + r(P - 8) + " " + (Y - 11) + "Q" + cI[0] + " " + cI[1] + " " + fI[0] + " " + fI[1] +
+            '" stroke-width="1.6" stroke-dasharray="1 5.5"/>' +
+            '<path d="' + punta(cI[0], cI[1], fI[0], fI[1]) + '" stroke-width="1.6"/>' +
+            '<path d="M' + r(P + 8) + " " + (Y - 11) + "Q" + cD[0] + " " + cD[1] + " " + fD[0] + " " + fD[1] + '" stroke-width="2.3"/>' +
+            '<path d="' + punta(cD[0], cD[1], fD[0], fD[1]) + '" stroke-width="2.3"/>' +
+            '<circle cx="' + P + '" cy="' + Y + '" r="9.5" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + P + '" cy="' + Y + '" r="5" fill="currentColor" stroke="none"/>' +
+            '<rect x="846" y="56" width="92" height="34" rx="17" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 64, y: Y + 20, tex: "5{,}3", cuerpo: 12, opacidad: 0.8 },
+              { x: 224, y: Y + 20, tex: "5{,}4", cuerpo: 12, opacidad: 0.8 },
+              { x: P, y: Y + 25, tex: "5{,}3862", cuerpo: 17 },
+              { x: X0, y: Y + 25, tex: "5{,}38", cuerpo: 17 },
+              { x: X1, y: Y + 25, tex: "5{,}39", cuerpo: 17 },
+              { x: X0, y: Y + 44, texto: "por defecto", cuerpo: 10.5, opacidad: 0.8 },
+              { x: X1, y: Y + 44, texto: "por exceso", cuerpo: 10.5, opacidad: 0.8 },
+              { x: cI[0] - 22, y: 14, texto: "truncar", cuerpo: 12 },
+              { x: cD[0] + 4, y: 14, texto: "redondear", cuerpo: 12 },
+              { x: 800, y: 35, texto: "truncado", cuerpo: 11.5, opacidad: 0.85 },
+              { x: 892, y: 35, tex: "5{,}38", cuerpo: 16 },
+              { x: 794, y: 73, texto: "redondeado", cuerpo: 11.5 },
+              { x: 892, y: 73, tex: "5{,}39", cuerpo: 16 }
+            ],
+            foco: 502
+          };
+        },
+
+        // Tres preguntas sobre la misma igualdad: la potencia y la raíz, que
+        // ya se conocen, y el logaritmo, con letras.
+        "tres-preguntas": function () {
+          var d = '<rect x="452" y="27" width="178" height="54" rx="27" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<path d="M442 54h-26M423 48.5l-7 5.5 7 5.5M640 54h26M659 48.5l7 5.5-7 5.5" stroke-width="1.6"/>';
+          var tarjetas = [
+            { x: 92, ancho: 154, nombre: "potencia", tex: "b=a^{n}", pregunta: "¿cuánto da?" },
+            { x: 254, ancho: 154, nombre: "raíz", tex: "a=\\sqrt[n]{b}", pregunta: "¿qué base?" },
+            { x: 674, ancho: 238, nombre: "logaritmo", tex: "n=\\log_{a}b", pregunta: "¿qué exponente?", realce: true }
+          ];
+          var rotulos = [{ x: 541, y: 54, tex: "a^{n}=b", cuerpo: 25 }];
+          tarjetas.forEach(function (t) {
+            d += '<rect x="' + t.x + '" y="13" width="' + t.ancho + '" height="82" rx="13" fill="currentColor" fill-opacity="' +
+              (t.realce ? 0.13 : 0.035) + '" stroke-width="' + (t.realce ? 2.1 : 1.3) + '"' + (t.realce ? "" : ' opacity="0.85"') + "/>";
+            rotulos.push({ x: t.x + t.ancho / 2, y: 28, texto: t.nombre, cuerpo: 12 });
+            rotulos.push({ x: t.x + t.ancho / 2, y: 54, tex: t.tex, cuerpo: t.realce ? 21 : 18 });
+            rotulos.push({ x: t.x + t.ancho / 2, y: 81, texto: t.pregunta, cuerpo: 11, opacidad: 0.8 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 694 };
+        },
+
+        // El torneo con el que empieza el apartado: con 16 jugadores hay 4
+        // rondas, porque 2 elevado a 4 es 16, y en Wimbledon, con 128, hay 7.
+        // El número de rondas es el exponente, es decir, el logaritmo. Solo
+        // lleva lo que la entrada escribe: el logaritmo de 16 no se pone,
+        // porque lo usa un ejercicio.
+        "torneo": function () {
+          var X = [44, 90, 136, 182, 228];
+          var ys = [[]];
+          for (var i = 0; i < 16; i++) {
+            ys[0].push(9 + 5.4 * i);
+          }
+          for (var ronda = 1; ronda <= 4; ronda++) {
+            ys.push([]);
+            for (var k = 0; k < ys[ronda - 1].length / 2; k++) {
+              ys[ronda].push((ys[ronda - 1][2 * k] + ys[ronda - 1][2 * k + 1]) / 2);
+            }
+          }
+          var lineas = "", puntos = "";
+          for (ronda = 0; ronda < 4; ronda++) {
+            var xm = X[ronda] + 28;
+            for (k = 0; k < ys[ronda].length; k += 2) {
+              lineas += "M" + X[ronda] + " " + r(ys[ronda][k]) + "H" + xm + "V" + r(ys[ronda][k + 1]) + "H" + X[ronda] +
+                "M" + xm + " " + r(ys[ronda + 1][k / 2]) + "H" + X[ronda + 1];
+            }
+          }
+          ys[0].forEach(function (y) {
+            puntos += '<circle cx="' + X[0] + '" cy="' + r(y) + '" r="2" fill="currentColor" stroke="none"/>';
+          });
+          var cima = r(ys[4][0]);
+          var d = '<path d="' + lineas + '" stroke-width="1.25"/>' + puntos +
+            '<circle cx="' + X[4] + '" cy="' + cima + '" r="10" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + X[4] + '" cy="' + cima + '" r="5" fill="currentColor" stroke="none"/>' +
+            '<rect x="396" y="46" width="136" height="44" rx="22" fill="currentColor" fill-opacity="0.12" stroke-width="1.7"/>' +
+            '<path d="M566 14V96" stroke-width="1" opacity="0.3" stroke-dasharray="2 5"/>';
+          var rotulos = [
+            { x: 310, y: 41, tex: "2^{4}=16", cuerpo: 19 },
+            { x: 310, y: 68, texto: "16 jugadores, 4 rondas", cuerpo: 10.5, opacidad: 0.9 },
+            { x: 464, y: 13, texto: "Wimbledon", cuerpo: 10.5, opacidad: 0.85 },
+            { x: 464, y: 30, texto: "128 jugadores, 7 rondas", cuerpo: 10.5, opacidad: 0.9 },
+            { x: 464, y: 68, tex: "\\log_{2}128=7", cuerpo: 18 },
+            { x: 772, y: 31, texto: "el número de rondas es un logaritmo", cuerpo: 11.5, opacidad: 0.9 },
+            { x: 772, y: 66, tex: "\\text{rondas}=\\log_{2}(\\text{jugadores})", cuerpo: 17 }
+          ];
+          ["octavos", "cuartos", "semifinal", "final"].forEach(function (nombre, j) {
+            rotulos.push({ x: X[j] + 16, y: 101, texto: nombre, cuerpo: 9.5, opacidad: 0.85 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 286 };
+        },
+
         // La cumbre: el camino de la unidad, con el emblema de cada apartado
         // en su parada. Vale para cualquier unidad.
         "cumbre": function (seccion) {
@@ -10354,6 +10512,20 @@ void main() {
         "al-yabr": '<span class="letras-dibujo" lang="ar" dir="rtl">الجبر</span>',
         // El signo igual de Recorde: dos rayas paralelas.
         "igual": svg(48, 48, '<path d="M7 20h34M7 28h34" stroke-width="2.8"/>', 2.2),
+        // Un índice que baja y baja: el de la Bolsa de Vancouver.
+        "indice": svg(48, 48,
+          '<path d="M8 8v32h33" stroke-width="1.7" opacity="0.65"/>' +
+          '<path d="M11 13l6 6 4-3.5 6 9 4-3 7 12" stroke-width="2.5"/><path d="M38.5 26.5v7h-7" stroke-width="2.1"/>', 2.2),
+        // El signo de la raíz.
+        "radical": svg(48, 48, '<path d="M6 27.5h6l6 12 8.5-31H43" stroke-width="3"/>', 2.2),
+        // La regla de cálculo: dos escalas que se deslizan.
+        "regla-de-calculo": svg(48, 48,
+          '<rect x="3" y="12" width="42" height="8" rx="1.5" stroke-width="1.6"/>' +
+          '<rect x="10" y="20" width="35" height="8" rx="1.5" fill="currentColor" fill-opacity="0.16" stroke-width="1.6"/>' +
+          '<rect x="3" y="28" width="42" height="8" rx="1.5" stroke-width="1.6"/>' +
+          '<path d="M8 12v3.5M17 12v3.5M23 12v3.5M27.5 12v3.5M31 12v3.5M34 12v3.5M36.5 12v3.5M38.7 12v3.5M40.6 12v3.5' +
+          'M15 28v-3.5M24 28v-3.5M30 28v-3.5M34.5 28v-3.5M38 28v-3.5M41 28v-3.5" stroke-width="1.2"/>' +
+          '<path d="M27.5 8.5v31" stroke-width="1.5" opacity="0.7"/>', 2),
         // Sin dibujo propio: un destello.
         "": svg(48, 48, '<path d="M24 8v8M24 32v8M8 24h8M32 24h8M13 13l5 5M30 30l5 5M35 13l-5 5M18 30l-5 5" stroke-width="2.2"/>', 2.2)
       };
