@@ -3460,11 +3460,53 @@
       cursor: pointer;
     }
 
-    .domino-induccion .acciones-interactivo button:disabled {
+    .domino-induccion .acciones-interactivo button:disabled,
+    .acciones-interactivo.apagables button:disabled {
       opacity: 0.45;
       box-shadow: none;
       cursor: default;
       transform: none;
+    }
+
+    /* La pantalla de la calculadora: un marco oscuro, como el de la
+       fx-CG50, alrededor de la gráfica. */
+    .zona-grafica.pantalla-calculadora {
+      max-width: 40rem;
+      margin-inline: auto;
+      padding: 0.7rem;
+      border-color: #1f2937;
+      border-radius: 0.9rem;
+      background: #1f2937;
+    }
+
+    .zona-grafica.pantalla-calculadora svg {
+      border-radius: 0.35rem;
+    }
+
+    /* La pantalla tiene que verse entera de una vez, también en un
+       teléfono: no lleva el ancho mínimo de las otras gráficas. */
+    .zona-grafica.pantalla-calculadora svg.grafica-ib {
+      min-width: 0;
+    }
+
+    .tira-calculadora {
+      margin: 0.5rem 0 0;
+      padding: 0.3rem 0.6rem;
+      overflow-wrap: anywhere;
+      color: #111827;
+      border-radius: 0.35rem;
+      background: #e5e7eb;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    .controles-intervalos.ventana-calculadora {
+      margin-top: 0.9rem;
+    }
+
+    .pantalla-calculadora + .acciones-interactivo {
+      margin: 0 0 0.9rem;
     }
 
     /* Ordenaciones: todas las filas a la vista, en una caja que se
@@ -19427,6 +19469,839 @@ Enfoques NS</p>
         );
       }
 
+      // ---- Unidad 1: la ventana de la calculadora gráfica ----
+
+      function raizPorBiseccionIB(funcion, izquierda, derecha) {
+        let a = izquierda;
+        let b = derecha;
+        for (let paso = 0; paso < 70; paso += 1) {
+          const medio = (a + b) / 2;
+          if (funcion(a) * funcion(medio) <= 0) {
+            b = medio;
+          } else {
+            a = medio;
+          }
+        }
+        return (a + b) / 2;
+      }
+
+      // La ecuación de la teoría del subapartado 3.4, e^x = x + 3, y las
+      // dos ventanas de fábrica de la Casio fx-CG50, que es la calculadora
+      // de la alumna: INITIAL y STANDRD.
+      const SOLUCIONES_VENTANA = [
+        raizPorBiseccionIB((x) => Math.exp(x) - x - 3, -3.5, -2.5),
+        raizPorBiseccionIB((x) => Math.exp(x) - x - 3, 1, 2)
+      ];
+      const VENTANA_INICIAL = { xmin: -6.3, xmax: 6.3, ymin: -3.1, ymax: 3.1 };
+      const VENTANA_ESTANDAR = { xmin: -10, xmax: 10, ymin: -10, ymax: 10 };
+      const LIMITES_VENTANA = {
+        xmin: [-26, 0],
+        xmax: [0.5, 26],
+        ymin: [-26, 0],
+        ymax: [0.5, 26]
+      };
+      const MODOS_VENTANA = {
+        dos: {
+          orden: "INTSECT",
+          nombre: "cortes",
+          graficas: [
+            {
+              rotulo: "Y1=eˣ",
+              color: "#1d4ed8",
+              funcion: (x) => Math.exp(x)
+            },
+            { rotulo: "Y2=x+3", color: "#dc2626", funcion: (x) => x + 3 }
+          ],
+          altura: (x) => x + 3
+        },
+        una: {
+          orden: "ROOT",
+          nombre: "ceros",
+          graficas: [
+            {
+              rotulo: "Y1=eˣ−x−3",
+              color: "#1d4ed8",
+              funcion: (x) => Math.exp(x) - x - 3
+            }
+          ],
+          altura: () => 0
+        }
+      };
+
+      // Un número como lo escribe la calculadora: diez cifras y punto.
+      function cifrasDeCalculadoraIB(valor) {
+        return String(Number(valor.toPrecision(10)));
+      }
+
+      function VentanaCalculadoraInteractivo({ configuracion, alPreparar }) {
+        const [modo, setModo] = React.useState("dos");
+        const [ventana, setVentana] = React.useState(VENTANA_INICIAL);
+        // null: G-Solv no está en marcha; un número: la solución que enseña.
+        const [lugar, setLugar] = React.useState(null);
+        const recorte = React.useMemo(() => {
+          recortesIB += 1;
+          return "recorte-ib-" + recortesIB;
+        }, []);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const datos = MODOS_VENTANA[modo];
+        const area = { izq: 6, der: 594, arr: 6, aba: 300 };
+        const x = escalaIB(ventana.xmin, ventana.xmax, area.izq, area.der);
+        const y = escalaIB(ventana.ymin, ventana.ymax, area.aba, area.arr);
+        const alto = ventana.ymax - ventana.ymin;
+
+        const ponerVentana = (nueva) => {
+          const ajustada = {};
+          Object.keys(LIMITES_VENTANA).forEach((clave) => {
+            ajustada[clave] = limitar(
+              Math.round(nueva[clave] * 10) / 10,
+              LIMITES_VENTANA[clave][0],
+              LIMITES_VENTANA[clave][1]
+            );
+          });
+          setVentana(ajustada);
+          setLugar(null);
+        };
+        const zoom = (factor) => {
+          const centroX = (ventana.xmin + ventana.xmax) / 2;
+          const centroY = (ventana.ymin + ventana.ymax) / 2;
+          const medioX = ((ventana.xmax - ventana.xmin) / 2) * factor;
+          const medioY = ((ventana.ymax - ventana.ymin) / 2) * factor;
+          ponerVentana({
+            xmin: centroX - medioX,
+            xmax: centroX + medioX,
+            ymin: centroY - medioY,
+            ymax: centroY + medioY
+          });
+        };
+
+        // Cada solución, con el motivo por el que no se ve, si no se ve.
+        const soluciones = SOLUCIONES_VENTANA.map((abscisa) => {
+          const ordenada = datos.altura(abscisa);
+          let fuera = "";
+          if (abscisa < ventana.xmin) {
+            fuera = "a la izquierda de la pantalla";
+          } else if (abscisa > ventana.xmax) {
+            fuera = "a la derecha de la pantalla";
+          } else if (ordenada > ventana.ymax) {
+            fuera = "por encima de la pantalla";
+          } else if (ordenada < ventana.ymin) {
+            fuera = "por debajo de la pantalla";
+          }
+          return { abscisa, ordenada, fuera };
+        });
+        const visibles = soluciones.filter((solucion) => !solucion.fuera);
+        const ocultas = soluciones.filter((solucion) => solucion.fuera);
+        const elegida =
+          lugar === null || visibles.length === 0
+            ? null
+            : visibles[Math.min(lugar, visibles.length - 1)];
+
+        const trazos = (funcion) => {
+          const tramos = [];
+          let actual = [];
+          for (let paso = 0; paso <= 240; paso += 1) {
+            const abscisa =
+              ventana.xmin + ((ventana.xmax - ventana.xmin) * paso) / 240;
+            const ordenada = funcion(abscisa);
+            if (
+              ordenada > ventana.ymin - 3 * alto &&
+              ordenada < ventana.ymax + 3 * alto
+            ) {
+              actual.push(
+                x(abscisa).toFixed(1) + "," + y(ordenada).toFixed(1)
+              );
+            } else if (actual.length > 0) {
+              tramos.push(actual);
+              actual = [];
+            }
+          }
+          if (actual.length > 0) {
+            tramos.push(actual);
+          }
+          return tramos.filter((tramo) => tramo.length > 1);
+        };
+
+        // Marcas de los ejes, de 1 en 1 como en la calculadora; si quedan
+        // demasiado juntas, de 5 en 5.
+        const marcasDe = (minimo, maximo, escala) => {
+          const separacion = Math.abs(escala(1) - escala(0));
+          const salto = separacion >= 9 ? 1 : 5;
+          const marcas = [];
+          for (
+            let valor = Math.ceil(minimo / salto) * salto;
+            valor <= maximo;
+            valor += salto
+          ) {
+            if (valor !== 0) {
+              marcas.push(valor);
+            }
+          }
+          return marcas;
+        };
+        const ejeX = limitar(y(0), area.arr, area.aba);
+        const ejeY = limitar(x(0), area.izq, area.der);
+
+        const coordenadas = (solucion) =>
+          "(" +
+          numeroIB(solucion.abscisa, 2) +
+          "; " +
+          numeroIB(solucion.ordenada, 2) +
+          ")";
+        let titular;
+        let explicacion;
+        if (ocultas.length === 0) {
+          titular =
+            "Los dos " + datos.nombre + " están en pantalla";
+          explicacion =
+            "La ecuación tiene dos soluciones: con tres cifras " +
+            "significativas, x ≈ −2,95 o x ≈ 1,51." +
+            (modo === "una"
+              ? " Con una sola función, las soluciones son ceros: están " +
+                "en el eje X y no se pueden escapar por arriba."
+              : "");
+        } else {
+          titular =
+            visibles.length === 1
+              ? "En pantalla solo hay uno de los dos " + datos.nombre
+              : "En pantalla no hay ninguno de los dos " + datos.nombre;
+          explicacion =
+            ocultas
+              .map(
+                (solucion) =>
+                  "El de " + coordenadas(solucion) + " queda " + solucion.fuera + "."
+              )
+              .join(" ") +
+            " La calculadora trabaja con lo que hay en pantalla: cambia " +
+            "la ventana hasta verlo.";
+        }
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "La ventana de la fx-CG50"}
+            </p>
+            <p className="instruccion-interactivo">
+              La pantalla imita la de la Casio fx-CG50 al dibujar la
+              ecuación del ejemplo con su ventana de fábrica. Cambia la
+              ventana, como harías con V-Window o con Zoom, y busca las
+              soluciones con G-Solv.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Cómo se escribe la ecuación en la calculadora"
+            >
+              <button
+                type="button"
+                aria-pressed={modo === "dos"}
+                onClick={() => {
+                  setModo("dos");
+                  setLugar(null);
+                }}
+              >
+                Dos gráficas: <MatematicaEnLinea tex={"e^x"} /> y{" "}
+                <MatematicaEnLinea tex={"x+3"} />
+              </button>
+              <button
+                type="button"
+                aria-pressed={modo === "una"}
+                onClick={() => {
+                  setModo("una");
+                  setLugar(null);
+                }}
+              >
+                Una sola: <MatematicaEnLinea tex={"e^x-x-3"} />
+              </button>
+            </div>
+
+            <div className="zona-grafica pantalla-calculadora">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 306"
+                role="img"
+                aria-label={
+                  "Pantalla de la calculadora con x entre " +
+                  numeroIB(ventana.xmin, 1) +
+                  " y " +
+                  numeroIB(ventana.xmax, 1) +
+                  " e y entre " +
+                  numeroIB(ventana.ymin, 1) +
+                  " y " +
+                  numeroIB(ventana.ymax, 1) +
+                  ". " +
+                  titular +
+                  "."
+                }
+              >
+                <defs>
+                  <clipPath id={recorte}>
+                    <rect
+                      x={area.izq}
+                      y={area.arr}
+                      width={area.der - area.izq}
+                      height={area.aba - area.arr}
+                    />
+                  </clipPath>
+                </defs>
+                <rect x="0" y="0" width="600" height="306" fill="#ffffff" />
+                <g clipPath={"url(#" + recorte + ")"}>
+                  <line
+                    x1={area.izq}
+                    y1={ejeX}
+                    x2={area.der}
+                    y2={ejeX}
+                    stroke="#111827"
+                    strokeWidth="1.5"
+                  />
+                  <line
+                    x1={ejeY}
+                    y1={area.arr}
+                    x2={ejeY}
+                    y2={area.aba}
+                    stroke="#111827"
+                    strokeWidth="1.5"
+                  />
+                  {marcasDe(ventana.xmin, ventana.xmax, x).map((valor) => (
+                    <line
+                      key={"mx" + valor}
+                      x1={x(valor)}
+                      y1={ejeX - 4}
+                      x2={x(valor)}
+                      y2={ejeX + 4}
+                      stroke="#111827"
+                      strokeWidth="1"
+                    />
+                  ))}
+                  {marcasDe(ventana.ymin, ventana.ymax, (valor) =>
+                    y(valor)
+                  ).map((valor) => (
+                    <line
+                      key={"my" + valor}
+                      x1={ejeY - 4}
+                      y1={y(valor)}
+                      x2={ejeY + 4}
+                      y2={y(valor)}
+                      stroke="#111827"
+                      strokeWidth="1"
+                    />
+                  ))}
+                  {datos.graficas.map((grafica) =>
+                    trazos(grafica.funcion).map((tramo, orden) => (
+                      <polyline
+                        key={grafica.rotulo + orden}
+                        points={tramo.join(" ")}
+                        fill="none"
+                        stroke={grafica.color}
+                        strokeWidth="3"
+                      />
+                    ))
+                  )}
+                  {elegida && (
+                    <g stroke="#111827" strokeWidth="2.5">
+                      <line
+                        x1={x(elegida.abscisa) - 11}
+                        y1={y(elegida.ordenada)}
+                        x2={x(elegida.abscisa) + 11}
+                        y2={y(elegida.ordenada)}
+                      />
+                      <line
+                        x1={x(elegida.abscisa)}
+                        y1={y(elegida.ordenada) - 11}
+                        x2={x(elegida.abscisa)}
+                        y2={y(elegida.ordenada) + 11}
+                      />
+                    </g>
+                  )}
+                </g>
+                {datos.graficas.map((grafica, orden) => (
+                  <text
+                    key={"rotulo" + orden}
+                    x="12"
+                    y={24 + 22 * orden}
+                    fontSize="17"
+                    fontWeight="700"
+                    fill={grafica.color}
+                    stroke="#ffffff"
+                    strokeWidth="4"
+                    paintOrder="stroke"
+                  >
+                    {grafica.rotulo}
+                  </text>
+                ))}
+              </svg>
+              <p className="tira-calculadora" aria-live="polite">
+                {lugar === null
+                  ? "Xmin:" +
+                    ventana.xmin +
+                    "  Xmax:" +
+                    ventana.xmax +
+                    "  Ymin:" +
+                    ventana.ymin +
+                    "  Ymax:" +
+                    ventana.ymax
+                  : elegida
+                    ? datos.orden +
+                      "  X=" +
+                      cifrasDeCalculadoraIB(elegida.abscisa) +
+                      "  Y=" +
+                      cifrasDeCalculadoraIB(elegida.ordenada)
+                    : "Not Found"}
+              </p>
+            </div>
+
+            <div className="acciones-interactivo apagables">
+              <button type="button" onClick={() => setLugar(0)}>
+                {"G-Solv: " + datos.orden}
+              </button>
+              <button
+                type="button"
+                className="secundario"
+                aria-label="Solución anterior"
+                disabled={lugar === null || lugar === 0}
+                onClick={() => setLugar(lugar - 1)}
+              >
+                {"←"}
+              </button>
+              <button
+                type="button"
+                className="secundario"
+                aria-label="Solución siguiente"
+                disabled={lugar === null || lugar >= visibles.length - 1}
+                onClick={() => setLugar(lugar + 1)}
+              >
+                {"→"}
+              </button>
+            </div>
+
+            <div
+              className="opciones-interactivo"
+              role="group"
+              aria-label="Ventanas de fábrica y zoom"
+            >
+              <button
+                type="button"
+                onClick={() => ponerVentana(VENTANA_INICIAL)}
+              >
+                V-Window: INITIAL
+              </button>
+              <button
+                type="button"
+                onClick={() => ponerVentana(VENTANA_ESTANDAR)}
+              >
+                V-Window: STANDRD
+              </button>
+              <button type="button" onClick={() => zoom(0.5)}>
+                Zoom: IN
+              </button>
+              <button type="button" onClick={() => zoom(2)}>
+                Zoom: OUT
+              </button>
+            </div>
+
+            <div className="controles-intervalos ventana-calculadora">
+              {["xmin", "xmax", "ymin", "ymax"].map((clave) => (
+                <div className="panel-control" key={clave}>
+                  <label className="control-rango">
+                    <span>
+                      {clave.charAt(0).toUpperCase() + clave.slice(1)}
+                    </span>
+                    <output>{numeroIB(ventana[clave], 1)}</output>
+                    <input
+                      type="range"
+                      min={LIMITES_VENTANA[clave][0]}
+                      max={LIMITES_VENTANA[clave][1]}
+                      step="0.1"
+                      value={ventana[clave]}
+                      onChange={(evento) => {
+                        const nueva = Object.assign({}, ventana);
+                        nueva[clave] = Number(evento.target.value);
+                        ponerVentana(nueva);
+                      }}
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className={
+                "veredicto-interactivo" +
+                (ocultas.length === 0 ? "" : " es-fallo")
+              }
+              aria-live="polite"
+            >
+              <strong>{titular}</strong>
+              <p>{explicacion}</p>
+              {lugar !== null && (
+                <p>
+                  {visibles.length === 0
+                    ? "G-Solv responde «Not Found»: en esta pantalla no " +
+                      "hay nada que encontrar."
+                    : "G-Solv enseña " +
+                      (visibles.length === 1
+                        ? "el único que hay en pantalla."
+                        : "el primero por la izquierda; con la flecha " +
+                          "derecha pasa al siguiente.")}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ---- Unidad 1: el menor entero que cumple una desigualdad ----
+
+      const UMBRALES_MENOR_ENTERO = [0.1, 0.05, 0.01];
+
+      // Tres cifras significativas, con coma: 0,0550.
+      function tresCifrasIB(valor) {
+        return valor.toPrecision(3).replace(".", ",");
+      }
+
+      function MenorEnteroInteractivo({ configuracion, alPreparar }) {
+        const [base, setBase] = React.useState(0.8);
+        const [umbral, setUmbral] = React.useState(0.05);
+        const [exponente, setExponente] = React.useState(13);
+        const recorte = React.useMemo(() => {
+          recortesIB += 1;
+          return "recorte-ib-" + recortesIB;
+        }, []);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const cruce = Math.log(umbral) / Math.log(base);
+        const menor = Math.floor(cruce + 1e-9) + 1;
+        const primero = Math.max(0, menor - 7);
+        const ultimo = menor + 5;
+        const elegido = limitar(exponente, primero, ultimo);
+        const valor = Math.pow(base, elegido);
+        const area = { izq: 62, der: 585, arr: 20, aba: 262 };
+        const techo = umbral * 3.2;
+        const x = escalaIB(primero - 0.5, ultimo + 0.5, area.izq, area.der);
+        const y = escalaIB(0, techo, area.aba, area.arr);
+        const enteros = [];
+        for (let n = primero; n <= ultimo; n += 1) {
+          enteros.push(n);
+        }
+        const curva = [];
+        for (let paso = 0; paso <= 120; paso += 1) {
+          const abscisa =
+            primero - 0.5 + ((ultimo - primero + 1) * paso) / 120;
+          curva.push(
+            x(abscisa).toFixed(1) +
+              "," +
+              y(Math.min(Math.pow(base, abscisa), techo * 2)).toFixed(1)
+          );
+        }
+        const baseTex = texIB(base, 1);
+        const umbralTex = texIB(umbral, 2);
+
+        // Al cambiar la base o el umbral, el exponente se coloca en el
+        // entero anterior al que resuelve la pregunta: el «todavía no».
+        const cambiar = (nuevaBase, nuevoUmbral) => {
+          setBase(nuevaBase);
+          setUmbral(nuevoUmbral);
+          setExponente(
+            Math.floor(Math.log(nuevoUmbral) / Math.log(nuevaBase) + 1e-9)
+          );
+        };
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "El menor entero, entre dos puntos"}
+            </p>
+            <p className="instruccion-interactivo">
+              Cada punto es una potencia de exponente entero. Mueve n y
+              mira cuál es el primero que queda por debajo de la raya.
+            </p>
+
+            <div
+              className="fichas-interactivo"
+              role="group"
+              aria-label="Valor por debajo del cual tiene que quedar la potencia"
+            >
+              {UMBRALES_MENOR_ENTERO.map((opcion) => (
+                <button
+                  type="button"
+                  key={opcion}
+                  aria-pressed={opcion === umbral}
+                  onClick={() => cambiar(base, opcion)}
+                >
+                  {"Menor que " + numeroIB(opcion, 2)}
+                </button>
+              ))}
+            </div>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Base de la potencia</span>
+                  <output>{numeroIB(base, 1)}</output>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="0.9"
+                    step="0.1"
+                    value={base}
+                    onChange={(evento) =>
+                      cambiar(
+                        Math.round(Number(evento.target.value) * 10) / 10,
+                        umbral
+                      )
+                    }
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Exponente n</span>
+                  <output>{elegido}</output>
+                  <input
+                    type="range"
+                    min={primero}
+                    max={ultimo}
+                    step="1"
+                    value={elegido}
+                    onChange={(evento) =>
+                      setExponente(Number(evento.target.value))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <FormulaViva
+              tex={
+                baseTex +
+                "^{n}<" +
+                umbralTex +
+                "\\iff n\\ln" +
+                baseTex +
+                "<\\ln" +
+                umbralTex +
+                "\\iff n>\\frac{\\ln" +
+                umbralTex +
+                "}{\\ln" +
+                baseTex +
+                "}\\approx" +
+                texIB(cruce, 2)
+              }
+            />
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 306"
+                role="img"
+                aria-label={
+                  "Potencias de " +
+                  numeroIB(base, 1) +
+                  " con exponente de " +
+                  primero +
+                  " a " +
+                  ultimo +
+                  " y la raya de " +
+                  numeroIB(umbral, 2) +
+                  ". La primera que queda por debajo es la de exponente " +
+                  menor +
+                  "."
+                }
+              >
+                <defs>
+                  <clipPath id={recorte}>
+                    <rect
+                      x={area.izq}
+                      y={area.arr}
+                      width={area.der - area.izq}
+                      height={area.aba - area.arr}
+                    />
+                  </clipPath>
+                </defs>
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={enteros}
+                  marcasY={[0, umbral, umbral * 2, umbral * 3]}
+                  textoX={(marca) => String(marca)}
+                  textoY={(marca) => numeroIB(marca, 2)}
+                  rotuloX="n"
+                />
+                <g clipPath={"url(#" + recorte + ")"}>
+                  <polyline
+                    points={curva.join(" ")}
+                    fill="none"
+                    stroke={COLORES_IB.azul}
+                    strokeWidth="1.5"
+                    strokeOpacity="0.45"
+                  />
+                  <line
+                    x1={x(cruce)}
+                    y1={y(umbral)}
+                    x2={x(cruce)}
+                    y2={area.aba}
+                    stroke={COLORES_IB.naranja}
+                    strokeWidth="2"
+                    strokeDasharray="4 4"
+                  />
+                </g>
+                <line
+                  x1={area.izq}
+                  y1={y(umbral)}
+                  x2={area.der}
+                  y2={y(umbral)}
+                  stroke={COLORES_IB.rojo}
+                  strokeWidth="2.5"
+                  strokeDasharray="8 5"
+                />
+                <text
+                  x={area.der - 6}
+                  y={y(umbral) - 9}
+                  textAnchor="end"
+                  fontSize="16"
+                  fontWeight="700"
+                  fill="#b91c1c"
+                >
+                  {"La raya: " + numeroIB(umbral, 2)}
+                </text>
+                <text
+                  x={x(cruce)}
+                  y={area.aba - 8}
+                  textAnchor="middle"
+                  fontSize="15"
+                  fontWeight="700"
+                  fill="#9a3412"
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  paintOrder="stroke"
+                >
+                  {numeroIB(cruce, 2)}
+                </text>
+                {enteros.map((n) => {
+                  const altura = Math.pow(base, n);
+                  if (altura > techo) {
+                    return null;
+                  }
+                  return (
+                    <circle
+                      key={"potencia" + n}
+                      cx={x(n)}
+                      cy={y(altura)}
+                      r={n === elegido ? 9 : 6}
+                      fill={
+                        altura < umbral ? COLORES_IB.verde : COLORES_IB.azul
+                      }
+                      stroke={n === elegido ? COLORES_IB.naranja : "#ffffff"}
+                      strokeWidth={n === elegido ? 4 : 2}
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+
+            <div className="resumen-operaciones">
+              <div className="resultado-operacion">
+                <strong>{"Con n = " + (menor - 1) + ", todavía no"}</strong>
+                <span className="valor-resultado">
+                  <MatematicaEnLinea
+                    tex={
+                      baseTex +
+                      "^{" +
+                      (menor - 1) +
+                      "}\\approx" +
+                      tresCifrasIB(Math.pow(base, menor - 1)).replace(
+                        ",",
+                        "{,}"
+                      )
+                    }
+                  />
+                </span>
+              </div>
+              <div className="resultado-operacion">
+                <strong>{"Con n = " + menor + ", ya sí"}</strong>
+                <span className="valor-resultado">
+                  <MatematicaEnLinea
+                    tex={
+                      baseTex +
+                      "^{" +
+                      menor +
+                      "}\\approx" +
+                      tresCifrasIB(Math.pow(base, menor)).replace(",", "{,}")
+                    }
+                  />
+                </span>
+              </div>
+            </div>
+
+            <div
+              className={
+                "veredicto-interactivo" + (elegido < menor ? " es-fallo" : "")
+              }
+              aria-live="polite"
+            >
+              <strong>
+                {elegido < menor
+                  ? "Con n = " + elegido + " todavía no se cumple"
+                  : elegido === menor
+                    ? "n = " + menor + " es el menor entero"
+                    : "Con n = " + elegido + " se cumple, pero no es el menor"}
+              </strong>
+              <p>
+                {elegido < menor
+                  ? numeroIB(base, 1) +
+                    " elevado a " +
+                    elegido +
+                    " vale " +
+                    tresCifrasIB(valor) +
+                    ", que no es menor que " +
+                    numeroIB(umbral, 2) +
+                    "."
+                  : elegido === menor
+                    ? "La curva cruza la raya en n ≈ " +
+                      numeroIB(cruce, 2) +
+                      ", entre dos enteros: el primero que queda por " +
+                      "debajo es el siguiente, " +
+                      menor +
+                      ", no " +
+                      (menor - 1) +
+                      "."
+                    : "Ya se cumplía con n = " +
+                      menor +
+                      ": la pregunta pide el primero."}
+              </p>
+              <p>
+                {"El logaritmo de " +
+                  numeroIB(base, 1) +
+                  " es negativo, " +
+                  numeroIB(Math.log(base), 4) +
+                  ": al dividir entre él, el signo de la desigualdad " +
+                  "cambia de sentido."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
       const COMPONENTES = {
         ejemplo: EjemploInteractivo,
         "conjuntos-numericos": ConjuntosNumericosInteractivo,
@@ -19462,7 +20337,9 @@ Enfoques NS</p>
         "abre-sumatorio": AbreSumatorioInteractivo,
         "escalera-gauss": EscaleraGaussInteractivo,
         "suma-infinita": SumaInfinitaInteractivo,
-        "domino-induccion": DominoInduccionInteractivo
+        "domino-induccion": DominoInduccionInteractivo,
+        "ventana-calculadora": VentanaCalculadoraInteractivo,
+        "menor-entero": MenorEnteroInteractivo
       };
 
       document
