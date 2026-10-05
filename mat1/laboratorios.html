@@ -6812,6 +6812,15 @@ teoría que lo acompaña.</p>
       // una transparencia (24 pt en una de 7,5 pulgadas) es el 4,4 %, y la
       // ventana del navegador es algo más baja que la pantalla.
       var LETRA_OBJETIVO = 0.046;
+      // Parte de esa letra con la que una unidad va entera y no se reparte.
+      // Era el 85 %. Desde que el rótulo de un bloque con nombre lleva su
+      // antetítulo y su nombre, y más grandes en el modo clase, los bloques
+      // que cabían por muy poco pasaron a repartirse; con el 83 % vuelven a
+      // ir enteros, con la letra un paso menor (5 de octubre de 2026).
+      var LETRA_PARA_IR_ENTERA = 0.83;
+      // Y la menor con la que se junta a propósito lo que podría ir en dos
+      // pantallas: la de una tabla entera.
+      var LETRA_MINIMA_JUNTAS = 0.7;
       var ampliacion = null;
 
       function esUnidad(elemento) {
@@ -6891,6 +6900,62 @@ teoría que lo acompaña.</p>
           }
         });
         return piezas;
+      }
+      // ¿Es la pieza solo una fórmula centrada? ¿Acaba en una?
+      function esFormula(pieza) {
+        var formula = pieza.querySelector(":scope > .math.display");
+        return !!formula && texto(pieza) === texto(formula);
+      }
+      function acabaEnFormula(pieza) {
+        var formulas = pieza.querySelectorAll(":scope > .math.display");
+        var ultima = formulas[formulas.length - 1];
+        return !!ultima && texto(pieza).slice(-texto(ultima).length) === texto(ultima);
+      }
+      // Una frase anuncia lo que sigue si acaba en dos puntos («Dividimos:» y
+      // la fórmula, la lista o la tabla) o si se queda sin terminar ante una
+      // fórmula centrada («Por tanto, suman» y la fórmula).
+      function anuncia(pieza, siguiente) {
+        var final = texto(pieza).slice(-1);
+        if (final === "" || acabaEnFormula(pieza)) {
+          return false;
+        }
+        return (
+          final === ":" ||
+          (pieza.tagName === "P" && esFormula(siguiente) && ".!?…".indexOf(final) === -1)
+        );
+      }
+      // Las piezas de un bloque que se reparte, en tramos que no se separan:
+      // la frase que anuncia va con lo anunciado si juntas conservan casi
+      // toda la letra que lo anunciado tendría solo (la misma proporción con
+      // la que un bloque va entero) y no bajan de la letra de una tabla. Si
+      // juntas pierden más, van como antes, cada una en su pantalla. Hasta el
+      // 5 de octubre de 2026 las piezas se empaquetaban una a una y la frase
+      // se quedaba sola, con su fórmula en la pantalla siguiente (85 partes
+      // en las cinco unidades publicadas, 75 de ellas con la frase como única
+      // pieza: una fórmula que no llega a la letra buscada nunca cabía a su
+      // lado).
+      function tramosDe(unidad, piezas, rotulos, meta) {
+        var a = ampliacion;
+        var juntas = unidad.classList.contains("bloque-didactico");
+        function letraDe(grupo) {
+          mostrar(rotulos.concat(grupo));
+          a.partible = false;
+          return mayorZoom(1, meta) || 1;
+        }
+        var tramos = [];
+        piezas.forEach(function (pieza) {
+          var anterior = tramos[tramos.length - 1];
+          if (juntas && anterior && anuncia(anterior[anterior.length - 1], pieza)) {
+            var letra = letraDe(anterior.concat([pieza]));
+            if (letra >= LETRA_PARA_IR_ENTERA * letraDe([pieza]) && letra >= LETRA_MINIMA_JUNTAS * meta) {
+              anterior.push(pieza);
+              return;
+            }
+          }
+          tramos.push([pieza]);
+        });
+        a.partible = false;
+        return tramos;
       }
       // Número que pinta cada elemento de una lista numerada: si luego solo
       // se ve una parte, cada uno conserva el suyo.
@@ -7110,7 +7175,9 @@ teoría que lo acompaña.</p>
       }
       // Reparte la unidad en partes: entera si así ya se acerca a la letra
       // buscada; si no, tantas piezas seguidas por parte como quepan con esa
-      // letra. Una pieza que sola no cabe con ella lleva la mayor que admita.
+      // letra, sin separar la frase que anuncia de lo anunciado cuando la
+      // letra lo permite. Un tramo que solo no cabe con ella lleva la mayor
+      // que admita.
       function componer(unidad) {
         var a = ampliacion;
         a.numeros = [];
@@ -7128,8 +7195,9 @@ teoría que lo acompaña.</p>
         // letra que lo demás y, si se reparte, todas sus partes llevan la
         // misma, la de la fila que menos admite.
         var esTabla = unidad.tagName === "TABLE";
-        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? 0.7 : 0.85)) {
-          return [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
+        var unaSola = [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
+        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? LETRA_MINIMA_JUNTAS : LETRA_PARA_IR_ENTERA)) {
+          return unaSola;
         }
         var meta = a.objetivo;
         if (esTabla) {
@@ -7139,18 +7207,22 @@ teoría que lo acompaña.</p>
             meta = Math.min(meta, evitarPartir(mayorZoom(1, a.objetivo)) || 1);
           });
         }
+        var tramos = tramosDe(unidad, piezas, rotulos, meta);
+        if (tramos.length < 2) {
+          return unaSola;
+        }
         var partes = [];
         var i = 0;
-        while (i < piezas.length) {
-          var grupo = [piezas[i]];
+        while (i < tramos.length) {
+          var grupo = tramos[i].slice();
           i++;
-          while (i < piezas.length) {
-            mostrar(rotulos.concat(grupo, [piezas[i]]));
+          while (i < tramos.length) {
+            mostrar(rotulos.concat(grupo, tramos[i]));
             ponerZoom(meta);
             if (!cabe()) {
               break;
             }
-            grupo.push(piezas[i]);
+            grupo = grupo.concat(tramos[i]);
             i++;
           }
           partes.push({ piezas: grupo, visibles: rotulos.concat(grupo), zoom: 1 });
