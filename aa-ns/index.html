@@ -11,8 +11,8 @@
       color-scheme: light;
       --texto: #182033;
       --texto-suave: #4b5568;
-      --fondo: #ffffff;
-      --fondo-suave: #f4f7fb;
+      --fondo: #f2f5fa;
+      --superficie: #ffffff;
       --borde: #d6dce7;
       --acento: #2557a7;
     }
@@ -38,13 +38,31 @@
     }
 
     h1 {
-      max-width: 18ch;
-      margin: 0 0 1rem;
+      margin: 0 0 0.55rem;
       color: #111827;
       font-size: clamp(2.25rem, 7vw, 4.5rem);
       line-height: 1.08;
       letter-spacing: -0.035em;
       text-wrap: balance;
+    }
+
+    /* El título, como en el portal de Matemáticas I: el curso en un
+       antetítulo, la materia en grande y una recta numérica de subrayado,
+       con el punto en la raíz de 2. */
+    .antetitulo-portal {
+      margin: 0 0 0.5rem;
+      color: #1d4ed8;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .recta-portal {
+      display: block;
+      width: min(100%, 35rem);
+      height: auto;
+      margin: 0 0 1.05rem;
     }
 
     .subtitulo {
@@ -54,35 +72,17 @@
       font-size: clamp(1.05rem, 2.5vw, 1.3rem);
     }
 
-    section {
-      padding: clamp(1.25rem, 4vw, 2rem);
-      border: 1px solid var(--borde);
-      border-radius: 0.75rem;
-      background: var(--fondo-suave);
+    main {
+      display: grid;
+      gap: 2.2rem;
     }
 
     h2 {
-      margin: 0 0 1rem;
-      color: #111827;
-      font-size: 1.6rem;
-    }
-
-    .lista-unidades {
-      margin: 0;
-      padding-left: 1.25rem;
-    }
-
-    .lista-unidades:empty {
-      display: none;
-    }
-
-    .sin-unidades {
-      margin: 0;
-      color: var(--texto-suave);
-    }
-
-    .lista-unidades:not(:empty) + .sin-unidades {
-      display: none;
+      margin: 0 0 0.9rem;
+      color: #163b72;
+      font-size: 0.86rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
     }
 
     a {
@@ -90,11 +90,325 @@
       font-weight: 650;
       text-underline-offset: 0.16em;
     }
+
+    /* Una tarjeta por unidad, con su tono y un dibujo de su tema, cuyos
+       datos salen de la teoría de la unidad (AGENTS.md, regla 14): al
+       publicar una unidad se añade su tarjeta. */
+    .rejilla-unidades {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+      gap: 1.5rem;
+    }
+
+    .tarjeta-unidad {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: inherit;
+      font-weight: 400;
+      text-decoration: none;
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: 1.1rem;
+      box-shadow: 0 14px 34px rgb(22 59 114 / 0.1);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .tarjeta-unidad:focus-visible {
+      outline: 3px solid var(--tono);
+      outline-offset: 3px;
+    }
+
+    @media (hover: hover) {
+      .tarjeta-unidad:hover {
+        box-shadow: 0 18px 40px rgb(22 59 114 / 0.16);
+        transform: translateY(-2px);
+      }
+    }
+
+    .tono-azul {
+      --tono: #1d4ed8;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #163b72 0%, #1d4ed8 68%, #4778de 100%);
+    }
+
+    .tono-violeta {
+      --tono: #6d28d9;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+    }
+
+    .tono-turquesa {
+      --tono: #0f766e;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #0b4a45 0%, #0f766e 66%, #2aa79b 100%);
+    }
+
+    .tono-granate {
+      --tono: #b4233a;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #6b1626 0%, #b4233a 66%, #d95a6c 100%);
+    }
+
+    .tono-ambar {
+      --tono: #9a4e05;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
+    }
+
+    .lienzo-tarjeta {
+      display: block;
+      flex: none;
+      aspect-ratio: 640 / 225;
+      color: #ffffff;
+      background: var(--lienzo);
+    }
+
+    .lienzo-tarjeta svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .lienzo-tarjeta .rotulos {
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    /* Con el ratón encima, o con el foco del teclado, el dibujo de la tarjeta
+       se retira y se vuelve a construir: cada pieza entra a su tiempo y una
+       línea de luz lo recorre, hasta quedar exactamente como estaba. Solo
+       CSS, sin guiones ni cargas: no pesa al abrir la página. No actúa en
+       pantallas táctiles ni con el movimiento reducido. Cada pieza lleva en
+       --t el instante en que entra y, si hace falta, en --d lo que dura; las
+       fichas de dominó, además, en --a el ángulo en que quedan. */
+    .lienzo-tarjeta {
+      overflow: hidden;
+    }
+
+    .lienzo-tarjeta svg,
+    .lienzo-tarjeta .e-rejilla {
+      transition: transform 1.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .lienzo-tarjeta .luz {
+      opacity: 0;
+    }
+
+    .lienzo-tarjeta .e-destello {
+      stroke-dasharray: 6 200;
+      stroke-dashoffset: 6;
+    }
+
+    .lienzo-tarjeta .e-punto {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .lienzo-tarjeta .e-ficha {
+      transform: rotate(var(--a));
+    }
+
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      /* La cámara se acerca; la cuadrícula, más lejos, se acerca menos. */
+      .tarjeta-unidad:is(:hover, :focus-visible) svg {
+        transform: scale(1.05);
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-rejilla {
+        transform: translate(9.6px, 3.4px) scale(0.97);
+      }
+
+      /* Dos animaciones por pieza: se retira enseguida y vuelve en su
+         instante. La segunda no se adelanta: manda solo desde que empieza. */
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-punto {
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-brota 0.5s cubic-bezier(0.34, 1.7, 0.5, 1) var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-rotulo {
+        animation:
+          t-apaga 0.2s ease-in forwards,
+          t-sube 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-baja {
+        animation:
+          t-apaga 0.2s ease-in forwards,
+          t-baja 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-letra {
+        animation:
+          t-apaga 0.2s ease-in forwards,
+          t-letra 0.4s ease var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-velo {
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-entra 0.45s ease var(--t) forwards;
+      }
+
+      /* Un trazo se dibuja de un extremo al otro: mide 100 (pathLength) y
+         su guion, que lo cubre entero, se descubre poco a poco. */
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-trazo {
+        stroke-dasharray: 100 120;
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-traza var(--d) ease-in-out var(--t) forwards;
+      }
+
+      /* Las fichas se levantan y caen una tras otra: todas siguen la misma
+         caída, cada una desde su instante, y a los 1,23 s se quedan como
+         estaban, apoyada cada una en la siguiente. */
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-ficha {
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-planta 0.18s ease-out 0.24s forwards,
+          t-cae 0.78s linear var(--t) forwards,
+          t-queda 1ms linear 1.23s forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-eje {
+        animation: t-eje 0.8s ease-out;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-destello {
+        animation: t-destello var(--d) linear var(--t) forwards;
+      }
+    }
+
+    @keyframes t-sale {
+      to { opacity: 0; }
+    }
+
+    @keyframes t-apaga {
+      to { fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    @keyframes t-brota {
+      from { opacity: 0; transform: scale(0); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes t-sube {
+      from { fill-opacity: 0; stroke-opacity: 0; transform: translateY(8px); }
+      to { fill-opacity: 1; stroke-opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes t-baja {
+      from { fill-opacity: 0; stroke-opacity: 0; transform: translateY(-9px); }
+      to { fill-opacity: 1; stroke-opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes t-letra {
+      from { fill-opacity: 0; stroke-opacity: 0; }
+      to { fill-opacity: 1; stroke-opacity: 1; }
+    }
+
+    @keyframes t-entra {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes t-traza {
+      from { opacity: 1; stroke-dashoffset: 100; }
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+
+    @keyframes t-planta {
+      from { opacity: 0; transform: rotate(0deg); }
+      to { opacity: 1; transform: rotate(0deg); }
+    }
+
+    /* El ángulo de una ficha cada vez que la caída avanza una ficha más:
+       0° de pie, 28° al tocar a la siguiente y, apoyada en ella, cada vez
+       más tumbada. */
+    @keyframes t-cae {
+      0% { transform: rotate(0deg); }
+      16.667% { transform: rotate(27.77deg); }
+      33.333% { transform: rotate(50.72deg); }
+      50% { transform: rotate(63.67deg); }
+      66.667% { transform: rotate(69.36deg); }
+      83.333% { transform: rotate(71.6deg); }
+      100% { transform: rotate(72.45deg); }
+    }
+
+    @keyframes t-queda {
+      from, to { transform: rotate(var(--a)); }
+    }
+
+    @keyframes t-eje {
+      30% { stroke-opacity: 1; stroke-width: 3.2; }
+    }
+
+    /* La luz sale por el final del trazo: acaba más allá, para no dejar
+       un punto encendido en su extremo. */
+    @keyframes t-destello {
+      from { opacity: 1; stroke-dashoffset: 6; }
+      to { opacity: 1; stroke-dashoffset: -110; }
+    }
+
+    .cuerpo-tarjeta {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 1.15rem 1.4rem 1.35rem;
+    }
+
+    .antetitulo {
+      color: var(--tono);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .titulo-tarjeta {
+      margin: 0.1rem 0 0.4rem;
+      color: #111827;
+      font-size: 1.55rem;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+    }
+
+    .resumen {
+      margin-bottom: 0.9rem;
+      color: var(--texto-suave);
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .fichas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: auto;
+    }
+
+    .fichas span {
+      padding: 0.22rem 0.7rem;
+      color: #3b4a63;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #eef2f8;
+      border-radius: 999px;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Matemáticas IB — Análisis y Enfoques NS</h1>
+    <p class="antetitulo-portal">Análisis y Enfoques NS</p>
+    <h1>Matemáticas IB</h1>
+    <svg class="recta-portal" viewBox="0 0 560 24" aria-hidden="true" focusable="false" fill="none" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="tinta-recta" gradientUnits="userSpaceOnUse" x1="0" x2="560" y1="0" y2="0"><stop offset="0" stop-color="#1d4ed8"></stop><stop offset="1" stop-color="#6d28d9"></stop></linearGradient></defs><g stroke="url(#tinta-recta)"><line x1="3" y1="12" x2="548" y2="12" stroke-width="2.4"></line><path d="M541 5.5l9 6.5l-9 6.5" stroke-width="2.4"></path><path d="M40 6v12M110 6v12M180 6v12M250 6v12M320 6v12M390 6v12M460 6v12" stroke-width="1.8"></path><path d="M57.5 9v6M75 9v6M92.5 9v6M127.5 9v6M145 9v6M162.5 9v6M197.5 9v6M215 9v6M232.5 9v6M267.5 9v6M285 9v6M302.5 9v6M337.5 9v6M355 9v6M372.5 9v6M407.5 9v6M425 9v6M442.5 9v6M477.5 9v6M495 9v6M512.5 9v6" stroke-width="1" stroke-opacity="0.55"></path></g><circle cx="138.99" cy="12" r="10" fill="#1d4ed8" fill-opacity="0.16"></circle><circle cx="138.99" cy="12" r="4.8" fill="#1d4ed8"></circle></svg>
     <p class="subtitulo">
       Apuntes y recursos del Programa del Diploma del Bachillerato
       Internacional, Nivel Superior.
@@ -104,37 +418,63 @@
   <main>
     <section aria-labelledby="titulo-unidades">
       <h2 id="titulo-unidades">Unidades</h2>
-      <ul class="lista-unidades">
-        <li>
-          <a href="unidad_00_numeros_reales.html">Unidad 0: Números reales</a>
-          — lo que el IB da por sabido y lo primero de clase: conjuntos
-          numéricos y notación del IB, intervalos, intersección y unión,
-          valor absoluto, potencias y radicales, y práctica tipo examen.
-        </li>
-        <li>
-          <a href="unidad_01_exponenciales_y_logaritmos.html">Unidad 1: Exponenciales y logaritmos</a>
-          — el número e, logaritmos y ecuaciones al estilo del IB, modelos
-          exponenciales y práctica tipo examen de las pruebas 1, 2 y 3.
-        </li>
-        <li>
-          <a href="unidad_02_combinatoria_y_binomio.html">Unidad 2: Combinatoria y binomio</a>
-          — principios de recuento, factorial, permutaciones, ordenaciones con
-          elementos repetidos y combinaciones, binomio de Newton (término
-          general, datos que faltan, productos, raíces y valores exactos),
-          exponentes negativos y fraccionarios y práctica tipo examen.
-        </li>
-        <li>
-          <a href="unidad_03_sucesiones_y_series.html">Unidad 3: Sucesiones y series</a>
-          — notación sigma, progresiones aritméticas y geométricas, suma
-          infinita, interés compuesto, depreciación y práctica tipo examen.
-        </li>
-        <li>
-          <a href="unidad_04_metodos_de_demostracion.html">Unidad 4: Métodos de demostración</a>
-          — demostración directa, inducción matemática, contradicción,
-          contraejemplos y práctica tipo examen.
-        </li>
-      </ul>
-      <p class="sin-unidades">Todavía no hay unidades publicadas.</p>
+      <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-azul" href="unidad_00_numeros_reales.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u0" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u0"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u0)"></rect></mask></defs><g mask="url(#adorno-mascara-u0)" stroke="#fff"><rect class="e-velo" style="--t:.95s" x="252" y="32" width="184" height="126" fill="#fff" fill-opacity="0.09" stroke="none"></rect><path class="e-velo" style="--t:.95s" d="M252 32V75.3M252 92.7V109.3M252 126.7V158M436 32V41.3M436 58.7V109.3M436 126.7V158" stroke-opacity="0.55" stroke-width="1.4" stroke-dasharray="1.5 5.5"></path><line x1="6" y1="158" x2="622" y2="158" stroke-opacity="0.9"></line><path d="M614 152L624 158L614 164" stroke-opacity="0.9"></path><path d="M68 150v16M114 150v16M160 150v16M206 150v16M252 150v16M298 150v16M344 150v16M390 150v16M436 150v16M482 150v16M528 150v16M574 150v16" stroke-opacity="0.9" stroke-width="1.7"></path><line class="e-trazo" style="--t:.15s;--d:.45s" pathLength="100" x1="119.9" y1="50" x2="429.3" y2="50" stroke-opacity="0.75" stroke-width="4" stroke-linecap="butt"></line><circle class="e-punto" style="--t:.15s" cx="114" cy="50" r="6.4" fill="#fff" fill-opacity="0.94" stroke="none"></circle><circle class="e-punto" style="--t:.58s" cx="436" cy="50" r="5.6" stroke-opacity="0.92" stroke-width="2.2"></circle><line class="e-trazo" style="--t:.5s;--d:.45s" pathLength="100" x1="258.7" y1="84" x2="522.1" y2="84" stroke-opacity="0.75" stroke-width="4" stroke-linecap="butt"></line><circle class="e-punto" style="--t:.5s" cx="252" cy="84" r="5.6" stroke-opacity="0.92" stroke-width="2.2"></circle><circle class="e-punto" style="--t:.93s" cx="528" cy="84" r="6.4" fill="#fff" fill-opacity="0.94" stroke="none"></circle><line class="e-trazo" style="--t:1.15s;--d:.42s" pathLength="100" x1="258.7" y1="118" x2="429.3" y2="118" stroke-opacity="0.16" stroke-width="13" stroke-linecap="butt"></line><line class="e-trazo" style="--t:1.15s;--d:.42s" pathLength="100" x1="258.7" y1="118" x2="429.3" y2="118" stroke-width="5.4" stroke-linecap="butt"></line><circle class="e-punto" style="--t:1.15s" cx="252" cy="118" r="5.6" stroke-width="2.5"></circle><circle class="e-punto" style="--t:1.55s" cx="436" cy="118" r="5.6" stroke-width="2.5"></circle></g><g stroke="#fff"><line x1="258.7" y1="118" x2="429.3" y2="118" pathLength="100" class="luz e-destello" style="--t:1.15s;--d:.42s" stroke-opacity="0.3" stroke-width="15"></line><line x1="258.7" y1="118" x2="429.3" y2="118" pathLength="100" class="luz e-destello" style="--t:1.15s;--d:.42s" stroke-width="5.4"></line></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text x="68" y="190.1" font-size="15" opacity="0.82">−5</text><text x="114" y="190.1" font-size="15" opacity="0.82">−4</text><text x="160" y="190.1" font-size="15" opacity="0.82">−3</text><text x="206" y="190.1" font-size="15" opacity="0.82">−2</text><text x="252" y="190.1" font-size="15" opacity="0.82">−1</text><text x="298" y="190.1" font-size="15" opacity="0.82">0</text><text x="344" y="190.1" font-size="15" opacity="0.82">1</text><text x="390" y="190.1" font-size="15" opacity="0.82">2</text><text x="436" y="190.1" font-size="15" opacity="0.82">3</text><text x="482" y="190.1" font-size="15" opacity="0.82">4</text><text x="528" y="190.1" font-size="15" opacity="0.82">5</text><text x="574" y="190.1" font-size="15" opacity="0.82">6</text><text class="e-rotulo" style="--t:.2s" x="89" y="56.3" font-size="19" opacity="0.95" font-style="italic">A</text><text class="e-rotulo" style="--t:.55s" x="227" y="90.3" font-size="19" opacity="0.95" font-style="italic">B</text><g class="e-rotulo" style="--t:1.2s"><text x="181" y="124.3" font-size="19" font-style="italic">A</text><path d="M194.4 124.3v-6.4a5.6 5.6 0 0 1 11.2 0v6.4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><text x="219" y="124.3" font-size="19" font-style="italic">B</text></g></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 0</span>
+            <strong class="titulo-tarjeta">Números reales</strong>
+            <span class="resumen">Lo que el IB da por sabido y lo primero de clase: conjuntos numéricos y notación del IB, intervalos, intersección y unión, valor absoluto, potencias y radicales, y práctica tipo examen.</span>
+            <span class="fichas"><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-violeta" href="unidad_01_exponenciales_y_logaritmos.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u1" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u1"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u1)"></rect></mask><path id="curva-u1" pathLength="100" d="M12.6 139.8C26.6 139.77 40.6 139.73 54.6 139.68C68.6 139.62 82.6 139.56 96.6 139.47C110.6 139.38 124.6 139.27 138.6 139.12C152.6 138.98 166.6 138.79 180.6 138.55C194.6 138.31 208.6 138.01 222.6 137.62C236.6 137.22 250.6 136.72 264.6 136.07C278.6 135.41 292.6 134.6 306.6 133.52C320.6 132.44 334.6 131.1 348.6 129.31C362.6 127.53 376.6 125.32 390.6 122.38C404.6 119.45 418.6 115.8 432.6 110.95C446.6 106.11 460.6 100.09 474.6 92.11C488.6 84.13 502.6 74.2 516.6 61.05C530.6 47.89 544.6 31.52 558.6 9.83C561.38 5.52 564.16 1 566.93 -3.75"></path></defs><g mask="url(#adorno-mascara-u1)" stroke="#fff"><path d="M84 8V190M168 8V190M252 8V190M336 8V190M504 8V190M588 8V190M24 15H616M24 40H616M24 65H616M24 90H616M24 115H616M24 165H616" class="e-rejilla" stroke-opacity="0.085" stroke-width="1"></path><path class="e-velo" style="--t:1.34s" d="M172.41 138.69C186.41 138.47 200.41 138.2 214.41 137.84C228.41 137.48 242.41 137.03 256.41 136.43C270.41 135.84 284.41 135.1 298.41 134.12C312.41 133.14 326.41 131.92 340.41 130.31C354.41 128.69 368.41 126.68 382.41 124.02C396.41 121.36 410.41 118.04 424.41 113.65C438.41 109.26 452.41 103.8 466.41 96.56C480.41 89.32 494.41 80.32 508.41 68.38C521.09 57.57 533.76 44.37 546.44 27.37L172.41 138.69Z" fill="#fff" fill-opacity="0.13" stroke="none"></path><line x1="420" y1="8" x2="420" y2="190" stroke-opacity="0.5" stroke-width="1.4"></line><line class="e-eje" x1="14" y1="140" x2="622" y2="140" stroke-opacity="0.85" stroke-width="1.7"></line><path d="M614 134L624 140L614 146" stroke-opacity="0.85" stroke-width="1.7"></path><line class="e-trazo" style="--t:.15s;--d:.55s" pathLength="100" x1="11.76" y1="186.5" x2="619.08" y2="5.75" stroke-opacity="0.8" stroke-width="1.9"></line><use class="e-trazo" style="--t:.35s;--d:1.0s" href="#curva-u1" stroke-opacity="0.16" stroke-width="8"></use><use class="e-trazo" style="--t:.35s;--d:1.0s" href="#curva-u1" stroke-width="2.6"></use><path class="e-velo" style="--t:1.39s" d="M546.44 40.37V140" stroke-opacity="0.6" stroke-width="1.3" stroke-dasharray="3 4.5"></path><circle class="e-punto" style="--t:1.54s" cx="546.44" cy="140" r="3" fill="#fff" stroke="none"></circle><g class="e-punto" style="--t:.61s"><circle cx="172.41" cy="138.69" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="172.41" cy="138.69" r="5" fill="#fff" stroke="none"></circle></g><g class="e-punto" style="--t:1.29s"><circle cx="546.44" cy="27.37" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="546.44" cy="27.37" r="5" fill="#fff" stroke="none"></circle></g></g><g stroke="#fff"><use href="#curva-u1" class="luz e-destello" style="--t:.35s;--d:1.0s" stroke-opacity="0.3" stroke-width="13"></use><use href="#curva-u1" class="luz e-destello" style="--t:.35s;--d:1.0s" stroke-width="4.6"></use></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text class="e-rotulo" style="--t:.67s" x="194.4" y="167.8" font-size="16" opacity="0.95"><tspan font-style="italic">x</tspan> ≈ −2,95</text><text class="e-rotulo" style="--t:1.59s" x="546.4" y="167.8" font-size="16" opacity="0.95"><tspan font-style="italic">x</tspan> ≈ 1,51</text><text x="335.0" y="206.8" font-size="17" opacity="0.97"><tspan class="e-letra" style="--t:.5s"><tspan font-style="italic">e</tspan><tspan dy="-6.2" font-size="12" font-style="italic">x</tspan></tspan><tspan class="e-letra" style="--t:1.39s" dy="6.2"> = </tspan><tspan class="e-letra" style="--t:.25s"><tspan font-style="italic">x</tspan> + 3</tspan></text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 1</span>
+            <strong class="titulo-tarjeta">Exponenciales y logaritmos</strong>
+            <span class="resumen">El número e, logaritmos y ecuaciones al estilo del IB, modelos exponenciales y práctica tipo examen de las pruebas 1, 2 y 3.</span>
+            <span class="fichas"><span>5 laboratorios</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-turquesa" href="unidad_02_combinatoria_y_binomio.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u2" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u2"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u2)"></rect></mask></defs><g mask="url(#adorno-mascara-u2)" stroke="#fff"><path class="e-trazo" style="--t:.23s;--d:.22s" pathLength="200" d="M275.59 35.59L257.18 50.77M296.41 35.59L314.82 50.77" stroke-opacity="0.34" stroke-width="1.2"></path><path class="e-trazo" style="--t:.43s;--d:.22s" pathLength="400" d="M235.59 68.59L217.18 83.77M256.41 68.59L274.82 83.77M315.59 68.59L297.18 83.77M336.41 68.59L354.82 83.77" stroke-opacity="0.34" stroke-width="1.2"></path><path class="e-trazo" style="--t:.63s;--d:.22s" pathLength="600" d="M195.59 101.59L177.18 116.77M216.41 101.59L234.82 116.77M275.59 101.59L257.18 116.77M296.41 101.59L314.82 116.77M355.59 101.59L337.18 116.77M376.41 101.59L394.82 116.77" stroke-opacity="0.34" stroke-width="1.2"></path><path class="e-trazo" style="--t:.83s;--d:.22s" pathLength="600" d="M155.59 134.59L137.18 149.77M176.41 134.59L194.82 149.77M235.59 134.59L217.18 149.77M336.41 134.59L354.82 149.77M395.59 134.59L377.18 149.77M416.41 134.59L434.82 149.77" stroke-opacity="0.34" stroke-width="1.2"></path><path class="e-velo" style="--t:.25s" d="M306 27H522" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:.45s" d="M346 60H522" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:.65s" d="M386 93H522" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:.85s" d="M426 126H522" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:1.05s" d="M466 159H522" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"></path><path class="e-trazo" style="--t:1.1s;--d:.25s" pathLength="200" d="M256.41 134.59L272.5 147.86M315.59 134.59L299.5 147.86" stroke-width="2.3"></path><circle class="e-punto" style="--t:1.32s" cx="286" cy="159" r="15.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle></g><g stroke="#fff"><path d="M256.41 134.59L272.5 147.86M315.59 134.59L299.5 147.86" pathLength="200" class="luz e-destello" style="--t:1.1s;--d:.3s" stroke-opacity="0.3" stroke-width="11"></path><path d="M256.41 134.59L272.5 147.86M315.59 134.59L299.5 147.86" pathLength="200" class="luz e-destello" style="--t:1.1s;--d:.3s" stroke-width="4"></path></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><g class="e-baja" style="--t:.15s"><text x="286" y="33.4" font-size="19" opacity="0.9">1</text></g><text class="e-rotulo" style="--t:.27s" x="552" y="32.2" font-size="15" opacity="0.7"><tspan font-style="italic">n</tspan> = 0</text><g class="e-baja" style="--t:.35s"><text x="246" y="66.4" font-size="19" opacity="0.9">1</text><text x="326" y="66.4" font-size="19" opacity="0.9">1</text></g><text class="e-rotulo" style="--t:.47s" x="552" y="65.2" font-size="15" opacity="0.7"><tspan font-style="italic">n</tspan> = 1</text><g class="e-baja" style="--t:.55s"><text x="206" y="99.4" font-size="19" opacity="0.9">1</text><text x="286" y="99.4" font-size="19" opacity="0.9">2</text><text x="366" y="99.4" font-size="19" opacity="0.9">1</text></g><text class="e-rotulo" style="--t:.67s" x="552" y="98.2" font-size="15" opacity="0.7"><tspan font-style="italic">n</tspan> = 2</text><g class="e-baja" style="--t:.75s"><text x="166" y="132.4" font-size="19" opacity="0.9">1</text><text x="246" y="132.4" font-size="19">3</text><text x="326" y="132.4" font-size="19">3</text><text x="406" y="132.4" font-size="19" opacity="0.9">1</text></g><text class="e-rotulo" style="--t:.87s" x="552" y="131.2" font-size="15" opacity="0.7"><tspan font-style="italic">n</tspan> = 3</text><g class="e-baja" style="--t:.95s"><text x="126" y="165.4" font-size="19" opacity="0.9">1</text><text x="206" y="165.4" font-size="19" opacity="0.9">4</text><text x="366" y="165.4" font-size="19" opacity="0.9">4</text><text x="446" y="165.4" font-size="19" opacity="0.9">1</text></g><text class="e-rotulo" style="--t:1.07s" x="552" y="164.2" font-size="15" opacity="0.98"><tspan font-style="italic">n</tspan> = 4</text><text class="e-baja" style="--t:1.32s" x="286" y="165.4" font-size="19">6</text><text x="320.0" y="206.8" font-size="17" opacity="0.97"><tspan class="e-letra" style="--t:.5s">(<tspan font-style="italic">a</tspan> + <tspan font-style="italic">b</tspan>)<tspan dy="-6.2" font-size="12">4</tspan><tspan dy="6.2"> = </tspan></tspan><tspan class="e-letra" style="--t:1.0s"><tspan font-style="italic">a</tspan><tspan dy="-6.2" font-size="12">4</tspan><tspan dy="6.2"> + </tspan></tspan><tspan class="e-letra" style="--t:1.1s">4<tspan font-style="italic">a</tspan><tspan dy="-6.2" font-size="12">3</tspan><tspan dy="6.2" font-style="italic">b</tspan> + </tspan><tspan class="e-letra" style="--t:1.32s">6<tspan font-style="italic">a</tspan><tspan dy="-6.2" font-size="12">2</tspan><tspan dy="6.2" font-style="italic">b</tspan><tspan dy="-6.2" font-size="12">2</tspan><tspan dy="6.2"> + </tspan></tspan><tspan class="e-letra" style="--t:1.45s">4<tspan font-style="italic">a</tspan><tspan font-style="italic">b</tspan><tspan dy="-6.2" font-size="12">3</tspan><tspan dy="6.2"> + </tspan></tspan><tspan class="e-letra" style="--t:1.55s"><tspan font-style="italic">b</tspan><tspan dy="-6.2" font-size="12">4</tspan></tspan></text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 2</span>
+            <strong class="titulo-tarjeta">Combinatoria y binomio</strong>
+            <span class="resumen">Principios de recuento, factorial, permutaciones, ordenaciones con elementos repetidos y combinaciones, binomio de Newton (término general, datos que faltan, productos, raíces y valores exactos), exponentes negativos y fraccionarios y práctica tipo examen.</span>
+            <span class="fichas"><span>5 laboratorios</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-granate" href="unidad_03_sucesiones_y_series.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u3" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u3"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u3)"></rect></mask><path id="saltos-u3" pathLength="100" d="M70 140A129 103.2 0 0 1 328 140A64.5 51.6 0 0 1 457 140A32.25 25.8 0 0 1 521.5 140A16.12 12.9 0 0 1 553.75 140A8.06 6.45 0 0 1 569.88 140A4.03 3.23 0 0 1 577.94 140A2.02 1.61 0 0 1 581.97 140"></path></defs><g mask="url(#adorno-mascara-u3)" stroke="#fff"><path class="e-velo" style="--t:.81s" d="M70 140A129 103.2 0 0 1 328 140Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.13s" d="M328 140A64.5 51.6 0 0 1 457 140Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.3s" d="M457 140A32.25 25.8 0 0 1 521.5 140Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.38s" d="M521.5 140A16.12 12.9 0 0 1 553.75 140Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.42s" d="M553.75 140A8.06 6.45 0 0 1 569.88 140Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.5s" d="M586 20V126" stroke-opacity="0.6" stroke-width="1.3" stroke-dasharray="3 4.5"></path><line x1="6" y1="140" x2="622" y2="140" stroke-opacity="0.9"></line><path d="M614 134L624 140L614 146" stroke-opacity="0.9"></path><path d="M70 132v16" stroke-opacity="0.9" stroke-width="1.7"></path><use class="e-trazo" style="--t:.2s;--d:1.3s" href="#saltos-u3" stroke-opacity="0.16" stroke-width="8"></use><use class="e-trazo" style="--t:.2s;--d:1.3s" href="#saltos-u3" stroke-width="2.4"></use><circle class="e-punto" style="--t:.86s" cx="328" cy="140" r="3.8" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.18s" cx="457" cy="140" r="3.4" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.35s" cx="521.5" cy="140" r="3" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.43s" cx="553.75" cy="140" r="2.5" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.47s" cx="569.88" cy="140" r="2" fill="#fff" stroke="none"></circle><g class="e-punto" style="--t:1.55s"><circle cx="586" cy="140" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"></circle><circle cx="586" cy="140" r="5" fill="#fff" stroke="none"></circle></g></g><g stroke="#fff"><use href="#saltos-u3" class="luz e-destello" style="--t:.2s;--d:1.3s" stroke-opacity="0.3" stroke-width="13"></use><use href="#saltos-u3" class="luz e-destello" style="--t:.2s;--d:1.3s" stroke-width="4.4"></use></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text x="70" y="167.8" font-size="15" opacity="0.82">0</text><text class="e-rotulo" style="--t:.91s" x="328" y="167.8" font-size="15" opacity="0.82">12</text><text class="e-rotulo" style="--t:1.23s" x="457" y="167.8" font-size="15" opacity="0.82">18</text><text class="e-rotulo" style="--t:1.4s" x="521.5" y="167.8" font-size="15" opacity="0.82">21</text><text class="e-rotulo" style="--t:1.6s" x="586" y="167.8" font-size="17" opacity="0.98">24</text><text class="e-rotulo" style="--t:.3s" x="199" y="29.8" font-size="19" opacity="0.95">12</text><text class="e-rotulo" style="--t:.94s" x="392.5" y="81.4" font-size="17" opacity="0.95">6</text><text class="e-rotulo" style="--t:1.26s" x="489.2" y="107.2" font-size="15.5" opacity="0.95">3</text><text class="e-rotulo" style="--t:1.43s" x="537.6" y="120.1" font-size="14" opacity="0.95">1,5</text><text x="326.0" y="206.8" font-size="17" opacity="0.97"><tspan class="e-letra" style="--t:.3s">12</tspan><tspan class="e-letra" style="--t:.91s"> + 6</tspan><tspan class="e-letra" style="--t:1.23s"> + 3</tspan><tspan class="e-letra" style="--t:1.4s"> + 1,5</tspan><tspan class="e-letra" style="--t:1.48s"> + <tspan dy="-4.6">…</tspan></tspan><tspan class="e-letra" style="--t:1.6s" dy="4.6"> = 24</tspan></text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 3</span>
+            <strong class="titulo-tarjeta">Sucesiones y series</strong>
+            <span class="resumen">Notación sigma, progresiones aritméticas y geométricas, suma infinita, interés compuesto, depreciación y práctica tipo examen.</span>
+            <span class="fichas"><span>3 laboratorios</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-ambar" href="unidad_04_metodos_de_demostracion.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="adorno-fundido-u4" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"></stop><stop offset="0.11" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="1"></stop></linearGradient><mask id="adorno-mascara-u4"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido-u4)"></rect></mask></defs><g mask="url(#adorno-mascara-u4)" stroke="#fff"><path class="e-velo" style="--t:.74s" d="M118 64A88 88 0 0 1 199.27 118.26" stroke-opacity="0.42" stroke-width="1.4" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:.87s" d="M176 64A88 88 0 0 1 256.76 117.06" stroke-opacity="0.42" stroke-width="1.4" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:1s" d="M234 64A88 88 0 0 1 313.34 113.92" stroke-opacity="0.42" stroke-width="1.4" stroke-dasharray="1.5 5.5"></path><path class="e-velo" style="--t:1.13s" d="M292 64A88 88 0 0 1 367.17 106.24" stroke-opacity="0.42" stroke-width="1.4" stroke-dasharray="1.5 5.5"></path><line x1="6" y1="152" x2="622" y2="152" stroke-opacity="0.9"></line><g transform="translate(118 152)"><g class="e-ficha" style="--t:.45s;--a:72.45deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(176 152)"><g class="e-ficha" style="--t:.58s;--a:71.6deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(234 152)"><g class="e-ficha" style="--t:.71s;--a:69.36deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(292 152)"><g class="e-ficha" style="--t:.84s;--a:63.67deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(350 152)"><g class="e-ficha" style="--t:.97s;--a:50.72deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(408 152)"><g class="e-ficha" style="--t:1.1s;--a:27.77deg"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g transform="translate(466 152)"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g><g transform="translate(524 152)"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g><g transform="translate(582 152)"><rect x="-17" y="-88" width="17" height="88" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"></rect></g></g><g stroke="#fff"><line x1="101" y1="152" x2="449" y2="152" pathLength="100" class="luz e-destello" style="--t:.45s;--d:.78s" stroke-opacity="0.3" stroke-width="12"></line><line x1="101" y1="152" x2="449" y2="152" pathLength="100" class="luz e-destello" style="--t:.45s;--d:.78s" stroke-width="4"></line></g><g class="rotulos" fill="#fff" stroke="none" text-anchor="middle"><text class="e-rotulo" style="--t:.55s" x="109.5" y="178" font-size="15" opacity="0.82">1</text><text class="e-rotulo" style="--t:.68s" x="167.5" y="178" font-size="15" opacity="0.82">2</text><text class="e-rotulo" style="--t:.81s" x="225.5" y="178" font-size="15" opacity="0.82">3</text><g class="e-velo" style="--t:1.01s"><g opacity="0.7"><circle cx="302.5" cy="173" r="1.3"/><circle cx="308.5" cy="173" r="1.3"/><circle cx="314.5" cy="173" r="1.3"/></g></g><g><g opacity="0.7"><circle cx="538.5" cy="173" r="1.3"/><circle cx="544.5" cy="173" r="1.3"/><circle cx="550.5" cy="173" r="1.3"/></g></g><text class="e-rotulo" style="--t:1.2s" x="399.5" y="178" font-size="17" opacity="0.98" font-style="italic">k</text><text class="e-rotulo" style="--t:1.33s" x="457.5" y="178" font-size="17" opacity="0.98"><tspan font-style="italic">k</tspan> + 1</text><text class="e-letra" style="--t:1.1s" x="303" y="206.8" font-size="17" opacity="0.97" text-anchor="end"><tspan font-style="italic">P</tspan>(<tspan font-style="italic">k</tspan>)</text><path class="e-letra" style="--t:1.18s" d="M312 199.2h15.5M312 203.4h15.5M326.5 195.8l6.5 5.5l-6.5 5.5" fill="none" stroke="#fff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.97"/><text class="e-letra" style="--t:1.33s" x="341" y="206.8" font-size="17" opacity="0.97" text-anchor="start"><tspan font-style="italic">P</tspan>(<tspan font-style="italic">k</tspan> + 1)</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 4</span>
+            <strong class="titulo-tarjeta">Métodos de demostración</strong>
+            <span class="resumen">Demostración directa, inducción matemática, contradicción, contraejemplos y práctica tipo examen.</span>
+            <span class="fichas"><span>1 laboratorio</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+      </div>
     </section>
   </main>
 </body>
