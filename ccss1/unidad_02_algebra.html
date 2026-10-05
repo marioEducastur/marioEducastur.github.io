@@ -567,6 +567,16 @@
       font-size: 0.68em;
     }
 
+    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
+       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
+       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
+       línea; en pantalla va debajo, más grande. */
+    .nombre-bloque {
+      margin-left: 0.55em;
+      color: var(--texto);
+      font-weight: 800;
+    }
+
     .definicion {
       --color-bloque: var(--acento);
       --fondo-bloque: var(--acento-suave);
@@ -2236,6 +2246,35 @@
 
       .etiqueta-bloque::after {
         content: ":";
+      }
+
+      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
+         (la tercera de cinco maquetas, elegida por el profesor el 5 de
+         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
+         al ampliar en el modo clase acompañan juntos a todas las partes de
+         un bloque repartido. Un bloque sin nombre conserva su rótulo de
+         siempre. */
+      .bloque-didactico.con-nombre > p:first-child {
+        margin-bottom: 0.7rem;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .nombre-bloque {
+        display: block;
+        margin-left: 0;
+        font-size: 1.24rem;
+        letter-spacing: -0.005em;
+        line-height: 1.3;
       }
 
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
@@ -4932,9 +4971,10 @@ Bachillerato</p>
                 </div>
                 <p>Expresiones como <span
                 class="math inline">\(L(n)\)</span> son polinomios.</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Un polinomio en la variable <span
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Polinomio</span></p>
+                <p>Un <strong>polinomio</strong> en la variable <span
                 class="math inline">\(x\)</span> es una expresión de la
                 forma</p>
                 <p><span class="math display">\[
@@ -4945,17 +4985,20 @@ Bachillerato</p>
                 <span class="math inline">\(a_n\neq0\)</span> y los
                 exponentes son números naturales o cero.</p>
                 <ul>
-                <li>El grado de <span class="math inline">\(P\)</span>
-                es <span class="formula-con-signo"><span
+                <li>El <strong>grado</strong> de <span
+                class="math inline">\(P\)</span> es <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\)</span>,</span> el mayor
                 exponente con coeficiente no nulo.</li>
-                <li>El coeficiente principal es <span
-                class="math inline">\(a_n\)</span> y el término
-                independiente es <span class="formula-con-signo"><span
+                <li>El <strong>coeficiente principal</strong> es <span
+                class="math inline">\(a_n\)</span> y el <strong>término
+                independiente</strong> es <span
+                class="formula-con-signo"><span
                 class="math inline">\(a_0\)</span>.</span></li>
                 <li>Cada sumando <span
-                class="math inline">\(a_ix^i\)</span> es un monomio o
-                término del polinomio.</li>
+                class="math inline">\(a_ix^i\)</span> es un
+                <strong>monomio</strong> o <strong>término</strong> del
+                polinomio.</li>
                 </ul>
                 <p>Dos monomios son <strong>semejantes</strong> cuando
                 tienen la misma variable con el mismo exponente, como
@@ -5146,8 +5189,10 @@ Bachillerato</p>
                 &amp;=15x^3-7x^2+13x+3
                 \end{aligned}
                 \]</span></p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Grado del producto y de la
+                suma</span></p>
                 <p>El grado del producto es la suma de los grados de los
                 factores; el grado de la suma es, como mucho, el mayor
                 de los dos grados.</p>
@@ -5173,8 +5218,10 @@ Bachillerato</p>
                 (a+b)(a-b)=a^2-b^2
                 \]</span></p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Identidades para
+                factorizar</span></p>
                 <p>Leídas de derecha a izquierda son también las
                 factorizaciones más rápidas: <span
                 class="math inline">\(x^2-9=(x+3)(x-3)\)</span> sin
@@ -5184,18 +5231,28 @@ Bachillerato</p>
                 <section id="división-de-polinomios"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">División de polinomios</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Dividendo, divisor, cociente y
+                resto</span></p>
                 <p>Dividir el polinomio <span
-                class="math inline">\(D(x)\)</span> (dividendo) entre
-                <span class="math inline">\(d(x)\)</span> (divisor) es
-                encontrar un cociente <span
-                class="math inline">\(C(x)\)</span> y un resto <span
+                class="math inline">\(D(x)\)</span>
+                (<strong>dividendo</strong>) entre <span
+                class="math inline">\(d(x)\)</span>
+                (<strong>divisor</strong>) es encontrar un
+                <strong>cociente</strong> <span
+                class="math inline">\(C(x)\)</span> y un
+                <strong>resto</strong> <span
                 class="math inline">\(R(x)\)</span> que reproduzcan el
                 esquema de la división entera de números.</p>
+                <p>Recuerda que: <span class="math display">\[
+                D(x)=d(x)\cdot C(x)+R(x)
+                \]</span></p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Dividir un polinomio entre
+                otro</span></p>
                 <ol type="1">
                 <li>Ordena dividendo y divisor de mayor a menor grado,
                 completando con coeficiente <span
@@ -5217,8 +5274,7 @@ Bachillerato</p>
                 <p>El primer término del cociente es <span
                 class="formula-con-signo"><span
                 class="math inline">\(3x^3:x^2=3x\)</span>,</span> y al
-                restar queda</p>
-                <p><span class="math display">\[
+                restar queda <span class="math display">\[
                 \begin{aligned}
                 &amp;3x^3+0x^2-5x+1-(3x^3-6x^2)\\
                 ={}&amp;6x^2-5x+1
@@ -5227,14 +5283,13 @@ Bachillerato</p>
                 <p>El siguiente término es <span
                 class="formula-con-signo"><span
                 class="math inline">\(6x^2:x^2=6\)</span>,</span> y al
-                restar queda</p>
-                <p><span class="math display">\[
+                restar queda <span class="math display">\[
                 6x^2-5x+1-(6x^2-12x)=7x+1
                 \]</span></p>
                 <p>Como el grado de <span
                 class="math inline">\(7x+1\)</span> es menor que el del
-                divisor, la división termina:</p>
-                <p><span class="math display">\[
+                divisor, la división termina: <span
+                class="math display">\[
                 C(x)=3x+6,
                 \qquad
                 R(x)=7x+1
@@ -5255,10 +5310,11 @@ Bachillerato</p>
                 \end{array}
                 \]</span></p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Identidad de la división.</strong> Si <span
-                class="math inline">\(C(x)\)</span> y <span
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Identidad de la
+                división</span></p>
+                <p>Si <span class="math inline">\(C(x)\)</span> y <span
                 class="math inline">\(R(x)\)</span> son el cociente y el
                 resto de dividir <span
                 class="math inline">\(D(x)\)</span> entre <span
@@ -5290,8 +5346,11 @@ Bachillerato</p>
                 class="math inline">\(x-a\)</span>,</span> la división
                 se abrevia con la regla de Ruffini: una tabla en la que
                 solo viajan los coeficientes.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Dividir entre <span
+                class="math inline">\(x-a\)</span> con la regla de
+                Ruffini</span></p>
                 <ol type="1">
                 <li>Escribe en la fila superior los coeficientes del
                 dividendo, ordenados y completando con <span
@@ -5512,8 +5571,9 @@ Bachillerato</p>
                 <h3 data-number="1.2"><span
                 class="header-section-number">1.2</span> Raíces de un
                 polinomio. Factorización</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Raíz de un polinomio</span></p>
                 <p>Una <strong>raíz</strong> de un polinomio <span
                 class="math inline">\(P(x)\)</span> es un número <span
                 class="math inline">\(a\)</span> tal que <span
@@ -5527,11 +5587,12 @@ Bachillerato</p>
                 \]</span></p>
                 </div>
                 <p>Dos teoremas conectan las raíces con la división.</p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Teorema del resto.</strong> El resto de
-                dividir <span class="math inline">\(P(x)\)</span> entre
-                <span class="math inline">\(x-a\)</span> es <span
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Teorema del resto</span></p>
+                <p>El resto de dividir <span
+                class="math inline">\(P(x)\)</span> entre <span
+                class="math inline">\(x-a\)</span> es <span
                 class="formula-con-signo"><span
                 class="math inline">\(P(a)\)</span>.</span></p>
                 </div>
@@ -5542,12 +5603,12 @@ Bachillerato</p>
                 \]</span></p>
                 <p>que es el resto obtenido con la tabla: el teorema
                 permite conocer el resto sin dividir.</p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Teorema del factor.</strong> <span
-                class="math inline">\(x-a\)</span> es un factor de <span
-                class="math inline">\(P(x)\)</span> si y solo si <span
-                class="formula-con-signo"><span
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Teorema del factor</span></p>
+                <p><span class="math inline">\(x-a\)</span> es un factor
+                de <span class="math inline">\(P(x)\)</span> si y solo
+                si <span class="formula-con-signo"><span
                 class="math inline">\(P(a)=0\)</span>.</span></p>
                 </div>
                 <p>Es consecuencia directa del teorema del resto: la
@@ -5558,20 +5619,23 @@ Bachillerato</p>
                 C(x)\)</span>.</span> Conocer una raíz es conocer un
                 factor: las raíces son las piezas de la
                 factorización.</p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Búsqueda de raíces enteras.</strong> Si un
-                número entero <span class="math inline">\(a\)</span> es
-                raíz de un polinomio con coeficientes enteros, entonces
-                <span class="math inline">\(a\)</span> divide al término
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Búsqueda de raíces
+                enteras</span></p>
+                <p>Si un número entero <span
+                class="math inline">\(a\)</span> es raíz de un polinomio
+                con coeficientes enteros, entonces <span
+                class="math inline">\(a\)</span> divide al término
                 independiente. Los divisores del término independiente
                 son, por tanto, los únicos candidatos a raíz entera que
                 merece la pena probar con Ruffini.</p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Cuántas raíces puede haber.</strong> Un
-                polinomio de grado <span
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Cuántas raíces puede
+                haber</span></p>
+                <p>Un polinomio de grado <span
                 class="math inline">\(n\)</span> tiene a lo sumo <span
                 class="math inline">\(n\)</span> raíces reales, y puede
                 tener menos: <span class="math inline">\(x^2+4\)</span>
@@ -5587,8 +5651,10 @@ Bachillerato</p>
                 P(x)=K\,(x-r_1)(x-r_2)\cdots(x-r_n)
                 \]</span></p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Multiplicidad de una
+                raíz</span></p>
                 <p>El número de veces que se repite un factor <span
                 class="math inline">\(x-a\)</span> se llama
                 <strong>multiplicidad</strong> de la raíz <span
@@ -5602,8 +5668,9 @@ Bachillerato</p>
                 class="math inline">\(-2\)</span>
                 <strong>simple</strong>.</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Factorización</span></p>
                 <p><strong>Factorizar</strong> un polinomio es
                 escribirlo como producto de factores
                 <strong>irreducibles</strong>, los que ya no pueden
@@ -5612,8 +5679,9 @@ Bachillerato</p>
                 no tiene raíces reales, es decir, cuando su
                 discriminante es negativo.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Factorizar un polinomio</span></p>
                 <p>Para factorizar un polinomio, en este orden:</p>
                 <ol type="1">
                 <li>Extrae el factor común, incluido el numérico, si
@@ -6040,10 +6108,11 @@ Bachillerato</p>
                 <h3 data-number="2.1"><span
                 class="header-section-number">2.1</span> Fracciones
                 equivalentes y simplificación</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Una fracción algebraica es un cociente de dos
-                polinomios</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Fracción algebraica</span></p>
+                <p>Una <strong>fracción algebraica</strong> es un
+                cociente de dos polinomios</p>
                 <p><span class="math display">\[
                 \frac{P(x)}{Q(x)},
                 \]</span></p>
@@ -6062,8 +6131,9 @@ Bachillerato</p>
                 class="math inline">\(x^2+4\)</span> no se anula
                 nunca.</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Fracciones equivalentes</span></p>
                 <p>Como con las fracciones numéricas, dos fracciones
                 algebraicas son <strong>equivalentes</strong> cuando
                 valen lo mismo allí donde las dos existen, y se obtienen
@@ -6082,8 +6152,10 @@ Bachillerato</p>
                 factorizar.</li>
                 </ul>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Simplificar una fracción
+                algebraica</span></p>
                 <ol type="1">
                 <li>Factoriza numerador y denominador.</li>
                 <li>Anota las condiciones de existencia de la fracción
@@ -6293,8 +6365,10 @@ Bachillerato</p>
                 de varios números, factorizando y multiplicando los
                 factores comunes y no comunes elevados al mayor
                 exponente.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Sumar y restar fracciones
+                algebraicas</span></p>
                 <ol type="1">
                 <li>Factoriza los denominadores y anota las condiciones:
                 los valores que anulan alguno.</li>
@@ -6453,12 +6527,12 @@ Bachillerato</p>
                 <h3 data-number="2.3"><span
                 class="header-section-number">2.3</span> Multiplicación
                 y división</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Producto y cociente.</strong> El producto de
-                fracciones algebraicas se calcula multiplicando
-                numeradores y denominadores; el cociente, multiplicando
-                por la inversa del divisor:</p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Producto y cociente</span></p>
+                <p>El producto de fracciones algebraicas se calcula
+                multiplicando numeradores y denominadores; el cociente,
+                multiplicando por la inversa del divisor:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 \frac{P}{Q}\cdot\frac{R}{S}&amp;=\frac{P\cdot R}{Q\cdot
@@ -6562,13 +6636,16 @@ Bachillerato</p>
                 <section id="resolver-es-transformar"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Resolver es transformar</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Una solución de una ecuación es un valor de la
-                incógnita que hace cierta la igualdad. Resolver la
-                ecuación es hallar todas sus soluciones. Dos ecuaciones
-                son equivalentes cuando tienen exactamente las mismas
-                soluciones.</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Solución y ecuaciones
+                equivalentes</span></p>
+                <p>Una <strong>solución</strong> de una ecuación es un
+                valor de la incógnita que hace cierta la igualdad.
+                <strong>Resolver</strong> la ecuación es hallar todas
+                sus soluciones. Dos ecuaciones son
+                <strong>equivalentes</strong> cuando tienen exactamente
+                las mismas soluciones.</p>
                 </div>
                 <p>Algunas transformaciones producen siempre ecuaciones
                 equivalentes; otras no, y son precisamente las que
@@ -6713,8 +6790,9 @@ Bachillerato</p>
                 <section id="el-discriminante-decide"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">El discriminante decide</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Discriminante</span></p>
                 <p>El radicando de la fórmula, <span
                 class="formula-con-signo"><span
                 class="math inline">\(\Delta=b^2-4ac\)</span>,</span> se
@@ -6790,8 +6868,9 @@ Bachillerato</p>
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Bicuadradas: el cambio de
                 variable</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Ecuaciones bicuadradas</span></p>
                 <p>En las ecuaciones <strong>bicuadradas</strong>, <span
                 class="formula-con-signo"><span
                 class="math inline">\(ax^4+bx^2+c=0\)</span>,</span> la
@@ -6836,8 +6915,10 @@ Bachillerato</p>
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Grado mayor que 2:
                 factorizar</h4>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una ecuación de grado
+                mayor que 2</span></p>
                 <p>Para grados superiores usamos la herramienta del
                 apartado 1: pasar todo a un miembro, factorizar e
                 igualar cada factor a cero, porque un producto es nulo
@@ -7087,8 +7168,10 @@ Bachillerato</p>
                 múltiplo de los denominadores, que es una transformación
                 de la lista peligrosa: pueden colarse candidatas que
                 anulan algún denominador.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una ecuación
+                racional</span></p>
                 <ol type="1">
                 <li>Anota las condiciones: los valores que anulan algún
                 denominador quedan prohibidos.</li>
@@ -7294,8 +7377,10 @@ Bachillerato</p>
                 class="math inline">\(3\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-3\)</span>.</span></p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una ecuación con
+                radicales</span></p>
                 <ol type="1">
                 <li>Aísla el radical en un miembro.</li>
                 <li>Eleva al cuadrado los dos miembros.</li>
@@ -7526,10 +7611,11 @@ Bachillerato</p>
                 logarítmicas</h3>
                 <p>La incógnita aparece dentro de un logaritmo. Las
                 herramientas son las de la unidad 1.</p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Recuerda de la unidad 1.</strong> La
-                definición de logaritmo y sus tres propiedades:</p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Recuerda de la unidad 1</span></p>
+                <p>La definición de logaritmo y sus tres
+                propiedades:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 \log_a x=y&amp;\iff a^y=x\\
@@ -7540,8 +7626,10 @@ Bachillerato</p>
                 \]</span></p>
                 <p>Solo tienen logaritmo los números positivos.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una ecuación
+                logarítmica</span></p>
                 <ol type="1">
                 <li>Anota las condiciones: todos los argumentos deben
                 ser positivos.</li>
@@ -7793,8 +7881,10 @@ Bachillerato</p>
                 \]</span></p>
                 <p>Hay tres estrategias, y elegir bien la primera jugada
                 es la mitad del trabajo:</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Tres estrategias para una ecuación
+                exponencial</span></p>
                 <ol type="1">
                 <li><strong>Igualar bases.</strong> Si ambos miembros
                 pueden escribirse como potencias de la misma base, se
@@ -7879,11 +7969,10 @@ Bachillerato</p>
                 <p>Cuando los dos miembros no son potencias de la misma
                 base, el logaritmo baja el exponente y permite
                 despejarlo.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Resolver <span
-                class="formula-con-signo"><span
-                class="math inline">\(a^{x}=b\)</span>.</span></strong></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver <span
+                class="math inline">\(a^{x}=b\)</span></span></p>
                 <ol type="1">
                 <li>Aísla la potencia en un miembro de la igualdad.</li>
                 <li>Toma logaritmos en los dos miembros (decimales o
@@ -8246,18 +8335,23 @@ Bachillerato</p>
                 <h3 data-number="4.1"><span
                 class="header-section-number">4.1</span> Sistemas
                 lineales</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Una ecuación lineal es una ecuación polinómica de
-                grado 1, como <span class="formula-con-signo"><span
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Sistema lineal</span></p>
+                <p>Una <strong>ecuación lineal</strong> es una ecuación
+                polinómica de grado 1, como <span
+                class="formula-con-signo"><span
                 class="math inline">\(2x+3y=8\)</span>.</span> Un
-                sistema lineal es un conjunto de ecuaciones lineales que
-                deben cumplirse simultáneamente. Una solución del
-                sistema es una asignación de valores a las incógnitas
-                que verifica todas las ecuaciones a la vez.</p>
+                <strong>sistema lineal</strong> es un conjunto de
+                ecuaciones lineales que deben cumplirse simultáneamente.
+                Una <strong>solución</strong> del sistema es una
+                asignación de valores a las incógnitas que verifica
+                todas las ecuaciones a la vez.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver un sistema de dos
+                ecuaciones con dos incógnitas</span></p>
                 <p>De cursos anteriores conoces cuatro métodos para
                 sistemas de dos ecuaciones con dos incógnitas:</p>
                 <ul>
@@ -8337,16 +8431,17 @@ Bachillerato</p>
                 <p>Con tres ecuaciones y tres incógnitas, sustituir e
                 igualar se vuelve un laberinto. El método de Gauss lo
                 evita transformando el sistema en otro escalonado.</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Sistema escalonado</span></p>
                 <p>Un sistema es <strong>escalonado</strong> cuando cada
                 ecuación tiene al menos una incógnita menos que la
                 anterior; se resuelve de abajo arriba.</p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Tres transformaciones producen sistemas
-                equivalentes:</strong></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Tres transformaciones producen
+                sistemas equivalentes</span></p>
                 <ul>
                 <li>Intercambiar dos ecuaciones.</li>
                 <li>Multiplicar una ecuación (entera, con su término
@@ -8361,8 +8456,10 @@ Bachillerato</p>
                 el doble de <span class="formula-con-signo"><span
                 class="math inline">\(E_1\)</span>».</span></p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver un sistema por
+                Gauss</span></p>
                 <ol type="1">
                 <li><strong>Escalona.</strong> Usa la primera ecuación
                 para eliminar la <span class="math inline">\(x\)</span>
@@ -8460,10 +8557,11 @@ Bachillerato</p>
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Cuando el sistema no
                 colabora</h4>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Dos filas especiales deciden la
-                clasificación</strong> al escalonar:</p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Dos filas especiales deciden la
+                clasificación</span></p>
+                <p>Al escalonar:</p>
                 <ul>
                 <li>Una fila <span class="math inline">\(0=k\)</span>
                 con <span class="formula-con-signo"><span
@@ -8959,8 +9057,10 @@ Bachillerato</p>
                 <p>Muchos enunciados se resuelven traduciendo cada
                 condición a una ecuación. El protocolo importa tanto
                 como las cuentas:</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver un problema con un
+                sistema</span></p>
                 <ol type="1">
                 <li><strong>Define las incógnitas</strong> con una frase
                 y sus unidades: <span class="formula-con-signo">«<span
@@ -9248,13 +9348,15 @@ Bachillerato</p>
                 <section id="desigualdades-y-sus-reglas"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Desigualdades y sus reglas</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Una inecuación es una desigualdad entre expresiones
-                con incógnita. Su conjunto solución está formado por
-                todos los valores que la hacen cierta. Resolverla es
-                describir ese conjunto, normalmente como un intervalo o
-                una unión de intervalos.</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Inecuación</span></p>
+                <p>Una <strong>inecuación</strong> es una desigualdad
+                entre expresiones con incógnita. Su <strong>conjunto
+                solución</strong> está formado por todos los valores que
+                la hacen cierta. Resolverla es describir ese conjunto,
+                normalmente como un intervalo o una unión de
+                intervalos.</p>
                 </div>
                 <p>Los intervalos y las semirrectas se escriben como en
                 la unidad 1: corchete si el extremo entra, paréntesis si
@@ -9267,10 +9369,11 @@ Bachillerato</p>
                 x&lt;-3&amp;\iff x\in(-\infty,-3)
                 \end{aligned}
                 \]</span></p>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Las transformaciones seguras</strong> se
-                parecen a las de las ecuaciones, con una excepción
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Las transformaciones
+                seguras</span></p>
+                <p>Se parecen a las de las ecuaciones, con una excepción
                 crucial:</p>
                 <ul>
                 <li>Sumar o restar lo mismo en ambos miembros conserva
@@ -9460,8 +9563,10 @@ Bachillerato</p>
                 <p>La clave es el signo de un producto: para saber dónde
                 un polinomio es positivo o negativo, se factoriza y se
                 estudia el signo de cada factor sobre la recta.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una inecuación de grado
+                mayor que 1</span></p>
                 <ol type="1">
                 <li>Pasa todos los términos a un miembro: la inecuación
                 queda comparada con cero.</li>
@@ -9598,11 +9703,12 @@ Bachillerato</p>
                 [-2,0]\cup[2,+\infty)
                 \]</span></p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
-                <p><strong>Sin raíces o con una raíz doble.</strong> Si
-                un polinomio de segundo grado no tiene raíces reales
-                <span class="formula-con-signo">(<span
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Sin raíces o con una raíz
+                doble</span></p>
+                <p>Si un polinomio de segundo grado no tiene raíces
+                reales <span class="formula-con-signo">(<span
                 class="math inline">\(\Delta&lt;0\)</span>),</span> no
                 cambia nunca de signo: tiene siempre el signo de su
                 coeficiente principal. Si tiene una raíz doble <span
@@ -9843,8 +9949,10 @@ Bachillerato</p>
                 El camino seguro es comparar con cero y estudiar
                 signos.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver una inecuación
+                racional</span></p>
                 <ol type="1">
                 <li>Pasa todo a un miembro y opera hasta dejar
                 <strong>una sola fracción</strong> comparada con
@@ -10136,8 +10244,9 @@ Bachillerato</p>
                 <section id="con-una-incógnita"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Con una incógnita</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Sistema de inecuaciones</span></p>
                 <p>Un <strong>sistema de inecuaciones</strong> exige
                 cumplir varias desigualdades a la vez: su solución es la
                 <strong>intersección</strong> de las soluciones de cada
@@ -10174,9 +10283,12 @@ Bachillerato</p>
                 <section id="con-dos-incógnitas"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Con dos incógnitas</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Una inecuación lineal con dos incógnitas, como <span
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Inecuación lineal con dos
+                incógnitas</span></p>
+                <p>Una <strong>inecuación lineal con dos
+                incógnitas</strong>, como <span
                 class="formula-con-signo"><span
                 class="math inline">\(x+y\leq4\)</span>,</span> ya no
                 selecciona un intervalo, sino <strong>medio

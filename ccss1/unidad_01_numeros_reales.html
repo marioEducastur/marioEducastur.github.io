@@ -567,6 +567,16 @@
       font-size: 0.68em;
     }
 
+    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
+       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
+       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
+       línea; en pantalla va debajo, más grande. */
+    .nombre-bloque {
+      margin-left: 0.55em;
+      color: var(--texto);
+      font-weight: 800;
+    }
+
     .definicion {
       --color-bloque: var(--acento);
       --fondo-bloque: var(--acento-suave);
@@ -2236,6 +2246,35 @@
 
       .etiqueta-bloque::after {
         content: ":";
+      }
+
+      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
+         (la tercera de cinco maquetas, elegida por el profesor el 5 de
+         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
+         al ampliar en el modo clase acompañan juntos a todas las partes de
+         un bloque repartido. Un bloque sin nombre conserva su rótulo de
+         siempre. */
+      .bloque-didactico.con-nombre > p:first-child {
+        margin-bottom: 0.7rem;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .nombre-bloque {
+        display: block;
+        margin-left: 0;
+        font-size: 1.24rem;
+        letter-spacing: -0.005em;
+        line-height: 1.3;
       }
 
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
@@ -4901,8 +4940,9 @@ Bachillerato</p>
                 <h3 class="unnumbered">Los conjuntos numéricos</h3>
                 <p>Los principales conjuntos numéricos se relacionan
                 mediante inclusiones:</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Conjuntos numéricos</span></p>
                 <ul>
                 <li>Los <strong>números naturales</strong>, <span
                 class="formula-con-signo"><span
@@ -5020,12 +5060,13 @@ Bachillerato</p>
                 <section id="números-irracionales"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Números irracionales</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>Un número es irracional cuando su expresión decimal
-                no termina nunca y no es periódica: ningún bloque de
-                cifras se repite indefinidamente. Los dos más conocidos
-                son</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Número irracional</span></p>
+                <p>Un número es <strong>irracional</strong> cuando su
+                expresión decimal no termina nunca y no es periódica:
+                ningún bloque de cifras se repite indefinidamente. Los
+                dos más conocidos son</p>
                 <p><span class="math display">\[
                 \sqrt2=1{,}41421356\ldots,
                 \qquad
@@ -5051,8 +5092,10 @@ Bachillerato</p>
                 es otro irracional famoso.</li>
                 </ul>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Propiedades de los
+                irracionales</span></p>
                 <p>La raíz cuadrada de un número natural es irracional
                 siempre que el número no sea un cuadrado perfecto: <span
                 class="formula-con-signo"><span
@@ -5298,8 +5341,9 @@ Bachillerato</p>
                 <p>Toda fracción se puede convertir en número decimal
                 dividiendo. Según cómo sea el resultado, distinguimos
                 tres tipos:</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Tipos de decimal</span></p>
                 <ul>
                 <li><strong>Decimal exacto</strong>, cuando la división
                 termina: <span class="formula-con-signo"><span
@@ -5316,14 +5360,15 @@ Bachillerato</p>
                 <strong>período</strong> y se señala con una raya
                 encima.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Tipo de decimal sin
+                dividir</span></p>
                 <p>No hace falta dividir para saber qué tipo de decimal
                 produce una fracción: basta con mirar el denominador de
                 la fracción <strong>irreducible</strong>, la que ya no
                 se puede simplificar.</p>
-                <p><strong>Tipo de decimal sin dividir.</strong>
-                Simplifica la fracción y descompón su denominador en
+                <p>Simplifica la fracción y descompón su denominador en
                 factores primos:</p>
                 <ol type="1">
                 <li>Si solo aparecen los factores <span
@@ -5406,14 +5451,17 @@ Bachillerato</p>
                 <section id="fracción-generatriz"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Fracción generatriz</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Fracción generatriz</span></p>
                 <p>La <strong>fracción generatriz</strong> de un número
                 decimal exacto o periódico es la fracción irreducible
                 que lo genera.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Hallar la fracción
+                generatriz</span></p>
                 <p><strong>Decimal exacto.</strong> Se escribe el número
                 sin coma en el numerador y, en el denominador, un <span
                 class="math inline">\(1\)</span> seguido de tantos ceros
@@ -5629,8 +5677,10 @@ Bachillerato</p>
                 esta unidad; en el apartado 5 situaremos números en la
                 recta solo para compararlos.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Representar un número en la
+                recta</span></p>
                 <p>Para representar un número en la recta se tiene en
                 cuenta el conjunto más pequeño al que pertenece:</p>
                 <ul>
@@ -5759,8 +5809,9 @@ Bachillerato</p>
                 tiene inverso: <strong>no se puede dividir entre
                 cero</strong>.</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Sacar factor común</span></p>
                 <p>La propiedad distributiva leída de derecha a
                 izquierda es <strong>sacar factor común</strong>:</p>
                 <p><span class="math display">\[
@@ -5849,11 +5900,13 @@ Bachillerato</p>
                 <h3 data-number="2.1"><span
                 class="header-section-number">2.1</span> Potencias de
                 exponente entero</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                entero</span></p>
                 <p>Si <span class="math inline">\(a\)</span> es un
                 número real y <span class="math inline">\(n\)</span> un
-                número natural, la potencia <span
+                número natural, la <strong>potencia</strong> <span
                 class="math inline">\(a^{n}\)</span> es el producto de
                 <span class="math inline">\(n\)</span> factores iguales
                 a <span class="formula-con-signo"><span
@@ -6101,8 +6154,9 @@ Bachillerato</p>
                 comparar de un vistazo cantidades muy grandes o muy
                 pequeñas.</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Notación científica</span></p>
                 <p>Un número está en <strong>notación
                 científica</strong> cuando se escribe como</p>
                 <p><span class="math display">\[
@@ -6214,8 +6268,10 @@ Bachillerato</p>
                 da <span class="formula-con-signo"><span
                 class="math inline">\(a\)</span>?»:</span> son la
                 operación inversa de elevar a una potencia.</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Raíz de índice <span
+                class="math inline">\(n\)</span></span></p>
                 <p>Sea <span class="math inline">\(n\)</span> un número
                 natural mayor que <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>.</span> La <strong>raíz
@@ -6325,8 +6381,9 @@ Bachillerato</p>
                 <h3 data-number="3.1"><span
                 class="header-section-number">3.1</span> Radicales
                 equivalentes</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Radicales equivalentes</span></p>
                 <p>Igual que una fracción no cambia si se multiplican o
                 dividen numerador y denominador por el mismo número, un
                 radical no cambia si se multiplican o dividen por el
@@ -6382,8 +6439,10 @@ Bachillerato</p>
                 exponente fraccionario</h3>
                 <p>Un radical se puede escribir como una potencia de
                 exponente fraccionario.</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                fraccionario</span></p>
                 <p>Si <span class="formula-con-signo"><span
                 class="math inline">\(a&gt;0\)</span>,</span> <span
                 class="math inline">\(m\)</span> es un número entero y
@@ -6404,8 +6463,10 @@ Bachillerato</p>
                 16^{-\frac{1}{4}}&amp;=\frac{1}{\sqrt[4]{16}}=\frac{1}{2}
                 \end{aligned}
                 \]</span></p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Calcular una raíz con la
+                calculadora</span></p>
                 <p>En la calculadora, <span
                 class="math inline">\(\sqrt[7]{200}\)</span> se calcula
                 como <span
@@ -6524,8 +6585,10 @@ Bachillerato</p>
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Extraer e introducir
                 factores</h4>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Extraer e introducir
+                factores</span></p>
                 <p>Para simplificar un radical se descompone el
                 radicando en factores primos y se extraen los grupos
                 completos: cada grupo de <span
@@ -6548,8 +6611,9 @@ Bachillerato</p>
                 <section id="sumar-y-restar-radicales"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Sumar y restar radicales</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Radicales semejantes</span></p>
                 <p>Solo se pueden sumar o restar directamente los
                 <strong>radicales semejantes</strong>: los que, una vez
                 simplificados, tienen el mismo índice y el mismo
@@ -6573,8 +6637,10 @@ Bachillerato</p>
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Multiplicar y dividir
                 radicales</h4>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Multiplicar y dividir
+                radicales</span></p>
                 <p>Con el mismo índice se multiplican o dividen los
                 radicandos. Con índices distintos, primero se llevan a
                 un índice común, el mínimo común múltiplo de los
@@ -6589,16 +6655,19 @@ Bachillerato</p>
                 </section>
                 <section id="racionalizar" class="level4 unnumbered">
                 <h4 class="unnumbered">Racionalizar</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Racionalizar</span></p>
                 <p><strong>Racionalizar</strong> una fracción es
                 transformarla en otra equivalente sin raíces en el
                 denominador. Se multiplican numerador y denominador por
                 una misma expresión, elegida para que el denominador
                 deje de ser un radical.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Racionalizar un
+                denominador</span></p>
                 <p><strong>Una raíz cuadrada en el denominador.</strong>
                 Se multiplica arriba y abajo por esa misma raíz: <span
                 class="math display">\[
@@ -6879,8 +6948,9 @@ Bachillerato</p>
                 data-number="4.1">
                 <h3 data-number="4.1"><span
                 class="header-section-number">4.1</span> Definición</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Logaritmo</span></p>
                 <p>Sean <span class="math inline">\(a\)</span> y <span
                 class="math inline">\(x\)</span> dos números positivos,
                 con <span class="formula-con-signo"><span
@@ -7009,8 +7079,10 @@ Bachillerato</p>
                 <h3 data-number="4.2"><span
                 class="header-section-number">4.2</span> Tres preguntas
                 sobre la misma igualdad</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Potencia, raíz y
+                logaritmo</span></p>
                 <p>La igualdad <span
                 class="math inline">\(a^{n}=b\)</span> esconde tres
                 preguntas:</p>
@@ -7046,8 +7118,10 @@ Bachillerato</p>
                 <h3 data-number="4.3"><span
                 class="header-section-number">4.3</span> Logaritmos
                 decimales y neperianos</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Logaritmo decimal y
+                neperiano</span></p>
                 <p>Dos bases tienen nombre propio y tecla en la
                 calculadora:</p>
                 <ul>
@@ -7271,8 +7345,9 @@ Bachillerato</p>
                 <h3 data-number="4.5"><span
                 class="header-section-number">4.5</span> Desarrollar y
                 agrupar logaritmos</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Desarrollar y agrupar</span></p>
                 <p>Las propiedades se usan en los dos sentidos: para
                 <strong>desarrollar</strong> el logaritmo de una
                 expresión en una suma de logaritmos sencillos, y para
@@ -7356,11 +7431,10 @@ Bachillerato</p>
                 <p>La pregunta «¿cuándo?» de un crecimiento que se
                 multiplica lleva siempre a una ecuación con la incógnita
                 en el exponente. El logaritmo la despeja.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Resolver <span
-                class="formula-con-signo"><span
-                class="math inline">\(a^{x}=b\)</span>.</span></strong></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Resolver <span
+                class="math inline">\(a^{x}=b\)</span></span></p>
                 <ol type="1">
                 <li>Aísla la potencia en un lado de la igualdad.</li>
                 <li>Toma logaritmos en los dos lados (decimales o
@@ -7428,11 +7502,12 @@ Bachillerato</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(1{,}03^{24}\approx2{,}03\)</span>).</span></p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Lo mismo con una hoja de cálculo.</strong> La
-                pregunta «¿cuándo se duplican los precios?» admite dos
-                caminos en una hoja de cálculo:</p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Lo mismo con una hoja de
+                cálculo</span></p>
+                <p>La pregunta «¿cuándo se duplican los precios?» admite
+                dos caminos en una hoja de cálculo:</p>
                 <ol type="1">
                 <li>Por tanteo: escribe <span
                 class="math inline">\(1\)</span> en la celda
@@ -7752,8 +7827,10 @@ Bachillerato</p>
                 calculadas, hay que añadir cifras o comparar de forma
                 exacta, por ejemplo con fracciones.</p>
                 </div>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Reglas de las
+                desigualdades</span></p>
                 <p>Las desigualdades se conservan al sumar un número a
                 los dos lados y al multiplicar los dos lados por un
                 número positivo, pero <strong>cambian de sentido al
@@ -7866,8 +7943,9 @@ Bachillerato</p>
                 </tr>
                 </tbody>
                 </table>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Intervalo y semirrecta</span></p>
                 <p>Un <strong>intervalo</strong> es el conjunto de los
                 números reales comprendidos entre dos extremos <span
                 class="formula-con-signo"><span
@@ -8027,8 +8105,9 @@ Bachillerato</p>
                 <h3 data-number="5.3"><span
                 class="header-section-number">5.3</span> Unión e
                 intersección</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Intersección y unión</span></p>
                 <p>La <strong>intersección</strong> <span
                 class="math inline">\(A\cap B\)</span> es el conjunto de
                 los números que están en <span
@@ -8159,8 +8238,9 @@ Bachillerato</p>
                 <h3 data-number="6.1"><span
                 class="header-section-number">6.1</span> Conocimientos
                 básicos</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Resumen de la unidad</span></p>
                 <p><strong>Números reales.</strong> <span
                 class="formula-con-signo"><span
                 class="math inline">\(\mathbb N\subset\mathbb

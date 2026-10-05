@@ -567,6 +567,16 @@
       font-size: 0.68em;
     }
 
+    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
+       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
+       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
+       línea; en pantalla va debajo, más grande. */
+    .nombre-bloque {
+      margin-left: 0.55em;
+      color: var(--texto);
+      font-weight: 800;
+    }
+
     .definicion {
       --color-bloque: var(--acento);
       --fondo-bloque: var(--acento-suave);
@@ -2236,6 +2246,35 @@
 
       .etiqueta-bloque::after {
         content: ":";
+      }
+
+      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
+         (la tercera de cinco maquetas, elegida por el profesor el 5 de
+         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
+         al ampliar en el modo clase acompañan juntos a todas las partes de
+         un bloque repartido. Un bloque sin nombre conserva su rótulo de
+         siempre. */
+      .bloque-didactico.con-nombre > p:first-child {
+        margin-bottom: 0.7rem;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .nombre-bloque {
+        display: block;
+        margin-left: 0;
+        font-size: 1.24rem;
+        letter-spacing: -0.005em;
+        line-height: 1.3;
       }
 
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
@@ -5043,8 +5082,9 @@
                 <p>Toda fracción se puede convertir en número decimal
                 dividiendo. Según cómo sea el resultado, distinguimos
                 tres tipos:</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Tipos de decimal</span></p>
                 <ul>
                 <li><strong>Decimal exacto</strong>, cuando la división
                 termina: <span class="formula-con-signo"><span
@@ -5066,10 +5106,11 @@
                 class="math inline">\(0{,}1010010001\ldots\)</span>,</span>
                 con un cero más cada vez, no procede de ninguna
                 fracción: es irracional.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Tipo de decimal sin dividir.</strong>
-                Simplifica la fracción y descompón su denominador en
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Tipo de decimal sin
+                dividir</span></p>
+                <p>Simplifica la fracción y descompón su denominador en
                 factores primos:</p>
                 <ol type="1">
                 <li>Si solo aparecen los factores <span
@@ -5231,15 +5272,18 @@
                 <h3 data-number="1.3"><span
                 class="header-section-number">1.3</span> Fracción
                 generatriz</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Fracción generatriz</span></p>
                 <p>La <strong>fracción generatriz</strong> de un decimal
                 exacto o periódico es la fracción irreducible que lo
                 genera. Existe siempre: por eso esos decimales son
                 racionales.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Hallar la fracción
+                generatriz</span></p>
                 <p><strong>Decimal exacto.</strong> Se escribe el número
                 sin coma en el numerador y, en el denominador, un <span
                 class="math inline">\(1\)</span> seguido de tantos ceros
@@ -6107,8 +6151,9 @@
                 <h3 data-number="2.3"><span
                 class="header-section-number">2.3</span> Intervalos y
                 semirrectas</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Intervalo y semirrecta</span></p>
                 <p>Un <strong>intervalo</strong> es el conjunto de los
                 números reales comprendidos entre dos valores <span
                 class="formula-con-signo"><span
@@ -6346,8 +6391,9 @@
                 <h3 data-number="2.4"><span
                 class="header-section-number">2.4</span> Unión e
                 intersección</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Intersección y unión</span></p>
                 <p>La <strong>intersección</strong> <span
                 class="math inline">\(A\cap B\)</span> son los números
                 que están en <span class="math inline">\(A\)</span> y en
@@ -6534,8 +6580,9 @@
                 <h3 data-number="2.5"><span
                 class="header-section-number">2.5</span> Valor absoluto
                 y distancia</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Valor absoluto</span></p>
                 <p>El <strong>valor absoluto</strong> de un número real
                 <span class="formula-con-signo"><span
                 class="math inline">\(a\)</span>,</span> escrito <span
@@ -6771,9 +6818,9 @@
                 class="math inline">\(1{,}73\)</span>).</span> Hay dos
                 formas de aproximar a un orden dado (unidades, décimas,
                 centésimas, decenas…):</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Truncar y redondear.</strong></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Truncar y redondear</span></p>
                 <ol type="1">
                 <li>Al <strong>truncar</strong>, se eliminan las cifras
                 que siguen al orden elegido, sin mirarlas: <span
@@ -6831,8 +6878,9 @@
                 millares son <span class="formula-con-signo"><span
                 class="math inline">\(32\,000\)</span>.</span></p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Cifras significativas</span></p>
                 <p>Las <strong>cifras significativas</strong> de una
                 aproximación son todas sus cifras salvo los ceros que
                 solo sitúan la coma. Cada uno de estos números tiene
@@ -6992,8 +7040,10 @@
                 y relativo</h3>
                 <p>Siempre que se aproxima se comete un error, y se mide
                 de dos maneras.</p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Error absoluto y error
+                relativo</span></p>
                 <p>Si <span class="math inline">\(x\)</span> es el valor
                 exacto y <span class="math inline">\(x_{a}\)</span> una
                 aproximación:</p>
@@ -7172,11 +7222,13 @@
                 <h3 data-number="4.1"><span
                 class="header-section-number">4.1</span> Potencias de
                 exponente entero</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                entero</span></p>
                 <p>Si <span class="math inline">\(a\)</span> es un
                 número real y <span class="math inline">\(n\)</span> un
-                número natural, la potencia <span
+                número natural, la <strong>potencia</strong> <span
                 class="math inline">\(a^{n}\)</span> es el producto de
                 <span class="math inline">\(n\)</span> factores iguales
                 a <span class="formula-con-signo"><span
@@ -7447,8 +7499,9 @@
                 <h3 data-number="4.2"><span
                 class="header-section-number">4.2</span> Notación
                 científica</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Notación científica</span></p>
                 <p>Un número está escrito en <strong>notación
                 científica</strong> cuando tiene la forma</p>
                 <p><span class="math display">\[
@@ -7501,9 +7554,10 @@
                 dos y <span class="formula-con-signo"><span
                 class="math inline">\(4{,}00\cdot10^{3}\)</span>,</span>
                 tres.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Operar en notación científica.</strong></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Operar en notación
+                científica</span></p>
                 <ol type="1">
                 <li>Para <strong>sumar o restar</strong>, se escriben
                 los números con el mismo exponente (normalmente el
@@ -7814,8 +7868,10 @@
                 <section id="raíces" class="level3" data-number="5.1">
                 <h3 data-number="5.1"><span
                 class="header-section-number">5.1</span> Raíces</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Raíz de índice <span
+                class="math inline">\(n\)</span></span></p>
                 <p>Sea <span class="math inline">\(n\)</span> un número
                 natural mayor que <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>.</span> La <strong>raíz
@@ -7979,8 +8035,10 @@
                 <h3 data-number="5.2"><span
                 class="header-section-number">5.2</span> Potencias de
                 exponente fraccionario</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                fraccionario</span></p>
                 <p>Si <span class="formula-con-signo"><span
                 class="math inline">\(a&gt;0\)</span>,</span> <span
                 class="math inline">\(m\)</span> es un número entero y
@@ -8478,8 +8536,9 @@
                 <h3 data-number="5.6"><span
                 class="header-section-number">5.6</span> Operar con
                 radicales</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Radicales semejantes</span></p>
                 <p>Solo se suman o restan los <strong>radicales
                 semejantes</strong>: mismo índice y mismo radicando una
                 vez simplificados.</p>
@@ -8622,8 +8681,10 @@
                 multiplican numerador y denominador por la misma
                 expresión, elegida para que el denominador deje de ser
                 un radical.</p>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Racionalizar un
+                denominador</span></p>
                 <p><strong>Una raíz cuadrada en el denominador.</strong>
                 Se multiplica arriba y abajo por esa misma raíz, porque
                 <span class="formula-con-signo"><span
@@ -8798,8 +8859,9 @@
                 data-number="6.1">
                 <h3 data-number="6.1"><span
                 class="header-section-number">6.1</span> Definición</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Logaritmo</span></p>
                 <p>Sean <span class="math inline">\(a\)</span> y <span
                 class="math inline">\(x\)</span> dos números positivos,
                 con <span class="formula-con-signo"><span
@@ -9453,8 +9515,9 @@
                 <h3 data-number="7.1"><span
                 class="header-section-number">7.1</span> Lo
                 esencial</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Resumen de la unidad</span></p>
                 <p><strong>Números reales.</strong> <span
                 class="math inline">\(\mathbb N\subset\mathbb
                 Z\subset\mathbb Q\subset\mathbb R\)</span> y <span

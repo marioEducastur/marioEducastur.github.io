@@ -567,6 +567,16 @@
       font-size: 0.68em;
     }
 
+    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
+       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
+       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
+       línea; en pantalla va debajo, más grande. */
+    .nombre-bloque {
+      margin-left: 0.55em;
+      color: var(--texto);
+      font-weight: 800;
+    }
+
     .definicion {
       --color-bloque: var(--acento);
       --fondo-bloque: var(--acento-suave);
@@ -2236,6 +2246,35 @@
 
       .etiqueta-bloque::after {
         content: ":";
+      }
+
+      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
+         (la tercera de cinco maquetas, elegida por el profesor el 5 de
+         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
+         al ampliar en el modo clase acompañan juntos a todas las partes de
+         un bloque repartido. Un bloque sin nombre conserva su rótulo de
+         siempre. */
+      .bloque-didactico.con-nombre > p:first-child {
+        margin-bottom: 0.7rem;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .nombre-bloque {
+        display: block;
+        margin-left: 0;
+        font-size: 1.24rem;
+        letter-spacing: -0.005em;
+        line-height: 1.3;
       }
 
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
@@ -4855,8 +4894,9 @@ Bachillerato</p>
                 <section id="los-conjuntos-numéricos"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Los conjuntos numéricos</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Conjuntos numéricos</span></p>
                 <ul>
                 <li>Los <strong>números naturales</strong>, <span
                 class="formula-con-signo"><span
@@ -4933,8 +4973,9 @@ Bachillerato</p>
                 \mathbb N\subset\mathbb Z\subset\mathbb Q\subset\mathbb
                 R
                 \]</span></p>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Conjuntos densos</span></p>
                 <p>Cada número real es racional o irracional, nunca las
                 dos cosas. Entre dos reales distintos hay siempre
                 infinitos racionales e infinitos irracionales: se dice
@@ -5218,8 +5259,9 @@ Bachillerato</p>
                 racional de un irracional por su expresión decimal
                 (véase «Los conjuntos numéricos»).</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Tipos de decimal</span></p>
                 <p>Un número real es racional si y solo si su expresión
                 decimal es exacta o periódica:</p>
                 <ul>
@@ -5244,11 +5286,12 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(0{,}\overline{9}=1\)</span>.</span></p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
-                <p><strong>Tipo de decimal sin dividir.</strong> Con la
-                fracción ya irreducible, descompón el denominador en
-                factores primos:</p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Tipo de decimal sin
+                dividir</span></p>
+                <p>Con la fracción ya irreducible, descompón el
+                denominador en factores primos:</p>
                 <ol type="1">
                 <li>Si solo aparecen los factores <span
                 class="math inline">\(2\)</span> o <span
@@ -5287,14 +5330,17 @@ Bachillerato</p>
                 factor <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>.</span></p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p><strong>Fracción generatriz.</strong> Es la fracción
-                irreducible que genera un decimal exacto o
-                periódico.</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Fracción generatriz</span></p>
+                <p>La <strong>fracción generatriz</strong> de un decimal
+                exacto o periódico es la fracción irreducible que lo
+                genera.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Hallar la fracción
+                generatriz</span></p>
                 <p><strong>Decimal exacto.</strong> Se quita la coma y
                 se divide por la potencia de <span
                 class="math inline">\(10\)</span> que corresponda: <span
@@ -5397,8 +5443,10 @@ Bachillerato</p>
                 <p>La representación de fracciones y raíces en la recta
                 se da por sabida y no se evalúa en esta unidad.</p>
                 </div>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Representar un número en la
+                recta</span></p>
                 <ul>
                 <li>Un entero se marca directamente sobre la recta.</li>
                 <li>Una fracción se sitúa dividiendo la unidad en tantas
@@ -5544,11 +5592,13 @@ Bachillerato</p>
                 <h3 data-number="2.1"><span
                 class="header-section-number">2.1</span> Potencias de
                 exponente entero</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                entero</span></p>
                 <p>Si <span class="math inline">\(a\in\mathbb R\)</span>
                 y <span class="math inline">\(n\)</span> es un número
-                natural, la potencia <span
+                natural, la <strong>potencia</strong> <span
                 class="math inline">\(a^n\)</span> es el producto de
                 <span class="math inline">\(n\)</span> factores iguales
                 a <span class="formula-con-signo"><span
@@ -5752,8 +5802,9 @@ Bachillerato</p>
                 evalúa como tal en esta unidad, aunque se usará para
                 comparar magnitudes y en las actividades finales.</p>
                 </div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Notación científica</span></p>
                 <p>Un número está en <strong>notación
                 científica</strong> cuando se escribe como</p>
                 <p><span class="math display">\[
@@ -5850,8 +5901,12 @@ Bachillerato</p>
                 data-friso="raices"><span
                 class="header-section-number">3</span> Radicales</h2>
                 <div class="friso-apartado" data-friso="raices" aria-hidden="true"></div>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Raíz <span
+                class="formula-con-signo"><span
+                class="math inline">\(n\)</span>-ésima</span> y
+                radical</span></p>
                 <p>Sean <span class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb N\)</span>,</span>
                 <span class="formula-con-signo"><span
@@ -5950,8 +6005,9 @@ Bachillerato</p>
                 <h3 data-number="3.1"><span
                 class="header-section-number">3.1</span> Radicales
                 equivalentes</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Radicales equivalentes</span></p>
                 <p>Dos radicales son <strong>equivalentes</strong> si
                 valen lo mismo. Con radicando positivo, multiplicar o
                 dividir el índice y el exponente del radicando por el
@@ -6005,8 +6061,10 @@ Bachillerato</p>
                 <h3 data-number="3.2"><span
                 class="header-section-number">3.2</span> Potencias de
                 exponente fraccionario</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Potencia de exponente
+                fraccionario</span></p>
                 <p>Si <span class="formula-con-signo"><span
                 class="math inline">\(a&gt;0\)</span>,</span> <span
                 class="math inline">\(m\in\mathbb Z\)</span> y <span
@@ -6229,8 +6287,10 @@ Bachillerato</p>
                 <section id="extraer-factores"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Extraer factores</h4>
-                <div class="metodo bloque-didactico">
-                <p><span class="etiqueta-bloque">Método</span></p>
+                <div class="metodo bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Método</span> <span
+                class="nombre-bloque">Extraer factores de un
+                radical</span></p>
                 <p>Se descompone el radicando y se sacan las potencias
                 completas del índice. Si el exponente supera al índice,
                 se separa en un múltiplo del índice más un resto:</p>
@@ -6247,8 +6307,9 @@ Bachillerato</p>
                 </section>
                 <section id="sumar-y-restar" class="level4 unnumbered">
                 <h4 class="unnumbered">Sumar y restar</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Radicales semejantes</span></p>
                 <p>Solo se suman <strong>radicales semejantes</strong>,
                 los que tienen el mismo índice y el mismo radicando una
                 vez simplificados. Se operan los coeficientes:</p>
@@ -6282,8 +6343,9 @@ Bachillerato</p>
                 </section>
                 <section id="racionalizar" class="level4 unnumbered">
                 <h4 class="unnumbered">Racionalizar</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Racionalizar</span></p>
                 <p><strong>Racionalizar</strong> es transformar una
                 fracción para que su denominador no contenga radicales,
                 sin cambiar su valor.</p>
@@ -6576,8 +6638,9 @@ Bachillerato</p>
                 data-number="4.1">
                 <h3 data-number="4.1"><span
                 class="header-section-number">4.1</span> Definición</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Logaritmo</span></p>
                 <p>Sean <span class="formula-con-signo"><span
                 class="math inline">\(a&gt;0\)</span>,</span> <span
                 class="math inline">\(a\neq1\)</span> y <span
@@ -6696,13 +6759,16 @@ Bachillerato</p>
                 <h3 data-number="4.2"><span
                 class="header-section-number">4.2</span> Logaritmos
                 decimales y neperianos</h3>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Logaritmo decimal y
+                neperiano</span></p>
                 <p>Cuando la base es <span
                 class="math inline">\(10\)</span> se omite: <span
                 class="formula-con-signo"><span
-                class="math inline">\(\log x=\log_{10}x\)</span>.</span>
-                Cuando la base es el número <span
+                class="math inline">\(\log x=\log_{10}x\)</span>,</span>
+                el logaritmo <strong>decimal</strong>. Cuando la base es
+                el número <span
                 class="math inline">\(e\approx2{,}71828\)</span> se
                 escribe <span class="formula-con-signo"><span
                 class="math inline">\(\ln x=\log_e x\)</span>,</span> el
@@ -7001,8 +7067,10 @@ Bachillerato</p>
                 <h3 data-number="4.5"><span
                 class="header-section-number">4.5</span> Despejar un
                 exponente</h3>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Exponencial y logaritmo, funciones
+                inversas</span></p>
                 <p>Las funciones <span
                 class="math inline">\(y=a^x\)</span> e <span
                 class="formula-con-signo"><span
@@ -7172,9 +7240,11 @@ Bachillerato</p>
                 Aplicaciones</h3>
                 <section id="acidez" class="level4 unnumbered">
                 <h4 class="unnumbered">Acidez</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>El pH mide la acidez de una disolución mediante</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">pH</span></p>
+                <p>El <strong>pH</strong> mide la acidez de una
+                disolución mediante</p>
                 <p><span class="math display">\[
                 \operatorname{pH}
                 =
@@ -7200,10 +7270,12 @@ Bachillerato</p>
                 <section id="magnitud-sísmica"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Magnitud sísmica</h4>
-                <div class="definicion bloque-didactico">
-                <p><span class="etiqueta-bloque">Definición</span></p>
-                <p>La magnitud de un terremoto se mide con un
-                logaritmo:</p>
+                <div class="definicion bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Definición</span> <span
+                class="nombre-bloque">Magnitud de un
+                terremoto</span></p>
+                <p>La <strong>magnitud</strong> de un terremoto se mide
+                con un logaritmo:</p>
                 <p><span class="math display">\[
                 M=\log\left(\frac{A}{A_0}\right),
                 \]</span></p>
@@ -7252,8 +7324,10 @@ Bachillerato</p>
                 <section id="interés-compuesto"
                 class="level4 unnumbered">
                 <h4 class="unnumbered">Interés compuesto</h4>
-                <div class="resultado bloque-didactico">
-                <p><span class="etiqueta-bloque">Resultado</span></p>
+                <div class="resultado bloque-didactico con-nombre">
+                <p><span class="etiqueta-bloque">Resultado</span> <span
+                class="nombre-bloque">Fórmula del interés
+                compuesto</span></p>
                 <p>Un capital <span class="math inline">\(C_0\)</span>
                 colocado a un interés compuesto del <span
                 class="math inline">\(r\)</span> por uno anual se

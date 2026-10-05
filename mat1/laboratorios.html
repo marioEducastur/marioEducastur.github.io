@@ -567,6 +567,16 @@
       font-size: 0.68em;
     }
 
+    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
+       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
+       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
+       línea; en pantalla va debajo, más grande. */
+    .nombre-bloque {
+      margin-left: 0.55em;
+      color: var(--texto);
+      font-weight: 800;
+    }
+
     .definicion {
       --color-bloque: var(--acento);
       --fondo-bloque: var(--acento-suave);
@@ -2236,6 +2246,35 @@
 
       .etiqueta-bloque::after {
         content: ":";
+      }
+
+      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
+         (la tercera de cinco maquetas, elegida por el profesor el 5 de
+         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
+         al ampliar en el modo clase acompañan juntos a todas las partes de
+         un bloque repartido. Un bloque sin nombre conserva su rótulo de
+         siempre. */
+      .bloque-didactico.con-nombre > p:first-child {
+        margin-bottom: 0.7rem;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .con-nombre > p:first-child > .etiqueta-bloque::after {
+        content: none;
+      }
+
+      .nombre-bloque {
+        display: block;
+        margin-left: 0;
+        font-size: 1.24rem;
+        letter-spacing: -0.005em;
+        line-height: 1.3;
       }
 
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
