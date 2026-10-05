@@ -2277,6 +2277,29 @@
         line-height: 1.3;
       }
 
+      /* El título de dentro de un subapartado («División de polinomios»)
+         manda sobre el nombre de los bloques que lleva debajo y queda por
+         debajo del título del subapartado: algo menor que este y con un
+         filete a todo el ancho, del color del apartado (la segunda de cinco
+         maquetas, elegida por el profesor el 5 de octubre de 2026, al ver
+         que el nombre de un bloque, a 1,24 rem, se leía más que su título,
+         a 1,13). Los tres tamaños bajan juntos en pantallas estrechas,
+         donde el subapartado mide 1,25 rem. El rótulo «Ejercicios» de cada
+         lista no cambia. En el modo clase el estilo es el mismo y los
+         tamaños son los suyos, más abajo. */
+      #contenido-unidad section.level4 > h4:not(.ejercicios) {
+        padding-bottom: 0.38rem;
+        color: var(--acento-oscuro);
+        border-bottom: 2px solid var(--borde);
+        border-bottom-color: color-mix(in srgb, var(--apartado, var(--acento)) 32%, #ffffff);
+        font-size: clamp(1.19rem, 2.08vw, 1.34rem);
+        font-weight: 800;
+      }
+
+      :where(html:not(.modo-clase)) .nombre-bloque {
+        font-size: clamp(1.1rem, 1.93vw, 1.24rem);
+      }
+
       /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
          desplazamiento horizontal cuando su anchura supera la pantalla. */
       .bloque-didactico .math.display {
@@ -2580,6 +2603,25 @@
 
       html.modo-clase h4 {
         font-size: 1.55rem;
+      }
+
+      /* En el modo clase el texto mide 1,42 rem, y el nombre de un bloque,
+         a 1,24, se leía menos que el párrafo de debajo (el profesor, 5 de
+         octubre de 2026: «agrándalo sí»). El nombre y su antetítulo crecen
+         con la letra del modo, y el título de dentro del subapartado sube
+         lo justo para seguir por encima: subapartado, 1,85 rem > título de
+         dentro, 1,7 > nombre de bloque, 1,55 > texto, 1,42. Al ampliar
+         crecen todos con `rem`, en la misma proporción. */
+      html.modo-clase #contenido-unidad section.level4 > h4:not(.ejercicios) {
+        font-size: 1.7rem;
+      }
+
+      html.modo-clase .nombre-bloque {
+        font-size: 1.55rem;
+      }
+
+      html.modo-clase .con-nombre > p:first-child > .etiqueta-bloque {
+        font-size: 0.9rem;
       }
 
       /* La sangría de las listas crece con su letra (observación del
