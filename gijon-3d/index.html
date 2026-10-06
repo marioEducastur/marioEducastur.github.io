@@ -3144,14 +3144,15 @@ const rnd = n => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return
 // «Muy alta» de ahora). Además de lo de antes: pr, la resolución; shadow, el lado del mapa de sombras (0: sin sombras) y shadow2,
 // el de la sombra de lejos (con él, sombras en dos cascadas: ver SOMBRAS); hojas, hasta dónde llevan hojas los árboles (0: solo
 // la copa lisa), y nh, cuántos como mucho (ver ARBOLES); fx, los efectos de luz (ver FX); v, el nivel de la gente, el tráfico,
-// la lluvia y los coches aparcados que se dibujan (0, 1 o 2: ver LIFE_Q), que no cambia con los efectos.
+// la lluvia y los coches aparcados que se dibujan (0, 1 o 2: ver LIFE_Q), que no cambia con los efectos; luz (06/10/2026), la luz
+// de las farolas en el suelo, las sombras de las nubes y la bruma con el sol (ver LUCES).
 const DPR2 = Math.min(devicePixelRatio || 1, 2);
 const QUALITY = [
-  { n: 'Baja', que: 'Sin sombras ni detalles, con menos resolución y la vista corta: lo más fluido', v: 0, pr: 0.75, shadow: 0, det: 380, arb: 380, far: 380, dn: 1e9, hojas: 0, nh: 0, fx: false },
-  { n: 'Media', que: 'Sombras, vista lejana y árboles con hojas de cerca', v: 1, pr: 1, shadow: 1024, det: 620, arb: 800, far: 3500, dn: 750, hojas: 90, nh: 260, fx: false },
-  { n: 'Alta', que: 'Además, efectos de luz y sombras nítidas', v: 1, pr: 1, shadow: 2048, shadow2: 2048, det: 620, arb: 800, far: 3500, dn: 750, hojas: 120, nh: 400, fx: true },
-  { n: 'Muy alta', que: 'Además, toda la resolución de la pantalla y más distancia', v: 2, pr: DPR2, shadow: 2048, shadow2: 2048, det: 950, arb: 1100, far: 5000, dn: 1100, hojas: 150, nh: 560, fx: true },
-  { n: 'Máxima', que: 'Todo al máximo: para equipos potentes', v: 2, pr: DPR2, shadow: 4096, shadow2: 4096, det: 1300, arb: 1500, far: 6500, dn: 1500, hojas: 220, nh: 900, fx: true }
+  { n: 'Baja', que: 'Sin sombras ni detalles, con menos resolución y la vista corta: lo más fluido', v: 0, pr: 0.75, shadow: 0, det: 380, arb: 380, far: 380, dn: 1e9, hojas: 0, nh: 0, fx: false, luz: false },
+  { n: 'Media', que: 'Sombras, vista lejana, árboles con hojas de cerca y la luz de las farolas', v: 1, pr: 1, shadow: 1024, det: 620, arb: 800, far: 3500, dn: 750, hojas: 90, nh: 260, fx: false, luz: true },
+  { n: 'Alta', que: 'Además, efectos de luz y sombras nítidas', v: 1, pr: 1, shadow: 2048, shadow2: 2048, det: 620, arb: 800, far: 3500, dn: 750, hojas: 120, nh: 400, fx: true, luz: true },
+  { n: 'Muy alta', que: 'Además, toda la resolución de la pantalla y más distancia', v: 2, pr: DPR2, shadow: 2048, shadow2: 2048, det: 950, arb: 1100, far: 5000, dn: 1100, hojas: 150, nh: 560, fx: true, luz: true },
+  { n: 'Máxima', que: 'Todo al máximo: para equipos potentes', v: 2, pr: DPR2, shadow: 4096, shadow2: 4096, det: 1300, arb: 1500, far: 6500, dn: 1500, hojas: 220, nh: 900, fx: true, luz: true }
 ];
 
 // ---------- Geometría 2D (plano: [x este, y norte]) ----------
@@ -3750,9 +3751,27 @@ const scene = new THREE.Scene(); scene.fog = new THREE.Fog(0xcfdde6, 10000, 620)
 // Niebla (desde el 29/09/2026): la bruma del tiempo, 1 − e^(−d/L), con L = fog.near (sale de la visibilidad: ajustaNiebla), y al
 // final del alcance (fog.far) un fundido que esconde dónde se acaba lo dibujado. Antes era la niebla lineal de Three.js entre
 // fog.near y fog.far, que a 380–950 m lo tapaba todo. brumaPatch usa la misma cuenta.
+// (06/10/2026) Con las luces de LUCES (calidades con «luz»), en los materiales con luces la bruma es además:
+//  · menos espesa con la altura (BRUMA_ALTO: la densidad cae con la altura media del rayo, a la mitad a 420 m): desde el aire se ve
+//    más lejos el suelo, y lo alto asoma;
+//  · más clara y cálida hacia el sol, como el cielo de detrás; y, antes de la bruma, el aire azulea lo lejano y le quita contraste
+//    (hasta un tercio, en unos kilómetros): es lo que da profundidad a la vista (BRUMA_COLOR).
+// Lo que les hace falta (dónde está el sol y cuánto) llega en la luz de foco de LUCES. brumaPatch usa lo mismo.
+// Va en cada píxel de casi todo: sin exp ni pow (con ellos, las vistas de calle perdían unos puntos de fps).
+const BRUMA_ALTO = `float fogD = vFogDepth;
+#if defined( RE_Direct ) && NUM_SPOT_LIGHT_MAPS > 0
+fogD *= 420.0 / ( 420.0 + max( cameraPosition.y - 0.5 * dot( vViewPosition, viewMatrix[ 1 ].xyz ), 0.0 ) );   // (viewMatrix[1].xyz: hacia arriba, visto desde la cámara)
+#endif`, BRUMA_COLOR = `vec3 colBruma = fogColor;
+#if defined( RE_Direct ) && NUM_SPOT_LIGHT_MAPS > 0
+if ( spotLights[ 0 ].coneCos > 0.001 ) gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor * vec3( 0.74, 0.9, 1.12 ), 0.36 * spotLights[ 0 ].coneCos * fogD / ( fogD + 1500.0 ) * ( 1.0 - fogFactor ) );   // el aire: lo lejano, más azul y con menos contraste
+if ( spotLights[ 0 ].decay > 0.0 ) { float cs = max( dot( - vViewPosition, spotLights[ 0 ].direction ), 0.0 ); cs = cs * cs / dot( vViewPosition, vViewPosition ); cs *= cs;   // (el coseno a la octava, sin pow)
+	colBruma *= 1.0 + spotLights[ 0 ].decay * cs * cs * vec3( 1.0, 0.86, 0.64 ); }   // hacia el sol, más clara y cálida
+#endif`;
 THREE.ShaderChunk.fog_fragment = `#ifdef USE_FOG
-float fogFactor = 1.0 - exp(-vFogDepth / fogNear) * (1.0 - smoothstep(0.55 * fogFar, fogFar, vFogDepth));
-gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, fogFactor);
+${BRUMA_ALTO}
+float fogFactor = 1.0 - exp(-fogD / fogNear) * (1.0 - smoothstep(0.55 * fogFar, fogFar, vFogDepth));
+${BRUMA_COLOR}
+gl_FragColor.rgb = mix(gl_FragColor.rgb, colBruma, fogFactor);
 #endif`;
 const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 20000); camera.rotation.order = 'YXZ';
 const mat = o => new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, ...o });
@@ -3922,6 +3941,9 @@ const NOCHE = { uNoche: { value: 0 }, uLuces: { value: 0 } };
 // (más fuerte en los primeros metros). focoPatch lo añade a un material; base es la cota del suelo del monumento. Los materiales
 // de NOCHE_MATS (vidrieras, ventanas encendidas por dentro) suben su emisivo con la noche: [material, intensidad de noche].
 const FOCO = { uFoco: { value: 0 } }, NOCHE_MATS = [];
+// Las farolas que alumbran (06/10/2026: ver LUCES): quien pone una fuera de W.lamps y de las de Begoña la apunta aquí, [x, y, tipo]
+// (los tipos, en LUCES.TIPOS). Con todas se hace, al acabar la carga, el mapa de la luz de las farolas.
+const FAROLAS = [], LAMPARAS = [];   // (LAMPARAS: los materiales que se encienden de noche como lampMat, el de los globos)
 // Tiempo (ver «Tiempo»): el real de Gijón (Open-Meteo) o el que se elija en las opciones. cov: nubes (0–1); lluvia: 0 seco,
 // ~0,3 orbayu, ~0,85 lluvia; vis: visibilidad (m); ola: altura de las olas (1 = la de siempre); mojado: suelo mojado (0–1).
 const TIEMPOS = {
@@ -3974,8 +3996,10 @@ function brumaPatch(m, base, desde = 20, hasta = 45) {
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n{ vec4 bp = vec4(transformed, 1.0);\n#ifdef USE_INSTANCING\nbp = instanceMatrix * bp;\n#endif\nvBrumaY = (modelMatrix * bp).y; }');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uBrumaK; uniform vec3 uBrumaY; varying float vBrumaY;')
       .replace('#include <fog_fragment>', `#ifdef USE_FOG
-float fogFactor = mix(1.0 - exp(-vFogDepth / fogNear) * (1.0 - smoothstep(0.55 * fogFar, fogFar, vFogDepth)), 1.0 - exp(-vFogDepth * uBrumaK), smoothstep(uBrumaY.y, uBrumaY.z, vBrumaY - uBrumaY.x));
-gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, fogFactor);
+${BRUMA_ALTO}
+float fogFactor = mix(1.0 - exp(-fogD / fogNear) * (1.0 - smoothstep(0.55 * fogFar, fogFar, vFogDepth)), 1.0 - exp(-fogD * uBrumaK), smoothstep(uBrumaY.y, uBrumaY.z, vBrumaY - uBrumaY.x));
+${BRUMA_COLOR}
+gl_FragColor.rgb = mix(gl_FragColor.rgb, colBruma, fogFactor);
 #endif`);
   };
   const key = m.customProgramCacheKey ? m.customProgramCacheKey() : '';
@@ -4334,7 +4358,7 @@ function fachadaMat(estilo, tienda) {   // estilo: 0 ventana, 1 balcón, 2 galer
         cristal = clamp(cristal, 0.0, 1.0) * (1.0 - fBanda(mg.y, 2.02, 2.08, px.y) * enPuerta);   // (con el travesaño de la puerta)
         vec3 cuarto = uFacK > 0.5 ? fCuarto(mg, vt, bw, alto, 4.5 + 3.0 * fract(hc * 13.0), mix(vec3(0.8, 0.77, 0.7), vec3(0.6, 0.65, 0.7), fract(hc * 5.0)) * (0.78 + 0.25 * fract(hc * 3.0)), hc2, 1.0) : vec3(0.5);
         vec3 luzC = mix(vec3(1.0, 0.86, 0.66), vec3(0.9, 0.95, 1.0), step(0.6, fract(hc * 7.0)));
-        ${FAC_CRISTAL('cuarto', '0.2', 'enc * 1.15 * luzC')}
+        ${FAC_CRISTAL('cuarto', '0.2', 'enc * 0.78 * luzC')}
         vec3 carp = mg.y < zoc && enPuerta < 0.5 ? mix(oscuro, piedra * 0.7, 0.6) : oscuro;   // el zócalo y los marcos
         col = mix(carp, col, cristal); em *= cristal; rg = mix(0.6, rg, cristal);
         if (hc2 > 0.72) { float td = fBanda(mg.y, rot - 0.62, rot, px.y), raya = fRayas(mg.x, 0.36, 0.18, px.x);   // el toldo, a rayas, y su sombra debajo
@@ -5724,7 +5748,14 @@ const LEJOS = D.lejos ? await (async () => {
     const a = VX(i, nY); if (!(a.m & 1)) continue;
     Hz.quad(a.p, [a.p[0] + s * LEJ, a.p[1], a.p[2]], [a.p[0] + s * LEJ, a.p[1], a.p[2] + LEJ], [a.p[0], a.p[1], a.p[2] + LEJ], up);
   }
-  mesh(SG, mat({ map: mapa, roughness: 1 }), false);   // por teselas
+  // De noche (06/10/2026): fuera de la zona no hay farolas una a una (dentro, su luz es de verdad: ver LUCES); las calles se encienden
+  // pintadas, con su resplandor, en una textura pequeña que solo brilla de noche
+  const NW = 1024, kn = NW / (LX1 - LX0), calNoche = lienzo(NW, Math.round(NW * (LY1 - LY0) / (LX1 - LX0)), (x, w, h) => {
+    x.fillStyle = '#000'; x.fillRect(0, 0, w, h); x.lineCap = x.lineJoin = 'round';
+    for (const [mas, color] of [[26, 'rgba(255,160,80,0.07)'], [3, 'rgba(255,184,110,0.3)']]) { x.strokeStyle = color;
+      for (const c of CAL) { x.lineWidth = Math.max(1.3, (c.w + mas) * kn); x.beginPath(); for (let i = 0; i < c.p.length; i += 2) { const px = (c.p[i] - LX0) * kn, py = (LY1 - c.p[i + 1]) * kn; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); } }
+  });
+  { const m = mat({ map: mapa, roughness: 1, emissive: '#ffffff', emissiveMap: calNoche, emissiveIntensity: 0 }); NOCHE_MATS.push([m, 0.5]); mesh(SG, m, false); }   // por teselas
   scene.add(new THREE.Mesh(F.geo(), mat({ color: '#8d8474', roughness: 1 })));
   scene.add(new THREE.Mesh(Hz.geo(), mat({ color: '#b3ac9d', roughness: 1 })));
   // edificios: paredes con ventanas (la textura multiplica el color de fachada) y azotea lisa; en las cuestas, las paredes bajan
@@ -7390,6 +7421,7 @@ function farolaDoble(items, colocar, dy = 0) {   // la farola de fundición blan
   for (const s of [-1, 1]) hierro.push([Bx(0.4, 0.035, 0.035).rotateZ(s * 0.2), s * 0.2, 3.06, 0], [Cy(0.03, 0, 0.16), s * 0.3, 2.98, 0], [Cy(0.1, 0.04, 0.2), s * 0.38, 3.24, 0],
     [Cy(0.07, 0.15, 0.1), s * 0.38, 3.72, 0], [Cy(0.03, 0.07, 0.08), s * 0.38, 3.81, 0], [Cy(0, 0.02, 0.08), s * 0.38, 3.89, 0]);
   const sube = (o, p, i) => { colocar(o, p, i); o.position.y += dy; };
+  { const o = new THREE.Object3D(); items.forEach((p, i) => { colocar(o, p, i); FAROLAS.push([o.position.x, -o.position.z, 'doble']); }); }   // (alumbran: ver LUCES)
   inst(merged(hierro), white, items, sube);
   inst(merged([-1, 1].map(s => [new THREE.SphereGeometry(0.17, 12, 9).scale(1, 0.95, 1), s * 0.38, 3.51, 0])), lampMat, items, sube);
 }
@@ -8054,13 +8086,200 @@ sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.3; scene.add(sun, sun.targe
 const sun2 = new THREE.DirectionalLight(0xffffff, 0); sun2.castShadow = true; sun2.visible = false; sun2.shadow.mapSize.set(2048, 2048);
 Object.assign(sun2.shadow.camera, { left: -260, right: 260, top: 260, bottom: -260, near: 1, far: 1500 }); sun2.shadow.camera.updateProjectionMatrix();
 sun2.shadow.bias = -0.0004; sun2.shadow.normalBias = 0.5; sun2.shadow.autoUpdate = false; scene.add(sun2, sun2.target);
-{ const c = THREE.ShaderChunk.lights_fragment_begin, a = c.indexOf('#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )'), b = c.indexOf('#if ( NUM_RECT_AREA_LIGHTS > 0 )');
-  if (a < 0 || b < a) throw new Error('Sombras: no encuentro las luces direccionales en el shader de Three.js (¿ha cambiado de versión?)');
-  THREE.ShaderChunk.lights_fragment_begin = c.slice(0, a) + `#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )
+// ---------- La luz de las farolas y las sombras de las nubes (06/10/2026) ----------
+// De noche el suelo no recibía la luz de las farolas: todo iba con la misma luz de ambiente, lisa, y solo brillaban las ventanas.
+// Ahora la luz de todas las farolas (FAROLAS, W.lamps, las de Begoña y las de las calles: ver «Farolas de las calles») va en un mapa
+// de la zona, a LUCES.res m por píxel: en rojo, la luz cálida; en verde, la blanca; en alfa, la cota del pie de las farolas de allí.
+// Lo hace LUCES.monta al acabar la carga: cada farola deja su charco (lo que le llega al suelo de un punto de luz a su altura),
+// cortado por los edificios (los rayos se paran en la huella del primero que encuentran). En el azul de un rincón del mapa (258 × 258
+// píxeles) van las nubes: un ruido que se repite, para sus sombras.
+// Lo leen todos los materiales con luces, sin tocarlos uno a uno: va en una luz de foco de Three.js que no alumbra (como sun2, que
+// solo trae su sombra) y cuyo «mapa» es este. El trozo de shader de las luces (el mismo que ya se cambiaba para las cascadas) saca
+// de la posición de cada píxel su punto de la escena, y:
+//  · farolas: lee el mapa 1,6 m por delante de la superficie (según su normal): en el suelo, donde cae; en una pared, la luz de la
+//    calle de delante; en una persona, más luz por el lado de la farola. Se apaga con la altura sobre el pie de la farola (los
+//    bajos y el primer piso, sí; de 10 m para arriba, no), y lo que mira hacia abajo casi no recibe. Se suma a la luz de ambiente
+//    (difusa: no da brillos);
+//  · nubes: con el cielo a medias, manchas de sol y de sombra que se mueven con el viento (desde cada punto, hacia el sol, hasta la
+//    altura de las nubes; la misma cobertura que las nubes del cielo, aunque no son las mismas una a una). Multiplica la luz del
+//    sol. Con el cielo cubierto del todo o lloviendo no hay manchas: la luz del sol baja entera, como antes.
+// Sus números viajan en los campos de esa luz que Three.js pasa tal cual a todos los materiales: color = (cuánto alumbran las
+// farolas, y el desplazamiento de las nubes con el viento); distance, la cobertura para las sombras (0, sin ellas); decay, cuánto
+// se aclara la bruma hacia el sol, y el coseno de su ángulo, cuánto azulea el aire lo lejano (ver la niebla, arriba); su
+// «dirección» es hacia el sol.
+// Coste: lo que pesaba no era la cuenta de cada píxel sino las llamadas de WebGL. Con dos luces de foco, cada una con su textura y su
+// matriz (la primera versión), Three.js las volvía a poner en cada material: unas 700 llamadas más por fotograma (un 17 %) y de
+// un 10 a un 14 % menos de fps. Por eso es una sola textura, sin matriz (el punto de la escena sale de vViewPosition; se quitan de
+// los shaders las coordenadas de las luces de foco, que nadie usa) y declarada la primera, para que le toque siempre la misma
+// unidad de textura y no haya que volver a enlazarla.
+// Solo en las calidades con «luz» (ver QUALITY): sin ella, la luz se quita y los shaders quedan como antes.
+const LUCES = (() => {
+  const res = matchMedia('(pointer:coarse)').matches ? 3 : 2, LW = Math.ceil(BW / res), LH = Math.ceil(BH / res), EMAX = 6;
+  // Tipos de farola: h, la altura del punto de luz sobre su pie (m); e, lo que alumbra justo debajo (la luz de ambiente de día es 1);
+  // r, hasta dónde llega (m); c, cuánto es de luz cálida y cuánto de blanca
+  const TIPOS = { globo: { h: 4.75, e: 1.25, r: 26, c: [0.85, 0.15] }, doble: { h: 3.7, e: 1.5, r: 24, c: [0.8, 0.2] }, calle: { h: 8.2, e: 1.6, r: 36, c: [1, 0] },
+    mural: { h: 6.2, e: 1.2, r: 30, c: [1, 0] }, peaton: { h: 4.9, e: 1.2, r: 26, c: [1, 0] }, torre: { h: 30, e: 1.1, r: 96, c: [0.15, 0.85] } };
+  const tex = new THREE.DataTexture(new Uint8Array(LW * LH * 4), LW, LH, THREE.RGBAFormat, THREE.UnsignedByteType);   // (sRGB: la GPU lo pasa a lineal antes de interpolar; con 8 bits lineales, los charcos salían en anillos)
+  tex.colorSpace = THREE.SRGBColorSpace; tex.magFilter = THREE.LinearFilter; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.generateMipmaps = true; tex.anisotropy = 2; tex.needsUpdate = true;
+  // Las nubes: ruido de valor en cinco octavas que se repite cada NS m (con la media y la dispersión del fbm del cielo: 0,484 y 0,115),
+  // a NH m de altura. Va en el azul del rincón noroeste del mapa, con un píxel de más alrededor (el del otro lado) para que
+  // interpole bien donde se repite
+  const NT = 256, NS = 4100, NH = 1200, nube = new Float32Array(NT * NT), srgb = v => v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+  { const f = nube;
+    for (let o = 0, a = 0.5, n = 4; o < 5; o++, a *= 0.5, n *= 2) {
+      const v = new Float32Array(n * n); for (let i = 0; i < n * n; i++) v[i] = rnd(i * 1.37 + o * 911.3 + 5.5);
+      for (let j = 0; j < NT; j++) { const y = j / NT * n, y0 = Math.floor(y), fy = y - y0, wy = fy * fy * (3 - 2 * fy), r0 = (y0 % n) * n, r1 = ((y0 + 1) % n) * n;
+        for (let i = 0; i < NT; i++) { const x = i / NT * n, x0 = Math.floor(x), fx = x - x0, wx = fx * fx * (3 - 2 * fx), c0 = x0 % n, c1 = (x0 + 1) % n;
+          f[j * NT + i] += a * ((v[r0 + c0] * (1 - wx) + v[r0 + c1] * wx) * (1 - wy) + (v[r1 + c0] * (1 - wx) + v[r1 + c1] * wx) * wy); } } }
+    let m = 0, m2 = 0; for (let i = 0; i < NT * NT; i++) { m += f[i]; m2 += f[i] * f[i]; } m /= NT * NT; const sd = Math.sqrt(m2 / (NT * NT) - m * m) || 1;
+    for (let i = 0; i < NT * NT; i++) f[i] = Math.max(0, Math.min(1, 0.484 + (f[i] - m) * 0.115 / sd));
+    const d = tex.image.data; for (let j = 0; j < NT + 2; j++) for (let i = 0; i < NT + 2; i++) d[(j * LW + i) * 4 + 2] = Math.round(255 * srgb(f[((j + NT - 1) % NT) * NT + (i + NT - 1) % NT])); }
+  const luz = new THREE.SpotLight(0xffffff, 1); luz.map = tex; luz.visible = false; luz.shadow.updateMatrices = () => {}; luz.color.setRGB(0, 0, 0); luz.distance = 0; luz.decay = 0; luz.position.set(0, 1, 0); scene.add(luz);   // (su destino, el origen: su «dirección» es su posición)
+  const S = { res, LW, LH, EMAX, TIPOS, tex, luz, nube: { NT, NS, NH, d: nube, t: 0 }, on: false, n: 0, ms: 0, lista: [], nubesOn: false, puntos: null,
+    U: { uPunto: { value: new THREE.Vector4(0, 600, 2, 30) }, uBrumaP: { value: new THREE.Vector2(10000, 3500) }, uTiempoP: { value: 0 } },
+    aplica(Q) { const on = !!Q.luz; S.on = on; luz.visible = on; return on; },   // (lo llama applyQuality)
+    // al cambiar la hora o el tiempo (updateSun): cuánto alumbran las farolas, las sombras de las nubes y la bruma. Devuelve si hay
+    // sombras de nubes (entonces la luz del sol va entera y la sombra la pone el shader)
+    pon(el, day, cov) {
+      const far = 1 - sm(el, -0.08, 0.12), nk = nieblaK(); S.U.uPunto.value.x = far;
+      const hay = S.on && cov > 0.06 && cov < 0.93 && sm(el, -0.02, 0.2) > 0.004 && TIEMPO.lluvia < 0.05 && nk < 0.5;
+      luz.color.r = S.on ? far : 0;
+      // (el cielo pinta nube de 1 − cov − 0,15 a 1 − cov + 0,25 del ruido, muy poco a poco; la sombra, con el borde más marcado, de 0,9 − cov a 0,98 − cov: con «algunas
+      // nubes», un tercio del suelo tiene algo de sombra y un sexto, sombra entera. Con el borde tan suave como el del cielo no se notaba. Bajo la nube queda el 14 % del sol
+      // (con el cielo casi cubierto, la mitad, como antes): con la mitad, la imagen apenas cambiaba un 8 % y no se veía)
+      luz.distance = hay ? cov : 0;
+      luz.decay = S.on ? 0.6 * sm(el, -0.12, 0.05) * (1 - 0.6 * cov) * (1 - nk) : 0;              // cuánto se aclara la bruma hacia el sol
+      luz.angle = Math.acos(S.on ? Math.min(0.9999, day * (1 - 0.6 * cov) * (1 - nk)) : 0);     // y cuánto azulea el aire lo lejano (va en el coseno del ángulo de la luz)
+      luz.position.copy(sunDir).normalize(); S.nubesOn = hay; return hay;
+    },
+    tick(t) {   // (cada fotograma) los puntos de luz y el viento de las nubes
+      if (S.puntos) { const u = S.U, pr = renderer.getPixelRatio(); S.puntos.visible = u.uPunto.value.x > 0.01;
+        if (S.puntos.visible) { u.uPunto.value.y = renderer.domElement.height / (2 * Math.tan(camera.fov * DEG / 2)); u.uPunto.value.z = 2.6 * pr; u.uPunto.value.w = 26 * pr; u.uBrumaP.value.set(scene.fog.near, scene.fog.far); u.uTiempoP.value = t % 1000; } }
+      S.nube.t = t; luz.color.g = (t * 0.00195) % 1; luz.color.b = (t * 0.000975) % 1;   // (las nubes, con el viento: como las del cielo)
+    },
+    // Cuánta nube hay sobre el punto (x, y) a la altura h, hacia el sol (0 a 1), con la misma cuenta que el shader (para las pruebas)
+    nubeEn(x, y, h = 0) {
+      const cov = luz.distance; if (!(cov > 0)) return 0;
+      const ly = Math.max(0.16, sunDir.y), u = (x + (NH - h) * sunDir.x / ly) / NS + luz.color.g, v = (-y + (NH - h) * sunDir.z / ly) / NS + luz.color.b;
+      const fx = (u - Math.floor(u)) * NT - 0.5, fy = (v - Math.floor(v)) * NT - 0.5, i = Math.floor(fx), j = Math.floor(fy), a = fx - i, b = fy - j, T = (i, j) => nube[((j + NT) % NT) * NT + (i + NT) % NT];
+      return sm((T(i, j) * (1 - a) + T(i + 1, j) * a) * (1 - b) + (T(i, j + 1) * (1 - a) + T(i + 1, j + 1) * a) * b, 0.9 - cov, 0.98 - cov);
+    },
+    // El mapa. Cada farola: su charco, h³/(d² + h²)^1,5 (lo que da un punto de luz a la altura h sobre un suelo llano), hasta r; los
+    // edificios de 3,5 m o más lo cortan (rayos del punto de luz a cada celda del borde de su cuadrado, que se paran en la primera
+    // celda edificada; el borde de la sombra se suaviza). La cota (alfa) es la media de las de las farolas de alrededor.
+    monta() {
+      const t0 = performance.now(), n = LW * LH, dat = tex.image.data;
+      const L = S.lista = [...W.lamps.map(p => [p[0], p[1], 'globo']), ...BEG.farolas.map(p => [p[0], p[1], 'doble']), ...FAROLAS].filter(l => TIPOS[l[2]] && l[0] > BX0 + 2 && l[0] < BX1 - 2 && l[1] > BY0 + 2 && l[1] < BY1 - 2);
+      const edi = new Uint8Array(n);
+      { const T = 2048, c = document.createElement('canvas'); c.width = c.height = T; const g = c.getContext('2d', { willReadFrequently: true }), B = W.buildings.filter(b => b.h - (b.mh || 0) >= 3.5 && !(b.mh > 3));
+        for (let ty = 0; ty < LH; ty += T) for (let tx = 0; tx < LW; tx += T) {
+          const x0 = BX0 + tx * res, x1 = x0 + T * res, y1 = BY1 - ty * res, y0 = y1 - T * res;
+          g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, T, T); g.setTransform(1 / res, 0, 0, -1 / res, -x0 / res, y1 / res); g.fillStyle = '#fff';
+          for (const b of B) { const bb = b.bb || (b.bb = bboxOf(b.pts)); if (bb[2] < x0 || bb[0] > x1 || bb[3] < y0 || bb[1] > y1) continue;
+            g.beginPath(); for (const r of [b.pts, ...(b.holes || [])]) { r.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.closePath(); } g.fill('evenodd'); }
+          const w = Math.min(T, LW - tx), h = Math.min(T, LH - ty), d = g.getImageData(0, 0, w, h).data;
+          for (let j = 0; j < h; j++) for (let i = 0, o = j * w * 4 + 3; i < w; i++, o += 4) if (d[o] > 127) edi[(ty + j) * LW + tx + i] = 1;
+        } }
+      const Ew = new Float32Array(n), Ec = new Float32Array(n), SW = new Float32Array(n), SH = new Float32Array(n), NL = 512, luts = {};
+      for (const k in TIPOS) { const T = TIPOS[k], h2 = T.h * T.h + 0.36 * res * res, lut = luts[k] = new Float32Array(NL + 1); for (let i = 0; i <= NL; i++) { const d2 = i / NL * T.r * T.r; lut[i] = T.e * Math.pow(h2 / (d2 + h2), 1.5) * (1 - sm(Math.sqrt(d2), 0.7 * T.r, T.r)); } }
+      let vis = new Float32Array(1), tmp = new Float32Array(1);
+      for (const [x, y, tipo] of L) {
+        const T = TIPOS[tipo], lut = luts[tipo], g = terrainAt(x, y), fx = (x - BX0) / res, fy = (BY1 - y) / res, R = Math.ceil(T.r / res), N = 2 * R + 1, i0 = Math.floor(fx) - R, j0 = Math.floor(fy) - R, lx = fx - i0, ly = fy - j0;
+        if (vis.length < N * N) { vis = new Float32Array(N * N); tmp = new Float32Array(N * N); } else vis.fill(0, 0, N * N);
+        let tapado = false;
+        const rayo = (ti, tj) => { const dx = ti + 0.5 - lx, dy = tj + 0.5 - ly, len = Math.ceil(Math.max(Math.abs(dx), Math.abs(dy))) || 1; let fuera = false;
+          for (let s = 0; s <= len; s++) { const i = Math.floor(lx + dx * s / len), j = Math.floor(ly + dy * s / len), gi = i0 + i, gj = j0 + j;
+            if (gi < 0 || gj < 0 || gi >= LW || gj >= LH) return;
+            if (edi[gj * LW + gi]) { if (fuera || s > 2) { tapado = true; return; } } else { fuera = true; vis[j * N + i] = 1; } } };
+        for (let k = 0; k < N; k++) { rayo(k, 0); rayo(k, N - 1); rayo(0, k); rayo(N - 1, k); }
+        if (tapado) {   // el borde de la sombra, suave (y un poco de luz al pie de las fachadas)
+          for (let j = 0; j < N; j++) for (let i = 0, o = j * N; i < N; i++, o++) tmp[o] = 0.5 * vis[o] + 0.25 * ((i ? vis[o - 1] : vis[o]) + (i < N - 1 ? vis[o + 1] : vis[o]));
+          for (let j = 0; j < N; j++) for (let i = 0, o = j * N; i < N; i++, o++) vis[o] = 0.5 * tmp[o] + 0.25 * ((j ? tmp[o - N] : tmp[o]) + (j < N - 1 ? tmp[o + N] : tmp[o]));
+        }
+        const k2 = NL * res * res / (T.r * T.r), kh = res * res / (T.h * T.h), cw = T.c[0], cc = T.c[1];
+        for (let j = 0; j < N; j++) { const gj = j0 + j; if (gj < 0 || gj >= LH) continue; const dy = j + 0.5 - ly;
+          for (let i = 0; i < N; i++) { const gi = i0 + i; if (gi < 0 || gi >= LW) continue; const dx = i + 0.5 - lx, d2 = dx * dx + dy * dy, o = gj * LW + gi, wa = 1 / (1 + d2 * kh);
+            SW[o] += wa; SH[o] += wa * g; const q = d2 * k2; if (q >= NL) continue;
+            const e = lut[q | 0] * (tapado ? vis[j * N + i] : 1); if (e > 0) { Ew[o] += e * cw; Ec[o] += e * cc; } } }
+      }
+      const LE = new Uint8Array(4097); for (let i = 0; i <= 4096; i++) { const v = i / 4096; LE[i] = Math.round(255 * (v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055)); }
+      const KE = 4096 / EMAX; let luz = 0;
+      for (let o = 0; o < n; o++) { const sw = SW[o]; if (!sw) continue; const k = o * 4, i = o % LW, j = (o - i) / LW, borde = i === 0 || j === 0 || i === LW - 1 || j === LH - 1;   // (el borde, apagado: fuera del mapa no hay luz)
+        dat[k] = borde ? 0 : LE[Math.min(4096, Ew[o] * KE) | 0]; dat[k + 1] = borde ? 0 : LE[Math.min(4096, Ec[o] * KE) | 0]; dat[k + 3] = Math.max(0, Math.min(255, Math.round((SH[o] / sw + 16) / 128 * 255)));
+        if (Ew[o] + Ec[o] > 0.15) luz++; }
+      tex.needsUpdate = true; if (!DEPURA) tex.onUpdate = () => { tex.image.data = null; tex.onUpdate = null; };   // (una vez en la GPU, la copia sobra)
+      S.n = L.length; S.ha = Math.round(luz * res * res / 1e4);
+      S.cerca = gridIndex(L, l => [l[0], l[1], l[0], l[1]], 48);
+      // Los puntos de luz: cada farola es además un punto que se ve desde lejos y desde el aire (la lámpara en sí son unos píxeles, y
+      // la luminaria de una calle ni se ve desde arriba). De cerca, un halo suave; de lejos, un punto de dos píxeles que titila.
+      // Se pierden con la bruma y con el final de la vista, como lo demás. Una sola llamada de dibujo.
+      { const P = new Float32Array(L.length * 3), A = new Float32Array(L.length * 2);
+        L.forEach((l, i) => { const T = TIPOS[l[2]]; P.set([l[0], l[3] != null ? l[3] : terrainAt(l[0], l[1]) + T.h, -l[1]], i * 3); A.set([T.c[1], rnd(i * 3.7 + 1.1)], i * 2); });
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(P, 3)); g.setAttribute('aDat', new THREE.BufferAttribute(A, 2));
+        const pm = new THREE.ShaderMaterial({ uniforms: S.U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+          vertexShader: `attribute vec2 aDat; uniform vec4 uPunto; uniform vec2 uBrumaP; uniform float uTiempoP; varying vec4 vC;   // uPunto: cuánto alumbran, píxeles por metro a 1 m, píxeles mínimos y máximos
+void main() { vec4 mv = viewMatrix * vec4(position, 1.0); float d = length(mv.xyz); mv.xyz -= mv.xyz / d * min(0.6, d * 0.5);   // (algo hacia la cámara: por delante de su globo o de su luminaria)
+  gl_Position = projectionMatrix * mv;
+  float px = 0.9 * uPunto.y / d, tam = clamp(px, uPunto.z, uPunto.w), lejos = min(1.0, px / uPunto.z);
+  float a = uPunto.x * mix(0.5, 1.0, smoothstep(0.0, 1.0, lejos)) * (0.3 + 0.7 * pow(lejos, 0.45)) * exp(-d / uBrumaP.x) * (1.0 - smoothstep(0.7 * uBrumaP.y, uBrumaP.y, d));
+  a *= mix(0.82 + 0.18 * sin(uTiempoP * (3.0 + 5.0 * aDat.y) + aDat.y * 50.0), 1.0, lejos);   // (de lejos titilan)
+  a *= 1.0 - 0.55 * smoothstep(0.35, 1.0, px / uPunto.w);                                     // (muy de cerca, menos: ya se ve la lámpara)
+  vC = vec4(mix(vec3(1.0, 0.72, 0.4), vec3(0.92, 0.96, 1.0), aDat.x), a); gl_PointSize = tam; if (a < 0.004) gl_Position = vec4(2.0, 2.0, 2.0, 1.0); }`,
+          fragmentShader: `varying vec4 vC; void main() { float r = length(gl_PointCoord - 0.5) * 2.0, k = 1.0 - smoothstep(0.0, 1.0, r); gl_FragColor = vec4(vC.rgb * (k * k * 1.6 + k * 0.4), vC.a);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}` });
+        S.puntos = new THREE.Points(g, pm); S.puntos.frustumCulled = false; S.puntos.renderOrder = 3; S.puntos.visible = false; scene.add(S.puntos); }
+      S.ms = Math.round(performance.now() - t0);
+    },
+    // Cuánta luz de farolas llega al suelo en (x, y), con la misma cuenta que el mapa pero punto a punto (para las pruebas): [cálida, blanca]
+    luzEn(x, y) {
+      let w = 0, c = 0; const visto = new Set();
+      for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) for (const l of S.cerca(x + a * 48, y + b * 48)) { if (visto.has(l)) continue; visto.add(l);
+        const T = TIPOS[l[2]], d = Math.hypot(l[0] - x, l[1] - y); if (d >= T.r) continue;
+        let tapa = false; for (let s = 1.5; s < d - 0.5 && !tapa; s += 1) { const px = l[0] + (x - l[0]) * s / d, py = l[1] + (y - l[1]) * s / d; for (const e of bldAt(px, py)) if (e.h - (e.mh || 0) >= 3.5 && !(e.mh > 3) && pip(px, py, e.pts)) { tapa = true; break; } }
+        if (tapa) continue; const e = T.e * Math.pow(T.h * T.h / (d * d + T.h * T.h), 1.5) * (1 - sm(d, 0.7 * T.r, T.r)); w += e * T.c[0]; c += e * T.c[1]; }
+      return [w, c];
+    } };
+  return S;
+})();
+{ const C = THREE.ShaderChunk, c = C.lights_fragment_begin, s0 = c.indexOf('#if ( NUM_SPOT_LIGHTS > 0 ) && defined( RE_Direct )'), a = c.indexOf('#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )'), b = c.indexOf('#if ( NUM_RECT_AREA_LIGHTS > 0 )'), e = c.indexOf('#if defined( RE_IndirectSpecular )');
+  if (s0 < 0 || a < s0 || b < a || e < b) throw new Error('Luces: no encuentro las luces de foco y las direccionales en el shader de Three.js (¿ha cambiado de versión?)');
+  // Las coordenadas de las luces de foco (una matriz y un «varying» por luz) no hacen falta: se quitan de los shaders. Y su mapa se
+  // declara lo primero (en «common»), para que le toque siempre la misma unidad de textura
+  const quita = (k, ini, fin) => { const t = C[k], i = t.indexOf(ini), j = i < 0 ? -1 : t.indexOf(fin, i); if (i < 0 || j < 0) throw new Error(`Luces: no encuentro las luces de foco en «${k}» de Three.js (¿ha cambiado de versión?)`); C[k] = t.slice(0, i) + t.slice(j + fin.length); };
+  quita('shadowmap_pars_vertex', '#if NUM_SPOT_LIGHT_COORDS > 0', '#endif');
+  { const t = C.shadowmap_vertex, i = t.indexOf('#if NUM_SPOT_LIGHT_COORDS > 0'); if (i < 0 || !/unroll_loop_end\s*#endif\s*$/.test(t)) throw new Error('Luces: no encuentro las luces de foco en «shadowmap_vertex» de Three.js (¿ha cambiado de versión?)'); C.shadowmap_vertex = t.slice(0, i); }   // (es lo último del trozo)
+  quita('shadowmap_pars_fragment', '#if NUM_SPOT_LIGHT_COORDS > 0', '#endif'); quita('shadowmap_pars_fragment', '#if NUM_SPOT_LIGHT_MAPS > 0', '#endif');
+  if (/vSpotLightCoord|spotLightMatrix/.test(C.shadowmap_pars_vertex + C.shadowmap_vertex + C.shadowmap_pars_fragment) || /spotLightMap/.test(C.shadowmap_pars_fragment)) throw new Error('Luces: quedan restos de las luces de foco en los shaders de las sombras de Three.js');
+  C.common = '#if NUM_SPOT_LIGHT_MAPS > 0\n\tuniform sampler2D spotLightMap[ NUM_SPOT_LIGHT_MAPS ];\n#endif\n' + C.common;
+  const f = v => v.toExponential(6), S = LUCES;
+  THREE.ShaderChunk.lights_fragment_begin = c.slice(0, s0) + `#if NUM_SPOT_LIGHT_MAPS > 0
+	// (la luz de foco no alumbra: trae el mapa de la luz de las farolas, con las nubes en un rincón; ver LUCES)
+	vec3 luzFarolas = vec3( 0.0 );
+	float sombraNube = 1.0;
+	vec3 pEsc = cameraPosition - vViewPosition * mat3( viewMatrix );   // el punto, en la escena
+	if ( spotLights[ 0 ].color.r > 0.002 ) {
+		vec3 nF = inverseTransformDirection( geometryNormal, viewMatrix );
+		vec4 mF = texture2D( spotLightMap[ 0 ], ( pEsc.xz + nF.xz * 1.6 - vec2( ${f(BX0)}, ${f(-BY1)} ) ) * vec2( ${f(1 / BW)}, ${f(1 / BH)} ) );
+		float dF = pEsc.y - ( mF.a * 128.0 - 16.0 );
+		float kF = ( dF > 0.0 ? 1.0 - smoothstep( 3.5, 10.5, dF ) : 1.0 / ( 1.0 + dF * dF / 90.0 ) ) * ( nF.y > 0.0 ? mix( 0.6 - 0.36 * smoothstep( 0.3, 2.0, - dF ), 1.0, nF.y ) : mix( 0.6, 0.14, - nF.y ) );   // (lo vertical por debajo del pie de las farolas, como la cara del Muro: poco)
+		luzFarolas = ( mF.r * vec3( 1.0, 0.72, 0.43 ) + mF.g * vec3( 0.88, 0.94, 1.0 ) ) * ( kF * ${S.EMAX}.0 * spotLights[ 0 ].color.r );
+	}
+	if ( spotLights[ 0 ].distance > 0.0 ) {
+		float cN = spotLights[ 0 ].distance; vec3 sN = spotLights[ 0 ].direction * mat3( viewMatrix );
+		vec2 uN = fract( ( pEsc.xz + ( ${f(S.nube.NH)} - pEsc.y ) * sN.xz / max( sN.y, 0.16 ) ) * ${f(1 / S.nube.NS)} + spotLights[ 0 ].color.gb );
+		sombraNube = 1.0 - ( 0.86 - 0.32 * smoothstep( 0.5, 0.9, cN ) ) * smoothstep( 0.9 - cN, 0.98 - cN, textureLod( spotLightMap[ 0 ], ( 1.0 + uN * ${S.nube.NT}.0 ) * vec2( ${f(1 / S.LW)}, ${f(1 / S.LH)} ), 0.0 ).b );
+	}
+#endif
+#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )
 	DirectionalLight directionalLight;
 	float sombraSol = 1.0;
 	directionalLight = directionalLights[ 0 ];
 	getDirectionalLightInfo( directionalLight, directLight );
+	#if NUM_SPOT_LIGHT_MAPS > 0
+	directLight.color *= sombraNube;
+	#endif
 	#if defined( USE_SHADOWMAP ) && NUM_DIR_LIGHT_SHADOWS > 0
 	if ( directLight.visible && receiveShadow ) {
 		DirectionalLightShadow dls0 = directionalLightShadows[ 0 ];
@@ -8085,7 +8304,10 @@ sun2.shadow.bias = -0.0004; sun2.shadow.normalBias = 0.5; sun2.shadow.autoUpdate
 	#endif
 	RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );
 #endif
-` + c.slice(b); }
+` + c.slice(b, e) + `#if defined( RE_IndirectDiffuse ) && NUM_SPOT_LIGHT_MAPS > 0
+	irradiance += luzFarolas;
+#endif
+` + c.slice(e); }
 const SOMBRAS = (() => {
   const R = new THREE.Vector3(), V = new THREE.Vector3(), ARR = new THREE.Vector3(0, 1, 0), C = new THREE.Vector3();
   const ajusta = (luz, x, y, lado, dist) => {   // centra la sombra de una luz en (x, y), a la altura del suelo de allí, encajada en sus píxeles
@@ -8120,8 +8342,8 @@ const SOMBRAS = (() => {
 })();
 const sunDir = new THREE.Vector3(), luzDir = new THREE.Vector3(0, 1, 0), WHITE = new THREE.Color(1, 1, 1);   // luzDir: de dónde viene la luz (el Sol o, de noche, la Luna)
 const K = h => new THREE.Color(h), DAY_T = K('#3b78c0'), DAY_H = K('#cbdde9'), SET_T = K('#35507c'), SET_H = K('#efb17c'), NIG_T = K('#070d1c'), NIG_H = K('#1c2638');
-const sm = THREE.MathUtils.smoothstep;
-let realMode = true;   // hora y marea de este momento; al mover la hora, el día o la marea, pasan a manual
+const sm = THREE.MathUtils.smoothstep, NOCHE_AMB = new THREE.Color(0.58, 0.7, 1.0), NOCHE_NUB = new THREE.Color(1.0, 0.82, 0.66);   // la luz de ambiente de la noche: azulada; con nubes, más cálida
+let realMode = true, solListo = false;   // hora y marea de este momento; al mover la hora, el día o la marea, pasan a manual
 // El día (02/10/2026): en manual se puede elegir otro día; con él cambian el sol, la luna, las estrellas, la marea y lo que sale por el
 // mes y el día de la semana. La marea es la de ese día y esa hora mientras no se mueva su barra (FECHA.marea).
 const FECHA = { ref: null, marea: false };   // ref: el día elegido (a mediodía; null, hoy)
@@ -8241,18 +8463,21 @@ function updateSun() {
   skyU.sunDir.value.copy(sunDir); scene.fog.color.copy(skyU.hor.value);
   const cov = +$('cloud').value; skyU.cover.value = cov; $('cloudv').textContent = cov < 0.2 ? 'pocas' : cov > 0.7 ? 'muchas' : 'algunas';
   skyU.cloudCol.value.copy(NIG_H).lerp(WHITE, day).lerp(SET_H, dusk * 0.5);
-  sun.intensity = 2.6 * sm(el, -0.02, 0.2) * (1 - 0.6 * cov * cov) * (1 - 0.55 * nieblaK()) * (1 - 0.3 * TIEMPO.lluvia); sun.color.setRGB(1, 0.75 + 0.25 * day, 0.55 + 0.45 * day);
+  const nubes = LUCES.pon(el, day, cov);   // (con sombras de nubes, el sol va entero donde no hay nube: la sombra la pone el shader)
+  sun.intensity = 2.6 * sm(el, -0.02, 0.2) * (nubes ? 1 : 1 - 0.6 * cov * cov) * (1 - 0.55 * nieblaK()) * (1 - 0.3 * TIEMPO.lluvia); sun.color.setRGB(1, 0.75 + 0.25 * day, 0.55 + 0.45 * day);
   { const L = ASTROS.pon(d, el, cov); skyU.uDia.value = day;   // de noche, si la Luna está arriba, alumbra ella
     if (L.luz > 0.004 && sun.intensity < 0.004) { luzDir.copy(L.dir); sun.intensity = L.luz; sun.color.setRGB(0.62, 0.74, 1.0); } else luzDir.copy(sunDir);
     const alt = Math.round(el / DEG), az = ((az0 => (az0 % 360 + 360) % 360)(Math.atan2(sunDir.x, -sunDir.z) / DEG));
     $('astroinfo').textContent = (alt > -1 ? `Sol a ${alt}° de altura, al ${RUMBOS[Math.round(az / 45) % 8]}` : 'Sol bajo el horizonte') + ` · ${ASTROS.nombreFase(d)} (${Math.round(L.frac * 100)} %)` + (L.alt > 0 ? `, a ${Math.round(L.alt)}°` : ''); }
   hemi.intensity = hemi.userData.base = 0.5 + 0.5 * day; hemi.color.copy(skyU.top.value).lerp(WHITE, 0.72);
-  lampMat.emissiveIntensity = 0.6 + 3.5 * (1 - sm(el, -0.08, 0.12));
+  if (LUCES.on) {   // (06/10/2026) con la luz de las farolas, la noche cerrada es más oscura y azulada (antes, la mitad de la luz de ambiente del día, lisa); con nubes, algo menos: reflejan la ciudad
+    const oscuro = 1 - sm(el, -0.2, -0.05); hemi.intensity = hemi.userData.base = (0.5 + 0.5 * day) * (1 - (0.54 - 0.14 * cov) * oscuro); hemi.color.lerp(NOCHE_AMB.clone().lerp(NOCHE_NUB, 0.6 * cov), oscuro); }
+  lampMat.emissiveIntensity = 0.6 + 3.5 * (1 - sm(el, -0.08, 0.12)); for (const m of LAMPARAS) m.emissiveIntensity = lampMat.emissiveIntensity;
   const noche = 1 - sm(el, -0.1, 0.03); FOCO.uFoco.value = noche;   // los focos de los monumentos se encienden al anochecer
   for (const [m, k, dia = 0] of NOCHE_MATS) m.emissiveIntensity = dia + (k - dia) * noche;   // (dia: lo que brillan de día, como el bronce de las estatuas que hablan)
   if (NEON) { NEON.visible = noche > 0.02; NEON.material.opacity = Math.min(1, noche * 1.3); }
   $('hourv').textContent = hhmm(d);
-  envDirty = true; updateEstado();
+  envDirty = true; updateEstado(); solListo = true;
 }
 let tideT = 0, lastHighY = HIGH_MEAN;
 function updateTide() {
@@ -9517,7 +9742,7 @@ const oesteTick = (() => {
     const fuste = new THREE.CylinderGeometry(0.25, 0.45, 1, 8).translate(0, 0.5, 0), corona = new THREE.BoxGeometry(2.6, 1.2, 2.6);
     const mf = mat({ color: '#9a9ea1', metalness: 0.5, roughness: 0.4 }), mc = mat({ color: '#f2efe4', emissive: '#fff1c4', emissiveIntensity: 0 }); NOCHE_MATS.push([mc, 1.4]);
     const f = new THREE.InstancedMesh(fuste, mf, TL.length), c = new THREE.InstancedMesh(corona, mc, TL.length), o = new THREE.Object3D();
-    TL.forEach(([x, y, h], i) => { const hh = h || 30, z0 = suelo(x, y); o.position.set(x, z0, -y); o.scale.set(1, hh, 1); o.updateMatrix(); f.setMatrixAt(i, o.matrix); o.position.set(x, z0 + hh, -y); o.scale.set(1, 1, 1); o.updateMatrix(); c.setMatrixAt(i, o.matrix); });
+    TL.forEach(([x, y, h], i) => { const hh = h || 30, z0 = suelo(x, y); FAROLAS.push([x, y, 'torre', z0 + hh]); o.position.set(x, z0, -y); o.scale.set(1, hh, 1); o.updateMatrix(); f.setMatrixAt(i, o.matrix); o.position.set(x, z0 + hh, -y); o.scale.set(1, 1, 1); o.updateMatrix(); c.setMatrixAt(i, o.matrix); });
     f.castShadow = true; for (const m of [f, c]) { m.computeBoundingSphere(); scene.add(m); }
   }
   // ---- depósitos de los alrededores: tanques lisos, esferas de gas sobre patas, gasómetros de chapa oxidada y los tanques de GNL
@@ -10375,7 +10600,8 @@ const ESTE_VIDA = { areneros: [], columpios: [], sentados: [], zonas: [] };
     { const c = [3412.5, 847.5], L = [];
       for (let k = 0; k < 14; k++) { const an = k / 14 * TAU + 0.1, x = c[0] + Math.cos(an) * 34.2, y = c[1] + Math.sin(an) * 34.2; if (!inBuilding(x, y, 1)) L.push([x, y, an + Math.PI / 2, '#ffffff']); }
       const poste = junta([[cil(0.07, 0.1, 4.0, 0, 2.0, 0, 8), '#2a2d30'], [palo([0, 3.8, 0], [0.55, 4.05, 0], 0.03), '#2a2d30'], [palo([0, 3.8, 0], [-0.55, 4.05, 0], 0.03), '#2a2d30']]);
-      copias(poste, VC, L); copias(junta([[cil(0.16, 0.11, 0.42, 0.55, 3.85, 0, 8), '#ffffff'], [cil(0.16, 0.11, 0.42, -0.55, 3.85, 0, 8), '#ffffff']]), lampMat, L, false); }
+      copias(poste, VC, L); copias(junta([[cil(0.16, 0.11, 0.42, 0.55, 3.85, 0, 8), '#ffffff'], [cil(0.16, 0.11, 0.42, -0.55, 3.85, 0, 8), '#ffffff']]), lampMat, L, false);
+      for (const q of L) FAROLAS.push([q[0], q[1], 'doble']); }
     G.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     fusiona(G, 'lejos');
     ESTE_VIDA.zonas.push({ c: [3370, 960], r: 170, n: 12, min: 28, perros: 0.3 });   // paseantes por la pradera, muchos con perro
@@ -10521,6 +10747,7 @@ function applyQuality(i) {
   qLevel = i; const Q = QUALITY[i]; qVida = Q.v; SEA.uDetail.value = i > 0 ? 1 : 0; for (const m of DETAIL) if (m) m.visible = i > 0; sea.geometry = SEA_GEO[i > 0 ? 1 : 0];
   renderer.setPixelRatio(Q.pr); renderer.setSize(innerWidth, innerHeight);
   SOMBRAS.aplica(Q); ARBOLES.aplica(Q); HIERBA.uHierbaK.value = FACU.uFacK.value = i > 0 ? 1 : 0;
+  LUCES.aplica(Q); if (solListo) updateSun();   // (la noche es más oscura donde alumbran las farolas)
   $('q').value = i; $('qv').textContent = Q.n; $('qinfo').textContent = Q.que;
   ajustaNiebla();
 }
@@ -12026,6 +12253,76 @@ const lifeWalk = (p, dt) => {   // avanza por su recorrido (por la derecha, esqu
   }
   p.a = p.dir > 0 ? p.o.a : p.o.a + Math.PI;
 };
+// ---------- Farolas de las calles (06/10/2026) ----------
+// OSM trae muy pocas farolas (983 en toda la zona, casi todas del paseo, de los parques y de los bordes): las calles salían a oscuras.
+// Aquí se ponen las que faltan, a lo largo de los ejes de las calles con nombre (D.calles.ejes), una cada unos 25 m, a un lado y a otro
+// (al tresbolillo). Son verosímiles, no las de verdad:
+//  · en una calle con calzada, un báculo de 8 m en la acera, a 0,6 m del bordillo, con el brazo hacia la calzada; si la acera es
+//    estrecha (la fachada, a menos de 3,2 m del bordillo), un brazo mural en la fachada, a unos 6 m;
+//  · en una calle peatonal, un brazo mural en la fachada que quede a ese lado (hasta 11 m del eje) o, si no hay, una farola baja.
+// No van a menos de 15 m de otra farola (19 m de las del Muro: el paseo ya tiene las suyas), ni en un árbol, un semáforo, una parada o
+// un paso de cebra, ni en una fachada con foto, ni dentro del Parque de Isabel la Católica. Cada una se apunta en FAROLAS (alumbra:
+// ver LUCES) y los báculos, entre lo que esquiva la gente.
+const FAROLAS_CALLE = (() => {
+  const E = (D.calles && D.calles.ejes) || [], POSTES = [], MURALES = [];   // [x, y, hacia dónde va el brazo, escala] y [x, y (en la fachada), hacia dónde sale, alto]
+  if (!E.length) return { postes: POSTES, murales: MURALES };
+  const rejilla = cel => { const M = new Map(), k = (x, y) => (Math.floor(x / cel) + 4096) * 8192 + Math.floor(y / cel) + 4096;
+    return { pon(x, y, r) { const q = k(x, y); let l = M.get(q); if (!l) M.set(q, l = []); l.push([x, y, r]); },
+      libre(x, y, r = 0) { for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) { const l = M.get(k(x + a * cel, y + b * cel)); if (l) for (const q of l) { const rr = Math.max(r, q[2]); if ((q[0] - x) ** 2 + (q[1] - y) ** 2 < rr * rr) return false; } } return true; } }; };
+  const luces = rejilla(32), estorbos = rejilla(8);
+  for (const l of W.lamps) luces.pon(l[0], l[1], 14); for (const l of BEG.farolas) luces.pon(l[0], l[1], 14); for (const l of W.pilastras) luces.pon(l[0], l[1], 19);
+  for (const l of FAROLAS) luces.pon(l[0], l[1], l[2] === 'torre' ? 30 : 16);
+  for (const t of W.trees) estorbos.pon(t[0], t[1], 1.5); for (const s of W.signals) estorbos.pon(s[0], s[1], 1.2); for (const b of W.benches) estorbos.pon(b[0], b[1], 1.3); for (const b of W.bins) estorbos.pon(b[0], b[1], 0.8);
+  for (const p of [...(D.paradas || []), ...(D.taxis || [])]) estorbos.pon(p[0], p[1], 4); for (const c of W.crossings) estorbos.pon(c[0], c[1], 3.6); for (const p of PALMAS) estorbos.pon(p[0], p[1], 1.5);
+  // la primera fachada desde (px, py) hacia (nx, ny), hasta max m: { d, b, tx, ty } (tx, ty: a lo largo de ella)
+  const fachada = (px, py, nx, ny, max) => { let best = null; const vistos = new Set();
+    for (let s = 0; s <= max + 1; s += 9.9) for (const b of bldAt(px + nx * s, py + ny * s)) { if (vistos.has(b)) continue; vistos.add(b);
+      for (const r of [b.pts, ...(b.holes || [])]) for (let i = 0, j = r.length - 1; i < r.length; j = i++) { const a = r[j], c = r[i], ex = c[0] - a[0], ey = c[1] - a[1], den = nx * ey - ny * ex; if (Math.abs(den) < 1e-9) continue;
+        const t = ((a[0] - px) * ey - (a[1] - py) * ex) / den, u = ((a[0] - px) * ny - (a[1] - py) * nx) / den;
+        if (t > 0 && t <= max && u >= 0 && u <= 1 && (!best || t < best.d)) best = { d: t, b, tx: ex, ty: ey }; } }
+    return best; };
+  const pon = (x0, y0, tx, ty, nx, ny) => {   // una farola junto al punto (x0, y0) del eje, hacia el lado (nx, ny); si ahí no cabe, algo más allá o más acá
+    for (const ds of [0, 3.5, -3.5, 7, -7]) { const x = x0 + tx * ds, y = y0 + ty * ds;
+      if (x < BX0 + 8 || x > BX1 - 8 || y < BY0 + 8 || y > BY1 - 8 || (PQ && PQ.en(x, y))) continue;
+      const enC = onRoad(x, y); let dk = 0;
+      if (enC) { dk = -1; for (let d = 0.5; d <= 13; d += 0.5) if (!onRoad(x + nx * d, y + ny * d)) { dk = d; break; } if (dk < 0) continue; }
+      else if (inBuilding(x, y, 0.2)) continue;
+      const kx = x + nx * dk, ky = y + ny * dk, F = fachada(kx, ky, nx, ny, enC ? 9 : 11);
+      if (F && (enC ? F.d < 3.2 : F.d > 1.5)) {   // en la fachada
+        const b = F.b, alto = Math.min(6.2, b.h - b.mh - 0.8), fx = kx + nx * F.d, fy = ky + ny * F.d, l = Math.hypot(F.tx, F.ty) || 1; let ox = -F.ty / l, oy = F.tx / l; if (ox * nx + oy * ny > 0) { ox = -ox; oy = -oy; }
+        const lx = fx + ox * 0.95, ly = fy + oy * 0.95;
+        if (b.oculto || b.w || PHOTO.has(b.i) || alto < 4.6 || b.mh > 0.5 || !inLand(lx, ly) || !luces.libre(lx, ly, 15)) continue;
+        MURALES.push([fx, fy, Math.atan2(oy, ox), alto]); luces.pon(lx, ly, 15); FAROLAS.push([lx, ly, 'mural']); return true; }
+      if (enC) { const px = kx + nx * 0.6, py = ky + ny * 0.6;   // en la acera
+        if (!footOK(px, py) || inBuilding(px, py, 0.8) || !luces.libre(px, py, 15) || !estorbos.libre(px, py)) continue;
+        POSTES.push([px, py, Math.atan2(-ny, -nx), 1]); luces.pon(px, py, 15); FAROLAS.push([px - nx * 1.2, py - ny * 1.2, 'calle']); return true; }
+      const px = x + nx * 2.4, py = y + ny * 2.4;   // peatonal, sin fachada a ese lado
+      if (!footOK(px, py) || inBuilding(px, py, 0.8) || !luces.libre(px, py, 15) || !estorbos.libre(px, py)) continue;
+      POSTES.push([px, py, Math.atan2(-ny, -nx), 0.6]); luces.pon(px, py, 15); FAROLAS.push([px, py, 'peaton']); return true; }
+    return false; };
+  let ne = 0;
+  for (const e of E) { ne++; const P = []; for (let i = 1; i + 1 < e.length; i += 2) P.push([e[i], e[i + 1]]);
+    const cum = [0]; let Lt = 0; for (let i = 1; i < P.length; i++) cum.push(Lt += dist(P[i - 1], P[i]));
+    if (Lt < 14) continue;
+    const n = Math.max(1, Math.round(Lt / 25)), paso = Lt / n; let sd = rnd(ne * 7.31) < 0.5 ? 1 : -1, k = 0;
+    for (let q = 0; q < n; q++, sd = -sd) { const s = (q + 0.5) * paso; while (k < cum.length - 2 && cum[k + 1] < s) k++;
+      const a = P[k], b = P[k + 1], l = (cum[k + 1] - cum[k]) || 1, f = (s - cum[k]) / l, x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f, tx = (b[0] - a[0]) / l, ty = (b[1] - a[1]) / l;
+      for (const lado of [sd, -sd]) if (pon(x, y, tx, ty, -ty * lado, tx * lado)) break; } }
+  // Las piezas: un báculo gris de 8 m con su brazo y su luminaria (la de peatones es la misma, al 60 %) y un brazo mural. Van con el
+  // color en los vértices y un solo material: lo blanco (la lente de la luminaria) es lo que se enciende de noche.
+  const col = new THREE.Color(), piezas = partes => { const P = [], N = [], C = []; for (const [g0, hex] of partes) { const g = g0.index ? g0.toNonIndexed() : g0; col.set(hex); const p = g.attributes.position.array, q = g.attributes.normal.array; for (let i = 0; i < p.length; i += 3) { P.push(p[i], p[i + 1], p[i + 2]); N.push(q[i], q[i + 1], q[i + 2]); C.push(col.r, col.g, col.b); } }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(C, 3)); return g; };
+  const GRIS = '#555b60', caja = (w, h, d, x, y, z, rz = 0) => { const g = new THREE.BoxGeometry(w, h, d); if (rz) g.rotateZ(rz); return g.translate(x, y, z); };
+  const baculo = piezas([[new THREE.CylinderGeometry(0.13, 0.15, 0.3, 8).translate(0, 0.15, 0), GRIS], [new THREE.CylinderGeometry(0.055, 0.1, 7.8, 7).translate(0, 4.1, 0), GRIS],
+    [caja(1.0, 0.07, 0.07, 0.48, 8.07, 0, 0.1), GRIS], [caja(0.62, 0.08, 0.27, 1.2, 8.14, 0), GRIS], [caja(0.5, 0.025, 0.21, 1.2, 8.09, 0), '#ffffff']]);
+  const mural = piezas([[caja(0.04, 0.34, 0.16, 0.02, 0, 0), GRIS], [caja(0.72, 0.05, 0.05, 0.38, 0.06, 0, 0.12), GRIS], [caja(0.56, 0.08, 0.25, 0.95, 0.13, 0), GRIS], [caja(0.46, 0.025, 0.2, 0.95, 0.08, 0), '#ffffff']]);
+  const farolaMat = mat({ vertexColors: true, metalness: 0.35, roughness: 0.5, emissive: '#ffd9a0', emissiveIntensity: 0.6 });
+  farolaMat.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= step(0.9, vColor.g);'); };
+  farolaMat.customProgramCacheKey = () => 'farola-calle'; LAMPARAS.push(farolaMat);
+  inst(baculo, farolaMat, POSTES, (o, p) => { at0(o, p); o.rotation.y = p[2]; o.scale.setScalar(p[3]); });
+  inst(mural, farolaMat, MURALES, (o, p) => { o.position.set(p[0], terrainAt(p[0], p[1]) + p[3], -p[1]); o.rotation.y = p[2]; }, false);
+  return { postes: POSTES, murales: MURALES };
+})();
 // Esquivar: nadie atraviesa a nadie (ni al jugador, ni bancos, farolas o árboles). Cada figura que anda mira 2,2 m por delante;
 // si hay alguien, se aparta hacia el lado libre (o adelanta por la izquierda al que va más despacio) y, si no puede, frena.
 const lifeStatic = (() => {
@@ -12034,6 +12331,7 @@ const lifeStatic = (() => {
   for (const l of W.lamps) items.push({ x: l[0], y: l[1], r: 0.25 });
   for (const l of W.pilastras) items.push({ x: l[0], y: l[1], r: 0.4 });
   for (const l of BEG.farolas) items.push({ x: l[0], y: l[1], r: 0.3 });
+  for (const l of FAROLAS_CALLE.postes) items.push({ x: l[0], y: l[1], r: 0.22 });
   for (const t of W.trees) items.push({ x: t[0], y: t[1], r: 0.4 });
   for (const b of W.bins) items.push({ x: b[0], y: b[1], r: 0.3 });
   for (const s of W.signals) items.push({ x: s[0], y: s[1], r: 0.25 });
@@ -15783,6 +16081,7 @@ void main() {
   return { P, AO, FIN, render, activo, get rt() { return rt; } };
 })();
 
+LUCES.monta();   // (el mapa de la luz de las farolas: ya están todas puestas)
 // ---------- Bucle ----------
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(); let frames = 0, fpsT = 0, mapT = 0, nearT = 0, shoreT = 0, realT = 0;
@@ -15792,7 +16091,7 @@ renderer.setAnimationLoop(() => {
   waterTex.offset.set(t * 0.006, t * 0.004); sky.position.copy(camera.position); sea.position.x = Math.round(camera.position.x * 2) / 2; sea.position.z = Math.round(camera.position.z * 2) / 2; skyU.uTime.value = t; SEA.uTime.value = t % 3600; updateSignals(t); peatones(t); musicosTick(t); barcosTick(t, dt); ilustresMueve(t, dt); JDIN.tick(t, dt); updateLife(t, dt); ilustresTick(t); cityUpdate(t); talkUpdate(t); escTick(t); regTick(t); balizaTick(t); carmenTick(t); trenesTick(t, dt); vaporTick(t, dt); oesteTick(t); muselTick(t, dt); lluviaTick(t); teselasTick(t); if (APARCADOS) APARCADOS.tick(t);
   PASAJE.cam();   // (de pasajero: el jugador va donde está ahora su vehículo)
   MEDIR.tick(t); RETOS.tick(t);
-  SOMBRAS.coloca();
+  SOMBRAS.coloca(); LUCES.tick(t);
   skyU.uPix.value = camera.fov * DEG / renderer.domElement.height; ASTROS.U.uPR.value = renderer.getPixelRatio();
   if (envDirty) { envDirty = false; if (envRT) envRT.dispose(); envRT = pmrem.fromScene(envScene); for (const m of [waterMat, pondMat, pondMat2, seaMat, glassMat, miraMat, lifeCarMat, lifeBusMat, ...(TIEMPO.mojado > 0 ? MOJ_MATS : [])].filter(Boolean)) { if (!m.envMap) m.needsUpdate = true; m.envMap = envRT.texture; } }
   FX.render();   // (con los efectos de luz o, sin ellos, directamente)
@@ -15833,7 +16132,7 @@ ayudaT = setTimeout(quitaAyuda, 15000);   // la ayuda del principio se va sola
 window.__sp = { medir: MEDIR, retos: RETOS, st, W, keys, update, place, ready: true, escena: () => ({ scene, camera, THREE, renderer }), tiempo: () => ({ modo: TIEMPO.modo, estado: TIEMPO.estado, lluvia: TIEMPO.lluvia, vis: TIEMPO.vis, ola: TIEMPO.ola, real: TIEMPO.real, err: TIEMPO.err, texto: $('tiempov').textContent }), pideTiempo, coche: COCHE, trafico: () => TRAFICO, aparcados: () => APARCADOS, accionE, queHacerE, vehiculoCerca, perroCerca, rodable, onRoad, voz: VOZ, cielo: CIELO, puentes: PUENTES_ARCO, teclas: TECLAS, juegos: JUEGOS, juego: JUEGO, jdin: JDIN, suelo: () => SUELO && { triangulos: SUELO.nT, movidos: SUELO.movidos }, bocadillo: () => talk, ilustres: () => ILUSTRES, estatuas: () => ESTATUAS, pelayo: PELAYO, poniente: { ...PONIENTE2, ...PONIENTE_TA }, moreda: MOREDA, ies: IES, zona: [BX0, BY0, BX1, BY1], museo: { ...MUSEO_REC, P: MUSEO_P }, groundAt, inLand, stairH, terrainAt, seabedAt, inBuilding, blocked, railCross, maskAt, onBridge, snd, shoreNear, tideAt, tideExtremes, setReal, gijonDate, ahora, ponFecha, astros: ASTROS, fuegos: FUEGOS, rotulos: ROTULOS, vida: VIDA, fiesta: FIESTA, viaje: VIAJE, pasaje: PASAJE, reloj: RELOJ, luz: () => ({ dir: luzDir.toArray(), sol: sunDir.toArray(), i: sun.intensity, estrellas: skyU.uEstrellas.value }), MAREA, water: () => waterY, info: () => ({ suelo: TERN, rendijas: TERF, buildings: W.buildings.length, stairs: W.stairs.length, pois: pois.length, q: qLevel, balcones: BALC.length, terrazas: TERR.length, miradores: MIRA.length, lejos: LEJOS ? LEJOS.n : 0, arbolesLejos: LEJOS ? LEJOS.arboles : 0, laboral: LAB ? LAB.LA.partes.length : 0, roca: Math.round((D.roca || []).reduce((s, r) => s + r[2] - r[1], 0)), palmas: PALMAS.length, washingtonias: PALMAS.filter(p => p[3] === 'w').length }), sueloAt, enZona, VUELO, lejosH: (x, y) => LEJOS ? LEJOS.H(x, y) : null, lab: () => LAB,
   este: () => ({ ESTE, U: ESTE_VIDA.U, ocupacion: [ESTE_VIDA.OCUP, ESTE_VIDA.OCUP_AC] }),
   teselas: () => { const cx = camera.position.x, cz = camera.position.z, o = { far: scene.fog.far, q: qLevel }; for (const m of TESELAS) { const d = m.userData.tes, e = o[d.k] ??= { n: 0, vis: 0, lejos: 0 }; e.n++; if (m.visible) { e.vis++; e.lejos = Math.max(e.lejos, Math.round(Math.hypot(d.cx - cx, d.cz - cz) - d.r)); } } return o; } };   // teselas por clase: cuántas, cuántas se ven y la más lejana (m)
-Object.assign(window.__sp, { fx: FX, sombras: SOMBRAS, arboles: ARBOLES, hierba: HIERBA, fachadas: { FACU, eraDe, tejados: () => NTEJ }, figuras: { persona: personGeo, lejos: personGeoLejos, perro: perroGeo, moto: motoGeo, bici: biciGeo, patinete: patGeo }, calidad: { AUTO, QUALITY, nivel: () => qLevel, vida: () => qVida, aplica: applyQuality } });   // (05/10/2026)
+Object.assign(window.__sp, { luces: LUCES, farolas: FAROLAS_CALLE, fx: FX, sombras: SOMBRAS, arboles: ARBOLES, hierba: HIERBA, fachadas: { FACU, eraDe, tejados: () => NTEJ }, figuras: { persona: personGeo, lejos: personGeoLejos, perro: perroGeo, moto: motoGeo, bici: biciGeo, patinete: patGeo }, calidad: { AUTO, QUALITY, nivel: () => qLevel, vida: () => qVida, aplica: applyQuality } });   // (05/10/2026)
 </script>
 </body>
 </html>
