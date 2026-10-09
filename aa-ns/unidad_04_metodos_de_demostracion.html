@@ -3836,10 +3836,12 @@
       border: 1px solid #d6dfec;
       border-radius: 0.4rem;
       background: #ffffff;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 1.08rem;
+      /* Las letras de las fórmulas: cada palabra es un producto. */
+      font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", Times, serif;
+      font-size: 1.21em;
       font-style: italic;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.04em;
+      line-height: 1.35;
     }
 
     @media (max-width: 42rem) {
@@ -3876,7 +3878,7 @@
 
     /* Infografías animadas (regla 14 de AGENTS.md): el dibujo de una idea,
        en línea blanca sobre el tono de su unidad, con el lenguaje de las
-       tarjetas de la portada. Están plegadas tras una cinta «En un dibujo»
+       tarjetas de la portada. Están plegadas tras una cinta «Trazo a trazo»
        y, abiertas, llevan mandos de reproductor. Cada pieza lleva una clase
        e-… y, en --t, el instante en que entra (en --d, lo que dura un trazo
        o una luz). Sus animaciones están siempre en pausa: el instante que
@@ -4086,8 +4088,31 @@
       height: auto;
     }
 
+    /* La letra de los dibujos es la de la página: las fórmulas, con las
+       letras de KaTeX, como todas las de la unidad (y miden lo mismo en
+       cualquier aparato, que es lo que piden una raíz o una casilla); las
+       palabras, con la letra del texto, algo menor, como en un renglón de
+       los apuntes. */
     .lienzo-infografia-ib .rotulos {
-      font-family: "Times New Roman", Times, serif;
+      font-family: KaTeX_Main, "Times New Roman", Times, serif;
+    }
+
+    .lienzo-infografia-ib .rotulos .letra-ib {
+      font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", Times, serif;
+      font-style: italic;
+    }
+
+    .lienzo-infografia-ib .rotulos .palabra-ib {
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif;
+      font-size: 0.9em;
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .lienzo-infografia-ib .rotulos .palabra-ib.fuerte {
+      font-weight: 700;
     }
 
     /* Los mandos, sobre blanco, con el tono de la unidad. */
@@ -10035,7 +10060,7 @@ Enfoques NS</p>
     // Infografías animadas del curso IB (regla 14 de AGENTS.md): el dibujo
     // de una idea, en línea blanca sobre el tono de la unidad, con el
     // lenguaje de las tarjetas de la portada. Van plegadas tras una cinta
-    // «En un dibujo» y, abiertas, llevan mandos de reproductor: reproducir
+    // «Trazo a trazo» y, abiertas, llevan mandos de reproductor: reproducir
     // y pausa, una barra de avance, la mitad de velocidad y repetir.
     //
     // Tienen guion propio, delante del principal, porque Babel avisa en la
@@ -10115,9 +10140,26 @@ Enfoques NS</p>
         );
       }
 
-      // ---- La letra de las fórmulas ----
+      // ---- La letra de los rótulos ----
 
-      const cursiva = (letra) => <tspan fontStyle="italic">{letra}</tspan>;
+      // Un rótulo es una fórmula mientras no se diga otra cosa: va con las
+      // letras de KaTeX, que son las de las fórmulas de la página. Una
+      // variable lleva su cursiva, y las palabras, la letra del texto
+      // (orden del profesor del 9 de octubre de 2026, por la noche, ante un
+      // rótulo en Times: «que sean más bonitas visualmente la tipografía»).
+      // El punto de multiplicar es el de las fórmulas (U+22C5): el punto
+      // volado corriente no está en esas letras.
+      const cursiva = (letra) => <tspan className="letra-ib">{letra}</tspan>;
+
+      const palabra = (texto, fuerte) => (
+        <tspan className={fuerte ? "palabra-ib fuerte" : "palabra-ib"}>{texto}</tspan>
+      );
+
+      const POR = " \u22C5 ";
+
+      // Aire entre dos partes de un rótulo: los espacios corrientes se
+      // funden en uno, y estos, que no se parten, no.
+      const HUECO = "\u00A0\u00A0\u00A0";
 
       // Subíndice y superíndice. El último tramo de cada uno, que no se
       // ve, devuelve la línea a su sitio.
@@ -10234,6 +10276,15 @@ Enfoques NS</p>
 
       // ---- El reproductor ----
 
+      // Lo que avanza el dibujo por cada segundo de reloj. Los instantes de
+      // las piezas están escritos al doble de este paso: el profesor los
+      // vio así, con el mando de «×0,5» puesto, y pidió esa velocidad como
+      // la normal y, para el mando, la mitad de ella (9 de octubre de 2026:
+      // «la velocidad normal debería ser la que está ahora x0,5 y la
+      // velocidad x0,5 la mitad de esa»).
+      const PASO_NORMAL = 0.5;
+      const PASO_LENTO = 0.25;
+
       const ICONOS = {
         reproducir: "M8 5.2v13.6L19 12z",
         pausa: "M7 5h3.5v14H7zM13.5 5H17v14h-3.5z",
@@ -10259,7 +10310,7 @@ Enfoques NS</p>
 
       // La infografía entera: la cinta que la abre, el lienzo (640 de ancho
       // y el alto que pida el dibujo; los rótulos van en «rotulos»,
-      // centrados y con la letra de la portada), los mandos y el texto.
+      // centrados y con la letra de las fórmulas), los mandos y el texto.
       function InfografiaIB({ configuracion, alPreparar, tono, titulo, duracion, alto, descripcion, texto, rotulos, children }) {
         const lienzo = useRef(null);
         const barra = useRef(null);
@@ -10310,7 +10361,7 @@ Enfoques NS</p>
           const paso = () => {
             soltar();
             const ahora = Date.now();
-            const siguiente = instante.current + ((ahora - antes) / 1000) * (lenta ? 0.5 : 1);
+            const siguiente = instante.current + ((ahora - antes) / 1000) * (lenta ? PASO_LENTO : PASO_NORMAL);
             antes = ahora;
             poner(siguiente);
             if (siguiente >= duracion) {
@@ -10380,7 +10431,7 @@ Enfoques NS</p>
                   <path pathLength="100" d="M3 17c2.4-7.4 4.4-9.2 6.4-5.2s3.6 4.6 5.4-1.4 3.6-6 6.2-3.4" />
                 </svg>
               </span>
-              <span className="rotulo-infografia-ib">En un dibujo</span>
+              <span className="rotulo-infografia-ib">Trazo a trazo</span>
               <span className="titulo-infografia-ib">{configuracion.titulo || titulo}</span>
               <span className="accion-infografia-ib">
                 <Icono nombre={abierta ? "cerrar" : "reproducir"} relleno={!abierta} />
@@ -10516,7 +10567,7 @@ Enfoques NS</p>
                   …
                 </Rotulo>
                 <Rotulo t={3.25} x="302" y="36" fontSize="21">
-                  3 saltos
+                  3 {palabra("saltos")}
                 </Rotulo>
                 <text x="320" y="254" fontSize="27">
                   <tspan className="e-letra" style={cuando(3.6)}>
@@ -10525,7 +10576,7 @@ Enfoques NS</p>
                   <tspan className="e-letra" style={cuando(3.85)}>
                     {" + "}
                     <tspan fontWeight="700">3</tspan>
-                    {" · 4"}
+                    {POR}4
                   </tspan>
                   <tspan className="e-letra" style={cuando(4.1)}>{" = 19"}</tspan>
                 </text>
@@ -10610,9 +10661,9 @@ Enfoques NS</p>
           .map((x, nivel) => (nivel === 0 ? "M" : "L") + n1(x) + " " + alturas[nivel])
           .join("");
         const niveles = [
-          { y: alturas[1], desde: primeros[2] + 14, nombre: "3 primeros", cuenta: "", t: 0.8 },
-          { y: alturas[2], desde: segundos[11] + 10, nombre: "× 4 segundos", cuenta: "3 · 4 = 12", t: 1.8 },
-          { y: alturas[3], desde: hojas[23] + 8, nombre: "× 2 postres", cuenta: "3 · 4 · 2 = 24", t: 2.95 }
+          { y: alturas[1], desde: primeros[2] + 14, cuantos: "3", nombre: "primeros", cuenta: "", t: 0.8 },
+          { y: alturas[2], desde: segundos[11] + 10, cuantos: "× 4", nombre: "segundos", cuenta: "3" + POR + "4 = 12", t: 1.8 },
+          { y: alturas[3], desde: hojas[23] + 8, cuantos: "× 2", nombre: "postres", cuenta: "3" + POR + "4" + POR + "2 = 24", t: 2.95 }
         ];
 
         return (
@@ -10641,7 +10692,7 @@ Enfoques NS</p>
                 {niveles.map((nivel, orden) => (
                   <g key={orden} textAnchor="start">
                     <Rotulo t={nivel.t} x="500" y={nivel.y + (nivel.cuenta ? -3 : 7)} fontSize="22">
-                      {nivel.nombre}
+                      {nivel.cuantos} {palabra(nivel.nombre)}
                     </Rotulo>
                     <Rotulo t={nivel.t + 0.15} x="500" y={nivel.y + 20} fontSize="19" opacity="0.88">
                       {nivel.cuenta}
@@ -10649,11 +10700,14 @@ Enfoques NS</p>
                   </g>
                 ))}
                 <Rotulo t={4.4} x={hojas[13]} y={alturas[3] + 30} fontSize="19" opacity="0.92">
-                  un camino, un menú
+                  {palabra("un camino, un menú")}
                 </Rotulo>
                 <text x={raiz} y="308" fontSize="28">
-                  <tspan className="e-letra" style={cuando(4.75)}>3 · 4 · 2</tspan>
-                  <tspan className="e-letra" style={cuando(5)}>{" = 24 menús"}</tspan>
+                  <tspan className="e-letra" style={cuando(4.75)}>{"3" + POR + "4" + POR + "2"}</tspan>
+                  <tspan className="e-letra" style={cuando(5)}>
+                    {" = 24 "}
+                    {palabra("menús")}
+                  </tspan>
                 </text>
               </g>
             }
@@ -10736,11 +10790,11 @@ Enfoques NS</p>
                     {marca}
                   </Rotulo>
                 ))}
-                <Rotulo t={0.6} x="620" y="110" fontSize="20" fontStyle="italic" opacity="0.9">
-                  x
+                <Rotulo t={0.6} x="620" y="110" fontSize="20" opacity="0.9">
+                  {cursiva("x")}
                 </Rotulo>
-                <Rotulo t={0.6} x="54" y="28" fontSize="20" fontStyle="italic" opacity="0.9">
-                  y
+                <Rotulo t={0.6} x="54" y="28" fontSize="20" opacity="0.9">
+                  {cursiva("y")}
                 </Rotulo>
                 <Rotulo t={1.5} x="432" y="28" fontSize="19" opacity="0.92">
                   {cursiva("y")} = ln {cursiva("x")}
@@ -10766,12 +10820,12 @@ Enfoques NS</p>
                 </Rotulo>
                 <Rotulo t={3.8} clase="e-letra" x="200" y="290" fontSize="25">
                   {cursiva("n")}
-                  {" · ln 0,8 "}
+                  {POR + "ln 0,8 "}
                   <tspan fontWeight="700">{"<"}</tspan>
                   {" ln 0,05"}
                 </Rotulo>
                 <Rotulo t={4.15} x="376" y="262" fontSize="19" opacity="0.92">
-                  ÷ ln 0,8, negativo
+                  ÷ ln 0,8, {palabra("negativo")}
                 </Rotulo>
                 <Rotulo t={4.55} clase="e-letra" x="486" y="290" fontSize="25">
                   {cursiva("n")}{" "}
@@ -10874,10 +10928,10 @@ Enfoques NS</p>
             rotulos={
               <g>
                 <Rotulo t={0.2} x="184" y="35" fontSize="21" opacity="0.95">
-                  de 2 en 2
+                  {palabra("de")} 2 {palabra("en")} 2
                 </Rotulo>
                 <Rotulo t={0.65} x="494" y="35" fontSize="21" opacity="0.95">
-                  de 3 en 3
+                  {palabra("de")} 3 {palabra("en")} 3
                 </Rotulo>
                 {filas.map(([x0, y, , , , t0, numero, letra, resto], orden) => (
                   <Rotulo key={orden} t={t0 - 0.05} x={x0 - 14} y={y + 8} fontSize="24" textAnchor="end">
@@ -10887,13 +10941,13 @@ Enfoques NS</p>
                   </Rotulo>
                 ))}
                 <Rotulo t={1.1} x="160.5" y="62" fontSize="19" opacity="0.92">
-                  {cursiva("k")} parejas
+                  {cursiva("k")} {palabra("parejas")}
                 </Rotulo>
                 <Rotulo t={3} x="184" y="190" fontSize="19" opacity="0.92">
-                  {cursiva("m")} parejas
+                  {cursiva("m")} {palabra("parejas")}
                 </Rotulo>
                 <Rotulo t={1.45} x="494.5" y="62" fontSize="19" opacity="0.92">
-                  {cursiva("k")} tríos
+                  {cursiva("k")} {palabra("tríos")}
                 </Rotulo>
               </g>
             }
@@ -10957,11 +11011,11 @@ Enfoques NS</p>
                   </Rotulo>
                 ))}
                 <Rotulo como="g" t={2.2}>
-                  <Raiz x={258} y={126} s={21} ancho={43} indice="3">
+                  <Raiz x={258} y={126} s={21} ancho={48} indice="3">
                     −125
                   </Raiz>
                 </Rotulo>
-                <Rotulo clase="e-letra" t={2.6} x="310" y="126" fontSize="21" textAnchor="start">
+                <Rotulo clase="e-letra" t={2.6} x="314" y="126" fontSize="21" textAnchor="start">
                   = {negrita("−5")}
                 </Rotulo>
                 <Rotulo como="g" t={3.05}>
@@ -10989,27 +11043,27 @@ Enfoques NS</p>
                   <text x="404" y="152" fontSize="21" textAnchor="start">
                     0,3
                   </text>
-                  <path d="M419.5 135.5h10.5" fill="none" stroke="#fff" strokeWidth="1.4" />
+                  <path d="M420.5 135.5h10" fill="none" stroke="#fff" strokeWidth="1.4" />
                 </Rotulo>
                 <Rotulo como="g" clase="e-letra" t={5.15}>
-                  <text x="442" y="152" fontSize="21">
+                  <text x="445" y="152" fontSize="21">
                     =
                   </text>
                   <g fontWeight="700">
-                    <Quebrado x={461} y={152} s={21} ancho={14} arriba="1" abajo="3" />
+                    <Quebrado x={466} y={152} s={21} ancho={14} arriba="1" abajo="3" />
                   </g>
                 </Rotulo>
                 <Rotulo como="g" t={5.6}>
-                  <Raiz x={526} y={152} s={21} ancho={21}>
+                  <Raiz x={521} y={152} s={21} ancho={21}>
                     18
                   </Raiz>
                 </Rotulo>
                 <Rotulo como="g" clase="e-letra" t={6}>
-                  <text x="583" y="152" fontSize="21" textAnchor="end">
+                  <text x="584" y="152" fontSize="21" textAnchor="end">
                     = {negrita("3")}
                   </text>
                   <g fontWeight="700">
-                    <Raiz x={595} y={152} s={21} ancho={10.5}>
+                    <Raiz x={596} y={152} s={21} ancho={12}>
                       2
                     </Raiz>
                   </g>
@@ -11102,7 +11156,7 @@ Enfoques NS</p>
                   );
                 })}
                 <Rotulo t={5} x="492" y="150" fontSize="18" opacity="0.92">
-                  positivos, cada vez menores
+                  {palabra("positivos, cada vez menores")}
                 </Rotulo>
                 <Rotulo clase="e-letra" t={5.6} x="408" y="74" fontSize="26" textAnchor="start">
                   2<Sup>−3</Sup>
@@ -11133,7 +11187,7 @@ Enfoques NS</p>
                   </g>
                 </Rotulo>
                 <Rotulo t={6.6} x="472" y="118" fontSize="19" opacity="0.92">
-                  y no −8
+                  {palabra("y no")} −8
                 </Rotulo>
               </g>
             }
@@ -11261,19 +11315,23 @@ Enfoques NS</p>
                 {renglon(180, 3.3, cursiva("z"), false)}
                 <Rotulo t={4.2} x="168" y="238" fontSize="25">
                   {cursiva("z")} = <tspan fontWeight="700">2</tspan>
-                  {"   o   "}
+                  {HUECO}
+                  {palabra("o")}
+                  {HUECO}
                   {cursiva("z")} = <tspan fontWeight="700">3</tspan>
                 </Rotulo>
                 <Rotulo t={6.9} x="168" y="294" fontSize="26">
                   {cursiva("x")} = <tspan fontWeight="700">ln 2</tspan>
-                  {"   o   "}
+                  {HUECO}
+                  {palabra("o")}
+                  {HUECO}
                   {cursiva("x")} = <tspan fontWeight="700">ln 3</tspan>
                 </Rotulo>
-                <Rotulo t={0.7} x="626" y="284" fontSize="19" fontStyle="italic" opacity="0.9">
-                  x
+                <Rotulo t={0.7} x="626" y="284" fontSize="19" opacity="0.9">
+                  {cursiva("x")}
                 </Rotulo>
-                <Rotulo t={0.7} x="426" y="30" fontSize="19" fontStyle="italic" opacity="0.9">
-                  y
+                <Rotulo t={0.7} x="426" y="30" fontSize="19" opacity="0.9">
+                  {cursiva("y")}
                 </Rotulo>
                 <Rotulo t={1.5} x="607" y="54" fontSize="19" opacity="0.92">
                   {cursiva("y")} = {eElevadoAx}
@@ -11289,7 +11347,7 @@ Enfoques NS</p>
                   </g>
                 ))}
                 <Rotulo t={7.5} x="378" y="176" fontSize="18" opacity="0.92">
-                  siempre
+                  {palabra("siempre")}
                 </Rotulo>
                 <Rotulo t={7.6} x="378" y="199" fontSize="19">
                   {eElevadoAx}
@@ -11388,24 +11446,24 @@ Enfoques NS</p>
                       {medalla.optan.length}
                     </Rotulo>
                     <Rotulo t={1.05} x={medalla.x} y="250" fontSize="19" opacity="0.92">
-                      {medalla.nombre}
+                      {palabra(medalla.nombre)}
                     </Rotulo>
                   </g>
                 ))}
                 <Rotulo clase="e-letra" t={6.1} x="255" y="212" fontSize="30">
-                  ·
+                  {POR.trim()}
                 </Rotulo>
                 <Rotulo clase="e-letra" t={6.1} x="385" y="212" fontSize="30">
-                  ·
+                  {POR.trim()}
                 </Rotulo>
                 <Rotulo t={6.3} x="506" y="212" fontSize="28" textAnchor="start">
                   = 336
                 </Rotulo>
                 <Rotulo t={7.1} x="230" y="34" fontSize="19" opacity="0.95">
-                  5 sin medalla
+                  5 {palabra("sin medalla")}
                 </Rotulo>
                 <Rotulo clase="e-letra" t={7.6} x="352" y="302" fontSize="27" textAnchor="end">
-                  8 · 7 · 6 =
+                  {"8" + POR + "7" + POR + "6 ="}
                 </Rotulo>
                 <Rotulo como="g" clase="e-letra" t={7.9} fontWeight="700">
                   <Quebrado x={381} y={302} s={27} ancho={32} arriba="8!" abajo="5!" />
@@ -11498,13 +11556,13 @@ Enfoques NS</p>
             rotulos={
               <g>
                 <Rotulo t={0.2} x="150" y="28" fontSize="20" opacity="0.95">
-                  3! = 6 ordenaciones
+                  3! = 6 {palabra("ordenaciones")}
                 </Rotulo>
                 <Rotulo t={2.9} x="312" y="50" fontSize="17" opacity="0.92">
-                  la misma, 2! veces
+                  {palabra("la misma,")} 2! {palabra("veces")}
                 </Rotulo>
                 <Rotulo t={4.8} x="470" y="28" fontSize="20" opacity="0.95">
-                  3 palabras
+                  3 {palabra("palabras")}
                 </Rotulo>
                 {palabras.map((palabra, orden) => (
                   <g key={orden}>
@@ -11628,7 +11686,7 @@ Enfoques NS</p>
               <g>
                 {renglones.map((renglon) => (
                   <g key={renglon.y}>
-                    <Rotulo t={renglon.t} x="128" y={renglon.y} fontSize="27" textAnchor="end">
+                    <Rotulo t={renglon.t} x="138" y={renglon.y} fontSize="27" textAnchor="end">
                       {renglon.delante}
                       {suma} =
                     </Rotulo>
@@ -11660,7 +11718,7 @@ Enfoques NS</p>
                     2{suma} = 160
                   </tspan>
                   <tspan className="e-letra" style={cuando(6.5)}>
-                    {"   ⇒   "}
+                    {HUECO + "⇒" + HUECO}
                     {suma} = <tspan fontWeight="700">80</tspan>
                   </tspan>
                 </text>
@@ -11672,9 +11730,9 @@ Enfoques NS</p>
                 key={orden}
                 t={3.1 + 0.15 * (orden - 1)}
                 como="rect"
-                x={columna(orden) - 28}
+                x={columna(orden) - 26}
                 y="34"
-                width="56"
+                width="52"
                 height="108"
                 rx="14"
                 fillOpacity="0.1"
@@ -11762,7 +11820,7 @@ Enfoques NS</p>
                   5
                 </Rotulo>
                 <Rotulo t={3.4} x="170" y="288" fontSize="19">
-                  solo en {x} = 0 y {x} = 5: <tspan fontWeight="700">ecuación</tspan>
+                  {palabra("solo en")} {x} = 0 {palabra("y")} {x} = 5{palabra(":")} {palabra("ecuación", true)}
                 </Rotulo>
                 <Rotulo t={3.9} x="486" y="26" fontSize="22">
                   ({x} − 4){cuadrado} ≡ {x}
@@ -11776,7 +11834,7 @@ Enfoques NS</p>
                   {cuadrado} − 8{x} + 16
                 </Rotulo>
                 <Rotulo t={6.9} x="486" y="288" fontSize="19">
-                  la misma curva: <tspan fontWeight="700">identidad</tspan>
+                  {palabra("la misma curva:")} {palabra("identidad", true)}
                 </Rotulo>
               </g>
             }
@@ -11853,13 +11911,13 @@ Enfoques NS</p>
             rotulos={
               <g>
                 <Rotulo t={0.3} x="140" y="26" fontSize="19" opacity="0.92">
-                  Supongamos que
+                  {palabra("Supongamos que")}
                 </Rotulo>
                 <Rotulo como="g" t={0.5}>
                   <text x="166" y="68" fontSize="24" textAnchor="end">
                     log<Sub>2</Sub> 7 =
                   </text>
-                  <Quebrado x={184} y={68} s={24} ancho={16} arriba={p} abajo={q} />
+                  <Quebrado x={181} y={68} s={24} ancho={16} arriba={p} abajo={q} />
                 </Rotulo>
                 <Rotulo t={2} x="352" y="70" fontSize="24">
                   2
@@ -11878,16 +11936,16 @@ Enfoques NS</p>
                   </tspan>
                 </Rotulo>
                 <Rotulo t={4.2} x="432" y="272" fontSize="18">
-                  par
+                  {palabra("par")}
                 </Rotulo>
                 <Rotulo t={4.5} x="494" y="272" fontSize="18">
-                  impar
+                  {palabra("impar")}
                 </Rotulo>
-                <Rotulo t={5.8} x="118" y="218" fontSize="23" fontWeight="700">
-                  imposible
+                <Rotulo t={5.8} x="118" y="218" fontSize="23">
+                  {palabra("imposible", true)}
                 </Rotulo>
                 <Rotulo t={7.9} x="320" y="306" fontSize="23">
-                  log<Sub>2</Sub> 7 no es una fracción: <tspan fontWeight="700">es irracional</tspan>
+                  log<Sub>2</Sub> 7 {palabra("no es una fracción:")} {palabra("es irracional", true)}
                 </Rotulo>
               </g>
             }
@@ -11908,7 +11966,7 @@ Enfoques NS</p>
             ))}
             <Trazo t={6.5} dura={0.7} d={vuelta} strokeOpacity="0.9" strokeWidth="1.7" />
             <Velo t={7.15} d="M70 130L76 118L86 127" strokeOpacity="0.9" strokeWidth="1.7" />
-            <Trazo t={7.3} dura={0.3} d="M84 70L198 54" strokeWidth="2.6" />
+            <Trazo t={7.3} dura={0.3} d="M74 72L198 54" strokeWidth="2.6" />
             {tramos.map((tramo) => (
               <Luz key={tramo.d} t={tramo.t} dura={tramo.dura} d={tramo.d} />
             ))}
@@ -11950,10 +12008,11 @@ Enfoques NS</p>
               <g>
                 <Rotulo t={0.2} x="320" y="34" fontSize="23">
                   {cursiva("n")}
-                  <Sup>2</Sup> − {cursiva("n")} + 11, ¿primo para todo {cursiva("n")}?
+                  <Sup>2</Sup> − {cursiva("n")} + 11{palabra(", ¿primo para todo")} {cursiva("n")}
+                  {palabra("?")}
                 </Rotulo>
-                <Rotulo t={0.5} x="22" y="74" fontSize="17" fontStyle="italic" opacity="0.9">
-                  n
+                <Rotulo t={0.5} x="22" y="74" fontSize="17" opacity="0.9">
+                  {cursiva("n")}
                 </Rotulo>
                 {valores.map((valor, orden) => (
                   <g key={valor}>
@@ -11969,10 +12028,10 @@ Enfoques NS</p>
                   121 = 11<Sup>2</Sup>
                 </Rotulo>
                 <Rotulo t={5.5} x="606" y="220" fontSize="18" textAnchor="end" opacity="0.95">
-                  no es primo
+                  {palabra("no es primo")}
                 </Rotulo>
                 <Rotulo t={6.2} x="294" y="200" fontSize="20">
-                  10 primos
+                  10 {palabra("primos")}
                 </Rotulo>
               </g>
             }
