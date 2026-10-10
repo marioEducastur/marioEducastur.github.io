@@ -9806,8 +9806,10 @@ Enfoques NS</p>
     // toca: fuera del modo clase solo se esconde, con su botón, y sigue
     // siendo lo que usan el modo clase y su ampliación, lo que se imprime y
     // lo que se ve sin JavaScript. Si un bloque no casa número a número con
-    // su lista de ejercicios, se queda como estaba. Este guion no lleva
-    // ningún signo de dólar: la plantilla es de Pandoc.
+    // su lista de ejercicios, se queda como estaba. Dentro de la solución
+    // abierta, la cuenta centrada que no cabe en su caja se encoge hasta
+    // caber, con un tope. Este guion no lleva ningún signo de dólar: la
+    // plantilla es de Pandoc.
     document.addEventListener("DOMContentLoaded", function () {
       var contenido = document.getElementById("contenido-unidad");
       if (!contenido) {
@@ -9866,6 +9868,66 @@ Enfoques NS</p>
         panel.caja.classList.add("esta-plegado");
         panel.boton.setAttribute("aria-expanded", "false");
         panel.rotulo.textContent = VER;
+      }
+      // Una cuenta centrada que no cabe en su caja (en un teléfono en
+      // vertical, casi todas) dejaba fuera de la vista su final, que es
+      // donde va el resultado recuadrado. Primero se le da todo el ancho de
+      // la solución: sale de la sangría de su apartado, por debajo de la
+      // letra, que solo ocupa el primer renglón. Si ni así cabe, se encoge
+      // hasta caber, con el tope de las fórmulas de los resúmenes (el
+      // 60 %): por debajo se leería mal, y la que tampoco cabe se queda en
+      // el tope y se desliza de lado, como antes. Se mide con la letra
+      // entera cada vez, porque el ancho de la caja cambia al girar el
+      // teléfono y el de la cuenta, cuando llegan las letras de KaTeX.
+      var TOPE_DE_ENCOGER = 60;
+      function encogerCuentas(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var borde =
+          caja.getBoundingClientRect().left +
+          parseFloat(estilo.borderLeftWidth) +
+          parseFloat(estilo.paddingLeft);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.display"), function (cuenta) {
+          var dentro = cuenta.querySelector(".katex-display");
+          if (!dentro) {
+            return;
+          }
+          dentro.style.fontSize = "";
+          cuenta.style.marginLeft = "";
+          cuenta.style.width = "";
+          cuenta.style.maxWidth = "";
+          var ancho = cuenta.clientWidth;
+          if (!(ancho > 0) || cuenta.scrollWidth <= ancho + 1) {
+            return;
+          }
+          // La que comparte renglón con su número o su letra (va en línea)
+          // no se mueve: los pisaría.
+          var sangria = Math.floor(cuenta.getBoundingClientRect().left - borde);
+          if (sangria > 0 && window.getComputedStyle(cuenta).display === "block") {
+            cuenta.style.marginLeft = -sangria + "px";
+            cuenta.style.width = "calc(100% + " + sangria + "px)";
+            cuenta.style.maxWidth = "none";
+            ancho = cuenta.clientWidth;
+          }
+          var tanto = 100;
+          for (
+            var vuelta = 0;
+            vuelta < 3 && cuenta.scrollWidth > ancho + 1 && tanto > TOPE_DE_ENCOGER;
+            vuelta++
+          ) {
+            tanto = Math.max(
+              TOPE_DE_ENCOGER,
+              Math.floor((0.99 * tanto * ancho) / cuenta.scrollWidth)
+            );
+            dentro.style.fontSize = tanto + "%";
+          }
+        });
+      }
+      function encogerLasAbiertas() {
+        paneles.forEach(function (panel) {
+          if (panel.caja.firstChild && !panel.caja.classList.contains("esta-plegado")) {
+            encogerCuentas(panel.caja);
+          }
+        });
       }
 
       Array.prototype.forEach.call(
@@ -9928,6 +9990,7 @@ Enfoques NS</p>
                 caja.classList.remove("esta-plegado");
                 boton.setAttribute("aria-expanded", "true");
                 panel.rotulo.textContent = OCULTAR;
+                encogerCuentas(caja);
               } else {
                 plegar(panel);
               }
@@ -9946,6 +10009,25 @@ Enfoques NS</p>
           }
         }
       );
+
+      // Las cuentas de las soluciones abiertas se vuelven a medir cuando
+      // cambia el ancho de la página (al girar el teléfono) y cuando llegan
+      // las letras de KaTeX. Solo si cambia el ancho: en un teléfono, la
+      // barra del navegador que aparece y desaparece al desplazar también
+      // avisa de un cambio de tamaño. Se hace en el momento, sin esperar a
+      // un fotograma, que en una pestaña en segundo plano no llega.
+      var anchoVisto = contenido.clientWidth;
+      window.addEventListener("resize", function () {
+        if (contenido.clientWidth === anchoVisto) {
+          return;
+        }
+        anchoVisto = contenido.clientWidth;
+        encogerLasAbiertas();
+      });
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(encogerLasAbiertas);
+      }
+      window.addEventListener("load", encogerLasAbiertas);
 
       // En el modo clase no hay botones de ejercicio: se pliegan y se vacían
       // las copias, para que la ampliación solo encuentre las soluciones del
