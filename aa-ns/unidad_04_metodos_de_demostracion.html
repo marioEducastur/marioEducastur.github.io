@@ -4925,6 +4925,189 @@
     .grupo-poster-ib .tapa-ficha-ib {
       color: rgb(255 255 255 / 0.88);
     }
+
+    /* Curso IB: la solución de cada ejercicio, debajo de él, y el resultado
+       final recuadrado (regla 14 de AGENTS.md). El guion deja bajo cada
+       enunciado un botón pequeño, «Ver solución», y al pulsarlo abre allí
+       una copia de su solución. El bloque «Soluciones» sigue en la página,
+       entero y sin tocar: es lo que usan el modo clase y su ampliación, lo
+       que se imprime y lo que ve quien no tiene JavaScript. */
+    .boton-solucion-ib {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      width: fit-content;
+      min-height: 0;
+      margin: 0.75rem 0 0;
+      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
+      color: var(--verde);
+      background: #ffffff;
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+      border-radius: 999px;
+      box-shadow: none;
+      font-size: 0.84rem;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .boton-solucion-ib svg {
+      flex: none;
+      width: 1.05em;
+      height: 1.05em;
+    }
+
+    .boton-solucion-ib .flecha-solucion-ib {
+      transition: transform 160ms ease;
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] {
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] .flecha-solucion-ib {
+      transform: rotate(180deg);
+    }
+
+    .boton-solucion-ib:focus-visible {
+      color: #ffffff;
+      background: var(--verde);
+      border-color: var(--verde);
+      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .boton-solucion-ib:hover {
+        color: #ffffff;
+        background: var(--verde);
+        border-color: var(--verde);
+      }
+    }
+
+    .solucion-ib {
+      margin: 0.65rem 0 0.15rem;
+      padding: 0.85rem 1rem 0.9rem;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.18);
+      border-left: 0.3rem solid var(--verde);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      animation: entrar-detalle 260ms ease-out;
+    }
+
+    .solucion-ib.esta-plegado {
+      display: none;
+    }
+
+    /* La copia es el elemento de la lista de soluciones, con sus clases:
+       va en una lista propia, sin número, porque el número ya lo lleva el
+       enunciado de encima. */
+    section.ejercicios ol.lista-solucion-ib {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    section.ejercicios ol.lista-solucion-ib > li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .solucion-ib > figure {
+      margin: 0 0 0.7rem;
+    }
+
+    .solucion-ib .math.display {
+      margin: 0.6rem 0;
+      padding: 0.55rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    /* Un enunciado que es solo una fórmula centrada la llevaba junto a su
+       número porque era lo único del elemento; con el botón detrás deja de
+       serlo, y el guion lo marca para que siga igual. */
+    #contenido-unidad li.solo-formula-ib > .math.display:first-child {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* El resultado final de cada solución va recuadrado: una frase, con
+       `[…]{.final}` en la fuente; una fórmula o su último miembro, con
+       `\boxed{…}`, que KaTeX pinta con un marco (`.fbox`). */
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
+      background: #ffffff;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    /* La frase es una sola caja: si no cabe en lo que queda del renglón,
+       baja entera, y solo se parte por dentro si no cabe en uno. Como es un
+       bloque en línea, el navegador podría dejar solo en el renglón
+       siguiente el signo que lleva detrás: el filtro los envuelve juntos. */
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
+    }
+
+    @media screen {
+      html:not(.modo-clase) .boton-soluciones.repartido-ib,
+      html:not(.modo-clase) .resultado.plegable.repartido-ib {
+        display: none !important;
+      }
+
+      html.modo-clase .boton-solucion-ib,
+      html.modo-clase .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    @media print {
+      .boton-solucion-ib,
+      .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    /* En un teléfono la solución va dentro de la tarjeta del ejercicio, que
+       ya es estrecha: menos relleno, para que las cuentas tengan sitio. */
+    @media screen and (max-width: 42rem) {
+      .solucion-ib {
+        margin-inline: -0.45rem;
+        padding: 0.65rem 0.55rem 0.7rem 0.6rem;
+      }
+
+      .solucion-ib ol[type="a"],
+      .solucion-ib ul {
+        padding-left: 1.35rem;
+      }
+
+      .solucion-ib .math.display {
+        padding: 0.5rem 0.45rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .solucion-ib {
+        animation: none;
+      }
+
+      .boton-solucion-ib .flecha-solucion-ib {
+        transition: none;
+      }
+    }
   </style>
 
   </head>
@@ -5061,27 +5244,27 @@ Enfoques NS</p>
                 <li><ol type="a">
                 <li>Se desarrolla el cuadrado del binomio y se resta:
                 <span class="math display">\[
-                (k+2)^2-k^2=k^2+4k+4-k^2=4k+4
+                (k+2)^2-k^2=k^2+4k+4-k^2=\boxed{4k+4}
                 \]</span></li>
                 <li>Con el cuadrado de una suma, <span
                 class="formula-con-signo"><span
                 class="math inline">\((a+b)^2=a^2+2ab+b^2\)</span>:</span>
                 <span class="math display">\[
-                (2m+3)^2=(2m)^2+2\cdot2m\cdot3+3^2=4m^2+12m+9
+                (2m+3)^2=(2m)^2+2\cdot2m\cdot3+3^2=\boxed{4m^2+12m+9}
                 \]</span></li>
                 </ol></li>
                 <li>Al sumar exponentes se multiplican las potencias.
                 <ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(10^{k+1}=10^k\cdot10^1=10\cdot10^k\)</span>.</span></li>
+                class="math inline">\(10^{k+1}=10^k\cdot10^1=\boxed{10\cdot10^k}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(3^{2(k+1)}=3^{2k+2}=3^{2k}\cdot3^2=9\cdot3^{2k}\)</span>.</span></li>
+                class="math inline">\(3^{2(k+1)}=3^{2k+2}=3^{2k}\cdot3^2=\boxed{9\cdot3^{2k}}\)</span>.</span></li>
                 </ol></li>
                 <li>Los dos sumandos llevan el factor <span
                 class="formula-con-signo"><span
                 class="math inline">\(k+3\)</span>,</span> que sale
                 fuera: <span class="math display">\[
-                k(k+3)+4(k+3)=(k+3)(k+4)
+                k(k+3)+4(k+3)=\boxed{(k+3)(k+4)}
                 \]</span></li>
                 <li>La segunda suma tiene los mismos términos que la
                 primera y uno más, el de <span
@@ -5090,10 +5273,11 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(2(k+1)+5=2k+7\)</span>.</span> Hay
                 que sumar <span class="formula-con-signo"><span
-                class="math inline">\(2k+7\)</span>.</span></li>
+                class="math inline">\(\boxed{2k+7}\)</span>.</span></li>
                 <li><ol type="a">
-                <li>Verdadero. Un múltiplo de <span
-                class="math inline">\(6\)</span> es <span
+                <li><span class="final-con-signo"><span
+                class="final">Verdadero</span>.</span> Un múltiplo de
+                <span class="math inline">\(6\)</span> es <span
                 class="formula-con-signo"><span
                 class="math inline">\(6k\)</span>,</span> con <span
                 class="math inline">\(k\)</span> entero, y <span
@@ -5101,10 +5285,11 @@ Enfoques NS</p>
                 class="math inline">\(6k=3\cdot(2k)\)</span>,</span> que
                 es múltiplo de <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>.</span></li>
-                <li>Falso. Basta un contraejemplo: <span
-                class="math inline">\(3\)</span> es múltiplo de <span
-                class="math inline">\(3\)</span> y no de <span
-                class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> Basta un
+                contraejemplo: <span class="math inline">\(3\)</span> es
+                múltiplo de <span class="math inline">\(3\)</span> y no
+                de <span class="formula-con-signo"><span
                 class="math inline">\(6\)</span>.</span></li>
                 </ol></li>
                 </ol>
@@ -5286,7 +5471,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 (n+5)^2-(n-5)^2&amp;=n^2+10n+25-\left(n^2-10n+25\right)\\
                 &amp;=n^2+10n+25-n^2+10n-25\\
-                &amp;=20n
+                &amp;=\boxed{20n}
                 \end{aligned}
                 \]</span></li>
                 <li>Se resta con denominador común <span
@@ -5296,14 +5481,14 @@ Enfoques NS</p>
                 \begin{aligned}
                 \frac{4}{x-1}-\frac{4}{x+3}&amp;=\frac{4(x+3)-4(x-1)}{(x-1)(x+3)}\\
                 &amp;=\frac{4x+12-4x+4}{(x-1)(x+3)}\\
-                &amp;=\frac{16}{(x-1)(x+3)}
+                &amp;=\boxed{\frac{16}{(x-1)(x+3)}}
                 \end{aligned}
                 \]</span></li>
                 <li>Se desarrollan los dos cubos; al restar, cambian los
                 signos del segundo: <span class="math display">\[
                 \begin{aligned}
                 (x+1)^3-(x-1)^3&amp;=x^3+3x^2+3x+1-\left(x^3-3x^2+3x-1\right)\\
-                &amp;=6x^2+2
+                &amp;=\boxed{6x^2+2}
                 \end{aligned}
                 \]</span></li>
                 </ol></li>
@@ -5315,7 +5500,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 n(n+1)(n+2)-(n-1)\,n(n+1)&amp;=n(n+1)\bigl[(n+2)-(n-1)\bigr]\\
                 &amp;=n(n+1)\cdot3\\
-                &amp;=3n(n+1)
+                &amp;=\boxed{3n(n+1)}
                 \end{aligned}
                 \]</span></li>
                 <li><ol type="a">
@@ -5328,7 +5513,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 \frac{5}{\sqrt{21}-4}&amp;=\frac{5\left(\sqrt{21}+4\right)}{\left(\sqrt{21}-4\right)\left(\sqrt{21}+4\right)}\\
                 &amp;=\frac{5\left(\sqrt{21}+4\right)}{21-16}\\
-                &amp;=\sqrt{21}+4
+                &amp;=\boxed{\sqrt{21}+4}
                 \end{aligned}
                 \]</span></li>
                 <li>La raíz cuadrada de un número es el número positivo
@@ -5339,21 +5524,24 @@ Enfoques NS</p>
                 \left(2+\sqrt3\right)^2=4+4\sqrt3+3=7+4\sqrt3
                 \]</span> Como además <span
                 class="formula-con-signo"><span
-                class="math inline">\(2+\sqrt3&gt;0\)</span>,</span> es
-                la raíz cuadrada de <span
+                class="math inline">\(2+\sqrt3&gt;0\)</span>,</span>
+                <span class="final">es la raíz cuadrada de <span
                 class="formula-con-signo"><span
-                class="math inline">\(7+4\sqrt3\)</span>.</span></li>
+                class="math inline">\(7+4\sqrt3\)</span>.</span></span></li>
                 <li>La resta de logaritmos es el logaritmo del cociente,
                 y <span class="formula-con-signo"><span
                 class="math inline">\(81=3^4\)</span>:</span> <span
                 class="math display">\[
-                \log_3 162-\log_3 2=\log_3\frac{162}{2}=\log_3 81=4
+                \log_3 162-\log_3 2=\log_3\frac{162}{2}=\log_3
+                81=\boxed{4}
                 \]</span></li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Parte de la igualdad que hay que demostrar y la da
-                por cierta desde la primera línea. Llegar a algo
-                verdadero, como <span class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final">Parte de la igualdad que hay que demostrar
+                y la da por cierta desde la primera línea</span>.</span>
+                Llegar a algo verdadero, como <span
+                class="formula-con-signo"><span
                 class="math inline">\(a^2+1=a^2+1\)</span>,</span> no
                 prueba que la primera línea lo sea: de una igualdad
                 falsa también se puede llegar a una verdadera.</li>
@@ -5364,7 +5552,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 \frac{a}{a-1}-\frac{1}{a+1}&amp;=\frac{a(a+1)-(a-1)}{(a-1)(a+1)}\\
                 &amp;=\frac{a^2+a-a+1}{a^2-1}\\
-                &amp;=\frac{a^2+1}{a^2-1}
+                &amp;=\boxed{\frac{a^2+1}{a^2-1}}
                 \end{aligned}
                 \]</span></li>
                 </ol></li>
@@ -5561,7 +5749,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(k\in\mathbb Z\)</span>:</span>
                 <span class="math display">\[
-                3k+(3k+3)+(3k+6)=9k+9=9(k+1)
+                3k+(3k+3)+(3k+6)=9k+9=\boxed{9(k+1)}
                 \]</span> Es múltiplo de <span
                 class="formula-con-signo"><span
                 class="math inline">\(9\)</span>,</span> porque <span
@@ -5578,10 +5766,11 @@ Enfoques NS</p>
                 &amp;=4k^2+4m^2+4m+1\\
                 &amp;=2\left(2k^2+2m^2+2m\right)+1
                 \end{aligned}
-                \]</span> Es un par más <span
+                \]</span> <span class="final-con-signo"><span
+                class="final">Es un par más <span
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> es decir,
-                impar.</li>
+                impar</span>.</span></li>
                 </ol></li>
                 <li>Si la cifra de las decenas es <span
                 class="math inline">\(a\)</span> y la de las unidades,
@@ -5593,7 +5782,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(10b+a\)</span>:</span> <span
                 class="math display">\[
-                (10a+b)+(10b+a)=11a+11b=11(a+b)
+                (10a+b)+(10b+a)=11a+11b=\boxed{11(a+b)}
                 \]</span> Es múltiplo de <span
                 class="formula-con-signo"><span
                 class="math inline">\(11\)</span>,</span> porque <span
@@ -5611,7 +5800,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 (n-1)\,n\,(n+1)+n&amp;=n\left(n^2-1\right)+n\\
                 &amp;=n^3-n+n\\
-                &amp;=n^3
+                &amp;=\boxed{n^3}
                 \end{aligned}
                 \]</span></li>
                 <li><ol type="a">
@@ -5624,7 +5813,8 @@ Enfoques NS</p>
                 factor par; si <span class="math inline">\(n\)</span> es
                 impar, el par es <span class="formula-con-signo"><span
                 class="math inline">\(n+1\)</span>.</span> En los dos
-                casos el producto es par.</li>
+                casos <span class="final-con-signo"><span
+                class="final">el producto es par</span>.</span></li>
                 <li>Un impar es <span class="formula-con-signo"><span
                 class="math inline">\(2m+1\)</span>,</span> con <span
                 class="formula-con-signo"><span
@@ -5638,9 +5828,9 @@ Enfoques NS</p>
                 class="math inline">\(j\in\mathbb Z\)</span>.</span>
                 Entonces <span class="formula-con-signo"><span
                 class="math inline">\((2m+1)^2=4\cdot2j+1=8j+1\)</span>,</span>
-                una unidad más que un múltiplo de <span
-                class="formula-con-signo"><span
-                class="math inline">\(8\)</span>.</span></li>
+                <span class="final">una unidad más que un múltiplo de
+                <span class="formula-con-signo"><span
+                class="math inline">\(8\)</span>.</span></span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -5685,9 +5875,10 @@ Enfoques NS</p>
                 binomio: <span class="math display">\[
                 a^2+b^2+(ab)^2=(ab)^2+2ab+1=(ab+1)^2
                 \]</span> Como <span class="math inline">\(ab+1\)</span>
-                es entero, es un cuadrado perfecto. Por ejemplo, con
-                <span class="math inline">\(a=2\)</span> y <span
-                class="formula-con-signo"><span
+                es entero, <span class="final-con-signo"><span
+                class="final">es un cuadrado perfecto</span>.</span> Por
+                ejemplo, con <span class="math inline">\(a=2\)</span> y
+                <span class="formula-con-signo"><span
                 class="math inline">\(b=3\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(4+9+36=49=7^2\)</span>.</span></p></li>
@@ -5755,8 +5946,8 @@ Enfoques NS</p>
                 </tr>
                 </tbody>
                 </table>
-                <p>Un cuadrado solo puede terminar en <span
-                class="formula-con-signo"><span
+                <p><span class="final">Un cuadrado solo puede terminar
+                en <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> <span
@@ -5773,9 +5964,11 @@ Enfoques NS</p>
                 class="math inline">\(3\)</span>,</span> <span
                 class="math inline">\(7\)</span> ni <span
                 class="formula-con-signo"><span
-                class="math inline">\(8\)</span>.</span> Un cubo puede
-                terminar en cualquier cifra, y cada una sale de una sola
-                cifra de <span class="formula-con-signo"><span
+                class="math inline">\(8\)</span>.</span></span> <span
+                class="final-con-signo"><span class="final">Un cubo
+                puede terminar en cualquier cifra</span>,</span> y cada
+                una sale de una sola cifra de <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\)</span>.</span> En los dos
                 casos, el resultado es par si <span
                 class="math inline">\(n\)</span> es par e impar si <span
@@ -6183,10 +6376,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado.
@@ -6227,10 +6421,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
@@ -6281,10 +6476,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado.
@@ -6332,10 +6528,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado.
@@ -6387,10 +6584,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol>
                 </div>
@@ -6511,10 +6709,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado.
@@ -6565,10 +6764,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado.
@@ -6607,10 +6807,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>En el sumatorio, la letra <span
                 class="math inline">\(k\)</span> solo cuenta los
@@ -6692,10 +6893,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado. Se usa una propiedad del
@@ -6747,10 +6949,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol>
                 </div>
@@ -6941,11 +7144,12 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(3^{n+1}+4^{2n-1}\)</span> es
                 divisible por <span class="math inline">\(13\)</span>
                 para todo <span class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 afirmación <span class="formula-con-signo">«<span
@@ -6995,11 +7199,12 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(n^3+(n+1)^3+(n+2)^3\)</span> es
                 divisible por <span class="math inline">\(9\)</span>
                 para todo <span class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
@@ -7045,11 +7250,12 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(5^n+2\cdot11^n\)</span> es
                 divisible por <span class="math inline">\(3\)</span>
                 para todo <span class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 afirmación <span class="formula-con-signo">«<span
@@ -7093,11 +7299,12 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(7^n+3n-1\)</span> es divisible por
                 <span class="math inline">\(9\)</span> para todo <span
                 class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol>
                 </div>
@@ -7162,11 +7369,13 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(2^{2n}-3n-1\)</span> es divisible
                 por <span class="math inline">\(9\)</span> para todo
                 <span class="formula-con-signo"><span
-                class="math inline">\(n\in\mathbb Z^+\)</span>.</span>
-                También lo es para <span class="formula-con-signo"><span
+                class="math inline">\(n\in\mathbb
+                Z^+\)</span>.</span></span> También lo es para <span
+                class="formula-con-signo"><span
                 class="math inline">\(n=0\)</span>,</span> porque <span
                 class="formula-con-signo"><span
                 class="math inline">\(1-0-1=0\)</span>.</span></li>
@@ -7324,10 +7533,11 @@ Enfoques NS</p>
                 <li><ol type="a">
                 <li>Con la ley de recurrencia: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_2=2\cdot6-5=7\)</span>,</span>
-                <span class="math inline">\(u_3=2\cdot7-5=9\)</span> y
+                class="math inline">\(u_2=2\cdot6-5=\boxed{7}\)</span>,</span>
+                <span
+                class="math inline">\(u_3=2\cdot7-5=\boxed{9}\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(u_4=2\cdot9-5=13\)</span>.</span></li>
+                class="math inline">\(u_4=2\cdot9-5=\boxed{13}\)</span>.</span></li>
                 <li>Restando <span class="math inline">\(5\)</span> a
                 cada término quedan <span
                 class="formula-con-signo"><span
@@ -7341,7 +7551,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(2^0\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=2^{\,n-1}+5\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=2^{\,n-1}+5}\)</span>.</span></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad <span class="formula-con-signo"><span
                 class="math inline">\(u_n=2^{\,n-1}+5\)</span>.</span>
@@ -7374,10 +7584,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 </ol></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
@@ -7412,10 +7623,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                Z^+\)</span>.</span></li>
+                Z^+\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 afirmación <span class="formula-con-signo">«<span
@@ -7461,11 +7673,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(7^n-1\)</span> es divisible por
-                <span class="math inline">\(6\)</span> para todo <span
-                class="formula-con-signo"><span
+                class="final"><span class="math inline">\(7^n-1\)</span>
+                es divisible por <span class="math inline">\(6\)</span>
+                para todo <span class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                N\)</span>.</span></li>
+                N\)</span>.</span></span></li>
                 </ul></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad del enunciado. Empieza en <span
@@ -7507,9 +7719,10 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(P(n)\)</span> es verdadera para
-                todo entero <span class="formula-con-signo"><span
-                class="math inline">\(n\geq2\)</span>.</span></li>
+                class="final"><span class="math inline">\(P(n)\)</span>
+                es verdadera para todo entero <span
+                class="formula-con-signo"><span
+                class="math inline">\(n\geq2\)</span>.</span></span></li>
                 </ul></li>
                 </ol>
                 </div>
@@ -7586,10 +7799,10 @@ Enfoques NS</p>
                 class="math inline">\(k\)</span>,</span> también <span
                 class="formula-con-signo"><span
                 class="math inline">\(k+1\)</span>.</span> Por el
-                principio de inducción matemática, se puede pagar
-                cualquier cantidad entera <span
-                class="formula-con-signo"><span
-                class="math inline">\(n\geq8\)</span>.</span></li>
+                principio de inducción matemática, <span
+                class="final">se puede pagar cualquier cantidad entera
+                <span class="formula-con-signo"><span
+                class="math inline">\(n\geq8\)</span>.</span></span></li>
                 </ul></li>
                 </ol>
                 </div>
@@ -7748,10 +7961,11 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
-                class="math inline">\(2^n\geq n+1\)</span> para todo
-                <span class="formula-con-signo"><span
+                class="final"><span class="math inline">\(2^n\geq
+                n+1\)</span> para todo <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\in\mathbb
-                N\)</span>.</span></li>
+                N\)</span>.</span></span></li>
                 </ul></li>
                 <li><ol type="a">
                 <li>Para <span class="formula-con-signo"><span
@@ -7760,7 +7974,9 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(4^2+3^2=16+9=25\)</span>:</span>
                 los dos miembros son iguales, así que <span
-                class="math inline">\(25&gt;25\)</span> es falso.</li>
+                class="final-con-signo"><span class="final"><span
+                class="math inline">\(25&gt;25\)</span> es
+                falso</span>.</span></li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 desigualdad <span class="formula-con-signo"><span
                 class="math inline">\(5^n&gt;4^n+3^n\)</span>.</span>
@@ -7798,9 +8014,10 @@ Enfoques NS</p>
                 lo es <span class="formula-con-signo"><span
                 class="math inline">\(P(k+1)\)</span>.</span> Por el
                 principio de inducción matemática, <span
+                class="final"><span
                 class="math inline">\(5^n&gt;4^n+3^n\)</span> para todo
                 entero <span class="formula-con-signo"><span
-                class="math inline">\(n\geq3\)</span>.</span></li>
+                class="math inline">\(n\geq3\)</span>.</span></span></li>
                 </ul></li>
                 </ol></li>
                 </ol>
@@ -7984,8 +8201,9 @@ Enfoques NS</p>
                 \]</span> Pero <span class="math inline">\(5^p\)</span>
                 es impar y <span class="math inline">\(2^q\)</span> es
                 par, así que no pueden ser iguales. La suposición es
-                falsa: <span class="math inline">\(\log_5 2\)</span> es
-                irracional.</li>
+                falsa: <span class="final-con-signo"><span
+                class="final"><span class="math inline">\(\log_5
+                2\)</span> es irracional</span>.</span></li>
                 <li>Supongamos que <span class="math inline">\(\log_3
                 5\)</span> es racional. Como es positivo, <span
                 class="math inline">\(\log_3 5=\frac pq\)</span> con
@@ -8000,8 +8218,9 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(5\)</span>.</span> No pueden ser
                 iguales, así que la suposición es falsa: <span
+                class="final-con-signo"><span class="final"><span
                 class="math inline">\(\log_3 5\)</span> es
-                irracional.</li>
+                irracional</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Supongamos que <span
@@ -8030,10 +8249,10 @@ Enfoques NS</p>
                 class="math inline">\(3\)</span>:</span> no es múltiplo
                 de <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>,</span> en contra de lo
-                supuesto. Por tanto, <span
+                supuesto. Por tanto, <span class="final"><span
                 class="math inline">\(n\)</span> es múltiplo de <span
                 class="formula-con-signo"><span
-                class="math inline">\(3\)</span>.</span></li>
+                class="math inline">\(3\)</span>.</span></span></li>
                 <li>Supongamos que <span
                 class="math inline">\(\sqrt[3]{3}\)</span> es racional:
                 <span class="formula-con-signo"><span
@@ -8060,8 +8279,10 @@ Enfoques NS</p>
                 class="math inline">\(q\)</span> no podían ser múltiplos
                 de <span class="math inline">\(3\)</span> a la vez,
                 porque la fracción era irreducible. La suposición es
-                falsa: <span class="math inline">\(\sqrt[3]{3}\)</span>
-                es irracional.</li>
+                falsa: <span class="final-con-signo"><span
+                class="final"><span
+                class="math inline">\(\sqrt[3]{3}\)</span> es
+                irracional</span>.</span></li>
                 </ol></li>
                 <li>Supongamos que hay algún <span
                 class="math inline">\(x&gt;0\)</span> con <span
@@ -8077,10 +8298,10 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;(x-1)^2&lt;0
                 \end{aligned}
                 \]</span> Pero un cuadrado no puede ser negativo. La
-                suposición es falsa: <span
+                suposición es falsa: <span class="final"><span
                 class="math inline">\(x+\frac1x\geq2\)</span> para todo
                 <span class="formula-con-signo"><span
-                class="math inline">\(x&gt;0\)</span>.</span></li>
+                class="math inline">\(x&gt;0\)</span>.</span></span></li>
                 <li>Supongamos que <span
                 class="math inline">\(n^2+n+1=m^2\)</span> para algún
                 <span class="formula-con-signo"><span
@@ -8104,8 +8325,9 @@ Enfoques NS</p>
                 class="math inline">\(n&lt;m&lt;n+1\)</span>.</span>
                 Pero entre dos enteros consecutivos no hay ningún
                 entero. La suposición es falsa: <span
+                class="final-con-signo"><span class="final"><span
                 class="math inline">\(n^2+n+1\)</span> no es un cuadrado
-                perfecto.</li>
+                perfecto</span>.</span></li>
                 <li><ol type="a">
                 <li>Se sustituye <span class="math inline">\(x=\frac
                 pq\)</span> en la ecuación y se multiplica por <span
@@ -8113,7 +8335,7 @@ Enfoques NS</p>
                 denominadores: <span class="math display">\[
                 \begin{aligned}
                 &amp;\frac{p^3}{q^3}+\frac{3p}{q}+1=0\\
-                \Rightarrow{}&amp;p^3+3pq^2+q^3=0
+                \Rightarrow{}&amp;\boxed{p^3+3pq^2+q^3=0}
                 \end{aligned}
                 \]</span></li>
                 <li>Como la fracción es irreducible, <span
@@ -8138,8 +8360,9 @@ Enfoques NS</p>
                 la suma es impar y no puede valer <span
                 class="formula-con-signo"><span
                 class="math inline">\(0\)</span>,</span> que es par.
-                Contradicción: la ecuación no tiene soluciones
-                racionales.</li>
+                Contradicción: <span class="final-con-signo"><span
+                class="final">la ecuación no tiene soluciones
+                racionales</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8310,22 +8533,22 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <p>Hay otros contraejemplos válidos.</p>
                 <ol start="36" type="1">
                 <li>En cada una basta un caso en el que se cumple lo que
-                se supone y falla lo que se afirma.
+                se supone y falla lo que se afirma. Hay otros
+                contraejemplos válidos.
                 <ol type="a">
-                <li>Con <span class="math inline">\(a=3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(b=-3\)</span>:</span> <span
-                class="formula-con-signo"><span
+                <li>Con <span class="math inline">\(\boxed{a=3}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{b=-3}\)</span>:</span>
+                <span class="formula-con-signo"><span
                 class="math inline">\(a^2=b^2=9\)</span>,</span> pero
                 <span class="formula-con-signo"><span
                 class="math inline">\(a\neq b\)</span>.</span></li>
-                <li>Con <span class="math inline">\(a=1\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(b=-1\)</span>:</span> se cumple
-                <span class="formula-con-signo"><span
+                <li>Con <span class="math inline">\(\boxed{a=1}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{b=-1}\)</span>:</span> se
+                cumple <span class="formula-con-signo"><span
                 class="math inline">\(a&gt;b\)</span>,</span> pero <span
                 class="math inline">\(\frac1a=1\)</span> y <span
                 class="formula-con-signo"><span
@@ -8333,41 +8556,45 @@ Enfoques NS</p>
                 <span class="math inline">\(1&lt;-1\)</span> es
                 falso.</li>
                 <li>Con <span class="formula-con-signo"><span
-                class="math inline">\(x=-4\)</span>:</span> <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=-4}\)</span>:</span>
+                <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt{(-4)^2}=\sqrt{16}=4\)</span>,</span>
                 que no es <span class="formula-con-signo"><span
                 class="math inline">\(-4\)</span>.</span></li>
-                <li><span class="math inline">\(2+\sqrt7\)</span> y
-                <span class="math inline">\(2-\sqrt7\)</span> son
+                <li><span class="final"><span
+                class="math inline">\(2+\sqrt7\)</span> y <span
+                class="math inline">\(2-\sqrt7\)</span></span> son
                 irracionales, y su suma es <span
                 class="formula-con-signo"><span
                 class="math inline">\(\left(2+\sqrt7\right)+\left(2-\sqrt7\right)=4\)</span>,</span>
                 que es racional.</li>
                 <li>Con <span class="formula-con-signo"><span
-                class="math inline">\(a=b=10\)</span>:</span> <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{a=b=10}\)</span>:</span>
+                <span class="formula-con-signo"><span
                 class="math inline">\(\log(10+10)=\log20\approx1{,}30\)</span>,</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(\log10+\log10=1+1=2\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Se calculan los dos miembros: <span
-                class="math inline">\(2^{11}-1=2048-1=2047\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(23\cdot89=2047\)</span>.</span></li>
+                class="math inline">\(2^{11}-1=2048-1=\boxed{2047}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(23\cdot89=\boxed{2047}\)</span>.</span></li>
                 <li><span class="math inline">\(11\)</span> es primo y,
                 por a), <span
                 class="math inline">\(2^{11}-1=23\cdot89\)</span> no lo
                 es, porque tiene divisores distintos de <span
                 class="math inline">\(1\)</span> y de sí mismo. Así,
-                <span class="math inline">\(n=11\)</span> es un
-                contraejemplo.</li>
+                <span class="final-con-signo"><span class="final"><span
+                class="math inline">\(n=11\)</span> es un
+                contraejemplo</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
-                <li>Cierta. Se estudian los casos según el resto de
-                <span class="math inline">\(n\)</span> al dividirlo
-                entre <span class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final">Cierta</span>.</span> Se estudian los
+                casos según el resto de <span
+                class="math inline">\(n\)</span> al dividirlo entre
+                <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>.</span> Si <span
                 class="formula-con-signo"><span
                 class="math inline">\(n=3k\)</span>,</span> <span
@@ -8387,27 +8614,34 @@ Enfoques NS</p>
                 class="math inline">\(2\)</span>.</span> En ningún caso
                 es múltiplo de <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>.</span></li>
-                <li>Falsa. Con <span class="math inline">\(n=3\)</span>
-                queda <span class="math inline">\(2^3=8\)</span> y <span
+                <li><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span> Con <span
+                class="math inline">\(n=3\)</span> queda <span
+                class="math inline">\(2^3=8\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(3^2=9\)</span>,</span> y <span
                 class="math inline">\(8&gt;9\)</span> es falso: <span
-                class="math inline">\(n=3\)</span> es un contraejemplo.
-                También fallan <span class="math inline">\(n=2\)</span>
-                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{n=3}\)</span> es un
+                contraejemplo. También fallan <span
+                class="math inline">\(n=2\)</span> y <span
+                class="formula-con-signo"><span
                 class="math inline">\(n=4\)</span>,</span> donde los dos
                 miembros son iguales; desde <span
                 class="math inline">\(n=5\)</span> es cierta, y se
                 demuestra por inducción como las del subapartado
                 2.4.</li>
-                <li>Falsa. <span class="math inline">\(\sqrt2\)</span> y
-                <span class="math inline">\(\sqrt{18}\)</span> son
+                <li><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span> <span
+                class="final"><span
+                class="math inline">\(\sqrt2\)</span> y <span
+                class="math inline">\(\sqrt{18}\)</span></span> son
                 irracionales, y su producto es <span
                 class="formula-con-signo"><span
                 class="math inline">\(\sqrt2\cdot\sqrt{18}=\sqrt{36}=6\)</span>,</span>
                 que es racional.</li>
-                <li>Cierta. Cuatro enteros consecutivos son <span
-                class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final">Cierta</span>.</span> Cuatro enteros
+                consecutivos son <span class="formula-con-signo"><span
                 class="math inline">\(n\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(n+1\)</span>,</span> <span
@@ -8634,8 +8868,9 @@ Enfoques NS</p>
                 class="math inline">\(n=k\)</span>,</span> también para
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=k+1\)</span>.</span> Por el
-                principio de inducción matemática, lo es para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>
+                principio de inducción matemática, <span
+                class="final">lo es para todo <span
+                class="math inline">\(n\in\mathbb Z^+\)</span></span>
                 <strong>R1</strong>.</li>
                 </ul></li>
                 <li>Supongamos que existen <span
@@ -8656,14 +8891,16 @@ Enfoques NS</p>
                 class="math inline">\(4\)</span>,</span> y <span
                 class="math inline">\(6\)</span> no lo es
                 <strong>R1</strong>. En los dos casos hay contradicción,
-                así que no existen <strong>R1</strong>.</li>
+                así que <span class="final">no existen</span>
+                <strong>R1</strong>.</li>
                 <li><ol type="a">
                 <li>Con la ley de recurrencia: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_2=u_1+4\cdot1=5\)</span>,</span>
-                <span class="math inline">\(u_3=u_2+4\cdot2=13\)</span>
+                class="math inline">\(u_2=u_1+4\cdot1=\boxed{5}\)</span>,</span>
+                <span
+                class="math inline">\(u_3=u_2+4\cdot2=\boxed{13}\)</span>
                 y <span
-                class="math inline">\(u_4=u_3+4\cdot3=25\)</span>
+                class="math inline">\(u_4=u_3+4\cdot3=\boxed{25}\)</span>
                 <strong>A2</strong> (<strong>A1</strong> por dos de los
                 tres).</li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
@@ -8696,27 +8933,29 @@ Enfoques NS</p>
                 class="math inline">\(n=k\)</span>,</span> también para
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=k+1\)</span>.</span> Por el
-                principio de inducción matemática, lo es para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>
+                principio de inducción matemática, <span
+                class="final">lo es para todo <span
+                class="math inline">\(n\in\mathbb Z^+\)</span></span>
                 <strong>R1</strong>.</li>
                 </ul></li>
                 <li>Se desarrolla el miembro derecho: <span
-                class="math inline">\(n^2+(n-1)^2=n^2+n^2-2n+1=2n^2-2n+1=u_n\)</span>
+                class="math inline">\(n^2+(n-1)^2=n^2+n^2-2n+1=2n^2-2n+1=\boxed{u_n}\)</span>
                 <strong>A1</strong> <strong>AG</strong>.</li>
                 <li>Se saca factor común <span
                 class="formula-con-signo"><span
                 class="math inline">\(2\)</span>:</span> <span
                 class="math inline">\(u_n=2\left(n^2-n\right)+1\)</span>
-                <strong>M1</strong>. Es un par más <span
-                class="formula-con-signo"><span
-                class="math inline">\(1\)</span>,</span> es decir, impar
-                <strong>R1</strong>.</li>
+                <strong>M1</strong>. <span class="final">Es un par más
+                <span class="formula-con-signo"><span
+                class="math inline">\(1\)</span>,</span> es decir,
+                impar</span> <strong>R1</strong>.</li>
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(n=4\)</span>,</span> <span
                 class="math inline">\(u_4=25=5^2\)</span>
                 <strong>A1</strong>, que no es primo: <span
-                class="math inline">\(n=4\)</span> es un contraejemplo y
-                la conjetura es falsa <strong>R1</strong>.</li>
+                class="final"><span class="math inline">\(n=4\)</span>
+                es un contraejemplo</span> y la conjetura es falsa
+                <strong>R1</strong>.</li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8769,9 +9008,9 @@ Enfoques NS</p>
                 <ol start="42" type="1">
                 <li><ol type="a">
                 <li>Con la ley de recurrencia: <span
-                class="math inline">\(u_2=1{,}5\cdot3+2=6{,}5\)</span>
+                class="math inline">\(u_2=1{,}5\cdot3+2=\boxed{6{,}5}\)</span>
                 <strong>A1</strong> y <span
-                class="math inline">\(u_3=1{,}5\cdot6{,}5+2=11{,}75\)</span>
+                class="math inline">\(u_3=1{,}5\cdot6{,}5+2=\boxed{11{,}75}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad <span class="formula-con-signo"><span
@@ -8802,8 +9041,9 @@ Enfoques NS</p>
                 class="math inline">\(n=k\)</span>,</span> también para
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=k+1\)</span>.</span> Por el
-                principio de inducción matemática, lo es para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>
+                principio de inducción matemática, <span
+                class="final">lo es para todo <span
+                class="math inline">\(n\in\mathbb Z^+\)</span></span>
                 <strong>R1</strong>.</li>
                 </ul></li>
                 <li>Se plantea <span
@@ -8814,8 +9054,8 @@ Enfoques NS</p>
                 Tomando logaritmos, <span
                 class="math inline">\(n-1&gt;\frac{\ln\frac{1004}{7}}{\ln1{,}5}\approx12{,}2\)</span>
                 <strong>A1</strong>, así que <span
-                class="math inline">\(n=14\)</span> <strong>A1</strong>.
-                Comprobación: <span
+                class="math inline">\(\boxed{n=14}\)</span>
+                <strong>A1</strong>. Comprobación: <span
                 class="math inline">\(u_{13}\approx904\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(u_{14}\approx1358\)</span>.</span></li>
@@ -8826,7 +9066,7 @@ Enfoques NS</p>
                 los <span class="math inline">\(17\)</span> primeros,
                 <span class="math inline">\(13\,711{,}6\ldots\)</span>
                 El menor valor es <span
-                class="math inline">\(n=17\)</span>
+                class="math inline">\(\boxed{n=17}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -8896,32 +9136,33 @@ Enfoques NS</p>
                 <li><ol type="a">
                 <li>Una recta divide el plano en dos regiones y dos
                 rectas que se cortan, en cuatro: <span
-                class="math inline">\(R_1=2\)</span> y <span
-                class="math inline">\(R_2=4\)</span>
+                class="math inline">\(\boxed{R_1=2}\)</span> y <span
+                class="math inline">\(\boxed{R_2=4}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Con <span class="math inline">\(n=3\)</span> la
                 conjetura daría <span class="formula-con-signo"><span
                 class="math inline">\(2^3=8\)</span>,</span> pero <span
                 class="formula-con-signo"><span
                 class="math inline">\(R_3=7\)</span>:</span> <span
-                class="math inline">\(n=3\)</span> es un contraejemplo
-                <strong>R1</strong>.</li>
+                class="final"><span class="math inline">\(n=3\)</span>
+                es un contraejemplo</span> <strong>R1</strong>.</li>
                 <li>La recta nueva no es paralela a ninguna, así que
                 corta a las <span class="math inline">\(n\)</span>
                 anteriores, y en <span class="math inline">\(n\)</span>
                 puntos distintos, porque no pasan tres rectas por un
-                mismo punto <strong>R1</strong>. Esos <span
+                mismo punto <strong>R1</strong>. <span
+                class="final">Esos <span
                 class="math inline">\(n\)</span> puntos la dividen en
-                <span class="math inline">\(n+1\)</span> trozos
+                <span class="math inline">\(n+1\)</span> trozos</span>
                 <strong>A1</strong>. Cada trozo parte en dos la región
                 que atraviesa, así que se añaden <span
                 class="math inline">\(n+1\)</span> regiones: <span
-                class="math inline">\(R_{n+1}=R_n+n+1\)</span>
+                class="math inline">\(\boxed{R_{n+1}=R_n+n+1}\)</span>
                 <strong>R1</strong> <strong>AG</strong>.</li>
                 <li>Con la relación de c): <span
-                class="math inline">\(R_4=R_3+4=11\)</span>
+                class="math inline">\(R_4=R_3+4=\boxed{11}\)</span>
                 <strong>A1</strong> y <span
-                class="math inline">\(R_5=R_4+5=16\)</span>
+                class="math inline">\(R_5=R_4+5=\boxed{16}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Sea <span class="math inline">\(P(n)\)</span> la
                 igualdad <span class="formula-con-signo"><span
@@ -8953,8 +9194,9 @@ Enfoques NS</p>
                 class="math inline">\(n=k\)</span>,</span> también para
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=k+1\)</span>.</span> Por el
-                principio de inducción matemática, lo es para todo <span
-                class="math inline">\(n\in\mathbb Z^+\)</span>
+                principio de inducción matemática, <span
+                class="final">lo es para todo <span
+                class="math inline">\(n\in\mathbb Z^+\)</span></span>
                 <strong>R1</strong>.</li>
                 </ul></li>
                 <li>Se plantea <span
@@ -8965,7 +9207,8 @@ Enfoques NS</p>
                 La solución positiva de la ecuación es <span
                 class="formula-con-signo"><span
                 class="math inline">\(n=\frac{-1+\sqrt{7993}}{2}\approx44{,}2\)</span>,</span>
-                así que <span class="math inline">\(n=45\)</span>
+                así que <span
+                class="math inline">\(\boxed{n=45}\)</span>
                 <strong>A1</strong>. Comprobación: <span
                 class="math inline">\(R_{44}=991\)</span> y <span
                 class="formula-con-signo"><span
@@ -9680,10 +9923,13 @@ Enfoques NS</p>
       // llegan las letras de KaTeX, cuando cambia el ancho, al abrir un
       // bloque plegado y al entrar o salir del modo clase; el zoom decide
       // por su cuenta.
+      // La frase recuadrada del curso IB (`.final`) es la caja de sus
+      // fórmulas: es un bloque en línea, más estrecho que su párrafo, y una
+      // fórmula que cabe en el párrafo puede no caber en ella.
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
-          : formula.closest("p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
+          : formula.closest(".final, p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
       }
       function repartirFormulas() {
         if (document.documentElement.classList.contains("ampliando")) {
@@ -9832,6 +10078,172 @@ Enfoques NS</p>
             rotulo.textContent = plegado ? textoAbrir : textoCerrar;
           });
         });
+    });
+  </script>
+
+  <script>
+    // Curso IB: la solución de cada ejercicio, debajo de él (regla 14 de
+    // AGENTS.md; orden del profesor del 10 de octubre de 2026). Bajo cada
+    // enunciado queda un botón, «Ver solución», que abre allí mismo una
+    // copia de su solución, hecha al pulsarlo. El bloque «Soluciones» no se
+    // toca: fuera del modo clase solo se esconde, con su botón, y sigue
+    // siendo lo que usan el modo clase y su ampliación, lo que se imprime y
+    // lo que se ve sin JavaScript. Si un bloque no casa número a número con
+    // su lista de ejercicios, se queda como estaba. Este guion no lleva
+    // ningún signo de dólar: la plantilla es de Pandoc.
+    document.addEventListener("DOMContentLoaded", function () {
+      var contenido = document.getElementById("contenido-unidad");
+      if (!contenido) {
+        return;
+      }
+      var OJO =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
+        '<circle cx="12" cy="12" r="2.8"></circle></svg>';
+      var FLECHA =
+        '<svg class="flecha-solucion-ib" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
+        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="m6 9 6 6 6-6"></path></svg>';
+      var VER = "Ver solución";
+      var OCULTAR = "Ocultar solución";
+      var paneles = [];
+
+      function numerosDeLaLista(lista) {
+        var primero = parseInt(lista.getAttribute("start") || "1", 10);
+        return Array.prototype.map.call(lista.children, function (elemento, lugar) {
+          return primero + lugar;
+        });
+      }
+      // La lista de ejercicios que responde un bloque: la que va justo antes
+      // de él o, si el bloque abre su sección («Comprueba tus respuestas»),
+      // justo antes de esa sección. Entre las dos solo puede haber el botón
+      // del bloque y el título de las respuestas.
+      function listaDeEjercicios(bloque) {
+        var nodo = bloque;
+        for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
+          var anterior = nodo.previousElementSibling;
+          while (anterior && anterior.matches("button, h3, h4, h5, h6")) {
+            anterior = anterior.previousElementSibling;
+          }
+          if (anterior) {
+            return anterior.tagName === "OL" ? anterior : null;
+          }
+          nodo = nodo.parentElement && nodo.parentElement.matches("section")
+            ? nodo.parentElement
+            : null;
+        }
+        return null;
+      }
+      // ¿Es una fórmula centrada lo único que lleva el enunciado?
+      function soloFormula(ejercicio) {
+        var formula = ejercicio.firstElementChild;
+        if (!formula || formula !== ejercicio.lastElementChild || !formula.matches(".math.display")) {
+          return false;
+        }
+        return Array.prototype.every.call(ejercicio.childNodes, function (nodo) {
+          return nodo === formula || nodo.textContent.trim() === "";
+        });
+      }
+      function plegar(panel) {
+        panel.caja.classList.add("esta-plegado");
+        panel.boton.setAttribute("aria-expanded", "false");
+        panel.rotulo.textContent = VER;
+      }
+
+      Array.prototype.forEach.call(
+        contenido.querySelectorAll(".resultado.plegable"),
+        function (bloque) {
+          var listas = bloque.querySelectorAll(":scope > ol");
+          var ejercicios = listaDeEjercicios(bloque);
+          if (listas.length !== 1 || !ejercicios || !ejercicios.closest("section.ejercicios")) {
+            return;
+          }
+          var soluciones = listas[0];
+          var suyos = numerosDeLaLista(ejercicios);
+          if (suyos.join() !== numerosDeLaLista(soluciones).join()) {
+            return;
+          }
+          // Una figura de la nota que abre el bloque va con la solución del
+          // ejercicio que nombra su pie («Las cuatro rectas del ejercicio
+          // 5»); si no nombra ninguno de la lista, con la del primero.
+          var figuras = {};
+          Array.prototype.forEach.call(bloque.children, function (hijo) {
+            var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
+            if (!imagen) {
+              return;
+            }
+            var nombrado = /ejercicio\s+(\d+)/.exec(hijo.textContent + " " + (imagen.alt || ""));
+            var numero = nombrado ? parseInt(nombrado[1], 10) : suyos[0];
+            if (suyos.indexOf(numero) === -1) {
+              numero = suyos[0];
+            }
+            (figuras[numero] = figuras[numero] || []).push(hijo);
+          });
+
+          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
+            var numero = suyos[lugar];
+            var solucion = soluciones.children[lugar];
+            var caja = document.createElement("div");
+            caja.className = "solucion-ib plegable esta-plegado";
+            caja.id = "solucion-ib-" + (paneles.length + 1);
+            var boton = document.createElement("button");
+            boton.type = "button";
+            boton.className = "boton-solucion-ib";
+            boton.setAttribute("aria-expanded", "false");
+            boton.setAttribute("aria-controls", caja.id);
+            boton.innerHTML = OJO + '<span class="rotulo-solucion-ib"></span>' + FLECHA;
+            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-solucion-ib") };
+            panel.rotulo.textContent = VER;
+            paneles.push(panel);
+            boton.addEventListener("click", function () {
+              if (!caja.firstChild) {
+                (figuras[numero] || []).forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ib";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+              }
+              if (caja.classList.contains("esta-plegado")) {
+                caja.classList.remove("esta-plegado");
+                boton.setAttribute("aria-expanded", "true");
+                panel.rotulo.textContent = OCULTAR;
+              } else {
+                plegar(panel);
+              }
+            });
+            if (soloFormula(ejercicio)) {
+              ejercicio.classList.add("solo-formula-ib");
+            }
+            ejercicio.appendChild(boton);
+            ejercicio.appendChild(caja);
+          });
+
+          bloque.classList.add("repartido-ib");
+          var general = bloque.previousElementSibling;
+          if (general && general.classList.contains("boton-soluciones")) {
+            general.classList.add("repartido-ib");
+          }
+        }
+      );
+
+      // En el modo clase no hay botones de ejercicio: se pliegan y se vacían
+      // las copias, para que la ampliación solo encuentre las soluciones del
+      // bloque.
+      new MutationObserver(function () {
+        if (!document.documentElement.classList.contains("modo-clase")) {
+          return;
+        }
+        paneles.forEach(function (panel) {
+          if (panel.caja.firstChild) {
+            plegar(panel);
+            panel.caja.textContent = "";
+          }
+        });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
   </script>
 

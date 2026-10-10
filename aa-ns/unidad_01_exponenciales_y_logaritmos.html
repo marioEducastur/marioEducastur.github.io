@@ -4925,6 +4925,189 @@
     .grupo-poster-ib .tapa-ficha-ib {
       color: rgb(255 255 255 / 0.88);
     }
+
+    /* Curso IB: la solución de cada ejercicio, debajo de él, y el resultado
+       final recuadrado (regla 14 de AGENTS.md). El guion deja bajo cada
+       enunciado un botón pequeño, «Ver solución», y al pulsarlo abre allí
+       una copia de su solución. El bloque «Soluciones» sigue en la página,
+       entero y sin tocar: es lo que usan el modo clase y su ampliación, lo
+       que se imprime y lo que ve quien no tiene JavaScript. */
+    .boton-solucion-ib {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      width: fit-content;
+      min-height: 0;
+      margin: 0.75rem 0 0;
+      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
+      color: var(--verde);
+      background: #ffffff;
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+      border-radius: 999px;
+      box-shadow: none;
+      font-size: 0.84rem;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .boton-solucion-ib svg {
+      flex: none;
+      width: 1.05em;
+      height: 1.05em;
+    }
+
+    .boton-solucion-ib .flecha-solucion-ib {
+      transition: transform 160ms ease;
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] {
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] .flecha-solucion-ib {
+      transform: rotate(180deg);
+    }
+
+    .boton-solucion-ib:focus-visible {
+      color: #ffffff;
+      background: var(--verde);
+      border-color: var(--verde);
+      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .boton-solucion-ib:hover {
+        color: #ffffff;
+        background: var(--verde);
+        border-color: var(--verde);
+      }
+    }
+
+    .solucion-ib {
+      margin: 0.65rem 0 0.15rem;
+      padding: 0.85rem 1rem 0.9rem;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.18);
+      border-left: 0.3rem solid var(--verde);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      animation: entrar-detalle 260ms ease-out;
+    }
+
+    .solucion-ib.esta-plegado {
+      display: none;
+    }
+
+    /* La copia es el elemento de la lista de soluciones, con sus clases:
+       va en una lista propia, sin número, porque el número ya lo lleva el
+       enunciado de encima. */
+    section.ejercicios ol.lista-solucion-ib {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    section.ejercicios ol.lista-solucion-ib > li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .solucion-ib > figure {
+      margin: 0 0 0.7rem;
+    }
+
+    .solucion-ib .math.display {
+      margin: 0.6rem 0;
+      padding: 0.55rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    /* Un enunciado que es solo una fórmula centrada la llevaba junto a su
+       número porque era lo único del elemento; con el botón detrás deja de
+       serlo, y el guion lo marca para que siga igual. */
+    #contenido-unidad li.solo-formula-ib > .math.display:first-child {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* El resultado final de cada solución va recuadrado: una frase, con
+       `[…]{.final}` en la fuente; una fórmula o su último miembro, con
+       `\boxed{…}`, que KaTeX pinta con un marco (`.fbox`). */
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
+      background: #ffffff;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    /* La frase es una sola caja: si no cabe en lo que queda del renglón,
+       baja entera, y solo se parte por dentro si no cabe en uno. Como es un
+       bloque en línea, el navegador podría dejar solo en el renglón
+       siguiente el signo que lleva detrás: el filtro los envuelve juntos. */
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
+    }
+
+    @media screen {
+      html:not(.modo-clase) .boton-soluciones.repartido-ib,
+      html:not(.modo-clase) .resultado.plegable.repartido-ib {
+        display: none !important;
+      }
+
+      html.modo-clase .boton-solucion-ib,
+      html.modo-clase .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    @media print {
+      .boton-solucion-ib,
+      .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    /* En un teléfono la solución va dentro de la tarjeta del ejercicio, que
+       ya es estrecha: menos relleno, para que las cuentas tengan sitio. */
+    @media screen and (max-width: 42rem) {
+      .solucion-ib {
+        margin-inline: -0.45rem;
+        padding: 0.65rem 0.55rem 0.7rem 0.6rem;
+      }
+
+      .solucion-ib ol[type="a"],
+      .solucion-ib ul {
+        padding-left: 1.35rem;
+      }
+
+      .solucion-ib .math.display {
+        padding: 0.5rem 0.45rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .solucion-ib {
+        animation: none;
+      }
+
+      .boton-solucion-ib .flecha-solucion-ib {
+        transition: none;
+      }
+    }
   </style>
 
   </head>
@@ -5048,15 +5231,17 @@ Enfoques NS</p>
                 elevar la base para obtener el número.
                 <ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_6 216=3\)</span>,</span>
-                porque <span class="formula-con-signo"><span
+                class="math inline">\(\log_6
+                216=\boxed{3}\)</span>,</span> porque <span
+                class="formula-con-signo"><span
                 class="math inline">\(6^3=216\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_2 0{,}125=-3\)</span>,</span>
-                porque <span class="formula-con-signo"><span
+                class="math inline">\(\log_2
+                0{,}125=\boxed{-3}\)</span>,</span> porque <span
+                class="formula-con-signo"><span
                 class="math inline">\(0{,}125=\frac18=2^{-3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_{25}5=\frac12\)</span>,</span>
+                class="math inline">\(\log_{25}5=\boxed{\frac12}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(5=\sqrt{25}=25^{1/2}\)</span>.</span></li>
                 </ol></li>
@@ -5069,7 +5254,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 \log_a\left(\frac{\sqrt{x}\,y^3}{z}\right)&amp;=\log_a
                 x^{1/2}+\log_a y^3-\log_a z\\
-                &amp;=\frac12\log_a x+3\log_a y-\log_a z
+                &amp;=\boxed{\frac12\log_a x+3\log_a y-\log_a z}
                 \end{aligned}
                 \]</span></li>
                 <li>Las dos potencias se escriben con la misma base,
@@ -5077,7 +5262,8 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(125=5^3\)</span>,</span> y se
                 igualan los exponentes: <span class="math display">\[
-                5^{2x}=5^3\ \Rightarrow\ 2x=3\ \Rightarrow\ x=\frac32
+                5^{2x}=5^3\ \Rightarrow\ 2x=3\ \Rightarrow\
+                \boxed{x=\frac32}
                 \]</span></li>
                 <li>Los logaritmos existen si <span
                 class="math inline">\(x&gt;0\)</span> y <span
@@ -5097,7 +5283,7 @@ Enfoques NS</p>
                 class="math inline">\(8\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>.</span> Solo <span
-                class="math inline">\(x=8\)</span> cumple <span
+                class="math inline">\(\boxed{x=8}\)</span> cumple <span
                 class="formula-con-signo"><span
                 class="math inline">\(x&gt;6\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
@@ -5107,7 +5293,7 @@ Enfoques NS</p>
                 logaritmos para bajar el exponente: <span
                 class="math display">\[
                 x\ln5=\ln12\ \Rightarrow\
-                x=\frac{\ln12}{\ln5}\approx1{,}54
+                x=\frac{\ln12}{\ln5}\approx\boxed{1{,}54}
                 \]</span></li>
                 </ol>
                 </div>
@@ -5302,15 +5488,16 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(1{,}04\)</span>:</span> <span
                 class="math display">\[
-                3200\cdot1{,}04^{3}\approx3599{,}56\ \text{euros}
+                3200\cdot1{,}04^{3}\approx\boxed{3599{,}56\
+                \text{euros}}
                 \]</span></li>
                 <li>Con un abono al mes, cada mes se aplica la doceava
                 parte del interés, y en <span
                 class="math inline">\(3\)</span> años hay <span
                 class="math inline">\(36\)</span> meses: <span
                 class="math display">\[
-                3200\left(1+\frac{0{,}04}{12}\right)^{36}\approx3607{,}27\
-                \text{euros}
+                3200\left(1+\frac{0{,}04}{12}\right)^{36}\approx\boxed{3607{,}27\
+                \text{euros}}
                 \]</span></li>
                 <li>Con interés continuo se usa <span
                 class="formula-con-signo"><span
@@ -5319,28 +5506,29 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(t=3\)</span>:</span> <span
                 class="math display">\[
-                3200\,e^{0{,}04\cdot3}=3200\,e^{0{,}12}\approx3607{,}99\
-                \text{euros}
+                3200\,e^{0{,}04\cdot3}=3200\,e^{0{,}12}\approx\boxed{3607{,}99\
+                \text{euros}}
                 \]</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Se calcula cada potencia con la calculadora: <span
                 class="math display">\[
                 \begin{aligned}
-                n=10:&amp;\quad1{,}2^{10}\approx6{,}1917\\
-                n=100:&amp;\quad1{,}02^{100}\approx7{,}2446\\
-                n=1000:&amp;\quad1{,}002^{1000}\approx7{,}3743\\
-                n=10\,000:&amp;\quad1{,}0002^{10\,000}\approx7{,}3876
+                n=10:&amp;\quad1{,}2^{10}\approx\boxed{6{,}1917}\\
+                n=100:&amp;\quad1{,}02^{100}\approx\boxed{7{,}2446}\\
+                n=1000:&amp;\quad1{,}002^{1000}\approx\boxed{7{,}3743}\\
+                n=10\,000:&amp;\quad1{,}0002^{10\,000}\approx\boxed{7{,}3876}
                 \end{aligned}
                 \]</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(e^2\approx7{,}3891\)</span>:</span>
-                al crecer <span class="formula-con-signo"><span
+                <span class="final">al crecer <span
+                class="formula-con-signo"><span
                 class="math inline">\(n\)</span>,</span> los valores se
                 acercan cada vez más a <span
                 class="formula-con-signo"><span
-                class="math inline">\(e^2\)</span>.</span> En general,
-                <span
+                class="math inline">\(e^2\)</span>.</span></span> En
+                general, <span
                 class="math inline">\(\left(1+\frac{r}{n}\right)^n\)</span>
                 se acerca a <span class="formula-con-signo"><span
                 class="math inline">\(e^r\)</span>,</span> que es de
@@ -5524,36 +5712,37 @@ Enfoques NS</p>
                 <li>Se restan los exponentes: <span
                 class="formula-con-signo"><span
                 class="math inline">\(\ln\frac{e^7}{e^2}=\ln
-                e^{5}=5\)</span>.</span></li>
+                e^{5}=\boxed{5}\)</span>.</span></li>
                 <li>El <span class="math inline">\(3\)</span> pasa como
                 exponente del <span class="formula-con-signo"><span
                 class="math inline">\(2\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(e^{3\ln2}=e^{\ln2^3}=e^{\ln8}=8\)</span>.</span></li>
+                class="math inline">\(e^{3\ln2}=e^{\ln2^3}=e^{\ln8}=\boxed{8}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt[4]{e}=e^{1/4}\)</span>,</span>
                 se suman los exponentes: <span
                 class="formula-con-signo"><span
                 class="math inline">\(\ln\left(e^2\cdot
-                e^{1/4}\right)=\ln e^{9/4}=\frac94\)</span>.</span></li>
+                e^{1/4}\right)=\ln
+                e^{9/4}=\boxed{\frac94}\)</span>.</span></li>
                 <li>El signo menos pasa como exponente del <span
                 class="formula-con-signo"><span
                 class="math inline">\(10\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(e^{-\ln10}=e^{\ln10^{-1}}=10^{-1}=\frac{1}{10}\)</span>.</span></li>
+                class="math inline">\(e^{-\ln10}=e^{\ln10^{-1}}=10^{-1}=\boxed{\frac{1}{10}}\)</span>.</span></li>
                 </ol></li>
                 <li>Se aplica <span class="formula-con-signo"><span
                 class="math inline">\(a^x=e^{x\ln a}\)</span>.</span>
                 <ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(3^x=e^{x\ln3}\)</span>.</span></li>
+                class="math inline">\(3^x=\boxed{e^{x\ln3}}\)</span>.</span></li>
                 <li>La base es <span class="math inline">\(10\)</span> y
                 el exponente, <span class="formula-con-signo"><span
                 class="math inline">\(2x\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(10^{2x}=e^{2x\ln10}\)</span>.</span></li>
+                class="math inline">\(10^{2x}=\boxed{e^{2x\ln10}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\left(\frac23\right)^x=e^{x\ln\frac23}\)</span>,</span>
+                class="math inline">\(\left(\frac23\right)^x=\boxed{e^{x\ln\frac23}}\)</span>,</span>
                 que también se escribe <span
                 class="formula-con-signo"><span
                 class="math inline">\(e^{x(\ln2-\ln3)}\)</span>.</span></li>
@@ -5563,15 +5752,17 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(2\ln x=\ln x^2\)</span>:</span>
                 <span class="math display">\[
-                e^{\ln6+2\ln x}=e^{\ln6}\cdot e^{\ln x^2}=6x^2
+                e^{\ln6+2\ln x}=e^{\ln6}\cdot e^{\ln x^2}=\boxed{6x^2}
                 \]</span></li>
                 <li>El logaritmo del producto es la suma de los
                 logaritmos: <span class="math display">\[
-                \ln\left(x\,e^x\right)-\ln x=\ln x+\ln e^x-\ln x=x
+                \ln\left(x\,e^x\right)-\ln x=\ln x+\ln e^x-\ln
+                x=\boxed{x}
                 \]</span></li>
                 <li>Una resta de exponentes es un cociente de potencias:
                 <span class="math display">\[
-                e^{\ln x-\ln4}=\frac{e^{\ln x}}{e^{\ln4}}=\frac{x}{4}
+                e^{\ln x-\ln4}=\frac{e^{\ln
+                x}}{e^{\ln4}}=\boxed{\frac{x}{4}}
                 \]</span></li>
                 </ol></li>
                 </ol>
@@ -5613,27 +5804,29 @@ Enfoques NS</p>
                 elevar la base para obtener el número.
                 <ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_2 1024=10\)</span>,</span>
-                porque <span class="formula-con-signo"><span
+                class="math inline">\(\log_2
+                1024=\boxed{10}\)</span>,</span> porque <span
+                class="formula-con-signo"><span
                 class="math inline">\(2^{10}=1024\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log 0{,}001=-3\)</span>,</span>
-                porque <span class="formula-con-signo"><span
+                class="math inline">\(\log
+                0{,}001=\boxed{-3}\)</span>,</span> porque <span
+                class="formula-con-signo"><span
                 class="math inline">\(0{,}001=10^{-3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_2\frac{1}{64}=-6\)</span>,</span>
+                class="math inline">\(\log_2\frac{1}{64}=\boxed{-6}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(\frac{1}{64}=2^{-6}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_{\sqrt3}3=2\)</span>,</span>
+                class="math inline">\(\log_{\sqrt3}3=\boxed{2}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(\left(\sqrt3\right)^2=3\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_3\sqrt3=\frac12\)</span>,</span>
+                class="math inline">\(\log_3\sqrt3=\boxed{\frac12}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt3=3^{1/2}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\ln\frac{1}{\sqrt[3]{e}}=-\frac13\)</span>,</span>
+                class="math inline">\(\ln\frac{1}{\sqrt[3]{e}}=\boxed{-\frac13}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(\frac{1}{\sqrt[3]{e}}=e^{-1/3}\)</span>.</span></li>
                 </ol></li>
@@ -5649,7 +5842,7 @@ Enfoques NS</p>
                 \]</span> Dos logaritmos neperianos solo son iguales si
                 lo son sus argumentos, así que <span
                 class="formula-con-signo"><span
-                class="math inline">\(k=4\)</span>.</span></li>
+                class="math inline">\(\boxed{k=4}\)</span>.</span></li>
                 <li>Las tres expresiones existen si <span
                 class="formula-con-signo"><span
                 class="math inline">\(x&gt;1\)</span>.</span> El
@@ -5661,7 +5854,7 @@ Enfoques NS</p>
                 &amp;\ln\left(x^2-1\right)-\ln\left[(x+1)^2\right]+\ln\left(x^2+x\right)\\
                 ={}&amp;\ln\frac{\left(x^2-1\right)\left(x^2+x\right)}{(x+1)^2}\\
                 ={}&amp;\ln\frac{(x+1)(x-1)\cdot x\,(x+1)}{(x+1)^2}\\
-                ={}&amp;\ln\bigl(x\,(x-1)\bigr)=\ln\left(x^2-x\right)
+                ={}&amp;\ln\bigl(x\,(x-1)\bigr)=\boxed{\ln\left(x^2-x\right)}
                 \end{aligned}
                 \]</span></li>
                 </ol>
@@ -5801,24 +5994,24 @@ Enfoques NS</p>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(24=2^3\cdot3\)</span>:</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\ln24=3\ln2+\ln3=3p+q\)</span>.</span></li>
+                class="math inline">\(\ln24=3\ln2+\ln3=\boxed{3p+q}\)</span>.</span></li>
                 <li>Como <span class="math inline">\(9=3^2\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(16=2^4\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\ln\frac{9}{16}=\ln3^2-\ln2^4=2\ln3-4\ln2=2q-4p\)</span>.</span></li>
+                class="math inline">\(\ln\frac{9}{16}=\ln3^2-\ln2^4=2\ln3-4\ln2=\boxed{2q-4p}\)</span>.</span></li>
                 <li>Como <span
                 class="math inline">\(\frac{1}{\sqrt6}=6^{-1/2}\)</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(6=2\cdot3\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\ln\frac{1}{\sqrt6}=-\frac12\ln6=-\frac12\,(\ln2+\ln3)=-\frac{p+q}{2}\)</span>.</span></li>
+                class="math inline">\(\ln\frac{1}{\sqrt6}=-\frac12\ln6=-\frac12\,(\ln2+\ln3)=\boxed{-\frac{p+q}{2}}\)</span>.</span></li>
                 <li>Con el cambio de base a base <span
                 class="formula-con-signo"><span
                 class="math inline">\(e\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(\log_2
-                3=\frac{\ln3}{\ln2}=\frac{q}{p}\)</span>.</span></li>
+                3=\frac{\ln3}{\ln2}=\boxed{\frac{q}{p}}\)</span>.</span></li>
                 </ol></li>
                 <li>El dato está en base <span
                 class="formula-con-signo"><span
@@ -5831,7 +6024,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 \log_6 12&amp;=\frac{\log_3 12}{\log_3 6}\\
                 &amp;=\frac{\log_3 3+2\log_3 2}{\log_3 3+\log_3 2}\\
-                &amp;=\frac{1+2p}{1+p}
+                &amp;=\boxed{\frac{1+2p}{1+p}}
                 \end{aligned}
                 \]</span></li>
                 <li><ol type="a">
@@ -5842,19 +6035,20 @@ Enfoques NS</p>
                 \begin{aligned}
                 \log_a\left(x^2\sqrt{y}\right)&amp;=2\log_a
                 x+\frac12\log_a y\\
-                &amp;=2\cdot3+\frac12\cdot(-2)=5
+                &amp;=2\cdot3+\frac12\cdot(-2)=\boxed{5}
                 \end{aligned}
                 \]</span></li>
                 <li>Cambiar el orden invierte el logaritmo: <span
                 class="formula-con-signo"><span
                 class="math inline">\(\log_x a=\frac{1}{\log_a
-                x}=\frac13\)</span>.</span></li>
+                x}=\boxed{\frac13}\)</span>.</span></li>
                 <li>Con el cambio de base a base <span
                 class="formula-con-signo"><span
                 class="math inline">\(a\)</span>:</span> <span
                 class="math display">\[
                 \log_{a^2}(xy)=\frac{\log_a(xy)}{\log_a
-                a^2}=\frac{\log_a x+\log_a y}{2}=\frac{3-2}{2}=\frac12
+                a^2}=\frac{\log_a x+\log_a
+                y}{2}=\frac{3-2}{2}=\boxed{\frac12}
                 \]</span></li>
                 </ol></li>
                 </ol>
@@ -5981,7 +6175,7 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span> Se deshace el cambio con la definición de
                 logaritmo: <span class="formula-con-signo"><span
-                class="math inline">\(x=3^2=9\)</span>.</span>
+                class="math inline">\(x=3^2=\boxed{9}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(\log_3 9+4\log_9
                 3=2+4\cdot\frac12=4\)</span>.</span></li>
@@ -5994,9 +6188,9 @@ Enfoques NS</p>
                 t=\frac4t\ \Rightarrow\ t^2=4\ \Rightarrow\ t=2\
                 \text{o}\ t=-2
                 \]</span> Se deshace el cambio: <span
-                class="math inline">\(x=6^2=36\)</span> o <span
+                class="math inline">\(x=6^2=\boxed{36}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=6^{-2}=\frac{1}{36}\)</span>.</span>
+                class="math inline">\(x=6^{-2}=\boxed{\frac{1}{36}}\)</span>.</span>
                 Las dos cumplen las condiciones.</li>
                 </ol></li>
                 <li>Condiciones: <span
@@ -6023,7 +6217,7 @@ Enfoques NS</p>
                 class="math inline">\(6\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>.</span> Solo <span
-                class="math inline">\(x=6\)</span> cumple <span
+                class="math inline">\(\boxed{x=6}\)</span> cumple <span
                 class="formula-con-signo"><span
                 class="math inline">\(x&gt;3\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
@@ -6115,7 +6309,7 @@ Enfoques NS</p>
                 &amp;\sqrt[3]{100-x^2}=16^{1/2}=4\\
                 \Rightarrow{}&amp;100-x^2=4^3=64\\
                 \Rightarrow{}&amp;x^2=36\\
-                \Rightarrow{}&amp;x=6\ \text{o}\ x=-6
+                \Rightarrow{}&amp;\boxed{x=6}\ \text{o}\ \boxed{x=-6}
                 \end{aligned}
                 \]</span> Comprobación: con las dos, <span
                 class="formula-con-signo"><span
@@ -6153,7 +6347,7 @@ Enfoques NS</p>
                 no existe <span class="formula-con-signo"><span
                 class="math inline">\(\log_3(x-3)\)</span>.</span> La
                 única solución es <span class="formula-con-signo"><span
-                class="math inline">\(x=15\)</span>.</span>
+                class="math inline">\(\boxed{x=15}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(2\log_3 12-\log_3
                 16=\log_3\frac{144}{16}=\log_3 9=2\)</span>.</span></li>
@@ -6175,10 +6369,10 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span> Se deshace el cambio con la definición de
                 logaritmo: <span
-                class="math inline">\(x=5^{5/3}\)</span> o <span
+                class="math inline">\(\boxed{x=5^{5/3}}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=5^{-5/3}\)</span>.</span> Las
-                dos cumplen las condiciones y tienen la forma
+                class="math inline">\(\boxed{x=5^{-5/3}}\)</span>.</span>
+                Las dos cumplen las condiciones y tienen la forma
                 pedida.</li>
                 <li>Condiciones: <span
                 class="math inline">\(x+17&gt;0\)</span> y <span
@@ -6194,7 +6388,7 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;\log_3\frac{x+17}{2x}=2\\
                 \Rightarrow{}&amp;\frac{x+17}{2x}=3^2=9\\
                 \Rightarrow{}&amp;x+17=18x\\
-                \Rightarrow{}&amp;x=1
+                \Rightarrow{}&amp;\boxed{x=1}
                 \end{aligned}
                 \]</span> Cumple <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>.</span>
@@ -6225,7 +6419,7 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span> El producto de los dos ceros es <span
                 class="formula-con-signo"><span
-                class="math inline">\(\sqrt3\cdot\frac{1}{\sqrt3}=1\)</span>.</span></li>
+                class="math inline">\(\sqrt3\cdot\frac{1}{\sqrt3}=\boxed{1}\)</span>.</span></li>
                 <li><ol type="a">
                 <li>El exponente de cada potencia sale delante de su
                 logaritmo, y todo se escribe con <span
@@ -6240,7 +6434,7 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;(4x-1)\ln2=(3x+15)\ln2+4-8x\\
                 \Rightarrow{}&amp;(x-16)\ln2=4-8x\\
                 \Rightarrow{}&amp;x\,(8+\ln2)=4+16\ln2\\
-                \Rightarrow{}&amp;x=\frac{4+16\ln2}{8+\ln2}
+                \Rightarrow{}&amp;\boxed{x=\frac{4+16\ln2}{8+\ln2}}
                 \end{aligned}
                 \]</span></li>
                 <li>Con la calculadora, <span
@@ -6251,7 +6445,7 @@ Enfoques NS</p>
                 class="math inline">\(a^2=x\)</span>,</span> y la base
                 de un logaritmo es positiva: <span
                 class="math display">\[
-                a=\sqrt{x}\approx1{,}318
+                a=\sqrt{x}\approx\boxed{1{,}318}
                 \]</span></li>
                 </ol></li>
                 <li>Condiciones: <span
@@ -6272,7 +6466,7 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;\log_3(x+7)-\log_3(2x)=2\\
                 \Rightarrow{}&amp;\frac{x+7}{2x}=3^2=9\\
                 \Rightarrow{}&amp;x+7=18x\\
-                \Rightarrow{}&amp;x=\frac{7}{17}
+                \Rightarrow{}&amp;\boxed{x=\frac{7}{17}}
                 \end{aligned}
                 \]</span> Cumple <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>.</span>
@@ -6286,7 +6480,7 @@ Enfoques NS</p>
                 class="math display">\[
                 \begin{aligned}
                 a&amp;=\frac{\ln3}{\ln2}\cdot\frac{\ln4}{\ln3}\cdot\frac{\ln5}{\ln4}\cdots\frac{\ln32}{\ln31}\\
-                &amp;=\frac{\ln32}{\ln2}=\log_2 32=5
+                &amp;=\frac{\ln32}{\ln2}=\log_2 32=\boxed{5}
                 \end{aligned}
                 \]</span> El último paso vale porque <span
                 class="formula-con-signo"><span
@@ -6304,9 +6498,9 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;\log_x y=2\ \text{o}\ \log_x y=-2
                 \end{aligned}
                 \]</span> Por la definición de logaritmo, <span
-                class="math inline">\(y=x^2\)</span> o <span
+                class="math inline">\(\boxed{y=x^2}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=x^{-2}=\frac{1}{x^2}\)</span>.</span></li>
+                class="math inline">\(y=x^{-2}=\boxed{\frac{1}{x^2}}\)</span>.</span></li>
                 <li>El segundo miembro se pasa a base <span
                 class="math inline">\(3\)</span> con el cambio de base,
                 y después se descompone <span
@@ -6323,10 +6517,10 @@ Enfoques NS</p>
                 se cumple con <span class="math inline">\(m=5\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(-n=5\)</span>,</span> es decir,
-                con <span class="math inline">\(m=5\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(n=-5\)</span>.</span> No hay más
-                valores enteros, porque <span
+                con <span class="math inline">\(\boxed{m=5}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{n=-5}\)</span>.</span> No
+                hay más valores enteros, porque <span
                 class="math inline">\(\log_3 2\)</span> es
                 irracional.</li>
                 </ol>
@@ -6506,13 +6700,14 @@ Enfoques NS</p>
                 class="math inline">\(\ln\)</span>:</span> <span
                 class="math display">\[
                 2e^{3x}=14\ \Rightarrow\ e^{3x}=7\ \Rightarrow\ 3x=\ln7\
-                \Rightarrow\ x=\frac{\ln7}{3}
+                \Rightarrow\ \boxed{x=\frac{\ln7}{3}}
                 \]</span></li>
                 <li>La exponencial ya está sola, así que se toma <span
                 class="formula-con-signo"><span
                 class="math inline">\(\ln\)</span>:</span> <span
                 class="math display">\[
-                e^{1-x}=5\ \Rightarrow\ 1-x=\ln5\ \Rightarrow\ x=1-\ln5
+                e^{1-x}=5\ \Rightarrow\ 1-x=\ln5\ \Rightarrow\
+                \boxed{x=1-\ln5}
                 \]</span></li>
                 <li>Las bases son distintas: se toma <span
                 class="math inline">\(\ln\)</span> en los dos miembros y
@@ -6523,7 +6718,7 @@ Enfoques NS</p>
                 &amp;x\ln5=(x+2)\ln2\\
                 \Rightarrow{}&amp;x\ln5-x\ln2=2\ln2\\
                 \Rightarrow{}&amp;x\,(\ln5-\ln2)=2\ln2\\
-                \Rightarrow{}&amp;x=\frac{2\ln2}{\ln\frac52}=\frac{\ln4}{\ln\frac52}
+                \Rightarrow{}&amp;x=\frac{2\ln2}{\ln\frac52}=\boxed{\frac{\ln4}{\ln\frac52}}
                 \end{aligned}
                 \]</span></li>
                 </ol></li>
@@ -6541,9 +6736,9 @@ Enfoques NS</p>
                 se factoriza: <span class="math display">\[
                 (z-2)(z-5)=0\ \Rightarrow\ z=2\ \text{o}\ z=5
                 \]</span> Las dos son positivas: <span
-                class="math inline">\(x=\ln2\)</span> o <span
+                class="math inline">\(\boxed{x=\ln2}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=\ln5\)</span>.</span></li>
+                class="math inline">\(\boxed{x=\ln5}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(e^{-x}=\frac{1}{e^x}\)</span>,</span>
                 la ecuación es <span class="formula-con-signo"><span
@@ -6560,7 +6755,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(e^x=4\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=\ln4=2\ln2\)</span>.</span></li>
+                class="math inline">\(x=\ln4=\boxed{2\ln2}\)</span>.</span></li>
                 <li>La ecuación es <span class="formula-con-signo"><span
                 class="math inline">\(2z^2+z-1=0\)</span>:</span> <span
                 class="math display">\[
@@ -6575,7 +6770,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(e^x=\frac12\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(x=\ln\frac12=-\ln2\)</span>.</span></li>
+                class="math inline">\(x=\ln\frac12=\boxed{-\ln2}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -6696,7 +6891,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(x\ln8=\ln9\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(x=\frac{\ln9}{\ln8}\)</span>.</span>
+                class="math inline">\(\boxed{x=\frac{\ln9}{\ln8}}\)</span>.</span>
                 Es la forma pedida, con <span
                 class="math inline">\(a=9\)</span> y <span
                 class="formula-con-signo"><span
@@ -6725,7 +6920,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(5^x=\frac35\)</span>:</span> <span
                 class="math display">\[
-                x=\log_5\frac35=\log_5 3-\log_5 5=-1+\log_5 3
+                x=\log_5\frac35=\log_5 3-\log_5 5=\boxed{-1+\log_5 3}
                 \]</span> Es la forma pedida, con <span
                 class="math inline">\(a=-1\)</span> y <span
                 class="formula-con-signo"><span
@@ -6739,9 +6934,9 @@ Enfoques NS</p>
                 logaritmo: <span class="math display">\[
                 \begin{aligned}
                 \ln(x+3)=1&amp;\ \Rightarrow\ x+3=e\ \Rightarrow\
-                x=e-3\\
+                \boxed{x=e-3}\\
                 \ln(x+3)=-1&amp;\ \Rightarrow\ x+3=e^{-1}\ \Rightarrow\
-                x=\frac1e-3
+                \boxed{x=\frac1e-3}
                 \end{aligned}
                 \]</span> Las dos cumplen <span
                 class="formula-con-signo"><span
@@ -6771,9 +6966,9 @@ Enfoques NS</p>
                 \]</span> Es la forma pedida, <span
                 class="formula-con-signo"><span
                 class="math inline">\(a+\log_2 b\)</span>,</span> con
-                <span class="math inline">\(a=-2\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(b=3\)</span>.</span></li>
+                <span class="math inline">\(\boxed{a=-2}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{b=3}\)</span>.</span></li>
                 <li>Condición: <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>.</span> Con <span
                 class="formula-con-signo"><span
@@ -6792,10 +6987,10 @@ Enfoques NS</p>
                 deshace el cambio con <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=e^t\)</span>:</span> <span
-                class="math inline">\(x=e\)</span> o <span
+                class="math inline">\(\boxed{x=e}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=e^{1/2}=\sqrt
-                e\)</span>.</span></li>
+                class="math inline">\(x=e^{1/2}=\boxed{\sqrt
+                e}\)</span>.</span></li>
                 <li><ol type="a">
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(4^{-x}=\frac{1}{4^x}\)</span>,</span>
@@ -6811,12 +7006,12 @@ Enfoques NS</p>
                 class="math inline">\(t=1\)</span>,</span> <span
                 class="math inline">\(4^x=1\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=0\)</span>.</span> Si <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=0}\)</span>.</span> Si
+                <span class="formula-con-signo"><span
                 class="math inline">\(t=\frac12\)</span>,</span> <span
                 class="math inline">\(4^x=2^{2x}=2^{-1}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=-\frac12\)</span>.</span></li>
+                class="math inline">\(\boxed{x=-\frac12}\)</span>.</span></li>
                 <li>Tomando <span class="math inline">\(\ln\)</span> en
                 los dos miembros y agrupando la <span
                 class="formula-con-signo"><span
@@ -6825,7 +7020,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 &amp;x\ln a=2x+1\\
                 \Rightarrow{}&amp;x\,(\ln a-2)=1\\
-                \Rightarrow{}&amp;x=\frac{1}{\ln a-2}
+                \Rightarrow{}&amp;\boxed{x=\frac{1}{\ln a-2}}
                 \end{aligned}
                 \]</span> No se puede dividir si <span
                 class="formula-con-signo"><span
@@ -6835,7 +7030,7 @@ Enfoques NS</p>
                 ecuación es <span class="formula-con-signo"><span
                 class="math inline">\(e^{2x}=e^{2x+1}\)</span>,</span>
                 que no se cumple nunca: para <span
-                class="math inline">\(a=e^2\)</span> no hay
+                class="math inline">\(\boxed{a=e^2}\)</span> no hay
                 solución.</li>
                 </ol></li>
                 <li>Como <span class="formula-con-signo"><span
@@ -6857,11 +7052,11 @@ Enfoques NS</p>
                 positivas. Si <span class="formula-con-signo"><span
                 class="math inline">\(2^x=2\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>;</span> si <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=1}\)</span>;</span> si
+                <span class="formula-con-signo"><span
                 class="math inline">\(2^x=\frac12=2^{-1}\)</span>,</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=-1\)</span>.</span></li>
+                class="math inline">\(\boxed{x=-1}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(4^{x-1}=\frac{4^x}{4}=\frac{\left(2^x\right)^2}{4}\)</span>,</span>
                 con <span class="formula-con-signo"><span
@@ -6879,8 +7074,9 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(2^x=8=2^3\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=3\)</span>.</span> Comprobación:
-                <span class="math inline">\(4^2=16\)</span> y <span
+                class="math inline">\(\boxed{x=3}\)</span>.</span>
+                Comprobación: <span
+                class="math inline">\(4^2=16\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(2^3+8=16\)</span>.</span></li>
                 <li><ol type="a">
@@ -6902,7 +7098,7 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;\log_2\left[(x-2)^2\right]=\log_2\left(x^2-6x+12\right)\\
                 \Rightarrow{}&amp;x^2-4x+4=x^2-6x+12\\
                 \Rightarrow{}&amp;2x=8\\
-                \Rightarrow{}&amp;x=4
+                \Rightarrow{}&amp;\boxed{x=4}
                 \end{aligned}
                 \]</span> Cumple <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;2\)</span>.</span>
@@ -6924,12 +7120,12 @@ Enfoques NS</p>
                 sus factores: <span class="formula-con-signo"><span
                 class="math inline">\(\ln x=0\)</span>,</span> que da
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>,</span> o <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=1}\)</span>,</span> o
+                <span class="formula-con-signo"><span
                 class="math inline">\(\ln x=1\)</span>,</span> que da
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=e\)</span>.</span> No se divide
-                por <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=e}\)</span>.</span> No se
+                divide por <span class="formula-con-signo"><span
                 class="math inline">\((\ln x)^2\)</span>,</span> porque
                 se perdería la solución <span
                 class="formula-con-signo"><span
@@ -6950,7 +7146,7 @@ Enfoques NS</p>
                 &amp;2^{3x-3}=2^{3x}\cdot3^{3x}\\
                 \Rightarrow{}&amp;2^{-3}=3^{3x}\\
                 \Rightarrow{}&amp;-3\ln2=3x\ln3\\
-                \Rightarrow{}&amp;x=-\frac{\ln2}{\ln3}
+                \Rightarrow{}&amp;\boxed{x=-\frac{\ln2}{\ln3}}
                 \end{aligned}
                 \]</span></li>
                 <li>Como <span
@@ -6975,7 +7171,7 @@ Enfoques NS</p>
                 class="math inline">\(\sqrt7\approx2{,}65\)</span>,</span>
                 y por la definición de logaritmo <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=\log_2\left(\sqrt7-2\right)\)</span>.</span></li>
+                class="math inline">\(\boxed{x=\log_2\left(\sqrt7-2\right)}\)</span>.</span></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 7C,
@@ -7046,12 +7242,13 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(\ln y\)</span>:</span> <span
                 class="math display">\[
-                2\ln x=6\ \Rightarrow\ \ln x=3\ \Rightarrow\ x=e^3
+                2\ln x=6\ \Rightarrow\ \ln x=3\ \Rightarrow\
+                \boxed{x=e^3}
                 \]</span> Restándolas se va <span
                 class="formula-con-signo"><span
                 class="math inline">\(\ln x\)</span>:</span> <span
                 class="math display">\[
-                2\ln y=2\ \Rightarrow\ \ln y=1\ \Rightarrow\ y=e
+                2\ln y=2\ \Rightarrow\ \ln y=1\ \Rightarrow\ \boxed{y=e}
                 \]</span></li>
                 <li>Cada ecuación se escribe con una sola base. Como
                 <span class="formula-con-signo"><span
@@ -7075,10 +7272,10 @@ Enfoques NS</p>
                 \]</span> Sumando, <span class="formula-con-signo"><span
                 class="math inline">\(2x=2\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>.</span> Entonces
-                <span class="math inline">\(1+2y=5\)</span> e <span
-                class="formula-con-signo"><span
-                class="math inline">\(y=2\)</span>.</span></li>
+                class="math inline">\(\boxed{x=1}\)</span>.</span>
+                Entonces <span class="math inline">\(1+2y=5\)</span> e
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{y=2}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -7120,12 +7317,12 @@ Enfoques NS</p>
                 &amp;\ln\left(e^3y^3\right)+\ln y^2=5\\
                 \Rightarrow{}&amp;3+3\ln y+2\ln y=5\\
                 \Rightarrow{}&amp;5\ln y=2\\
-                \Rightarrow{}&amp;y=e^{2/5}=\sqrt[5]{e^2}
+                \Rightarrow{}&amp;y=e^{2/5}=\boxed{\sqrt[5]{e^2}}
                 \end{aligned}
                 \]</span> Entonces <span class="formula-con-signo"><span
                 class="math inline">\(x=e\cdot
-                e^{2/5}=e^{7/5}=\sqrt[5]{e^7}\)</span>.</span> También
-                sale llamando <span class="math inline">\(a=\ln
+                e^{2/5}=e^{7/5}=\boxed{\sqrt[5]{e^7}}\)</span>.</span>
+                También sale llamando <span class="math inline">\(a=\ln
                 x\)</span> y <span class="formula-con-signo"><span
                 class="math inline">\(b=\ln y\)</span>:</span> el
                 sistema es <span class="formula-con-signo"><span
@@ -7165,9 +7362,9 @@ Enfoques NS</p>
                 class="math inline">\(\ln
                 y=2+\frac15=\frac{11}{5}\)</span>.</span> Las soluciones
                 son <span
-                class="math inline">\(x=e^{1/5}=\sqrt[5]{e}\)</span> e
-                <span class="formula-con-signo"><span
-                class="math inline">\(y=e^{11/5}=\sqrt[5]{e^{11}}\)</span>.</span></li>
+                class="math inline">\(x=e^{1/5}=\boxed{\sqrt[5]{e}}\)</span>
+                e <span class="formula-con-signo"><span
+                class="math inline">\(y=e^{11/5}=\boxed{\sqrt[5]{e^{11}}}\)</span>.</span></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 7D,
@@ -7321,7 +7518,7 @@ Enfoques NS</p>
                 n&gt;\frac{\ln10}{\ln1{,}15}\approx16{,}5
                 \]</span> El menor entero es <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=17\)</span>.</span>
+                class="math inline">\(\boxed{n=17}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(1{,}15^{16}\approx9{,}36\)</span>,</span>
                 que no llega, y <span class="formula-con-signo"><span
@@ -7338,7 +7535,7 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span> El menor entero es <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=16\)</span>.</span>
+                class="math inline">\(\boxed{n=16}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(5\cdot0{,}9^{15}\approx1{,}03\)</span>,</span>
                 que todavía no baja de <span
@@ -7359,9 +7556,9 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span> El menor entero es <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=17\)</span>.</span> Aquí la
-                comprobación es imprescindible, porque el cociente está
-                muy cerca de <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{n=17}\)</span>.</span> Aquí
+                la comprobación es imprescindible, porque el cociente
+                está muy cerca de <span class="formula-con-signo"><span
                 class="math inline">\(16\)</span>:</span> <span
                 class="math inline">\(1-0{,}75^{16}\approx0{,}98998\)</span>
                 todavía no llega y <span
@@ -7494,16 +7691,16 @@ Enfoques NS</p>
                 x\)</span> e <span class="math inline">\(y=3-x\)</span>
                 se cortan una sola vez, porque una crece y la otra
                 decrece: <span class="formula-con-signo"><span
-                class="math inline">\(x\approx2{,}21\)</span>.</span></li>
+                class="math inline">\(\boxed{x\approx2{,}21}\)</span>.</span></li>
                 <li>Las gráficas de <span
                 class="math inline">\(y=2^x\)</span> e <span
                 class="math inline">\(y=x^2\)</span> se cortan tres
                 veces: <span class="formula-con-signo"><span
-                class="math inline">\(x\approx-0{,}767\)</span>,</span>
-                <span class="math inline">\(x=2\)</span> y <span
+                class="math inline">\(\boxed{x\approx-0{,}767}\)</span>,</span>
+                <span class="math inline">\(\boxed{x=2}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=4\)</span>.</span> Las dos
-                últimas son exactas: en <span
+                class="math inline">\(\boxed{x=4}\)</span>.</span> Las
+                dos últimas son exactas: en <span
                 class="math inline">\(x=2\)</span> los dos miembros
                 valen <span class="formula-con-signo"><span
                 class="math inline">\(4\)</span>,</span> y en <span
@@ -7519,10 +7716,10 @@ Enfoques NS</p>
                 <li>Las gráficas de <span class="math inline">\(y=3\ln
                 x\)</span> e <span class="math inline">\(y=x-2\)</span>
                 se cortan dos veces: <span
-                class="math inline">\(x\approx0{,}634\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\approx8{,}38\)</span>.</span> El
-                segundo corte queda lejos: hay que ampliar la ventana
+                class="math inline">\(\boxed{x\approx0{,}634}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\approx8{,}38}\)</span>.</span>
+                El segundo corte queda lejos: hay que ampliar la ventana
                 para verlo.</li>
                 </ol></li>
                 </ol>
@@ -7542,10 +7739,10 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <p>Es el ejercicio 18 de la ficha de logaritmos de
-                clase. Es de la prueba 2: el final se hace con la
-                calculadora.</p>
+                clase.</p>
                 <ol start="42" type="1">
-                <li>Condiciones: las bases, <span
+                <li>Es de la prueba 2: el final se hace con la
+                calculadora. Condiciones: las bases, <span
                 class="math inline">\(x+1\)</span> e <span
                 class="formula-con-signo"><span
                 class="math inline">\(y+1\)</span>,</span> tienen que
@@ -7574,9 +7771,10 @@ Enfoques NS</p>
                 class="math inline">\(x\approx1{,}70\)</span>.</span> El
                 primero no cumple <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>.</span> Queda
-                <span class="math inline">\(x\approx1{,}70\)</span> e
+                <span
+                class="math inline">\(\boxed{x\approx1{,}70}\)</span> e
                 <span class="formula-con-signo"><span
-                class="math inline">\(y=(x+1)^2\approx7{,}27\)</span>,</span>
+                class="math inline">\(y=(x+1)^2\approx\boxed{7{,}27}\)</span>,</span>
                 con <span class="math inline">\(x\)</span> sin
                 redondear.</li>
                 </ol>
@@ -7812,14 +8010,14 @@ Enfoques NS</p>
                 &amp;50\,e^{-8k}=25\\
                 \Rightarrow{}&amp;e^{-8k}=\frac12\\
                 \Rightarrow{}&amp;-8k=\ln\frac12=-\ln2\\
-                \Rightarrow{}&amp;k=\frac{\ln2}{8}
+                \Rightarrow{}&amp;\boxed{k=\frac{\ln2}{8}}
                 \end{aligned}
                 \]</span></li>
                 <li>Se sustituye <span class="formula-con-signo"><span
                 class="math inline">\(t=30\)</span>,</span> con <span
                 class="math inline">\(k\)</span> sin redondear: <span
                 class="math display">\[
-                m(30)=50\,e^{-30k}\approx3{,}72\ \text{mg}
+                m(30)=50\,e^{-30k}\approx\boxed{3{,}72\ \text{mg}}
                 \]</span></li>
                 <li>Se plantea la inecuación y se toma <span
                 class="formula-con-signo"><span
@@ -7834,18 +8032,20 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;-kt&lt;-\ln50\\
                 \Rightarrow{}&amp;t&gt;\frac{\ln50}{k}\approx45{,}2
                 \end{aligned}
-                \]</span> Tarda unos <span
-                class="math inline">\(45{,}2\)</span> días.</li>
+                \]</span> <span class="final-con-signo"><span
+                class="final">Tarda unos <span
+                class="math inline">\(45{,}2\)</span>
+                días</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>La concentración inicial es la de <span
                 class="formula-con-signo"><span
                 class="math inline">\(t=0\)</span>:</span> <span
-                class="math inline">\(C(0)=14\,e^{0}=14\)</span>
+                class="math inline">\(C(0)=14\,e^{0}=\boxed{14}\)</span>
                 mg/L.</li>
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(t=5\)</span>:</span> <span
-                class="math inline">\(C(5)=14\,e^{-0{,}23\cdot5}=14\,e^{-1{,}15}\approx4{,}43\)</span>
+                class="math inline">\(C(5)=14\,e^{-0{,}23\cdot5}=14\,e^{-1{,}15}\approx\boxed{4{,}43}\)</span>
                 mg/L.</li>
                 <li>Hace efecto hasta que la concentración baja a <span
                 class="math inline">\(2\)</span> mg/L: <span
@@ -7856,35 +8056,38 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;-0{,}23t=-\ln7\\
                 \Rightarrow{}&amp;t=\frac{\ln7}{0{,}23}\approx8{,}46
                 \end{aligned}
-                \]</span> Hace efecto durante unas <span
-                class="math inline">\(8{,}46\)</span> horas.</li>
+                \]</span> <span class="final-con-signo"><span
+                class="final">Hace efecto durante unas <span
+                class="math inline">\(8{,}46\)</span>
+                horas</span>.</span></li>
                 <li>Con la fórmula de la semivida, <span
                 class="formula-con-signo"><span
                 class="math inline">\(T=\frac{\ln2}{|k|}\)</span>,</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(k=-0{,}23\)</span>:</span> <span
-                class="math inline">\(T=\frac{\ln2}{0{,}23}\approx3{,}01\)</span>
+                class="math inline">\(T=\frac{\ln2}{0{,}23}\approx\boxed{3{,}01}\)</span>
                 horas.</li>
                 </ol></li>
                 <li><ol type="a">
                 <li><span class="math inline">\(A\)</span> es el valor
                 inicial: <span class="formula-con-signo"><span
-                class="math inline">\(A=N(0)=800\)</span>.</span> Con el
-                dato de las <span class="math inline">\(3\)</span>
-                horas: <span class="math display">\[
+                class="math inline">\(A=N(0)=\boxed{800}\)</span>.</span>
+                Con el dato de las <span
+                class="math inline">\(3\)</span> horas: <span
+                class="math display">\[
                 \begin{aligned}
                 &amp;800\,e^{3k}=2000\\
                 \Rightarrow{}&amp;e^{3k}=2{,}5\\
-                \Rightarrow{}&amp;k=\frac{\ln2{,}5}{3}\approx0{,}305
+                \Rightarrow{}&amp;k=\frac{\ln2{,}5}{3}\approx\boxed{0{,}305}
                 \end{aligned}
                 \]</span></li>
                 <li><span class="math inline">\(c\)</span> es el valor
                 inicial, <span class="formula-con-signo"><span
-                class="math inline">\(c=800\)</span>,</span> y <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{c=800}\)</span>,</span> y
+                <span class="formula-con-signo"><span
                 class="math inline">\(m\)</span>,</span> lo que crece
                 cada hora: <span class="formula-con-signo"><span
-                class="math inline">\(m=\frac{2000-800}{3}=400\)</span>.</span></li>
+                class="math inline">\(m=\frac{2000-800}{3}=\boxed{400}\)</span>.</span></li>
                 <li>Se calcula lo que predice cada modelo a las <span
                 class="math inline">\(6\)</span> horas. El exponencial,
                 con <span class="formula-con-signo"><span
@@ -7894,9 +8097,10 @@ Enfoques NS</p>
                 \]</span> El lineal predice <span
                 class="formula-con-signo"><span
                 class="math inline">\(400\cdot6+800=3200\)</span>.</span>
-                El exponencial se ajusta mejor: se aleja <span
-                class="math inline">\(100\)</span> del dato y el lineal,
-                <span class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final">El
+                exponencial se ajusta mejor</span>:</span> se aleja
+                <span class="math inline">\(100\)</span> del dato y el
+                lineal, <span class="formula-con-signo"><span
                 class="math inline">\(1700\)</span>.</span></li>
                 </ol></li>
                 </ol>
@@ -7946,25 +8150,26 @@ Enfoques NS</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <p>Es el ejercicio 24 de la ficha de logaritmos de
-                clase. El modelo no es exponencial, sino potencial: la
-                incógnita <span class="math inline">\(b\)</span> está en
-                un exponente y se despeja igual, con logaritmos.</p>
+                clase.</p>
                 <ol start="46" type="1">
-                <li><ol type="a">
+                <li>El modelo no es exponencial, sino potencial: la
+                incógnita <span class="math inline">\(b\)</span> está en
+                un exponente y se despeja igual, con logaritmos.
+                <ol type="a">
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(N=1\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(1^b=1\)</span>,</span> así que
                 <span class="math inline">\(a\)</span> es el tiempo de
                 un solo remero: <span class="formula-con-signo"><span
-                class="math inline">\(a=420{,}65\)</span>.</span> Con
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{a=420{,}65}\)</span>.</span>
+                Con <span class="formula-con-signo"><span
                 class="math inline">\(N=2\)</span>:</span> <span
                 class="math display">\[
                 \begin{aligned}
                 &amp;420{,}65\cdot2^b=390{,}94\\
                 \Rightarrow{}&amp;2^b=\frac{390{,}94}{420{,}65}=0{,}929371\ldots\\
-                \Rightarrow{}&amp;b=\frac{\ln0{,}929371\ldots}{\ln2}\approx-0{,}10567
+                \Rightarrow{}&amp;b=\frac{\ln0{,}929371\ldots}{\ln2}\approx\boxed{-0{,}10567}
                 \end{aligned}
                 \]</span></li>
                 <li>Como <span class="formula-con-signo"><span
@@ -7973,13 +8178,13 @@ Enfoques NS</p>
                 class="math inline">\(8^b=\left(2^b\right)^3\)</span>,</span>
                 y se usa <span class="math inline">\(2^b\)</span> sin
                 redondear: <span class="math display">\[
-                T=420{,}65\cdot8^b=420{,}65\left(\frac{390{,}94}{420{,}65}\right)^3\approx337{,}67\
-                \text{s}
+                T=420{,}65\cdot8^b=420{,}65\left(\frac{390{,}94}{420{,}65}\right)^3\approx\boxed{337{,}67\
+                \text{s}}
                 \]</span></li>
                 <li>El error es la diferencia entre la estimación y el
                 valor real, dividida entre el valor real: <span
                 class="math display">\[
-                \frac{342{,}08-337{,}67}{342{,}08}\cdot100\approx1{,}29\%
+                \frac{342{,}08-337{,}67}{342{,}08}\cdot100\approx\boxed{1{,}29\%}
                 \]</span></li>
                 <li>Las constantes salen de los botes de <span
                 class="math inline">\(1\)</span> y de <span
@@ -7994,10 +8199,10 @@ Enfoques NS</p>
                 modelo predice tiempos cada vez menores, que se acercan
                 a <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>:</span> no es realista.
-                Es poco probable que el modelo valga para <span
-                class="math inline">\(N\)</span> mayor que <span
-                class="formula-con-signo"><span
-                class="math inline">\(8\)</span>.</span></li>
+                <span class="final">Es poco probable que el modelo valga
+                para <span class="math inline">\(N\)</span> mayor que
+                <span class="formula-con-signo"><span
+                class="math inline">\(8\)</span>.</span></span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8117,7 +8322,7 @@ Enfoques NS</p>
                 &amp;25+275\,e^{-10k}=150\\
                 \Rightarrow{}&amp;e^{-10k}=\frac{125}{275}=\frac{5}{11}\\
                 \Rightarrow{}&amp;-10k=\ln\frac{5}{11}\\
-                \Rightarrow{}&amp;k=\frac{1}{10}\ln\frac{11}{5}=\frac{\ln2{,}2}{10}\approx0{,}0788
+                \Rightarrow{}&amp;k=\frac{1}{10}\ln\frac{11}{5}=\frac{\ln2{,}2}{10}\approx\boxed{0{,}0788}
                 \end{aligned}
                 \]</span></li>
                 <li>Como <span class="formula-con-signo"><span
@@ -8127,10 +8332,14 @@ Enfoques NS</p>
                 class="math inline">\(e^{-30k}=\left(\frac{5}{11}\right)^3\)</span>:</span>
                 <span class="math display">\[
                 T(30)=25+275\left(\frac{5}{11}\right)^3\approx50{,}8
-                \]</span> Está a unos <span
-                class="math inline">\(50{,}8\)</span> °C.</li>
-                <li>Tiende a <span class="math inline">\(25\)</span> °C,
-                la temperatura del taller: al crecer <span
+                \]</span> <span class="final-con-signo"><span
+                class="final">Está a unos <span
+                class="math inline">\(50{,}8\)</span>
+                °C</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Tiende a <span
+                class="math inline">\(25\)</span> °C</span>,</span> la
+                temperatura del taller: al crecer <span
                 class="formula-con-signo"><span
                 class="math inline">\(t\)</span>,</span> <span
                 class="math inline">\(e^{-kt}\)</span> se acerca a <span
@@ -8521,7 +8730,7 @@ Enfoques NS</p>
                 <strong>R1</strong>. Queda <span
                 class="formula-con-signo"><span
                 class="math inline">\(e^x=4\)</span>,</span> es decir,
-                <span class="math inline">\(x=\ln4\)</span>
+                <span class="math inline">\(\boxed{x=\ln4}\)</span>
                 <strong>A1</strong>.</li>
                 <li><ol type="a">
                 <li>Por el cambio de base, <span
@@ -8529,7 +8738,7 @@ Enfoques NS</p>
                 4}\)</span> <strong>M1</strong>, y como <span
                 class="math inline">\(\log_2 4=2\)</span>
                 <strong>A1</strong>, queda <span
-                class="math inline">\(\log_4(x+7)=\frac12\log_2(x+7)\)</span>
+                class="math inline">\(\boxed{\log_4(x+7)=\frac12\log_2(x+7)}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Con el resultado de a), la ecuación es <span
                 class="formula-con-signo"><span
@@ -8556,7 +8765,7 @@ Enfoques NS</p>
                 class="math inline">\(x&gt;1\)</span>,</span> que
                 descarta <span class="formula-con-signo"><span
                 class="math inline">\(-3\)</span>:</span> <span
-                class="math inline">\(x=9\)</span>
+                class="math inline">\(\boxed{x=9}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
@@ -8570,11 +8779,11 @@ Enfoques NS</p>
                 class="math inline">\(\ln\)</span>,</span> <span
                 class="math inline">\(-10k=\ln\frac14=-2\ln2\)</span>
                 <strong>A1</strong> y, por tanto, <span
-                class="math inline">\(k=\frac{\ln2}{5}\)</span>
+                class="math inline">\(\boxed{k=\frac{\ln2}{5}}\)</span>
                 <strong>AG</strong>.</li>
                 <li>La semivida es <span
-                class="math inline">\(\frac{\ln2}{k}=5\)</span> días
-                <strong>A1</strong>. Comprobación: <span
+                class="math inline">\(\frac{\ln2}{k}=\boxed{5}\)</span>
+                días <strong>A1</strong>. Comprobación: <span
                 class="formula-con-signo"><span
                 class="math inline">\(e^{-5k}=e^{-\ln2}=\frac12\)</span>.</span></li>
                 <li>Se plantea <span class="formula-con-signo"><span
@@ -8586,9 +8795,9 @@ Enfoques NS</p>
                 class="math inline">\(\ln\)</span>,</span> <span
                 class="math inline">\(kt=\ln8=3\ln2\)</span>
                 <strong>A1</strong>, así que <span
-                class="math inline">\(t=\frac{3\ln2}{k}=15\)</span> días
-                <strong>A1</strong>. También sale razonando: de <span
-                class="math inline">\(60\)</span> a <span
+                class="math inline">\(t=\frac{3\ln2}{k}=\boxed{15}\)</span>
+                días <strong>A1</strong>. También sale razonando: de
+                <span class="math inline">\(60\)</span> a <span
                 class="math inline">\(7{,}5\)</span> la masa se divide
                 por <span class="formula-con-signo"><span
                 class="math inline">\(8=2^3\)</span>,</span> luego pasan
@@ -8665,13 +8874,13 @@ Enfoques NS</p>
                 <li><span class="math inline">\(A\)</span> es el valor
                 inicial, el de <span class="formula-con-signo"><span
                 class="math inline">\(t=0\)</span>:</span> <span
-                class="math inline">\(A=340\)</span>
+                class="math inline">\(\boxed{A=340}\)</span>
                 <strong>A1</strong>.</li>
                 <li>A los cinco años, <span
                 class="math inline">\(340\,e^{5k}=510\)</span>
                 <strong>M1</strong>, así que <span
                 class="math inline">\(e^{5k}=1{,}5\)</span> y <span
-                class="math inline">\(k=\frac{\ln1{,}5}{5}\approx0{,}0811\)</span>
+                class="math inline">\(k=\frac{\ln1{,}5}{5}\approx\boxed{0{,}0811}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Con <span class="math inline">\(k\)</span> sin
                 redondear, <span
@@ -8679,12 +8888,13 @@ Enfoques NS</p>
                 <strong>(M1)</strong> <span
                 class="formula-con-signo"><span
                 class="math inline">\(=899{,}7\ldots\)</span>:</span>
-                unos <span class="math inline">\(900\)</span> ciervos
+                <span class="final">unos <span
+                class="math inline">\(900\)</span> ciervos</span>
                 <strong>A1</strong>.</li>
                 <li>Se plantea <span
                 class="math inline">\(340\,e^{kt}=1000\)</span>
                 <strong>(M1)</strong>, que da <span
-                class="math inline">\(t=\frac1k\ln\frac{1000}{340}\approx13{,}3\)</span>
+                class="math inline">\(t=\frac1k\ln\frac{1000}{340}\approx\boxed{13{,}3}\)</span>
                 años <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
@@ -8694,9 +8904,9 @@ Enfoques NS</p>
                 class="math inline">\(f\)</span> y <span
                 class="math inline">\(g\)</span> en la calculadora y se
                 buscan sus cortes <strong>(M1)</strong>: <span
-                class="math inline">\(x\approx-1{,}90\)</span>
+                class="math inline">\(\boxed{x\approx-1{,}90}\)</span>
                 <strong>A1</strong> y <span
-                class="math inline">\(x\approx1{,}41\)</span>
+                class="math inline">\(\boxed{x\approx1{,}41}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Los cortes separan las zonas en que una gráfica va
                 por encima de la otra. Como <span
@@ -8707,9 +8917,9 @@ Enfoques NS</p>
                 porque <span class="math inline">\(g\)</span> baja sin
                 límite y <span class="math inline">\(f\)</span> es
                 siempre positiva: <span
-                class="math inline">\(x&lt;-1{,}90\)</span>
+                class="math inline">\(\boxed{x&lt;-1{,}90}\)</span>
                 <strong>A1</strong> o <span
-                class="math inline">\(x&gt;1{,}41\)</span>
+                class="math inline">\(\boxed{x&gt;1{,}41}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -8810,50 +9020,55 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(\ln\)</span>,</span> <span
                 class="math inline">\(T\ln\left(1+\frac{r}{100}\right)=\ln2\)</span>
-                <strong>A1</strong>, y al despejar <span
-                class="math inline">\(T\)</span> sale la fórmula
+                <strong>A1</strong>, y al dividir entre <span
+                class="math inline">\(\ln\left(1+\frac{r}{100}\right)\)</span>
+                queda <span
+                class="math inline">\(\boxed{T=\frac{\ln2}{\ln\left(1+\frac{r}{100}\right)}}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Con la fórmula de a): para <span
                 class="formula-con-signo"><span
                 class="math inline">\(r=1\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(T=\frac{\ln2}{\ln1{,}01}\approx69{,}7\)</span>,</span>
+                class="math inline">\(T=\frac{\ln2}{\ln1{,}01}\approx\boxed{69{,}7}\)</span>,</span>
                 frente a <span class="formula-con-signo"><span
                 class="math inline">\(\frac{70}{1}=70\)</span>;</span>
                 para <span class="formula-con-signo"><span
                 class="math inline">\(r=5\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(T=\frac{\ln2}{\ln1{,}05}\approx14{,}2\)</span>,</span>
+                class="math inline">\(T=\frac{\ln2}{\ln1{,}05}\approx\boxed{14{,}2}\)</span>,</span>
                 frente a <span class="formula-con-signo"><span
                 class="math inline">\(14\)</span>;</span> para <span
                 class="formula-con-signo"><span
                 class="math inline">\(r=10\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(T=\frac{\ln2}{\ln1{,}1}\approx7{,}27\)</span>,</span>
+                class="math inline">\(T=\frac{\ln2}{\ln1{,}1}\approx\boxed{7{,}27}\)</span>,</span>
                 frente a <span class="math inline">\(7\)</span>
-                <strong>A2</strong>. Con <span
+                <strong>A2</strong>. <span class="final">Con <span
                 class="math inline">\(r=1\)</span> la regla se pasa un
-                poco; después se queda corta, cada vez más
+                poco; después se queda corta, cada vez más</span>
                 <strong>R1</strong>.</li>
                 <li>Las dos pasan por el origen y casi se confunden
                 cerca de él; la de <span
                 class="math inline">\(\ln(1+x)\)</span> queda algo por
                 debajo de la recta <strong>A1 A1</strong>. Así, <span
+                class="final"><span
                 class="math inline">\(\ln(1+x)\approx x\)</span> si
-                <span class="math inline">\(x\)</span> es pequeño
+                <span class="math inline">\(x\)</span> es pequeño</span>
                 <strong>A1</strong>.</li>
                 <li>Con <span
                 class="math inline">\(x=\frac{r}{100}\)</span> pequeño,
                 el resultado de c) da <span
                 class="math inline">\(\ln\left(1+\frac{r}{100}\right)\approx\frac{r}{100}\)</span>
                 <strong>M1</strong>, así que <span
-                class="math inline">\(T\approx\frac{\ln2}{r/100}=\frac{100\ln2}{r}\approx\frac{69{,}3}{r}\)</span>
-                <strong>A1</strong>. Se usa <span
+                class="math inline">\(T\approx\frac{\ln2}{r/100}=\boxed{\frac{100\ln2}{r}}\approx\frac{69{,}3}{r}\)</span>
+                <strong>A1</strong>. <span class="final-con-signo"><span
+                class="final">Se usa <span
                 class="math inline">\(70\)</span> porque está muy cerca
                 de <span class="math inline">\(69{,}3\)</span> y tiene
-                muchos divisores, y porque compensa en parte que <span
-                class="math inline">\(\ln(1+x)\)</span> quede por debajo
-                de <span class="formula-con-signo"><span
+                muchos divisores</span>,</span> y porque compensa en
+                parte que <span class="math inline">\(\ln(1+x)\)</span>
+                quede por debajo de <span
+                class="formula-con-signo"><span
                 class="math inline">\(x\)</span>,</span> lo que alarga
                 un poco el tiempo real <strong>R1</strong>.</li>
                 <li>Se escribe el error como función de <span
@@ -8865,7 +9080,7 @@ Enfoques NS</p>
                 <span class="math inline">\(r=13\)</span>
                 <strong>A1</strong>, y a partir de ahí no deja de
                 crecer. El mayor entero es <span
-                class="math inline">\(r=12\)</span>
+                class="math inline">\(\boxed{r=12}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -9585,10 +9800,13 @@ Enfoques NS</p>
       // llegan las letras de KaTeX, cuando cambia el ancho, al abrir un
       // bloque plegado y al entrar o salir del modo clase; el zoom decide
       // por su cuenta.
+      // La frase recuadrada del curso IB (`.final`) es la caja de sus
+      // fórmulas: es un bloque en línea, más estrecho que su párrafo, y una
+      // fórmula que cabe en el párrafo puede no caber en ella.
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
-          : formula.closest("p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
+          : formula.closest(".final, p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
       }
       function repartirFormulas() {
         if (document.documentElement.classList.contains("ampliando")) {
@@ -9737,6 +9955,172 @@ Enfoques NS</p>
             rotulo.textContent = plegado ? textoAbrir : textoCerrar;
           });
         });
+    });
+  </script>
+
+  <script>
+    // Curso IB: la solución de cada ejercicio, debajo de él (regla 14 de
+    // AGENTS.md; orden del profesor del 10 de octubre de 2026). Bajo cada
+    // enunciado queda un botón, «Ver solución», que abre allí mismo una
+    // copia de su solución, hecha al pulsarlo. El bloque «Soluciones» no se
+    // toca: fuera del modo clase solo se esconde, con su botón, y sigue
+    // siendo lo que usan el modo clase y su ampliación, lo que se imprime y
+    // lo que se ve sin JavaScript. Si un bloque no casa número a número con
+    // su lista de ejercicios, se queda como estaba. Este guion no lleva
+    // ningún signo de dólar: la plantilla es de Pandoc.
+    document.addEventListener("DOMContentLoaded", function () {
+      var contenido = document.getElementById("contenido-unidad");
+      if (!contenido) {
+        return;
+      }
+      var OJO =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
+        '<circle cx="12" cy="12" r="2.8"></circle></svg>';
+      var FLECHA =
+        '<svg class="flecha-solucion-ib" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
+        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="m6 9 6 6 6-6"></path></svg>';
+      var VER = "Ver solución";
+      var OCULTAR = "Ocultar solución";
+      var paneles = [];
+
+      function numerosDeLaLista(lista) {
+        var primero = parseInt(lista.getAttribute("start") || "1", 10);
+        return Array.prototype.map.call(lista.children, function (elemento, lugar) {
+          return primero + lugar;
+        });
+      }
+      // La lista de ejercicios que responde un bloque: la que va justo antes
+      // de él o, si el bloque abre su sección («Comprueba tus respuestas»),
+      // justo antes de esa sección. Entre las dos solo puede haber el botón
+      // del bloque y el título de las respuestas.
+      function listaDeEjercicios(bloque) {
+        var nodo = bloque;
+        for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
+          var anterior = nodo.previousElementSibling;
+          while (anterior && anterior.matches("button, h3, h4, h5, h6")) {
+            anterior = anterior.previousElementSibling;
+          }
+          if (anterior) {
+            return anterior.tagName === "OL" ? anterior : null;
+          }
+          nodo = nodo.parentElement && nodo.parentElement.matches("section")
+            ? nodo.parentElement
+            : null;
+        }
+        return null;
+      }
+      // ¿Es una fórmula centrada lo único que lleva el enunciado?
+      function soloFormula(ejercicio) {
+        var formula = ejercicio.firstElementChild;
+        if (!formula || formula !== ejercicio.lastElementChild || !formula.matches(".math.display")) {
+          return false;
+        }
+        return Array.prototype.every.call(ejercicio.childNodes, function (nodo) {
+          return nodo === formula || nodo.textContent.trim() === "";
+        });
+      }
+      function plegar(panel) {
+        panel.caja.classList.add("esta-plegado");
+        panel.boton.setAttribute("aria-expanded", "false");
+        panel.rotulo.textContent = VER;
+      }
+
+      Array.prototype.forEach.call(
+        contenido.querySelectorAll(".resultado.plegable"),
+        function (bloque) {
+          var listas = bloque.querySelectorAll(":scope > ol");
+          var ejercicios = listaDeEjercicios(bloque);
+          if (listas.length !== 1 || !ejercicios || !ejercicios.closest("section.ejercicios")) {
+            return;
+          }
+          var soluciones = listas[0];
+          var suyos = numerosDeLaLista(ejercicios);
+          if (suyos.join() !== numerosDeLaLista(soluciones).join()) {
+            return;
+          }
+          // Una figura de la nota que abre el bloque va con la solución del
+          // ejercicio que nombra su pie («Las cuatro rectas del ejercicio
+          // 5»); si no nombra ninguno de la lista, con la del primero.
+          var figuras = {};
+          Array.prototype.forEach.call(bloque.children, function (hijo) {
+            var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
+            if (!imagen) {
+              return;
+            }
+            var nombrado = /ejercicio\s+(\d+)/.exec(hijo.textContent + " " + (imagen.alt || ""));
+            var numero = nombrado ? parseInt(nombrado[1], 10) : suyos[0];
+            if (suyos.indexOf(numero) === -1) {
+              numero = suyos[0];
+            }
+            (figuras[numero] = figuras[numero] || []).push(hijo);
+          });
+
+          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
+            var numero = suyos[lugar];
+            var solucion = soluciones.children[lugar];
+            var caja = document.createElement("div");
+            caja.className = "solucion-ib plegable esta-plegado";
+            caja.id = "solucion-ib-" + (paneles.length + 1);
+            var boton = document.createElement("button");
+            boton.type = "button";
+            boton.className = "boton-solucion-ib";
+            boton.setAttribute("aria-expanded", "false");
+            boton.setAttribute("aria-controls", caja.id);
+            boton.innerHTML = OJO + '<span class="rotulo-solucion-ib"></span>' + FLECHA;
+            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-solucion-ib") };
+            panel.rotulo.textContent = VER;
+            paneles.push(panel);
+            boton.addEventListener("click", function () {
+              if (!caja.firstChild) {
+                (figuras[numero] || []).forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ib";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+              }
+              if (caja.classList.contains("esta-plegado")) {
+                caja.classList.remove("esta-plegado");
+                boton.setAttribute("aria-expanded", "true");
+                panel.rotulo.textContent = OCULTAR;
+              } else {
+                plegar(panel);
+              }
+            });
+            if (soloFormula(ejercicio)) {
+              ejercicio.classList.add("solo-formula-ib");
+            }
+            ejercicio.appendChild(boton);
+            ejercicio.appendChild(caja);
+          });
+
+          bloque.classList.add("repartido-ib");
+          var general = bloque.previousElementSibling;
+          if (general && general.classList.contains("boton-soluciones")) {
+            general.classList.add("repartido-ib");
+          }
+        }
+      );
+
+      // En el modo clase no hay botones de ejercicio: se pliegan y se vacían
+      // las copias, para que la ampliación solo encuentre las soluciones del
+      // bloque.
+      new MutationObserver(function () {
+        if (!document.documentElement.classList.contains("modo-clase")) {
+          return;
+        }
+        paneles.forEach(function (panel) {
+          if (panel.caja.firstChild) {
+            plegar(panel);
+            panel.caja.textContent = "";
+          }
+        });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
   </script>
 

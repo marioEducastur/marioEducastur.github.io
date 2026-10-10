@@ -4925,6 +4925,189 @@
     .grupo-poster-ib .tapa-ficha-ib {
       color: rgb(255 255 255 / 0.88);
     }
+
+    /* Curso IB: la solución de cada ejercicio, debajo de él, y el resultado
+       final recuadrado (regla 14 de AGENTS.md). El guion deja bajo cada
+       enunciado un botón pequeño, «Ver solución», y al pulsarlo abre allí
+       una copia de su solución. El bloque «Soluciones» sigue en la página,
+       entero y sin tocar: es lo que usan el modo clase y su ampliación, lo
+       que se imprime y lo que ve quien no tiene JavaScript. */
+    .boton-solucion-ib {
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      width: fit-content;
+      min-height: 0;
+      margin: 0.75rem 0 0;
+      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
+      color: var(--verde);
+      background: #ffffff;
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+      border-radius: 999px;
+      box-shadow: none;
+      font-size: 0.84rem;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .boton-solucion-ib svg {
+      flex: none;
+      width: 1.05em;
+      height: 1.05em;
+    }
+
+    .boton-solucion-ib .flecha-solucion-ib {
+      transition: transform 160ms ease;
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] {
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .boton-solucion-ib[aria-expanded="true"] .flecha-solucion-ib {
+      transform: rotate(180deg);
+    }
+
+    .boton-solucion-ib:focus-visible {
+      color: #ffffff;
+      background: var(--verde);
+      border-color: var(--verde);
+      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .boton-solucion-ib:hover {
+        color: #ffffff;
+        background: var(--verde);
+        border-color: var(--verde);
+      }
+    }
+
+    .solucion-ib {
+      margin: 0.65rem 0 0.15rem;
+      padding: 0.85rem 1rem 0.9rem;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.18);
+      border-left: 0.3rem solid var(--verde);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      animation: entrar-detalle 260ms ease-out;
+    }
+
+    .solucion-ib.esta-plegado {
+      display: none;
+    }
+
+    /* La copia es el elemento de la lista de soluciones, con sus clases:
+       va en una lista propia, sin número, porque el número ya lo lleva el
+       enunciado de encima. */
+    section.ejercicios ol.lista-solucion-ib {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    section.ejercicios ol.lista-solucion-ib > li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .solucion-ib > figure {
+      margin: 0 0 0.7rem;
+    }
+
+    .solucion-ib .math.display {
+      margin: 0.6rem 0;
+      padding: 0.55rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    /* Un enunciado que es solo una fórmula centrada la llevaba junto a su
+       número porque era lo único del elemento; con el botón detrás deja de
+       serlo, y el guion lo marca para que siga igual. */
+    #contenido-unidad li.solo-formula-ib > .math.display:first-child {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* El resultado final de cada solución va recuadrado: una frase, con
+       `[…]{.final}` en la fuente; una fórmula o su último miembro, con
+       `\boxed{…}`, que KaTeX pinta con un marco (`.fbox`). */
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
+      background: #ffffff;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    /* La frase es una sola caja: si no cabe en lo que queda del renglón,
+       baja entera, y solo se parte por dentro si no cabe en uno. Como es un
+       bloque en línea, el navegador podría dejar solo en el renglón
+       siguiente el signo que lleva detrás: el filtro los envuelve juntos. */
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
+    }
+
+    @media screen {
+      html:not(.modo-clase) .boton-soluciones.repartido-ib,
+      html:not(.modo-clase) .resultado.plegable.repartido-ib {
+        display: none !important;
+      }
+
+      html.modo-clase .boton-solucion-ib,
+      html.modo-clase .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    @media print {
+      .boton-solucion-ib,
+      .solucion-ib {
+        display: none !important;
+      }
+    }
+
+    /* En un teléfono la solución va dentro de la tarjeta del ejercicio, que
+       ya es estrecha: menos relleno, para que las cuentas tengan sitio. */
+    @media screen and (max-width: 42rem) {
+      .solucion-ib {
+        margin-inline: -0.45rem;
+        padding: 0.65rem 0.55rem 0.7rem 0.6rem;
+      }
+
+      .solucion-ib ol[type="a"],
+      .solucion-ib ul {
+        padding-left: 1.35rem;
+      }
+
+      .solucion-ib .math.display {
+        padding: 0.5rem 0.45rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .solucion-ib {
+        animation: none;
+      }
+
+      .boton-solucion-ib .flecha-solucion-ib {
+        transition: none;
+      }
+    }
   </style>
 
   </head>
@@ -5056,18 +5239,19 @@ Enfoques NS</p>
                 class="math inline">\(9-4=5\)</span></span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(14-9=5\)</span>):</span> siguen
-                <span class="math inline">\(19+5=24\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(24+5=29\)</span>.</span></li>
+                <span class="math inline">\(19+5=\boxed{24}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(24+5=\boxed{29}\)</span>.</span></li>
                 <li>Se multiplica por <span
                 class="math inline">\(3\)</span> cada vez <span
                 class="formula-con-signo">(<span
                 class="math inline">\(15=5\cdot3\)</span></span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(45=15\cdot3\)</span>):</span>
-                siguen <span class="math inline">\(45\cdot3=135\)</span>
-                y <span class="formula-con-signo"><span
-                class="math inline">\(135\cdot3=405\)</span>.</span></li>
+                siguen <span
+                class="math inline">\(45\cdot3=\boxed{135}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(135\cdot3=\boxed{405}\)</span>.</span></li>
                 <li>Son los cuadrados <span
                 class="formula-con-signo"><span
                 class="math inline">\(1^2\)</span>,</span> <span
@@ -5076,9 +5260,9 @@ Enfoques NS</p>
                 class="math inline">\(3^2\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(4^2\)</span>:</span> siguen <span
-                class="math inline">\(5^2=25\)</span> y <span
+                class="math inline">\(5^2=\boxed{25}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(6^2=36\)</span>.</span></li>
+                class="math inline">\(6^2=\boxed{36}\)</span>.</span></li>
                 </ol></li>
                 <li>Las dos ecuaciones llevan la misma <span
                 class="formula-con-signo"><span
@@ -5086,12 +5270,12 @@ Enfoques NS</p>
                 restar la primera de la segunda se va: <span
                 class="math display">\[
                 (a+7b)-(a+2b)=41-16\ \Rightarrow\ 5b=25\ \Rightarrow\
-                b=5
+                \boxed{b=5}
                 \]</span> Se sustituye en la primera: <span
                 class="formula-con-signo"><span
                 class="math inline">\(a+2\cdot5=16\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(a=6\)</span>.</span></li>
+                class="math inline">\(\boxed{a=6}\)</span>.</span></li>
                 <li><ol type="a">
                 <li>Se escribe <span class="math inline">\(1024\)</span>
                 como potencia de <span class="formula-con-signo"><span
@@ -5101,14 +5285,14 @@ Enfoques NS</p>
                 ecuación es <span
                 class="math inline">\(2^n=2^{10}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=10\)</span>.</span></li>
+                class="math inline">\(\boxed{n=10}\)</span>.</span></li>
                 <li>Se deja sola la potencia y se toman logaritmos para
                 bajar el exponente: <span class="math display">\[
                 \begin{aligned}
                 &amp;3\cdot1{,}5^n=60\\
                 \Rightarrow{}&amp;1{,}5^n=20\\
                 \Rightarrow{}&amp;n\ln1{,}5=\ln20\\
-                \Rightarrow{}&amp;n=\frac{\ln20}{\ln1{,}5}\approx7{,}39
+                \Rightarrow{}&amp;n=\frac{\ln20}{\ln1{,}5}\approx\boxed{7{,}39}
                 \end{aligned}
                 \]</span></li>
                 </ol></li>
@@ -5127,7 +5311,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(11\)</span>,</span> así que el
                 total es <span class="formula-con-signo"><span
-                class="math inline">\(5\cdot11=55\)</span>.</span></li>
+                class="math inline">\(5\cdot11=\boxed{55}\)</span>.</span></li>
                 </ol>
                 </div>
                 <p>Si has fallado la 2, repasa los sistemas en la unidad
@@ -5241,8 +5425,8 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(u_4=3\cdot4-5=7\)</span>.</span>
                 Los términos son <span class="formula-con-signo"><span
-                class="math inline">\(-2,\ 1,\ 4,\
-                7\)</span>.</span></li>
+                class="math inline">\(\boxed{-2,\ 1,\ 4,\
+                7}\)</span>.</span></li>
                 <li>El factor <span
                 class="math inline">\((-1)^n\)</span> vale <span
                 class="math inline">\(-1\)</span> si <span
@@ -5256,8 +5440,8 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(u_4=1\cdot4^2=16\)</span>.</span>
                 Los términos son <span class="formula-con-signo"><span
-                class="math inline">\(-1,\ 4,\ -9,\
-                16\)</span>.</span></li>
+                class="math inline">\(\boxed{-1,\ 4,\ -9,\
+                16}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(u_1=\frac{1+3}{2\cdot1}=2\)</span>,</span>
                 <span class="formula-con-signo"><span
@@ -5267,8 +5451,8 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(u_4=\frac{4+3}{2\cdot4}=\frac78\)</span>.</span>
                 Los términos son <span class="formula-con-signo"><span
-                class="math inline">\(2,\ \frac54,\ 1,\
-                \frac78\)</span>.</span></li>
+                class="math inline">\(\boxed{2,\ \frac54,\ 1,\
+                \frac78}\)</span>.</span></li>
                 </ol></li>
                 <li>Con una ley de recurrencia, cada término se calcula
                 a partir del anterior.
@@ -5281,8 +5465,8 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(u_4=8^2-1=63\)</span>.</span> Los
                 términos son <span class="formula-con-signo"><span
-                class="math inline">\(2,\ 3,\ 8,\
-                63\)</span>.</span></li>
+                class="math inline">\(\boxed{2,\ 3,\ 8,\
+                63}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(u_1=100\)</span>,</span> <span
                 class="formula-con-signo"><span
@@ -5292,8 +5476,8 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(u_4=\frac12\cdot40+10=30\)</span>.</span>
                 Los términos son <span class="formula-con-signo"><span
-                class="math inline">\(100,\ 60,\ 40,\
-                30\)</span>.</span></li>
+                class="math inline">\(\boxed{100,\ 60,\ 40,\
+                30}\)</span>.</span></li>
                 </ol></li>
                 <li>Se mira cómo se pasa de cada término al siguiente.
                 <ol type="a">
@@ -5310,7 +5494,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(2\)</span>.</span> Por tanto,
                 <span class="formula-con-signo"><span
-                class="math inline">\(u_n=3n+2\)</span>.</span>
+                class="math inline">\(\boxed{u_n=3n+2}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(u_4=3\cdot4+2=14\)</span>.</span></li>
                 <li>Se multiplica por <span
@@ -5324,7 +5508,7 @@ Enfoques NS</p>
                 class="math inline">\(2\cdot5^3\)</span>.</span> El
                 exponente es una unidad menor que el lugar, así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(u_n=2\cdot5^{\,n-1}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=2\cdot5^{\,n-1}}\)</span>.</span></li>
                 <li>Solo cambia el signo, y eso lo hace una potencia de
                 <span class="formula-con-signo"><span
                 class="math inline">\(-1\)</span>.</span> El primer
@@ -5332,7 +5516,7 @@ Enfoques NS</p>
                 par cuando <span class="formula-con-signo"><span
                 class="math inline">\(n=1\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=(-1)^{n+1}\)</span>.</span>
+                class="math inline">\(\boxed{u_n=(-1)^{n+1}}\)</span>.</span>
                 También vale <span class="formula-con-signo"><span
                 class="math inline">\((-1)^{n-1}\)</span>.</span></li>
                 </ol></li>
@@ -5391,7 +5575,7 @@ Enfoques NS</p>
                 class="math inline">\(n\)</span>,</span> y el
                 denominador, una unidad más: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=\frac{n}{n+1}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=\frac{n}{n+1}}\)</span>.</span></li>
                 <li>Los numeradores son los pares, <span
                 class="formula-con-signo"><span
                 class="math inline">\(2n\)</span>,</span> y los
@@ -5399,7 +5583,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(2n-1\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=\frac{2n}{2n-1}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=\frac{2n}{2n-1}}\)</span>.</span></li>
                 <li>Cada término es el anterior por su lugar: <span
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> <span
@@ -5412,7 +5596,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(24\cdot5\)</span>.</span> Por
                 tanto, <span class="formula-con-signo"><span
-                class="math inline">\(u_n=n!\)</span>,</span> el
+                class="math inline">\(\boxed{u_n=n!}\)</span>,</span> el
                 factorial de la unidad 2.</li>
                 <li>Los numeradores son las potencias de <span
                 class="formula-con-signo"><span
@@ -5425,7 +5609,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(3n\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=\frac{3^n}{3n}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=\frac{3^n}{3n}}\)</span>.</span></li>
                 <li>Los signos se alternan empezando por el positivo,
                 <span class="formula-con-signo"><span
                 class="math inline">\((-1)^{n+1}\)</span>;</span> los
@@ -5438,20 +5622,22 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(n^2\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=(-1)^{n+1}\,\frac{2n+1}{n^2}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=(-1)^{n+1}\,\frac{2n+1}{n^2}}\)</span>.</span></li>
                 <li>Son las potencias de <span
                 class="math inline">\(4\)</span> empezando por <span
                 class="formula-con-signo"><span
                 class="math inline">\(4^0\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=4^{\,n-1}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=4^{\,n-1}}\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Cada término es el anterior dividido entre <span
                 class="formula-con-signo"><span
-                class="math inline">\(3\)</span>:</span> <span
+                class="math inline">\(3\)</span>,</span> y del primero
+                al de lugar <span class="math inline">\(n\)</span> hay
+                <span class="math inline">\(n-1\)</span> pasos: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=3\cdot\left(\frac13\right)^{n-1}=3^{\,2-n}\)</span>.</span></li>
+                class="math inline">\(u_n=3\cdot\left(\frac13\right)^{n-1}=3\cdot3^{\,1-n}=\boxed{3^{\,2-n}}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt8=2\sqrt2\)</span>,</span>
                 <span class="math inline">\(\sqrt{18}=3\sqrt2\)</span> y
@@ -5461,22 +5647,33 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(\sqrt2\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=n\sqrt2\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=n\sqrt2}\)</span>.</span></li>
                 <li>Cada término es el anterior por <span
                 class="formula-con-signo"><span
-                class="math inline">\(\sqrt2\)</span>:</span> <span
+                class="math inline">\(\sqrt2\)</span>,</span> y el
+                primero es <span class="formula-con-signo"><span
+                class="math inline">\(\left(\sqrt2\right)^1\)</span>,</span>
+                así que el de lugar <span
+                class="math inline">\(n\)</span> lleva el exponente
+                <span class="formula-con-signo"><span
+                class="math inline">\(n\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=\left(\sqrt2\right)^n\)</span>.</span></li>
+                class="math inline">\(\boxed{u_n=\left(\sqrt2\right)^n}\)</span>.</span></li>
                 <li>Cada término es el anterior menos <span
                 class="formula-con-signo"><span
-                class="math inline">\(3\)</span>:</span> <span
+                class="math inline">\(3\)</span>,</span> y del primero
+                al de lugar <span class="math inline">\(n\)</span> hay
+                <span class="math inline">\(n-1\)</span> pasos: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_n=4-3(n-1)=7-3n\)</span>.</span></li>
+                class="math inline">\(u_n=4-3(n-1)=\boxed{7-3n}\)</span>.</span></li>
                 <li>Cada término es el anterior por <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac32\)</span>:</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_n=\left(\frac32\right)^{n-1}\)</span>.</span></li>
+                class="math inline">\(\frac32\)</span>,</span> y el
+                primero es <span class="formula-con-signo"><span
+                class="math inline">\(\left(\frac32\right)^0=1\)</span>,</span>
+                así que el exponente va una unidad por detrás del lugar:
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{u_n=\left(\frac32\right)^{n-1}}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -5619,14 +5816,14 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(17\)</span>:</span> <span
                 class="math display">\[
-                \sum_{k=1}^{5}(4k-3)=1+5+9+13+17=45
+                \sum_{k=1}^{5}(4k-3)=1+5+9+13+17=\boxed{45}
                 \]</span></li>
                 <li>El índice empieza en <span
                 class="formula-con-signo"><span
                 class="math inline">\(2\)</span>,</span> así que hay
                 <span class="math inline">\(5-2+1=4\)</span> términos:
                 <span class="math display">\[
-                \sum_{k=2}^{5}3^k=3^2+3^3+3^4+3^5=9+27+81+243=360
+                \sum_{k=2}^{5}3^k=3^2+3^3+3^4+3^5=9+27+81+243=\boxed{360}
                 \]</span></li>
                 <li>Lo que se suma no depende de <span
                 class="formula-con-signo"><span
@@ -5634,7 +5831,7 @@ Enfoques NS</p>
                 class="math inline">\(7\)</span> sumado <span
                 class="math inline">\(20\)</span> veces. <span
                 class="math display">\[
-                \sum_{k=1}^{20}7=20\cdot7=140
+                \sum_{k=1}^{20}7=20\cdot7=\boxed{140}
                 \]</span></li>
                 </ol></li>
                 <li>Se busca una fórmula para el término que ocupa el
@@ -5650,7 +5847,7 @@ Enfoques NS</p>
                 el lugar <span class="formula-con-signo"><span
                 class="math inline">\(20\)</span>:</span> <span
                 class="math display">\[
-                2+4+6+\cdots+40=\sum_{k=1}^{20}2k
+                2+4+6+\cdots+40=\boxed{\sum_{k=1}^{20}2k}
                 \]</span></li>
                 <li>Los denominadores son las potencias de <span
                 class="formula-con-signo"><span
@@ -5668,7 +5865,7 @@ Enfoques NS</p>
                 y hay <span class="formula-con-signo"><span
                 class="math inline">\(4\)</span>:</span> <span
                 class="math display">\[
-                \frac17+\frac{1}{49}+\frac{1}{343}+\frac{1}{2401}=\sum_{k=1}^{4}\left(\frac17\right)^k
+                \frac17+\frac{1}{49}+\frac{1}{343}+\frac{1}{2401}=\boxed{\sum_{k=1}^{4}\left(\frac17\right)^k}
                 \]</span></li>
                 <li>Cada término es el anterior por <span
                 class="formula-con-signo"><span
@@ -5684,7 +5881,7 @@ Enfoques NS</p>
                 Hay <span class="math inline">\(5\)</span> términos y el
                 exponente es una unidad menor que el lugar: <span
                 class="math display">\[
-                10-30+90-270+810=\sum_{k=1}^{5}10\,(-3)^{k-1}
+                10-30+90-270+810=\boxed{\sum_{k=1}^{5}10\,(-3)^{k-1}}
                 \]</span> Hay otras escrituras válidas, como <span
                 class="formula-con-signo"><span
                 class="math inline">\(\sum\limits_{k=0}^{4}10\,(-3)^{k}\)</span>,</span>
@@ -5870,7 +6067,7 @@ Enfoques NS</p>
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(n=20\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_{20}=15-3\cdot20=-45\)</span>.</span></li>
+                class="math inline">\(u_{20}=15-3\cdot20=\boxed{-45}\)</span>.</span></li>
                 <li>Se iguala el término general a <span
                 class="math inline">\(-60\)</span> y se despeja <span
                 class="formula-con-signo"><span
@@ -5879,14 +6076,14 @@ Enfoques NS</p>
                 15-3n=-60\ \Rightarrow\ 3n=75\ \Rightarrow\ n=25
                 \]</span> Vale <span class="math inline">\(-60\)</span>
                 el término <span class="formula-con-signo"><span
-                class="math inline">\(u_{25}\)</span>.</span></li>
+                class="math inline">\(\boxed{u_{25}}\)</span>.</span></li>
                 <li>Se buscan los lugares en los que el término es
                 negativo: <span class="math display">\[
                 15-3n&lt;0\ \Rightarrow\ 3n&gt;15\ \Rightarrow\ n&gt;5
                 \]</span> El primero es <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_6=15-18=-3\)</span>.</span> El
-                anterior, <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{u_6=15-18=-3}\)</span>.</span>
+                El anterior, <span class="formula-con-signo"><span
                 class="math inline">\(u_5=0\)</span>,</span> todavía no
                 es negativo.</li>
                 </ol></li>
@@ -5896,16 +6093,16 @@ Enfoques NS</p>
                 class="math inline">\(d\)</span>:</span> <span
                 class="math display">\[
                 u_{14}=u_6+8d\ \Rightarrow\ 56=20+8d\ \Rightarrow\
-                d=\frac{36}{8}=4{,}5
+                d=\frac{36}{8}=\boxed{4{,}5}
                 \]</span> Del primero al sexto hay <span
                 class="math inline">\(5\)</span> saltos: <span
                 class="formula-con-signo"><span
                 class="math inline">\(20=u_1+5\cdot4{,}5\)</span>,</span>
                 así que <span class="formula-con-signo"><span
-                class="math inline">\(u_1=20-22{,}5=-2{,}5\)</span>.</span>
+                class="math inline">\(u_1=20-22{,}5=\boxed{-2{,}5}\)</span>.</span>
                 Con el término general, <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_{30}=-2{,}5+29\cdot4{,}5=-2{,}5+130{,}5=128\)</span>.</span></li>
+                class="math inline">\(u_{30}=-2{,}5+29\cdot4{,}5=-2{,}5+130{,}5=\boxed{128}\)</span>.</span></li>
                 <li>En una progresión aritmética, la diferencia entre
                 dos términos seguidos es siempre la misma, así que se
                 igualan las dos diferencias: <span
@@ -5914,15 +6111,16 @@ Enfoques NS</p>
                 &amp;(5x-1)-(2x+3)=(6x+5)-(5x-1)\\
                 \Rightarrow{}&amp;3x-4=x+6\\
                 \Rightarrow{}&amp;2x=10\\
-                \Rightarrow{}&amp;x=5
+                \Rightarrow{}&amp;\boxed{x=5}
                 \end{aligned}
                 \]</span> Con <span class="math inline">\(x=5\)</span>
                 los términos son <span class="formula-con-signo"><span
-                class="math inline">\(2\cdot5+3=13\)</span>,</span>
-                <span class="math inline">\(5\cdot5-1=24\)</span> y
+                class="math inline">\(2\cdot5+3=\boxed{13}\)</span>,</span>
+                <span
+                class="math inline">\(5\cdot5-1=\boxed{24}\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(6\cdot5+5=35\)</span>,</span> de
-                diferencia <span class="formula-con-signo"><span
+                class="math inline">\(6\cdot5+5=\boxed{35}\)</span>,</span>
+                de diferencia <span class="formula-con-signo"><span
                 class="math inline">\(11\)</span>.</span></li>
                 </ol>
                 </div>
@@ -5949,14 +6147,15 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(d\)</span>:</span> <span
                 class="math display">\[
-                u_{10}=u_4+6d\ \Rightarrow\ 88=16+6d\ \Rightarrow\ d=12
+                u_{10}=u_4+6d\ \Rightarrow\ 88=16+6d\ \Rightarrow\
+                \boxed{d=12}
                 \]</span> Del primero al cuarto hay <span
                 class="math inline">\(3\)</span> saltos: <span
                 class="formula-con-signo"><span
                 class="math inline">\(16=u_1+3\cdot12\)</span>,</span>
                 así que <span class="formula-con-signo"><span
-                class="math inline">\(u_1=-20\)</span>.</span> También
-                sale con el sistema del método, <span
+                class="math inline">\(\boxed{u_1=-20}\)</span>.</span>
+                También sale con el sistema del método, <span
                 class="math inline">\(u_1+3d=16\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(u_1+9d=88\)</span>:</span>
@@ -6132,7 +6331,7 @@ Enfoques NS</p>
                 class="math inline">\(d=6\)</span> y <span
                 class="math inline">\(n=30\)</span> en la fórmula de la
                 suma: <span class="math display">\[
-                S_{30}=\frac{30}{2}\bigl(2\cdot11+29\cdot6\bigr)=15\cdot196=2940
+                S_{30}=\frac{30}{2}\bigl(2\cdot11+29\cdot6\bigr)=15\cdot196=\boxed{2940}
                 \]</span></li>
                 <li>Aquí <span class="math inline">\(u_1=50\)</span> y
                 <span class="formula-con-signo"><span
@@ -6147,7 +6346,7 @@ Enfoques NS</p>
                 por tanto, <span class="math inline">\(17\)</span>
                 términos. Con el primero y el último: <span
                 class="math display">\[
-                S_{17}=\frac{17}{2}\,(50+2)=17\cdot26=442
+                S_{17}=\frac{17}{2}\,(50+2)=17\cdot26=\boxed{442}
                 \]</span></li>
                 <li>Los términos <span
                 class="math inline">\(7k-3\)</span> son <span
@@ -6164,7 +6363,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(u_{40}=7\cdot40-3=277\)</span>:</span>
                 <span class="math display">\[
-                \sum_{k=1}^{40}(7k-3)=\frac{40}{2}\,(4+277)=20\cdot281=5620
+                \sum_{k=1}^{40}(7k-3)=\frac{40}{2}\,(4+277)=20\cdot281=\boxed{5620}
                 \]</span></li>
                 </ol></li>
                 <li>Las butacas de cada fila forman una progresión
@@ -6174,10 +6373,10 @@ Enfoques NS</p>
                 class="math inline">\(d=3\)</span>.</span>
                 <ol type="a">
                 <li>Con el término general, <span
-                class="math inline">\(u_{15}=22+14\cdot3=64\)</span>
+                class="math inline">\(u_{15}=22+14\cdot3=\boxed{64}\)</span>
                 butacas.</li>
                 <li>Con la primera fila y la última, <span
-                class="math inline">\(S_{15}=\frac{15}{2}\,(22+64)=15\cdot43=645\)</span>
+                class="math inline">\(S_{15}=\frac{15}{2}\,(22+64)=15\cdot43=\boxed{645}\)</span>
                 butacas.</li>
                 <li>Se busca el menor <span
                 class="math inline">\(n\)</span> con <span
@@ -6196,9 +6395,11 @@ Enfoques NS</p>
                 class="math inline">\(n=\frac{-41+\sqrt{41^2+12\cdot3000}}{6}\approx25{,}5\)</span>,</span>
                 y a partir de ella la suma pasa de <span
                 class="formula-con-signo"><span
-                class="math inline">\(1500\)</span>:</span> hacen falta
-                <span class="math inline">\(26\)</span> filas.
-                Comprobación: <span class="formula-con-signo"><span
+                class="math inline">\(1500\)</span>:</span> <span
+                class="final-con-signo"><span class="final">hacen falta
+                <span class="math inline">\(26\)</span>
+                filas</span>.</span> Comprobación: <span
+                class="formula-con-signo"><span
                 class="math inline">\(S_{25}=1450\)</span>,</span> que
                 no llega, y <span class="formula-con-signo"><span
                 class="math inline">\(S_{26}=1547\)</span>.</span></li>
@@ -6211,12 +6412,12 @@ Enfoques NS</p>
                 <ol type="a">
                 <li>La primera suma solo tiene un término: <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_1=S_1=5\cdot1^2-2\cdot1=3\)</span>.</span>
+                class="math inline">\(u_1=S_1=5\cdot1^2-2\cdot1=\boxed{3}\)</span>.</span>
                 La segunda tiene dos, <span
                 class="formula-con-signo"><span
                 class="math inline">\(S_2=u_1+u_2\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(u_2=S_2-S_1=(5\cdot2^2-2\cdot2)-3=16-3=13\)</span>.</span></li>
+                class="math inline">\(u_2=S_2-S_1=(5\cdot2^2-2\cdot2)-3=16-3=\boxed{13}\)</span>.</span></li>
                 <li>Para <span class="formula-con-signo"><span
                 class="math inline">\(n\geq2\)</span>,</span> <span
                 class="formula-con-signo"><span
@@ -6225,7 +6426,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 u_n&amp;=5n^2-2n-\bigl(5(n-1)^2-2(n-1)\bigr)\\
                 &amp;=5n^2-2n-\left(5n^2-12n+7\right)\\
-                &amp;=10n-7
+                &amp;=\boxed{10n-7}
                 \end{aligned}
                 \]</span> La fórmula también vale para <span
                 class="formula-con-signo"><span
@@ -6235,8 +6436,9 @@ Enfoques NS</p>
                 Como <span
                 class="math inline">\(u_{n+1}-u_n=10(n+1)-7-(10n-7)=10\)</span>
                 no depende de <span class="formula-con-signo"><span
-                class="math inline">\(n\)</span>,</span> la sucesión es
-                una progresión aritmética de diferencia <span
+                class="math inline">\(n\)</span>,</span> <span
+                class="final">la sucesión es una progresión
+                aritmética</span> de diferencia <span
                 class="formula-con-signo"><span
                 class="math inline">\(10\)</span>.</span></li>
                 </ol></li>
@@ -6302,7 +6504,7 @@ Enfoques NS</p>
                 Como <span class="math inline">\(n\)</span> cuenta
                 términos, solo vale <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=10\)</span>.</span>
+                class="math inline">\(\boxed{n=10}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(S_{10}=5\,(8+27)=175\)</span>.</span></li>
                 <li>Los impares <span class="formula-con-signo"><span
@@ -6321,8 +6523,8 @@ Enfoques NS</p>
                 \]</span> Entonces <span
                 class="math inline">\(n^2=1681\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(n=41\)</span>,</span> porque <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{n=41}\)</span>,</span>
+                porque <span class="formula-con-signo"><span
                 class="math inline">\(41^2=1681\)</span>.</span></li>
                 <li><ol type="a">
                 <li>El primer múltiplo de <span
@@ -6340,10 +6542,12 @@ Enfoques NS</p>
                 class="math display">\[
                 21+7(n-1)=196\ \Rightarrow\ 7(n-1)=175\ \Rightarrow\
                 n=26
-                \]</span> Hay <span class="math inline">\(26\)</span>
-                múltiplos. En clase se llegó al mismo número buscando
-                hasta dónde se puede llegar sin pasar de <span
-                class="formula-con-signo"><span
+                \]</span> <span class="final-con-signo"><span
+                class="final">Hay <span
+                class="math inline">\(26\)</span>
+                múltiplos</span>.</span> En clase se llegó al mismo
+                número buscando hasta dónde se puede llegar sin pasar de
+                <span class="formula-con-signo"><span
                 class="math inline">\(200\)</span>:</span> <span
                 class="math inline">\(21+7(n-1)\leq200\)</span> da <span
                 class="formula-con-signo"><span
@@ -6353,7 +6557,7 @@ Enfoques NS</p>
                 class="math inline">\(26\)</span>.</span></li>
                 <li>Con el primero y el último, <span
                 class="formula-con-signo"><span
-                class="math inline">\(S_{26}=\frac{26}{2}\,(21+196)=13\cdot217=2821\)</span>.</span></li>
+                class="math inline">\(S_{26}=\frac{26}{2}\,(21+196)=13\cdot217=\boxed{2821}\)</span>.</span></li>
                 </ol></li>
                 <li>Los ángulos de un hexágono suman <span
                 class="formula-con-signo"><span
@@ -6366,7 +6570,7 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;d=32
                 \end{aligned}
                 \]</span> Los demás ángulos miden <span
-                class="formula-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
                 class="math inline">\(72^\circ\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(104^\circ\)</span>,</span> <span
@@ -6374,8 +6578,8 @@ Enfoques NS</p>
                 class="math inline">\(136^\circ\)</span>,</span> <span
                 class="math inline">\(168^\circ\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(200^\circ\)</span>.</span> El
-                último pasa de <span class="formula-con-signo"><span
+                class="math inline">\(200^\circ\)</span>.</span></span>
+                El último pasa de <span class="formula-con-signo"><span
                 class="math inline">\(180^\circ\)</span>:</span> el
                 hexágono no es convexo.</li>
                 </ol>
@@ -6496,12 +6700,13 @@ Enfoques NS</p>
                 Las cuatro subidas están entre <span
                 class="math inline">\(0{,}35\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(0{,}45\)</span> €:</span> son casi
-                constantes. La diferencia media es la subida total
-                repartida entre los cuatro saltos: <span
+                class="math inline">\(0{,}45\)</span> €:</span> <span
+                class="final-con-signo"><span class="final">son casi
+                constantes</span>.</span> La diferencia media es la
+                subida total repartida entre los cuatro saltos: <span
                 class="math display">\[
-                d\approx\frac{9{,}55-8{,}00}{4}=0{,}3875\approx0{,}39\
-                \text{euros al año}
+                d\approx\frac{9{,}55-8{,}00}{4}=0{,}3875\approx\boxed{0{,}39\
+                \text{euros al año}}
                 \]</span></li>
                 <li>Con <span class="math inline">\(n=1\)</span> en
                 2018, el modelo es <span class="formula-con-signo"><span
@@ -6509,12 +6714,14 @@ Enfoques NS</p>
                 El año 2026 es <span class="formula-con-signo"><span
                 class="math inline">\(n=9\)</span>:</span> <span
                 class="math display">\[
-                u_9=8+8\cdot0{,}3875=11{,}10\ \text{euros}
+                u_9=8+8\cdot0{,}3875=\boxed{11{,}10\ \text{euros}}
                 \]</span></li>
                 <li>Es una extrapolación: 2026 queda cuatro años después
-                del último dato, y el modelo solo se apoya en cinco. La
+                del último dato, y el modelo solo se apoya en cinco.
+                <span class="final-con-signo"><span class="final">La
                 predicción vale si los precios siguen subiendo al mismo
-                ritmo, y cuanto más lejos, menos fiable.</li>
+                ritmo, y cuanto más lejos, menos
+                fiable</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -6680,7 +6887,7 @@ Enfoques NS</p>
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(n=6\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_6=5^{4-6}=5^{-2}=\frac{1}{25}\)</span>.</span></li>
+                class="math inline">\(u_6=5^{4-6}=5^{-2}=\boxed{\frac{1}{25}}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(\frac{1}{625}=5^{-4}\)</span>,</span>
                 se igualan los exponentes: <span class="math display">\[
@@ -6688,22 +6895,23 @@ Enfoques NS</p>
                 \]</span> Vale <span
                 class="math inline">\(\frac{1}{625}\)</span> el término
                 <span class="formula-con-signo"><span
-                class="math inline">\(u_8\)</span>.</span></li>
+                class="math inline">\(\boxed{u_8}\)</span>.</span></li>
                 </ol></li>
                 <li>Del segundo término al quinto hay <span
                 class="math inline">\(3\)</span> saltos, así que al
                 dividirlos queda <span class="formula-con-signo"><span
                 class="math inline">\(r^3\)</span>:</span> <span
                 class="math display">\[
-                \frac{u_5}{u_2}=r^3=\frac{48}{-6}=-8\ \Rightarrow\ r=-2
+                \frac{u_5}{u_2}=r^3=\frac{48}{-6}=-8\ \Rightarrow\
+                \boxed{r=-2}
                 \]</span> El exponente es impar y solo hay una razón.
                 Como <span class="formula-con-signo"><span
                 class="math inline">\(u_2=u_1r\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_1=\frac{-6}{-2}=3\)</span>,</span>
+                class="math inline">\(u_1=\frac{-6}{-2}=\boxed{3}\)</span>,</span>
                 y con el término general <span
                 class="formula-con-signo"><span
-                class="math inline">\(u_{10}=3\cdot(-2)^9=3\cdot(-512)=-1536\)</span>.</span></li>
+                class="math inline">\(u_{10}=3\cdot(-2)^9=3\cdot(-512)=\boxed{-1536}\)</span>.</span></li>
                 <li>Del tercer término al quinto hay <span
                 class="math inline">\(2\)</span> saltos, así que al
                 dividirlos queda <span class="formula-con-signo"><span
@@ -6718,8 +6926,8 @@ Enfoques NS</p>
                 class="math inline">\(u_1=9\)</span>.</span> Las dos
                 progresiones son: <span class="math display">\[
                 \begin{aligned}
-                r=2:&amp;\quad9,\ 18,\ 36,\ 72,\ 144\\
-                r=-2:&amp;\quad9,\ -18,\ 36,\ -72,\ 144
+                r=2:&amp;\quad\boxed{9,\ 18,\ 36,\ 72,\ 144}\\
+                r=-2:&amp;\quad\boxed{9,\ -18,\ 36,\ -72,\ 144}
                 \end{aligned}
                 \]</span></li>
                 <li>En una progresión geométrica, el cociente entre dos
@@ -6735,22 +6943,26 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;x^2-2x-15=0\\
                 \Rightarrow{}&amp;(x-5)(x+3)=0
                 \end{aligned}
-                \]</span> Con <span class="math inline">\(x=5\)</span>
-                los términos son <span class="formula-con-signo"><span
+                \]</span> Las soluciones son <span
+                class="math inline">\(x=5\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(x=-3\)</span>.</span> Con <span
+                class="math inline">\(\boxed{x=5}\)</span> los términos
+                son <span class="formula-con-signo"><span
                 class="math inline">\(6\)</span>,</span> <span
                 class="math inline">\(12\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(24\)</span>,</span> de razón <span
                 class="formula-con-signo"><span
-                class="math inline">\(2\)</span>.</span> Con <span
-                class="math inline">\(x=-3\)</span> son <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{2}\)</span>.</span> Con
+                <span class="math inline">\(\boxed{x=-3}\)</span> son
+                <span class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span> <span
                 class="math inline">\(4\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-8\)</span>,</span> de razón <span
                 class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>.</span></li>
+                class="math inline">\(\boxed{-2}\)</span>.</span></li>
                 <li>El término general es <span
                 class="formula-con-signo"><span
                 class="math inline">\(u_n=4\cdot1{,}2^{\,n-1}\)</span>.</span>
@@ -6767,7 +6979,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=19\)</span>.</span> El término
                 es <span class="formula-con-signo"><span
-                class="math inline">\(u_{19}=4\cdot1{,}2^{18}\approx106\)</span>;</span>
+                class="math inline">\(\boxed{u_{19}=4\cdot1{,}2^{18}\approx106}\)</span>;</span>
                 el anterior, <span class="formula-con-signo"><span
                 class="math inline">\(u_{18}\approx88{,}7\)</span>,</span>
                 todavía no llega.</li>
@@ -6841,7 +7053,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(n=115\)</span>.</span> El término
                 es <span class="formula-con-signo"><span
-                class="math inline">\(u_{115}=2\cdot1{,}05^{114}\approx521\)</span>;</span>
+                class="math inline">\(\boxed{u_{115}=2\cdot1{,}05^{114}\approx521}\)</span>;</span>
                 el anterior, <span class="formula-con-signo"><span
                 class="math inline">\(u_{114}\approx496\)</span>,</span>
                 todavía no llega.</li>
@@ -6858,11 +7070,11 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(u_1=\frac9r\)</span>:</span> el
                 primer término es <span
-                class="math inline">\(27\)</span> o <span
+                class="math inline">\(\boxed{27}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(-27\)</span>.</span> Al escribir
-                las dos progresiones se comprueba que en las dos el
-                segundo término es <span
+                class="math inline">\(\boxed{-27}\)</span>.</span> Al
+                escribir las dos progresiones se comprueba que en las
+                dos el segundo término es <span
                 class="math inline">\(9\)</span> y el sexto, <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac19\)</span>:</span> <span
@@ -6886,11 +7098,11 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;x=\frac{7\pm\sqrt{49-24}}{4}=\frac{7\pm5}{4}
                 \end{aligned}
                 \]</span> Las soluciones son <span
-                class="math inline">\(x=3\)</span> y <span
+                class="math inline">\(\boxed{x=3}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=\frac12\)</span>.</span> Con
-                <span class="math inline">\(x=3\)</span> los términos
-                son <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=\frac12}\)</span>.</span>
+                Con <span class="math inline">\(x=3\)</span> los
+                términos son <span class="formula-con-signo"><span
                 class="math inline">\(5\)</span>,</span> <span
                 class="math inline">\(10\)</span> y <span
                 class="formula-con-signo"><span
@@ -6942,8 +7154,9 @@ Enfoques NS</p>
                 class="math inline">\(\frac14\)</span>.</span> Con <span
                 class="formula-con-signo"><span
                 class="math inline">\(r=4\)</span>,</span> <span
-                class="math inline">\(a=2\)</span> y los términos son
-                <span class="formula-con-signo"><span
+                class="math inline">\(a=2\)</span> y <span
+                class="final-con-signo"><span class="final">los términos
+                son <span class="formula-con-signo"><span
                 class="math inline">\(2\)</span>,</span> <span
                 class="math inline">\(8\)</span> y <span
                 class="formula-con-signo"><span
@@ -6956,7 +7169,8 @@ Enfoques NS</p>
                 class="math inline">\(8\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(2\)</span>:</span> los mismos tres
-                números en el orden contrario. Comprobación: <span
+                números en el orden contrario</span>.</span>
+                Comprobación: <span
                 class="math inline">\(2+8+32=42\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(2\cdot8\cdot32=512\)</span>.</span></li>
@@ -6975,7 +7189,7 @@ Enfoques NS</p>
                 a un miembro: <span class="formula-con-signo"><span
                 class="math inline">\(1=7r^2+6r^3\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
-                class="math inline">\(6r^3+7r^2-1=0\)</span>.</span></li>
+                class="math inline">\(\boxed{6r^3+7r^2-1=0}\)</span>.</span></li>
                 <li>Se prueba con <span class="formula-con-signo"><span
                 class="math inline">\(r=-1\)</span>:</span> <span
                 class="formula-con-signo"><span
@@ -6994,10 +7208,10 @@ Enfoques NS</p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(r=-\frac12\)</span>.</span> Los
                 tres valores son <span class="formula-con-signo"><span
-                class="math inline">\(-1\)</span>,</span> <span
-                class="math inline">\(\frac13\)</span> y <span
+                class="math inline">\(\boxed{-1}\)</span>,</span> <span
+                class="math inline">\(\boxed{\frac13}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-\frac12\)</span>.</span></li>
+                class="math inline">\(\boxed{-\frac12}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -7170,7 +7384,7 @@ Enfoques NS</p>
                 class="math inline">\(1\)</span>,</span> se usa la
                 primera forma de la fórmula: <span
                 class="math display">\[
-                S_{10}=\frac{7\left(2^{10}-1\right)}{2-1}=7\cdot1023=7161
+                S_{10}=\frac{7\left(2^{10}-1\right)}{2-1}=7\cdot1023=\boxed{7161}
                 \]</span></li>
                 <li>Con <span class="math inline">\(u_1=81\)</span> y
                 <span
@@ -7181,7 +7395,7 @@ Enfoques NS</p>
                 <span class="math display">\[
                 \begin{aligned}
                 S_8&amp;=\frac{81\left(1-\frac{1}{6561}\right)}{1+\frac13}\\
-                &amp;=\frac{6560}{81}\cdot\frac34=\frac{1640}{27}
+                &amp;=\frac{6560}{81}\cdot\frac34=\boxed{\frac{1640}{27}}
                 \end{aligned}
                 \]</span></li>
                 <li>El primer término es el de <span
@@ -7192,7 +7406,7 @@ Enfoques NS</p>
                 la razón es <span class="math inline">\(\frac12\)</span>
                 y hay <span class="math inline">\(6\)</span> términos:
                 <span class="math display">\[
-                S_6=\frac{2\left(1-\frac{1}{64}\right)}{1-\frac12}=4\cdot\frac{63}{64}=\frac{63}{16}
+                S_6=\frac{2\left(1-\frac{1}{64}\right)}{1-\frac12}=4\cdot\frac{63}{64}=\boxed{\frac{63}{16}}
                 \]</span></li>
                 </ol></li>
                 <li>Es una progresión geométrica con <span
@@ -7208,9 +7422,11 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;1{,}2^n&gt;51\\
                 \Rightarrow{}&amp;n&gt;\frac{\ln51}{\ln1{,}2}\approx21{,}6
                 \end{aligned}
-                \]</span> Hacen falta <span
-                class="math inline">\(22\)</span> términos.
-                Comprobación: <span class="formula-con-signo"><span
+                \]</span> <span class="final-con-signo"><span
+                class="final">Hacen falta <span
+                class="math inline">\(22\)</span>
+                términos</span>.</span> Comprobación: <span
+                class="formula-con-signo"><span
                 class="math inline">\(S_{21}\approx450\)</span>,</span>
                 que no llega, y <span class="formula-con-signo"><span
                 class="math inline">\(S_{22}\approx542\)</span>.</span></li>
@@ -7224,10 +7440,10 @@ Enfoques NS</p>
                 class="math inline">\(r=1{,}08\)</span>.</span>
                 <ol type="a">
                 <li>Con el término general, <span
-                class="math inline">\(u_{10}=5000\cdot1{,}08^9\approx9995\)</span>
+                class="math inline">\(u_{10}=5000\cdot1{,}08^9\approx\boxed{9995}\)</span>
                 unidades.</li>
                 <li>Con la fórmula de la suma, <span
-                class="math inline">\(S_{10}=\frac{5000\left(1{,}08^{10}-1\right)}{1{,}08-1}\approx72\,433\)</span>
+                class="math inline">\(S_{10}=\frac{5000\left(1{,}08^{10}-1\right)}{1{,}08-1}\approx\boxed{72\,433}\)</span>
                 unidades.</li>
                 <li>Se plantea <span
                 class="math inline">\(S_n&gt;100\,000\)</span> y se
@@ -7241,8 +7457,8 @@ Enfoques NS</p>
                 \]</span> El total supera las <span
                 class="math inline">\(100\,000\)</span> unidades en el
                 año <span class="formula-con-signo"><span
-                class="math inline">\(13\)</span>.</span> Comprobación:
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{13}\)</span>.</span>
+                Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(S_{12}\approx94\,886\)</span>,</span>
                 que no llega, y <span class="formula-con-signo"><span
                 class="math inline">\(S_{13}\approx107\,476\)</span>.</span></li>
@@ -7495,13 +7711,13 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(r=\frac{15}{45}=\frac13\)</span>:</span>
                 <span class="math display">\[
-                S_\infty=\frac{45}{1-\frac13}=\frac{45}{\frac23}=\frac{135}{2}
+                S_\infty=\frac{45}{1-\frac13}=\frac{45}{\frac23}=\boxed{\frac{135}{2}}
                 \]</span></li>
                 <li><span class="math inline">\(u_1=8\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(r=\frac{-4}{8}=-\frac12\)</span>:</span>
                 <span class="math display">\[
-                S_\infty=\frac{8}{1+\frac12}=\frac{8}{\frac32}=\frac{16}{3}
+                S_\infty=\frac{8}{1+\frac12}=\frac{8}{\frac32}=\boxed{\frac{16}{3}}
                 \]</span></li>
                 <li>El primer término es el de <span
                 class="formula-con-signo"><span
@@ -7511,7 +7727,7 @@ Enfoques NS</p>
                 y la razón es <span class="formula-con-signo"><span
                 class="math inline">\(0{,}2\)</span>:</span> <span
                 class="math display">\[
-                S_\infty=\frac{0{,}6}{1-0{,}2}=\frac{0{,}6}{0{,}8}=\frac34
+                S_\infty=\frac{0{,}6}{1-0{,}2}=\frac{0{,}6}{0{,}8}=\boxed{\frac34}
                 \]</span></li>
                 </ol></li>
                 <li>La parte periódica es una serie geométrica, <span
@@ -7523,7 +7739,7 @@ Enfoques NS</p>
                 class="math display">\[
                 \begin{aligned}
                 2{,}\overline{15}&amp;=2+\frac{0{,}15}{1-0{,}01}=2+\frac{0{,}15}{0{,}99}\\
-                &amp;=2+\frac{15}{99}=2+\frac{5}{33}=\frac{71}{33}
+                &amp;=2+\frac{15}{99}=2+\frac{5}{33}=\boxed{\frac{71}{33}}
                 \end{aligned}
                 \]</span></li>
                 <li>Cada término es el anterior por <span
@@ -7538,14 +7754,14 @@ Enfoques NS</p>
                 class="math inline">\(|r|&lt;1\)</span>:</span> <span
                 class="math display">\[
                 |2x|&lt;1\ \Rightarrow\ -1&lt;2x&lt;1\ \Rightarrow\
-                -\frac12&lt;x&lt;\frac12
+                \boxed{-\frac12&lt;x&lt;\frac12}
                 \]</span></li>
                 <li>Para esos valores la suma es <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{1}{1-2x}\)</span>:</span>
                 <span class="math display">\[
                 \frac{1}{1-2x}=3\ \Rightarrow\ 1=3-6x\ \Rightarrow\
-                x=\frac13
+                \boxed{x=\frac13}
                 \]</span> Vale, porque <span
                 class="math inline">\(\frac13\)</span> está entre <span
                 class="math inline">\(-\frac12\)</span> y <span
@@ -7561,8 +7777,8 @@ Enfoques NS</p>
                 class="math inline">\(|r|&lt;1\)</span>,</span> la
                 distancia total es la suma infinita: <span
                 class="math display">\[
-                S_\infty=\frac{50}{1-0{,}9}=\frac{50}{0{,}1}=500\
-                \text{cm}
+                S_\infty=\frac{50}{1-0{,}9}=\frac{50}{0{,}1}=\boxed{500\
+                \text{cm}}
                 \]</span></li>
                 <li>Se plantea <span
                 class="math inline">\(S_n&gt;450\)</span> y se toman
@@ -7577,9 +7793,10 @@ Enfoques NS</p>
                 sentido, porque se divide por <span
                 class="formula-con-signo"><span
                 class="math inline">\(\ln0{,}9\)</span>,</span> que es
-                negativo. Hacen falta <span
-                class="math inline">\(22\)</span> oscilaciones.
-                Comprobación: <span
+                negativo. <span class="final-con-signo"><span
+                class="final">Hacen falta <span
+                class="math inline">\(22\)</span>
+                oscilaciones</span>.</span> Comprobación: <span
                 class="math inline">\(S_{21}\approx445\)</span> cm, que
                 no llega, y <span
                 class="math inline">\(S_{22}\approx451\)</span> cm.</li>
@@ -7663,9 +7880,9 @@ Enfoques NS</p>
                 hay suma infinita si <span
                 class="formula-con-signo"><span
                 class="math inline">\(|r|&lt;1\)</span>,</span> así que
-                <span class="math inline">\(r=-\frac23\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_1=12\left(1+\frac23\right)=20\)</span>.</span>
+                <span class="math inline">\(\boxed{r=-\frac23}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(u_1=12\left(1+\frac23\right)=\boxed{20}\)</span>.</span>
                 Comprobación: <span class="formula-con-signo"><span
                 class="math inline">\(20\cdot\left(-\frac23\right)=-\frac{40}{3}\)</span>.</span></li>
                 <li>Tras el rebote <span class="formula-con-signo"><span
@@ -7687,15 +7904,15 @@ Enfoques NS</p>
                 class="math inline">\(\frac23\)</span>.</span>
                 <ol type="a">
                 <li>Entre el quinto rebote y el sexto sube hasta <span
-                class="math inline">\(h_5=81\cdot\left(\frac23\right)^5=\frac{32}{3}\approx10{,}7\)</span>
+                class="math inline">\(h_5=81\cdot\left(\frac23\right)^5=\frac{32}{3}\approx\boxed{10{,}7}\)</span>
                 m.</li>
                 <li>Baja <span class="math inline">\(81\)</span> m y,
                 después de cada uno de los cinco primeros rebotes, sube
                 y baja la misma altura: <span class="math display">\[
                 \begin{aligned}
                 81+2\,(h_1+\cdots+h_5)&amp;=81+2\cdot\frac{54\left(1-\left(\frac23\right)^5\right)}{1-\frac23}\\
-                &amp;=81+\frac{844}{3}=\frac{1087}{3}\approx362\
-                \text{m}
+                &amp;=81+\frac{844}{3}=\frac{1087}{3}\approx\boxed{362\
+                \text{m}}
                 \end{aligned}
                 \]</span></li>
                 <li>Ahora se suman las infinitas alturas, <span
@@ -7708,7 +7925,8 @@ Enfoques NS</p>
                 existe porque <span class="formula-con-signo"><span
                 class="math inline">\(|r|&lt;1\)</span>:</span> <span
                 class="math display">\[
-                81+2\cdot\frac{54}{1-\frac23}=81+2\cdot162=405\ \text{m}
+                81+2\cdot\frac{54}{1-\frac23}=81+2\cdot162=\boxed{405\
+                \text{m}}
                 \]</span></li>
                 </ol></li>
                 <li>Cada término es el anterior por <span
@@ -7733,11 +7951,11 @@ Enfoques NS</p>
                 \begin{aligned}
                 \left|\frac{2x}{3}\right|&lt;1&amp;\iff-1&lt;\frac{2x}{3}&lt;1\\
                 &amp;\iff-3&lt;2x&lt;3\\
-                &amp;\iff-\frac32&lt;x&lt;\frac32
+                &amp;\iff\boxed{-\frac32&lt;x&lt;\frac32}
                 \end{aligned}
                 \]</span> Como intervalo, que es como se escribió en
                 clase, <span class="formula-con-signo"><span
-                class="math inline">\(x\in\left(-\frac32,\frac32\right)\)</span>.</span></li>
+                class="math inline">\(\boxed{x\in\left(-\frac32,\frac32\right)}\)</span>.</span></li>
                 <li><span class="math inline">\(1{,}2\)</span> está
                 entre <span class="math inline">\(-1{,}5\)</span> y
                 <span class="formula-con-signo"><span
@@ -7748,7 +7966,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>:</span> <span
                 class="math display">\[
-                S_\infty=\frac{1}{1-0{,}8}=\frac{1}{0{,}2}=5
+                S_\infty=\frac{1}{1-0{,}8}=\frac{1}{0{,}2}=\boxed{5}
                 \]</span></li>
                 <li>También <span class="math inline">\(-1{,}2\)</span>
                 está en el intervalo. Ahora la razón es negativa, <span
@@ -7756,7 +7974,7 @@ Enfoques NS</p>
                 class="math inline">\({r=\frac{2\cdot(-1{,}2)}{3}=-0{,}8}\)</span>,</span>
                 y al restarla el denominador crece: <span
                 class="math display">\[
-                S_\infty=\frac{1}{1-(-0{,}8)}=\frac{1}{1{,}8}=\frac{10}{18}=\frac59
+                S_\infty=\frac{1}{1-(-0{,}8)}=\frac{1}{1{,}8}=\frac{10}{18}=\boxed{\frac59}
                 \]</span> La suma es mucho menor que la de b) porque los
                 términos alternan el signo, <span
                 class="formula-con-signo"><span
@@ -7813,7 +8031,7 @@ Enfoques NS</p>
                 \begin{aligned}
                 &amp;u_1\left(1+\frac13+\frac19\right)=13\\
                 \Rightarrow{}&amp;u_1\cdot\frac{13}{9}=13\\
-                \Rightarrow{}&amp;u_1=9
+                \Rightarrow{}&amp;\boxed{u_1=9}
                 \end{aligned}
                 \]</span> Comprobación: la progresión es <span
                 class="formula-con-signo"><span
@@ -7985,8 +8203,8 @@ Enfoques NS</p>
                 <li>En <span class="math inline">\(5\)</span> años hay
                 <span class="math inline">\(4\cdot5=20\)</span>
                 trimestres: <span class="math display">\[
-                VF=12\,000\cdot1{,}006^{20}\approx13\,525{,}11\
-                \text{euros}
+                VF=12\,000\cdot1{,}006^{20}\approx\boxed{13\,525{,}11\
+                \text{euros}}
                 \]</span></li>
                 <li>Con capitalización mensual, <span
                 class="formula-con-signo"><span
@@ -7999,7 +8217,7 @@ Enfoques NS</p>
                 VF=12\,000\cdot1{,}002^{60}\approx13\,528{,}34\
                 \text{euros}
                 \]</span> Son <span class="formula-con-signo"><span
-                class="math inline">\(13\,528{,}34-13\,525{,}11=3{,}23\)</span> €</span>
+                class="math inline">\(13\,528{,}34-13\,525{,}11=\boxed{3{,}23}\)</span> €</span>
                 más.</li>
                 <li>Se busca el número <span
                 class="math inline">\(m\)</span> de trimestres con el
@@ -8011,9 +8229,11 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;1{,}006^{m}&gt;1{,}25\\
                 \Rightarrow{}&amp;m&gt;\frac{\ln1{,}25}{\ln1{,}006}\approx37{,}3
                 \end{aligned}
-                \]</span> Tienen que pasar <span
-                class="math inline">\(38\)</span> trimestres, es decir,
-                nueve años y medio. Comprobación: con <span
+                \]</span> <span class="final-con-signo"><span
+                class="final">Tienen que pasar <span
+                class="math inline">\(38\)</span>
+                trimestres</span>,</span> es decir, nueve años y medio.
+                Comprobación: con <span
                 class="math inline">\(37\)</span> trimestres hay <span
                 class="formula-con-signo"><span
                 class="math inline">\(14\,972{,}92\)</span> €,</span>
@@ -8034,8 +8254,10 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;1+\frac{r}{100}=\sqrt[4]{1{,}125}\approx1{,}0299\\
                 \Rightarrow{}&amp;r\approx2{,}99
                 \end{aligned}
-                \]</span> La tasa es del <span
-                class="math inline">\(2{,}99\%\)</span> anual.</li>
+                \]</span> <span class="final-con-signo"><span
+                class="final">La tasa es del <span
+                class="math inline">\(2{,}99\%\)</span>
+                anual</span>.</span></li>
                 </ol>
                 </div>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1D,
@@ -8117,7 +8339,7 @@ Enfoques NS</p>
                 <ol type="a">
                 <li>A los <span class="math inline">\(4\)</span> años
                 vale <span class="formula-con-signo"><span
-                class="math inline">\(45\,000\cdot0{,}88^4\approx26\,986\)</span> €.</span></li>
+                class="math inline">\(45\,000\cdot0{,}88^4\approx\boxed{26\,986}\)</span> €.</span></li>
                 <li>Se plantea la inecuación y se toman logaritmos:
                 <span class="math display">\[
                 \begin{aligned}
@@ -8130,8 +8352,9 @@ Enfoques NS</p>
                 class="math inline">\(\ln0{,}88\)</span>,</span> que es
                 negativo. Vale menos de <span
                 class="formula-con-signo"><span
-                class="math inline">\(10\,000\)</span> €</span> a los
-                <span class="math inline">\(12\)</span> años.
+                class="math inline">\(10\,000\)</span> €</span> <span
+                class="final-con-signo"><span class="final">a los <span
+                class="math inline">\(12\)</span> años</span>.</span>
                 Comprobación: a los <span
                 class="math inline">\(11\)</span> años vale unos <span
                 class="formula-con-signo"><span
@@ -8150,8 +8373,10 @@ Enfoques NS</p>
                 \Rightarrow{}&amp;1-\frac{r}{100}=\sqrt[6]{0{,}4}\approx0{,}858\\
                 \Rightarrow{}&amp;r\approx14{,}2
                 \end{aligned}
-                \]</span> Se deprecia un <span
-                class="math inline">\(14{,}2\%\)</span> anual.</li>
+                \]</span> <span class="final-con-signo"><span
+                class="final">Se deprecia un <span
+                class="math inline">\(14{,}2\%\)</span>
+                anual</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8234,11 +8459,11 @@ Enfoques NS</p>
                 class="math inline">\(u_9-u_4=5d\)</span>
                 <strong>(M1)</strong>. Entonces <span
                 class="math inline">\(5d=-6-14=-20\)</span> y <span
-                class="math inline">\(d=-4\)</span>
+                class="math inline">\(\boxed{d=-4}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Del primero al cuarto hay <span
                 class="math inline">\(3\)</span> saltos: <span
-                class="math inline">\(u_1=u_4-3d=14+12=26\)</span>
+                class="math inline">\(u_1=u_4-3d=14+12=\boxed{26}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Con <span class="math inline">\(u_1=26\)</span> y
                 <span class="math inline">\(d=-4\)</span> en la fórmula
@@ -8252,7 +8477,7 @@ Enfoques NS</p>
                 class="math inline">\(n=0\)</span>,</span> que no cuenta
                 términos, o <span class="math inline">\(56-4n=0\)</span>
                 <strong>A1</strong>, es decir, <span
-                class="math inline">\(n=14\)</span>
+                class="math inline">\(\boxed{n=14}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
@@ -8271,7 +8496,7 @@ Enfoques NS</p>
                 <strong>A1</strong> y, al dividir por <span
                 class="formula-con-signo"><span
                 class="math inline">\(2\)</span>,</span> <span
-                class="math inline">\(25r^2-25r+4=0\)</span>
+                class="math inline">\(\boxed{25r^2-25r+4=0}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Se resuelve la ecuación: <span
                 class="math inline">\(r=\frac{25\pm\sqrt{625-400}}{50}=\frac{25\pm15}{50}\)</span>
@@ -8282,8 +8507,8 @@ Enfoques NS</p>
                 class="math inline">\(|r|&lt;1\)</span> y, como <span
                 class="formula-con-signo"><span
                 class="math inline">\(u_1=\frac8r\)</span>,</span> <span
-                class="math inline">\(u_1=10\)</span> o <span
-                class="math inline">\(u_1=40\)</span>
+                class="math inline">\(\boxed{u_1=10}\)</span> o <span
+                class="math inline">\(\boxed{u_1=40}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li><ol type="a">
@@ -8302,7 +8527,7 @@ Enfoques NS</p>
                 n2\bigl(10+2(n-1)\bigr)\)</span> <strong>A1</strong>
                 <span class="math inline">\(=\frac n2\,(2n+8)\)</span>
                 <strong>A1</strong> <span
-                class="math inline">\(=n(n+4)\)</span>
+                class="math inline">\(=\boxed{n(n+4)}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Se busca el menor <span
                 class="math inline">\(n\)</span> con <span
@@ -8315,7 +8540,7 @@ Enfoques NS</p>
                 no llega, y <span
                 class="math inline">\(21\cdot25=525\)</span>
                 <strong>A1</strong>. El menor valor es <span
-                class="math inline">\(n=21\)</span>
+                class="math inline">\(\boxed{n=21}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -8387,7 +8612,7 @@ Enfoques NS</p>
                 class="math inline">\(6000\left(1+\frac{3{,}2}{1200}\right)^{60}\)</span>
                 <strong>(M1)</strong> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\approx7039{,}57\)</span> €</span>
+                class="math inline">\(\approx\boxed{7039{,}57}\)</span> €</span>
                 <strong>A1</strong>.</li>
                 <li>Se busca el número <span
                 class="math inline">\(m\)</span> de meses con <span
@@ -8395,9 +8620,9 @@ Enfoques NS</p>
                 <strong>M1</strong>. Con la calculadora, o tomando
                 logaritmos, <span
                 class="math inline">\(m&gt;\frac{\ln\frac43}{\ln\left(1+\frac{3{,}2}{1200}\right)}\approx108{,}02\)</span>
-                <strong>A1</strong>: tienen que pasar <span
-                class="math inline">\(109\)</span> meses
-                <strong>A1</strong>. A los <span
+                <strong>A1</strong>: <span class="final">tienen que
+                pasar <span class="math inline">\(109\)</span>
+                meses</span> <strong>A1</strong>. A los <span
                 class="math inline">\(108\)</span> meses hay <span
                 class="formula-con-signo"><span
                 class="math inline">\(7999{,}48\)</span> €,</span> que
@@ -8406,7 +8631,8 @@ Enfoques NS</p>
                 class="math inline">\(6000\left(1+\frac{r}{100}\right)^5=7039{,}57\ldots\)</span>
                 <strong>(M1)</strong>, así que <span
                 class="math inline">\(1+\frac{r}{100}=\sqrt[5]{1{,}17326\ldots}\approx1{,}0325\)</span>
-                y <span class="math inline">\(r\approx3{,}25\)</span>
+                y <span
+                class="math inline">\(\boxed{r\approx3{,}25}\)</span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 <li>Los sueldos de la opción A forman una progresión
@@ -8420,20 +8646,20 @@ Enfoques NS</p>
                 class="math inline">\(r=1{,}04\)</span>.</span>
                 <ol type="a">
                 <li>A: <span class="formula-con-signo"><span
-                class="math inline">\(u_{10}=24\,000+9\cdot1200=34\,800\)</span> €</span>
+                class="math inline">\(u_{10}=24\,000+9\cdot1200=\boxed{34\,800}\)</span> €</span>
                 <strong>A1</strong>. B: <span
                 class="math inline">\(u_{10}=24\,000\cdot1{,}04^9\)</span>
                 <strong>(M1)</strong> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\approx34\,159\)</span> €</span>
+                class="math inline">\(\approx\boxed{34\,159}\)</span> €</span>
                 <strong>A1</strong>.</li>
                 <li>A: <span class="formula-con-signo"><span
-                class="math inline">\(S_{10}=\frac{10}{2}\,(24\,000+34\,800)=294\,000\)</span> €</span>
+                class="math inline">\(S_{10}=\frac{10}{2}\,(24\,000+34\,800)=\boxed{294\,000}\)</span> €</span>
                 <strong>A1</strong>. B: <span
                 class="math inline">\(S_{10}=\frac{24\,000\left(1{,}04^{10}-1\right)}{1{,}04-1}\)</span>
                 <strong>(M1)</strong> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\approx288\,147\)</span> €</span>
+                class="math inline">\(\approx\boxed{288\,147}\)</span> €</span>
                 <strong>A1</strong>.</li>
                 <li>Se busca el primer <span
                 class="math inline">\(n\)</span> con <span
@@ -8448,8 +8674,8 @@ Enfoques NS</p>
                 y el año <span class="formula-con-signo"><span
                 class="math inline">\(13\)</span>,</span> <span
                 class="math inline">\(38\,425&gt;38\,400\)</span>
-                <strong>A1</strong>. Es el año <span
-                class="math inline">\(13\)</span>
+                <strong>A1</strong>. Es <span class="final">el año <span
+                class="math inline">\(13\)</span></span>
                 <strong>A1</strong>.</li>
                 </ol></li>
                 </ol>
@@ -8523,16 +8749,16 @@ Enfoques NS</p>
                 <li><ol type="a">
                 <li>El primer día solo está lo que se añade: <span
                 class="formula-con-signo"><span
-                class="math inline">\(A_1=c\)</span>.</span> Cada día
-                queda el <span class="math inline">\(60\%\)</span> de lo
-                que había y se añaden <span
-                class="math inline">\(c\)</span> gramos: <span
-                class="math inline">\(A_2=0{,}6c+c\)</span>
+                class="math inline">\(\boxed{A_1=c}\)</span>.</span>
+                Cada día queda el <span
+                class="math inline">\(60\%\)</span> de lo que había y se
+                añaden <span class="math inline">\(c\)</span> gramos:
+                <span class="math inline">\(A_2=0{,}6c+c\)</span>
                 <strong>A1</strong> <span
-                class="math inline">\(=1{,}6c\)</span> y <span
+                class="math inline">\(=\boxed{1{,}6c}\)</span> y <span
                 class="math inline">\(A_3=0{,}6\cdot1{,}6c+c\)</span>
                 <strong>A1</strong> <span
-                class="math inline">\(=0{,}96c+c=1{,}96c\)</span>
+                class="math inline">\(=0{,}96c+c=\boxed{1{,}96c}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Del cloro añadido un día queda al siguiente <span
                 class="formula-con-signo"><span
@@ -8550,7 +8776,7 @@ Enfoques NS</p>
                 <strong>A1</strong>. Por tanto, <span
                 class="math inline">\(A_n=\frac{c\left(1-0{,}6^n\right)}{1-0{,}6}\)</span>
                 <strong>A1</strong> <span
-                class="math inline">\(=2{,}5c\left(1-0{,}6^n\right)\)</span>
+                class="math inline">\(=\boxed{2{,}5c\left(1-0{,}6^n\right)}\)</span>
                 <strong>AG</strong>.</li>
                 <li>Al crecer <span class="formula-con-signo"><span
                 class="math inline">\(n\)</span>,</span> <span
@@ -8558,18 +8784,18 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(0\)</span>,</span> así que <span
                 class="math inline">\(A_n\)</span> se acerca a <span
-                class="math inline">\(2{,}5c\)</span>
-                <strong>A1</strong>. Con el tiempo, la cantidad de cloro
-                tras cada adición se estabiliza en <span
-                class="math inline">\(2{,}5c\)</span> gramos
-                <strong>R1</strong>.</li>
+                class="math inline">\(\boxed{2{,}5c}\)</span>
+                <strong>A1</strong>. <span class="final">Con el tiempo,
+                la cantidad de cloro tras cada adición se estabiliza en
+                <span class="math inline">\(2{,}5c\)</span>
+                gramos</span> <strong>R1</strong>.</li>
                 <li>Con <span class="math inline">\(c=400\)</span> ese
                 valor es <span class="math inline">\(1000\)</span>
                 gramos, y su <span class="formula-con-signo"><span
                 class="math inline">\(95\%\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(950\)</span>.</span> Se plantea
-                <span
+                class="math inline">\(950\)</span>.</span> Se plantea la
+                inecuación <span
                 class="math inline">\(1000\left(1-0{,}6^n\right)\geq950\)</span>
                 <strong>M1</strong>, que da <span
                 class="math inline">\(0{,}6^n\leq0{,}05\)</span> y, al
@@ -8577,17 +8803,18 @@ Enfoques NS</p>
                 class="math inline">\(\ln0{,}6&lt;0\)</span>,</span>
                 <span
                 class="math inline">\(n\geq\frac{\ln0{,}05}{\ln0{,}6}\approx5{,}86\)</span>
-                <strong>A1</strong>. Es el día <span
-                class="math inline">\(6\)</span> <strong>A1</strong>:
-                <span class="math inline">\(A_5\approx922\)</span> y
-                <span class="formula-con-signo"><span
+                <strong>A1</strong>. Es <span class="final">el día <span
+                class="math inline">\(6\)</span></span>
+                <strong>A1</strong>: <span
+                class="math inline">\(A_5\approx922\)</span> y <span
+                class="formula-con-signo"><span
                 class="math inline">\(A_6\approx953\)</span>.</span></li>
                 <li>A largo plazo, tras cada adición hay <span
                 class="math inline">\(2{,}5c\)</span> gramos, y justo
                 antes de la siguiente queda su <span
                 class="formula-con-signo"><span
                 class="math inline">\(60\%\)</span>:</span> <span
-                class="math inline">\(0{,}6\cdot2{,}5c=1{,}5c\)</span>
+                class="math inline">\(0{,}6\cdot2{,}5c=\boxed{1{,}5c}\)</span>
                 <strong>R1</strong> <strong>AG</strong>.</li>
                 <li>A largo plazo el cloro va de <span
                 class="formula-con-signo"><span
@@ -8601,7 +8828,7 @@ Enfoques NS</p>
                 class="math inline">\(c\geq400\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(c\leq480\)</span>:</span> <span
-                class="math inline">\(400\leq c\leq480\)</span>
+                class="math inline">\(\boxed{400\leq c\leq480}\)</span>
                 <strong>A1</strong>.</li>
                 <li>Ahora queda cada día una fracción <span
                 class="math inline">\(p\)</span> en lugar de <span
@@ -8615,7 +8842,7 @@ Enfoques NS</p>
                 suma se acerca a la suma infinita de razón <span
                 class="formula-con-signo"><span
                 class="math inline">\(p\)</span>,</span> <span
-                class="math inline">\(S_\infty=\frac{c}{1-p}\)</span>
+                class="math inline">\(S_\infty=\boxed{\frac{c}{1-p}}\)</span>
                 <strong>R1</strong> <strong>AG</strong>.</li>
                 </ol></li>
                 </ol>
@@ -9313,10 +9540,13 @@ Enfoques NS</p>
       // llegan las letras de KaTeX, cuando cambia el ancho, al abrir un
       // bloque plegado y al entrar o salir del modo clase; el zoom decide
       // por su cuenta.
+      // La frase recuadrada del curso IB (`.final`) es la caja de sus
+      // fórmulas: es un bloque en línea, más estrecho que su párrafo, y una
+      // fórmula que cabe en el párrafo puede no caber en ella.
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
-          : formula.closest("p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
+          : formula.closest(".final, p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
       }
       function repartirFormulas() {
         if (document.documentElement.classList.contains("ampliando")) {
@@ -9465,6 +9695,172 @@ Enfoques NS</p>
             rotulo.textContent = plegado ? textoAbrir : textoCerrar;
           });
         });
+    });
+  </script>
+
+  <script>
+    // Curso IB: la solución de cada ejercicio, debajo de él (regla 14 de
+    // AGENTS.md; orden del profesor del 10 de octubre de 2026). Bajo cada
+    // enunciado queda un botón, «Ver solución», que abre allí mismo una
+    // copia de su solución, hecha al pulsarlo. El bloque «Soluciones» no se
+    // toca: fuera del modo clase solo se esconde, con su botón, y sigue
+    // siendo lo que usan el modo clase y su ampliación, lo que se imprime y
+    // lo que se ve sin JavaScript. Si un bloque no casa número a número con
+    // su lista de ejercicios, se queda como estaba. Este guion no lleva
+    // ningún signo de dólar: la plantilla es de Pandoc.
+    document.addEventListener("DOMContentLoaded", function () {
+      var contenido = document.getElementById("contenido-unidad");
+      if (!contenido) {
+        return;
+      }
+      var OJO =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
+        '<circle cx="12" cy="12" r="2.8"></circle></svg>';
+      var FLECHA =
+        '<svg class="flecha-solucion-ib" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
+        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="m6 9 6 6 6-6"></path></svg>';
+      var VER = "Ver solución";
+      var OCULTAR = "Ocultar solución";
+      var paneles = [];
+
+      function numerosDeLaLista(lista) {
+        var primero = parseInt(lista.getAttribute("start") || "1", 10);
+        return Array.prototype.map.call(lista.children, function (elemento, lugar) {
+          return primero + lugar;
+        });
+      }
+      // La lista de ejercicios que responde un bloque: la que va justo antes
+      // de él o, si el bloque abre su sección («Comprueba tus respuestas»),
+      // justo antes de esa sección. Entre las dos solo puede haber el botón
+      // del bloque y el título de las respuestas.
+      function listaDeEjercicios(bloque) {
+        var nodo = bloque;
+        for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
+          var anterior = nodo.previousElementSibling;
+          while (anterior && anterior.matches("button, h3, h4, h5, h6")) {
+            anterior = anterior.previousElementSibling;
+          }
+          if (anterior) {
+            return anterior.tagName === "OL" ? anterior : null;
+          }
+          nodo = nodo.parentElement && nodo.parentElement.matches("section")
+            ? nodo.parentElement
+            : null;
+        }
+        return null;
+      }
+      // ¿Es una fórmula centrada lo único que lleva el enunciado?
+      function soloFormula(ejercicio) {
+        var formula = ejercicio.firstElementChild;
+        if (!formula || formula !== ejercicio.lastElementChild || !formula.matches(".math.display")) {
+          return false;
+        }
+        return Array.prototype.every.call(ejercicio.childNodes, function (nodo) {
+          return nodo === formula || nodo.textContent.trim() === "";
+        });
+      }
+      function plegar(panel) {
+        panel.caja.classList.add("esta-plegado");
+        panel.boton.setAttribute("aria-expanded", "false");
+        panel.rotulo.textContent = VER;
+      }
+
+      Array.prototype.forEach.call(
+        contenido.querySelectorAll(".resultado.plegable"),
+        function (bloque) {
+          var listas = bloque.querySelectorAll(":scope > ol");
+          var ejercicios = listaDeEjercicios(bloque);
+          if (listas.length !== 1 || !ejercicios || !ejercicios.closest("section.ejercicios")) {
+            return;
+          }
+          var soluciones = listas[0];
+          var suyos = numerosDeLaLista(ejercicios);
+          if (suyos.join() !== numerosDeLaLista(soluciones).join()) {
+            return;
+          }
+          // Una figura de la nota que abre el bloque va con la solución del
+          // ejercicio que nombra su pie («Las cuatro rectas del ejercicio
+          // 5»); si no nombra ninguno de la lista, con la del primero.
+          var figuras = {};
+          Array.prototype.forEach.call(bloque.children, function (hijo) {
+            var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
+            if (!imagen) {
+              return;
+            }
+            var nombrado = /ejercicio\s+(\d+)/.exec(hijo.textContent + " " + (imagen.alt || ""));
+            var numero = nombrado ? parseInt(nombrado[1], 10) : suyos[0];
+            if (suyos.indexOf(numero) === -1) {
+              numero = suyos[0];
+            }
+            (figuras[numero] = figuras[numero] || []).push(hijo);
+          });
+
+          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
+            var numero = suyos[lugar];
+            var solucion = soluciones.children[lugar];
+            var caja = document.createElement("div");
+            caja.className = "solucion-ib plegable esta-plegado";
+            caja.id = "solucion-ib-" + (paneles.length + 1);
+            var boton = document.createElement("button");
+            boton.type = "button";
+            boton.className = "boton-solucion-ib";
+            boton.setAttribute("aria-expanded", "false");
+            boton.setAttribute("aria-controls", caja.id);
+            boton.innerHTML = OJO + '<span class="rotulo-solucion-ib"></span>' + FLECHA;
+            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-solucion-ib") };
+            panel.rotulo.textContent = VER;
+            paneles.push(panel);
+            boton.addEventListener("click", function () {
+              if (!caja.firstChild) {
+                (figuras[numero] || []).forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ib";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+              }
+              if (caja.classList.contains("esta-plegado")) {
+                caja.classList.remove("esta-plegado");
+                boton.setAttribute("aria-expanded", "true");
+                panel.rotulo.textContent = OCULTAR;
+              } else {
+                plegar(panel);
+              }
+            });
+            if (soloFormula(ejercicio)) {
+              ejercicio.classList.add("solo-formula-ib");
+            }
+            ejercicio.appendChild(boton);
+            ejercicio.appendChild(caja);
+          });
+
+          bloque.classList.add("repartido-ib");
+          var general = bloque.previousElementSibling;
+          if (general && general.classList.contains("boton-soluciones")) {
+            general.classList.add("repartido-ib");
+          }
+        }
+      );
+
+      // En el modo clase no hay botones de ejercicio: se pliegan y se vacían
+      // las copias, para que la ampliación solo encuentre las soluciones del
+      // bloque.
+      new MutationObserver(function () {
+        if (!document.documentElement.classList.contains("modo-clase")) {
+          return;
+        }
+        paneles.forEach(function (panel) {
+          if (panel.caja.firstChild) {
+            plegar(panel);
+            panel.caja.textContent = "";
+          }
+        });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
   </script>
 
