@@ -3312,6 +3312,15 @@
       color: var(--color-parte);
     }
 
+    .parte-induccion .con-letras {
+      display: block;
+      margin-top: 0.45rem;
+      padding-top: 0.4rem;
+      border-top: 1px dashed #d6dfec;
+      color: var(--texto-suave);
+      line-height: 2;
+    }
+
     .domino-induccion svg .ficha-domino {
       cursor: pointer;
     }
@@ -30866,6 +30875,8 @@ Enfoques NS</p>
         const suma = (capa) => (capa * (3 * capa - 1)) / 2;
         const puntosDe = (cuantos) =>
           cuantos + (cuantos === 1 ? " punto" : " puntos");
+        const capasDe = (cuantas) =>
+          cuantas + (cuantas === 1 ? " capa" : " capas");
         const nueva = capas + 1;
         const unidad = Math.min(70, 250 / (PENTAGONO_IB[2].y * capas));
         const radio = Math.min(7, unidad * 0.2);
@@ -30906,6 +30917,13 @@ Enfoques NS</p>
           puntos
             .map((punto) => px(punto).toFixed(1) + "," + py(punto).toFixed(1))
             .join(" ");
+        const rotulo = { fontSize: "11.5", fontWeight: "800", letterSpacing: "0.06em" };
+        const conSigno = (formula, signo) => (
+          <span className="formula-con-signo">
+            {formula}
+            {signo}
+          </span>
+        );
 
         const cambiarCapas = (valor) => {
           quitar();
@@ -30919,8 +30937,11 @@ Enfoques NS</p>
             </p>
             <p className="instruccion-interactivo">
               La suma del ejemplo, 1 + 4 + 7 + …, dibujada: cada término es
-              una capa de puntos de un pentágono que crece. Elige cuántas
-              capas hay ya, que es la hipótesis, y añade la siguiente.
+              una capa de puntos, y <MatematicaFijaIB tex="P(n)" /> dice que
+              con <MatematicaFijaIB tex="n" /> capas
+              hay <MatematicaFijaIB tex="\frac{n(3n-1)}{2}" /> puntos. Elige
+              cuántas capas hay ya y añade la siguiente: debajo se ve qué es
+              cada cosa en la demostración.
             </p>
 
             <div className="controles-intervalos">
@@ -30945,23 +30966,29 @@ Enfoques NS</p>
             <div className="zona-grafica">
               <svg
                 className="grafica-ib"
-                viewBox="0 0 600 330"
+                viewBox="0 0 600 338"
                 role="img"
                 aria-label={
-                  "Puntos en capas con forma de pentágono. Con " +
-                  capas +
-                  (capas === 1 ? " capa hay " : " capas hay ") +
+                  "Puntos en capas con forma de pentágono. La primera capa, " +
+                  "un punto, es el caso base. Con " +
+                  capasDe(capas) +
+                  " hay " +
                   puntosDe(suma(capas)) +
+                  ": es la hipótesis. " +
                   (completa
-                    ? "; con la capa " +
+                    ? "Se ha añadido la capa " +
                       nueva +
                       ", de " +
                       puntosDe(termino(nueva)) +
-                      ", hay " +
+                      ", y hay " +
                       puntosDe(suma(nueva)) +
-                      "."
-                    : ". La capa siguiente tendría " +
+                      ", lo que da la fórmula."
+                    : "La capa siguiente, la " +
+                      nueva +
+                      ", tiene " +
                       puntosDe(termino(nueva)) +
+                      "; con ella tiene que haber " +
+                      puntosDe(suma(nueva)) +
                       ".")
                 }
               >
@@ -31012,6 +31039,24 @@ Enfoques NS</p>
                     </g>
                   );
                 })}
+                <circle
+                  cx={origen.x}
+                  cy={origen.y}
+                  r={radio + 4}
+                  fill="none"
+                  stroke={COLORES_IB.turquesa}
+                  strokeWidth="1.6"
+                />
+                <text
+                  x={origen.x}
+                  y={origen.y + 44}
+                  textAnchor="middle"
+                  fontSize="11.5"
+                  fontWeight="800"
+                  fill={COLORES_IB.turquesa}
+                >
+                  caso base
+                </text>
                 {anadida && (
                   <g>
                     {completa && (
@@ -31046,33 +31091,58 @@ Enfoques NS</p>
                 >
                   {termino(nueva)}
                 </text>
+                <text x="392" y="40" {...rotulo} fill={COLORES_IB.azul}>
+                  {"HIPÓTESIS: P(" + capas + ")"}
+                </text>
                 <text
                   x="392"
-                  y="62"
+                  y="63"
                   fontSize="17"
                   fontWeight="800"
                   fill={COLORES_IB.azul}
                 >
                   {"Ya hay " + puntosDe(suma(capas))}
                 </text>
+                <text x="392" y="99" {...rotulo} fill="#c2410c">
+                  {"SE AÑADE: TÉRMINO r = " + nueva}
+                </text>
                 <text
                   x="392"
-                  y="90"
+                  y="122"
                   fontSize="17"
                   fontWeight="800"
                   fill="#c2410c"
                 >
                   {"Capa " + nueva + ": " + puntosDe(termino(nueva))}
                 </text>
+                <text x="392" y="158" {...rotulo} fill="var(--texto)">
+                  {"HAY QUE LLEGAR A P(" + nueva + ")"}
+                </text>
+                <text
+                  x="392"
+                  y="183"
+                  fontSize="19"
+                  fontWeight="800"
+                  fill="var(--texto)"
+                  fillOpacity={completa ? 1 : 0.5}
+                >
+                  {completa
+                    ? "✓ " + puntosDe(suma(nueva))
+                    : "¿" + puntosDe(suma(nueva)) + "?"}
+                </text>
                 {completa && (
                   <text
                     x="392"
-                    y="126"
-                    fontSize="19"
-                    fontWeight="800"
-                    fill="var(--texto)"
+                    y="205"
+                    fontSize="14"
+                    fontWeight="700"
+                    fill="var(--texto-suave)"
                   >
-                    {"En total, " + puntosDe(suma(nueva))}
+                    {suma(capas) +
+                      " + " +
+                      termino(nueva) +
+                      " = " +
+                      suma(nueva)}
                   </text>
                 )}
                 <text x="392" y="296" fontSize="13" fill="var(--texto-suave)">
@@ -31105,63 +31175,93 @@ Enfoques NS</p>
             <div className="partes-induccion">
               <div
                 className="parte-induccion"
+                style={{ "--color-parte": COLORES_IB.turquesa }}
+              >
+                <strong>1. Caso base: la primera capa</strong>
+                Es {conSigno(<MatematicaFijaIB tex="P(1)" />, ".")} Con una
+                capa hay 1 punto, y la fórmula
+                da {conSigno(<MatematicaFijaIB tex="\frac{1\cdot2}{2}=1" />, ":")} es
+                verdadera.
+              </div>
+              <div
+                className="parte-induccion"
                 style={{ "--color-parte": COLORES_IB.azul }}
               >
-                <strong>{"Hipótesis: lo que ya hay, con k = " + capas}</strong>
+                <strong>2. Hipótesis: lo azul, lo que ya hay</strong>
+                Es {conSigno(<MatematicaFijaIB tex="P(k)" />, ",")}{" "}
+                con {conSigno(<MatematicaEnLinea tex={"k=" + capas} />, ".")} Se
+                da por cierto que{" "}
                 <MatematicaEnLinea
                   tex={
-                    sumaTex + "=" + formulaTex(capas) + "=" + suma(capas)
+                    "{" +
+                    sumaTex +
+                    "}={" +
+                    formulaTex(capas) +
+                    "}=" +
+                    suma(capas) +
+                    "\\text{.}"
                   }
                 />
+                {capas === 1 &&
+                  " Con una sola capa, la hipótesis es el propio caso base."}
+                <span className="con-letras">
+                  Con letras:
+                  <br />
+                  <MatematicaFijaIB tex="1+4+\cdots+(3k-2)=\frac{k(3k-1)}{2}" />
+                </span>
               </div>
               <div
                 className="parte-induccion"
                 style={{ "--color-parte": "#c2410c" }}
+                aria-live="polite"
               >
-                <strong>{"Lo que se añade: el término r = " + nueva}</strong>
-                <MatematicaEnLinea
-                  tex={"3\\cdot" + nueva + "-2=" + termino(nueva)}
-                />
+                <strong>3. Paso inductivo: añadir lo naranja</strong>
+                Hay que llegar
+                a {conSigno(<MatematicaFijaIB tex="P(k+1)" />, ",")} que aquí
+                es {conSigno(<MatematicaEnLinea tex={"P(" + nueva + ")"} />, ":")} con{" "}
+                {nueva} capas,{" "}
+                <span className="formula-con-signo">
+                  <MatematicaEnLinea
+                    tex={formulaTex(nueva) + "=" + suma(nueva)}
+                  />
+                </span>{" "}
+                puntos. A la hipótesis se le suma el
+                término {conSigno(<MatematicaEnLinea tex={"r=" + nueva} />, ",")} que
+                vale{" "}
+                {conSigno(
+                  <MatematicaEnLinea
+                    tex={"3\\cdot" + nueva + "-2=" + termino(nueva)}
+                  />,
+                  ":"
+                )}{" "}
+                {conSigno(
+                  <MatematicaEnLinea
+                    tex={
+                      suma(capas) +
+                      "+" +
+                      termino(nueva) +
+                      "=" +
+                      (completa ? suma(nueva) : "\\ ?")
+                    }
+                  />,
+                  completa ? "." : ""
+                )}
+                {completa ? " Coincide." : ""}
+                <span className="con-letras">
+                  Con letras, para
+                  cualquier {conSigno(<MatematicaFijaIB tex="k" />, ":")}
+                  <br />
+                  <MatematicaFijaIB tex="\frac{k(3k-1)}{2}+(3k+1)=\frac{(k+1)(3k+2)}{2}" />
+                </span>
               </div>
-            </div>
-
-            <FormulaViva
-              tex={
-                "\\underbrace{" +
-                suma(capas) +
-                "}_{\\text{lo que ya hay}}+\\underbrace{" +
-                termino(nueva) +
-                "}_{\\text{la capa nueva}}=" +
-                (completa
-                  ? suma(nueva) + "=" + formulaTex(nueva)
-                  : "\\ ?")
-              }
-            />
-
-            <div className="veredicto-interactivo" aria-live="polite">
-              <strong>
-                {completa
-                  ? "Con la capa nueva hay " +
-                    puntosDe(suma(nueva)) +
-                    ": lo que da la fórmula con n = " +
-                    nueva
-                  : "Con " +
-                    capas +
-                    (capas === 1 ? " capa hay " : " capas hay ") +
-                    puntosDe(suma(capas))}
-              </strong>
-              <p>
-                {completa
-                  ? "A lo que ya había se le ha sumado el término " +
-                    "siguiente, y el total vuelve a salir de la fórmula. " +
-                    "Eso es el paso inductivo. Funciona igual con " +
-                    "cualquier número de capas: por eso se escribe con " +
-                    "letras, y la k no se despeja."
-                  : "Es la hipótesis: se da por cierto que con k capas " +
-                    "hay k(3k − 1)/2 puntos. El paso inductivo pregunta " +
-                    "qué pasa al añadir una capa más."}
-              </p>
-              <FormulaFijaIB tex="\frac{k(3k-1)}{2}+(3k+1)=\frac{(k+1)(3k+2)}{2}" />
+              <div className="parte-induccion">
+                <strong>4. Conclusión: todas las capas</strong>
+                <MatematicaFijaIB tex="P(1)" /> es verdadera y, si lo
+                es {conSigno(<MatematicaFijaIB tex="P(k)" />, ",")} también lo
+                es {conSigno(<MatematicaFijaIB tex="P(k+1)" />, ":")} la fórmula
+                vale para
+                todo {conSigno(<MatematicaFijaIB tex="n\in\mathbb Z^+" />, ".")}
+              </div>
             </div>
           </div>
         );
