@@ -65,10 +65,6 @@
       scroll-padding-top: calc(var(--alto-cabecera) + 1rem);
     }
 
-    /* En pantalla táctil el salto de capítulo es instantáneo: la
-       animación suave sobre una página tan larga tardaba varios
-       segundos y cualquier gesto o realce del índice la interrumpía
-       a medio camino. */
     @media (hover: none) {
       html {
         scroll-behavior: auto;
@@ -269,11 +265,6 @@
       }
     }
 
-    /* Descargas de la unidad: los apuntes y las soluciones en PDF, en dos
-       pastillas bajo el índice. Los enlaces salen del metadato `descargas`
-       de la unidad; sin él, el bloque no existe. En pantallas estrechas,
-       donde el índice es una fila, lo sustituye la tira `.descargas-movil`,
-       justo debajo del índice. Ni el modo clase ni la impresión las ven. */
     .descargas-unidad {
       margin-top: 0.9rem;
       padding-top: 0.8rem;
@@ -322,11 +313,6 @@
       border-color: var(--verde);
     }
 
-    /* Propio de este curso (28 de septiembre de 2026): el cuadernillo de
-       fórmulas del IB, en una pastilla violeta que ocupa su propia fila bajo
-       los apuntes y las soluciones. Sale del metadato `descargas.formulas`,
-       que enlaza a una copia pública del cuadernillo: no se publica ninguna
-       copia propia (regla 11). */
     .fila-descargas,
     .descargas-movil {
       flex-wrap: wrap;
@@ -339,13 +325,6 @@
       border-color: var(--violeta);
     }
 
-    /* Propio de este curso (3 de octubre de 2026): bajo las pastillas de
-       los PDF, un enlace a la página principal de Matemáticas I, el curso
-       que estos apuntes completan (regla 14 de AGENTS.md). Lleva su rótulo
-       y una raya que lo separa, como «En PDF» del índice; en pantallas
-       estrechas es una pastilla más de la tira, en su propia fila. Va
-       dentro del bloque de las descargas, así que ni el modo clase ni la
-       impresión lo ven. */
     .descargas-unidad .titulo-portal {
       margin-top: 0.9rem;
       padding-top: 0.8rem;
@@ -392,10 +371,6 @@
     #contenido-unidad > section.level2 > h2:first-child {
       margin: 0 calc(-1 * var(--relleno-tarjeta)) 1.65rem;
       padding: 1.1rem var(--relleno-tarjeta);
-      /* Sangría francesa: cuando el título ocupa dos líneas, la segunda
-         empieza bajo la primera letra, no bajo el número. El ancho del
-         hueco (--sangria-numero) lo fija cada contexto junto al tamaño
-         de la insignia; sin insignia vale 0 y no ocurre nada. */
       padding-left: calc(var(--relleno-tarjeta) + var(--sangria-numero, 0rem));
       text-indent: calc(-1 * var(--sangria-numero, 0rem));
       color: var(--acento-oscuro);
@@ -422,8 +397,6 @@
       font-size: clamp(1.25rem, 2.3vw, 1.48rem);
     }
 
-    /* El número de apartado y subapartado termina en punto: «3.», «3.5.».
-       Igual que en el PDF. */
     .header-section-number::after,
     .toc-section-number::after {
       content: ".";
@@ -477,9 +450,6 @@
       text-align: center;
     }
 
-    /* Retratos y figuras laterales: flotan a la derecha en pantalla ancha
-       y el texto fluye a su alrededor. El ancho en línea que Pandoc pone
-       sobre la imagen (pensado para el PDF) se anula aquí. */
     figure:has(> img.retrato-lateral) {
       float: right;
       width: min(40%, 16.5rem);
@@ -605,10 +575,6 @@
       font-size: 0.68em;
     }
 
-    /* Bloques con nombre (`titulo` en la fuente): una definición dice qué
-       define; un método, qué resuelve, y un resultado, cómo se llama. Sin la
-       hoja de pantalla, y al imprimir, el nombre sigue al rótulo en su
-       línea; en pantalla va debajo, más grande. */
     .nombre-bloque {
       margin-left: 0.55em;
       color: var(--texto);
@@ -646,18 +612,11 @@
       --fondo-bloque: var(--verde-suave);
     }
 
-    /* Contenido optativo: gris pizarra, al margen de la paleta funcional,
-       para que se lea como un aparte prescindible. */
     .ampliacion {
       --color-bloque: #475569;
       --fondo-bloque: #f4f6f9;
     }
 
-    /* «Repaso de la ESO»: franja amarilla suave bajo el título del
-       subapartado; la etiqueta es una pestaña dorada que asoma por el borde
-       superior, a la derecha. Lo que sigue se da por sabido: la web lo
-       muestra entero y el PDF de apuntes imprime solo el título, la nota y
-       los ejercicios. */
     .repaso-eso {
       --color-bloque: #c8961e;
       --fondo-bloque: #fdf8e3;
@@ -673,10 +632,6 @@
       height: 0;
     }
 
-    /* El tramo entero de repaso (nota, teoría, ejercicios y soluciones) va
-       dentro de un marco discontinuo dorado, sin fondo, para ver de un
-       vistazo hasta dónde llega; la pestaña de la nota se cuelga del
-       marco. */
     .tramo-repaso {
       position: relative;
       margin: 1.7rem 0 1.9rem;
@@ -694,7 +649,6 @@
       margin-bottom: 0;
     }
 
-    /* Pestaña de cierre, colgada del borde inferior del marco. */
     .cierre-repaso {
       position: absolute;
       right: 1.1rem;
@@ -741,16 +695,11 @@
 
 
 
-    /* «Matemáticas en acción»: aplicaciones y cultura matemática fuera del
-       examen. Morado fucsia propio, distinto del violeta de métodos e
-       interactivos, para que se lea como regalo y no como materia. */
     .aplicacion {
       --color-bloque: var(--morado);
       --fondo-bloque: var(--morado-suave);
     }
 
-    /* Dentro del aparte, el laboratorio adopta el morado y fondo blanco
-       para no apilar dos lilas. */
     .aplicacion .interactivo {
       --color-bloque: var(--morado);
       border-color: #f0d9f4;
@@ -769,27 +718,10 @@
       vertical-align: baseline;
     }
 
-    /* La copia accesible de cada fórmula (MathML), invisible, va con
-       `position: absolute`: con su fórmula como referencia se queda dentro
-       de ella, y no ensancha la página cuando la fórmula está en una tabla
-       que se desplaza de lado. */
     .math .katex {
       position: relative;
     }
 
-    /* Una fórmula en línea se parte solo donde conviene (desde el 26 de
-       septiembre de 2026, al ver «x +» al final de una línea y «7» al
-       principio de la siguiente). KaTeX deja partir entre sus cajas, tras
-       cada signo de relación o de operación; el guion marca cada uno de
-       esos cortes con un espacio de anchura cero (`.corte-formula`) y su
-       clase, y aquí no se parte nada más: una fórmula corta
-       (`.formula-corta`) no se parte nunca, y una larga, solo tras una
-       relación (=, <, ≈, ⟺…), nunca tras un + o un −. Lo que lleva pegado
-       sin espacio (la coma, los dos puntos, un paréntesis, la letra de un
-       apartado…) va con ella en la envoltura del filtro
-       (`.formula-con-signo`): sin esto, Safari y Chrome partían entre la
-       última caja de KaTeX y el signo, que quedaba solo al principio de la
-       línea siguiente. */
     .formula-con-signo,
     .math.inline .katex-html,
     .math.inline .corte-formula {
@@ -802,10 +734,6 @@
       white-space: normal;
     }
 
-    /* La que no cabe ni en una línea entera de su caja (en un móvil, sobre
-       todo) se deja partir tras sus relaciones y, si un tramo entre dos
-       relaciones tampoco cabe, por cualquier corte: el guion lo mide con
-       todo sin partir (`.midiendo-formulas`). */
     #contenido-unidad.midiendo-formulas .math.inline .corte-formula {
       white-space: nowrap;
     }
@@ -820,9 +748,6 @@
       scrollbar-width: none;
     }
 
-    /* Ritmo vertical: KaTeX separa cada fórmula centrada con 1em por
-       arriba y por abajo, que sumado a los márgenes de párrafo dejaba
-       huecos enormes entre texto y fórmula. Se compacta sin pegarlo. */
     #contenido-unidad .katex-display {
       margin: 0.45em 0;
     }
@@ -831,14 +756,6 @@
       margin-block: 0.6rem;
     }
 
-    /* Un elemento de lista cuyo único contenido es una fórmula centrada
-       perdía su número visible: la fórmula es un bloque y el marcador
-       quedaba huérfano, sin línea que compartir. Como elemento en línea
-       la fórmula acompaña al número, igual que en el PDF. Si lleva texto
-       delante («Calcula:» y la fila de apartados), la fórmula va debajo y
-       centrada, también como en el PDF: `:first-child` no ve el texto
-       suelto, así que el guion marca esos elementos con
-       `.formula-tras-texto`. */
     #contenido-unidad li:not(.formula-tras-texto):not(.formula-abre) > .math.display:first-child:last-child {
       display: inline-block;
       width: auto;
@@ -846,14 +763,6 @@
       vertical-align: middle;
     }
 
-    /* Si la fórmula abre el elemento pero no va sola (una solución que
-       sigue con «porque…») o va dentro de un párrafo (los apartados de una
-       lista suelta), Safari tampoco pinta el número: lo mete en la primera
-       línea de dentro de la fórmula, que recorta lo que se sale porque se
-       desplaza a lo ancho. El guion marca esos elementos con
-       `.formula-abre` y la fórmula va en línea a todo el ancho: el número
-       comparte su línea y lo que sigue baja a la siguiente, como en
-       Chrome. */
     #contenido-unidad li.formula-abre > .math.display:first-child,
     #contenido-unidad li.formula-abre > p:first-child > .math.display:first-child {
       display: inline-block;
@@ -920,10 +829,6 @@
       box-shadow: 0 12px 26px rgb(109 40 217 / 0.08);
     }
 
-    /* Los laboratorios llevan una píldora «Explora» con un puntero de clic
-       (flecha con rayitas) encima
-       del título (decisión del profesor, 12 de septiembre de 2026); la pone
-       la plantilla para todos los componentes, sin tocar las fuentes. */
     .titulo-interactivo::before {
       content: "Explora";
       display: block;
@@ -1309,9 +1214,6 @@
         box-shadow 140ms ease;
     }
 
-    /* Los estilos de hover solo se aplican donde existe un puntero que
-       de verdad se posa (ratón). En pantalla táctil el hover se queda
-       «pegado» tras el toque y los botones parecían seleccionados. */
     button:focus-visible {
       background: var(--acento-oscuro);
       box-shadow: 0 7px 15px rgb(22 59 114 / 0.2);
@@ -1326,7 +1228,6 @@
       }
     }
 
-    /* ---- Piezas comunes de los laboratorios interactivos ---- */
 
     .fichas-interactivo {
       display: flex;
@@ -1377,7 +1278,6 @@
       gap: 0.6rem;
     }
 
-    /* Interruptor de escala con etiqueta, común a los laboratorios. */
     .fila-conmutador {
       display: flex;
       align-items: center;
@@ -1444,7 +1344,6 @@
       color: #ffffff;
     }
 
-    /* Deslizador de zoom entre dos lupas. */
     .fila-zoom {
       display: flex;
       align-items: center;
@@ -1487,7 +1386,6 @@
       }
     }
 
-    /* Iconos dentro de chips y botones. */
     .icono-chip {
       vertical-align: -0.35em;
       margin-right: 0.35em;
@@ -1571,9 +1469,6 @@
       box-shadow: 0 3px 8px rgb(23 32 51 / 0.05);
     }
 
-    /* Bloques plegables (soluciones y ampliaciones): sin JavaScript se
-       muestran completos; con él quedan tras un botón. La impresión los
-       fuerza abiertos. */
     .bloque-didactico.plegable.esta-plegado {
       display: none;
     }
@@ -1602,8 +1497,6 @@
       background: #03604a;
     }
 
-    /* El botón de las ampliaciones es deliberadamente discreto: contorno
-       claro, sin relleno, para que se lea como algo prescindible. */
     .boton-ampliacion {
       margin: 0.9rem 0 0;
       color: #33415c;
@@ -1628,9 +1521,6 @@
       background: #475569;
     }
 
-    /* Dos bloques plegables seguidos (dos ampliaciones, o una aplicación y
-       una ampliación) van cada uno en su línea, nunca uno al lado del otro
-       (petición del profesor, 13 de septiembre de 2026). */
     .boton-ampliacion,
     .boton-aplicacion {
       display: block;
@@ -1638,8 +1528,6 @@
       max-width: 100%;
     }
 
-    /* El botón de «Matemáticas en acción» sí invita: contorno morado,
-       distinto del gris discreto de las ampliaciones. */
     .boton-aplicacion {
       margin: 0.9rem 0 0;
       color: #86198f;
@@ -1709,23 +1597,18 @@
         background 220ms ease;
     }
 
-    /* La gráfica de la exponencial y el logaritmo es cuadrada: a ancho
-       completo ocuparía toda la pantalla. Se acota y se centra. */
     .grafica-explog {
       max-width: 30rem;
       margin-left: auto;
       margin-right: auto;
     }
 
-    /* El ascensor del folio también es estrecho y alto: se acota. */
     .grafica-lunar {
       max-width: 27rem;
       margin-left: auto;
       margin-right: auto;
     }
 
-    /* El lienzo del plegado nunca debe exigir desplazamiento para verse
-       entero: se acota a la altura de la ventana. */
     .plegado-panorama .grafica-lunar svg {
       display: block;
       width: auto;
@@ -1734,10 +1617,6 @@
       margin: 0 auto;
     }
 
-    /* En pantalla ancha, el panorama pone los controles y las lecturas a
-       la izquierda y el lienzo a la derecha: se dobla y se ve reaccionar
-       la pila sin tocar el scroll. En pantallas estrechas todo se apila
-       como siempre. */
     @media (min-width: 52rem) {
       .plegado-panorama {
         display: grid;
@@ -1766,8 +1645,6 @@
       font-size: 0.92rem;
     }
 
-    /* Solo los hijos directos llevan la píldora de color: dentro hay
-       spans de KaTeX y un selector descendente los salpicaría todos. */
     .leyenda-grafica > span::before {
       content: "";
       display: inline-block;
@@ -1933,11 +1810,6 @@
         padding: 0.45rem;
       }
 
-      /* La tabla que no cabe se desplaza dentro de su caja. Con
-         `position: relative` es además el bloque contenedor de lo que sus
-         celdas llevan con posición absoluta: KaTeX guarda así, oculto, el
-         MathML de cada fórmula, y sin esto el de las celdas que quedan
-         fuera de la vista no se recortaba y ensanchaba la página. */
       table {
         position: relative;
         display: block;
@@ -2118,12 +1990,7 @@
       }
     }
 
-    /* Nivel 1: el acento identifica el apartado; los colores de los bloques
-       siguen identificando su función pedagógica. Todo el acabado queda
-       limitado a pantalla para conservar intacta la impresión. */
     @media screen {
-      /* La paleta se repite cada ocho apartados y, por tanto, funciona también
-         en unidades más largas que el prototipo original. */
       #contenido-unidad > section.level2:nth-of-type(8n + 1),
       #TOC > ul > li:nth-child(8n + 1) {
         --apartado: #1d4ed8;
@@ -2188,10 +2055,6 @@
         box-shadow: inset 0 0.26rem 0 var(--apartado, var(--acento));
       }
 
-      /* La insignia mide 2,1rem y deja 0,6rem de hueco: la sangría
-         francesa del título debe medir exactamente la suma. El
-         text-indent negativo se hereda, así que la insignia debe
-         anularlo o el dígito se saldría del cuadrado. */
       #contenido-unidad > section.level2 > h2:first-child {
         --sangria-numero: 2.7rem;
       }
@@ -2223,8 +2086,6 @@
         border-left-color: var(--apartado, var(--acento));
       }
 
-      /* La segunda línea de un título del índice se alinea con la primera y
-         el punto de color es decorativo: el texto sigue siendo suficiente. */
       #TOC > ul > li > a {
         display: flex;
         gap: 0.55rem;
@@ -2286,12 +2147,6 @@
         content: ":";
       }
 
-      /* Con nombre, el tipo sube a un antetítulo pequeño y el nombre manda
-         (la tercera de cinco maquetas, elegida por el profesor el 5 de
-         octubre de 2026). Los dos van en el mismo párrafo, el del rótulo:
-         al ampliar en el modo clase acompañan juntos a todas las partes de
-         un bloque repartido. Un bloque sin nombre conserva su rótulo de
-         siempre. */
       .bloque-didactico.con-nombre > p:first-child {
         margin-bottom: 0.7rem;
       }
@@ -2315,16 +2170,6 @@
         line-height: 1.3;
       }
 
-      /* El título de dentro de un subapartado («División de polinomios»)
-         manda sobre el nombre de los bloques que lleva debajo y queda por
-         debajo del título del subapartado: algo menor que este y con un
-         filete a todo el ancho, del color del apartado (la segunda de cinco
-         maquetas, elegida por el profesor el 5 de octubre de 2026, al ver
-         que el nombre de un bloque, a 1,24 rem, se leía más que su título,
-         a 1,13). Los tres tamaños bajan juntos en pantallas estrechas,
-         donde el subapartado mide 1,25 rem. El rótulo «Ejercicios» de cada
-         lista no cambia. En el modo clase el estilo es el mismo y los
-         tamaños son los suyos, más abajo. */
       #contenido-unidad section.level4 > h4:not(.ejercicios) {
         padding-bottom: 0.38rem;
         color: var(--acento-oscuro);
@@ -2338,8 +2183,6 @@
         font-size: clamp(1.1rem, 1.93vw, 1.24rem);
       }
 
-      /* Las fórmulas clave se leen como pequeñas tarjetas y conservan el
-         desplazamiento horizontal cuando su anchura supera la pantalla. */
       .bloque-didactico .math.display {
         margin: 0.85rem 0;
         padding: 0.8rem 1rem;
@@ -2353,10 +2196,6 @@
         padding: 0.55rem 0.85rem;
       }
 
-      /* Fichas: retícula de tarjetas para colecciones de fórmulas (las
-         propiedades de potencias, radicales o valor absoluto). En la
-         fuente es un contenedor `::: fichas`; el PDF lo ignora y apila
-         las fórmulas. Cada ficha toma el acento de su apartado. */
       .fichas {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
@@ -2384,10 +2223,6 @@
         box-shadow: 0 3px 10px rgb(22 59 114 / 0.05);
       }
 
-      /* Centrado con márgenes automáticos y no con justify-content: si la
-         fórmula no cabe (en el modo clase la letra crece), empieza por la
-         izquierda y se desplaza, en lugar de quedar recortada por los dos
-         lados. */
       #contenido-unidad .fichas .katex-display {
         margin: 0 auto;
       }
@@ -2416,10 +2251,6 @@
       }
     }
 
-    /* Ejercicios, soluciones y «Ponte a prueba» se numeran «1)», igual que
-       en el PDF, para que el número del ejercicio no se confunda con cifras
-       del enunciado; sus apartados van «a)». Los pasos de los métodos
-       conservan «1.». Un navegador sin @counter-style muestra «1.». */
     @counter-style mat-parentesis {
       system: extends decimal;
       suffix: ") ";
@@ -2442,8 +2273,6 @@
       list-style-type: mat-parentesis-alfa;
     }
 
-    /* Las guías de los laboratorios son pasos, no ejercicios: «1.» también
-       en el respaldo que se imprime. */
     section.ejercicios .interactivo ol,
     section[id^="soluciones"] .interactivo ol,
     #ponte-a-prueba .interactivo ol {
@@ -2500,20 +2329,7 @@
       }
     }
 
-    /* Modo clase (decisiones del profesor del 13 y el 14 de septiembre de
-       2026): la misma web para el proyector del aula. Se enciende con el
-       interruptor del índice o con `?clase` en la dirección y se apaga con el
-       interruptor o con `Esc`; al cambiar, la vista se queda en el apartado
-       donde estaba. Solo queda lo que se usa en clase: sin cabecera, portada,
-       prosa, listas del texto, pies de figura, ampliaciones ni «Matemáticas
-       en acción»; índice en fila con el número y el nombre de cada apartado;
-       y una barra con anterior, apartado, siguiente y soluciones. Solo en
-       pantalla: la impresión no lo ve. */
     @media screen {
-      /* El interruptor vive en la esquina superior derecha en los dos
-         modos, para que no cambie de sitio al encenderlo o apagarlo: en la
-         cabecera, en blanco sobre el azul; en el modo clase, solo él queda
-         de la cabecera, flotando sobre el índice en fila. */
       .unidad-en-cabecera {
         margin-left: auto;
       }
@@ -2537,9 +2353,6 @@
         display: none;
       }
 
-      /* En un teléfono no se proyecta: el interruptor dejaría sin sitio al
-         título de la unidad. Si el modo está encendido, se ve para poder
-         apagarlo. */
       @media (max-width: 42rem) {
         html:not(.modo-clase) .interruptor-clase {
           display: none;
@@ -2643,13 +2456,6 @@
         font-size: 1.55rem;
       }
 
-      /* En el modo clase el texto mide 1,42 rem, y el nombre de un bloque,
-         a 1,24, se leía menos que el párrafo de debajo (el profesor, 5 de
-         octubre de 2026: «agrándalo sí»). El nombre y su antetítulo crecen
-         con la letra del modo, y el título de dentro del subapartado sube
-         lo justo para seguir por encima: subapartado, 1,85 rem > título de
-         dentro, 1,7 > nombre de bloque, 1,55 > texto, 1,42. Al ampliar
-         crecen todos con `rem`, en la misma proporción. */
       html.modo-clase #contenido-unidad section.level4 > h4:not(.ejercicios) {
         font-size: 1.7rem;
       }
@@ -2662,10 +2468,6 @@
         font-size: 0.9rem;
       }
 
-      /* Lo que no se usa en clase no se ve. De la prosa y de las listas
-         solo quedan los párrafos y los elementos que llevan una fórmula
-         centrada, que son los ejemplos; también dentro del marco de un
-         «Repaso de la ESO», que envuelve su tramo. */
       html.modo-clase .portada-unidad,
       html.modo-clase .titulo-indice,
       html.modo-clase .descargas-unidad,
@@ -2688,7 +2490,6 @@
         margin: 1rem auto;
       }
 
-      /* «Ver las soluciones» se queda en «Soluciones». */
       html.modo-clase .boton-soluciones .rotulo-boton-plegable {
         display: none;
       }
@@ -2697,10 +2498,6 @@
         content: "Soluciones";
       }
 
-      /* Índice arriba, en fila, con el número y el nombre de cada apartado
-         (decisión del profesor del 14 de septiembre de 2026, por la noche:
-         «puedes poner los nombres de los apartados perfectamente»); si no
-         caben en una línea, pasan a la siguiente. */
       html.modo-clase .disposicion-unidad {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -2714,8 +2511,6 @@
         z-index: 30;
         max-height: none;
         margin-bottom: 0.6rem;
-        /* A la derecha queda el hueco del interruptor, que flota en la
-           esquina: con los nombres, la primera línea llegaba debajo. */
         padding: 0.35rem 10.5rem 0.35rem 0.6rem;
         overflow: visible;
         border-radius: 0 0 0.75rem 0.75rem;
@@ -2755,8 +2550,6 @@
         border-left-color: transparent;
       }
 
-      /* Las fichas, más anchas: la columna mínima crece con la letra, para
-         que las fórmulas quepan sin desplazarse. */
       html.modo-clase .fichas {
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 17em), 1fr));
       }
@@ -2841,15 +2634,6 @@
         --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5L21 21M10.5 7.8v5.4M7.8 10.5h5.4'/%3E%3C/svg%3E");
       }
 
-      /* Ampliar, «toca y se amplía» (decisión del profesor del 20 de
-         septiembre de 2026, que proyecta desde un iPad y tenía que
-         pellizcar para que se leyera): en el modo clase, un toque sobre una
-         fórmula, unas fichas, un bloque, una lista o una figura lo deja
-         solo en la pantalla con la letra más grande que quepa; lo que
-         entero quedaría pequeño se reparte en partes por sus piezas. Se
-         pasa con las flechas o deslizando y se vuelve con la ×. Las medidas
-         del marco van en píxeles, no en `rem`, porque la ampliación cambia
-         el tamaño de `rem` para recolocar el contenido. */
       html.modo-clase .ampliable {
         cursor: pointer;
       }
@@ -2876,7 +2660,6 @@
         display: none !important;
       }
 
-      /* El apartado que contiene lo ampliado hace de pantalla. */
       html.ampliando #contenido-unidad > section.ampliar-camino {
         position: fixed;
         inset: 0;
@@ -2891,9 +2674,6 @@
         border-radius: 0;
         box-shadow: none;
         touch-action: manipulation;
-        /* Sin barra de desplazamiento: si ocupara sitio, el texto saltaría
-           de línea al aparecer y la medida de lo que cabe dependería del
-           orden en que se prueban los tamaños. */
         scrollbar-width: none;
       }
 
@@ -2905,8 +2685,6 @@
         margin: 0;
       }
 
-      /* Centrado con márgenes automáticos: si lo ampliado no cabe ni a su
-         tamaño normal, empieza arriba y se desplaza, en vez de cortarse. */
       html.ampliando .ampliar-arriba {
         margin-top: auto !important;
       }
@@ -2915,7 +2693,6 @@
         margin-bottom: auto !important;
       }
 
-      /* Las soluciones de lo ampliado se ven sin desplegar las de la página. */
       html.ampliando .bloque-didactico.plegable.ampliar-abierto {
         display: block;
       }
@@ -2940,9 +2717,6 @@
         white-space: nowrap;
       }
 
-      /* El título del subapartado se lee desde el fondo del aula, como lo
-         ampliado: crece con la altura de la ventana y, si es largo, ocupa
-         dos líneas. */
       .marco-ampliar .miga-ampliar {
         top: 16px;
         left: 28px;
@@ -2974,11 +2748,6 @@
         transform: translateX(-50%);
       }
 
-      /* Una ecuación escrita dentro de una frase no se parte entre dos
-         líneas: si no cabe al final de una, baja entera a la siguiente.
-         Solo se deja partir la que no cabe ni en una línea entera, y
-         entonces por cualquiera de los cortes que marca el guion, también
-         tras un + o un −; el signo que lleva pegado sigue con ella. */
       html.ampliando #contenido-unidad .math.inline {
         white-space: nowrap;
       }
@@ -3084,24 +2853,11 @@
       }
     }
 
-    /* Subapartados en el índice (orden del profesor del 1 de octubre de
-       2026: «deberíamos hacer un menú desplegable en las webs para poder
-       seleccionar los subapartados»). El guion añade a cada apartado del
-       índice la lista de sus subapartados y una flecha que la despliega. La
-       flecha ocupa el sitio del punto de color, delante del nombre, para no
-       quitarle ancho al título ni añadir líneas al índice en fila. Con el
-       índice a un lado, la lista se abre debajo de su apartado, de una en
-       una, y la del apartado que está en pantalla se abre sola. Con el
-       índice en fila (pantallas estrechas y modo clase), la flecha abre un
-       menú flotante bajo su apartado: la lista no puede ir dentro de la
-       fila, que recorta lo que sobresale de ella. Solo en pantalla: la
-       impresión no lleva índice. */
     @media screen {
       #TOC > ul > li.con-subapartados {
         position: relative;
       }
 
-      /* El punto deja su sitio a la flecha, sin mover el título. */
       #TOC > ul > li.con-subapartados > a::before {
         visibility: hidden;
       }
@@ -3126,8 +2882,6 @@
         transition: background 160ms ease;
       }
 
-      /* Cerrada mira a la derecha y abierta, hacia abajo, donde se abre la
-         lista. */
       #TOC .conmutador-subapartados::before {
         width: 0.85rem;
         height: 0.85rem;
@@ -3142,8 +2896,6 @@
           transform 160ms ease;
       }
 
-      /* El dedo no acierta en una flecha tan pequeña: la zona que responde
-         al toque es algo mayor que el dibujo. */
       #TOC .conmutador-subapartados::after {
         position: absolute;
         inset: -0.25rem;
@@ -3190,8 +2942,6 @@
         margin-top: 0;
       }
 
-      /* El número y el título van en dos columnas: la segunda línea de un
-         título largo empieza bajo la primera, no bajo el número. */
       #TOC .subapartados a,
       .menu-subapartados a {
         display: flex;
@@ -3233,9 +2983,6 @@
         }
       }
 
-      /* Índice en fila: la flecha mira hacia abajo, donde se abre el menú,
-         y se da la vuelta mientras está abierto; la lista no se pinta
-         dentro de la fila. */
       @media (max-width: 64rem) {
         #TOC .subapartados,
         #TOC li.abierto > .subapartados {
@@ -3280,8 +3027,6 @@
         transform: rotate(180deg);
       }
 
-      /* El menú flotante cuelga de `body` y el guion lo coloca bajo su
-         apartado, con el color de ese apartado. */
       .menu-subapartados {
         position: fixed;
         z-index: 60;
@@ -3341,7 +3086,6 @@
         }
       }
 
-      /* En el aula se toca con el dedo en una tableta: letra mayor. */
       html.modo-clase .menu-subapartados {
         max-width: min(30rem, calc(100vw - 1rem));
       }
@@ -3362,7 +3106,6 @@
       }
     }
 
-    /* Piezas de los componentes de la unidad 2 */
     .tabla-ruffini {
       margin: 0.6rem auto;
       border-collapse: collapse;
@@ -3462,8 +3205,6 @@
       font-family: "Times New Roman", Times, serif;
     }
 
-    /* Curso IB: laboratorios propios (regla 14 de AGENTS.md). Piezas de los
-       componentes que solo tiene este curso; no se portan a los demás. */
     .controles-intervalos.de-tres {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -3492,9 +3233,6 @@
       margin-top: 0.45rem;
     }
 
-    /* En un teléfono, una gráfica reducida al ancho de la pantalla deja
-       los números ilegibles: conserva un ancho mínimo y su caja se desplaza
-       a lo ancho, como una tabla. */
     .zona-grafica svg.grafica-ib {
       min-width: 27rem;
     }
@@ -3510,7 +3248,6 @@
       box-shadow: 0 0 0 1px var(--color-fila, #94a3b8);
     }
 
-    /* Notación sigma: un cartón por cada valor del índice. */
     .chips-sumatorio {
       display: flex;
       flex-wrap: wrap;
@@ -3549,7 +3286,6 @@
       letter-spacing: 0.03em;
     }
 
-    /* Inducción: las dos partes de la demostración, una al lado de otra. */
     .partes-induccion {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3588,8 +3324,6 @@
       transform: none;
     }
 
-    /* La pantalla de la calculadora: un marco oscuro, como el de la
-       fx-CG50, alrededor de la gráfica. */
     .zona-grafica.pantalla-calculadora {
       max-width: 40rem;
       margin-inline: auto;
@@ -3603,8 +3337,6 @@
       border-radius: 0.35rem;
     }
 
-    /* La pantalla tiene que verse entera de una vez, también en un
-       teléfono: no lleva el ancho mínimo de las otras gráficas. */
     .zona-grafica.pantalla-calculadora svg.grafica-ib {
       min-width: 0;
     }
@@ -3629,8 +3361,6 @@
       margin: 0 0 0.9rem;
     }
 
-    /* Ordenaciones: todas las filas a la vista, en una caja que se
-       desplaza. */
     .barra-clases-ib {
       display: flex;
       height: 1.9rem;
@@ -3704,7 +3434,6 @@
       box-shadow: inset 0 0 0 1.5px #fdba74;
     }
 
-    /* Combinaciones: cada grupo con todas sus ordenaciones. */
     .grupos-orden-ib {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(18.5rem, 1fr));
@@ -3764,7 +3493,6 @@
       background: transparent;
     }
 
-    /* Binomio: el triángulo de Pascal con casillas que se pulsan. */
     .triangulo-ib {
       display: grid;
       gap: 0.22rem;
@@ -3836,7 +3564,6 @@
       border: 1px solid #d6dfec;
       border-radius: 0.4rem;
       background: #ffffff;
-      /* Las letras de las fórmulas: cada palabra es un producto. */
       font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", Times, serif;
       font-size: 1.21em;
       font-style: italic;
@@ -3864,8 +3591,6 @@
       }
     }
 
-    /* Una gráfica cuadrada tiene que verse entera de una vez, también en
-       un teléfono: no lleva el ancho mínimo de las demás. */
     .zona-grafica.grafica-entera-ib svg.grafica-ib {
       min-width: 0;
       max-width: 34rem;
@@ -3876,13 +3601,6 @@
       max-width: 44rem;
     }
 
-    /* Infografías animadas (regla 14 de AGENTS.md): el dibujo de una idea,
-       en línea blanca sobre el tono de su unidad, con el lenguaje de las
-       tarjetas de la portada. Están plegadas tras una cinta «Trazo a trazo»
-       y, abiertas, llevan mandos de reproductor. Cada pieza lleva una clase
-       e-… y, en --t, el instante en que entra (en --d, lo que dura un trazo
-       o una luz). Sus animaciones están siempre en pausa: el instante que
-       se ve lo fija la variable --ahora del lienzo, que mueve el guion. */
     .infografia-ib {
       --tono: #6d28d9;
       --lienzo:
@@ -3923,7 +3641,6 @@
         linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
     }
 
-    /* La cinta: lo único que se ve mientras la infografía está plegada. */
     .infografia-ib .cabecera-infografia-ib {
       display: grid;
       grid-template-columns: auto auto minmax(0, 1fr) auto;
@@ -4021,7 +3738,6 @@
       }
     }
 
-    /* En un teléfono estrecho, «Ver» baja junto al título. */
     @media (max-width: 22.5rem) {
       .infografia-ib .cabecera-infografia-ib {
         grid-template-areas:
@@ -4048,7 +3764,6 @@
       }
     }
 
-    /* El cuerpo se despliega: su fila pasa de no medir nada a lo que pida. */
     .cuerpo-infografia-ib {
       display: grid;
       grid-template-rows: 0fr;
@@ -4088,11 +3803,6 @@
       height: auto;
     }
 
-    /* La letra de los dibujos es la de la página: las fórmulas, con las
-       letras de KaTeX, como todas las de la unidad (y miden lo mismo en
-       cualquier aparato, que es lo que piden una raíz o una casilla); las
-       palabras, con la letra del texto, algo menor, como en un renglón de
-       los apuntes. */
     .lienzo-infografia-ib .rotulos {
       font-family: KaTeX_Main, "Times New Roman", Times, serif;
     }
@@ -4115,7 +3825,6 @@
       font-weight: 700;
     }
 
-    /* Los mandos, sobre blanco, con el tono de la unidad. */
     .mandos-infografia-ib {
       display: flex;
       gap: 0.6em;
@@ -4186,10 +3895,6 @@
       line-height: 1.5;
     }
 
-    /* Las piezas. Una animación por pieza, parada: su retardo es lo que
-       falta para su instante, de modo que --ahora la lleva de antes de
-       entrar (el primer fotograma, por «both») a ya puesta (el último).
-       Sin --ahora, el dibujo está entero. */
     .lienzo-infografia-ib :is(.e-trazo, .e-velo, .e-punto, .e-crece, .e-rotulo, .e-baja, .e-letra, .e-destello) {
       animation-play-state: paused;
       animation-fill-mode: both;
@@ -4234,8 +3939,6 @@
       animation-duration: 0.45s;
     }
 
-    /* Un trazo se dibuja de un extremo al otro: mide 100 (pathLength) y su
-       guion, que lo cubre entero, se descubre poco a poco. */
     .lienzo-infografia-ib .e-trazo {
       stroke-dasharray: 100 120;
       animation-name: ib-traza;
@@ -4243,7 +3946,6 @@
       animation-timing-function: ease-in-out;
     }
 
-    /* La luz que recorre un trazo solo existe mientras se dibuja. */
     .lienzo-infografia-ib .e-destello {
       opacity: 0;
       stroke-dasharray: 6 200;
@@ -4283,8 +3985,6 @@
       100% { stroke-dashoffset: 0; }
     }
 
-    /* La luz sale por el final del trazo: acaba más allá, para no dejar un
-       punto encendido en su extremo. */
     @keyframes ib-destello {
       from { opacity: 1; stroke-dashoffset: 6; }
       to { opacity: 1; stroke-dashoffset: -110; }
@@ -4295,12 +3995,6 @@
       to { stroke-dashoffset: 0; }
     }
 
-    /* Resúmenes interactivos (regla 14 de AGENTS.md): «Lo esencial», al
-       final de cada unidad. Una infografía con el lenguaje de las de
-       arriba, de las que toma la caja, el tono, la cinta y las piezas del
-       lienzo, pero que no se mira como un vídeo: se toca. Va repartida en
-       estaciones; cada una lleva un dibujo que responde a sus mandos y,
-       debajo, sus fórmulas, y la última pestaña las reúne todas. */
     .resumen-ib {
       --tono-suave: #f5f0ff;
       --tono-raya: #d9cff8;
@@ -4326,7 +4020,6 @@
       --tono-raya: #ecd3b0;
     }
 
-    /* Ningún botón de dentro hereda el relieve de los de la página. */
     .resumen-ib button {
       min-height: 0;
       box-shadow: none;
@@ -4353,8 +4046,6 @@
       }
     }
 
-    /* Las estaciones: una pastilla por cada parte del resumen, y la
-       última, «Todo junto». */
     .estaciones-resumen-ib {
       display: flex;
       flex-wrap: wrap;
@@ -4395,7 +4086,6 @@
       height: 1.05em;
     }
 
-    /* Una estación por la que ya se ha pasado. */
     .resumen-ib .estacion-ib.vista .numero-ib {
       background: rgb(255 255 255 / 0.42);
     }
@@ -4425,7 +4115,6 @@
       }
     }
 
-    /* En un teléfono solo dice su nombre la estación abierta. */
     @media (max-width: 40rem) {
       .resumen-ib .estacion-ib:not([aria-selected="true"]) {
         padding: 0.2em 0.22em;
@@ -4441,9 +4130,6 @@
       }
     }
 
-    /* El lienzo no es un vídeo: solo se toca lo que responde. En una
-       pantalla ancha y baja no pasa de dos tercios de su alto, para que los
-       mandos queden a la vista sin desplazar la página. */
     .resumen-ib .lienzo-infografia-ib {
       cursor: default;
     }
@@ -4461,7 +4147,6 @@
       touch-action: pan-y;
     }
 
-    /* Una ficha de dominó cae girando sobre su esquina. */
     .resumen-ib .ficha-domino-ib {
       transform-box: fill-box;
       transform-origin: 100% 100%;
@@ -4474,8 +4159,6 @@
       }
     }
 
-    /* Bajo el lienzo, sobre blanco: los mandos, lo que sale con esos datos,
-       las fichas con lo que hay que saberse y los errores frecuentes. */
     .bajo-resumen-ib {
       display: grid;
       gap: 0.85em;
@@ -4626,7 +4309,6 @@
       cursor: pointer;
     }
 
-    /* Lo que sale con los datos de los mandos. */
     .vivo-resumen-ib {
       padding: 0.45em 0.8em;
       border: 1px solid var(--tono-raya);
@@ -4640,9 +4322,6 @@
       text-align: center;
     }
 
-    /* Una fórmula que no cabe se desplaza dentro de su caja; el MathML que
-       KaTeX guarda oculto se queda dentro de ella, para no ensanchar la
-       página en un teléfono. */
     .formula-resumen-ib {
       display: block;
       max-width: 100%;
@@ -4655,8 +4334,6 @@
       display: none;
     }
 
-    /* Una fórmula corta, dentro de una frase, no se parte entre dos
-       renglones (la marca el guion). */
     .resumen-ib .corta-ib {
       white-space: nowrap;
     }
@@ -4738,8 +4415,6 @@
       font-size: 0.95em;
     }
 
-    /* Una ficha tapada, para repasar: dice de qué es y espera a que la
-       toquen para enseñar la fórmula. */
     .resumen-ib button.ficha-resumen-ib {
       border-style: dashed;
       border-left-style: solid;
@@ -4801,7 +4476,6 @@
       height: 1em;
     }
 
-    /* «Todo junto»: las fichas de todas las estaciones, sobre el tono. */
     .poster-resumen-ib {
       padding: 0 1em 0.4em;
     }
@@ -4845,8 +4519,6 @@
       column-gap: 0.8em;
     }
 
-    /* Cada bloque va en línea y a todo el ancho de su columna: así Safari
-       no pasa su margen de abajo a la columna siguiente. */
     .grupo-poster-ib {
       display: inline-grid;
       gap: 0.45em;
@@ -4926,12 +4598,6 @@
       color: rgb(255 255 255 / 0.88);
     }
 
-    /* Curso IB: la solución de cada ejercicio, debajo de él, y el resultado
-       final recuadrado (regla 14 de AGENTS.md). El guion deja bajo cada
-       enunciado un botón pequeño, «Ver solución», y al pulsarlo abre allí
-       una copia de su solución. El bloque «Soluciones» sigue en la página,
-       entero y sin tocar: es lo que usan el modo clase y su ampliación, lo
-       que se imprime y lo que ve quien no tiene JavaScript. */
     .boton-solucion-ib {
       display: flex;
       align-items: center;
@@ -4999,9 +4665,6 @@
       display: none;
     }
 
-    /* La copia es el elemento de la lista de soluciones, con sus clases:
-       va en una lista propia, sin número, porque el número ya lo lleva el
-       enunciado de encima. */
     section.ejercicios ol.lista-solucion-ib {
       margin: 0;
       padding: 0;
@@ -5025,9 +4688,6 @@
       border-radius: 0.65rem;
     }
 
-    /* Un enunciado que es solo una fórmula centrada la llevaba junto a su
-       número porque era lo único del elemento; con el botón detrás deja de
-       serlo, y el guion lo marca para que siga igual. */
     #contenido-unidad li.solo-formula-ib > .math.display:first-child {
       display: inline-block;
       width: auto;
@@ -5035,9 +4695,6 @@
       vertical-align: middle;
     }
 
-    /* El resultado final de cada solución va recuadrado: una frase, con
-       `[…]{.final}` en la fuente; una fórmula o su último miembro, con
-       `\boxed{…}`, que KaTeX pinta con un marco (`.fbox`). */
     #contenido-unidad .final {
       display: inline-block;
       max-width: calc(100% - 0.7em);
@@ -5048,10 +4705,6 @@
       white-space: normal;
     }
 
-    /* La frase es una sola caja: si no cabe en lo que queda del renglón,
-       baja entera, y solo se parte por dentro si no cabe en uno. Como es un
-       bloque en línea, el navegador podría dejar solo en el renglón
-       siguiente el signo que lleva detrás: el filtro los envuelve juntos. */
     #contenido-unidad .final-con-signo {
       white-space: nowrap;
     }
@@ -5081,8 +4734,6 @@
       }
     }
 
-    /* En un teléfono la solución va dentro de la tarjeta del ejercicio, que
-       ya es estrecha: menos relleno, para que las cuentas tengan sitio. */
     @media screen and (max-width: 42rem) {
       .solucion-ib {
         margin-inline: -0.45rem;
@@ -5186,7 +4837,6 @@ Enfoques NS</p>
         id="contenido-unidad"
         tabindex="-1"
         aria-labelledby="titulo-unidad">
-        <!-- INICIO_CONTENIDO_UNIDAD -->
                 <section id="antes-de-empezar"
                 class="level2 ejercicios solo-web" data-number="0">
                 <h2 class="ejercicios solo-web" data-number="0"><span
@@ -5657,11 +5307,15 @@ Enfoques NS</p>
                 <p><span class="math display">\[
                 (2k-1)(2k+1)=4k^2-1,
                 \]</span></p>
-                <p>donde <span class="math inline">\(4k^2\)</span> es
-                múltiplo de <span class="formula-con-signo"><span
-                class="math inline">\(4\)</span>.</span> Por ejemplo,
-                <span class="formula-con-signo"><span
-                class="math inline">\(7\cdot9=63=64-1\)</span>.</span></p>
+                <p>donde <span class="math inline">\(4k^2=4\cdot
+                k^2\)</span> es múltiplo de <span
+                class="formula-con-signo"><span
+                class="math inline">\(4\)</span>,</span> porque <span
+                class="math inline">\(k^2\)</span> es un entero. Por
+                ejemplo, con <span class="formula-con-signo"><span
+                class="math inline">\(k=4\)</span>,</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\({7\cdot9=63=64-1}\)</span>.</span></p>
                 </div>
                 <div class="ejemplo bloque-didactico">
                 <p><span class="etiqueta-bloque">Ejemplo</span></p>
@@ -6019,6 +5673,47 @@ Enfoques NS</p>
                 class="math inline">\(n\in\mathbb
                 Z^+\)</span>.</span></p>
                 </div>
+                <div id="fila-induccion"
+                class="interactivo bloque-didactico"
+                data-componente="infografia-induccion"
+                data-titulo="De la primera a todas">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p><strong>Una fila de afirmaciones y un paso que se
+                repite.</strong> <span
+                class="math inline">\(P(n)\)</span> no es una sola
+                afirmación, sino una fila: <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(1)\)</span>,</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(2)\)</span>,</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(3)\)</span>…</span> El caso base
+                dice que la primera es verdadera. El paso inductivo no
+                dice que <span class="math inline">\(P(k)\)</span> lo
+                sea: dice que, si lo es, también lo es la siguiente, y
+                esa única demostración vale para <span
+                class="formula-con-signo"><span
+                class="math inline">\(k=1\)</span>,</span> para <span
+                class="formula-con-signo"><span
+                class="math inline">\(k=2\)</span>,</span> para <span
+                class="formula-con-signo"><span
+                class="math inline">\(k=3\)</span>…</span> Con <span
+                class="formula-con-signo"><span
+                class="math inline">\(k=1\)</span>,</span> de <span
+                class="math inline">\(P(1)\)</span> sale <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(2)\)</span>;</span> con <span
+                class="formula-con-signo"><span
+                class="math inline">\(k=2\)</span>,</span> de <span
+                class="math inline">\(P(2)\)</span> sale <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(3)\)</span>,</span> y así se
+                llega a cualquier <span class="formula-con-signo"><span
+                class="math inline">\(n\)</span>:</span> a <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(5)\)</span>,</span> en cuatro
+                pasos.</p>
+                </div>
                 <p>En clase se dice con la misma letra («si se cumple
                 para <span class="formula-con-signo"><span
                 class="math inline">\(n\)</span>,</span> también para
@@ -6032,7 +5727,22 @@ Enfoques NS</p>
                 letra, <span class="formula-con-signo"><span
                 class="math inline">\(k\)</span>,</span> para no
                 confundirla con la <span
-                class="math inline">\(n\)</span> del enunciado.</p>
+                class="math inline">\(n\)</span> del enunciado. Y dice
+                «enteros positivos», <span
+                class="formula-con-signo"><span
+                class="math inline">\(\mathbb
+                Z^+=\{1,2,3,\ldots\}\)</span>,</span> y no «naturales»,
+                porque sus naturales, <span
+                class="formula-con-signo"><span
+                class="math inline">\(\mathbb N\)</span>,</span>
+                incluyen el <span class="math inline">\(0\)</span> y el
+                principio empieza en <span
+                class="formula-con-signo"><span
+                class="math inline">\(P(1)\)</span>;</span> el <span
+                class="math inline">\(\mathbb N\)</span> de clase, que
+                empieza en <span class="formula-con-signo"><span
+                class="math inline">\(1\)</span>,</span> es ese mismo
+                conjunto.</p>
                 <div class="metodo bloque-didactico con-nombre">
                 <p><span class="etiqueta-bloque">Método</span> <span
                 class="nombre-bloque">Demostrar por inducción, en cuatro
@@ -9313,24 +9023,11 @@ Enfoques NS</p>
                 </ul>
                 </div>
                 </section>
-                <!-- FIN_CONTENIDO_UNIDAD -->
-      </main>
+              </main>
     </div>
   </div>
 
   <script>
-    // Índice: realza el apartado que está en pantalla y, en las unidades,
-    // despliega los subapartados de cada apartado (orden del profesor del 1
-    // de octubre de 2026: «deberíamos hacer un menú desplegable en las webs
-    // para poder seleccionar los subapartados»). Los subapartados no salen
-    // del índice de Pandoc: se leen de las secciones de la página, porque
-    // ese índice no ve los encabezados que quedan dentro del marco de un
-    // repaso de apartado entero y sí vería los «Soluciones» de segundo
-    // nivel. Con el índice a un lado, los del apartado en pantalla se abren
-    // solos bajo él, de uno en uno; con el índice en fila (pantallas
-    // estrechas y modo clase), la flecha de cada apartado abre un menú
-    // flotante. La página de laboratorios trae ya su índice de dos niveles y
-    // no lleva menú.
     document.addEventListener("DOMContentLoaded", function () {
       var raiz = document.documentElement;
       var indice = document.getElementById("TOC");
@@ -9347,9 +9044,6 @@ Enfoques NS</p>
         );
       }
 
-      // Los subapartados de un apartado son sus secciones de un nivel
-      // menos, salvo las de dentro de un laboratorio o de un bloque y las
-      // de respuestas («Soluciones»), que la web pliega tras su botón.
       var padreDe = new Map();
       var conSubapartados = [];
       var subenlaces = [];
@@ -9413,7 +9107,6 @@ Enfoques NS</p>
           elemento.appendChild(lista);
           conSubapartados.push(elemento);
         });
-        // Un título con una fórmula se copia antes de que KaTeX la pinte.
         if (subenlaces.length && window.renderMathInElement) {
           window.renderMathInElement(indice, {
             delimiters: [{ left: "\\(", right: "\\)", display: false }],
@@ -9430,7 +9123,6 @@ Enfoques NS</p>
         })
         .filter(Boolean);
 
-      // El índice va en fila en las pantallas estrechas y en el modo clase.
       var estrecha = window.matchMedia("(max-width: 64rem)");
       function enFila() {
         return estrecha.matches || raiz.classList.contains("modo-clase");
@@ -9439,8 +9131,6 @@ Enfoques NS</p>
         return elemento.querySelector(":scope > .conmutador-subapartados");
       }
 
-      // Con el índice a un lado: la lista se abre bajo su apartado y cierra
-      // la que hubiera abierta.
       function plegar() {
         conSubapartados.forEach(function (elemento) {
           elemento.classList.remove("abierto");
@@ -9454,8 +9144,6 @@ Enfoques NS</p>
           conmutadorDe(elemento).setAttribute("aria-expanded", "true");
         }
       }
-      // El enlace realzado se ve aunque el índice tenga que desplazarse por
-      // dentro; se mueve solo el índice, nunca la página.
       var lateral = indice.closest(".indice-unidad");
       function asomarEnElIndice() {
         var realzado =
@@ -9473,12 +9161,6 @@ Enfoques NS</p>
         }
       }
 
-      // En la fila de una pantalla estrecha, el apartado realzado se lleva
-      // al centro moviendo solo la fila, y sin animación. `scrollIntoView`
-      // movía también la página: el índice va pegado arriba, dentro del
-      // margen que reserva `scroll-padding-top`, y cada llamada subía la
-      // página lo que faltaba para sacarlo de ese margen, sin conseguirlo
-      // nunca (63 píxeles por cada cambio de apartado en un móvil).
       function centrarEnLaFila(enlace) {
         if (!lateral) {
           return;
@@ -9488,8 +9170,6 @@ Enfoques NS</p>
         lateral.scrollLeft += caja.left + caja.width / 2 - marco.left - marco.width / 2;
       }
 
-      // Con el índice en fila: un menú flotante con una copia de la lista,
-      // bajo su apartado y sin salirse de la ventana.
       var menu = null;
       var menuDe = null;
       function colocarMenu() {
@@ -9501,8 +9181,6 @@ Enfoques NS</p>
         var izquierda = Math.min(caja.left, raiz.clientWidth - menu.offsetWidth - 8);
         menu.style.left = Math.round(Math.max(izquierda, 8)) + "px";
       }
-      // El foco entra en el menú sin mover la página; si el menú es más
-      // alto que la ventana, se desplaza él hasta enseñar el enlace.
       function enfocar(opcion) {
         opcion.focus({ preventScroll: true });
         var caja = opcion.getBoundingClientRect();
@@ -9524,8 +9202,6 @@ Enfoques NS</p>
         menu.textContent = "";
         menuDe = null;
         if (devolverFoco) {
-          // Sin mover la página: el índice va dentro del margen que reserva
-          // `scroll-padding-top` y el navegador querría sacarlo de él.
           boton.focus({ preventScroll: true });
         }
       }
@@ -9572,9 +9248,6 @@ Enfoques NS</p>
         }
       }
 
-      // El apartado en pantalla se realza al momento; su lista de
-      // subapartados espera a que la página se pare, para que un salto
-      // largo no abra y cierre por el camino las de los apartados que cruza.
       var apartadoActual = null;
       var pendiente = null;
       var reloj = 0;
@@ -9646,7 +9319,6 @@ Enfoques NS</p>
           if (menuDe === elemento) {
             cerrarMenu(false);
           } else {
-            // `detail` vale 0 cuando el botón se pulsa con el teclado.
             abrirMenu(elemento, evento.detail === 0);
           }
         } else if (elemento.classList.contains("abierto")) {
@@ -9656,8 +9328,6 @@ Enfoques NS</p>
         }
       });
 
-      // Un toque fuera del menú solo lo cierra: ni sigue un enlace ni, en
-      // el modo clase, amplía lo que se ha tocado.
       document.addEventListener(
         "click",
         function (evento) {
@@ -9671,8 +9341,6 @@ Enfoques NS</p>
         true
       );
 
-      // `Esc` cierra el menú antes de que el modo clase lo tome para
-      // apagarse; las flechas recorren sus enlaces.
       document.addEventListener(
         "keydown",
         function (evento) {
@@ -9698,12 +9366,6 @@ Enfoques NS</p>
         true
       );
 
-      // El menú se cierra al desplazar la página a mano, con la rueda o con
-      // el dedo, y al cambiar la ventana. Si la página se mueve sola bajo él
-      // (un salto que aún no ha terminado) o se arrastra la fila del índice,
-      // sigue a su apartado. Un gesto sobre el índice no lo cierra: el dedo
-      // que toca la flecha para cerrarlo se mueve un poco, y el toque que
-      // llega después lo volvería a abrir.
       ["wheel", "touchmove"].forEach(function (gesto) {
         document.addEventListener(
           gesto,
@@ -9739,9 +9401,6 @@ Enfoques NS</p>
         }
       });
 
-      // Al pasar de índice lateral a índice en fila, o al revés (al
-      // encender o apagar el modo clase, al girar la tableta), lo
-      // desplegado se recoge; al ampliar, el menú se cierra con el índice.
       var fila = enFila();
       function alCambiarDeDisposicion() {
         if (raiz.classList.contains("ampliando")) {
@@ -9782,9 +9441,6 @@ Enfoques NS</p>
         return;
       }
 
-      // Las secciones que cortan la franja de lectura, en el alto de la
-      // ventana. El observador solo avisa de las que cambian, así que se
-      // lleva la cuenta de todas.
       var aLaVista = [];
       var observador = new IntersectionObserver(
         function (entradas) {
@@ -9796,17 +9452,12 @@ Enfoques NS</p>
               aLaVista.splice(lugar, 1);
             }
           });
-          // Manda la sección de más adentro (un subapartado en su
-          // apartado, un laboratorio en su unidad, en la página de
-          // laboratorios) y, entre las que quedan, la que empieza más
-          // abajo, que es la que ocupa el final de la franja.
           var candidatas = aLaVista.filter(function (seccion) {
             return !aLaVista.some(function (otra) {
               return otra !== seccion && seccion.contains(otra);
             });
           });
           if (!candidatas.length) {
-            // Arriba del todo, en la portada, toca el primer apartado.
             if (secciones.length && secciones[0].seccion.getBoundingClientRect().top > 0) {
               activar(secciones[0].enlace, false);
             }
@@ -9840,9 +9491,6 @@ Enfoques NS</p>
         return;
       }
 
-      // Una fórmula centrada que es el único elemento de un elemento de
-      // lista va junto a su número (véase la plantilla), salvo si lleva
-      // texto suelto delante: entonces va debajo, como en el PDF.
       contenido.querySelectorAll("li > .math.display:only-child").forEach(function (formula) {
         for (var nodo = formula.previousSibling; nodo; nodo = nodo.previousSibling) {
           if (nodo.nodeType === Node.TEXT_NODE && nodo.textContent.trim() !== "") {
@@ -9852,10 +9500,6 @@ Enfoques NS</p>
         }
       });
 
-      // Una fórmula centrada que abre un elemento de lista sin ir sola
-      // (detrás lleva algo más, o va dentro de un párrafo) también va en
-      // línea, a todo el ancho, para que Safari pinte el número (véase la
-      // plantilla).
       function nodoConContenido(nodo) {
         while (nodo && nodo.nodeType !== Node.ELEMENT_NODE &&
                !(nodo.nodeType === Node.TEXT_NODE && nodo.textContent.trim() !== "")) {
@@ -9888,14 +9532,6 @@ Enfoques NS</p>
         throwOnError: false
       });
 
-      // En una fórmula en línea no se parte nada salvo donde KaTeX lo
-      // permitía, entre sus cajas: se marca ahí un espacio de anchura cero,
-      // con la clase del signo que cierra la caja de antes (relación u
-      // operación), y la plantilla decide cuáles se usan. Así el signo pegado
-      // (`.formula-con-signo`) va siempre con su fórmula en Safari y en
-      // Chrome, que deciden distinto el corte junto a una caja `inline-block`.
-      // Una fórmula corta, de hasta LETRAS_DE_UNA_CORTA letras, no se parte
-      // nunca: cabe entera hasta en la línea de un móvil.
       var LETRAS_DE_UNA_CORTA = 20;
       contenido.querySelectorAll(".math.inline .katex-html").forEach(function (html) {
         var cajas = html.querySelectorAll(":scope > .base");
@@ -9916,16 +9552,6 @@ Enfoques NS</p>
         }
       });
 
-      // Una fórmula que no cabe ni en una línea entera de su caja se deja
-      // partir: tras sus relaciones (`.partir-en-relaciones`) y, si un tramo
-      // entre dos relaciones tampoco cabe, por cualquier corte
-      // (`.partir-en-todo`). Se mide todo sin partir, al cargar, cuando
-      // llegan las letras de KaTeX, cuando cambia el ancho, al abrir un
-      // bloque plegado y al entrar o salir del modo clase; el zoom decide
-      // por su cuenta.
-      // La frase recuadrada del curso IB (`.final`) es la caja de sus
-      // fórmulas: es un bloque en línea, más estrecho que su párrafo, y una
-      // fórmula que cabe en el párrafo puede no caber en ella.
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
@@ -9953,10 +9579,6 @@ Enfoques NS</p>
           if (marco.width <= ancho + 1) {
             return "";
           }
-          // Lo que la fórmula lleva pegado cuenta en el tramo que toca: lo
-          // de delante, en el primero, y lo de detrás, en el último. Sin
-          // contarlo, una fórmula sin relaciones que cabía sola pero no con
-          // su signo se quedaba sin ningún corte abierto y se salía.
           var propia = formula.getBoundingClientRect();
           var mayor = 0;
           var tramo = propia.left - marco.left;
@@ -10011,10 +9633,6 @@ Enfoques NS</p>
   </script>
 
   <script>
-    // Bloques plegables (soluciones, ampliaciones y «Matemáticas en
-    // acción»): el contenido existe siempre en el documento; este realce
-    // solo lo esconde tras un botón. Sin JavaScript, o al imprimir, se ven
-    // completos.
     document.addEventListener("DOMContentLoaded", function () {
       document
         .querySelectorAll("#contenido-unidad .bloque-didactico.plegable")
@@ -10044,9 +9662,6 @@ Enfoques NS</p>
             }
           }
 
-          // Un interactivo inmediatamente posterior a un bloque de
-          // aplicación forma parte de él: se pliega y despliega con el
-          // mismo botón (el PDF también los retira juntos).
           if (esAplicacion) {
             var anexo = bloque.nextElementSibling;
             if (anexo && anexo.classList.contains("interactivo")) {
@@ -10082,17 +9697,6 @@ Enfoques NS</p>
   </script>
 
   <script>
-    // Curso IB: la solución de cada ejercicio, debajo de él (regla 14 de
-    // AGENTS.md; orden del profesor del 10 de octubre de 2026). Bajo cada
-    // enunciado queda un botón, «Ver solución», que abre allí mismo una
-    // copia de su solución, hecha al pulsarlo. El bloque «Soluciones» no se
-    // toca: fuera del modo clase solo se esconde, con su botón, y sigue
-    // siendo lo que usan el modo clase y su ampliación, lo que se imprime y
-    // lo que se ve sin JavaScript. Si un bloque no casa número a número con
-    // su lista de ejercicios, se queda como estaba. Dentro de la solución
-    // abierta, la cuenta centrada que no cabe en su caja se encoge hasta
-    // caber, con un tope. Este guion no lleva ningún signo de dólar: la
-    // plantilla es de Pandoc.
     document.addEventListener("DOMContentLoaded", function () {
       var contenido = document.getElementById("contenido-unidad");
       if (!contenido) {
@@ -10117,10 +9721,6 @@ Enfoques NS</p>
           return primero + lugar;
         });
       }
-      // La lista de ejercicios que responde un bloque: la que va justo antes
-      // de él o, si el bloque abre su sección («Comprueba tus respuestas»),
-      // justo antes de esa sección. Entre las dos solo puede haber el botón
-      // del bloque y el título de las respuestas.
       function listaDeEjercicios(bloque) {
         var nodo = bloque;
         for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
@@ -10137,7 +9737,6 @@ Enfoques NS</p>
         }
         return null;
       }
-      // ¿Es una fórmula centrada lo único que lleva el enunciado?
       function soloFormula(ejercicio) {
         var formula = ejercicio.firstElementChild;
         if (!formula || formula !== ejercicio.lastElementChild || !formula.matches(".math.display")) {
@@ -10152,16 +9751,6 @@ Enfoques NS</p>
         panel.boton.setAttribute("aria-expanded", "false");
         panel.rotulo.textContent = VER;
       }
-      // Una cuenta centrada que no cabe en su caja (en un teléfono en
-      // vertical, casi todas) dejaba fuera de la vista su final, que es
-      // donde va el resultado recuadrado. Primero se le da todo el ancho de
-      // la solución: sale de la sangría de su apartado, por debajo de la
-      // letra, que solo ocupa el primer renglón. Si ni así cabe, se encoge
-      // hasta caber, con el tope de las fórmulas de los resúmenes (el
-      // 60 %): por debajo se leería mal, y la que tampoco cabe se queda en
-      // el tope y se desliza de lado, como antes. Se mide con la letra
-      // entera cada vez, porque el ancho de la caja cambia al girar el
-      // teléfono y el de la cuenta, cuando llegan las letras de KaTeX.
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
         var estilo = window.getComputedStyle(caja);
@@ -10182,8 +9771,6 @@ Enfoques NS</p>
           if (!(ancho > 0) || cuenta.scrollWidth <= ancho + 1) {
             return;
           }
-          // La que comparte renglón con su número o su letra (va en línea)
-          // no se mueve: los pisaría.
           var sangria = Math.floor(cuenta.getBoundingClientRect().left - borde);
           if (sangria > 0 && window.getComputedStyle(cuenta).display === "block") {
             cuenta.style.marginLeft = -sangria + "px";
@@ -10226,9 +9813,6 @@ Enfoques NS</p>
           if (suyos.join() !== numerosDeLaLista(soluciones).join()) {
             return;
           }
-          // Una figura de la nota que abre el bloque va con la solución del
-          // ejercicio que nombra su pie («Las cuatro rectas del ejercicio
-          // 5»); si no nombra ninguno de la lista, con la del primero.
           var figuras = {};
           Array.prototype.forEach.call(bloque.children, function (hijo) {
             var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
@@ -10293,12 +9877,6 @@ Enfoques NS</p>
         }
       );
 
-      // Las cuentas de las soluciones abiertas se vuelven a medir cuando
-      // cambia el ancho de la página (al girar el teléfono) y cuando llegan
-      // las letras de KaTeX. Solo si cambia el ancho: en un teléfono, la
-      // barra del navegador que aparece y desaparece al desplazar también
-      // avisa de un cambio de tamaño. Se hace en el momento, sin esperar a
-      // un fotograma, que en una pestaña en segundo plano no llega.
       var anchoVisto = contenido.clientWidth;
       window.addEventListener("resize", function () {
         if (contenido.clientWidth === anchoVisto) {
@@ -10312,9 +9890,6 @@ Enfoques NS</p>
       }
       window.addEventListener("load", encogerLasAbiertas);
 
-      // En el modo clase no hay botones de ejercicio: se pliegan y se vacían
-      // las copias, para que la ampliación solo encuentre las soluciones del
-      // bloque.
       new MutationObserver(function () {
         if (!document.documentElement.classList.contains("modo-clase")) {
           return;
@@ -10330,11 +9905,6 @@ Enfoques NS</p>
   </script>
 
   <script>
-    // Modo clase: interruptor del índice o `?clase` en la dirección; `Esc`
-    // lo apaga. Al encender o apagar, la vista se queda en el apartado donde
-    // estaba. La barra recorre los apartados y abre las soluciones del
-    // apartado en pantalla; sus teclas no actúan dentro de los campos de los
-    // laboratorios.
     document.addEventListener("DOMContentLoaded", function () {
       var raiz = document.documentElement;
       var interruptor = document.getElementById("modo-clase");
@@ -10371,9 +9941,6 @@ Enfoques NS</p>
       function visible(elemento) {
         return elemento.getClientRects().length > 0;
       }
-      // Lo que tapa la parte de arriba: la cabecera y el índice cuando van a
-      // todo lo ancho (en el modo clase, de la cabecera solo queda el
-      // interruptor en la esquina).
       function bordeSuperior() {
         var borde = 0;
         if (cabecera && visible(cabecera)) {
@@ -10391,9 +9958,6 @@ Enfoques NS</p>
         return borde;
       }
 
-      // Un apartado cuyo contenido propio no se ve (solo prosa, que el modo
-      // oculta) no es parada: lo representa su primer subapartado, y el
-      // salto lleva al título del apartado.
       function contenidoPropio(seccion) {
         for (var i = 0; i < seccion.children.length; i++) {
           var hijo = seccion.children[i];
@@ -10456,7 +10020,6 @@ Enfoques NS</p>
         var lista = paradas();
         var presente = actual(lista);
         var i = lista.indexOf(presente);
-        // Hacia atrás, desde la mitad de un apartado, primero a su comienzo.
         if (paso < 0 && destino(presente).getBoundingClientRect().top < bordeSuperior() - 40) {
           llevar(destino(presente), 8);
           pintar();
@@ -10466,9 +10029,6 @@ Enfoques NS</p>
         llevar(destino(lista[j]), 8);
         pintar();
       }
-      // Del apartado en pantalla, el primer elemento que asoma bajo el borde
-      // (o el último, si todos quedaron arriba); si el apartado no tiene
-      // ninguno, el siguiente del documento.
       function elegir(selector) {
         var seccion = actual(paradas());
         var borde = bordeSuperior();
@@ -10489,7 +10049,6 @@ Enfoques NS</p>
         }
         return null;
       }
-      // Lo que se acaba de abrir, si queda fuera de la vista, se trae a ella.
       function asomar(elemento) {
         var caja = elemento.getBoundingClientRect();
         if (caja.top < bordeSuperior() || caja.bottom > window.innerHeight) {
@@ -10507,11 +10066,6 @@ Enfoques NS</p>
         }
       }
 
-      // Ancla para no perder el sitio al cambiar de modo: el primer elemento
-      // que se ve en los dos modos y asoma bajo el borde, si está en el
-      // primer cuarto de la pantalla; si no (arriba solo hay texto), el
-      // apartado más interno que ocupa la parte de arriba, que queda con su
-      // título arriba.
       var ESTABLES =
         "h2, h3, h4, h5, .bloque-didactico, figure, table, .fichas, .interactivo, " +
         ".ejercicios ol > li, .boton-soluciones, section > p";
@@ -10534,9 +10088,6 @@ Enfoques NS</p>
       function anclar() {
         var borde = bordeSuperior();
         var todas = contenido.querySelectorAll("section");
-        // La línea de referencia queda algo por debajo del borde: un salto
-        // deja el título a 8 píxeles y ese hueco no debe contar como el
-        // apartado padre.
         var linea = borde + 24;
         var arriba = null;
         for (var k = 0; k < todas.length; k++) {
@@ -10552,13 +10103,9 @@ Enfoques NS</p>
           }
           var caja = candidatos[i].getBoundingClientRect();
           if (caja.bottom > borde + 4) {
-            // Solo vale si es del apartado de arriba, no del siguiente.
             var suya = candidatos[i].closest("section");
             var delDeArriba = !arriba || (suya && suya.contains(arriba));
             if (delDeArriba && caja.top - borde < (window.innerHeight - borde) / 4) {
-              // Cortado por el borde: se guarda la proporción que quedaba
-              // arriba, porque su altura cambia de un modo a otro; una
-              // fórmula suelta vuelve entera.
               if (caja.top < borde) {
                 if (candidatos[i].matches("section > p")) {
                   return { elemento: candidatos[i], desfase: 8 };
@@ -10580,8 +10127,6 @@ Enfoques NS</p>
           cerrarAmpliacion();
         }
         var ancla = anclar();
-        // Si arriba de la pantalla ya se estaba dentro del apartado del ancla,
-        // ese apartado no puede bajar: encima no debe asomar el anterior.
         var propia = ancla ? ancla.elemento.closest("section") : null;
         var dentro = propia && propia.getBoundingClientRect().top <= bordeSuperior() + 4;
         raiz.classList.toggle("modo-clase", encendido);
@@ -10664,22 +10209,11 @@ Enfoques NS</p>
             return;
         }
       });
-      // Ampliar («toca y se amplía»): en el modo clase, un toque sobre una
-      // fórmula, unas fichas, un bloque, una lista o una figura lo deja solo
-      // en la pantalla con la letra más grande que quepa. La ampliación
-      // cambia el tamaño de `rem`: el contenido se recoloca, como con el
-      // zoom de página, y no se estira como con el pellizco. Una unidad que
-      // entera quedaría lejos de la letra de una transparencia se reparte en
-      // partes por sus piezas (fichas, líneas de una lista, ejercicios,
-      // párrafos de un bloque). Los laboratorios no se amplían.
       var UNIDADES =
         ".fichas, .bloque-didactico, figure, table, " +
         ":is(section, .tramo-repaso) > :is(ul, ol), " +
         ":is(section, .tramo-repaso) > p";
       var AMPLIACION_MAXIMA = 3.2;
-      // Letra que se busca, en proporción a la altura de la ventana: la de
-      // una transparencia (24 pt en una de 7,5 pulgadas) es el 4,4 %, y la
-      // ventana del navegador es algo más baja que la pantalla.
       var LETRA_OBJETIVO = 0.046;
       var ampliacion = null;
 
@@ -10717,13 +10251,9 @@ Enfoques NS</p>
       function hijosVisibles(caja) {
         return Array.prototype.filter.call(caja.children, visible);
       }
-      // El rótulo de un bloque («Ejemplo», «Errores frecuentes»…) acompaña a
-      // todas sus partes.
       function esRotulo(elemento) {
         return !!elemento.querySelector(":scope > .etiqueta-bloque");
       }
-      // Lo que acompaña a todas las partes de una unidad: los rótulos de un
-      // bloque, o la cabecera y las columnas de una tabla.
       function fijosDe(unidad) {
         if (unidad.tagName === "TABLE") {
           return Array.prototype.filter.call(unidad.children, function (hijo) {
@@ -10761,8 +10291,6 @@ Enfoques NS</p>
         });
         return piezas;
       }
-      // Número que pinta cada elemento de una lista numerada: si luego solo
-      // se ve una parte, cada uno conserva el suyo.
       function numerosDe(lista, soloVisibles) {
         var pares = [];
         if (lista.tagName !== "OL") {
@@ -10803,8 +10331,6 @@ Enfoques NS</p>
           ampliacion.tarjeta.style.paddingTop = "";
         }
       }
-      // Deja a la vista solo los elementos dados, enteros, y el camino de
-      // cajas que los contiene; el apartado de ese camino hace de pantalla.
       function mostrar(visibles) {
         var a = ampliacion;
         limpiar();
@@ -10836,7 +10362,6 @@ Enfoques NS</p>
         if (!a.tarjeta) {
           return false;
         }
-        // Sitio para el título, que puede ocupar dos líneas.
         a.tarjeta.style.paddingTop = a.margenArriba + "px";
         var quedan = Array.prototype.filter.call(a.tarjeta.children, function (hijo) {
           return !hijo.classList.contains("ampliar-oculto");
@@ -10856,10 +10381,6 @@ Enfoques NS</p>
       function ponerZoom(zoom) {
         raiz.style.fontSize = Math.round(zoom * 1000) / 10 + "%";
       }
-      // Las ecuaciones escritas dentro de una frase no se parten entre dos
-      // líneas (van con `nowrap`); se deja partir solo la que, con el tamaño
-      // puesto, no cabe ni en una línea entera de su párrafo. Se mide con el
-      // signo que lleva pegado, que ya no se separa de ella.
       function partirLoImprescindible() {
         var formulas = Array.prototype.filter.call(
           ampliacion.tarjeta.querySelectorAll(".math.inline"),
@@ -10883,7 +10404,6 @@ Enfoques NS</p>
             formula.classList.add("formula-partible");
           });
       }
-      // ¿Cabe lo que se ve, a lo alto y a lo ancho, con el tamaño puesto?
       function cabe() {
         var a = ampliacion;
         partirLoImprescindible();
@@ -10904,12 +10424,6 @@ Enfoques NS</p>
         }
         return true;
       }
-      // ¿Se sale algo de verdad de su caja? Una raíz o un paréntesis alto
-      // sobresalen un par de píxeles aunque la fórmula quepa, así que una
-      // fórmula centrada se mide por sus piezas (`.base`), no por su
-      // `scrollWidth`: el margen del 3 % que se daba antes por eso dejaba
-      // esconder hasta 40 px del final de las más anchas (22 de septiembre
-      // de 2026, «hay veces que no se ve todo»).
       function seSale(caja) {
         var piezas = caja.classList.contains("math")
           ? caja.querySelectorAll(".katex-html > .base, .katex-html > .tag")
@@ -10925,15 +10439,11 @@ Enfoques NS</p>
         }
         return false;
       }
-      // El mayor tamaño entre los dos dados con el que cabe; 0 si no cabe ni
-      // con el menor.
       function mayorZoom(minimo, maximo) {
         var a = ampliacion;
         a.tarjeta.classList.toggle("ampliar-partible", !!a.partible);
         ponerZoom(minimo);
         if (!cabe()) {
-          // Ni con el tamaño menor: es imprescindible dejar que las
-          // ecuaciones de las frases (las de una tabla, sobre todo) se partan.
           if (a.partible) {
             return 0;
           }
@@ -10960,8 +10470,6 @@ Enfoques NS</p>
         }
         return Math.max(minimo, Math.floor(abajo * 20) / 20);
       }
-      // Si con el tamaño elegido alguna ecuación tuviera que partirse, se
-      // prueba con algo menos de letra (hasta un 15 %) antes de dejarla partir.
       function evitarPartir(zoom) {
         var a = ampliacion;
         ponerZoom(zoom || 1);
@@ -10977,9 +10485,6 @@ Enfoques NS</p>
         }
         return zoom;
       }
-      // Reparte la unidad en partes: entera si así ya se acerca a la letra
-      // buscada; si no, tantas piezas seguidas por parte como quepan con esa
-      // letra. Una pieza que sola no cabe con ella lleva la mayor que admita.
       function componer(unidad) {
         var a = ampliacion;
         a.numeros = [];
@@ -10993,9 +10498,6 @@ Enfoques NS</p>
         var rotulos = fijosDe(unidad);
         a.partible = false;
         var entera = evitarPartir(mayorZoom(1, AMPLIACION_MAXIMA));
-        // Una tabla se lee comparando sus filas: aguanta entera con menos
-        // letra que lo demás y, si se reparte, todas sus partes llevan la
-        // misma, la de la fila que menos admite.
         var esTabla = unidad.tagName === "TABLE";
         if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? 0.7 : 0.85)) {
           return [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
@@ -11032,11 +10534,6 @@ Enfoques NS</p>
         });
         return partes;
       }
-      // Soluciones de una lista de ejercicios: el bloque plegable que la
-      // sigue en su sección, con el número de cada respuesta. El «Soluciones»
-      // de segundo nivel conserva su título y queda en una sección aparte,
-      // justo detrás de la de sus ejercicios (la síntesis de las unidades 1):
-      // si la sección de la lista no lleva bloque, se toma el de esa.
       function solucionesDeLaLista(unidad) {
         var seccion = unidad.tagName === "OL" ? unidad.closest("section.ejercicios") : null;
         if (!seccion || unidad.parentElement.closest(".resultado")) {
@@ -11055,9 +10552,6 @@ Enfoques NS</p>
         var lista = bloque ? bloque.querySelector(":scope > ol") : null;
         return lista ? numerosDe(lista, false) : null;
       }
-      // El bloque de la sección «Soluciones» que va justo detrás de la sección
-      // de ejercicios más exterior, dentro del mismo apartado (la pantalla de
-      // la ampliación es un apartado: de otro no podría traer las respuestas).
       function solucionesAparte(seccion) {
         var exterior = seccion;
         for (var madre = seccion; madre; madre = madre.parentElement.closest("section.ejercicios")) {
@@ -11069,12 +10563,6 @@ Enfoques NS</p>
         }
         return detras.querySelector(":scope > .resultado.plegable");
       }
-      // Respuestas de los ejercicios de una parte. Sus números salen solo de
-      // los ejercicios: con las respuestas a la vista, `a.numeros` lleva
-      // también los pares de las soluciones, y con la unidad entera como
-      // única parte (una lista de un solo ejercicio, como la competencial que
-      // va tras su laboratorio) entrarían todas las del bloque, también las
-      // de las otras listas con las que lo comparte.
       function respuestasDe(parte) {
         var a = ampliacion;
         if (!a.soluciones) {
@@ -11101,7 +10589,6 @@ Enfoques NS</p>
       function texto(elemento) {
         return elemento ? elemento.textContent.replace(/\s+/g, " ").trim() : "";
       }
-      // El título de un apartado, como en la web: el número lleva su punto.
       function tituloDe(encabezado) {
         var numero = encabezado ? encabezado.querySelector(".header-section-number") : null;
         if (!numero) {
@@ -11109,9 +10596,6 @@ Enfoques NS</p>
         }
         return texto(numero) + ". " + texto(encabezado).slice(texto(numero).length).trim();
       }
-      // Arriba, el subapartado de lo ampliado, en grande, y detrás el título
-      // interior («Propiedades», «Ejercicios») o el aviso de repaso. Se pone
-      // antes de componer, porque de sus líneas depende el sitio que queda.
       function titular(unidad) {
         var a = ampliacion;
         var ambito = unidad.closest("section.level3") || unidad.closest("section.level2");
@@ -11167,7 +10651,6 @@ Enfoques NS</p>
         mostrar(parte.visibles.concat(respuestas));
         a.partible = !!parte.partible;
         a.tarjeta.classList.toggle("ampliar-partible", a.partible);
-        // Con las respuestas debajo puede hacer falta una letra algo menor.
         ponerZoom(respuestas.length ? mayorZoom(1, parte.zoom) || 1 : parte.zoom);
         partirLoImprescindible();
         a.tarjeta.scrollTop = 0;
@@ -11253,9 +10736,6 @@ Enfoques NS</p>
           prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
         }
       }
-      // Las respuestas salen debajo de sus ejercicios. Si con ellas la letra
-      // se quedara corta, la parte se reparte en un ejercicio con su
-      // respuesta por pantalla.
       function alternarRespuestas() {
         var a = ampliacion;
         if (botonSoluciones.hidden) {
@@ -11281,7 +10761,6 @@ Enfoques NS</p>
               return suelto;
             });
             Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(sueltos));
-            // Se queda en el ejercicio que se tocó, si se abrió tocando uno.
             sueltos.forEach(function (suelto, lugar) {
               if (a.toque && suelto.piezas[0].contains(a.toque)) {
                 a.pagina += lugar;
@@ -11292,7 +10771,6 @@ Enfoques NS</p>
         }
         pintarParte();
       }
-      // Lo que asoma arriba de la pantalla, ampliado: para la barra y la tecla A.
       function ampliarLoQueSeVe() {
         var unidad = elegir(".ampliable");
         if (unidad) {
@@ -11355,8 +10833,6 @@ Enfoques NS</p>
         }
         boton.blur();
       });
-      // Deslizar con un dedo pasa de parte, salvo sobre una fórmula que se
-      // desplaza porque no cabe.
       var gesto = null;
       document.addEventListener(
         "touchstart",
@@ -11389,7 +10865,6 @@ Enfoques NS</p>
         },
         { passive: true }
       );
-      // Al girar la tableta o cambiar la ventana se recompone lo ampliado.
       var recomposicion = false;
       window.addEventListener("resize", function () {
         if (!ampliacion || recomposicion) {
@@ -11430,17 +10905,6 @@ Enfoques NS</p>
   </script>
 
   <script type="text/babel" data-presets="env,react">
-    // Infografías animadas del curso IB (regla 14 de AGENTS.md): el dibujo
-    // de una idea, en línea blanca sobre el tono de la unidad, con el
-    // lenguaje de las tarjetas de la portada. Van plegadas tras una cinta
-    // «Trazo a trazo» y, abiertas, llevan mandos de reproductor: reproducir
-    // y pausa, una barra de avance, la mitad de velocidad y repetir.
-    //
-    // Tienen guion propio, delante del principal, porque Babel avisa en la
-    // consola cuando un guion pasa de 500 000 caracteres y el principal ya
-    // anda cerca. Este deja sus componentes en window.InfografiasIB, y el
-    // principal los añade a su registro. Como toda la plantilla, no lleva
-    // el signo del dólar: es de Pandoc, que lo leería como una variable.
     (() => {
       if (!window.React) {
         return;
@@ -11448,12 +10912,7 @@ Enfoques NS</p>
 
       const { useCallback, useEffect, useMemo, useRef, useState } = React;
 
-      // ---- Las piezas de un dibujo ----
 
-      // Cada pieza lleva una clase e-… y, en --t, el instante en que entra
-      // (en --d, lo que dura un trazo o una luz). Su animación está siempre
-      // en pausa: el instante que se ve lo fija la variable --ahora del
-      // lienzo, que mueve el reproductor.
       function cuando(t, dura) {
         const estilo = { "--t": t.toFixed(2) + "s" };
         if (dura !== undefined) {
@@ -11464,36 +10923,29 @@ Enfoques NS</p>
 
       const n1 = (valor) => valor.toFixed(1);
 
-      // Una línea que se dibuja de un extremo al otro.
       function Trazo({ t, dura, ...resto }) {
         return <path className="e-trazo" style={cuando(t, dura)} pathLength="100" {...resto} />;
       }
 
-      // Algo que aparece sin más.
       function Velo({ t, como, ...resto }) {
         const Pieza = como || "path";
         return <Pieza className="e-velo" style={cuando(t)} {...resto} />;
       }
 
-      // Algo que brota desde su centro.
       function Punto({ t, como, ...resto }) {
         const Pieza = como || "circle";
         return <Pieza className="e-punto" style={cuando(t)} fill="#fff" stroke="none" {...resto} />;
       }
 
-      // Una barra que crece desde su base.
       function Barra({ t, ...resto }) {
         return <rect className="e-crece" style={cuando(t)} fill="#fff" stroke="none" {...resto} />;
       }
 
-      // Un rótulo (o un grupo de ellos) que sube a su sitio. Con la clase
-      // e-letra aparece sin moverse; con e-baja, desde arriba.
       function Rotulo({ t, clase, como, ...resto }) {
         const Pieza = como || "text";
         return <Pieza className={clase || "e-rotulo"} style={cuando(t)} {...resto} />;
       }
 
-      // Un trazo con su halo, y la luz que lo recorre mientras se dibuja.
       function Halo({ t, dura, d, grosor }) {
         return (
           <g>
@@ -11513,15 +10965,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- La letra de los rótulos ----
 
-      // Un rótulo es una fórmula mientras no se diga otra cosa: va con las
-      // letras de KaTeX, que son las de las fórmulas de la página. Una
-      // variable lleva su cursiva, y las palabras, la letra del texto
-      // (orden del profesor del 9 de octubre de 2026, por la noche, ante un
-      // rótulo en Times: «que sean más bonitas visualmente la tipografía»).
-      // El punto de multiplicar es el de las fórmulas (U+22C5): el punto
-      // volado corriente no está en esas letras.
       const cursiva = (letra) => <tspan className="letra-ib">{letra}</tspan>;
 
       const palabra = (texto, fuerte) => (
@@ -11530,12 +10974,8 @@ Enfoques NS</p>
 
       const POR = " \u22C5 ";
 
-      // Aire entre dos partes de un rótulo: los espacios corrientes se
-      // funden en uno, y estos, que no se parten, no.
       const HUECO = "\u00A0\u00A0\u00A0";
 
-      // Subíndice y superíndice. El último tramo de cada uno, que no se
-      // ve, devuelve la línea a su sitio.
       function Sub({ children }) {
         return (
           <tspan>
@@ -11558,8 +10998,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una fracción centrada en x: `y` es la línea de base del renglón y
-      // `s`, el tamaño de su letra; `ancho`, lo que mide la raya.
       function Quebrado({ x, y, s, ancho, arriba, abajo }) {
         const letra = 0.84 * s;
         const raya = y - 0.3 * s;
@@ -11576,8 +11014,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una raíz: el signo con su raya y lo de dentro, que empieza en x y
-      // ocupa `ancho`.
       function Raiz({ x, y, s, ancho, indice, children }) {
         const d =
           "M" + n1(x - 0.5 * s) + " " + n1(y - 0.36 * s) +
@@ -11600,7 +11036,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una fórmula corta del texto que acompaña al dibujo.
       function Mates({ tex }) {
         if (!window.katex) {
           return <span>{tex}</span>;
@@ -11619,7 +11054,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un rectángulo de esquinas redondas, como camino que se puede trazar.
       function caja(x, y, ancho, alto, radio) {
         const r = radio + " " + radio + " 0 0 1 ";
         return (
@@ -11630,9 +11064,6 @@ Enfoques NS</p>
         );
       }
 
-      // Varios segmentos en un solo camino que se trazan a la vez: el guion
-      // de un trazo vuelve a empezar en cada tramo, así que basta con que
-      // el más largo mida algo menos de 100 (pathLength).
       function abanico(segmentos) {
         let total = 0;
         let mayor = 0;
@@ -11647,14 +11078,7 @@ Enfoques NS</p>
         return { d: d, pathLength: (99.5 * total) / mayor };
       }
 
-      // ---- El reproductor ----
 
-      // Lo que avanza el dibujo por cada segundo de reloj. Los instantes de
-      // las piezas están escritos al doble de este paso: el profesor los
-      // vio así, con el mando de «×0,5» puesto, y pidió esa velocidad como
-      // la normal y, para el mando, la mitad de ella (9 de octubre de 2026:
-      // «la velocidad normal debería ser la que está ahora x0,5 y la
-      // velocidad x0,5 la mitad de esa»).
       const PASO_NORMAL = 0.5;
       const PASO_LENTO = 0.25;
 
@@ -11681,9 +11105,6 @@ Enfoques NS</p>
         );
       }
 
-      // La infografía entera: la cinta que la abre, el lienzo (640 de ancho
-      // y el alto que pida el dibujo; los rótulos van en «rotulos»,
-      // centrados y con la letra de las fórmulas), los mandos y el texto.
       function InfografiaIB({ configuracion, alPreparar, tono, titulo, duracion, alto, descripcion, texto, rotulos, children }) {
         const lienzo = useRef(null);
         const barra = useRef(null);
@@ -11703,7 +11124,6 @@ Enfoques NS</p>
           return () => window.clearTimeout(arranque.current);
         }, [alPreparar]);
 
-        // Fija el instante que se ve: lo leen los estilos de las piezas.
         const poner = useCallback(
           (t) => {
             const ahora = Math.min(Math.max(t, 0), duracion);
@@ -11718,8 +11138,6 @@ Enfoques NS</p>
           [duracion]
         );
 
-        // El reloj: avanza con cada fotograma y, por si no llegan (una
-        // pestaña que no se pinta), también con un temporizador.
         useEffect(() => {
           if (!marcha) {
             return undefined;
@@ -11757,12 +11175,10 @@ Enfoques NS</p>
           }
           setAbierta(true);
           if (quieta) {
-            // Con el movimiento reducido se abre con el dibujo entero.
             poner(duracion);
             return;
           }
           poner(0);
-          // Empieza cuando el cuerpo ya se ha desplegado.
           arranque.current = window.setTimeout(() => setMarcha(true), 550);
         };
 
@@ -11817,8 +11233,6 @@ Enfoques NS</p>
                   ref={lienzo}
                   className="lienzo-infografia-ib"
                   onClick={(evento) => {
-                    // En modo clase, un clic en el contenido lo amplía:
-                    // aquí para o reanuda el dibujo y no pasa de ahí.
                     evento.stopPropagation();
                     reproducir();
                   }}
@@ -11879,15 +11293,11 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: n términos, n − 1 saltos ----
 
-      // La progresión 7, 11, 15, 19 del subapartado 2.1: de un término al
-      // siguiente hay un salto, así que del primero al cuarto hay tres.
       function SaltosProgresionInfografia({ configuracion, alPreparar }) {
         const suelo = 146;
         const lugares = [104, 236, 368, 500];
         const valores = [7, 11, 15, 19];
-        // Cada salto sale cuando ha llegado el anterior.
         const sale = (orden) => 0.75 + 0.6 * orden;
         const llega = (orden) => (orden === 0 ? 0.5 : sale(orden - 1) + 0.4);
         const arco = (orden) =>
@@ -11991,11 +11401,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: el árbol del menú ----
 
-      // El menú de 3 primeros, 4 segundos y 2 postres del subapartado 1.1:
-      // el diagrama de árbol que la teoría nombra. Cada camino de la raíz
-      // a una hoja es un menú.
       function ArbolMenuInfografia({ configuracion, alPreparar }) {
         const alturas = [30, 98, 174, 238];
         const hojas = [];
@@ -12012,8 +11418,6 @@ Enfoques NS</p>
         const segundos = medios(hojas, 2);
         const primeros = medios(segundos, 4);
         const raiz = primeros[1];
-        // Las ramas de un nivel, en un solo camino. Para que se tracen a la
-        // vez y enteras, la más larga mide algo menos de 100 (pathLength).
         const ramas = (padres, hijos, porPadre, nivel) => {
           let total = 0;
           let mayor = 0;
@@ -12028,8 +11432,6 @@ Enfoques NS</p>
             .join("");
           return { d: d, pathLength: (99.5 * total) / mayor };
         };
-        // El menú que sigue la luz: segundo primero, tercer segundo y
-        // segundo postre.
         const camino = [raiz, primeros[1], segundos[6], hojas[13]]
           .map((x, nivel) => (nivel === 0 ? "M" : "L") + n1(x) + " " + alturas[nivel])
           .join("");
@@ -12116,17 +11518,12 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: menor que 1, logaritmo negativo ----
 
-      // La curva de ln x cruza el eje en 1: a su izquierda, el logaritmo
-      // es negativo. Con los datos del ejemplo del subapartado 3.3, ln 0,8
-      // es negativo, y al dividir por él la desigualdad cambia de sentido.
       function LogaritmoNegativoInfografia({ configuracion, alPreparar }) {
         const px = (x) => 72 + 150 * x;
         const py = (y) => 88 - 50 * y;
         const tramos = [];
         for (let paso = 0; paso <= 120; paso += 1) {
-          // De 0,04 a 3,5, con más puntos cerca del 0, donde cae deprisa.
           const x = 0.04 * Math.pow(87.5, paso / 120);
           tramos.push((paso === 0 ? "M" : "L") + n1(px(x)) + " " + n1(py(Math.log(x))));
         }
@@ -12225,14 +11622,8 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: parejas y uno suelto ----
 
-      // Lo que dicen 2k, 2k + 1, 3k, 3k + 1 y 3k + 2 del subapartado 1.2:
-      // un entero repartido en grupos de dos o de tres, y lo que sobra. Dos
-      // impares distintos tienen distinto número de parejas: otra letra.
       function ParejasSueltoInfografia({ configuracion, alPreparar }) {
-        // Cada fila: dónde empieza, a qué altura, cuántos puntos por grupo,
-        // cuántos grupos, cuántos sobran, cuándo entra y cómo se escribe.
         const filas = [
           [118, 96, 2, 2, 0, 0.45, "2", "k", ""],
           [118, 158, 2, 2, 1, 1.4, "2", "k", " + 1"],
@@ -12334,21 +11725,14 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 0: cada número, en su conjunto ----
 
-      // Los cinco números del subapartado 1.1: cada uno llega con su
-      // disfraz y, ya simplificado, cae en el menor conjunto que lo
-      // contiene. Los conjuntos van uno dentro de otro.
       function ConjuntosNumerosInfografia({ configuracion, alPreparar }) {
-        // De dentro afuera: letra, caja y cuándo entra.
         const conjuntos = [
           { letra: "N", x: 62, y: 104, ancho: 152, alto: 124, t: 0.2 },
           { letra: "Z", x: 46, y: 74, ancho: 332, alto: 166, t: 0.6 },
           { letra: "Q", x: 30, y: 44, ancho: 464, alto: 208, t: 1 },
           { letra: "R", x: 14, y: 14, ancho: 612, alto: 250, t: 1.4 }
         ];
-        // Las letras huecas son las de las fórmulas de la página: la
-        // fuente de KaTeX las guarda en el sitio de las mayúsculas.
         const hueca = "KaTeX_AMS, 'Times New Roman', Times, serif";
         const negrita = (valor) => <tspan fontWeight="700">{valor}</tspan>;
 
@@ -12465,12 +11849,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 0: bajar un exponente es dividir ----
 
-      // Las potencias de 2, de 2³ a 2⁻³ (el 2⁻³ = 1/8 del subapartado
-      // 4.1): cada vez que el exponente baja uno, el valor se divide
-      // entre 2. Así se llega a 2⁰ = 1 y a los exponentes negativos, que
-      // dan números pequeños pero positivos.
       function EscaleraExponentesInfografia({ configuracion, alPreparar }) {
         const suelo = 232;
         const exponentes = [3, 2, 1, 0, -1, -2, -3];
@@ -12602,11 +11981,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: una cuadrática disfrazada ----
 
-      // El ejemplo del subapartado 3.1: en e²ˣ − 5eˣ + 6 = 0, cada eˣ se
-      // cambia por z, sale z = 2 o z = 3 y, al deshacer el cambio, se
-      // busca dónde alcanza la curva de eˣ esas dos alturas.
       function CuadraticaDisfrazadaInfografia({ configuracion, alPreparar }) {
         const px = (x) => 440 + 100 * x;
         const py = (y) => 262 - 62 * y;
@@ -12623,12 +11998,10 @@ Enfoques NS</p>
             <Sup>{cursiva("x")}</Sup>
           </tspan>
         );
-        // Las dos alturas: valor, cuándo entra y dónde va el rótulo de ln.
         const alturas = [
           { valor: 2, t: 4.9, rotulo: 503 },
           { valor: 3, t: 5.8, rotulo: 558 }
         ];
-        // Un renglón de la cuenta: las dos casillas y lo que las rodea.
         const renglon = (y, t, dentro, conParentesis) => (
           <g>
             <Rotulo clase="e-letra" t={t} x="168" y={y} fontSize="25">
@@ -12772,16 +12145,10 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: tres medallas ----
 
-      // La carrera de 8 corredores del subapartado 2.1: el oro puede ser
-      // para cualquiera de los 8; la plata, para cualquiera de los 7 que
-      // quedan, y el bronce, para cualquiera de los 6 restantes. Los 5 que
-      // se quedan sin medalla son el 5! que divide.
       function TresMedallasInfografia({ configuracion, alPreparar }) {
         const fila = 70;
         const corredor = (orden) => 110 + 60 * orden;
-        // Cada medalla: su casilla, quiénes optan, quién se la lleva y cuándo.
         const medallas = [
           { nombre: "oro", x: 190, optan: [0, 1, 2, 3, 4, 5, 6, 7], gana: 5, t: 1.6 },
           { nombre: "plata", x: 320, optan: [0, 1, 2, 3, 4, 6, 7], gana: 6, t: 3.1 },
@@ -12887,11 +12254,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: seis ordenaciones, tres palabras ----
 
-      // Las letras a, a y b del subapartado 2.2. Si las dos a se
-      // distinguieran habría 3! = 6 ordenaciones; al borrar la marca, cada
-      // palabra sale 2! = 2 veces, y quedan 3!/2! = 3.
       function PalabrasRepetidasInfografia({ configuracion, alPreparar }) {
         const palabras = [
           { letras: ["a", "a", "b"], pares: [["a1", "a2", "b"], ["a2", "a1", "b"]], y: 80, t: 2.3 },
@@ -13011,11 +12374,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: multiplicar por la razón y restar ----
 
-      // La cuenta que abre el subapartado 3.2, con la progresión 2, 6, 18,
-      // 54 de 3.1: la suma y su triple llevan los mismos términos, menos
-      // uno a cada lado, y al restar se van todos los de en medio.
       function MultiplicarRestarInfografia({ configuracion, alPreparar }) {
         const columna = (orden) => 190 + 90 * orden;
         const suma = (
@@ -13024,8 +12383,6 @@ Enfoques NS</p>
             <Sub>4</Sub>
           </tspan>
         );
-        // Cada renglón: altura, cuándo entra, qué lleva delante, sus
-        // términos y la columna en la que empieza.
         const renglones = [
           { y: 64, t: 0.2, delante: "", terminos: [2, 6, 18, 54], desde: 0 },
           { y: 128, t: 1.9, delante: "3", terminos: [6, 18, 54, 162], desde: 1 }
@@ -13125,18 +12482,12 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: ecuación o identidad ----
 
-      // Las dos igualdades de la definición del subapartado 1.1. En la
-      // ecuación x² = 5x, las dos gráficas solo coinciden en dos puntos;
-      // en la identidad (x − 4)² ≡ x² − 8x + 16, son la misma curva.
       function EcuacionIdentidadInfografia({ configuracion, alPreparar }) {
         const x = cursiva("x");
         const cuadrado = <Sup>2</Sup>;
-        // Izquierda: y = x² y la recta y = 5x.
         const ax = (valor) => 64 + 36 * valor;
         const ay = (valor) => 232 - 6.4 * valor;
-        // Derecha: la parábola de vértice (4, 0).
         const bx = (valor) => 372 + 30 * valor;
         const by = (valor) => 232 - 11 * valor;
         const curva = (desde, hasta, funcion, hx, hy) => {
@@ -13237,15 +12588,115 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: un camino sin salida ----
 
-      // El ejemplo del subapartado 3.1, la irracionalidad de log₂ 7, como
-      // un camino: se parte de la suposición, cada paso sigue del
-      // anterior y se acaba ante un muro. Hay que volver al principio.
+      function FilaInduccionInfografia({ configuracion, alPreparar }) {
+        const P = cursiva("P");
+        const k = cursiva("k");
+        const n = cursiva("n");
+        const hueca = "KaTeX_AMS, 'Times New Roman', Times, serif";
+        const centros = [62, 174, 286, 398, 510];
+        const pasos = [0, 1, 2, 3];
+        const techo = 86;
+        const eje = 113;
+        const nace = (orden) => 0.2 + 0.2 * orden;
+        const sale = (orden) => 3.9 + 0.3 * orden;
+        const llega = (orden) => (orden === 0 ? 1.9 : 5.2 + 0.55 * orden);
+        const contorno = (orden) => caja(centros[orden] - 38, techo, 76, 54, 12);
+        const flecha = (orden) => "M" + (centros[orden] + 41) + " " + eje + "H" + (centros[orden + 1] - 42);
+        const punta = (orden) => "M" + (centros[orden + 1] - 48) + " " + (eje - 6) + "l7 6l-7 6";
+        const marca = (orden) => "M" + (centros[orden] - 8) + " 158l5.5 6.5l10.5-13";
+        const sigue = "M551 " + eje + "H584";
+
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="De la primera a todas"
+            duracion={9}
+            alto="276"
+            descripcion={
+              "Una fila de cajas: P(1), P(2), P(3), P(4), P(5) y puntos suspensivos. " +
+              "La primera lleva una marca: es el caso base. De cada caja a la " +
+              "siguiente va una flecha, con k igual a 1, 2, 3, 4 y 5: es el paso " +
+              "inductivo, P(k) implica P(k más 1), para cada k. Por esas flechas la " +
+              "marca pasa a P(2), a P(3), a P(4) y a P(5). Debajo: P(n) es verdadera " +
+              "para todo n de los enteros positivos."
+            }
+            texto={
+              <>
+                El paso inductivo no dice que <Mates tex="P(k)" /> sea verdadera: pone una flecha
+                de cada afirmación a la siguiente, y la misma demostración sirve
+                para <Mates tex="{k=1}" />, para <Mates tex="{k=2}" />, para <Mates tex="{k=3}" />… El caso
+                base marca la primera y, flecha a flecha, quedan marcadas todas:
+                a <Mates tex="P(5)" /> se llega en cuatro pasos, y a cualquier otra, igual.
+              </>
+            }
+            rotulos={
+              <g>
+                {centros.map((x, orden) => (
+                  <Rotulo key={orden} t={nace(orden) + 0.3} x={x} y={eje + 8} fontSize="24">
+                    {P}({orden + 1})
+                  </Rotulo>
+                ))}
+                <Rotulo t={1.4} x="604" y={eje + 6} fontSize="27" opacity="0.8">
+                  …
+                </Rotulo>
+                <Rotulo t={2.3} x="62" y="192" fontSize="18" opacity="0.95">
+                  {palabra("caso base")}
+                </Rotulo>
+                <Rotulo t={3} x="343.5" y="30" fontSize="20">
+                  {palabra("paso inductivo: ")}
+                  {P}({k}) ⇒ {P}({k} + 1),
+                  {palabra(" para cada ")}
+                  {k}
+                </Rotulo>
+                {pasos.map((orden) => (
+                  <Rotulo key={orden} t={sale(orden) + 0.1} x={centros[orden] + 56} y="76" fontSize="17" opacity="0.92">
+                    {k} = {orden + 1}
+                  </Rotulo>
+                ))}
+                <Rotulo t={5.1} x="567.5" y="76" fontSize="17" opacity="0.6">
+                  {k} = 5
+                </Rotulo>
+                <Rotulo t={8.4} x="320" y="254" fontSize="23">
+                  {P}({n}){palabra(" es verdadera para todo ")}
+                  {n} ∈ <tspan fontFamily={hueca}>Z</tspan>
+                  <Sup>+</Sup>
+                </Rotulo>
+              </g>
+            }
+          >
+            {centros.map((x, orden) => (
+              <g key={orden}>
+                <Velo t={llega(orden)} d={contorno(orden)} fill="#fff" fillOpacity="0.2" stroke="none" />
+                <Trazo t={nace(orden)} dura={0.5} d={contorno(orden)} strokeOpacity="0.85" strokeWidth="1.7" />
+                <Trazo t={llega(orden) + 0.1} dura={0.28} d={marca(orden)} strokeWidth="2.4" />
+              </g>
+            ))}
+            <Trazo t={3.2} dura={0.6} d="M118 56V48H569V56" strokeOpacity="0.85" strokeWidth="1.5" />
+            {pasos.map((orden) => (
+              <g key={orden}>
+                <Trazo t={sale(orden)} dura={0.26} d={flecha(orden)} strokeOpacity="0.6" strokeWidth="1.6" />
+                <Velo t={sale(orden) + 0.22} d={punta(orden)} strokeOpacity="0.6" strokeWidth="1.6" />
+                <Halo t={llega(orden + 1) - 0.32} dura={0.3} d={flecha(orden)} grosor={2.4} />
+                <Velo t={llega(orden + 1) - 0.06} d={punta(orden)} strokeWidth="2.4" />
+              </g>
+            ))}
+            <Velo t={5.1} d={sigue} strokeOpacity="0.6" strokeWidth="1.6" strokeDasharray="2 6" />
+            <Trazo t={8.1} dura={0.5} d="M24 212V220H620V212" strokeOpacity="0.85" strokeWidth="1.5" />
+            {pasos.map((orden) => (
+              <Luz key={orden} t={llega(orden + 1) - 0.32} dura={0.3} d={flecha(orden)} />
+            ))}
+            <Luz t={7.75} dura={0.3} d={sigue} />
+          </InfografiaIB>
+        );
+      }
+
+
       function CaminoSinSalidaInfografia({ configuracion, alPreparar }) {
         const p = cursiva("p");
         const q = cursiva("q");
-        // Los tres tramos del camino, con el instante en que se recorren.
         const tramos = [
           { d: "M70 100H330", t: 1.2, dura: 0.7 },
           { d: "M330 100H500A52 52 0 0 1 500 204H460", t: 2.7, dura: 0.9 },
@@ -13347,11 +12798,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: diez aciertos y un fallo ----
 
-      // El ejemplo del subapartado 3.2: n² − n + 11 da un primo de n = 1 a
-      // n = 10 y falla en n = 11. Diez casos no demuestran nada, y uno solo
-      // basta para que la afirmación sea falsa.
       function DiezAciertosInfografia({ configuracion, alPreparar }) {
         const valores = [11, 13, 17, 23, 31, 41, 53, 67, 83, 101, 121];
         const centro = (orden) => 60 + 52 * orden;
@@ -13446,8 +12893,6 @@ Enfoques NS</p>
         );
       }
 
-      // Las piezas de los dibujos, para el guion de los resúmenes, que va
-      // detrás de este y dibuja con ellas.
       window.PiezasIB = {
         Trazo: Trazo,
         Velo: Velo,
@@ -13482,6 +12927,7 @@ Enfoques NS</p>
         "infografia-multiplicar-restar": MultiplicarRestarInfografia,
         "infografia-parejas": ParejasSueltoInfografia,
         "infografia-identidad": EcuacionIdentidadInfografia,
+        "infografia-induccion": FilaInduccionInfografia,
         "infografia-contradiccion": CaminoSinSalidaInfografia,
         "infografia-contraejemplo": DiezAciertosInfografia
       };
@@ -13489,18 +12935,6 @@ Enfoques NS</p>
   </script>
 
   <script type="text/babel" data-presets="env,react">
-    // Resúmenes interactivos del curso IB (regla 14 de AGENTS.md). Cada
-    // unidad acaba con «Lo esencial»: una infografía con lo que hay que
-    // saberse, que no se mira como un vídeo, sino que se toca. Tiene el
-    // lenguaje de las infografías «Trazo a trazo» (línea blanca sobre el
-    // tono de la unidad, las mismas piezas y la misma letra), repartido en
-    // estaciones: en cada una, un dibujo que responde a sus mandos y,
-    // debajo, sus fórmulas. La última pestaña, «Todo junto», las reúne.
-    //
-    // Tiene guion propio, entre el de las infografías, del que toma las
-    // piezas (window.PiezasIB), y el principal, que añade sus componentes a
-    // su registro (window.ResumenesIB). Como toda la plantilla, no lleva
-    // el signo del dólar: es de Pandoc, que lo leería como una variable.
     (() => {
       const piezas = window.PiezasIB;
       if (!window.React || !piezas) {
@@ -13510,14 +12944,10 @@ Enfoques NS</p>
       const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React;
       const { Trazo, Velo, Punto, Barra, Rotulo, Halo, cursiva, palabra, POR, HUECO, Sub, Sup, Quebrado, Raiz, Mates, caja, abanico, n1 } = piezas;
 
-      // ---- Números y fórmulas ----
 
       const MENOS = "−";
       const FINO = " ";
 
-      // Un número para un rótulo: con coma decimal, el signo menos de las
-      // fórmulas y, como mucho, los decimales que se pidan (dos, si no se
-      // dice). Sin «fijos», los ceros del final no se escriben.
       function cifra(valor, decimales, fijos) {
         let texto = Math.abs(valor).toFixed(decimales === undefined ? 2 : decimales);
         if (!fijos && texto.indexOf(".") >= 0) {
@@ -13532,7 +12962,6 @@ Enfoques NS</p>
         const partes = texto.split(".");
         let entera = partes[0];
         if (entera.length > 4) {
-          // De cinco cifras en adelante, en grupos de tres.
           let agrupada = "";
           for (let lugar = 0; lugar < entera.length; lugar += 1) {
             if (lugar > 0 && (entera.length - lugar) % 3 === 0) {
@@ -13545,24 +12974,18 @@ Enfoques NS</p>
         return (valor < 0 && !nulo ? MENOS : "") + entera + (partes[1] ? "," + partes[1] : "");
       }
 
-      // El mismo número, escrito para KaTeX.
       function enTex(valor, decimales, fijos) {
         return cifra(valor, decimales, fijos).split(MENOS).join("-").split(",").join("{,}").split(FINO).join("\\,");
       }
 
-      // Un número negativo, entre paréntesis: para multiplicar o elevar.
       const conParentesis = (valor, decimales) =>
         valor < 0 ? "(" + enTex(valor, decimales) + ")" : enTex(valor, decimales);
 
-      // El signo que une una cuenta con su resultado: «=» si el número se
-      // escribe entero con esos decimales y «≈» si hay que redondearlo.
       const exacto = (valor, decimales) =>
         Math.abs(valor - Number(valor.toFixed(decimales === undefined ? 2 : decimales))) < 1e-9;
       const igual = (valor, decimales) => (exacto(valor, decimales) ? "=" : "\\approx");
       const igualRotulo = (valor, decimales) => (exacto(valor, decimales) ? " = " : " ≈ ");
 
-      // Una fórmula centrada. Si no cabe en su caja, encoge hasta caber
-      // (y vuelve a medirse cuando cambia el ancho o llegan las letras).
       function Formula({ tex }) {
         const caja = useRef(null);
         const html = useMemo(
@@ -13603,8 +13026,6 @@ Enfoques NS</p>
           }
           const vigia = window.ResizeObserver
             ? new window.ResizeObserver(() => {
-                // Solo cuando cambia el ancho: al encoger cambia el alto,
-                // y volver a medir entonces no acabaría nunca.
                 if (nodo.clientWidth !== ancho) {
                   ajustar();
                 }
@@ -13631,9 +13052,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Las piezas de un dibujo que responde ----
 
-      // Los rótulos: centrados y con la letra de las fórmulas.
       function Letras({ children }) {
         return (
           <g className="rotulos" fill="#fff" stroke="none" textAnchor="middle">
@@ -13642,8 +13061,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una zona que se toca. Hace lo mismo que alguno de los mandos de
-      // debajo, que son los que se manejan con el teclado.
       function Toca({ alTocar, children }) {
         return (
           <g className="toca-ib" onClick={alTocar}>
@@ -13652,16 +13069,12 @@ Enfoques NS</p>
         );
       }
 
-      // Dónde cae un toque, en las unidades del lienzo (que puede no llenar
-      // su caja: en una pantalla ancha y baja queda centrado en ella).
       function dondeToca(evento) {
         const lienzo = evento.currentTarget.ownerSVGElement;
         const lugar = new DOMPoint(evento.clientX, evento.clientY).matrixTransform(lienzo.getScreenCTM().inverse());
         return { x: lugar.x, y: lugar.y };
       }
 
-      // Una zona que se toca o se arrastra, con el dedo o con el ratón:
-      // avisa de por dónde va.
       function Arrastre({ alMover, children }) {
         const pulsado = useRef(false);
         return (
@@ -13691,14 +13104,11 @@ Enfoques NS</p>
         );
       }
 
-      // Un rectángulo que no se ve y recoge los toques de su zona.
       function Zona(medidas) {
         return <rect fill="#fff" fillOpacity="0" stroke="none" {...medidas} />;
       }
 
-      // ---- Los mandos ----
 
-      // Un valor que sube y baja de paso en paso, o que recorre una lista.
       function PasoIB({ mando, valor, alCambiar }) {
         const lista = mando.valores;
         const lugar = lista ? lista.indexOf(valor) : 0;
@@ -13729,7 +13139,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un valor que se desliza.
       function BarraIB({ mando, valor, alCambiar }) {
         return (
           <label className="mando-resumen-ib ancho">
@@ -13751,7 +13160,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una opción entre varias.
       function OpcionesIB({ mando, valor, alCambiar }) {
         return (
           <div className="mando-resumen-ib" role="group" aria-label={mando.nombre}>
@@ -13775,10 +13183,7 @@ Enfoques NS</p>
 
       const MANDOS = { paso: PasoIB, barra: BarraIB, opciones: OpcionesIB };
 
-      // ---- Las fichas: lo que hay que saberse ----
 
-      // Una ficha lleva su nombre y una fórmula, una frase o las dos cosas.
-      // Tapada, para repasar, solo dice de qué es hasta que la tocan.
       function FichaIB({ ficha, tapada, alDestapar }) {
         if (tapada) {
           return (
@@ -13812,20 +13217,11 @@ Enfoques NS</p>
         );
       }
 
-      // ---- La infografía entera ----
 
-      // Todos los dibujos miden lo mismo, para que la página no salte al
-      // cambiar de estación.
       const ALTO = 320;
 
-      // Lo que avanza el trazado por cada segundo de reloj. Aquí el dibujo
-      // no explica nada paso a paso, como en «Trazo a trazo»: entra
-      // deprisa, para que se pueda tocar enseguida.
       const RITMO = 1.6;
 
-      // Una fórmula escrita dentro de una frase, si tiene hasta estas
-      // letras, no se parte entre dos renglones: es la medida del texto
-      // de la unidad.
       const LETRAS_DE_UNA_CORTA = 20;
 
       function ResumenIB({ configuracion, alPreparar, tono, titulo, estaciones }) {
@@ -13849,9 +13245,6 @@ Enfoques NS</p>
           alPreparar();
         }, [alPreparar]);
 
-        // El primer dibujo está entero hasta que la infografía asoma en
-        // pantalla: entonces se traza. Si el navegador no avisa, se queda
-        // entero.
         useEffect(() => {
           if (quieta || !window.IntersectionObserver || !lienzo.current) {
             return undefined;
@@ -13869,10 +13262,6 @@ Enfoques NS</p>
           return () => vigia.disconnect();
         }, [quieta]);
 
-        // El reloj del trazado lleva --ahora de cero al final del dibujo,
-        // con cada fotograma y, por si no llegan, con un temporizador. Al
-        // acabar la retira, y sin ella el dibujo está entero: lo que cambie
-        // después con los mandos se ve en el acto.
         useLayoutEffect(() => {
           const nodo = lienzo.current;
           const estacion = estaciones[activa];
@@ -13910,10 +13299,6 @@ Enfoques NS</p>
           };
         }, [activa, vuelta, quieta, estaciones]);
 
-        // «n +» al final de un renglón y «1» al principio del siguiente se
-        // lee mal: las fórmulas cortas de las frases se marcan para que
-        // vayan enteras. Se repasa en cada pintado, porque cambian con los
-        // mandos.
         useLayoutEffect(() => {
           if (!marco.current) {
             return;
@@ -13933,8 +13318,6 @@ Enfoques NS</p>
           setVuelta((antes) => antes + 1);
           setVistas((antes) => (antes.indexOf(orden) >= 0 ? antes : antes.concat(orden)));
           if (subir && marco.current) {
-            // Desde abajo, o desde «Todo junto», el dibujo nuevo puede
-            // quedar fuera de la pantalla: se sube hasta él.
             window.requestAnimationFrame(() => {
               const caja = marco.current && marco.current.getBoundingClientRect();
               if (caja && (caja.top < 0 || caja.top > window.innerHeight * 0.5)) {
@@ -13944,7 +13327,6 @@ Enfoques NS</p>
           }
         };
 
-        // Las pestañas se recorren también con las flechas.
         const teclear = (evento) => {
           const pasos = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
           let destino = null;
@@ -13971,8 +13353,6 @@ Enfoques NS</p>
         const panel = base + "panel";
         const pestana = (orden) => base + "pestana" + orden;
 
-        // Cambia los datos de la estación abierta; el trazado, si seguía,
-        // se da por acabado.
         const poner = (cambios) => {
           acabar.current();
           setEstados((antes) =>
@@ -14111,8 +13491,6 @@ Enfoques NS</p>
             ref={marco}
             className={"infografia-ib resumen-ib tono-" + tono}
             onClick={(evento) => {
-              // En modo clase, un clic en el contenido lo amplía: aquí
-              // dentro los clics son de la infografía.
               evento.stopPropagation();
             }}
           >
@@ -14169,7 +13547,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un término de una sucesión, con la letra del IB.
       const u = (indice) => (
         <tspan>
           {cursiva("u")}
@@ -14179,8 +13556,6 @@ Enfoques NS</p>
 
       const suma = (lista) => lista.reduce((total, valor) => total + valor, 0);
 
-      // Una letra hueca, de las de los conjuntos numéricos: la fuente de
-      // KaTeX las guarda en el sitio de las mayúsculas.
       const hueca = (letra) => <tspan fontFamily="KaTeX_AMS, 'Times New Roman', Times, serif">{letra}</tspan>;
 
       const enterosPositivos = (
@@ -14190,19 +13565,15 @@ Enfoques NS</p>
         </tspan>
       );
 
-      // Una marca de «bien» y otra de «mal», dibujadas: centradas en (x, y).
       const visto = (x, y, lado) =>
         "M" + n1(x - lado) + " " + n1(y) + "l" + n1(lado * 0.7) + " " + n1(lado * 0.7) + "l" + n1(lado * 1.3) + " " + n1(-lado * 1.5);
       const aspa = (x, y, lado) =>
         "M" + n1(x - lado) + " " + n1(y - lado) + "l" + n1(2 * lado) + " " + n1(2 * lado) +
         "M" + n1(x + lado) + " " + n1(y - lado) + "l" + n1(-2 * lado) + " " + n1(2 * lado);
 
-      // ---- Unidad 0: números reales ----
 
       const LETRAS_DE_CONJUNTO = { N: "naturales", Z: "enteros", Q: "racionales", R: "reales" };
 
-      // Los cinco números del ejemplo del subapartado 1.1, con su disfraz,
-      // lo que valen y el menor conjunto en el que están.
       const DISFRAZADOS = [
         { rotulo: <Mates tex="\sqrt[3]{-125}" />, tex: "\\sqrt[3]{-125}=-5", conjunto: "Z", zona: [246, 100, 116, 40] },
         { rotulo: <Mates tex="\frac{\sqrt{18}}{\sqrt2}" />, tex: "\\frac{\\sqrt{18}}{\\sqrt2}=\\sqrt9=3", conjunto: "N", zona: [92, 144, 100, 58] },
@@ -14211,9 +13582,6 @@ Enfoques NS</p>
         { rotulo: <Mates tex="\sqrt{18}" />, tex: "\\sqrt{18}=3\\sqrt2", conjunto: "R", zona: [504, 122, 112, 56] }
       ];
 
-      // Estación 1. Los cuatro conjuntos, uno dentro de otro, con los cinco
-      // números del ejemplo y el cero, que es natural en el IB y no lo es
-      // en clase.
       function ConjuntosDibujo({ e, poner }) {
         const conjuntos = [
           { letra: "N", x: 62, y: 104, ancho: 152, alto: 124, t: 0.2 },
@@ -14333,7 +13701,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un extremo de un intervalo: relleno si entra y hueco si no.
       function Extremo({ t, x, y, entra }) {
         return entra ? (
           <Punto t={t} cx={x} cy={y} r="8.5" />
@@ -14342,8 +13709,6 @@ Enfoques NS</p>
         );
       }
 
-      // Cómo se escribe un intervalo: en clase, con paréntesis; en el IB,
-      // con el corchete hacia fuera.
       function comoIntervalo(a, b, entraA, entraB, delIB) {
         const abre = entraA ? "[" : delIB ? "]" : "(";
         const cierra = entraB ? "]" : delIB ? "[" : ")";
@@ -14351,9 +13716,6 @@ Enfoques NS</p>
         return abre + texto(a) + ", " + texto(b) + cierra;
       }
 
-      // Estación 2. Un intervalo, de sus tres maneras: en la recta, con una
-      // desigualdad y con la notación de intervalo, la de clase y la del
-      // IB. Arranca con el conjunto {x | −1 ≤ x < 4} del subapartado 2.1.
       function IntervaloDibujo({ e, poner }) {
         const px = (valor) => 320 + 44 * valor;
         const eje = 112;
@@ -14441,9 +13803,6 @@ Enfoques NS</p>
         );
       }
 
-      // La intersección y la unión de dos intervalos, con sus extremos. Cada
-      // intervalo es [a, b, entra a, entra b]; la unión puede tener dos
-      // trozos, y la intersección, ninguno o un solo punto.
       function cortar(A, B) {
         const desde = Math.max(A[0], B[0]);
         const hasta = Math.min(A[1], B[1]);
@@ -14472,7 +13831,6 @@ Enfoques NS</p>
         ];
       }
 
-      // Un conjunto hecho de intervalos, escrito: para un rótulo.
       const comoConjunto = (trozos) =>
         trozos.length === 0
           ? "∅"
@@ -14482,9 +13840,6 @@ Enfoques NS</p>
 
       const FIJO = [-4, 3, true, false];
 
-      // Estación 3. La intersección y la unión de A = [−4, 3) con un
-      // intervalo B que se mueve: arranca en B = (−1, 5], el del ejemplo
-      // del subapartado 2.2.
       function UnionDibujo({ e, poner }) {
         const px = (valor) => 330 + 34 * valor;
         const B = [e.p, e.q, e.ip, e.iq];
@@ -14580,9 +13935,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 4. Un valor absoluto leído como distancia: los números que
-      // están a menos de r del centro son un intervalo, y los que están a
-      // más, dos semirrectas. Arranca con |x − 3| < 2, del subapartado 3.1.
       function AbsolutoDibujo({ e }) {
         const px = (valor) => 320 + 30 * valor;
         const eje = 150;
@@ -14686,9 +14038,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 5. Las potencias de una base, de su cubo a su inverso al
-      // cubo: bajar un exponente es dividir. Arranca con las de 2, del
-      // subapartado 4.1.
       function PotenciasDibujo({ e, poner }) {
         const suelo = 226;
         const exponentes = [3, 2, 1, 0, -1, -2, -3];
@@ -14781,9 +14130,6 @@ Enfoques NS</p>
         );
       }
 
-      // Una fila de trozos de fórmula, centrada en x: textos y raíces, con
-      // el ancho de cada uno medido en letras, y un pie debajo de los que
-      // lo llevan.
       function Fila({ x, y, s, trozos }) {
         const anchoDe = (trozo) => trozo.ancho + (trozo.raiz ? 0.62 : 0);
         let lugar = x - (suma(trozos.map(anchoDe)) * s) / 2;
@@ -14793,7 +14139,6 @@ Enfoques NS</p>
             {trozos.map((trozo, orden) => {
               const desde = lugar;
               lugar += anchoDe(trozo) * s;
-              // Los pies van alternos, en dos alturas, para no pisarse.
               const bajo = trozo.pie ? pies % 2 : 0;
               pies += trozo.pie ? 1 : 0;
               return (
@@ -14830,15 +14175,12 @@ Enfoques NS</p>
         );
       }
 
-      // Un espacio que no se pierde al principio ni al final de un texto.
       const DURO = "\u00A0";
       const IGUAL = DURO + "=" + DURO;
       const VECES = DURO + "\u22C5" + DURO;
 
-      // Lo que ocupa un número, en letras.
       const anchoNumero = (valor) => 0.5 * String(Math.abs(valor)).length + (valor < 0 ? 0.78 : 0);
 
-      // El 3 con su exponente, y lo que ocupa.
       const tresElevado = (exponente) =>
         exponente === 1
           ? { contenido: "3", ancho: 0.5 }
@@ -14857,9 +14199,6 @@ Enfoques NS</p>
         { titulo: "abajo hay una suma o una resta con raíces", gesto: "se multiplica por el conjugado: sale una suma por diferencia" }
       ];
 
-      // Estación 6. Racionalizar es multiplicar el denominador por lo que
-      // le falta para quedarse sin raíces: los tres casos del subapartado
-      // 4.2, con los datos de sus dos ejemplos.
       function RacionalizarDibujo({ e }) {
         const caso = CASOS_DE_RACIONALIZAR[e.caso];
         let trozos = [];
@@ -14926,7 +14265,6 @@ Enfoques NS</p>
         );
       }
 
-      // Los radicandos que no son cuadrados perfectos, para el conjugado.
       const NO_CUADRADOS = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15, 17, 19, 21, 22, 23];
 
       const ESTACIONES_REALES = [
@@ -15577,10 +14915,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: exponenciales y logaritmos ----
 
-      // Una curva, punto a punto: `punto(s)` da sus coordenadas para cada
-      // valor del parámetro, de `desde` a `hasta`.
       const curvaDe = (punto, desde, hasta) => {
         const tramos = [];
         for (let paso = 0; paso <= 100; paso += 1) {
@@ -15593,8 +14928,6 @@ Enfoques NS</p>
       const ABONOS = [1, 2, 4, 12, 365, 31536000];
       const CADA = ["una vez al año", "cada seis meses", "cada trimestre", "cada mes", "cada día", "cada segundo"];
 
-      // Estación 1. El techo del interés del subapartado 1.1: un euro al
-      // 100 %, con abonos cada vez más frecuentes, se acerca a e.
       function NumeroEDibujo({ e, poner }) {
         const valor = (abonos) => Math.pow(1 + 1 / abonos, abonos);
         const x = (orden) => 98 + 92 * orden;
@@ -15650,8 +14983,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 2. El espejo del subapartado 1.2: las gráficas de eˣ y de
-      // ln x, con un punto y su reflejo en la recta y = x.
       function EspejoDibujo({ e, poner }) {
         const px = (x) => 232 + 52 * x;
         const py = (y) => 190 - 52 * y;
@@ -15720,7 +15051,6 @@ Enfoques NS</p>
       const LN3 = Math.log(3);
       const LN5 = Math.log(5);
 
-      // Un producto de potencias de 3 y de 5, con sus exponentes.
       const potencias = (m, n) => {
         const factor = (base, exponente) => (
           <tspan>
@@ -15740,7 +15070,6 @@ Enfoques NS</p>
         );
       };
 
-      // La combinación ma + nb, con sus signos: para un rótulo.
       const combinacion = (m, n) => {
         const piezas = [];
         [[m, "a"], [n, "b"]].forEach(([veces, letra]) => {
@@ -15759,10 +15088,6 @@ Enfoques NS</p>
         return piezas.length ? piezas : "0";
       };
 
-      // Estación 3. Con ln 3 = a y ln 5 = b, del subapartado 2.1: cada
-      // factor suma la longitud de su logaritmo. Los de exponente negativo,
-      // que van en el denominador, la restan: tienen su propia fila, y el
-      // logaritmo es lo que le saca una fila a la otra.
       function LogaritmosDibujo({ e }) {
         const escala = 58;
         const cadena = (signo) => {
@@ -15915,8 +15240,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 4. Resolver eˣ = c es buscar dónde alcanza la curva esa
-      // altura: en x = ln c, si c es positivo; si no, en ningún sitio.
       function EcuacionesDibujo({ e, poner }) {
         const px = (x) => 384 + 104 * x;
         const py = (y) => 252 - 46 * y;
@@ -15980,8 +15303,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 5. El menor entero del subapartado 3.3: las potencias de
-      // una base menor que 1 bajan, y cruzan la raya entre dos enteros.
       function MenorEnteroDibujo({ e }) {
         const cruce = Math.log(e.c) / Math.log(e.b);
         const entero = Math.floor(cruce + 1e-9) + 1;
@@ -15999,8 +15320,6 @@ Enfoques NS</p>
             {" ≈ " + cifra(Math.pow(e.b, n), 4, true)}
           </>
         );
-        // La lupa: los dos puntos vecinos del cruce, ampliados alrededor
-        // de la raya.
         const conLupa = e.c <= 0.1;
         const antes = Math.pow(e.b, entero - 1);
         const despues = Math.pow(e.b, entero);
@@ -16071,9 +15390,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 6. Los modelos del apartado 4: el cultivo que crece o
-      // decrece, con su tiempo de duplicación o su semivida, y el café que
-      // se acerca a la temperatura del ambiente.
       function ModelosDibujo({ e }) {
         const exponencial = e.modo !== "asintota";
         const crece = e.modo === "crece";
@@ -16091,8 +15407,6 @@ Enfoques NS</p>
           }
           curva += (paso === 0 ? "M" : "L") + n1(px(t)) + " " + n1(py(cuanto));
         }
-        // Las marcas: cada vez que pasa un periodo. Su altura se rotula
-        // en el eje solo si no pisa a la anterior.
         const marcas = [];
         let rotulada = Infinity;
         for (let vez = 0; vez <= 3; vez += 1) {
@@ -16164,27 +15478,21 @@ Enfoques NS</p>
         );
       }
 
-      // Los tres números de la teoría del subapartado 5.1, con sus cifras.
       const NUMEROS = [
         { texto: "2,70481", valor: 2.70481 },
         { texto: "0,0557858", valor: 0.0557858 },
         { texto: "4577,63", valor: 4577.63 }
       ];
 
-      // Un número, con las cifras significativas que se pidan.
       function conCifras(valor, cifras) {
         const texto = valor.toPrecision(cifras);
         return (texto.indexOf("e") >= 0 ? String(Number(texto)) : texto).split(".").join(",");
       }
 
-      // Estación 7. Tres cifras significativas, cifra a cifra: cuáles
-      // cuentan, cuál decide el redondeo y qué queda.
       function ExamenDibujo({ e }) {
         const numero = NUMEROS[e.numero];
         const letras = numero.texto.split("");
         const x = (lugar) => 320 + 48 * (lugar - (letras.length - 1) / 2);
-        // El papel de cada carácter: la coma, un cero que solo la sitúa,
-        // una cifra que cuenta, la que decide o una que sobra.
         let contadas = 0;
         let empezado = false;
         const papeles = letras.map((letra) => {
@@ -16919,14 +16227,10 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: combinatoria y binomio ----
 
       const factorial = (n) => (n <= 1 ? 1 : n * factorial(n - 1));
       const combinatorio = (n, r) => Math.round(factorial(n) / (factorial(r) * factorial(n - r)));
 
-      // Estación 1. El diagrama de árbol del subapartado 1.1, con las ramas
-      // que se quieran: arranca con el menú de 3 primeros, 4 segundos y 2
-      // postres.
       function ArbolDibujo({ e }) {
         const alturas = [34, 96, 166, 228];
         const total = e.a * e.b * e.c;
@@ -16948,7 +16252,6 @@ Enfoques NS</p>
           abanico(
             hijos.map((x, orden) => [padres[Math.floor(orden / porPadre)], alturas[nivel], x, alturas[nivel + 1]])
           );
-        // El menú que sigue la luz: el del medio.
         const hoja = Math.floor(total / 2);
         const camino = [raiz, primeros[Math.floor(hoja / (e.b * e.c))], segundos[Math.floor(hoja / e.c)], hojas[hoja]]
           .map((x, nivel) => (nivel === 0 ? "M" : "L") + n1(x) + " " + alturas[nivel])
@@ -17002,7 +16305,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un número combinatorio o una permutación, con el índice delante.
       const conIndices = (n, letra, r) => (
         <tspan>
           <Sup>{n}</Sup>
@@ -17017,9 +16319,6 @@ Enfoques NS</p>
         grupo: { x: 530, pregunta: 1 }
       };
 
-      // Estación 2. Las dos preguntas del apartado 2 antes de contar:
-      // ¿importa el orden?, ¿se colocan todos? Arranca con los 8 corredores
-      // y las 3 medallas del subapartado 2.1.
       function DecisionDibujo({ e, poner }) {
         const permutaciones = factorial(e.n) / factorial(e.n - e.r);
         const hojas = [
@@ -17126,7 +16425,6 @@ Enfoques NS</p>
 
       const NORMALES = ["A", "B", "C", "D", "E", "F"];
 
-      // Una letra dentro de su círculo.
       function Ficha({ t, x, y, letra, llena }) {
         return (
           <g>
@@ -17138,9 +16436,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 3. Ordenaciones con condiciones, los tres tipos del método
-      // del subapartado 2.1: un lugar con condición (las letras de CAMINO),
-      // objetos juntos y objetos separados (las bicicletas eléctricas).
       function CondicionesDibujo({ e }) {
         if (e.tipo === "lugar") {
           const opciones = [3, 4, 3, 2, 1, 2];
@@ -17206,7 +16501,6 @@ Enfoques NS</p>
         let piezas = null;
         let rotulos = null;
         if (juntas) {
-          // Dos normales, el bloque y las demás.
           const paso = Math.min(66, 540 / (n + 2));
           const x = (lugar) => 320 + (lugar - (n + 1) / 2) * paso;
           const fila = NORMALES.slice(0, 2).concat(["X", "Y"], NORMALES.slice(2, n));
@@ -17235,7 +16529,6 @@ Enfoques NS</p>
             </>
           );
         } else {
-          // Las normales, con un hueco delante, entre cada dos y detrás.
           const paso = Math.min(46, 580 / (2 * n + 1));
           const x = (lugar) => 320 + (lugar - n) * paso;
           const huecos = [];
@@ -17297,7 +16590,6 @@ Enfoques NS</p>
         );
       }
 
-      // Un término del desarrollo de (a ± b)ⁿ, escrito para KaTeX.
       function terminoTex(n, k, menos) {
         const coeficiente = combinatorio(n, k);
         const potencia = (letra, exponente) => (exponente === 0 ? "" : exponente === 1 ? letra : letra + "^{" + exponente + "}");
@@ -17309,9 +16601,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 4. El triángulo de Pascal del subapartado 3.1 y el término
-      // del desarrollo que da cada uno de sus números. Arranca en el 6 de
-      // la fila 4, que es 3 + 3.
       function BinomioDibujo({ e, poner }) {
         const filas = [0, 1, 2, 3, 4, 5, 6];
         const x = (fila, lugar) => 320 + (lugar - fila / 2) * 60;
@@ -17401,8 +16690,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 5. Los siete términos del desarrollo de (x − 3/x²)⁶, el
-      // ejemplo del método del subapartado 3.1: uno por cada valor de r.
       function TerminoDibujo({ e, poner }) {
         const valores = [0, 1, 2, 3, 4, 5, 6];
         const x = (r) => 62 + 86 * r;
@@ -17477,8 +16764,6 @@ Enfoques NS</p>
         );
       }
 
-      // Los tres desarrollos con exponente racional de la teoría del
-      // subapartado 3.3: la función, sus términos y hasta dónde valen.
       const DESARROLLOS = [
         {
           rotulo: <Mates tex="(1+x)^{-1}" />,
@@ -17527,7 +16812,6 @@ Enfoques NS</p>
         }
       ];
 
-      // Lo que dan los primeros términos del desarrollo en un punto.
       function aproximacion(desarrollo, cuantos, x) {
         let coeficiente = Math.pow(desarrollo.a, desarrollo.n);
         let total = 0;
@@ -17538,18 +16822,13 @@ Enfoques NS</p>
         return total;
       }
 
-      // El signo del término que sigue a los que ya se han escrito: lo que
-      // crece el desarrollo en x = 1 al añadirlo.
       const signoSiguiente = (desarrollo, cuantos) =>
         aproximacion(desarrollo, cuantos + 1, 1) < aproximacion(desarrollo, cuantos, 1) ? "-" : "+";
 
-      // Estación 6. La función y los primeros términos de su desarrollo:
-      // dentro de la franja de validez se confunden; fuera, se separan.
       function RacionalDibujo({ e, poner }) {
         const desarrollo = DESARROLLOS[e.caso];
         const px = (t) => 320 + 170 * t;
         const py = (valor) => 226 - (190 * (valor - desarrollo.minimo)) / (desarrollo.maximo - desarrollo.minimo);
-        // Una curva, en tramos: se corta donde no está definida o se sale.
         const curva = (funcion, definida) => {
           let trazo = "";
           let levantado = true;
@@ -18155,8 +17434,6 @@ Enfoques NS</p>
           ],
           vivo: (e) => {
             const desarrollo = DESARROLLOS[e.caso];
-            // Con más de tres términos, los demás bajan a otra línea; y la
-            // raíz, que antes se escribe como potencia, va en la suya.
             const terminos = desarrollo.terminos.slice(0, e.m);
             const cola = signoSiguiente(desarrollo, e.m) + "\\cdots";
             const primera = terminos.slice(0, 3).join("") + (terminos.length > 3 ? "" : cola);
@@ -18250,10 +17527,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: sucesiones y series ----
 
-      // Estación 1. Un sumatorio abierto: los términos 2k + 1 del
-      // subapartado 1.2, de k = 1 a k = 7, y el tramo que se suma.
       function SigmaDibujo({ e, poner }) {
         const indices = [1, 2, 3, 4, 5, 6, 7];
         const centro = (k) => 86 + 78 * (k - 1);
@@ -18261,7 +17535,6 @@ Enfoques NS</p>
         const sumandos = indices.filter(dentro).map((k) => 2 * k + 1);
         const cuantos = sumandos.length;
         const medio = Math.min(500, Math.max(140, (centro(e.a) + centro(e.b)) / 2));
-        // Lo tocado pasa a ser el extremo que le queda más cerca.
         const tocar = (k) => poner(k <= (e.a + e.b) / 2 ? { a: k } : { b: k });
 
         return (
@@ -18331,10 +17604,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 2. Una progresión aritmética: por arriba, los saltos de
-      // un término al siguiente; por abajo, las parejas de Gauss, que suman
-      // todas lo mismo. Arranca con la progresión 7, 11, 15, 19 del
-      // subapartado 2.1.
       function AritmeticaDibujo({ e }) {
         const n = e.n;
         const paso = Math.min(124, 500 / (n - 1));
@@ -18411,12 +17680,8 @@ Enfoques NS</p>
         );
       }
 
-      // Cómo se escribe la razón al multiplicar.
       const porRazon = (razon) => "×" + (razon < 0 ? "(" + cifra(razon) + ")" : cifra(razon));
 
-      // Estación 3. Una progresión geométrica en barras: cada una es la
-      // anterior por la razón. Arranca con 2, 6, 18, 54, del subapartado
-      // 3.1.
       function GeometricaDibujo({ e }) {
         const n = e.n;
         const valores = [];
@@ -18513,9 +17778,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 4. Las sumas de 1, 2, 3… términos y la recta de las
-      // razones: solo entre −1 y 1 se acercan a un número. Arranca con la
-      // serie 12 + 6 + 3 + … del subapartado 3.3.
       function SumaInfinitaDibujo({ e, poner }) {
         const converge = Math.abs(e.r) < 1;
         const sumas = [];
@@ -18602,13 +17864,8 @@ Enfoques NS</p>
         );
       }
 
-      // El periodo de capitalización, según las veces que se abona al año.
       const PERIODOS = { 1: "año", 2: "semestre", 4: "trimestre", 12: "mes" };
 
-      // Estación 5. El dinero, año a año: el capital del ejemplo del
-      // subapartado 4.1 (4000 euros al 3,6 % nominal anual, con
-      // capitalización mensual) y el coche del 4.2 (24 000 euros que
-      // pierden un 18 % cada año).
       function FinanzasDibujo({ e, poner }) {
         const interes = e.tipo === "interes";
         const inicial = interes ? 4000 : 24000;
@@ -18694,7 +17951,6 @@ Enfoques NS</p>
             if (sumandos.length < 5) {
               return [cabeza + "=" + sumandos.join("+") + (sumandos.length > 1 ? "=" + suma(sumandos) : "")];
             }
-            // Con muchos sumandos, el resultado baja a otra línea.
             return ["\\begin{aligned}&" + cabeza + "\\\\={}&" + sumandos.join("+") + "\\\\={}&" + suma(sumandos) + "\\end{aligned}"];
           },
           pista: (
@@ -19157,10 +18413,8 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: métodos de demostración ----
 
 
-      // Las afirmaciones de la unidad, cada una con el método que pide.
       const AFIRMACIONES = [
         {
           metodo: 0,
@@ -19248,8 +18502,6 @@ Enfoques NS</p>
         { nombre: "Contraejemplo", x: 554, pista: () => palabra("basta un solo caso que falle") }
       ];
 
-      // Estación 1. El mapa de la unidad: tres maneras de demostrar y una
-      // de refutar, y el camino hasta la que pide cada afirmación.
       function MetodosDibujo({ e, poner }) {
         const elegido = AFIRMACIONES[e.caso].metodo;
         const rama = elegido === 3 ? 554 : 242;
@@ -19331,8 +18583,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 2. Un entero repartido de dos en dos y de tres en tres: lo
-      // que dicen 2k, 2k + 1, 3k, 3k + 1 y 3k + 2 del subapartado 1.2.
       function DirectaDibujo({ e }) {
         const filas = [
           { de: 2, y: 100, nombre: "de dos en dos" },
@@ -19413,22 +18663,15 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 3. La fila de fichas de dominó de la entrada del apartado
-      // 2: el caso base empuja la primera y el paso inductivo hace que cada
-      // una tire a la siguiente. Hacen falta las dos partes.
       function DominoDibujo({ e }) {
         const ALTO_FICHA = 84;
         const GRUESO = 15;
         const TRECHO = 60;
         const suelo = 212;
         const fichas = [0, 1, 2, 3, 4, 5, 6, 7];
-        // Si falla el paso, la caída se para tras la cuarta ficha: la
-        // quinta queda fuera de su alcance.
         const cortada = e.base && !e.paso;
         const caen = e.base ? (e.paso ? 8 : 4) : 0;
         const x = (orden) => 78 + TRECHO * orden + (cortada && orden >= 4 ? 44 : 0);
-        // El ángulo en que queda cada ficha caída, apoyada en la siguiente;
-        // la última cae al suelo.
         const angulos = [];
         let siguiente = Math.PI / 2;
         for (let orden = caen - 1; orden >= 0; orden -= 1) {
@@ -19499,8 +18742,6 @@ Enfoques NS</p>
         );
       }
 
-      // Los cuatro tipos de inducción de la unidad, con su caso k y lo que
-      // hace el paso para llegar al caso k + 1.
       const PASOS = {
         suma: {
           nombre: "Suma",
@@ -19581,8 +18822,6 @@ Enfoques NS</p>
         }
       };
 
-      // Estación 4. El paso inductivo, con números: del caso k al caso
-      // k + 1, en los cuatro ejemplos del apartado 2.
       function PasoDibujo({ e }) {
         const tipo = PASOS[e.tipo];
         const falla = e.k < tipo.desde;
@@ -19645,8 +18884,6 @@ Enfoques NS</p>
         );
       }
 
-      // Estación 5. El camino sin salida del subapartado 3.1: si log₂ 7
-      // fuera p/q, una potencia de 2 sería igual a una de 7.
       function ContradiccionDibujo({ e }) {
         const dos = Math.pow(2, e.p);
         const siete = Math.pow(7, e.q);
@@ -19709,7 +18946,6 @@ Enfoques NS</p>
         );
       }
 
-      // ¿Es primo? Para los valores pequeños de la estación 6.
       function esPrimo(numero) {
         if (numero < 2) {
           return false;
@@ -19722,8 +18958,6 @@ Enfoques NS</p>
         return true;
       }
 
-      // Estación 6. Los valores de n² − n + 11 del subapartado 3.2, uno a
-      // uno: diez primos seguidos y, en n = 11, el caso que falla.
       function ContraejemploDibujo({ e, poner }) {
         const casos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         const valor = (n) => n * n - n + 11;
@@ -20598,9 +19832,6 @@ Enfoques NS</p>
                 (imagenLista ? " imagen-lista" : "")
               }
             >
-              {/* Descripción en aria-label: un <title> dentro del SVG
-                  aparecería como globo emergente del navegador al pasar
-                  el ratón, tapando el mapa. */}
               <svg
                 viewBox="0 0 1600 900"
                 role="img"
@@ -20702,8 +19933,6 @@ Enfoques NS</p>
       function notacionIntervalo(intervalo) {
         const izquierda = intervalo.cerradoIzquierda ? "[" : "(";
         const derecha = intervalo.cerradoDerecha ? "]" : ")";
-        // Con extremos decimales la coma decimal chocaría con la coma
-        // separadora, así que el separador pasa a punto y coma.
         const separador =
           Number.isInteger(intervalo.inicio) &&
           Number.isInteger(intervalo.fin)
@@ -21678,7 +20907,6 @@ Enfoques NS</p>
         const dentro = distancia < radio;
         const inicio = centro - radio;
         const fin = centro + radio;
-        // Separador del intervalo: punto y coma si hay extremos decimales.
         const separadorEntorno =
           Number.isInteger(inicio) && Number.isInteger(fin)
             ? ",\\ "
@@ -22881,8 +22109,6 @@ Enfoques NS</p>
           { nombre: "Valdivia 1960", magnitud: 9.5 }
         ];
 
-        // El papel del sismógrafo empieza en x=150: el hueco izquierdo
-        // reserva sitio al rótulo «M 4,9» aunque la magnitud sea decimal.
         const escalaX = (magnitud) => 150 + ((magnitud - 2) / 8) * 790;
 
         function traza(magnitud, eje) {
@@ -22960,7 +22186,6 @@ Enfoques NS</p>
                   </linearGradient>
                 </defs>
 
-                {/* Papel del tambor del sismógrafo. */}
                 <rect
                   x="150"
                   y="20"
@@ -23012,7 +22237,6 @@ Enfoques NS</p>
                   </g>
                 ))}
 
-                {/* Escala Richter con las dos magnitudes. */}
                 <rect
                   x="150"
                   y="248"
@@ -23062,7 +22286,6 @@ Enfoques NS</p>
                   />
                 ))}
 
-                {/* Terremotos históricos sobre la escala. */}
                 {TERREMOTOS_FAMOSOS.map((sismo, indice) => (
                   <g key={sismo.nombre}>
                     <circle
@@ -23159,8 +22382,6 @@ Enfoques NS</p>
         );
       }
 
-      // Figuras vectoriales pequeñas, centradas en (0,0) y de unos 24 px,
-      // que ilustran hitos y objetos en los laboratorios de escalas.
       function FiguraObjeto({ tipo }) {
         switch (tipo) {
           case "folio":
@@ -23475,10 +22696,6 @@ Enfoques NS</p>
 
         const grosorActual = 0.0001 * Math.pow(2, pliegues);
 
-        // En escala lineal la cámara se aleja sola: primero se ve el salto
-        // de la pila con el eje quieto y, medio segundo después, el eje se
-        // reescala y todo desliza hacia el suelo. Así se siente la magnitud
-        // real de cada duplicación.
         React.useEffect(() => {
           if (escala !== "lineal") {
             return undefined;
@@ -23564,8 +22781,6 @@ Enfoques NS</p>
           return grosorLegible(valor);
         };
 
-        // Hitos visibles en lineal, con las etiquetas apiladas junto al
-        // suelo retiradas y contadas aparte.
         const hitosLineales = [];
         let hitosAplastados = 0;
         let ultimaYLineal = -1e9;
@@ -23655,10 +22870,6 @@ Enfoques NS</p>
                   "más allá."}
             </p>
 
-            {/* Panorama: en pantalla ancha, los controles y las
-                lecturas quedan a la izquierda y el lienzo a la
-                derecha, para doblar y ver la reacción sin
-                desplazarse. */}
             <div className="plegado-panorama">
               <div className="plegado-controles">
                 <ConmutadorEscala
@@ -24049,7 +23260,6 @@ Enfoques NS</p>
                       />
                     ))}
 
-                    {/* Suelo y Tierra. */}
                     <rect
                       x="0"
                       y={yMundo(0.0001) + 18}
@@ -24178,7 +23388,6 @@ Enfoques NS</p>
                       );
                     })}
 
-                    {/* La pila de folios viajera. */}
                     {[0, 1, 2].map((capa) => (
                       <rect
                         key={capa}
@@ -24354,9 +23563,6 @@ Enfoques NS</p>
           }
         }, [alPreparar]);
 
-        // Encuadre automático: al activar o retirar objetos, o al cambiar
-        // de escala, el eje se reajusta solo para mostrarlos todos. El
-        // deslizador de zoom parte de ese encuadre.
         const idsActivos = activos.slice().sort().join(",");
         React.useEffect(() => {
           const valores = OBJETOS_COSMICOS.filter((objeto) =>
@@ -24426,8 +23632,6 @@ Enfoques NS</p>
           );
         };
 
-        // Objetos dentro y fuera de la vista, y racimos de objetos que
-        // caen casi en el mismo píxel (la lección de la escala lineal).
         const dentro = [];
         let fueraDerecha = 0;
         let fueraIzquierda = 0;
@@ -24455,7 +23659,6 @@ Enfoques NS</p>
           }
         });
 
-        // Marcas del eje.
         const marcas = [];
         if (esLineal) {
           const exponente = Math.floor(Math.log10(maxLineal / 5));
@@ -24685,7 +23888,6 @@ Enfoques NS</p>
                   />
                 ))}
 
-                {/* La Tierra en el origen. */}
                 <g
                   transform={
                     "translate(" + X0 + " " + EJE_Y + ") scale(1.35)"
@@ -24913,8 +24115,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- «Matemáticas en acción»: la ley de Benford -------------------
-      // Frecuencia teórica de cada primera cifra: P(d) = log10(1 + 1/d).
       const BENFORD_PORCENTAJES = (() => {
         const lista = [];
         for (let d = 1; d <= 9; d += 1) {
@@ -24923,9 +24123,6 @@ Enfoques NS</p>
         return lista;
       })();
 
-      // Población de los 78 concejos de Asturias, padrón a 1 de enero de
-      // 2023 (INE); la suma, 1 005 283 habitantes, coincide con el total
-      // oficial. Los nombres dejan la lista auditable.
       const POBLACIONES_CONCEJOS = [
         ["Gijón", 268313], ["Oviedo", 217584],
         ["Avilés", 75518], ["Siero", 52194],
@@ -24996,9 +24193,6 @@ Enfoques NS</p>
         return cifras;
       })();
 
-      // Generador determinista (mulberry32 con semilla fija): la
-      // «contabilidad» es idéntica en cada visita y el barrido numérico
-      // puede verificarla fuera del navegador.
       const IMPORTES_INVENTADOS = (() => {
         let estado = 20260829;
         const azar = () => {
@@ -25081,9 +24275,6 @@ Enfoques NS</p>
         const coma = (valor, decimales) =>
           valor.toFixed(decimales).replace(".", ",");
 
-        // Umbrales calibrados con los cuatro conjuntos (todos
-        // deterministas): potencias 0,26 y Fibonacci 0,41; concejos 4,30;
-        // importes inventados 6,05 puntos de desviación media.
         let veredicto;
         if (desviacion < 1.6) {
           veredicto =
@@ -27556,12 +26747,6 @@ Enfoques NS</p>
         );
       }
 
-      // ====================================================================
-      // Laboratorios propios del curso IB (regla 14 de AGENTS.md). No son
-      // del motor compartido y no se portan a los otros cursos. Este tramo
-      // no lleva ningún signo de dólar, ni en el código ni en los
-      // comentarios: Pandoc lo leería como una variable de la plantilla.
-      // ====================================================================
 
       const COLORES_IB = {
         azul: "#2563eb",
@@ -27593,8 +26778,6 @@ Enfoques NS</p>
         };
       }
 
-      // La parte entera, de tres en tres cifras a partir de cinco, como en
-      // los apuntes: 5040, pero 14 400.
       function agruparMilesIB(entero, separador) {
         if (entero.length < 5) {
           return entero;
@@ -27609,7 +26792,6 @@ Enfoques NS</p>
         return agrupado;
       }
 
-      // Un número para leer: coma decimal, sin ceros de relleno.
       function numeroIB(valor, decimales) {
         const partes = partesDeNumeroIB(valor, decimales);
         return (
@@ -27619,7 +26801,6 @@ Enfoques NS</p>
         );
       }
 
-      // El mismo número, escrito para KaTeX.
       function texIB(valor, decimales) {
         const partes = partesDeNumeroIB(valor, decimales);
         return (
@@ -27629,7 +26810,6 @@ Enfoques NS</p>
         );
       }
 
-      // «=» si el valor cabe exacto en esas cifras decimales; si no, «≈».
       function igualIB(valor, decimales) {
         const factor = Math.pow(10, decimales);
         return Math.abs(valor * factor - Math.round(valor * factor)) < 1e-6
@@ -27637,7 +26817,6 @@ Enfoques NS</p>
           : "\\approx ";
       }
 
-      // Cuántas cifras decimales merece un número según su tamaño.
       function cifrasIB(valor) {
         const tamano = Math.abs(valor);
         return tamano >= 10000 ? 0 : tamano >= 100 ? 2 : 4;
@@ -27648,7 +26827,6 @@ Enfoques NS</p>
           desde + ((valor - minimo) / (maximo - minimo)) * (hasta - desde);
       }
 
-      // Marcas redondas (de 1, 2 o 5 en 5) para un eje.
       function marcasIB(minimo, maximo, cuantas) {
         const bruto = (maximo - minimo) / Math.max(1, cuantas);
         const potencia = Math.pow(10, Math.floor(Math.log10(bruto)));
@@ -27668,8 +26846,6 @@ Enfoques NS</p>
         return marcas;
       }
 
-      // Ejes de una gráfica: rejilla horizontal, marcas y rótulos. `x` e
-      // `y` pasan de valores a unidades del viewBox.
       function EjesIB({
         area,
         x,
@@ -27789,7 +26965,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: notación sigma ----
 
       const TERMINOS_SUMATORIO = [
         {
@@ -28009,9 +27184,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: la suma de una progresión aritmética ----
 
-      // El n\u00famero, con cifras de sub\u00edndice: u\u2081, u\u2081\u2080.
       function subindiceIB(numero) {
         const cifras = "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089";
         return String(numero)
@@ -28315,7 +27488,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: la suma infinita de una progresión geométrica ----
 
       const RAZONES_SERIE = [
         -1.5, -1.2, -1, -0.9, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 0.9, 1,
@@ -28649,7 +27821,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 4: el principio de inducción ----
 
       function menorDivisorIB(numero) {
         for (let divisor = 2; divisor * divisor <= numero; divisor += 1) {
@@ -28662,9 +27833,6 @@ Enfoques NS</p>
 
       const FICHAS_DOMINO = 12;
 
-      // Cada afirmación dice dónde empieza la fila (`primera`), si el caso
-      // base se cumple y en qué ficha deja de valer el paso inductivo
-      // (`rompeEn`: esa ficha cae, pero no tira a la siguiente).
       const AFIRMACIONES_DOMINO = [
         {
           clave: "suma",
@@ -28815,9 +27983,6 @@ Enfoques NS</p>
         }
       ];
 
-      // Durante la caída el componente se repinta en cada fotograma: con
-      // estas dos versiones, KaTeX solo vuelve a componer una fórmula
-      // cuando cambia su texto.
       const FormulaFijaIB = React.memo(FormulaViva);
       const MatematicaFijaIB = React.memo(MatematicaEnLinea);
 
@@ -28835,8 +28000,6 @@ Enfoques NS</p>
       function DominoInduccionInteractivo({ configuracion, alPreparar }) {
         const [clave, setClave] = React.useState("suma");
         const [ficha, setFicha] = React.useState(1);
-        // null: las fichas están de pie; un número: milisegundos desde el
-        // empujón.
         const [tiempo, setTiempo] = React.useState(null);
         const cuadro = React.useRef(null);
         const tope = React.useRef(null);
@@ -28883,8 +28046,6 @@ Enfoques NS</p>
             ? DOMINO.hueco
             : 0);
 
-        // En una pantalla estrecha la fila no cabe entera y la caja se
-        // desplaza a lo ancho: se lleva hasta la ficha que está cayendo.
         const seguir = (numero) => {
           const caja = zona.current;
           if (!caja || caja.scrollWidth <= caja.clientWidth + 1) {
@@ -28933,8 +28094,6 @@ Enfoques NS</p>
             cuadro.current = window.requestAnimationFrame(avanzar);
           };
           cuadro.current = window.requestAnimationFrame(avanzar);
-          // Si el navegador deja de dar fotogramas (la pestaña pasa a
-          // segundo plano), la caída se da por terminada igualmente.
           tope.current = window.setTimeout(() => {
             tope.current = null;
             if (cuadro.current !== null) {
@@ -28954,8 +28113,6 @@ Enfoques NS</p>
           }
         };
 
-        // Giro de cada ficha, en grados: acelera como una caída y se queda
-        // apoyada en la siguiente (70°) o tumbada del todo (90°).
         const giro = (numero) => {
           if (
             tiempo === null ||
@@ -29236,7 +28393,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: ordenaciones con condiciones ----
 
       function permutacionesIB(elementos) {
         if (elementos.length <= 1) {
@@ -29254,8 +28410,6 @@ Enfoques NS</p>
         return todas;
       }
 
-      // Las cinco bicicletas del laboratorio. Cada clase de filas se
-      // reconoce por las parejas de eléctricas pegadas que tiene.
       const CASOS_FILAS = {
         dos: {
           rotulo: "Dos eléctricas: X e Y",
@@ -29362,8 +28516,6 @@ Enfoques NS</p>
                   pegadas += 1;
                 }
               }
-              // Los tramos de la fila: una normal suelta o una racha de
-              // eléctricas, que se dibuja como bloque si tiene dos o más.
               const tramos = [];
               letras.forEach((letra) => {
                 const esElectrica = datos.electricas.indexOf(letra) >= 0;
@@ -29536,7 +28688,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: permutaciones y combinaciones ----
 
       function combinacionesIB(elementos, cuantos) {
         if (cuantos === 0) {
@@ -29745,7 +28896,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: el triángulo de Pascal y el binomio ----
 
       const FILAS_TRIANGULO = 7;
 
@@ -29757,7 +28907,6 @@ Enfoques NS</p>
         return Math.round(valor);
       }
 
-      // Todas las palabras con ese número de letras a y de letras b.
       function palabrasIB(letrasA, letrasB) {
         if (letrasA === 0) {
           return ["b".repeat(letrasB)];
@@ -29957,11 +29106,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: un término del desarrollo ----
 
-      // Los binomios de la teoría del subapartado 3.1. `numeroA` y `numeroB`
-      // son los números de los dos términos del binomio, y `exponente`, el
-      // de la x en el término que lleva la potencia r del segundo.
       const BINOMIOS_TERMINO = [
         {
           clave: "independiente",
@@ -30205,7 +29350,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 2: el binomio con exponente racional ----
 
       function mcdIB(a, b) {
         let mayor = Math.abs(a);
@@ -30227,9 +29371,6 @@ Enfoques NS</p>
         };
       }
 
-      // Coeficientes de escala · (1 + c·x)^(p/q), como fracciones exactas:
-      // cada uno sale del anterior multiplicando por (p − kq) / (q(k + 1))
-      // y por c.
       function coeficientesBinomioIB(desarrollo, cuantos) {
         const coeficientes = [fraccionIB(desarrollo.escala[0], desarrollo.escala[1])];
         for (let k = 0; k < cuantos - 1; k += 1) {
@@ -30348,8 +29489,6 @@ Enfoques NS</p>
         const y = escalaIB(ventana.yMin, ventana.yMax, area.aba, area.arr);
         const alto = ventana.yMax - ventana.yMin;
 
-        // Una curva puede tener varios tramos: se corta donde la función
-        // no existe o se sale muy lejos de la ventana.
         const trazos = (funcion) => {
           const tramos = [];
           let actual = [];
@@ -30645,7 +29784,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: el número e ----
 
       const ABONOS_NUMERO_E = [
         { veces: 1, rotulo: "una vez al año", corto: "año" },
@@ -30672,8 +29810,6 @@ Enfoques NS</p>
           return null;
         }
 
-        // (1 + 1/n)^n, calculado con el logaritmo para no perder cifras
-        // cuando n es enorme.
         const capital = (veces) => Math.exp(veces * Math.log1p(1 / veces));
         const abono = ABONOS_NUMERO_E[lugar];
         const valor = capital(abono.veces);
@@ -30834,7 +29970,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: modelos exponenciales ----
 
       function ModeloExponencialInteractivo({ configuracion, alPreparar }) {
         const conAsintota = configuracion.tipo === "asintota";
@@ -30876,8 +30011,6 @@ Enfoques NS</p>
         const marcasX = marcasIB(0, tiempoMaximo, 6);
         const marcasY = marcasIB(0, valorMaximo, 5);
 
-        // Las marcas de «cada cierto tiempo, la mitad o el doble»: los
-        // instantes T, 2T y 3T que caben en la gráfica.
         const hitos = [];
         if (mitad !== null && (!conAsintota || diferencia !== 0)) {
           for (let veces = 0; veces <= 3; veces += 1) {
@@ -31239,7 +30372,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: la ventana de la calculadora gráfica ----
 
       function raizPorBiseccionIB(funcion, izquierda, derecha) {
         let a = izquierda;
@@ -31255,9 +30387,6 @@ Enfoques NS</p>
         return (a + b) / 2;
       }
 
-      // La ecuación de la teoría del subapartado 3.4, e^x = x + 3, y las
-      // dos ventanas de fábrica de la Casio fx-CG50, que es la calculadora
-      // de la alumna: INITIAL y STANDRD.
       const SOLUCIONES_VENTANA = [
         raizPorBiseccionIB((x) => Math.exp(x) - x - 3, -3.5, -2.5),
         raizPorBiseccionIB((x) => Math.exp(x) - x - 3, 1, 2)
@@ -31298,7 +30427,6 @@ Enfoques NS</p>
         }
       };
 
-      // Un número como lo escribe la calculadora: diez cifras y punto.
       function cifrasDeCalculadoraIB(valor) {
         return String(Number(valor.toPrecision(10)));
       }
@@ -31306,7 +30434,6 @@ Enfoques NS</p>
       function VentanaCalculadoraInteractivo({ configuracion, alPreparar }) {
         const [modo, setModo] = React.useState("dos");
         const [ventana, setVentana] = React.useState(VENTANA_INICIAL);
-        // null: G-Solv no está en marcha; un número: la solución que enseña.
         const [lugar, setLugar] = React.useState(null);
         const recorte = React.useMemo(() => {
           recortesIB += 1;
@@ -31354,7 +30481,6 @@ Enfoques NS</p>
           });
         };
 
-        // Cada solución, con el motivo por el que no se ve, si no se ve.
         const soluciones = SOLUCIONES_VENTANA.map((abscisa) => {
           const ordenada = datos.altura(abscisa);
           let fuera = "";
@@ -31401,8 +30527,6 @@ Enfoques NS</p>
           return tramos.filter((tramo) => tramo.length > 1);
         };
 
-        // Marcas de los ejes, de 1 en 1 como en la calculadora; si quedan
-        // demasiado juntas, de 5 en 5.
         const marcasDe = (minimo, maximo, escala) => {
           const separacion = Math.abs(escala(1) - escala(0));
           const salto = separacion >= 9 ? 1 : 5;
@@ -31421,8 +30545,6 @@ Enfoques NS</p>
         const ejeX = limitar(y(0), area.arr, area.aba);
         const ejeY = limitar(x(0), area.izq, area.der);
 
-        // Con tres cifras significativas, como pide el examen: la
-        // ordenada del corte de la izquierda es 0,0525, no 0,05.
         const coordenadas = (solucion) =>
           "(" +
           numeroIB(solucion.abscisa, 2) +
@@ -31735,11 +30857,9 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: el menor entero que cumple una desigualdad ----
 
       const UMBRALES_MENOR_ENTERO = [0.1, 0.05, 0.01];
 
-      // Tres cifras significativas, con coma: 0,0550.
       function tresCifrasIB(valor) {
         return valor.toPrecision(3).replace(".", ",");
       }
@@ -31790,8 +30910,6 @@ Enfoques NS</p>
         const baseTex = texIB(base, 1);
         const umbralTex = texIB(umbral, 2);
 
-        // Al cambiar la base o el umbral, el exponente se coloca en el
-        // entero anterior al que resuelve la pregunta: el «todavía no».
         const cambiar = (nuevaBase, nuevoUmbral) => {
           setBase(nuevaBase);
           setUmbral(nuevoUmbral);
@@ -32077,11 +31195,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Laboratorios del 8 de octubre: una animación común ----
 
-      // Un avance de 0 a 1 que dura lo que se le pida. Con el movimiento
-      // reducido salta al final, y si el navegador deja de dar fotogramas
-      // (la pestaña pasa a segundo plano) se da por terminado igualmente.
       function usarAvanceIB() {
         const [avance, setAvance] = React.useState(null);
         const cuadro = React.useRef(null);
@@ -32147,12 +31261,7 @@ Enfoques NS</p>
         return { avance, lanzar, quitar };
       }
 
-      // ---- Unidad 4: el paso inductivo, capa a capa ----
 
-      // Un pentágono regular de lado 1 con un vértice en el origen. Los
-      // números pentagonales crecen desde ese vértice: la capa k son los
-      // puntos de los tres lados que no lo tocan, 3k - 2 en total, que es
-      // el término de la suma del ejemplo del subapartado 2.1.
       const PENTAGONO_IB = (() => {
         const grados = (angulo) => (angulo * Math.PI) / 180;
         return [
@@ -32201,8 +31310,6 @@ Enfoques NS</p>
         const puntosDe = (cuantos) =>
           cuantos + (cuantos === 1 ? " punto" : " puntos");
         const nueva = capas + 1;
-        // El pentágono se dibuja tan grande como quepa con la capa nueva
-        // incluida, centrado en la parte izquierda.
         const unidad = Math.min(70, 250 / (PENTAGONO_IB[2].y * capas));
         const radio = Math.min(7, unidad * 0.2);
         const origen = { x: 196 - 0.5 * capas * unidad, y: 286 };
@@ -32503,10 +31610,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 3: el balón que rebota ----
 
-      // Un balón que cae desde 12 m y rebota hasta la mitad: las alturas
-      // son la serie 12 + 6 + 3 + 1,5 + ... del subapartado 3.3.
       const BALON_IB = { altura: 12, razon: 0.5, toques: 8 };
 
       function BalonRebotaInteractivo({ configuracion, alPreparar }) {
@@ -32530,8 +31634,6 @@ Enfoques NS</p>
         const porMetro = (suelo - techo) / BALON_IB.altura;
         const yDe = (metros) => suelo - metros * porMetro;
 
-        // Un tramo por cada toque: la caída y, después, un arco por
-        // rebote. Su anchura es proporcional a lo que dura.
         const tramos = [];
         let alto = BALON_IB.altura;
         tramos.push({ alto: alto, dura: Math.sqrt(alto), caida: true });
@@ -32591,7 +31693,6 @@ Enfoques NS</p>
           tramoDelBalon = indice;
         }
 
-        // La barra de la distancia: 36 m de punta a punta.
         const barra = { izq: izq, der: 530, arr: 252, alto: 22 };
         const bx = (metros) =>
           barra.izq + (metros / 36) * (barra.der - barra.izq);
@@ -32936,11 +32037,7 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: la regla de cálculo ----
 
-      // Dos escalas logarítmicas: la de abajo, fija, va de 1 a 100; la de
-      // arriba, de 1 a 10, se corre hasta poner su 1 sobre el primer
-      // factor. Arranca con el 3 y el 5 del subapartado 2.1.
       function ReglaCalculoInteractivo({ configuracion, alPreparar }) {
         const [primero, setPrimero] = React.useState(3);
         const [segundo, setSegundo] = React.useState(5);
@@ -32962,8 +32059,6 @@ Enfoques NS</p>
         const corrida = lugar(primero) - izq;
         const union = 132;
         const banda = 48;
-        // El 9 solo se rotula cuando es el factor elegido, y entonces se
-        // quitan el 8 y el 10, que se le echarían encima.
         const rotulos = (elegido, lista) =>
           lista
             .filter(
@@ -33323,7 +32418,6 @@ Enfoques NS</p>
         );
       }
 
-      // ---- Unidad 1: el espejo de la exponencial y el logaritmo ----
 
       function EspejoExpLnInteractivo({ configuracion, alPreparar }) {
         const [abscisa, setAbscisa] = React.useState(1);
@@ -33339,8 +32433,6 @@ Enfoques NS</p>
           return null;
         }
 
-        // La misma escala en los dos ejes, para que el reflejo en la
-        // recta y = x sea de verdad un reflejo.
         const escala = 50;
         const minimoX = -3.5;
         const maximoX = 6.5;
@@ -33391,9 +32483,6 @@ Enfoques NS</p>
                 "\\approx" +
                 texIB(abscisa, 1);
         const reflejada = avance !== null;
-        // Los rótulos de los dos puntos no se salen del dibujo: cerca de
-        // un borde se corren hacia dentro, y el de arriba sube un poco
-        // para no pisar su punto.
         const anchoRotulo = (texto) => 9 * texto.length;
         const finAzul = Math.max(
           px(abscisa) - 14,
@@ -33763,7 +32852,6 @@ Enfoques NS</p>
         "dosis-medicamento": DosisMedicamentoInteractivo,
         "huerto-areas": HuertoAreasInteractivo,
         "region-plano": RegionPlanoInteractivo,
-        // Propios del curso IB.
         "numero-e": NumeroEInteractivo,
         "modelo-exponencial": ModeloExponencialInteractivo,
         "filas-condiciones": FilasCondicionesInteractivo,
@@ -33783,8 +32871,6 @@ Enfoques NS</p>
         "espejo-exp-ln": EspejoExpLnInteractivo
       };
 
-      // Las infografías tienen guion propio, delante de este, y los
-      // resúmenes de fin de unidad, otro.
       Object.assign(COMPONENTES, window.InfografiasIB || {});
       Object.assign(COMPONENTES, window.ResumenesIB || {});
 
