@@ -5315,7 +5315,7 @@
 
     .fichas-esencial {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(13.5em, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(15.5em, 1fr));
       gap: 0.6em;
     }
 
@@ -16354,8 +16354,8 @@ void main() {
       const { Trazo, Velo, Punto, Barra, Rotulo, cursiva, palabra, HUECO, Sup, Quebrado, Raiz, Mates, caja, n1, grafica, tonoDeLaUnidad } = piezas;
 
 
-      const MENOS = "−";
-      const FINO = " ";
+      const MENOS = "\u2212";
+      const FINO = "\u202F";
 
       function cifra(valor, decimales, fijos) {
         let texto = Math.abs(valor).toFixed(decimales === undefined ? 2 : decimales);
@@ -16387,6 +16387,42 @@ void main() {
         return cifra(valor, decimales, fijos).split(MENOS).join("-").split(",").join("{,}").split(FINO).join("\\,");
       }
 
+      const formulasVivas = new Set();
+      const formulasPorAjustar = new Set();
+      let ajusteCitado = false;
+
+      function ajustarFormulas() {
+        ajusteCitado = false;
+        const lote = Array.from(formulasPorAjustar);
+        formulasPorAjustar.clear();
+        lote.forEach((una) => {
+          if (una.dentro.style.fontSize) {
+            una.dentro.style.fontSize = "";
+          }
+        });
+        lote.forEach((una) => {
+          una.ancho = una.nodo.clientWidth;
+          una.pide = una.nodo.scrollWidth;
+        });
+        lote.forEach((una) => {
+          if (una.ancho > 0 && una.pide > una.ancho + 1) {
+            una.dentro.style.fontSize = Math.max(55, Math.floor((99 * una.ancho) / una.pide)) + "%";
+          }
+        });
+      }
+
+      function pedirAjuste(una) {
+        formulasPorAjustar.add(una);
+        if (!ajusteCitado) {
+          ajusteCitado = true;
+          Promise.resolve().then(ajustarFormulas);
+        }
+      }
+
+      if (document.fonts && document.fonts.addEventListener) {
+        document.fonts.addEventListener("loadingdone", () => formulasVivas.forEach(pedirAjuste));
+      }
+
       function Formula({ tex }) {
         const marco = useRef(null);
         const html = useMemo(
@@ -16408,27 +16444,13 @@ void main() {
           if (!dentro) {
             return undefined;
           }
-          let ancho = -1;
-          const ajustar = () => {
-            dentro.style.fontSize = "";
-            ancho = nodo.clientWidth;
-            if (ancho > 0 && nodo.scrollWidth > ancho + 1) {
-              dentro.style.fontSize = Math.max(60, Math.floor((99 * ancho) / nodo.scrollWidth)) + "%";
-            }
-          };
-          ajustar();
-          let vivo = true;
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(() => {
-              if (vivo) {
-                ajustar();
-              }
-            });
-          }
+          const una = { nodo: nodo, dentro: dentro, ancho: -1, pide: 0 };
+          formulasVivas.add(una);
+          pedirAjuste(una);
           const vigia = window.ResizeObserver
             ? new window.ResizeObserver(() => {
-                if (nodo.clientWidth !== ancho) {
-                  ajustar();
+                if (nodo.clientWidth !== una.ancho) {
+                  pedirAjuste(una);
                 }
               })
             : null;
@@ -16436,7 +16458,8 @@ void main() {
             vigia.observe(nodo);
           }
           return () => {
-            vivo = false;
+            formulasVivas.delete(una);
+            formulasPorAjustar.delete(una);
             if (vigia) {
               vigia.disconnect();
             }
@@ -16750,7 +16773,7 @@ void main() {
           marco.current.querySelectorAll(".katex-html").forEach((html) => {
             if (
               !html.closest(".katex-display") &&
-              html.textContent.replace(/​/g, "").length <= LETRAS_DE_UNA_CORTA
+              html.textContent.replace(/\u200B/g, "").length <= LETRAS_DE_UNA_CORTA
             ) {
               html.classList.add("corta-esencial");
             }
@@ -17064,6 +17087,194 @@ void main() {
             "nombres": ["Cómo se despeja", "Escalas logarítmicas"],
             "errores": ["un exponente se despeja con un logaritmo", "no se redondean antes de dividir", "Una escala logarítmica no es lineal"]
           }
+        ],
+        "resumen-algebra": [
+          {
+            "grupo": "Polinomios",
+            "desde": 0,
+            "nombres": ["Teorema del resto", "Teorema del factor", "Raíces enteras"],
+            "errores": ["que fallen los divisores", "contando multiplicidad"]
+          },
+          {
+            "grupo": "Polinomios",
+            "desde": 3,
+            "nombres": ["Raíces y factores", "Factor irreducible", "En este orden"],
+            "errores": ["el coeficiente principal se queda delante", "el signo sacado como factor común", "es irreducible porque"]
+          },
+          {
+            "grupo": "Fracciones algebraicas",
+            "desde": 0,
+            "nombres": ["Cuándo existe", "Simplificar", "Sumar y restar", "Multiplicar y dividir"],
+            "errores": ["Se cancelan factores, nunca sumandos", "no se toca hasta factorizar", "la condición se anota antes de cancelar", "existe para todo"]
+          },
+          {
+            "grupo": "Ecuaciones",
+            "desde": 0,
+            "nombres": ["Soluciones falsas", "Segundo grado", "Discriminante", "Producto nulo"],
+            "errores": ["es un fantasma", "pierde la primera", "el producto nulo solo funciona", "no toda ecuación"]
+          },
+          {
+            "grupo": "Ecuaciones",
+            "desde": 4,
+            "nombres": ["Cambio de variable", "Lo que no puede ser", "Valor absoluto"],
+            "errores": ["hay que deshacer el cambio", "una exponencial siempre es positiva", "la rama negativa", "se ve sin operar"]
+          },
+          {
+            "grupo": "Sistemas de ecuaciones",
+            "desde": 0,
+            "nombres": ["Transformaciones", "Método de Gauss", "Filas especiales", "No lineales"],
+            "errores": ["también se resta el término independiente", "es multiplicar todos sus términos", "que sobra una ecuación", "no garantizan infinitas soluciones"]
+          },
+          {
+            "grupo": "Inecuaciones",
+            "desde": 0,
+            "nombres": ["Reglas", "Cómo se da la solución", "Estudio del signo", "Con valor absoluto", "Exponenciales y logaritmos", "Sistemas de inecuaciones"],
+            "errores": ["no se resuelve multiplicando por", "queda fuera aunque", "son dos semirrectas", "con base menor que"]
+          }
+        ],
+        "resumen-algebra-sociales": [
+          {
+            "grupo": "Polinomios",
+            "desde": 0,
+            "nombres": ["Cuadrado de una suma y de una resta", "Suma por diferencia", "División", "Regla de Ruffini", "Teorema del resto", "Teorema del factor"],
+            "errores": ["no a^2+b^2", "contando multiplicidad"]
+          },
+          {
+            "grupo": "Polinomios",
+            "desde": 6,
+            "nombres": ["Raíces enteras", "Raíces y factores", "Factor irreducible", "En este orden"],
+            "errores": ["el coeficiente principal se queda delante", "que fallen los divisores", "es irreducible porque"]
+          },
+          {
+            "grupo": "Fracciones algebraicas",
+            "desde": 0,
+            "nombres": ["Cuándo existe", "Simplificar", "Sumar y restar", "Multiplicar y dividir"],
+            "errores": ["Se cancelan factores, nunca sumandos", "no se toca hasta factorizar", "la condición se anota antes de cancelar", "existe para todo"]
+          },
+          {
+            "grupo": "Ecuaciones",
+            "desde": 0,
+            "nombres": ["Soluciones falsas", "Segundo grado", "Discriminante", "Producto nulo"],
+            "errores": ["es un fantasma", "pierde la primera", "el producto nulo solo funciona", "no toda ecuación"]
+          },
+          {
+            "grupo": "Ecuaciones",
+            "desde": 4,
+            "nombres": ["Cambio de variable", "Lo que no puede ser", "Despejar un exponente"],
+            "errores": ["hay que deshacer el cambio", "una exponencial siempre es positiva", "un exponente se despeja con logaritmos", "en un cociente de logaritmos no se"]
+          },
+          {
+            "grupo": "Sistemas de ecuaciones",
+            "desde": 0,
+            "nombres": ["Transformaciones", "Método de Gauss", "Filas especiales", "No lineales"],
+            "errores": ["también se resta el término independiente", "es multiplicar todos sus términos", "que sobra una ecuación"]
+          },
+          {
+            "grupo": "Inecuaciones",
+            "desde": 0,
+            "nombres": ["Reglas", "Cómo se da la solución", "Estudio del signo", "Sistemas de inecuaciones"],
+            "errores": ["no se resuelve multiplicando por", "queda fuera aunque", "se compara con cero antes de estudiar signos"]
+          }
+        ],
+        "resumen-reales-sociales": [
+          {
+            "grupo": "Números reales",
+            "desde": 0,
+            "nombres": ["Los conjuntos", "Racional o irracional", "Densidad"],
+            "errores": []
+          },
+          {
+            "grupo": "Potencias",
+            "desde": 0,
+            "nombres": ["Exponente cero y negativo", "Con la misma base", "Con el mismo exponente"],
+            "errores": ["invierte la base", "sin paréntesis, el signo queda fuera", "al multiplicar potencias se suman", "no valen para sumas ni"]
+          },
+          {
+            "grupo": "Radicales",
+            "desde": 0,
+            "nombres": ["Qué es una raíz", "Exponente fraccionario", "Producto y raíz de una raíz"],
+            "errores": ["las dos soluciones son de la ecuación", "es una raíz", "la raíz no se reparte sobre una suma"]
+          },
+          {
+            "grupo": "Radicales",
+            "desde": 3,
+            "nombres": ["Sumar", "Racionalizar"],
+            "errores": ["solo se suman radicales semejantes", "con índices distintos se reduce", "Para racionalizar", "se simplifican factores"]
+          },
+          {
+            "grupo": "Logaritmos",
+            "desde": 0,
+            "nombres": ["Qué es un logaritmo", "Producto y cociente", "Potencia", "Cambio de base"],
+            "errores": ["sumar logaritmos es multiplicar", "un cociente de logaritmos no", "el coeficiente pasa como exponente", "puede ser negativo el"]
+          },
+          {
+            "grupo": "Logaritmos",
+            "desde": 4,
+            "nombres": ["Con logaritmos"],
+            "errores": ["un exponente se despeja", "los logaritmos no", "Crecer un"]
+          },
+          {
+            "grupo": "Recta real",
+            "desde": 0,
+            "nombres": ["Intervalos y semirrectas", "Intersección y unión"],
+            "errores": ["va siempre paréntesis", "es lo común y", "la unión de dos intervalos separados se"]
+          },
+          {
+            "grupo": "Repaso de la ESO",
+            "desde": 0,
+            "nombres": ["Tipo de decimal", "De decimal a fracción", "En la recta", "Propiedades", "Notación científica"],
+            "errores": []
+          }
+        ],
+        "resumen-reales-cuarto": [
+          {
+            "grupo": "Números reales",
+            "desde": 0,
+            "nombres": ["Los conjuntos", "Racional o irracional"],
+            "errores": ["irracional es no", "no todo radical es irracional", "una aproximación no es"]
+          },
+          {
+            "grupo": "Números reales",
+            "desde": 2,
+            "nombres": ["Tipo de decimal", "Fracción generatriz"],
+            "errores": ["en un periódico", "el período pone"]
+          },
+          {
+            "grupo": "Recta real",
+            "desde": 0,
+            "nombres": ["Intervalos y semirrectas", "Intersección y unión", "Valor absoluto y distancia"],
+            "errores": ["es lo común y", "la unión de dos intervalos separados se", "primero se opera dentro de las barras", "al restar un negativo hace falta el"]
+          },
+          {
+            "grupo": "Aproximaciones y errores",
+            "desde": 0,
+            "nombres": ["Redondear", "Cifras significativas", "Error absoluto y relativo"],
+            "errores": ["truncado y", "tres cifras significativas", "los ceros finales", "Se redondea una sola vez"]
+          },
+          {
+            "grupo": "Potencias",
+            "desde": 0,
+            "nombres": ["Exponente cero y negativo", "Con la misma base", "Con el mismo exponente", "Notación científica"],
+            "errores": ["invierte la base", "sin paréntesis, el signo queda fuera", "no valen para sumas ni", "no está en notación científica"]
+          },
+          {
+            "grupo": "Radicales",
+            "desde": 0,
+            "nombres": ["Qué es una raíz", "Exponente fraccionario", "Producto y raíz de una raíz"],
+            "errores": ["con índice par, la raíz nunca es negativa", "el denominador del", "la raíz no se reparte sobre una suma ni", "en una raíz de"]
+          },
+          {
+            "grupo": "Radicales",
+            "desde": 3,
+            "nombres": ["Sumar", "Racionalizar"],
+            "errores": ["solo se suman radicales semejantes", "con índices distintos se", "se le multiplica por su conjugado", "se simplifican factores"]
+          },
+          {
+            "grupo": "Logaritmos",
+            "desde": 0,
+            "nombres": ["Qué es un logaritmo", "Producto y cociente", "Potencia", "Cambio de base"],
+            "errores": ["se busca el", "sumar logaritmos es", "el coeficiente pasa como", "puede ser negativo el"]
+          }
         ]
       };
 
@@ -17072,9 +17283,9 @@ void main() {
 
       const mcd = (a, b) => (b === 0 ? a : mcd(b, a % b));
 
-      const DURO = " ";
+      const DURO = "\u00A0";
       const IGUAL = DURO + "=" + DURO;
-      const VECES = DURO + "⋅" + DURO;
+      const VECES = DURO + "\u22C5" + DURO;
 
       const anchoNumero = (valor) => 0.5 * String(Math.abs(valor)).length + (valor < 0 ? 0.78 : 0);
 
@@ -17094,7 +17305,7 @@ void main() {
       }
 
       function Fila({ x, y, s, trozos }) {
-        const anchoDe = (trozo) => trozo.ancho + (trozo.raiz ? 0.62 : 0);
+        const anchoDe = (trozo) => trozo.ancho + (trozo.raiz ? 0.62 : trozo.quebrado ? 0.2 : 0);
         let lugar = x - (suma(trozos.map(anchoDe)) * s) / 2;
         let pies = 0;
         return (
@@ -17111,6 +17322,10 @@ void main() {
                       <Raiz x={desde + 0.54 * s} y={y} s={s} ancho={trozo.ancho * s} indice={trozo.indice}>
                         {trozo.contenido}
                       </Raiz>
+                    </g>
+                  ) : trozo.quebrado ? (
+                    <g fontWeight={trozo.fuerte ? 700 : 400}>
+                      <Quebrado x={(desde + lugar) / 2} y={y} s={s} ancho={trozo.ancho * s} arriba={trozo.quebrado[0]} abajo={trozo.quebrado[1]} />
                     </g>
                   ) : (
                     <text x={desde} y={y} fontSize={s} textAnchor="start" fontWeight={trozo.fuerte ? 700 : 400}>
@@ -17138,650 +17353,443 @@ void main() {
         );
       }
 
+      const nombreDeBase = (base) => (base === Math.E ? "e" : cifra(base));
 
-      const CLASIFICADOS = [
-        {
-          rotulo: <Mates tex="-8" />,
-          nombre: "menos 8",
-          tex: "-8\\in\\mathbb Z",
-          conjunto: "Z",
-          frase: <>Es entero y no es natural: el menor conjunto al que pertenece es el de los enteros.</>,
-          zona: [282, 146, 80, 44]
-        },
-        {
-          rotulo: <Mates tex="\frac{12}{3}" />,
-          nombre: "12 entre 3",
-          tex: "\\frac{12}{3}=4\\in\\mathbb N",
-          conjunto: "N",
-          frase: <>Simplificada, la fracción es un natural: el menor conjunto al que pertenece es el de los naturales.</>,
-          zona: [70, 132, 140, 46]
-        },
-        {
-          rotulo: <Mates tex="0{,}125" />,
-          nombre: "0,125",
-          tex: "0{,}125\\in\\mathbb Q",
-          conjunto: "Q",
-          frase: <>Su expresión decimal es exacta: es racional, y no es entero.</>,
-          zona: [388, 132, 96, 46]
-        },
-        {
-          rotulo: <Mates tex="\sqrt{49}" />,
-          nombre: "la raíz de 49",
-          tex: "\\sqrt{49}=7\\in\\mathbb N",
-          conjunto: "N",
-          frase: (
-            <>
-              Lleva una raíz, pero vale <Mates tex="7" />: es un natural.
-            </>
-          ),
-          zona: [70, 184, 140, 40]
-        },
-        {
-          rotulo: <Mates tex="\sqrt{50}" />,
-          nombre: "la raíz de 50",
-          tex: "\\sqrt{50}=5\\sqrt2\\in\\mathbb R\\setminus\\mathbb Q",
-          conjunto: "I",
-          frase: (
-            <>
-              Es irracional, porque <Mates tex="50" /> no es el cuadrado de ningún entero.
-            </>
-          ),
-          zona: [500, 132, 122, 46]
+      function estacionDeDespejar({ clave, nombre, bases, inicial, alturas, ventana, marcas: marcasPedidas, cuenta, pista }) {
+        const [desde, hasta, techo] = ventana;
+        const px = (x) => 70 + (548 * (x - desde)) / (hasta - desde);
+        const py = (alto) => 270 - (220 * alto) / techo;
+        const marcas = marcasPedidas || [];
+        for (let marca = Math.ceil(desde); !marcasPedidas && marca <= Math.floor(hasta); marca += 1) {
+          marcas.push(marca);
         }
-      ];
+        const peldanos = [];
+        for (let alto = alturas.salto; alto <= techo; alto += alturas.salto) {
+          peldanos.push(alto);
+        }
+        const exponenteDe = (e) => Math.log(e.b) / Math.log(e.base);
+        const justoDe = (e) => Math.abs(exponenteDe(e) - Math.round(exponenteDe(e))) < 1e-9;
 
+        function Dibujo({ e, poner }) {
+          const exponente = exponenteDe(e);
+          const fin = Math.min(hasta, Math.log(techo * 1.02) / Math.log(e.base));
+          const x = px(exponente);
+          const y = py(e.b);
+          const aLaIzquierda = x > 500;
+          const base = e.base === Math.E ? cursiva("e") : cifra(e.base);
+          const justo = justoDe(e);
+
+          return (
+            <>
+              <Trazo t={0.1} dura={0.4} d="M70 270H618" strokeOpacity="0.85" strokeWidth="1.5" />
+              <Trazo t={0.2} dura={0.4} d={"M" + n1(px(0)) + " 270V46"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo
+                t={0.5}
+                d={
+                  "M" + marcas.filter((marca) => marca !== 0).map((marca) => n1(px(marca)) + " 265v10").join("M") +
+                  "M" + peldanos.map((alto) => n1(px(0) - 4) + " " + n1(py(alto)) + "h8").join("M")
+                }
+                strokeOpacity="0.8"
+                strokeWidth="1.4"
+              />
+              <Trazo t={0.7} dura={0.9} d={grafica((valor) => Math.pow(e.base, valor), desde, fin, px, py, 48)} strokeWidth="3" />
+              <Velo t={1.7} d={"M" + n1(px(0)) + " " + n1(y) + "H" + n1(x)} strokeDasharray="5 6" strokeWidth="1.8" />
+              <Velo t={1.9} d={"M" + n1(x) + " " + n1(y) + "V268"} strokeDasharray="5 6" strokeWidth="1.8" />
+              <Velo t={2.1} d={"M" + n1(x - 5) + " 261L" + n1(x) + " 269L" + n1(x + 5) + " 261"} strokeWidth="1.8" />
+              <Punto t={1.8} cx={n1(x)} cy={n1(y)} r="6.5" />
+              <Letras>
+                <Rotulo t={0.3} x="320" y="28" fontSize="19">
+                  {palabra("¿a qué exponente hay que elevar ")}
+                  {base}
+                  {palabra(" para llegar a " + cifra(e.b) + "?")}
+                </Rotulo>
+                {marcas.map((marca) => (
+                  <Rotulo key={marca} t={0.6} x={n1(px(marca) - (marca === 0 ? 10 : 0))} y="292" fontSize="16" opacity="0.88">
+                    {cifra(marca)}
+                  </Rotulo>
+                ))}
+                <Rotulo t={1.7} x={n1(px(0) - 12)} y={n1(y + 7)} fontSize="21" fontWeight="700" textAnchor="end">
+                  {cifra(e.b)}
+                </Rotulo>
+                <Rotulo t={1.2} x={n1(px(0) + 14)} y="66" fontSize="21" textAnchor="start">
+                  {cursiva("y")} = {base}
+                  <Sup>{cursiva("x")}</Sup>
+                </Rotulo>
+                <Rotulo t={2.2} x={n1(aLaIzquierda ? x - 13 : x + 13)} y="258" fontSize="21" fontWeight="700" textAnchor={aLaIzquierda ? "end" : "start"}>
+                  {cursiva("x")}
+                  {justo ? " = " : " ≈ "}
+                  {justo ? cifra(Math.round(exponente)) : cifra(exponente, 2, true)}
+                </Rotulo>
+              </Letras>
+              <Toca
+                alTocar={(evento) => {
+                  const alto = ((270 - dondeToca(evento).y) * techo) / 220;
+                  poner({ b: Math.min(alturas.max, Math.max(alturas.min, Math.round(alto / alturas.salto) * alturas.salto)) });
+                }}
+              >
+                <Zona x="70" y="40" width="548" height="230" />
+              </Toca>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
+          duracion: 2.8,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "La gráfica de la función exponencial de base " + nombreDeBase(e.base) + ". A la altura " + cifra(e.b) +
+            " llega cuando el exponente vale " + cifra(exponenteDe(e)) + ": ese exponente es el logaritmo en base " +
+            nombreDeBase(e.base) + " de " + cifra(e.b) + ".",
+          mandos: () =>
+            [
+              bases.length > 1 && {
+                tipo: "opciones",
+                clave: "base",
+                nombre: "la base",
+                rotulo: "Base",
+                opciones: bases.map((base) => ({ valor: base, rotulo: base === Math.E ? <Mates tex="e" /> : cifra(base) }))
+              },
+              {
+                tipo: "paso",
+                clave: "b",
+                nombre: "el número al que hay que llegar",
+                rotulo: "Hay que llegar a",
+                min: alturas.min,
+                max: alturas.max,
+                salto: alturas.salto
+              }
+            ].filter(Boolean),
+          vivo: (e) => {
+            const exponente = exponenteDe(e);
+            const entero = Math.round(exponente);
+            const decimal = e.base === 10;
+            const neperiano = e.base === Math.E;
+            const base = neperiano ? "e" : enTex(e.base);
+            const b = enTex(e.b);
+            const logaritmo = decimal ? "\\log " + b : neperiano ? "\\ln " + b : "\\log_{" + base + "}" + b;
+            const aproximado = "\\approx" + enTex(exponente, 2, true);
+            if (justoDe(e)) {
+              return [
+                base + "^{x}=" + b + "\\iff x=" + (cuenta === "ln" || decimal || neperiano ? logaritmo + "=" : "") + entero,
+                <>
+                  Sale exacto, porque <Mates tex={base + "^{" + entero + "}=" + b} />.
+                </>
+              ];
+            }
+            if (decimal || neperiano) {
+              return [
+                base + "^{x}=" + b + "\\iff x=" + logaritmo + aproximado,
+                <>
+                  Es la tecla <code>{decimal ? "log" : "ln"}</code> de la calculadora.
+                </>
+              ];
+            }
+            if (cuenta === "ln") {
+              return [
+                base + "^{x}=" + b + "\\iff x=" + logaritmo,
+                logaritmo + "=\\frac{\\ln " + b + "}{\\ln " + base + "}" + aproximado,
+                <>
+                  En la calculadora, con la tecla <code>ln</code> o con la tecla <code>log</code>: el cociente da lo mismo.
+                </>
+              ];
+            }
+            return [
+              base + "^{x}=" + b + "\\iff x\\log " + base + "=\\log " + b,
+              "x=\\frac{\\log " + b + "}{\\log " + base + "}" + aproximado,
+              <>Se toman logaritmos en los dos miembros y se baja el exponente.</>
+            ];
+          },
+          pista: pista
+        };
+      }
+
+
+      const SITIOS_DE_CONJUNTO = {
+        N: [[[138, 184]], [[138, 160], [138, 208]]],
+        Z: [[[318, 176]], [[318, 158], [318, 206]]],
+        Q: [[[436, 162]], [[436, 146], [436, 196]]],
+        I: [[[560, 162]], [[560, 138], [560, 186]]]
+      };
       const DONDE_ESTA = { N: "los naturales", Z: "los enteros", Q: "los racionales", I: "los irracionales" };
 
-      function ConjuntosDibujo({ e, poner }) {
+      function estacionDeConjuntos({ clave, nombre, numeros, inicial, pista }) {
         const conjuntos = [
           { letra: "N", x: 62, y: 104, ancho: 152, alto: 124, t: 0.2 },
           { letra: "Z", x: 46, y: 74, ancho: 332, alto: 166, t: 0.5 },
           { letra: "Q", x: 30, y: 44, ancho: 464, alto: 208, t: 0.8 },
           { letra: "R", x: 14, y: 14, ancho: 612, alto: 250, t: 1.1 }
         ];
-        const elegido = CLASIFICADOS[e.i].conjunto;
-        const tinta = (orden) => (orden === e.i ? 1 : 0.5);
         const contorno = (conjunto) => caja(conjunto.x, conjunto.y, conjunto.ancho, conjunto.alto, 18);
-
-        return (
-          <>
-            {conjuntos.map((conjunto) => {
-              const fuerte = conjunto.letra === elegido || (elegido === "I" && conjunto.letra === "R");
-              return (
-                <g key={conjunto.letra}>
-                  <Velo
-                    t={conjunto.t + 0.3}
-                    d={contorno(conjunto)}
-                    fill="#fff"
-                    fillOpacity={conjunto.letra === elegido ? 0.16 : 0.06}
-                    stroke="none"
-                  />
-                  <Trazo t={conjunto.t} dura={0.5} d={contorno(conjunto)} strokeOpacity={fuerte ? 1 : 0.7} strokeWidth={fuerte ? 2.6 : 1.6} />
-                </g>
-              );
-            })}
-            {elegido === "I" && (
-              <Velo
-                t={1.5}
-                d={contorno(conjuntos[3]) + contorno(conjuntos[2])}
-                fill="#fff"
-                fillOpacity="0.13"
-                fillRule="evenodd"
-                stroke="none"
-              />
-            )}
-            <Punto t={1.9} cx="250" cy="106" r="12" fillOpacity="0.24" />
-            <Letras>
-              {conjuntos.map((conjunto) => (
-                <Rotulo key={conjunto.letra} t={conjunto.t + 0.4} x={conjunto.x + 20} y={conjunto.y + 25} fontSize="23">
-                  {hueca(conjunto.letra)}
-                </Rotulo>
-              ))}
-              <Rotulo t={1.9} x="250" y="113" fontSize="20" fontWeight="700">
-                0
-              </Rotulo>
-              <Rotulo t={1.4} x="322" y="176" fontSize="23" fontWeight="700" opacity={tinta(0)}>
-                {MENOS}8
-              </Rotulo>
-              <Rotulo como="g" t={1.5} opacity={tinta(1)}>
-                <Quebrado x={108} y={160} s={20} ancho={24} arriba="12" abajo="3" />
-                <text x="127" y="160" fontSize="21" textAnchor="start">
-                  = {negrita("4")}
-                </text>
-              </Rotulo>
-              <Rotulo t={1.6} x="436" y="162" fontSize="21" fontWeight="700" opacity={tinta(2)}>
-                0,125
-              </Rotulo>
-              <Rotulo como="g" t={1.7} opacity={tinta(3)}>
-                <Raiz x={110} y={208} s={21} ancho={21}>
-                  49
-                </Raiz>
-                <text x="139" y="208" fontSize="21" textAnchor="start">
-                  = {negrita("7")}
-                </text>
-              </Rotulo>
-              <Rotulo como="g" t={1.8} opacity={tinta(4)}>
-                <Raiz x={518} y={162} s={20} ancho={20}>
-                  50
-                </Raiz>
-                <text x="580" y="162" fontSize="20" textAnchor="end">
-                  = {negrita("5")}
-                </text>
-                <g fontWeight="700">
-                  <Raiz x={593} y={162} s={20} ancho={11}>
-                    2
-                  </Raiz>
-                </g>
-              </Rotulo>
-              <Rotulo t={2} x="560" y="216" fontSize="18" opacity={elegido === "I" ? 1 : 0.75}>
-                {palabra("irracionales")}
-              </Rotulo>
-              <Rotulo t={2.2} x="24" y="298" fontSize="20" textAnchor="start">
-                {hueca("N")}
-                {" = {1, 2, 3, …}"}
-                {HUECO}
-                {palabra("el 0 no es natural")}
-              </Rotulo>
-              <Rotulo t={2.3} x="616" y="298" fontSize="20" textAnchor="end">
-                {hueca("N")} ⊂ {hueca("Z")} ⊂ {hueca("Q")} ⊂ {hueca("R")}
-              </Rotulo>
-            </Letras>
-            {CLASIFICADOS.map((numero, orden) => (
-              <Toca key={orden} alTocar={() => poner({ i: orden })}>
-                <Zona x={numero.zona[0]} y={numero.zona[1]} width={numero.zona[2]} height={numero.zona[3]} />
-              </Toca>
-            ))}
-          </>
+        const s = 20;
+        const cuantos = {};
+        numeros.forEach((numero) => {
+          cuantos[numero.conjunto] = (cuantos[numero.conjunto] || 0) + 1;
+        });
+        const puestos = {};
+        const sitios = numeros.map((numero) => {
+          const orden = puestos[numero.conjunto] || 0;
+          puestos[numero.conjunto] = orden + 1;
+          return SITIOS_DE_CONJUNTO[numero.conjunto][cuantos[numero.conjunto] - 1][orden];
+        });
+        const anchos = numeros.map(
+          (numero) => suma(numero.trozos.map((trozo) => trozo.ancho + (trozo.raiz ? 0.62 : trozo.quebrado ? 0.2 : 0))) * s
         );
-      }
+        const bajoLosIrracionales =
+          Math.max.apply(null, numeros.map((numero, orden) => (numero.conjunto === "I" ? sitios[orden][1] : 0))) + 52;
 
-      function PotenciasDibujo({ e, poner }) {
-        const negativa = e.signo < 0;
-        const suelo = negativa ? 140 : 226;
-        const tope = negativa ? 72 : 168;
-        const fila = negativa ? 268 : 256;
-        const exponentes = [3, 2, 1, 0, -1, -2, -3];
-        const centro = (orden) => 62 + 86 * orden;
-        const altura = (exponente) => Math.max(2.5, tope * Math.pow(e.base, exponente - 3));
-        const cuelga = (exponente) => negativa && Math.abs(exponente) % 2 === 1;
-        const escrito = (exponente) => (exponente < 0 ? MENOS + -exponente : exponente);
-        const base = negativa ? "(" + MENOS + e.base + ")" : e.base;
-        const letra = e.base === 10 ? 20 : 23;
-        const quebrado = e.base === 10 ? 18 : 21;
-
-        return (
-          <>
-            <Trazo t={0.15} dura={0.5} d={"M22 " + suelo + "H618"} strokeOpacity="0.9" />
-            {exponentes.map((exponente, orden) => (
-              <g key={exponente}>
-                <Barra
-                  t={0.4 + 0.2 * orden}
-                  x={centro(orden) - 25}
-                  y={cuelga(exponente) ? suelo : suelo - altura(exponente)}
-                  width="50"
-                  height={altura(exponente)}
-                  rx={Math.min(6, altura(exponente) / 2)}
-                  fillOpacity={exponente === e.n ? 0.98 : 0.5}
-                />
-                {orden < 6 && (
-                  <g>
-                    <Trazo
-                      t={0.6 + 0.2 * orden}
-                      dura={0.3}
-                      d={
-                        "M" + (centro(orden) + 16) + " " + (fila + 12) +
-                        "Q" + (centro(orden) + 43) + " " + (fila + (negativa ? 28 : 34)) + " " + (centro(orden) + 70) + " " + (fila + 12)
-                      }
-                      strokeOpacity="0.85"
-                      strokeWidth="1.5"
-                    />
-                    <Velo t={0.85 + 0.2 * orden} d={"M" + (centro(orden) + 62) + " " + (fila + 13) + "h8v8"} strokeOpacity="0.85" strokeWidth="1.5" />
-                  </g>
-                )}
-              </g>
-            ))}
-            <Letras>
-              {exponentes.map((exponente, orden) => {
-                const x = centro(orden);
-                const fuerte = exponente === e.n;
-                const abajo = cuelga(exponente);
-                const punta = abajo ? suelo + altura(exponente) : suelo - altura(exponente);
-                const valor = Math.pow(e.base, Math.abs(exponente));
-                const raya = 10 * String(valor).length + 6;
+        function Dibujo({ e, poner }) {
+          const elegido = numeros[e.i].conjunto;
+          return (
+            <>
+              {conjuntos.map((conjunto) => {
+                const fuerte = conjunto.letra === elegido || (elegido === "I" && conjunto.letra === "R");
                 return (
-                  <g key={exponente} fillOpacity={fuerte ? 1 : 0.75}>
-                    <Rotulo t={0.4 + 0.2 * orden} x={x} y={fila} fontSize={negativa ? 21 : 23} fontWeight={fuerte ? 700 : 400}>
-                      {base}
-                      <Sup>{escrito(exponente)}</Sup>
-                    </Rotulo>
-                    {exponente >= 0 ? (
-                      <Rotulo t={0.6 + 0.2 * orden} x={x} y={abajo ? punta + 25 : punta - 10} fontSize={letra} fontWeight="700">
-                        {(abajo ? MENOS : "") + cifra(valor)}
-                      </Rotulo>
-                    ) : (
-                      <Rotulo como="g" t={0.6 + 0.2 * orden} fontWeight="700">
-                        {abajo && (
-                          <text x={x - raya / 2 - 4} y={punta + 30} fontSize={quebrado}>
-                            {MENOS}
-                          </text>
-                        )}
-                        <Quebrado x={x + (abajo ? 7 : 0)} y={abajo ? punta + 30 : punta - 22} s={quebrado} ancho={raya} arriba="1" abajo={valor} />
-                      </Rotulo>
-                    )}
-                    {orden < 6 && (
-                      <Rotulo t={0.85 + 0.2 * orden} x={x + 43} y={fila + (negativa ? 44 : 50)} fontSize={negativa ? 15 : 17} opacity="0.9">
-                        ÷{base}
-                      </Rotulo>
-                    )}
+                  <g key={conjunto.letra}>
+                    <Velo
+                      t={conjunto.t + 0.3}
+                      d={contorno(conjunto)}
+                      fill="#fff"
+                      fillOpacity={conjunto.letra === elegido ? 0.16 : 0.06}
+                      stroke="none"
+                    />
+                    <Trazo t={conjunto.t} dura={0.5} d={contorno(conjunto)} strokeOpacity={fuerte ? 1 : 0.7} strokeWidth={fuerte ? 2.6 : 1.6} />
                   </g>
                 );
               })}
-              {negativa ? (
-                <>
-                  <Rotulo t={2.2} x="470" y="40" fontSize="19" opacity="0.95">
-                    {palabra("exponente par: resultado positivo")}
-                  </Rotulo>
-                  <Rotulo t={2.3} x="470" y="66" fontSize="19" opacity="0.95">
-                    {palabra("exponente impar: resultado negativo")}
-                  </Rotulo>
-                </>
-              ) : (
-                <>
-                  <Rotulo t={2.2} x="454" y="60" fontSize="19" opacity="0.95">
-                    {palabra("cada vez que el exponente baja uno,")}
-                  </Rotulo>
-                  <Rotulo t={2.3} x="454" y="86" fontSize="19" opacity="0.95">
-                    {palabra("el valor se divide entre " + e.base)}
-                  </Rotulo>
-                  <Rotulo t={2.4} x="454" y="122" fontSize="18" opacity="0.9">
-                    {palabra("los exponentes negativos dan")}
-                  </Rotulo>
-                  <Rotulo t={2.4} x="454" y="146" fontSize="18" opacity="0.9">
-                    {palabra("números pequeños, pero positivos")}
-                  </Rotulo>
-                </>
+              {elegido === "I" && (
+                <Velo
+                  t={1.5}
+                  d={contorno(conjuntos[3]) + contorno(conjuntos[2])}
+                  fill="#fff"
+                  fillOpacity="0.13"
+                  fillRule="evenodd"
+                  stroke="none"
+                />
               )}
-            </Letras>
-            {exponentes.map((exponente, orden) => (
-              <Toca key={exponente} alTocar={() => poner({ n: exponente })}>
-                <Zona x={centro(orden) - 43} y="80" width="86" height={fila - 62} />
-              </Toca>
-            ))}
-          </>
-        );
-      }
-
-      function ExponenteDibujo({ e, poner }) {
-        const s = 60;
-        const y = 206;
-        const anchoBase = 0.5 * s * String(e.base).length;
-        const xFraccion = 216;
-        const xRaiz = 398;
-        const xExponente = xRaiz + anchoBase + 0.17 * s;
-        const signo =
-          "M" + n1(xRaiz - 0.5 * s) + " " + n1(y - 0.36 * s) +
-          "l" + n1(0.09 * s) + " " + n1(-0.05 * s) +
-          "l" + n1(0.15 * s) + " " + n1(0.47 * s) +
-          "l" + n1(0.2 * s) + " " + n1(-1.08 * s) +
-          "h" + n1(anchoBase + 0.52 * s);
-        const arriba = flecha(xFraccion, y - 90, 318, y - 172, xExponente, y - 72);
-        const abajo = flecha(xFraccion, y - 16, 290, y + 76, xRaiz - 0.5 * s - 8, y - 10);
-        const nota =
-          e.n === 2 && e.m === 1
-            ? "ni el índice 2 ni el exponente 1 se escriben"
-            : e.n === 2
-              ? "el índice 2 no se escribe"
-              : e.m === 1
-                ? "el exponente 1 no se escribe"
-                : "";
-
-        return (
-          <>
-            <Trazo t={0.7} dura={0.5} d={signo} strokeWidth="4" />
-            <Trazo t={1.4} dura={0.5} d={arriba.arco} strokeOpacity="0.9" strokeWidth="1.8" />
-            <Velo t={1.85} d={arriba.punta} strokeOpacity="0.9" strokeWidth="1.8" />
-            <Trazo t={1.9} dura={0.5} d={abajo.arco} strokeOpacity="0.9" strokeWidth="1.8" />
-            <Velo t={2.35} d={abajo.punta} strokeOpacity="0.9" strokeWidth="1.8" />
-            <Letras>
-              <Rotulo como="g" t={0.2}>
-                <text x="196" y={y} fontSize={s} textAnchor="end">
-                  {e.base}
-                </text>
-                <text x={xFraccion} y={y - 62} fontSize="28" fontWeight="700">
-                  {e.m}
-                </text>
-                <path d={"M" + (xFraccion - 13) + " " + (y - 53) + "h26"} fill="none" stroke="#fff" strokeWidth="2" />
-                <text x={xFraccion} y={y - 26} fontSize="28" fontWeight="700">
-                  {e.n}
-                </text>
-              </Rotulo>
-              <Rotulo t={0.5} x="298" y={y - 8} fontSize="46">
-                =
-              </Rotulo>
-              <Rotulo como="g" t={1}>
-                <text x={xRaiz - 0.42 * s} y={y - 0.5 * s} fontSize={0.52 * s} fontWeight="700" fillOpacity={e.n === 2 ? 0.35 : 1}>
-                  {e.n}
-                </text>
-                <text x={xRaiz} y={y} fontSize={s} textAnchor="start">
-                  {e.base}
-                  <tspan fontWeight="700" fillOpacity={e.m === 1 ? 0.35 : 1}>
-                    <Sup>{e.m}</Sup>
-                  </tspan>
-                </text>
-              </Rotulo>
-              <Rotulo t={1.7} x={(xFraccion + xExponente) / 2} y="54" fontSize="19">
-                {palabra("el numerador es el exponente")}
-              </Rotulo>
-              <Rotulo t={2.2} x="290" y="270" fontSize="19">
-                {palabra("el denominador es el índice")}
-              </Rotulo>
-              {nota && (
-                <Rotulo t={2.5} x="320" y="304" fontSize="17" opacity="0.92">
-                  {palabra(nota)}
-                </Rotulo>
-              )}
-            </Letras>
-            <Toca alTocar={() => poner({ m: e.m === 4 ? 1 : e.m + 1 })}>
-              <Zona x={xFraccion - 24} y={y - 92} width="48" height="38" />
-            </Toca>
-            <Toca alTocar={() => poner({ n: e.n === 5 ? 2 : e.n + 1 })}>
-              <Zona x={xFraccion - 24} y={y - 54} width="48" height="38" />
-            </Toca>
-          </>
-        );
-      }
-
-      const dosElevado = (exponente) =>
-        exponente === 1
-          ? { contenido: "2", ancho: 0.5 }
-          : {
-              contenido: (
-                <>
-                  2<Sup>{exponente}</Sup>
-                </>
-              ),
-              ancho: 0.88
-            };
-
-      const CASOS_DE_RACIONALIZAR = [
-        { titulo: "abajo hay una raíz cuadrada", gesto: "se multiplica, arriba y abajo, por esa misma raíz" },
-        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por el radical que completa el índice" },
-        { titulo: "abajo hay una suma o una resta con raíces", gesto: "se multiplica por el conjugado: sale una suma por diferencia" }
-      ];
-
-      const EXPONENTES_PARA = {};
-      [3, 4, 5, 6].forEach((indice) => {
-        EXPONENTES_PARA[indice] = [1, 2, 3, 4, 5].filter((exponente) => exponente < indice && mcd(exponente, indice) === 1);
-      });
-
-      const NO_CUADRADOS = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15, 17, 19, 21, 22, 23];
-
-      function RacionalizarDibujo({ e }) {
-        const caso = CASOS_DE_RACIONALIZAR[e.caso];
-        let trozos = [];
-        if (e.caso === 0) {
-          const ancho = anchoNumero(e.a);
-          trozos = [
-            { raiz: true, contenido: e.a, ancho: ancho, pie: "el denominador" },
-            { contenido: VECES, ancho: 0.8 },
-            { raiz: true, contenido: e.a, ancho: ancho, pie: "lo que le falta" },
-            { contenido: IGUAL, ancho: 1.28 },
-            { contenido: e.a, ancho: ancho, fuerte: true, pie: "sin raíz" }
-          ];
-        } else if (e.caso === 1) {
-          trozos = [
-            Object.assign({ raiz: true, indice: e.n, pie: "el denominador" }, dosElevado(e.k)),
-            { contenido: VECES, ancho: 0.8 },
-            Object.assign({ raiz: true, indice: e.n, pie: "lo que le falta" }, dosElevado(e.n - e.k)),
-            { contenido: IGUAL, ancho: 1.28 },
-            Object.assign({ raiz: true, indice: e.n }, dosElevado(e.n)),
-            { contenido: IGUAL, ancho: 1.28 },
-            { contenido: "2", ancho: 0.5, fuerte: true, pie: "sin raíz" }
-          ];
-        } else {
-          const ancho = anchoNumero(e.r);
-          trozos = [
-            { contenido: "(", ancho: 0.39 },
-            { raiz: true, contenido: e.r, ancho: ancho, pie: "el denominador" },
-            { contenido: DURO + MENOS + DURO + e.b + ")", ancho: 1.28 + 0.5 + 0.39 },
-            { contenido: "(", ancho: 0.39 },
-            { raiz: true, contenido: e.r, ancho: ancho, pie: "su conjugado" },
-            { contenido: DURO + "+" + DURO + e.b + ")", ancho: 1.28 + 0.5 + 0.39 },
-            { contenido: IGUAL + e.r + DURO + MENOS + DURO + e.b * e.b + IGUAL, ancho: 1.28 + ancho + 1.28 + anchoNumero(e.b * e.b) + 1.28 },
-            { contenido: e.r - e.b * e.b, ancho: anchoNumero(e.r - e.b * e.b), fuerte: true, pie: "sin raíz" }
-          ];
-        }
-
-        return (
-          <>
-            <Trazo t={0.2} dura={0.5} d={caja(36, 82, 568, 156, 18)} strokeOpacity="0.75" strokeWidth="1.5" />
-            <Velo t={0.5} d={caja(36, 82, 568, 156, 18)} fill="#fff" fillOpacity="0.08" stroke="none" />
-            <Letras>
-              <Rotulo t={0.3} x="320" y="52" fontSize="20">
-                {palabra("si " + caso.titulo)}
-              </Rotulo>
-              <Rotulo como="g" t={0.8} textAnchor="middle">
-                <Fila x={320} y={150} s={e.caso === 2 ? 27 : 34} trozos={trozos} />
-              </Rotulo>
-              <Rotulo t={1.6} x="320" y="272" fontSize="19">
-                {palabra(caso.gesto)}
-              </Rotulo>
-              <Rotulo t={1.9} x="320" y="302" fontSize="17" opacity="0.92">
-                {e.caso === 1
-                  ? palabra("al exponente " + e.k + (e.n - e.k === 1 ? " le falta 1" : " le faltan " + (e.n - e.k)) + " para llegar al índice, " + e.n)
-                  : e.caso === 2
-                    ? palabra("el conjugado solo cambia el signo de en medio")
-                    : palabra("una raíz cuadrada por sí misma da lo de dentro")}
-              </Rotulo>
-            </Letras>
-          </>
-        );
-      }
-
-      const saltos = (cuantos) => (cuantos === 1 ? "1 salto" : cuantos + " saltos");
-
-      function SaltosDibujo({ e, poner }) {
-        const eje = 196;
-        const px = (lugar) => 206 + 76 * lugar;
-        const marcas = [-2, -1, 0, 1, 2, 3, 4, 5];
-        const p = Math.round(Math.log10(e.x));
-        const q = Math.round(Math.log10(e.y));
-        const sentido = e.op === "por" ? 1 : -1;
-        const fin = p + sentido * q;
-        const salto = (desde, hacia, alto) =>
-          flecha(px(desde), eje - 9, (px(desde) + px(hacia)) / 2, eje - 9 - 2 * alto, px(hacia), eje - 9);
-        const primeros = [];
-        for (let paso = 0; paso < p; paso += 1) {
-          primeros.push(salto(paso, paso + 1, 40));
-        }
-        const segundos = [];
-        for (let paso = 0; paso < q; paso += 1) {
-          segundos.push(salto(p + sentido * paso, p + sentido * (paso + 1), sentido > 0 ? 40 : 72));
-        }
-        const despues = 1.1 + 0.25 * p;
-        const alFinal = despues + 0.25 * q + 0.2;
-
-        return (
-          <>
-            <Trazo t={0.1} dura={0.5} d={"M22 " + eje + "H618"} strokeOpacity="0.8" strokeWidth="1.5" />
-            <Velo t={0.5} d={"M" + marcas.map((lugar) => px(lugar) + " " + (eje - 6) + "v12").join("M")} strokeOpacity="0.8" strokeWidth="1.5" />
-            <Punto t={0.9} cx={px(0)} cy={eje} r="4.5" />
-            {primeros.map((uno, orden) => (
-              <g key={orden}>
-                <Trazo t={1 + 0.25 * orden} dura={0.25} d={uno.arco} strokeWidth="2" />
-                <Velo t={1.2 + 0.25 * orden} d={uno.punta} strokeWidth="2" />
-              </g>
-            ))}
-            {segundos.map((uno, orden) => (
-              <g key={orden}>
-                <Trazo t={despues + 0.25 * orden} dura={0.25} d={uno.arco} strokeWidth="3.6" />
-                <Velo t={despues + 0.2 + 0.25 * orden} d={uno.punta} strokeWidth="3.6" />
-              </g>
-            ))}
-            <Velo t={alFinal} como="circle" cx={px(fin)} cy={eje} r="12" strokeOpacity="0.75" strokeWidth="1.6" />
-            <Punto t={alFinal} cx={px(fin)} cy={eje} r="6.5" />
-            <Letras>
-              <Rotulo t={0.3} x="320" y="42" fontSize="23">
-                {"log " + cifra(e.x) + (sentido > 0 ? " + " : " " + MENOS + " ") + "log " + cifra(e.y) + " = log " + cifra(Math.pow(10, fin))}
-              </Rotulo>
-              <Rotulo t={alFinal} x="320" y="72" fontSize="19">
-                {palabra(saltos(p) + " ")}
-                {palabra((sentido > 0 ? "+ " : MENOS + " ") + saltos(q), true)}
-                {palabra(" = " + (fin < 0 ? saltos(-fin) + " hacia atrás" : saltos(fin)))}
-              </Rotulo>
-              {marcas.map((lugar) => (
-                <g key={lugar} fillOpacity={lugar === fin ? 1 : 0.8}>
-                  <Rotulo t={0.6} x={px(lugar)} y={eje + 30} fontSize="16" fontWeight={lugar === fin ? 700 : 400}>
-                    {cifra(Math.pow(10, lugar))}
+              <Punto t={1.9} cx="250" cy="106" r="12" fillOpacity="0.24" />
+              <Letras>
+                {conjuntos.map((conjunto) => (
+                  <Rotulo key={conjunto.letra} t={conjunto.t + 0.4} x={conjunto.x + 20} y={conjunto.y + 25} fontSize="23">
+                    {hueca(conjunto.letra)}
                   </Rotulo>
-                  <Rotulo t={0.8} x={px(lugar)} y={eje + 58} fontSize="20" fontWeight="700">
-                    {cifra(lugar)}
-                  </Rotulo>
-                </g>
-              ))}
-              <Rotulo t={alFinal + 0.2} x="320" y="298" fontSize="17" opacity="0.92">
-                {palabra("cada salto multiplica por 10; debajo de cada número, su logaritmo decimal")}
-              </Rotulo>
-            </Letras>
-            {[0, 1, 2, 3].map((lugar) => (
-              <Toca key={lugar} alTocar={() => poner({ x: Math.pow(10, lugar) })}>
-                <Zona x={px(lugar) - 36} y={eje - 50} width="72" height="116" />
-              </Toca>
-            ))}
-          </>
-        );
-      }
-
-      const nombreDeBase = (base) => (base === Math.E ? "e" : String(base));
-
-      function DespejarDibujo({ e, poner }) {
-        const px = (x) => 190 + 120 * x;
-        const py = (alto) => 270 - 22 * alto;
-        const exponente = Math.log(e.b) / Math.log(e.base);
-        const fin = Math.log(10.2) / Math.log(e.base);
-        const x = px(exponente);
-        const y = py(e.b);
-        const aLaIzquierda = x > 500;
-        const base = e.base === Math.E ? cursiva("e") : e.base;
-        const justo = Math.abs(exponente - Math.round(exponente)) < 1e-9;
-        const alturas = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-        return (
-          <>
-            <Trazo t={0.1} dura={0.4} d="M70 270H618" strokeOpacity="0.85" strokeWidth="1.5" />
-            <Trazo t={0.2} dura={0.4} d="M190 270V46" strokeOpacity="0.85" strokeWidth="1.5" />
-            <Velo
-              t={0.5}
-              d={"M" + [-1, 1, 2, 3].map((marca) => px(marca) + " 265v10").join("M") + "M" + alturas.map((alto) => "186 " + py(alto) + "h8").join("M")}
-              strokeOpacity="0.8"
-              strokeWidth="1.4"
-            />
-            <Trazo t={0.7} dura={0.9} d={grafica((valor) => Math.pow(e.base, valor), -1, fin, px, py, 48)} strokeWidth="3" />
-            <Velo t={1.7} d={"M190 " + n1(y) + "H" + n1(x)} strokeDasharray="5 6" strokeWidth="1.8" />
-            <Velo t={1.9} d={"M" + n1(x) + " " + n1(y) + "V268"} strokeDasharray="5 6" strokeWidth="1.8" />
-            <Velo t={2.1} d={"M" + n1(x - 5) + " 261L" + n1(x) + " 269L" + n1(x + 5) + " 261"} strokeWidth="1.8" />
-            <Punto t={1.8} cx={n1(x)} cy={n1(y)} r="6.5" />
-            <Letras>
-              <Rotulo t={0.3} x="320" y="28" fontSize="19">
-                {palabra("¿a qué exponente hay que elevar ")}
-                {base}
-                {palabra(" para llegar a " + e.b + "?")}
-              </Rotulo>
-              {[-1, 1, 2, 3].map((marca) => (
-                <Rotulo key={marca} t={0.6} x={px(marca)} y="292" fontSize="16" opacity="0.88">
-                  {cifra(marca)}
+                ))}
+                <Rotulo t={1.9} x="250" y="113" fontSize="20" fontWeight="700">
+                  0
                 </Rotulo>
+                {numeros.map((numero, orden) => (
+                  <Rotulo key={orden} como="g" t={1.4 + 0.1 * orden} opacity={orden === e.i ? 1 : 0.5}>
+                    <Fila x={sitios[orden][0]} y={sitios[orden][1]} s={s} trozos={numero.trozos} />
+                  </Rotulo>
+                ))}
+                {cuantos.I > 0 && (
+                  <Rotulo t={2} x="560" y={bajoLosIrracionales} fontSize="18" opacity={elegido === "I" ? 1 : 0.75}>
+                    {palabra("irracionales")}
+                  </Rotulo>
+                )}
+                <Rotulo t={2.2} x="24" y="298" fontSize="20" textAnchor="start">
+                  {hueca("N")}
+                  {" = {1, 2, 3, …}"}
+                  {HUECO}
+                  {palabra("el 0 no es natural")}
+                </Rotulo>
+                <Rotulo t={2.3} x="616" y="298" fontSize="20" textAnchor="end">
+                  {hueca("N")} ⊂ {hueca("Z")} ⊂ {hueca("Q")} ⊂ {hueca("R")}
+                </Rotulo>
+              </Letras>
+              {numeros.map((numero, orden) => (
+                <Toca key={orden} alTocar={() => poner({ i: orden })}>
+                  <Zona x={sitios[orden][0] - anchos[orden] / 2 - 8} y={sitios[orden][1] - 30} width={anchos[orden] + 16} height="46" />
+                </Toca>
               ))}
-              <Rotulo t={0.6} x="180" y="292" fontSize="16" opacity="0.88">
-                0
-              </Rotulo>
-              <Rotulo t={1.7} x="178" y={n1(y + 7)} fontSize="21" fontWeight="700" textAnchor="end">
-                {e.b}
-              </Rotulo>
-              <Rotulo t={1.2} x={px(fin) > 540 ? px(fin) - 26 : px(fin) + 10} y="64" fontSize="21" textAnchor={px(fin) > 540 ? "end" : "start"}>
-                {cursiva("y")} = {base}
-                <Sup>{cursiva("x")}</Sup>
-              </Rotulo>
-              <Rotulo t={2.2} x={n1(aLaIzquierda ? x - 13 : x + 13)} y="258" fontSize="21" fontWeight="700" textAnchor={aLaIzquierda ? "end" : "start"}>
-                {cursiva("x")}
-                {justo ? " = " : " ≈ "}
-                {justo ? cifra(Math.round(exponente)) : cifra(exponente, 2, true)}
-              </Rotulo>
-            </Letras>
-            <Toca alTocar={(evento) => poner({ b: Math.min(10, Math.max(2, Math.round((270 - dondeToca(evento).y) / 22))) })}>
-              <Zona x="70" y="40" width="548" height="230" />
-            </Toca>
-          </>
-        );
-      }
+            </>
+          );
+        }
 
-      const ESTACIONES_NUMEROS_REALES = [
-        {
-          clave: "conjuntos",
-          nombre: "Números reales",
-          inicial: { i: 4 },
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: inicial },
           duracion: 2.8,
-          Dibujo: ConjuntosDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) =>
             "Cuatro conjuntos, uno dentro de otro: los naturales dentro de los enteros, estos dentro de los racionales y " +
             "estos dentro de los reales; lo que queda entre los racionales y los reales son los irracionales. Dentro están " +
-            "los cinco números del ejemplo, ya simplificados: el elegido, " + CLASIFICADOS[e.i].nombre + ", está en " +
-            DONDE_ESTA[CLASIFICADOS[e.i].conjunto] + ". El cero está en los enteros, fuera de los naturales.",
+            "los números del ejemplo, ya simplificados: el elegido, " + numeros[e.i].nombre + ", está en " +
+            DONDE_ESTA[numeros[e.i].conjunto] + ". El cero está en los enteros, fuera de los naturales.",
           mandos: () => [
             {
               tipo: "opciones",
               clave: "i",
               nombre: "el número",
               rotulo: "¿En qué conjunto está?",
-              opciones: CLASIFICADOS.map((numero, orden) => ({ valor: orden, rotulo: numero.rotulo }))
+              opciones: numeros.map((numero, orden) => ({ valor: orden, rotulo: numero.rotulo }))
             }
           ],
-          vivo: (e) => [CLASIFICADOS[e.i].tex, CLASIFICADOS[e.i].frase],
-          pista: (
+          vivo: (e) => [numeros[e.i].tex, numeros[e.i].frase],
+          pista: pista
+        };
+      }
+
+      function estacionDePotencias({ clave, nombre, bases, conSigno, inicial, pista }) {
+        const exponentes = [3, 2, 1, 0, -1, -2, -3];
+        const centro = (orden) => 62 + 86 * orden;
+        const escrito = (exponente) => (exponente < 0 ? MENOS + -exponente : exponente);
+
+        function Dibujo({ e, poner }) {
+          const negativa = conSigno && e.signo < 0;
+          const suelo = negativa ? 140 : 226;
+          const tope = negativa ? 72 : 168;
+          const fila = negativa ? 268 : 256;
+          const altura = (exponente) => Math.max(2.5, tope * Math.pow(e.base, exponente - 3));
+          const cuelga = (exponente) => negativa && Math.abs(exponente) % 2 === 1;
+          const base = negativa ? "(" + MENOS + e.base + ")" : e.base;
+          const letra = e.base === 10 ? 20 : 23;
+          const quebrado = e.base === 10 ? 18 : 21;
+
+          return (
             <>
-              Toca un número del dibujo. Antes de clasificarlo conviene simplificarlo, porque la forma de escribirlo
-              engaña.
+              <Trazo t={0.15} dura={0.5} d={"M22 " + suelo + "H618"} strokeOpacity="0.9" />
+              {exponentes.map((exponente, orden) => (
+                <g key={exponente}>
+                  <Barra
+                    t={0.4 + 0.2 * orden}
+                    x={centro(orden) - 25}
+                    y={cuelga(exponente) ? suelo : suelo - altura(exponente)}
+                    width="50"
+                    height={altura(exponente)}
+                    rx={Math.min(6, altura(exponente) / 2)}
+                    fillOpacity={exponente === e.n ? 0.98 : 0.5}
+                  />
+                  {orden < 6 && (
+                    <g>
+                      <Trazo
+                        t={0.6 + 0.2 * orden}
+                        dura={0.3}
+                        d={
+                          "M" + (centro(orden) + 16) + " " + (fila + 12) +
+                          "Q" + (centro(orden) + 43) + " " + (fila + (negativa ? 28 : 34)) + " " + (centro(orden) + 70) + " " + (fila + 12)
+                        }
+                        strokeOpacity="0.85"
+                        strokeWidth="1.5"
+                      />
+                      <Velo t={0.85 + 0.2 * orden} d={"M" + (centro(orden) + 62) + " " + (fila + 13) + "h8v8"} strokeOpacity="0.85" strokeWidth="1.5" />
+                    </g>
+                  )}
+                </g>
+              ))}
+              <Letras>
+                {exponentes.map((exponente, orden) => {
+                  const x = centro(orden);
+                  const fuerte = exponente === e.n;
+                  const abajo = cuelga(exponente);
+                  const punta = abajo ? suelo + altura(exponente) : suelo - altura(exponente);
+                  const valor = Math.pow(e.base, Math.abs(exponente));
+                  const raya = 10 * String(valor).length + 6;
+                  return (
+                    <g key={exponente} fillOpacity={fuerte ? 1 : 0.75}>
+                      <Rotulo t={0.4 + 0.2 * orden} x={x} y={fila} fontSize={negativa ? 21 : 23} fontWeight={fuerte ? 700 : 400}>
+                        {base}
+                        <Sup>{escrito(exponente)}</Sup>
+                      </Rotulo>
+                      {exponente >= 0 ? (
+                        <Rotulo t={0.6 + 0.2 * orden} x={x} y={abajo ? punta + 25 : punta - 10} fontSize={letra} fontWeight="700">
+                          {(abajo ? MENOS : "") + cifra(valor)}
+                        </Rotulo>
+                      ) : (
+                        <Rotulo como="g" t={0.6 + 0.2 * orden} fontWeight="700">
+                          {abajo && (
+                            <text x={x - raya / 2 - 4} y={punta + 30} fontSize={quebrado}>
+                              {MENOS}
+                            </text>
+                          )}
+                          <Quebrado x={x + (abajo ? 7 : 0)} y={abajo ? punta + 30 : punta - 22} s={quebrado} ancho={raya} arriba="1" abajo={valor} />
+                        </Rotulo>
+                      )}
+                      {orden < 6 && (
+                        <Rotulo t={0.85 + 0.2 * orden} x={x + 43} y={fila + (negativa ? 44 : 50)} fontSize={negativa ? 15 : 17} opacity="0.9">
+                          ÷{base}
+                        </Rotulo>
+                      )}
+                    </g>
+                  );
+                })}
+                {negativa ? (
+                  <>
+                    <Rotulo t={2.2} x="470" y="40" fontSize="19" opacity="0.95">
+                      {palabra("exponente par: resultado positivo")}
+                    </Rotulo>
+                    <Rotulo t={2.3} x="470" y="66" fontSize="19" opacity="0.95">
+                      {palabra("exponente impar: resultado negativo")}
+                    </Rotulo>
+                  </>
+                ) : (
+                  <>
+                    <Rotulo t={2.2} x="454" y="60" fontSize="19" opacity="0.95">
+                      {palabra("cada vez que el exponente baja uno,")}
+                    </Rotulo>
+                    <Rotulo t={2.3} x="454" y="86" fontSize="19" opacity="0.95">
+                      {palabra("el valor se divide entre " + e.base)}
+                    </Rotulo>
+                    <Rotulo t={2.4} x="454" y="122" fontSize="18" opacity="0.9">
+                      {palabra("los exponentes negativos dan")}
+                    </Rotulo>
+                    <Rotulo t={2.4} x="454" y="146" fontSize="18" opacity="0.9">
+                      {palabra("números pequeños, pero positivos")}
+                    </Rotulo>
+                  </>
+                )}
+              </Letras>
+              {exponentes.map((exponente, orden) => (
+                <Toca key={exponente} alTocar={() => poner({ n: exponente })}>
+                  <Zona x={centro(orden) - 43} y="80" width="86" height={fila - 62} />
+                </Toca>
+              ))}
             </>
-          )
-        },
-        {
-          clave: "potencias",
-          nombre: "Potencias",
-          inicial: { base: 2, signo: 1, n: -3 },
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
           duracion: 2.8,
-          Dibujo: PotenciasDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) =>
-            "Siete barras con las potencias de " + (e.signo < 0 ? "menos " : "") + e.base + ", del exponente 3 al exponente menos 3: " +
+            "Siete barras con las potencias de " + (conSigno && e.signo < 0 ? "menos " : "") + e.base + ", del exponente 3 al exponente menos 3: " +
             "cada una es la anterior dividida entre la base. La de exponente 0 vale 1 y las de exponente negativo son " +
             "fracciones. " +
-            (e.signo < 0
+            (conSigno && e.signo < 0
               ? "Como la base es negativa, las de exponente impar cuelgan del suelo: son negativas."
               : "Todas son positivas.") +
             " Está resaltada la de exponente " + e.n + ".",
-          mandos: () => [
-            {
-              tipo: "opciones",
-              clave: "base",
-              nombre: "la base",
-              rotulo: "Base",
-              opciones: [2, 3, 5, 10].map((base) => ({ valor: base, rotulo: String(base) }))
-            },
-            {
-              tipo: "opciones",
-              clave: "signo",
-              nombre: "el signo de la base",
-              rotulo: "Signo de la base",
-              opciones: [
-                { valor: 1, rotulo: "Positiva" },
-                { valor: -1, rotulo: "Negativa" }
-              ]
-            },
-            { tipo: "paso", clave: "n", nombre: "el exponente", rotulo: "Exponente", min: -3, max: 3 }
-          ],
+          mandos: () =>
+            [
+              {
+                tipo: "opciones",
+                clave: "base",
+                nombre: "la base",
+                rotulo: "Base",
+                opciones: bases.map((base) => ({ valor: base, rotulo: String(base) }))
+              },
+              conSigno && {
+                tipo: "opciones",
+                clave: "signo",
+                nombre: "el signo de la base",
+                rotulo: "Signo de la base",
+                opciones: [
+                  { valor: 1, rotulo: "Positiva" },
+                  { valor: -1, rotulo: "Negativa" }
+                ]
+              },
+              { tipo: "paso", clave: "n", nombre: "el exponente", rotulo: "Exponente", min: -3, max: 3 }
+            ].filter(Boolean),
           vivo: (e) => {
-            const negativa = e.signo < 0;
+            const negativa = conSigno && e.signo < 0;
             const base = negativa ? "(-" + e.base + ")" : String(e.base);
-            const valor = Math.pow(e.signo * e.base, Math.abs(e.n));
+            const valor = Math.pow((negativa ? -1 : 1) * e.base, Math.abs(e.n));
             const paridad = negativa && (
               <>
                 {Math.abs(e.n) % 2 === 1
@@ -17811,19 +17819,98 @@ void main() {
               paridad || <>Un exponente negativo no da un número negativo: da el inverso de la potencia de exponente positivo.</>
             ];
           },
-          pista: (
+          pista: pista
+        };
+      }
+
+      function estacionDelExponente({ clave, nombre, bases, inicial, numeradores, pista }) {
+        const s = 60;
+        const y = 206;
+        const xFraccion = 216;
+        const xRaiz = 398;
+
+        function Dibujo({ e, poner }) {
+          const anchoBase = 0.5 * s * String(e.base).length;
+          const xExponente = xRaiz + anchoBase + 0.17 * s;
+          const signo =
+            "M" + n1(xRaiz - 0.5 * s) + " " + n1(y - 0.36 * s) +
+            "l" + n1(0.09 * s) + " " + n1(-0.05 * s) +
+            "l" + n1(0.15 * s) + " " + n1(0.47 * s) +
+            "l" + n1(0.2 * s) + " " + n1(-1.08 * s) +
+            "h" + n1(anchoBase + 0.52 * s);
+          const arriba = flecha(xFraccion, y - 90, 318, y - 172, xExponente, y - 72);
+          const abajo = flecha(xFraccion, y - 16, 290, y + 76, xRaiz - 0.5 * s - 8, y - 10);
+          const nota =
+            e.n === 2 && e.m === 1
+              ? "ni el índice 2 ni el exponente 1 se escriben"
+              : e.n === 2
+                ? "el índice 2 no se escribe"
+                : e.m === 1
+                  ? "el exponente 1 no se escribe"
+                  : "";
+
+          return (
             <>
-              Toca una barra para elegir el exponente. Cada vez que el exponente baja uno, el valor se divide entre la
-              base: por eso <Mates tex="a^{0}=1" /> y los exponentes negativos dan fracciones.
+              <Trazo t={0.7} dura={0.5} d={signo} strokeWidth="4" />
+              <Trazo t={1.4} dura={0.5} d={arriba.arco} strokeOpacity="0.9" strokeWidth="1.8" />
+              <Velo t={1.85} d={arriba.punta} strokeOpacity="0.9" strokeWidth="1.8" />
+              <Trazo t={1.9} dura={0.5} d={abajo.arco} strokeOpacity="0.9" strokeWidth="1.8" />
+              <Velo t={2.35} d={abajo.punta} strokeOpacity="0.9" strokeWidth="1.8" />
+              <Letras>
+                <Rotulo como="g" t={0.2}>
+                  <text x="196" y={y} fontSize={s} textAnchor="end">
+                    {e.base}
+                  </text>
+                  <text x={xFraccion} y={y - 62} fontSize="28" fontWeight="700">
+                    {e.m}
+                  </text>
+                  <path d={"M" + (xFraccion - 13) + " " + (y - 53) + "h26"} fill="none" stroke="#fff" strokeWidth="2" />
+                  <text x={xFraccion} y={y - 26} fontSize="28" fontWeight="700">
+                    {e.n}
+                  </text>
+                </Rotulo>
+                <Rotulo t={0.5} x="298" y={y - 8} fontSize="46">
+                  =
+                </Rotulo>
+                <Rotulo como="g" t={1}>
+                  <text x={xRaiz - 0.42 * s} y={y - 0.5 * s} fontSize={0.52 * s} fontWeight="700" fillOpacity={e.n === 2 ? 0.35 : 1}>
+                    {e.n}
+                  </text>
+                  <text x={xRaiz} y={y} fontSize={s} textAnchor="start">
+                    {e.base}
+                    <tspan fontWeight="700" fillOpacity={e.m === 1 ? 0.35 : 1}>
+                      <Sup>{e.m}</Sup>
+                    </tspan>
+                  </text>
+                </Rotulo>
+                <Rotulo t={1.7} x={(xFraccion + xExponente) / 2} y="54" fontSize="19">
+                  {palabra("el numerador es el exponente")}
+                </Rotulo>
+                <Rotulo t={2.2} x="290" y="270" fontSize="19">
+                  {palabra("el denominador es el índice")}
+                </Rotulo>
+                {nota && (
+                  <Rotulo t={2.5} x="320" y="304" fontSize="17" opacity="0.92">
+                    {palabra(nota)}
+                  </Rotulo>
+                )}
+              </Letras>
+              <Toca alTocar={() => poner({ m: e.m === numeradores ? 1 : e.m + 1 })}>
+                <Zona x={xFraccion - 24} y={y - 92} width="48" height="38" />
+              </Toca>
+              <Toca alTocar={() => poner({ n: e.n === 5 ? 2 : e.n + 1 })}>
+                <Zona x={xFraccion - 24} y={y - 54} width="48" height="38" />
+              </Toca>
             </>
-          )
-        },
-        {
-          clave: "radicales",
-          nombre: "Radicales",
-          inicial: { base: 5, m: 2, n: 3 },
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
           duracion: 3,
-          Dibujo: ExponenteDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) =>
             e.base + " elevado a " + e.m + " partido por " + e.n + " es la raíz de índice " + e.n + " de " + e.base +
             (e.m === 1 ? "" : " elevado a " + e.m) + ". Una flecha lleva el numerador del exponente al exponente de dentro de la " +
@@ -17834,9 +17921,9 @@ void main() {
               clave: "base",
               nombre: "la base",
               rotulo: "Base",
-              opciones: [5, 27].map((base) => ({ valor: base, rotulo: String(base) }))
+              opciones: bases.map((base) => ({ valor: base, rotulo: String(base) }))
             },
-            { tipo: "paso", clave: "m", nombre: "el numerador del exponente", rotulo: "Numerador", min: 1, max: 4 },
+            { tipo: "paso", clave: "m", nombre: "el numerador del exponente", rotulo: "Numerador", min: 1, max: numeradores },
             { tipo: "paso", clave: "n", nombre: "el denominador del exponente", rotulo: "Denominador", min: 2, max: 5 }
           ],
           vivo: (e) => {
@@ -17870,27 +17957,124 @@ void main() {
               </>
             ];
           },
-          pista: (
+          pista: pista
+        };
+      }
+
+      const CASOS_DE_RACIONALIZAR = [
+        { titulo: "abajo hay una raíz cuadrada", gesto: "se multiplica, arriba y abajo, por esa misma raíz" },
+        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por el radical que completa el índice" },
+        { titulo: "abajo hay una suma o una resta con raíces", gesto: "se multiplica por el conjugado: sale una suma por diferencia" }
+      ];
+
+      const EXPONENTES_PARA = {};
+      [3, 4, 5, 6].forEach((indice) => {
+        EXPONENTES_PARA[indice] = [1, 2, 3, 4, 5].filter((exponente) => exponente < indice && mcd(exponente, indice) === 1);
+      });
+
+      const NO_CUADRADOS = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15, 17, 19, 21, 22, 23];
+
+      function conRadical(numerador, denominador, radical, esSuma) {
+        const comun = mcd(numerador, denominador);
+        const arriba = numerador / comun;
+        const abajo = denominador / comun;
+        const producto = arriba === 1 ? radical : arriba + (esSuma ? "\\left(" + radical + "\\right)" : radical);
+        return abajo === 1 ? producto : "\\frac{" + producto + "}{" + abajo + "}";
+      }
+
+      function estacionDeRacionalizar({ clave, nombre, numeradores, base, suma: conMas, inicial, pista }) {
+        const elevada = (exponente) =>
+          exponente === 1
+            ? { contenido: String(base), ancho: 0.5 }
+            : {
+                contenido: (
+                  <>
+                    {base}
+                    <Sup>{exponente}</Sup>
+                  </>
+                ),
+                ancho: 0.88
+              };
+        const delDenominador = conMas ? "+" : MENOS;
+        const delConjugado = conMas ? MENOS : "+";
+
+        function Dibujo({ e }) {
+          const caso = CASOS_DE_RACIONALIZAR[e.caso];
+          let trozos = [];
+          if (e.caso === 0) {
+            const ancho = anchoNumero(e.a);
+            trozos = [
+              { raiz: true, contenido: e.a, ancho: ancho, pie: "el denominador" },
+              { contenido: VECES, ancho: 0.8 },
+              { raiz: true, contenido: e.a, ancho: ancho, pie: "lo que le falta" },
+              { contenido: IGUAL, ancho: 1.28 },
+              { contenido: e.a, ancho: ancho, fuerte: true, pie: "sin raíz" }
+            ];
+          } else if (e.caso === 1) {
+            trozos = [
+              Object.assign({ raiz: true, indice: e.n, pie: "el denominador" }, elevada(e.k)),
+              { contenido: VECES, ancho: 0.8 },
+              Object.assign({ raiz: true, indice: e.n, pie: "lo que le falta" }, elevada(e.n - e.k)),
+              { contenido: IGUAL, ancho: 1.28 },
+              Object.assign({ raiz: true, indice: e.n }, elevada(e.n)),
+              { contenido: IGUAL, ancho: 1.28 },
+              { contenido: String(base), ancho: 0.5, fuerte: true, pie: "sin raíz" }
+            ];
+          } else {
+            const ancho = anchoNumero(e.r);
+            trozos = [
+              { contenido: "(", ancho: 0.39 },
+              { raiz: true, contenido: e.r, ancho: ancho, pie: "el denominador" },
+              { contenido: DURO + delDenominador + DURO + e.b + ")", ancho: 1.28 + 0.5 + 0.39 },
+              { contenido: "(", ancho: 0.39 },
+              { raiz: true, contenido: e.r, ancho: ancho, pie: "su conjugado" },
+              { contenido: DURO + delConjugado + DURO + e.b + ")", ancho: 1.28 + 0.5 + 0.39 },
+              { contenido: IGUAL + e.r + DURO + MENOS + DURO + e.b * e.b + IGUAL, ancho: 1.28 + ancho + 1.28 + anchoNumero(e.b * e.b) + 1.28 },
+              { contenido: e.r - e.b * e.b, ancho: anchoNumero(e.r - e.b * e.b), fuerte: true, pie: "sin raíz" }
+            ];
+          }
+
+          return (
             <>
-              Toca el numerador o el denominador del exponente para cambiarlos. Escritos como potencias, los radicales
-              siguen las propiedades de las potencias.
+              <Trazo t={0.2} dura={0.5} d={caja(36, 82, 568, 156, 18)} strokeOpacity="0.75" strokeWidth="1.5" />
+              <Velo t={0.5} d={caja(36, 82, 568, 156, 18)} fill="#fff" fillOpacity="0.08" stroke="none" />
+              <Letras>
+                <Rotulo t={0.3} x="320" y="52" fontSize="20">
+                  {palabra("si " + caso.titulo)}
+                </Rotulo>
+                <Rotulo como="g" t={0.8} textAnchor="middle">
+                  <Fila x={320} y={150} s={e.caso === 2 ? 27 : 34} trozos={trozos} />
+                </Rotulo>
+                <Rotulo t={1.6} x="320" y="272" fontSize="19">
+                  {palabra(caso.gesto)}
+                </Rotulo>
+                <Rotulo t={1.9} x="320" y="302" fontSize="17" opacity="0.92">
+                  {e.caso === 1
+                    ? palabra("al exponente " + e.k + (e.n - e.k === 1 ? " le falta 1" : " le faltan " + (e.n - e.k)) + " para llegar al índice, " + e.n)
+                    : e.caso === 2
+                      ? palabra("el conjugado solo cambia el signo de en medio")
+                      : palabra("una raíz cuadrada por sí misma da lo de dentro")}
+                </Rotulo>
+              </Letras>
             </>
-          )
-        },
-        {
-          clave: "racionalizar",
-          nombre: "Operar con radicales",
-          inicial: { caso: 1, a: 5, n: 5, k: 3, r: 3, b: 1 },
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
           duracion: 2.4,
-          Dibujo: RacionalizarDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) =>
             e.caso === 0
               ? "La raíz cuadrada de " + e.a + ", multiplicada por sí misma, da " + e.a + ": ya no hay raíz."
               : e.caso === 1
-                ? "La raíz de índice " + e.n + " de 2 elevado a " + e.k + ", multiplicada por la raíz de índice " + e.n +
-                  " de 2 elevado a " + (e.n - e.k) + ", da la raíz de índice " + e.n + " de 2 elevado a " + e.n + ", que es 2: ya no hay raíz."
-                : "La raíz de " + e.r + " menos " + e.b + ", multiplicada por su conjugado, la raíz de " + e.r + " más " + e.b + ", da " +
-                  e.r + " menos " + e.b * e.b + ", que es " + (e.r - e.b * e.b) + ": ya no hay raíz.",
+                ? "La raíz de índice " + e.n + " de " + base + " elevado a " + e.k + ", multiplicada por la raíz de índice " + e.n +
+                  " de " + base + " elevado a " + (e.n - e.k) + ", da la raíz de índice " + e.n + " de " + base + " elevado a " + e.n +
+                  ", que es " + base + ": ya no hay raíz."
+                : "La raíz de " + e.r + (conMas ? " más " : " menos ") + e.b + ", multiplicada por su conjugado, la raíz de " + e.r +
+                  (conMas ? " menos " : " más ") + e.b + ", da " + e.r + " menos " + e.b * e.b + ", que es " + (e.r - e.b * e.b) + ": ya no hay raíz.",
           mandos: (e) =>
             [
               {
@@ -17901,7 +18085,7 @@ void main() {
                 opciones: [
                   { valor: 0, rotulo: <Mates tex="\sqrt a" /> },
                   { valor: 1, rotulo: <Mates tex="\sqrt[n]{a^k}" /> },
-                  { valor: 2, rotulo: <Mates tex="\sqrt a-b" /> }
+                  { valor: 2, rotulo: <Mates tex={conMas ? "\\sqrt a+b" : "\\sqrt a-b"} /> }
                 ]
               },
               e.caso === 0 && { tipo: "paso", clave: "a", nombre: "el radicando", rotulo: "Radicando", valores: [2, 3, 5, 6, 7, 10] },
@@ -17925,7 +18109,7 @@ void main() {
               e.caso === 2 && {
                 tipo: "paso",
                 clave: "b",
-                nombre: "el número que se resta",
+                nombre: conMas ? "el número que se suma" : "el número que se resta",
                 rotulo: "El número",
                 min: 1,
                 max: 4,
@@ -17933,39 +18117,123 @@ void main() {
               }
             ].filter(Boolean),
           vivo: (e) => {
+            const numerador = numeradores[e.caso];
             if (e.caso === 0) {
               const raiz = "\\sqrt{" + e.a + "}";
-              const sale = e.a % 3 === 0 ? "=" + (e.a === 3 ? raiz : "\\frac{" + raiz + "}{" + e.a / 3 + "}") : "";
-              return ["\\frac{3}{" + raiz + "}=\\frac{3" + raiz + "}{" + raiz + "\\cdot" + raiz + "}=\\frac{3" + raiz + "}{" + e.a + "}" + sale];
+              return [
+                "\\frac{" + numerador + "}{" + raiz + "}=\\frac{" + numerador + raiz + "}{" + raiz + "\\cdot" + raiz + "}=\\frac{" + numerador + raiz +
+                  "}{" + e.a + "}" + (mcd(numerador, e.a) > 1 ? "=" + conRadical(numerador, e.a, raiz, false) : "")
+              ];
             }
             if (e.caso === 1) {
               const raiz = (dentro) => "\\sqrt[" + e.n + "]{" + dentro + "}";
-              const dos = (exponente) => "2" + (exponente === 1 ? "" : "^{" + exponente + "}");
+              const potencia = (exponente) => base + (exponente === 1 ? "" : "^{" + exponente + "}");
               const falta = e.n - e.k;
               return [
-                "\\frac{3}{" + raiz(dos(e.k)) + "}=\\frac{3" + raiz(dos(falta)) + "}{" + raiz(dos(e.n)) + "}=\\frac{3" + raiz(Math.pow(2, falta)) + "}{2}"
+                "\\frac{" + numerador + "}{" + raiz(potencia(e.k)) + "}=\\frac{" + numerador + raiz(potencia(falta)) + "}{" + raiz(potencia(e.n)) +
+                  "}=" + conRadical(numerador, base, raiz(Math.pow(base, falta)), false)
               ];
             }
             const resta = e.r - e.b * e.b;
-            const conjugado = "\\sqrt{" + e.r + "}+" + e.b;
+            const denominador = "\\sqrt{" + e.r + "}" + (conMas ? "+" : "-") + e.b;
+            const conjugado = "\\sqrt{" + e.r + "}" + (conMas ? "-" : "+") + e.b;
+            const producto = numerador === 1 ? conjugado : numerador + "\\left(" + conjugado + "\\right)";
+            const pasos = resta === 1 ? [] : ["\\frac{" + producto + "}{" + resta + "}"];
+            const simplificada = conRadical(numerador, resta, conjugado, true);
+            if (pasos[pasos.length - 1] !== simplificada) {
+              pasos.push(simplificada);
+            }
             return [
-              "\\frac{1}{\\sqrt{" + e.r + "}-" + e.b + "}=\\frac{" + conjugado + "}{\\left(\\sqrt{" + e.r + "}-" + e.b + "\\right)\\left(" + conjugado +
-                "\\right)}=" + (resta === 1 ? conjugado : "\\frac{" + conjugado + "}{" + resta + "}")
+              "\\frac{" + numerador + "}{" + denominador + "}=\\frac{" + producto + "}{\\left(" + denominador + "\\right)\\left(" + conjugado + "\\right)}",
+              "=" + pasos.join("=")
             ];
           },
-          pista: (
+          pista: pista
+        };
+      }
+
+      const saltos = (cuantos) => (cuantos === 1 ? "1 salto" : cuantos + " saltos");
+
+      function estacionDeSaltos({ clave, nombre, inicial, pista }) {
+        const eje = 196;
+        const px = (lugar) => 206 + 76 * lugar;
+        const marcas = [-2, -1, 0, 1, 2, 3, 4, 5];
+
+        function Dibujo({ e, poner }) {
+          const p = Math.round(Math.log10(e.x));
+          const q = Math.round(Math.log10(e.y));
+          const sentido = e.op === "por" ? 1 : -1;
+          const fin = p + sentido * q;
+          const salto = (desde, hacia, alto) =>
+            flecha(px(desde), eje - 9, (px(desde) + px(hacia)) / 2, eje - 9 - 2 * alto, px(hacia), eje - 9);
+          const primeros = [];
+          for (let paso = 0; paso < p; paso += 1) {
+            primeros.push(salto(paso, paso + 1, 40));
+          }
+          const segundos = [];
+          for (let paso = 0; paso < q; paso += 1) {
+            segundos.push(salto(p + sentido * paso, p + sentido * (paso + 1), sentido > 0 ? 40 : 72));
+          }
+          const despues = 1.1 + 0.25 * p;
+          const alFinal = despues + 0.25 * q + 0.2;
+
+          return (
             <>
-              Racionalizar es escribir la fracción sin radicales en el denominador: se multiplican el numerador y el
-              denominador por lo que le falta al denominador para dejar de tenerlos.
+              <Trazo t={0.1} dura={0.5} d={"M22 " + eje + "H618"} strokeOpacity="0.8" strokeWidth="1.5" />
+              <Velo t={0.5} d={"M" + marcas.map((lugar) => px(lugar) + " " + (eje - 6) + "v12").join("M")} strokeOpacity="0.8" strokeWidth="1.5" />
+              <Punto t={0.9} cx={px(0)} cy={eje} r="4.5" />
+              {primeros.map((uno, orden) => (
+                <g key={orden}>
+                  <Trazo t={1 + 0.25 * orden} dura={0.25} d={uno.arco} strokeWidth="2" />
+                  <Velo t={1.2 + 0.25 * orden} d={uno.punta} strokeWidth="2" />
+                </g>
+              ))}
+              {segundos.map((uno, orden) => (
+                <g key={orden}>
+                  <Trazo t={despues + 0.25 * orden} dura={0.25} d={uno.arco} strokeWidth="3.6" />
+                  <Velo t={despues + 0.2 + 0.25 * orden} d={uno.punta} strokeWidth="3.6" />
+                </g>
+              ))}
+              <Velo t={alFinal} como="circle" cx={px(fin)} cy={eje} r="12" strokeOpacity="0.75" strokeWidth="1.6" />
+              <Punto t={alFinal} cx={px(fin)} cy={eje} r="6.5" />
+              <Letras>
+                <Rotulo t={0.3} x="320" y="42" fontSize="23">
+                  {"log " + cifra(e.x) + (sentido > 0 ? " + " : " " + MENOS + " ") + "log " + cifra(e.y) + " = log " + cifra(Math.pow(10, fin))}
+                </Rotulo>
+                <Rotulo t={alFinal} x="320" y="72" fontSize="19">
+                  {palabra(saltos(p) + " ")}
+                  {palabra((sentido > 0 ? "+ " : MENOS + " ") + saltos(q), true)}
+                  {palabra(" = " + (fin < 0 ? saltos(-fin) + " hacia atrás" : saltos(fin)))}
+                </Rotulo>
+                {marcas.map((lugar) => (
+                  <g key={lugar} fillOpacity={lugar === fin ? 1 : 0.8}>
+                    <Rotulo t={0.6} x={px(lugar)} y={eje + 30} fontSize="16" fontWeight={lugar === fin ? 700 : 400}>
+                      {cifra(Math.pow(10, lugar))}
+                    </Rotulo>
+                    <Rotulo t={0.8} x={px(lugar)} y={eje + 58} fontSize="20" fontWeight="700">
+                      {cifra(lugar)}
+                    </Rotulo>
+                  </g>
+                ))}
+                <Rotulo t={alFinal + 0.2} x="320" y="298" fontSize="17" opacity="0.92">
+                  {palabra("cada salto multiplica por 10; debajo de cada número, su logaritmo decimal")}
+                </Rotulo>
+              </Letras>
+              {[0, 1, 2, 3].map((lugar) => (
+                <Toca key={lugar} alTocar={() => poner({ x: Math.pow(10, lugar) })}>
+                  <Zona x={px(lugar) - 36} y={eje - 50} width="72" height="116" />
+                </Toca>
+              ))}
             </>
-          )
-        },
-        {
-          clave: "logaritmos",
-          nombre: "Logaritmos",
-          inicial: { x: 100, y: 10, op: "por" },
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
           duracion: 2.8,
-          Dibujo: SaltosDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) => {
             const p = Math.round(Math.log10(e.x));
             const q = Math.round(Math.log10(e.y));
@@ -17979,13 +18247,7 @@ void main() {
             );
           },
           mandos: () => [
-            {
-              tipo: "paso",
-              clave: "x",
-              nombre: "el primer número",
-              rotulo: "Primer número",
-              valores: [1, 10, 100, 1000]
-            },
+            { tipo: "paso", clave: "x", nombre: "el primer número", rotulo: "Primer número", valores: [1, 10, 100, 1000] },
             {
               tipo: "opciones",
               clave: "op",
@@ -17995,13 +18257,7 @@ void main() {
                 { valor: "entre", rotulo: "Dividir" }
               ]
             },
-            {
-              tipo: "paso",
-              clave: "y",
-              nombre: "el segundo número",
-              rotulo: "Segundo número",
-              valores: [1, 10, 100]
-            }
+            { tipo: "paso", clave: "y", nombre: "el segundo número", rotulo: "Segundo número", valores: [1, 10, 100] }
           ],
           vivo: (e) => {
             const p = Math.round(Math.log10(e.x));
@@ -18018,86 +18274,2118 @@ void main() {
                   <>El logaritmo de un cociente es la resta de los logaritmos.</>
                 ];
           },
-          pista: (
+          pista: pista
+        };
+      }
+
+      function comoIntervalo(trozo, paraTex) {
+        const numero = (valor) => (paraTex ? enTex(valor) : valor < 0 ? MENOS + cifra(-valor) : cifra(valor));
+        return (trozo[2] ? "[" : "(") + numero(trozo[0]) + ", " + numero(trozo[1]) + (trozo[3] ? "]" : ")");
+      }
+
+      function cortar(A, B) {
+        const desde = Math.max(A[0], B[0]);
+        const hasta = Math.min(A[1], B[1]);
+        const entraDesde = A[0] > B[0] ? A[2] : A[0] < B[0] ? B[2] : A[2] && B[2];
+        const entraHasta = A[1] < B[1] ? A[3] : A[1] > B[1] ? B[3] : A[3] && B[3];
+        if (desde > hasta || (desde === hasta && !(entraDesde && entraHasta))) {
+          return [];
+        }
+        return [[desde, hasta, entraDesde, entraHasta]];
+      }
+
+      function unir(A, B) {
+        const primero = A[0] <= B[0] ? A : B;
+        const segundo = primero === A ? B : A;
+        const separados = primero[1] < segundo[0] || (primero[1] === segundo[0] && !primero[3] && !segundo[2]);
+        if (separados) {
+          return [primero, segundo];
+        }
+        return [
+          [
+            primero[0],
+            Math.max(A[1], B[1]),
+            A[0] < B[0] ? A[2] : A[0] > B[0] ? B[2] : A[2] || B[2],
+            A[1] > B[1] ? A[3] : A[1] < B[1] ? B[3] : A[3] || B[3]
+          ]
+        ];
+      }
+
+      const comoConjunto = (trozos, paraTex) =>
+        trozos.length === 0
+          ? paraTex
+            ? "\\emptyset"
+            : "∅"
+          : trozos
+              .map((trozo) =>
+                trozo[0] === trozo[1]
+                  ? (paraTex ? "\\{" : "{") + (paraTex ? enTex(trozo[0]) : cifra(trozo[0])) + (paraTex ? "\\}" : "}")
+                  : comoIntervalo(trozo, paraTex)
+              )
+              .join(paraTex ? "\\cup" : " ∪ ");
+
+      function estacionDeIntervalos({ clave, nombre, fijo, inicial, pista }) {
+        const px = (valor) => 118 + 37 * (valor + 5);
+        const eje = 244;
+        const marcas = [];
+        for (let marca = -5; marca <= 8; marca += 1) {
+          marcas.push(marca);
+        }
+
+        function Trozos({ t, y, trozos, grueso }) {
+          return (
+            <g>
+              {trozos.map((trozo, orden) => {
+                const unPunto = trozo[0] === trozo[1];
+                return (
+                  <g key={orden}>
+                    {!unPunto && (
+                      <Trazo
+                        t={t}
+                        dura={0.4}
+                        d={"M" + n1(px(trozo[0]) + (trozo[2] ? 0 : 7.5)) + " " + y + "H" + n1(px(trozo[1]) - (trozo[3] ? 0 : 7.5))}
+                        strokeWidth={grueso}
+                      />
+                    )}
+                    <Extremo t={t + 0.3} x={px(trozo[0])} y={y} entra={trozo[2]} />
+                    {!unPunto && <Extremo t={t + 0.35} x={px(trozo[1])} y={y} entra={trozo[3]} />}
+                  </g>
+                );
+              })}
+            </g>
+          );
+        }
+
+        function Dibujo({ e, poner }) {
+          const B = [e.p, e.q, e.ip, e.iq];
+          const comun = cortar(fijo, B);
+          const cubierto = unir(fijo, B);
+          const filas = [
+            { nombre: cursiva("A"), trozos: [fijo], y: 56, grueso: 5, t: 0.6 },
+            { nombre: cursiva("B"), trozos: [B], y: 100, grueso: 5, t: 0.9 },
+            {
+              nombre: (
+                <>
+                  {cursiva("A")} ∩ {cursiva("B")}
+                </>
+              ),
+              trozos: comun,
+              y: 152,
+              grueso: 8,
+              t: 1.4
+            },
+            {
+              nombre: (
+                <>
+                  {cursiva("A")} ∪ {cursiva("B")}
+                </>
+              ),
+              trozos: cubierto,
+              y: 200,
+              grueso: 8,
+              t: 1.8
+            }
+          ];
+          const guias = [fijo[0], fijo[1], e.p, e.q].filter((valor, orden, lista) => lista.indexOf(valor) === orden);
+          const escrito = (trozo) => (trozo[0] === trozo[1] ? "{" + cifra(trozo[0]) + "}" : comoIntervalo(trozo, false));
+          const escritos = [];
+          filas.forEach((fila) =>
+            fila.trozos.forEach((trozo) =>
+              escritos.push({ x: (px(trozo[0]) + px(trozo[1])) / 2, medio: 4.6 * escrito(trozo).length + 3, y: fila.y })
+            )
+          );
+          const guia = (valor) => {
+            const x = px(valor);
+            let desde = 44;
+            let camino = "";
+            escritos
+              .filter((uno) => Math.abs(x - uno.x) < uno.medio)
+              .forEach((uno) => {
+                if (uno.y - 31 > desde) {
+                  camino += "M" + x + " " + desde + "V" + (uno.y - 31);
+                }
+                desde = Math.max(desde, uno.y - 8);
+              });
+            return camino + "M" + x + " " + desde + "V" + (eje - 6);
+          };
+
+          return (
             <>
-              El logaritmo decimal de un número cuenta los saltos de «por 10» que lo separan del <Mates tex="1" />.
-              Multiplicar es dar los saltos de un número y, después, los del otro; dividir, deshacer los del segundo.
+              <Trazo t={0.1} dura={0.4} d={"M108 " + eje + "H612"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo t={0.4} d={"M" + marcas.map((marca) => px(marca) + " " + (eje - 5) + "v10").join("M")} strokeOpacity="0.8" strokeWidth="1.4" />
+              <Velo
+                t={1.1}
+                d={guias.map(guia).join("")}
+                strokeOpacity="0.35"
+                strokeWidth="1.2"
+                strokeDasharray="3 5"
+              />
+              {filas.map((fila, orden) => (
+                <Trozos key={orden} t={fila.t} y={fila.y} trozos={fila.trozos} grueso={fila.grueso} />
+              ))}
+              <Letras>
+                {marcas.map((marca) => (
+                  <Rotulo key={marca} t={0.5} x={px(marca)} y={eje + 23} fontSize="15" opacity="0.88">
+                    {marca < 0 ? MENOS + -marca : marca}
+                  </Rotulo>
+                ))}
+                {filas.map((fila, orden) => (
+                  <g key={orden}>
+                    <Rotulo t={fila.t} x="20" y={fila.y + 7} fontSize={orden < 2 ? 22 : 20} fontWeight={orden < 2 ? 400 : 700} textAnchor="start">
+                      {fila.nombre}
+                    </Rotulo>
+                    {fila.trozos.length === 0 ? (
+                      <Rotulo t={fila.t + 0.3} x="364" y={fila.y + 7} fontSize="19">
+                        {"∅" + HUECO}
+                        {palabra("no tienen ningún número en común")}
+                      </Rotulo>
+                    ) : (
+                      fila.trozos.map((trozo, lugar) => (
+                        <Rotulo key={lugar} t={fila.t + 0.3} x={n1((px(trozo[0]) + px(trozo[1])) / 2)} y={fila.y - 14} fontSize="17" fontWeight={orden < 2 ? 400 : 700}>
+                          {escrito(trozo)}
+                        </Rotulo>
+                      ))
+                    )}
+                  </g>
+                ))}
+                <Rotulo t={2.2} x="364" y="306" fontSize="17" opacity="0.92">
+                  {palabra("la intersección es lo común; la unión, todo lo cubierto")}
+                </Rotulo>
+              </Letras>
+              <Toca alTocar={() => poner({ ip: !e.ip })}>
+                <Zona x={px(e.p) - 18} y="78" width="36" height="44" />
+              </Toca>
+              <Toca alTocar={() => poner({ iq: !e.iq })}>
+                <Zona x={px(e.q) - 18} y="78" width="36" height="44" />
+              </Toca>
             </>
-          )
-        },
-        {
-          clave: "despejar",
-          nombre: "Despejar un exponente",
-          inicial: { base: 3, b: 7 },
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: inicial,
           duracion: 2.8,
-          Dibujo: DespejarDibujo,
+          Dibujo: Dibujo,
           descripcion: (e) => {
-            const exponente = Math.log(e.b) / Math.log(e.base);
+            const B = [e.p, e.q, e.ip, e.iq];
             return (
-              "La gráfica de la función exponencial de base " + nombreDeBase(e.base) + ". A la altura " + e.b +
-              " llega cuando el exponente vale " + cifra(exponente) + ": ese exponente es el logaritmo en base " +
-              nombreDeBase(e.base) + " de " + e.b + "."
+              "Dos intervalos en la recta real, A igual a " + comoIntervalo(fijo, false) + " y B igual a " + comoIntervalo(B, false) +
+              ", con el extremo relleno si entra y hueco si no. Debajo, su intersección, " + comoConjunto(cortar(fijo, B), false) +
+              ", y su unión, " + comoConjunto(unir(fijo, B), false) + "."
+            );
+          },
+          mandos: (e) => [
+            { tipo: "paso", clave: "p", nombre: "el extremo izquierdo de B", rotulo: "B empieza en", min: -4, max: e.q - 1 },
+            {
+              tipo: "opciones",
+              clave: "ip",
+              nombre: "si entra el extremo izquierdo de B",
+              opciones: [
+                { valor: true, rotulo: "Entra" },
+                { valor: false, rotulo: "No entra" }
+              ]
+            },
+            { tipo: "paso", clave: "q", nombre: "el extremo derecho de B", rotulo: "B acaba en", min: e.p + 1, max: 7 },
+            {
+              tipo: "opciones",
+              clave: "iq",
+              nombre: "si entra el extremo derecho de B",
+              opciones: [
+                { valor: true, rotulo: "Entra" },
+                { valor: false, rotulo: "No entra" }
+              ]
+            }
+          ],
+          vivo: (e) => {
+            const B = [e.p, e.q, e.ip, e.iq];
+            return [
+              "A\\cap B=" + comoIntervalo(fijo, true) + "\\cap" + comoIntervalo(B, true) + "=" + comoConjunto(cortar(fijo, B), true),
+              "A\\cup B=" + comoIntervalo(fijo, true) + "\\cup" + comoIntervalo(B, true) + (unir(fijo, B).length === 1 ? "=" + comoConjunto(unir(fijo, B), true) : ""),
+              unir(fijo, B).length === 2 && <>Como no se tocan, la unión se deja escrita con el símbolo de unión.</>
+            ].filter(Boolean);
+          },
+          pista: pista
+        };
+      }
+
+      function factoresDe(numero) {
+        const factores = [];
+        let resto = numero;
+        for (let primo = 2; resto > 1; primo += 1) {
+          while (resto % primo === 0) {
+            factores.push(primo);
+            resto /= primo;
+          }
+        }
+        return factores;
+      }
+
+      function decimalDe(numerador, denominador) {
+        const vistos = {};
+        let cifras = "";
+        let resto = numerador % denominador;
+        while (resto !== 0 && vistos[resto] === undefined) {
+          vistos[resto] = cifras.length;
+          resto *= 10;
+          cifras += Math.floor(resto / denominador);
+          resto %= denominador;
+        }
+        const corte = resto === 0 ? cifras.length : vistos[resto];
+        return { entera: Math.floor(numerador / denominador), fijas: cifras.slice(0, corte), periodo: cifras.slice(corte) };
+      }
+
+      const TIPOS_DE_DECIMAL = [
+        { si: ["solo", "2 y 5"], sale: "exacto" },
+        { si: ["ni 2", "ni 5"], sale: "periódico puro" },
+        { si: ["2 o 5,", "y otros"], sale: "periódico mixto" }
+      ];
+
+      function estacionDeDecimales({ clave, nombre, fracciones, pista }) {
+        const tipoDe = (fraccion) => {
+          const factores = factoresDe(fraccion[1]);
+          const deDiez = factores.filter((factor) => factor === 2 || factor === 5).length;
+          return deDiez === factores.length ? 0 : deDiez === 0 ? 1 : 2;
+        };
+
+        function Dibujo({ e }) {
+          const [numerador, denominador] = fracciones[e.i];
+          const decimal = decimalDe(numerador, denominador);
+          const factores = factoresDe(denominador);
+          const tipo = tipoDe(fracciones[e.i]);
+          const s = 34;
+          const antes = decimal.entera + "," + decimal.fijas;
+          const xDecimal = 330;
+          const xPeriodo = xDecimal - 0.25 * s + 0.5 * s * (antes.length - 1) + 0.278 * s;
+          const anchoFactores = 46 * factores.length + 22 * (factores.length - 1);
+          const xFactores = 400 - anchoFactores / 2;
+
+          return (
+            <>
+              {decimal.periodo && (
+                <Velo t={1} d={"M" + n1(xPeriodo) + " 58h" + n1(0.5 * s * decimal.periodo.length)} strokeWidth="2.2" />
+              )}
+              {factores.map((factor, orden) => (
+                <Velo
+                  key={orden}
+                  t={1.3 + 0.12 * orden}
+                  como="circle"
+                  cx={xFactores + 23 + 68 * orden}
+                  cy="134"
+                  r="23"
+                  fill="#fff"
+                  fillOpacity={factor === 2 || factor === 5 ? 0.92 : 0.1}
+                  strokeWidth="2"
+                />
+              ))}
+              {TIPOS_DE_DECIMAL.map((uno, orden) => (
+                <g key={orden}>
+                  <Velo t={1.8 + 0.15 * orden} d={caja(40 + 192 * orden, 196, 176, 84, 12)} fill="#fff" fillOpacity={orden === tipo ? 0.2 : 0.04} stroke="none" />
+                  <Trazo
+                    t={1.7 + 0.15 * orden}
+                    dura={0.35}
+                    d={caja(40 + 192 * orden, 196, 176, 84, 12)}
+                    strokeOpacity={orden === tipo ? 1 : 0.45}
+                    strokeWidth={orden === tipo ? 2.4 : 1.3}
+                  />
+                </g>
+              ))}
+              <Letras>
+                <Rotulo como="g" t={0.3}>
+                  <Quebrado x={236} y={84} s={s} ancho={0.5 * s * String(denominador).length + 14} arriba={numerador} abajo={denominador} />
+                  <text x="290" y="84" fontSize={s}>
+                    =
+                  </text>
+                </Rotulo>
+                <Rotulo t={0.7} x={xDecimal - 0.25 * s} y="84" fontSize={s} textAnchor="start">
+                  {antes + decimal.periodo}
+                </Rotulo>
+                <Rotulo t={1.2} x={n1(xFactores - 20)} y="142" fontSize="24" textAnchor="end">
+                  {denominador} =
+                </Rotulo>
+                {factores.map((factor, orden) => (
+                  <g key={orden}>
+                    <Rotulo como="g" t={1.3 + 0.12 * orden}>
+                      <text
+                        x={xFactores + 23 + 68 * orden}
+                        y="142"
+                        fontSize="24"
+                        fontWeight="700"
+                        style={{ fill: factor === 2 || factor === 5 ? "var(--tono)" : "#fff" }}
+                      >
+                        {factor}
+                      </text>
+                    </Rotulo>
+                    {orden > 0 && (
+                      <Rotulo t={1.3 + 0.12 * orden} x={xFactores - 11 + 68 * orden} y="142" fontSize="24">
+                        ⋅
+                      </Rotulo>
+                    )}
+                  </g>
+                ))}
+                {TIPOS_DE_DECIMAL.map((uno, orden) => (
+                  <g key={orden} fillOpacity={orden === tipo ? 1 : 0.55}>
+                    <Rotulo t={1.9 + 0.15 * orden} x={128 + 192 * orden} y="226" fontSize="17">
+                      {palabra(uno.si.join(" "))}
+                    </Rotulo>
+                    <Rotulo t={2 + 0.15 * orden} x={128 + 192 * orden} y="258" fontSize="20">
+                      {palabra(uno.sale, true)}
+                    </Rotulo>
+                  </g>
+                ))}
+                <Rotulo t={2.5} x="320" y="306" fontSize="17" opacity="0.92">
+                  {palabra("se mira el denominador de la fracción irreducible")}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        const periodoTex = (decimal) =>
+          decimal.entera + "{,}" + decimal.fijas + (decimal.periodo ? "\\overline{" + decimal.periodo + "}" : "");
+        const factoresTex = (denominador) => {
+          const cuenta = {};
+          factoresDe(denominador).forEach((factor) => {
+            cuenta[factor] = (cuenta[factor] || 0) + 1;
+          });
+          return Object.keys(cuenta)
+            .map((factor) => factor + (cuenta[factor] === 1 ? "" : "^{" + cuenta[factor] + "}"))
+            .join("\\cdot");
+        };
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0 },
+          duracion: 3,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "La fracción " + fracciones[e.i][0] + " partido por " + fracciones[e.i][1] + ", su expresión decimal y los factores primos de su " +
+            "denominador, " + factoresDe(fracciones[e.i][1]).join(" por ") + ". Debajo, los tres casos: solo 2 y 5, exacto; ni 2 ni 5, " +
+            "periódico puro; mezcla, periódico mixto. Este es " + TIPOS_DE_DECIMAL[tipoDe(fracciones[e.i])].sale + ".",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "la fracción",
+              rotulo: "Fracción",
+              opciones: fracciones.map((fraccion, orden) => ({
+                valor: orden,
+                rotulo: <Mates tex={"\\frac{" + fraccion[0] + "}{" + fraccion[1] + "}"} />
+              }))
+            }
+          ],
+          vivo: (e) => {
+            const [numerador, denominador] = fracciones[e.i];
+            const tipo = tipoDe(fracciones[e.i]);
+            return [
+              "\\frac{" + numerador + "}{" + denominador + "}=" + periodoTex(decimalDe(numerador, denominador)) + "\\qquad " + denominador +
+                (factoresDe(denominador).length === 1 ? "\\text{ es primo}" : "=" + factoresTex(denominador)),
+              <>
+                {tipo === 0
+                  ? "En el denominador solo hay doses y cincos: el decimal es exacto."
+                  : tipo === 1
+                    ? "En el denominador no hay ni doses ni cincos: el decimal es periódico puro."
+                    : "En el denominador hay doses o cincos y, además, otros factores: el decimal es periódico mixto."}
+              </>
+            ];
+          },
+          pista: pista
+        };
+      }
+
+      const conDosCifras = (valor) => cifra(Number(valor.toPrecision(2)), Math.max(0, 1 - Math.floor(Math.log10(valor) + 1e-9)));
+
+      function estacionDeErrores({ clave, nombre, numerador, denominador, decimales, inicial, ventana, pista }) {
+        const exacto = numerador / denominador;
+        const [desde, hasta, salto] = ventana;
+        const px = (valor) => 60 + (520 * (valor - desde)) / (hasta - desde);
+        const eje = 176;
+        const marcas = [];
+        for (let marca = Math.ceil(desde / salto - 1e-9); marca * salto <= hasta + 1e-9; marca += 1) {
+          marcas.push(marca * salto);
+        }
+        const redondeado = (cifras) => Number(exacto.toFixed(cifras));
+        const decimal = decimalDe(numerador, denominador);
+        const escrito = decimal.entera + "," + decimal.fijas + decimal.periodo + decimal.periodo + decimal.periodo + "…";
+        const errorDe = (cifras) => Math.abs(exacto - redondeado(cifras));
+
+        function Dibujo({ e }) {
+          const aproximado = redondeado(e.d);
+          const xExacto = px(exacto);
+          const xAproximado = px(aproximado);
+          const error = errorDe(e.d);
+          return (
+            <>
+              <Trazo t={0.1} dura={0.5} d={"M30 " + eje + "H610"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo t={0.5} d={"M" + marcas.map((marca) => n1(px(marca)) + " " + (eje - 7) + "v14").join("M")} strokeOpacity="0.8" strokeWidth="1.5" />
+              <Trazo t={0.8} dura={0.4} d={"M" + n1(xExacto) + " " + (eje + 12) + "V96"} strokeWidth="2" />
+              <Trazo t={1.6} dura={0.4} d={"M" + n1(Math.min(xExacto, xAproximado)) + " " + eje + "H" + n1(Math.max(xExacto, xAproximado))} strokeWidth="8" strokeOpacity="0.75" />
+              <Punto t={1.2} cx={n1(xExacto)} cy={eje} r="5" />
+              <Punto t={1.4} cx={n1(xAproximado)} cy={eje} r="8" />
+              <Letras>
+                <Rotulo t={0.2} x="320" y="40" fontSize="19">
+                  {palabra("el número y su aproximación, con " + (e.d === 1 ? "una cifra decimal" : e.d === 2 ? "dos cifras decimales" : "tres cifras decimales"))}
+                </Rotulo>
+                {marcas.map((marca, orden) => (
+                  <Rotulo key={orden} t={0.6} x={n1(px(marca))} y={eje + 34} fontSize="16" opacity="0.88">
+                    {cifra(marca, 2, true)}
+                  </Rotulo>
+                ))}
+                <Rotulo como="g" t={0.9}>
+                  <Quebrado x={n1(Math.min(540, xExacto) - 62)} y={84} s={22} ancho={22} arriba={numerador} abajo={denominador} />
+                  <text x={n1(Math.min(540, xExacto) - 40)} y="84" fontSize="22" textAnchor="start">
+                    {"= " + escrito}
+                  </text>
+                </Rotulo>
+                <Rotulo t={1.5} x={n1(Math.max(60, Math.min(580, xAproximado)))} y={eje + 66} fontSize="24" fontWeight="700">
+                  {cifra(aproximado, e.d, true)}
+                </Rotulo>
+                <Rotulo t={1.8} x={n1(xAproximado > xExacto ? xExacto + 12 : xExacto - 12)} y={eje - 22} fontSize="18" textAnchor={xAproximado > xExacto ? "start" : "end"}>
+                  {palabra("error absoluto: ")}
+                  {negrita(conDosCifras(error))}
+                </Rotulo>
+                <Rotulo t={2.2} x="320" y="286" fontSize="19">
+                  {palabra("error relativo: ")}
+                  {negrita(cifra((100 * error) / exacto, 2) + " %")}
+                  {palabra("  del número")}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { d: inicial },
+          duracion: 2.8,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "Una recta con el número " + numerador + " partido por " + denominador + " y su aproximación con " + e.d +
+            (e.d === 1 ? " cifra decimal" : " cifras decimales") + ", " + cifra(redondeado(e.d), e.d, true) + ". La distancia entre los dos es el error " +
+            "absoluto, " + conDosCifras(errorDe(e.d)) + ", y supone el " + cifra((100 * errorDe(e.d)) / exacto, 2) + " por ciento del número.",
+          mandos: () => [
+            {
+              tipo: "paso",
+              clave: "d",
+              nombre: "las cifras decimales de la aproximación",
+              rotulo: "Se redondea a",
+              valores: decimales,
+              escribe: (valor) => (valor === 1 ? "1 decimal" : valor + " decimales")
+            }
+          ],
+          vivo: (e) => {
+            const error = errorDe(e.d);
+            const relativo = error / exacto;
+            const cifras = decimal.entera + "{,}" + decimal.fijas + decimal.periodo + decimal.periodo + decimal.periodo + "\\ldots";
+            return [
+              "E_{a}=\\left|" + cifras + "-" + enTex(redondeado(e.d), e.d, true) + "\\right|\\approx" + conDosCifras(error).split(",").join("{,}"),
+              "E_{r}=\\frac{E_{a}}{|x|}=" + enTex(relativo, 4) + "=" + enTex(100 * relativo, 2) + "\\,\\%"
+            ];
+          },
+          pista: pista
+        };
+      }
+
+
+      function formula(texto) {
+        const piezas = [];
+        for (let lugar = 0; lugar < texto.length; lugar += 1) {
+          const letra = texto[lugar];
+          if (letra === "^") {
+            lugar += 1;
+            piezas.push(<Sup key={lugar}>{texto[lugar]}</Sup>);
+          } else if (letra >= "a" && letra <= "z") {
+            piezas.push(<React.Fragment key={lugar}>{cursiva(letra)}</React.Fragment>);
+          } else {
+            piezas.push(letra);
+          }
+        }
+        return piezas;
+      }
+
+      function anchoDeFormula(texto) {
+        let ancho = 0;
+        for (let lugar = 0; lugar < texto.length; lugar += 1) {
+          const letra = texto[lugar];
+          if (letra === "^") {
+            lugar += 1;
+            ancho += 0.36;
+          } else if (letra === " " || letra === ",") {
+            ancho += 0.28;
+          } else if (letra === "(" || letra === ")" || letra === "[" || letra === "]" || letra === "|") {
+            ancho += 0.39;
+          } else if ("+=<>≤≥≠∪∈".indexOf(letra) >= 0 || letra === MENOS) {
+            ancho += 0.78;
+          } else {
+            ancho += 0.5;
+          }
+        }
+        return ancho;
+      }
+
+      function Cociente({ x, y, s, arriba, abajo }) {
+        const ancho = 0.84 * s * Math.max(anchoDeFormula(arriba), anchoDeFormula(abajo)) + 0.4 * s;
+        return <Quebrado x={x} y={y} s={s} ancho={ancho} arriba={formula(arriba)} abajo={formula(abajo)} />;
+      }
+
+      const valorDe = (coeficientes, x) => coeficientes.reduce((total, coeficiente) => total * x + coeficiente, 0);
+
+      function polinomioEscrito(coeficientes, paraTex) {
+        const grado = coeficientes.length - 1;
+        let texto = "";
+        coeficientes.forEach((coeficiente, orden) => {
+          if (coeficiente === 0) {
+            return;
+          }
+          const exponente = grado - orden;
+          const valor = Math.abs(coeficiente);
+          if (paraTex) {
+            texto += coeficiente < 0 ? "-" : texto ? "+" : "";
+          } else {
+            texto += texto ? (coeficiente < 0 ? " " + MENOS + " " : " + ") : coeficiente < 0 ? MENOS : "";
+          }
+          texto += valor !== 1 || exponente === 0 ? valor : "";
+          if (exponente > 0) {
+            texto += "x" + (exponente === 1 ? "" : paraTex ? "^{" + exponente + "}" : "^" + exponente);
+          }
+        });
+        return texto || "0";
+      }
+
+      function fraccionTex(numerador, denominador) {
+        const comun = mcd(Math.abs(numerador), Math.abs(denominador)) || 1;
+        const signo = numerador * denominador < 0 ? "-" : "";
+        const arriba = Math.abs(numerador) / comun;
+        const abajo = Math.abs(denominador) / comun;
+        return abajo === 1 ? signo + arriba : signo + "\\frac{" + arriba + "}{" + abajo + "}";
+      }
+
+      const divisorDe = (raiz, paraTex) =>
+        "x" + (raiz === 0 ? "" : paraTex ? (raiz < 0 ? "+" + -raiz : "-" + raiz) : raiz < 0 ? " + " + -raiz : " " + MENOS + " " + raiz);
+
+      function Extremo({ t, x, y, entra }) {
+        return entra ? (
+          <Punto t={t} cx={x} cy={y} r="8.5" />
+        ) : (
+          <Velo t={t} como="circle" cx={x} cy={y} r="7.5" strokeWidth="2.8" />
+        );
+      }
+
+      function estacionDelResto({ clave, nombre, coeficientes, valores, inicial, ventana, pista }) {
+        const [desde, hasta] = ventana;
+        const P = (x) => valorDe(coeficientes, x);
+        let minimo = 0;
+        let maximo = 0;
+        for (let paso = 0; paso <= 60; paso += 1) {
+          const altura = P(desde + ((hasta - desde) * paso) / 60);
+          minimo = Math.min(minimo, altura);
+          maximo = Math.max(maximo, altura);
+        }
+        const px = (x) => 356 + (252 * (x - desde)) / (hasta - desde);
+        const py = (y) => 262 - (204 * (y - minimo)) / (maximo - minimo);
+        const columna = (orden) => 122 + (172 / (coeficientes.length - 1)) * orden;
+        const escrito = (valor) => (valor < 0 ? MENOS + -valor : String(valor));
+        const marcas = [];
+        for (let marca = Math.ceil(desde); marca <= Math.floor(hasta); marca += 1) {
+          marcas.push(marca);
+        }
+
+        function Dibujo({ e, poner }) {
+          const a = e.a;
+          const medio = [];
+          const abajo = [];
+          coeficientes.forEach((coeficiente, orden) => {
+            medio.push(orden === 0 ? null : a * abajo[orden - 1]);
+            abajo.push(orden === 0 ? coeficiente : coeficiente + a * abajo[orden - 1]);
+          });
+          const ultima = coeficientes.length - 1;
+          const resto = abajo[ultima];
+          const xa = px(a);
+          const ya = py(resto);
+          const aLaIzquierda = xa > 500;
+
+          return (
+            <>
+              <Trazo t={0.3} dura={0.4} d="M98 80V214" strokeOpacity="0.85" strokeWidth="1.6" />
+              <Trazo t={0.5} dura={0.4} d={"M98 168H" + (columna(ultima) + 30)} strokeOpacity="0.85" strokeWidth="1.6" />
+              <Velo t={1.5} d={caja(columna(ultima) - 26, 178, 52, 36, 9)} fill="#fff" fillOpacity="0.18" strokeWidth="2.2" />
+              <Trazo t={0.2} dura={0.4} d={"M348 " + n1(py(0)) + "H618"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Trazo t={0.3} dura={0.4} d={"M" + n1(px(0)) + " 268V50"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo t={0.6} d={"M" + marcas.map((marca) => n1(px(marca)) + " " + n1(py(0) - 5) + "v10").join("M")} strokeOpacity="0.8" strokeWidth="1.4" />
+              <Trazo t={0.8} dura={0.9} d={grafica(P, desde, hasta, px, py, 60)} strokeWidth="2.8" />
+              {resto !== 0 && <Velo t={1.8} d={"M" + n1(xa) + " " + n1(py(0)) + "V" + n1(ya)} strokeOpacity="0.55" strokeWidth="6" />}
+              <Punto t={1.9} cx={n1(xa)} cy={n1(ya)} r="6.5" />
+              <Letras>
+                <Rotulo t={0.1} x="196" y="48" fontSize="21">
+                  {formula("(" + polinomioEscrito(coeficientes, false) + ") : (" + divisorDe(a, false) + ")")}
+                </Rotulo>
+                <Rotulo t={0.4} x="72" y="152" fontSize="24" fontWeight="700">
+                  {escrito(a)}
+                </Rotulo>
+                {coeficientes.map((coeficiente, orden) => (
+                  <g key={orden}>
+                    <Rotulo t={0.4 + 0.1 * orden} x={columna(orden)} y="106" fontSize="24">
+                      {escrito(coeficiente)}
+                    </Rotulo>
+                    {orden > 0 && (
+                      <Rotulo t={0.9 + 0.2 * orden} x={columna(orden)} y="152" fontSize="24" opacity="0.85">
+                        {escrito(medio[orden])}
+                      </Rotulo>
+                    )}
+                    <Rotulo t={1 + 0.2 * orden} x={columna(orden)} y="204" fontSize="24" fontWeight={orden === ultima ? 700 : 400}>
+                      {escrito(abajo[orden])}
+                    </Rotulo>
+                  </g>
+                ))}
+                <Rotulo t={1.7} x="196" y="252" fontSize="20">
+                  {palabra("el resto es ")}
+                  {cursiva("P")}({escrito(a)}) = {negrita(escrito(resto))}
+                </Rotulo>
+                <Rotulo t={2} x="196" y="284" fontSize="18" opacity="0.92">
+                  {resto === 0 ? (
+                    <>
+                      {palabra("la división es exacta: ")}
+                      {formula(divisorDe(a, false))}
+                      {palabra(" es un factor")}
+                    </>
+                  ) : (
+                    palabra("no es 0: la división no es exacta")
+                  )}
+                </Rotulo>
+                {marcas.map((marca) => (
+                  <Rotulo key={marca} t={0.7} x={n1(px(marca) - (marca === 0 ? 9 : 0))} y={n1(py(0) + 20)} fontSize="15" opacity="0.88">
+                    {escrito(marca)}
+                  </Rotulo>
+                ))}
+                {resto === 0 ? (
+                  <Rotulo t={2.1} x={n1(xa)} y={n1(ya - 16)} fontSize="19">
+                    {palabra("raíz", true)}
+                  </Rotulo>
+                ) : (
+                  <Rotulo
+                    t={2.1}
+                    x={n1(aLaIzquierda ? xa - 12 : xa + 12)}
+                    y={n1(Math.max(64, ya + 6))}
+                    fontSize="19"
+                    fontWeight="700"
+                    textAnchor={aLaIzquierda ? "end" : "start"}
+                  >
+                    {escrito(resto)}
+                  </Rotulo>
+                )}
+              </Letras>
+              <Toca
+                alTocar={(evento) => {
+                  const x = desde + ((dondeToca(evento).x - 356) * (hasta - desde)) / 252;
+                  poner({ a: valores.reduce((mejor, valor) => (Math.abs(valor - x) < Math.abs(mejor - x) ? valor : mejor), valores[0]) });
+                }}
+              >
+                <Zona x="346" y="44" width="274" height="232" />
+              </Toca>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { a: inicial },
+          duracion: 3,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "A la izquierda, la tabla de Ruffini de dividir " + polinomioEscrito(coeficientes, false).split("^").join(" elevado a ") +
+            " entre " + divisorDe(e.a, false) + ": el último número, " + P(e.a) + ", es el resto. A la derecha, la gráfica del polinomio, " +
+            "que sobre " + e.a + " tiene esa misma altura." + (P(e.a) === 0 ? " Ahí corta al eje: es una raíz." : ""),
+          mandos: () => [
+            { tipo: "paso", clave: "a", nombre: "el número por el que se divide", rotulo: "Se divide entre x − a, con a =", valores: valores }
+          ],
+          vivo: (e) => {
+            const a = e.a;
+            const base = a < 0 ? "(" + a + ")" : String(a);
+            const grado = coeficientes.length - 1;
+            let cuenta = "";
+            coeficientes.forEach((coeficiente, orden) => {
+              if (coeficiente === 0) {
+                return;
+              }
+              const exponente = grado - orden;
+              const valor = Math.abs(coeficiente);
+              cuenta += coeficiente < 0 ? "-" : cuenta ? "+" : "";
+              cuenta += exponente === 0 ? valor : (valor === 1 ? "" : valor + "\\cdot") + base + (exponente === 1 ? "" : "^{" + exponente + "}");
+            });
+            const resto = P(a);
+            return [
+              "P(" + a + ")=" + cuenta + "=" + resto,
+              resto === 0 ? (
+                <>
+                  El resto es <Mates tex="0" />: la división es exacta, <Mates tex={String(a)} /> es una raíz y{" "}
+                  <Mates tex={divisorDe(a, true)} /> es un factor de <Mates tex="P(x)" />.
+                </>
+              ) : (
+                <>
+                  Es el resto de dividir <Mates tex="P(x)" /> entre <Mates tex={divisorDe(a, true)} />, y sale sin hacer la
+                  división.
+                </>
+              )
+            ];
+          },
+          pista: pista
+        };
+      }
+
+      function estacionDeFactorizar({ clave, nombre, herramientas, ejemplos, pista }) {
+        const hueco = 10;
+        const ancho = Math.min(176, (604 - hueco * (herramientas.length - 1)) / herramientas.length);
+        const izquierda = 320 - (herramientas.length * ancho + (herramientas.length - 1) * hueco) / 2;
+
+        function Dibujo({ e }) {
+          const ejemplo = ejemplos[e.i];
+          return (
+            <>
+              {herramientas.map((herramienta, orden) => {
+                const turno = ejemplo.usa.indexOf(orden);
+                const x = izquierda + orden * (ancho + hueco);
+                return (
+                  <g key={orden}>
+                    <Velo t={0.5 + 0.15 * orden} d={caja(x, 104, ancho, 72, 12)} fill="#fff" fillOpacity={turno >= 0 ? 0.2 : 0.04} stroke="none" />
+                    <Trazo
+                      t={0.4 + 0.15 * orden}
+                      dura={0.35}
+                      d={caja(x, 104, ancho, 72, 12)}
+                      strokeOpacity={turno >= 0 ? 1 : 0.45}
+                      strokeWidth={turno >= 0 ? 2.4 : 1.3}
+                    />
+                    {turno >= 0 && <Punto t={1.3 + 0.25 * turno} cx={x + ancho / 2} cy="104" r="13" />}
+                  </g>
+                );
+              })}
+              <Letras>
+                <Rotulo t={0.2} x="320" y="58" fontSize="30">
+                  {formula(ejemplo.polinomio)}
+                </Rotulo>
+                {herramientas.map((herramienta, orden) => {
+                  const turno = ejemplo.usa.indexOf(orden);
+                  const x = izquierda + orden * (ancho + hueco) + ancho / 2;
+                  return (
+                    <g key={orden} fillOpacity={turno >= 0 ? 1 : 0.55}>
+                      {herramienta.map((linea, renglon) => (
+                        <Rotulo key={renglon} t={0.6 + 0.15 * orden} x={x} y={(herramienta.length === 1 ? 148 : 138) + 22 * renglon} fontSize="17">
+                          {palabra(linea, turno >= 0)}
+                        </Rotulo>
+                      ))}
+                      {turno >= 0 && (
+                        <Rotulo como="g" t={1.3 + 0.25 * turno}>
+                          <text x={x} y="110" fontSize="17" fontWeight="700" style={{ fill: "var(--tono)" }}>
+                            {turno + 1}
+                          </text>
+                        </Rotulo>
+                      )}
+                    </g>
+                  );
+                })}
+                <Rotulo t={2} x="320" y="236" fontSize="28" fontWeight="700">
+                  {formula(ejemplo.resultado)}
+                </Rotulo>
+                <Rotulo t={2.3} x="320" y="284" fontSize="18" opacity="0.92">
+                  {palabra(ejemplo.pie)}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0 },
+          duracion: 3,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "Las herramientas para factorizar, en su orden: " + herramientas.map((herramienta) => herramienta.join(" ")).join(", ") +
+            ". Para el polinomio elegido se usan, por este orden: " +
+            ejemplos[e.i].usa.map((orden) => herramientas[orden].join(" ")).join(" y ") + ". " + ejemplos[e.i].pie + ".",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "el polinomio",
+              rotulo: "Polinomio",
+              opciones: ejemplos.map((ejemplo, orden) => ({ valor: orden, rotulo: <Mates tex={ejemplo.tex} /> }))
+            }
+          ],
+          vivo: (e) => [].concat(ejemplos[e.i].cadena, [ejemplos[e.i].nota]),
+          pista: pista
+        };
+      }
+
+      function estacionDeSimplificar({ clave, nombre, original, factorizada, condiciones, simplificada, cadenas, pista }) {
+        const PASOS = ["La fracción", "1. Factorizar", "2. Condiciones", "3. Cancelar"];
+        const anchoOriginal = 0.84 * 26 * Math.max(anchoDeFormula(original[0]), anchoDeFormula(original[1])) + 12;
+        const anchoFactorizada = 0.84 * 26 * Math.max(anchoDeFormula(factorizada[0]), anchoDeFormula(factorizada[1])) + 12;
+        const centro = 396;
+        const xOriginal = centro - (anchoFactorizada + 44) / 2;
+        const xFactorizada = centro + (anchoOriginal + 44) / 2;
+
+        function Dibujo({ e }) {
+          const tinta = (paso) => (e.paso >= paso ? 1 : 0.4);
+          return (
+            <>
+              {[1, 2, 3].map((paso) => (
+                <Velo
+                  key={paso}
+                  t={0.2 + 0.3 * paso}
+                  como="circle"
+                  cx="48"
+                  cy={8 + 82 * paso}
+                  r="15"
+                  fill="#fff"
+                  fillOpacity={e.paso >= paso ? 0.95 : 0.12}
+                  strokeOpacity={tinta(paso)}
+                  strokeWidth="1.6"
+                />
+              ))}
+              <Letras>
+                {[1, 2, 3].map((paso) => (
+                  <g key={paso}>
+                    <Rotulo como="g" t={0.2 + 0.3 * paso}>
+                      <text x="48" y={14 + 82 * paso} fontSize="18" fontWeight="700" style={{ fill: e.paso >= paso ? "var(--tono)" : "#fff" }}>
+                        {paso}
+                      </text>
+                    </Rotulo>
+                    <Rotulo t={0.3 + 0.3 * paso} x="74" y={14 + 82 * paso} fontSize="19" textAnchor="start" opacity={tinta(paso)}>
+                      {palabra(PASOS[paso].slice(3), e.paso === paso)}
+                    </Rotulo>
+                  </g>
+                ))}
+                <Rotulo como="g" t={0.3}>
+                  <Cociente x={e.paso >= 1 ? xOriginal : centro} y={96} s={26} arriba={original[0]} abajo={original[1]} />
+                </Rotulo>
+                {e.paso >= 1 && (
+                  <Rotulo como="g" t={0.9}>
+                    <text x={(xOriginal + anchoOriginal / 2 + xFactorizada - anchoFactorizada / 2) / 2} y="96" fontSize="26">
+                      =
+                    </text>
+                    <Cociente x={xFactorizada} y={96} s={26} arriba={factorizada[0]} abajo={factorizada[1]} />
+                  </Rotulo>
+                )}
+                {e.paso >= 2 && (
+                  <Rotulo t={1.5} x={centro} y="180" fontSize="24">
+                    {palabra("existe si ")}
+                    {formula(condiciones)}
+                  </Rotulo>
+                )}
+                {e.paso >= 3 && (
+                  <>
+                    <Rotulo t={2.1} x={centro} y="262" fontSize="30" fontWeight="700">
+                      {formula("= " + simplificada)}
+                    </Rotulo>
+                    <Rotulo t={2.4} x={centro} y="296" fontSize="17" opacity="0.92">
+                      {palabra("las condiciones se conservan, aunque ya no se vean")}
+                    </Rotulo>
+                  </>
+                )}
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { paso: 3 },
+          duracion: 2.8,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "Los tres pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador, anotar las " +
+            "condiciones de existencia y cancelar los factores comunes. Se ve hasta el paso " + e.paso + ".",
+          mandos: () => [
+            { tipo: "paso", clave: "paso", nombre: "el paso", rotulo: "Paso", min: 0, max: 3, escribe: (valor) => PASOS[valor] }
+          ],
+          vivo: (e) => [].concat(cadenas[e.paso]),
+          pista: pista
+        };
+      }
+
+      function estacionDelDiscriminante({ clave, nombre, ecuaciones, ventana, pista }) {
+        const [desde, hasta, suelo, techo] = ventana;
+        const px = (x) => 60 + (520 * (x - desde)) / (hasta - desde);
+        const py = (y) => 250 - (196 * (y - suelo)) / (techo - suelo);
+        const marcas = [];
+        for (let marca = Math.ceil(desde); marca <= Math.floor(hasta); marca += 1) {
+          marcas.push(marca);
+        }
+        const escrito = (valor) => (valor < 0 ? MENOS + cifra(-valor) : cifra(valor));
+        const deltaDe = (ecuacion) => ecuacion.b * ecuacion.b - 4 * ecuacion.a * ecuacion.c;
+        const raicesDe = (ecuacion) => {
+          const delta = deltaDe(ecuacion);
+          if (delta < 0) {
+            return [];
+          }
+          const mitad = -ecuacion.b / (2 * ecuacion.a);
+          return delta === 0 ? [mitad] : [mitad - Math.sqrt(delta) / (2 * ecuacion.a), mitad + Math.sqrt(delta) / (2 * ecuacion.a)];
+        };
+        const escrita = (ecuacion, paraTex) => polinomioEscrito([ecuacion.a, ecuacion.b, ecuacion.c], paraTex) + (paraTex ? "=0" : " = 0");
+
+        function Dibujo({ e }) {
+          const ecuacion = ecuaciones[e.i];
+          const f = (x) => valorDe([ecuacion.a, ecuacion.b, ecuacion.c], x);
+          const delta = deltaDe(ecuacion);
+          const raices = raicesDe(ecuacion);
+          const medio = Math.sqrt(ecuacion.b * ecuacion.b - 4 * ecuacion.a * (ecuacion.c - techo)) / (2 * ecuacion.a);
+          const eje = -ecuacion.b / (2 * ecuacion.a);
+          const curva = grafica(f, Math.max(desde, eje - medio), Math.min(hasta, eje + medio), px, py, 60);
+
+          return (
+            <>
+              <Trazo t={0.1} dura={0.4} d={"M40 " + n1(py(0)) + "H604"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Trazo t={0.2} dura={0.4} d={"M" + n1(px(0)) + " 254V52"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo t={0.5} d={"M" + marcas.map((marca) => n1(px(marca)) + " " + n1(py(0) - 5) + "v10").join("M")} strokeOpacity="0.8" strokeWidth="1.4" />
+              <Trazo t={0.7} dura={0.9} d={curva} strokeWidth="3" />
+              {raices.map((raiz, orden) => (
+                <g key={orden}>
+                  <Velo t={1.7 + 0.2 * orden} como="circle" cx={n1(px(raiz))} cy={n1(py(0))} r="13" strokeOpacity="0.75" strokeWidth="1.6" />
+                  <Punto t={1.7 + 0.2 * orden} cx={n1(px(raiz))} cy={n1(py(0))} r="6.5" />
+                </g>
+              ))}
+              <Letras>
+                {marcas.map((marca) => {
+                  const esRaiz = raices.some((raiz) => Math.abs(raiz - marca) < 1e-9);
+                  return (
+                    <Rotulo
+                      key={marca}
+                      t={0.6}
+                      x={n1(px(marca) - (marca === 0 ? 10 : 0))}
+                      y={n1(py(0) + (esRaiz ? 34 : 22))}
+                      fontSize={esRaiz ? 22 : 15}
+                      fontWeight={esRaiz ? 700 : 400}
+                      opacity={esRaiz ? 1 : 0.85}
+                    >
+                      {escrito(marca)}
+                    </Rotulo>
+                  );
+                })}
+                <Rotulo t={0.3} x="320" y="34" fontSize="23">
+                  {formula(escrita(ecuacion, false))}
+                </Rotulo>
+                <Rotulo t={2.1} x="320" y="296" fontSize="21">
+                  {"Δ = " + escrito(delta) + (delta > 0 ? " > 0" : delta < 0 ? " < 0" : "")}
+                  {palabra(
+                    delta > 0
+                      ? ": corta al eje en dos puntos"
+                      : delta === 0
+                        ? ": toca al eje en un punto; la solución es doble"
+                        : ": no corta al eje; no hay solución"
+                  )}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0 },
+          duracion: 2.8,
+          Dibujo: Dibujo,
+          descripcion: (e) => {
+            const raices = raicesDe(ecuaciones[e.i]);
+            return (
+              "La parábola de la ecuación " + escrita(ecuaciones[e.i], false).split("^").join(" elevado a ") + ". Su discriminante vale " +
+              deltaDe(ecuaciones[e.i]) + " y " +
+              (raices.length === 2
+                ? "corta al eje en " + cifra(raices[0]) + " y en " + cifra(raices[1]) + "."
+                : raices.length === 1
+                  ? "toca al eje solo en " + cifra(raices[0]) + "."
+                  : "no corta al eje.")
             );
           },
           mandos: () => [
             {
               tipo: "opciones",
-              clave: "base",
-              nombre: "la base",
-              rotulo: "Base",
-              opciones: [
-                { valor: 2, rotulo: "2" },
-                { valor: 3, rotulo: "3" },
-                { valor: Math.E, rotulo: <Mates tex="e" /> },
-                { valor: 10, rotulo: "10" }
-              ]
-            },
-            { tipo: "paso", clave: "b", nombre: "el número al que hay que llegar", rotulo: "Hay que llegar a", min: 2, max: 10 }
+              clave: "i",
+              nombre: "la ecuación",
+              rotulo: "Ecuación",
+              opciones: ecuaciones.map((ecuacion, orden) => ({ valor: orden, rotulo: <Mates tex={escrita(ecuacion, true)} /> }))
+            }
           ],
           vivo: (e) => {
-            const exponente = Math.log(e.b) / Math.log(e.base);
-            const entero = Math.round(exponente);
-            const base = nombreDeBase(e.base);
-            const decimal = e.base === 10;
-            const neperiano = e.base === Math.E;
-            const logaritmo = decimal ? "\\log " + e.b : neperiano ? "\\ln " + e.b : "\\log_{" + base + "}" + e.b;
-            const ecuacion = base + "^{x}=" + e.b + "\\iff x=" + logaritmo;
-            if (Math.abs(exponente - entero) < 1e-9) {
-              return [
-                ecuacion + "=" + entero,
-                <>
-                  Sale exacto, porque <Mates tex={base + "^{" + entero + "}=" + e.b} />.
-                </>
-              ];
+            const { a, b, c } = ecuaciones[e.i];
+            const delta = b * b - 4 * a * c;
+            const entre = (valor) => (valor < 0 ? "(" + valor + ")" : String(valor));
+            const cuenta = "\\Delta=" + entre(b) + "^{2}-4\\cdot" + entre(a) + "\\cdot" + entre(c) + "=" + delta;
+            if (delta < 0) {
+              return [cuenta + "<0", <>No hay ninguna solución real: la raíz de un número negativo no existe.</>];
             }
-            const aproximado = "\\approx" + enTex(exponente, 2, true);
-            return (
-              decimal || neperiano
-                ? [ecuacion + aproximado]
-                : [ecuacion, logaritmo + "=\\frac{\\ln " + e.b + "}{\\ln " + base + "}" + aproximado]
-            ).concat(
-              decimal ? (
+            const raiz = Math.sqrt(delta);
+            const formulaGeneral = "x=\\frac{" + -b + "\\pm\\sqrt{" + delta + "}}{" + 2 * a + "}";
+            if (delta === 0) {
+              return [cuenta, formulaGeneral + "=" + fraccionTex(-b, 2 * a), <>Una sola solución, doble.</>];
+            }
+            return [
+              cuenta + ">0",
+              Number.isInteger(raiz)
+                ? formulaGeneral + "\\iff x=" + fraccionTex(-b - raiz, 2 * a) + "\\ \\text{ o }\\ x=" + fraccionTex(-b + raiz, 2 * a)
+                : formulaGeneral,
+              <>Dos soluciones distintas.</>
+            ];
+          },
+          pista: pista
+        };
+      }
+
+      function estacionDelValorAbsoluto({ clave, nombre, m, n, inicial, pista }) {
+        const px = (valor) => 320 + 27 * valor;
+        const eje = 172;
+        const dentro = (paraTex) => polinomioEscrito([m, n], paraTex);
+        const escrito = (valor) => (valor < 0 ? MENOS + cifra(-valor) : cifra(valor));
+        const marcas = [];
+        for (let marca = -10; marca <= 10; marca += 1) {
+          marcas.push(marca);
+        }
+
+        function Dibujo({ e }) {
+          const k = e.k;
+          const ramas = k > 0 ? [-k, k] : k === 0 ? [0] : [];
+          return (
+            <>
+              <Trazo t={0.2} dura={0.5} d={"M24 " + eje + "H616"} strokeOpacity="0.85" strokeWidth="1.5" />
+              <Velo t={0.6} d={"M" + marcas.map((marca) => px(marca) + " " + (eje - (marca % 5 === 0 ? 7 : 4)) + "v" + (marca % 5 === 0 ? 14 : 8)).join("M")} strokeOpacity="0.8" strokeWidth="1.4" />
+              {k > 0 &&
+                ramas.map((rama, orden) => {
+                  const arco = flecha(px(0), eje - 10, px(rama / 2), eje - 10 - Math.min(76, 24 + 10 * k), px(rama), eje - 10);
+                  return (
+                    <g key={orden}>
+                      <Trazo t={1 + 0.3 * orden} dura={0.4} d={arco.arco} strokeWidth="2.2" />
+                      <Velo t={1.35 + 0.3 * orden} d={arco.punta} strokeWidth="2.2" />
+                    </g>
+                  );
+                })}
+              {ramas.map((rama, orden) => (
+                <Punto key={orden} t={1.4 + 0.3 * orden} cx={px(rama)} cy={eje} r="7" />
+              ))}
+              <Letras>
+                <Rotulo t={0.1} x="320" y="42" fontSize="23">
+                  {formula("|" + dentro(false) + "| = " + escrito(k))}
+                  {k >= 0 && palabra(":  lo de dentro está a distancia " + cifra(k) + " del 0")}
+                </Rotulo>
+                {[-10, -5, 0, 5, 10].map((marca) => (
+                  <Rotulo key={marca} t={0.7} x={px(marca)} y={eje + 28} fontSize="15" opacity="0.88">
+                    {escrito(marca)}
+                  </Rotulo>
+                ))}
+                {k > 0 &&
+                  ramas.map((rama, orden) => (
+                    <Rotulo
+                      key={orden}
+                      t={1.2 + 0.3 * orden}
+                      x={k >= 4 ? px(rama / 2) : px(0) + (rama < 0 ? -10 : 10)}
+                      y={eje - 62}
+                      fontSize="17"
+                      textAnchor={k >= 4 ? "middle" : rama < 0 ? "end" : "start"}
+                    >
+                      {palabra("distancia " + cifra(k))}
+                    </Rotulo>
+                  ))}
+                {ramas.map((rama, orden) => {
+                  const juntas = k > 0 && k < 3;
+                  const x = juntas ? px(0) + (rama < 0 ? -14 : 14) : Math.min(560, Math.max(80, px(rama)));
+                  const ancla = juntas ? (rama < 0 ? "end" : "start") : "middle";
+                  return (
+                    <g key={orden}>
+                      <Rotulo t={1.6 + 0.3 * orden} x={x} y={eje + 62} fontSize="19" textAnchor={ancla}>
+                        {formula(dentro(false) + " = " + escrito(rama))}
+                      </Rotulo>
+                      <Rotulo t={1.8 + 0.3 * orden} x={x} y={eje + 94} fontSize="25" fontWeight="700" textAnchor={ancla}>
+                        {cursiva("x")} = {escrito((rama - n) / m)}
+                      </Rotulo>
+                    </g>
+                  );
+                })}
+                <Rotulo t={2.4} x="320" y="302" fontSize="18" opacity="0.92">
+                  {palabra(
+                    k > 0
+                      ? "dos ramas: lo de dentro vale " + cifra(k) + " o vale " + MENOS + cifra(k)
+                      : k === 0
+                        ? "una sola rama: lo de dentro vale 0"
+                        : "un valor absoluto nunca es negativo: no hay solución"
+                  )}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { k: inicial },
+          duracion: 2.8,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "Una recta numérica para lo de dentro del valor absoluto, " + dentro(false) + ". " +
+            (e.k > 0
+              ? "Los dos puntos que están a distancia " + e.k + " del cero son " + e.k + " y menos " + e.k + ": dan x igual a " +
+                cifra((e.k - n) / m) + " y x igual a " + cifra((-e.k - n) / m) + "."
+              : e.k === 0
+                ? "Solo el cero está a distancia cero: da x igual a " + cifra(-n / m) + "."
+                : "Ningún punto está a una distancia negativa: no hay solución."),
+          mandos: () => [{ tipo: "paso", clave: "k", nombre: "el número de la derecha", rotulo: "A la derecha del igual", min: -2, max: 9 }],
+          vivo: (e) => {
+            const k = e.k;
+            const izquierda = "|" + dentro(true) + "|=" + k;
+            if (k < 0) {
+              return [izquierda, <>No tiene solución, y se ve sin operar: un valor absoluto nunca es negativo.</>];
+            }
+            if (k === 0) {
+              return [izquierda, dentro(true) + "=0", "x=" + fraccionTex(-n, m)];
+            }
+            return [
+              izquierda,
+              dentro(true) + "=" + k + "\\ \\text{ o }\\ " + dentro(true) + "=-" + k,
+              "x=" + fraccionTex(k - n, m) + "\\ \\text{ o }\\ x=" + fraccionTex(-k - n, m)
+            ];
+          },
+          pista: pista
+        };
+      }
+
+      function estacionDeSistemas({ clave, nombre, casos, pista }) {
+        function Sistema({ x, y, filas, fuerte }) {
+          return (
+            <g>
+              {filas.map((fila, orden) => (
+                <g key={orden} fontWeight={orden === fuerte ? 700 : 400}>
+                  {fila.slice(0, 3).map((termino, lugar) => (
+                    <text key={lugar} x={x + 44 + 58 * lugar} y={y + 40 * orden} fontSize="23" textAnchor="end">
+                      {formula(termino)}
+                    </text>
+                  ))}
+                  <text x={x + 176} y={y + 40 * orden} fontSize="23">
+                    =
+                  </text>
+                  <text x={x + 236} y={y + 40 * orden} fontSize="23" textAnchor="end">
+                    {fila[3]}
+                  </text>
+                </g>
+              ))}
+            </g>
+          );
+        }
+        const llave = (x, arriba, abajo) => {
+          const medio = (arriba + abajo) / 2;
+          return (
+            "M" + x + " " + arriba + "q-12 0 -12 12V" + (medio - 12) + "q0 12 -10 12q10 0 10 12V" + (abajo - 12) + "q0 12 12 12"
+          );
+        };
+
+        function Dibujo({ e }) {
+          const caso = casos[e.i];
+          const arriba = (filas) => 150 - 20 * (filas.length - 1);
+          const ultima = caso.escalonado.length - 1;
+          const yUltima = arriba(caso.escalonado) + 40 * ultima;
+          return (
+            <>
+              <Trazo t={0.2} dura={0.4} d={llave(40, arriba(caso.sistema) - 30, arriba(caso.sistema) + 40 * (caso.sistema.length - 1) + 14)} strokeWidth="1.8" />
+              <Trazo t={0.9} dura={0.4} d="M292 142H338" strokeWidth="2.2" />
+              <Velo t={1.25} d="M328 133L339 142L328 151" strokeWidth="2.2" />
+              <Trazo t={1.3} dura={0.4} d={llave(368, arriba(caso.escalonado) - 30, arriba(caso.escalonado) + 40 * ultima + 14)} strokeWidth="1.8" />
+              <Velo t={2} d={caja(376, yUltima - 28, 244, 40, 10)} fill="#fff" fillOpacity="0.16" strokeWidth="2" />
+              <Letras>
+                <Rotulo t={0.1} x="320" y="44" fontSize="20">
+                  {palabra("al escalonar, la última fila decide")}
+                </Rotulo>
+                <Rotulo como="g" t={0.4}>
+                  <Sistema x={44} y={arriba(caso.sistema)} filas={caso.sistema} fuerte={-1} />
+                </Rotulo>
+                <Rotulo t={1} x="315" y="128" fontSize="16">
+                  {palabra("Gauss")}
+                </Rotulo>
+                <Rotulo como="g" t={1.5}>
+                  <Sistema x={372} y={arriba(caso.escalonado)} filas={caso.escalonado} fuerte={ultima} />
+                </Rotulo>
+                <Rotulo t={2.2} x="320" y="262" fontSize="19">
+                  {palabra(caso.lectura)}
+                </Rotulo>
+                <Rotulo t={2.5} x="320" y="296" fontSize="21">
+                  {palabra(caso.clase, true)}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0 },
+          duracion: 3,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "Un sistema de ecuaciones lineales y, a su derecha, el mismo sistema ya escalonado con el método de Gauss. " +
+            casos[e.i].lectura + ": el sistema es " + casos[e.i].clase + ".",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "cuántas soluciones tiene el sistema",
+              rotulo: "El sistema tiene",
+              opciones: casos.map((caso, orden) => ({ valor: orden, rotulo: caso.nombre }))
+            }
+          ],
+          vivo: (e) => casos[e.i].vivo,
+          pista: pista
+        };
+      }
+
+      function estacionDelSigno({ clave, nombre, raices, inicial, pista }) {
+        const [r1, r2] = raices;
+        const coeficientes = [1, -(r1 + r2), r1 * r2];
+        const f = (x) => (x - r1) * (x - r2);
+        const desde = r1 - 2.2;
+        const hasta = r2 + 2.2;
+        const fondo = f((r1 + r2) / 2);
+        const px = (x) => 70 + (500 * (x - desde)) / (hasta - desde);
+        const eje = 150;
+        const unidad = 86 / -fondo;
+        const py = (y) => eje - unidad * y;
+        const techo = (eje - 62) / unidad;
+        const borde = Math.sqrt(techo - fondo);
+        const medio = (r1 + r2) / 2;
+        const escrito = (valor) => (valor < 0 ? MENOS + cifra(-valor) : cifra(valor));
+        const factores = "(" + divisorDe(r1, false) + ")(" + divisorDe(r2, false) + ")";
+        const solucion = (signo, paraTex) => {
+          const a = paraTex ? enTex(r1) : escrito(r1);
+          const b = paraTex ? enTex(r2) : escrito(r2);
+          const menos = paraTex ? "-\\infty" : MENOS + "∞";
+          const mas = paraTex ? "+\\infty" : "+∞";
+          const une = paraTex ? "\\cup" : " ∪ ";
+          return signo === "<"
+            ? "(" + a + ", " + b + ")"
+            : signo === "≤"
+              ? "[" + a + ", " + b + "]"
+              : signo === ">"
+                ? "(" + menos + ", " + a + ")" + une + "(" + b + ", " + mas + ")"
+                : "(" + menos + ", " + a + "]" + une + "[" + b + ", " + mas + ")";
+        };
+        const SIGNO_TEX = { "<": "<", "≤": "\\leq", ">": ">", "≥": "\\geq" };
+
+        function Dibujo({ e }) {
+          const dentro = e.signo === "<" || e.signo === "≤";
+          const entra = e.signo === "≤" || e.signo === "≥";
+          const corte = entra ? 0 : 8;
+          return (
+            <>
+              <Trazo t={0.1} dura={0.4} d={"M24 " + eje + "H616"} strokeOpacity="0.8" strokeWidth="1.5" />
+              <Trazo t={0.5} dura={0.9} d={grafica(f, medio - borde, medio + borde, px, py, 60)} strokeOpacity="0.5" strokeWidth="2" />
+              {dentro ? (
                 <>
-                  Es la tecla <code>log</code> de la calculadora.
-                </>
-              ) : neperiano ? (
-                <>
-                  Es la tecla <code>ln</code> de la calculadora.
+                  <Trazo t={1.5} dura={0.5} d={grafica(f, r1, r2, px, py, 40)} strokeWidth="4.2" />
+                  <Trazo t={1.9} dura={0.4} d={"M" + n1(px(r1) + corte) + " " + eje + "H" + n1(px(r2) - corte)} strokeWidth="7" />
                 </>
               ) : (
                 <>
-                  En la calculadora, con la tecla <code>ln</code> o con la tecla <code>log</code>: el cociente da lo mismo.
+                  <Trazo t={1.5} dura={0.4} d={grafica(f, medio - borde, r1, px, py, 30)} strokeWidth="4.2" />
+                  <Trazo t={1.5} dura={0.4} d={grafica(f, r2, medio + borde, px, py, 30)} strokeWidth="4.2" />
+                  <Trazo t={1.9} dura={0.4} d={"M" + n1(px(r1) - corte) + " " + eje + "H30"} strokeWidth="7" />
+                  <Trazo t={1.9} dura={0.4} d={"M" + n1(px(r2) + corte) + " " + eje + "H610"} strokeWidth="7" />
+                  <Velo t={2.2} d={"M42 " + (eje - 9) + "l-13 9l13 9M598 " + (eje - 9) + "l13 9l-13 9"} strokeWidth="3" />
+                </>
+              )}
+              <Extremo t={2.2} x={n1(px(r1))} y={eje} entra={entra} />
+              <Extremo t={2.3} x={n1(px(r2))} y={eje} entra={entra} />
+              <Letras>
+                <Rotulo t={0.2} x="320" y="40" fontSize="23">
+                  {formula(polinomioEscrito(coeficientes, false) + " " + e.signo + " 0")}
+                  {HUECO}
+                  {formula(factores + " " + e.signo + " 0")}
+                </Rotulo>
+                <Rotulo t={1} x={n1(px(r1) - 12)} y={eje + 28} fontSize="20" fontWeight="700" textAnchor="end">
+                  {escrito(r1)}
+                </Rotulo>
+                <Rotulo t={1} x={n1(px(r2) + 12)} y={eje + 28} fontSize="20" fontWeight="700" textAnchor="start">
+                  {escrito(r2)}
+                </Rotulo>
+                <Rotulo t={2.4} x="320" y="276" fontSize="18" opacity="0.92">
+                  {palabra(
+                    (dentro ? "por debajo del eje, entre las raíces" : "por encima del eje, fuera de las raíces") +
+                      (entra ? "; con el igual, las raíces entran" : "; sin el igual, las raíces no entran")
+                  )}
+                </Rotulo>
+                <Rotulo t={2.6} x="320" y="306" fontSize="24" fontWeight="700">
+                  {solucion(e.signo, false)}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { signo: inicial },
+          duracion: 3,
+          Dibujo: Dibujo,
+          descripcion: (e) =>
+            "La parábola del polinomio, que corta al eje en " + r1 + " y en " + r2 + ": queda por debajo del eje entre las raíces y " +
+            "por encima fuera de ellas. Con la desigualdad elegida, la solución es " + solucion(e.signo, false) + ".",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "signo",
+              nombre: "el signo de la desigualdad",
+              rotulo: "La desigualdad",
+              opciones: ["<", "≤", ">", "≥"].map((signo) => ({ valor: signo, rotulo: signo }))
+            }
+          ],
+          vivo: (e) => [
+            polinomioEscrito(coeficientes, true) + SIGNO_TEX[e.signo] + "0",
+            "\\iff(" + divisorDe(r1, true) + ")(" + divisorDe(r2, true) + ")" + SIGNO_TEX[e.signo] + "0",
+            "\\iff x\\in" + solucion(e.signo, true)
+          ],
+          pista: pista
+        };
+      }
+
+
+      const ESTACION_DEL_RESTO = estacionDelResto({
+        clave: "resto",
+        nombre: "Resto y factor",
+        coeficientes: [1, -2, 0, 3],
+        valores: [-1, 0, 1, 2, 3],
+        inicial: 3,
+        ventana: [-1.5, 3.3],
+        pista: (
+          <>
+            Toca la gráfica o cambia el número. El resto de dividir entre <Mates tex="x-a" /> es lo que vale el polinomio
+            en <Mates tex="a" />: donde la curva corta al eje, el resto es <Mates tex="0" /> y hay un factor.
+          </>
+        )
+      });
+
+      const ESTACION_DE_FRACCIONES = estacionDeSimplificar({
+        clave: "fracciones",
+        nombre: "Fracciones algebraicas",
+        original: ["x^3 − 8x^2 + 16x", "x^2 − 4x"],
+        factorizada: ["x(x − 4)^2", "x(x − 4)"],
+        condiciones: "x ≠ 0, x ≠ 4",
+        simplificada: "x − 4",
+        cadenas: [
+          "F(x)=\\frac{x^3-8x^2+16x}{x^2-4x}",
+          "F(x)=\\frac{x^3-8x^2+16x}{x^2-4x}=\\frac{x\\,(x-4)^2}{x\\,(x-4)}",
+          ["F(x)=\\frac{x\\,(x-4)^2}{x\\,(x-4)}", "x\\neq0,\\quad x\\neq4"],
+          ["F(x)=\\frac{x\\,(x-4)^2}{x\\,(x-4)}=x-4", "x\\neq0,\\quad x\\neq4"]
+        ],
+        pista: (
+          <>
+            Baja el paso a «La fracción» y piensa cada uno antes de destaparlo. Se cancelan factores, nunca sumandos, y
+            las condiciones se anotan antes de cancelar.
+          </>
+        )
+      });
+
+      const ESTACION_DEL_DISCRIMINANTE = estacionDelDiscriminante({
+        clave: "ecuaciones",
+        nombre: "Ecuaciones",
+        ecuaciones: [
+          { a: 1, b: -5, c: 6 },
+          { a: 1, b: -6, c: 9 },
+          { a: 1, b: 1, c: 1 }
+        ],
+        ventana: [-3.2, 6.4, -2.2, 7],
+        pista: (
+          <>
+            Las soluciones de la ecuación son los puntos donde su parábola corta al eje, y el discriminante dice
+            cuántos hay sin resolverla.
+          </>
+        )
+      });
+
+      const ESTACION_DE_SISTEMAS = estacionDeSistemas({
+        clave: "sistemas",
+        nombre: "Sistemas",
+        casos: [
+          {
+            nombre: "Una solución",
+            sistema: [
+              ["x", "+ y", "+ z", "2"],
+              ["2x", "− y", "+ 3z", "13"],
+              ["x", "+ 2y", "− z", "−6"]
+            ],
+            escalonado: [
+              ["x", "+ y", "+ z", "2"],
+              ["", "−3y", "+ z", "9"],
+              ["", "", "−5z", "−15"]
+            ],
+            lectura: "una ecuación en cada escalón: se resuelve de abajo arriba",
+            clase: "compatible determinado",
+            vivo: ["z=3,\\quad y=-2,\\quad x=1", <>Compatible determinado: una sola solución.</>]
+          },
+          {
+            nombre: "Infinitas",
+            sistema: [
+              ["x", "+ y", "− z", "1"],
+              ["2x", "+ 3y", "− 2z", "3"],
+              ["3x", "+ 4y", "− 3z", "4"]
+            ],
+            escalonado: [
+              ["x", "+ y", "− z", "1"],
+              ["", "y", "", "1"],
+              ["", "", "0", "0"]
+            ],
+            lectura: "la fila 0 = 0 sobra: quedan dos ecuaciones para tres incógnitas",
+            clase: "compatible indeterminado",
+            vivo: [
+              "x=t,\\quad y=1,\\quad z=t\\quad(t\\in\\mathbb R)",
+              <>Compatible indeterminado: una solución por cada valor del parámetro.</>
+            ]
+          },
+          {
+            nombre: "Ninguna",
+            sistema: [
+              ["x", "+ y", "+ z", "1"],
+              ["2x", "+ 2y", "+ 2z", "3"]
+            ],
+            escalonado: [
+              ["x", "+ y", "+ z", "1"],
+              ["", "", "0", "1"]
+            ],
+            lectura: "la fila 0 = 1 es una contradicción",
+            clase: "incompatible",
+            vivo: [<>Incompatible: no hay ninguna solución, y no queda nada que resolver.</>]
+          }
+        ],
+        pista: (
+          <>
+            Con las tres transformaciones el sistema se escalona sin cambiar sus soluciones. Mira la última fila de
+            cada caso: es la que dice cuántas hay.
+          </>
+        )
+      });
+
+      const ESTACION_DEL_SIGNO = estacionDelSigno({
+        clave: "inecuaciones",
+        nombre: "Inecuaciones",
+        raices: [-1, 3],
+        inicial: "≤",
+        pista: (
+          <>
+            Cambia la desigualdad. Se factoriza y se estudia el signo: la parábola dice dónde el polinomio es
+            negativo y dónde es positivo, y el igual decide si las raíces entran.
+          </>
+        )
+      });
+
+
+      const ESTACIONES_ALGEBRA = [
+        ESTACION_DEL_RESTO,
+        estacionDeFactorizar({
+          clave: "factorizar",
+          nombre: "Factorizar",
+          herramientas: [["Factor", "común"], ["Identidades", "notables"], ["Cambio", "z = x²"], ["Segundo", "grado"], ["Ruffini"]],
+          ejemplos: [
+            {
+              tex: "2x^3-50x",
+              polinomio: "2x^3 − 50x",
+              usa: [0, 1],
+              cadena: ["2x^3-50x=2x\\left(x^2-25\\right)", "=2x(x+5)(x-5)"],
+              resultado: "2x(x + 5)(x − 5)",
+              pie: "raíces: 0, −5 y 5",
+              nota: <>Primero, el factor común; lo que queda es una diferencia de cuadrados.</>
+            },
+            {
+              tex: "x^4-3x^3+5x^2-9x+6",
+              polinomio: "x^4 − 3x^3 + 5x^2 − 9x + 6",
+              usa: [4, 3],
+              cadena: ["x^4-3x^3+5x^2-9x+6", "=(x-1)\\left(x^3-2x^2+3x-6\\right)", "=(x-1)(x-2)\\left(x^2+3\\right)"],
+              resultado: "(x − 1)(x − 2)(x^2 + 3)",
+              pie: "raíces reales: 1 y 2; el factor de grado 2 es irreducible",
+              nota: (
+                <>
+                  Ruffini con los divisores de <Mates tex="6" />, dos veces. El discriminante de <Mates tex="x^2+3" /> es
+                  negativo: no se puede seguir.
                 </>
               )
-            );
-          },
+            },
+            {
+              tex: "-x^3+4x^2-x-6",
+              polinomio: "−x^3 + 4x^2 − x − 6",
+              usa: [0, 4, 3],
+              cadena: [
+                "-x^3+4x^2-x-6",
+                "=-\\left(x^3-4x^2+x+6\\right)",
+                "=-(x+1)\\left(x^2-5x+6\\right)",
+                "=-(x+1)(x-2)(x-3)"
+              ],
+              resultado: "−(x + 1)(x − 2)(x − 3)",
+              pie: "raíces: −1, 2 y 3",
+              nota: <>El signo sale como factor común y se arrastra hasta el final.</>
+            },
+            {
+              tex: "4x^3-4x^2-3x",
+              polinomio: "4x^3 − 4x^2 − 3x",
+              usa: [0, 3],
+              cadena: [
+                "4x^3-4x^2-3x=x\\left(4x^2-4x-3\\right)",
+                "=4x\\left(x-\\tfrac32\\right)\\left(x+\\tfrac12\\right)",
+                "=x(2x-3)(2x+1)"
+              ],
+              resultado: "x(2x − 3)(2x + 1)",
+              pie: "raíces: 0, tres medios y menos un medio",
+              nota: (
+                <>
+                  Ningún divisor de <Mates tex="-3" /> anula el factor de grado <Mates tex="2" />: sus raíces las da la
+                  fórmula, y el coeficiente principal se queda delante.
+                </>
+              )
+            }
+          ],
+          pista: (
+            <>
+              Las herramientas se prueban en este orden, y cada polinomio usa solo las que necesita. Elige otro ejemplo y
+              mira cuáles se encienden.
+            </>
+          )
+        }),
+        ESTACION_DE_FRACCIONES,
+        ESTACION_DEL_DISCRIMINANTE,
+        estacionDelValorAbsoluto({
+          clave: "absoluto",
+          nombre: "Otras ecuaciones",
+          m: 2,
+          n: -5,
+          inicial: 7,
+          pista: (
+            <>
+              Cambia el número de la derecha. Un valor absoluto es una distancia: con un número positivo hay dos ramas, y
+              con uno negativo, ninguna.
+            </>
+          )
+        }),
+        ESTACION_DE_SISTEMAS,
+        ESTACION_DEL_SIGNO
+      ];
+
+
+      const ESTACIONES_ALGEBRA_SOCIALES = [
+        Object.assign({}, ESTACION_DEL_RESTO, { clave: "polinomios", nombre: "Polinomios" }),
+        estacionDeFactorizar({
+          clave: "factorizar",
+          nombre: "Factorizar",
+          herramientas: [["Factor", "común"], ["Ruffini"], ["Identidad notable", "o segundo grado"]],
+          ejemplos: [
+            {
+              tex: "2x^3-50x",
+              polinomio: "2x^3 − 50x",
+              usa: [0, 2],
+              cadena: ["2x^3-50x=2x\\left(x^2-25\\right)", "=2x(x+5)(x-5)"],
+              resultado: "2x(x + 5)(x − 5)",
+              pie: "raíces: 0, −5 y 5",
+              nota: <>Primero, el factor común; lo que queda es una diferencia de cuadrados.</>
+            },
+            {
+              tex: "x^3-4x^2+x+6",
+              polinomio: "x^3 − 4x^2 + x + 6",
+              usa: [1, 2],
+              cadena: ["x^3-4x^2+x+6", "=(x+1)\\left(x^2-5x+6\\right)", "=(x+1)(x-2)(x-3)"],
+              resultado: "(x + 1)(x − 2)(x − 3)",
+              pie: "raíces: −1, 2 y 3",
+              nota: (
+                <>
+                  Ruffini con los divisores de <Mates tex="6" />; el cociente, de grado <Mates tex="2" />, se anula en{" "}
+                  <Mates tex="2" /> y en <Mates tex="3" />.
+                </>
+              )
+            },
+            {
+              tex: "x^3-2x^2+3x-6",
+              polinomio: "x^3 − 2x^2 + 3x − 6",
+              usa: [1, 2],
+              cadena: "x^3-2x^2+3x-6=(x-2)\\left(x^2+3\\right)",
+              resultado: "(x − 2)(x^2 + 3)",
+              pie: "una sola raíz real, 2; el factor de grado 2 es irreducible",
+              nota: (
+                <>
+                  El discriminante de <Mates tex="x^2+3" /> es negativo: no tiene raíces reales y no se puede seguir.
+                </>
+              )
+            },
+            {
+              tex: "2x^2+x-3",
+              polinomio: "2x^2 + x − 3",
+              usa: [2],
+              cadena: ["2x^2+x-3=2\\,(x-1)\\left(x+\\tfrac32\\right)", "=(x-1)(2x+3)"],
+              resultado: "(x − 1)(2x + 3)",
+              pie: "raíces: 1 y menos tres medios",
+              nota: <>La fórmula da las raíces, y el coeficiente principal se queda delante.</>
+            }
+          ],
+          pista: (
+            <>
+              Las herramientas se prueban en este orden, y cada polinomio usa solo las que necesita. Elige otro ejemplo y
+              mira cuáles se encienden.
+            </>
+          )
+        }),
+        ESTACION_DE_FRACCIONES,
+        ESTACION_DEL_DISCRIMINANTE,
+        estacionDeDespejar({
+          clave: "exponente",
+          nombre: "Otras ecuaciones",
+          bases: [7, 10],
+          inicial: { base: 7, b: 30 },
+          alturas: { min: 10, max: 50, salto: 10 },
+          ventana: [-0.4, 2.3, 52],
+          cuenta: "log",
+          pista: (
+            <>
+              Toca el dibujo para cambiar la altura. Cuando los dos miembros no son potencias de la misma base, el
+              exponente se despeja tomando logaritmos.
+            </>
+          )
+        }),
+        ESTACION_DE_SISTEMAS,
+        ESTACION_DEL_SIGNO
+      ];
+
+
+      const PISTA_DE_CONJUNTOS = (
+        <>
+          Toca un número del dibujo. Antes de clasificarlo conviene simplificarlo, porque la forma de escribirlo engaña.
+        </>
+      );
+      const PISTA_DE_POTENCIAS = (
+        <>
+          Toca una barra para elegir el exponente. Cada vez que el exponente baja uno, el valor se divide entre la base: por
+          eso <Mates tex="a^{0}=1" /> y los exponentes negativos dan fracciones.
+        </>
+      );
+      const PISTA_DEL_EXPONENTE = (
+        <>
+          Toca el numerador o el denominador del exponente para cambiarlos. Escritos como potencias, los radicales siguen
+          las propiedades de las potencias.
+        </>
+      );
+      const PISTA_DE_RACIONALIZAR = (
+        <>
+          Racionalizar es escribir la fracción sin radicales en el denominador: se multiplican el numerador y el
+          denominador por lo que le falta al denominador para dejar de tenerlos.
+        </>
+      );
+      const PISTA_DE_SALTOS = (
+        <>
+          El logaritmo decimal de un número cuenta los saltos de «por 10» que lo separan del <Mates tex="1" />. Multiplicar
+          es dar los saltos de un número y, después, los del otro; dividir, deshacer los del segundo.
+        </>
+      );
+      const PISTA_DE_INTERVALOS = (
+        <>
+          Mueve los extremos de <Mates tex="B" />, o tócalos en el dibujo para que entren o dejen de entrar. Un corchete
+          dice que el extremo entra, y un paréntesis, que no.
+        </>
+      );
+      const PISTA_DE_DECIMALES = (
+        <>
+          Elige otra fracción. El <Mates tex="2" /> y el <Mates tex="5" /> son los factores de <Mates tex="10" />: si el
+          denominador no tiene otros, la división termina.
+        </>
+      );
+
+      const queEs = (valor, ancho) => [
+        { contenido: IGUAL, ancho: 1.28 },
+        { contenido: valor, ancho: ancho, fuerte: true }
+      ];
+
+      const NUMEROS_DE_MATEMATICAS_I = [
+        {
+          conjunto: "Z",
+          rotulo: <Mates tex="-8" />,
+          nombre: "menos 8",
+          tex: "-8\\in\\mathbb Z",
+          frase: <>Es entero y no es natural: el menor conjunto al que pertenece es el de los enteros.</>,
+          trozos: [{ contenido: MENOS + "8", ancho: 1.28, fuerte: true }]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\frac{12}{3}" />,
+          nombre: "12 entre 3",
+          tex: "\\frac{12}{3}=4\\in\\mathbb N",
+          frase: <>Simplificada, la fracción es un natural: el menor conjunto al que pertenece es el de los naturales.</>,
+          trozos: [{ quebrado: ["12", "3"], ancho: 1.1 }].concat(queEs("4", 0.5))
+        },
+        {
+          conjunto: "Q",
+          rotulo: <Mates tex="0{,}125" />,
+          nombre: "0,125",
+          tex: "0{,}125\\in\\mathbb Q",
+          frase: <>Su expresión decimal es exacta: es racional, y no es entero.</>,
+          trozos: [{ contenido: "0,125", ancho: 2.28, fuerte: true }]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\sqrt{49}" />,
+          nombre: "la raíz de 49",
+          tex: "\\sqrt{49}=7\\in\\mathbb N",
+          frase: (
+            <>
+              Lleva una raíz, pero vale <Mates tex="7" />: es un natural.
+            </>
+          ),
+          trozos: [{ raiz: true, contenido: "49", ancho: 1 }].concat(queEs("7", 0.5))
+        },
+        {
+          conjunto: "I",
+          rotulo: <Mates tex="\sqrt{50}" />,
+          nombre: "la raíz de 50",
+          tex: "\\sqrt{50}=5\\sqrt2\\in\\mathbb R\\setminus\\mathbb Q",
+          frase: (
+            <>
+              Es irracional, porque <Mates tex="50" /> no es el cuadrado de ningún entero.
+            </>
+          ),
+          trozos: [
+            { raiz: true, contenido: "50", ancho: 1 },
+            { contenido: IGUAL, ancho: 1.28 },
+            { contenido: "5", ancho: 0.5, fuerte: true },
+            { raiz: true, contenido: "2", ancho: 0.5, fuerte: true }
+          ]
+        }
+      ];
+
+      const NUMEROS_DE_SOCIALES = [
+        {
+          conjunto: "Z",
+          rotulo: <Mates tex="-15" />,
+          nombre: "menos 15",
+          tex: "-15\\in\\mathbb Z",
+          frase: <>Es entero y no es natural: el menor conjunto al que pertenece es el de los enteros.</>,
+          trozos: [{ contenido: MENOS + "15", ancho: 1.78, fuerte: true }]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\frac{18}{6}" />,
+          nombre: "18 entre 6",
+          tex: "\\frac{18}{6}=3\\in\\mathbb N",
+          frase: <>Simplificada, la fracción es un natural: el menor conjunto al que pertenece es el de los naturales.</>,
+          trozos: [{ quebrado: ["18", "6"], ancho: 1.1 }].concat(queEs("3", 0.5))
+        },
+        {
+          conjunto: "Q",
+          rotulo: <Mates tex="\frac{-7}{4}" />,
+          nombre: "menos 7 entre 4",
+          tex: "\\frac{-7}{4}=-1{,}75\\in\\mathbb Q",
+          frase: <>Es un cociente de enteros que no da un entero: es racional.</>,
+          trozos: [{ quebrado: [MENOS + "7", "4"], ancho: 1.3, fuerte: true }]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\sqrt{36}" />,
+          nombre: "la raíz de 36",
+          tex: "\\sqrt{36}=6\\in\\mathbb N",
+          frase: (
+            <>
+              Lleva una raíz, pero vale <Mates tex="6" />: es un natural.
+            </>
+          ),
+          trozos: [{ raiz: true, contenido: "36", ancho: 1 }].concat(queEs("6", 0.5))
+        },
+        {
+          conjunto: "I",
+          rotulo: <Mates tex="\sqrt{20}" />,
+          nombre: "la raíz de 20",
+          tex: "\\sqrt{20}\\in\\mathbb R\\setminus\\mathbb Q",
+          frase: (
+            <>
+              Es irracional, porque <Mates tex="20" /> no es el cuadrado de ningún entero.
+            </>
+          ),
+          trozos: [{ raiz: true, contenido: "20", ancho: 1, fuerte: true }]
+        },
+        {
+          conjunto: "I",
+          rotulo: <Mates tex="\frac{\pi}{2}" />,
+          nombre: "pi medios",
+          tex: "\\frac{\\pi}{2}\\in\\mathbb R\\setminus\\mathbb Q",
+          frase: (
+            <>
+              Es irracional: si fuera racional, también lo sería su doble, <Mates tex="\pi" />.
+            </>
+          ),
+          trozos: [{ quebrado: [cursiva("π"), "2"], ancho: 0.8, fuerte: true }]
+        }
+      ];
+
+      const NUMEROS_DE_CUARTO = [
+        {
+          conjunto: "Z",
+          rotulo: <Mates tex="-21" />,
+          nombre: "menos 21",
+          tex: "-21\\in\\mathbb Z",
+          frase: <>Es entero y no es natural: el menor conjunto al que pertenece es el de los enteros.</>,
+          trozos: [{ contenido: MENOS + "21", ancho: 1.78, fuerte: true }]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\frac{45}{9}" />,
+          nombre: "45 entre 9",
+          tex: "\\frac{45}{9}=5\\in\\mathbb N",
+          frase: <>Simplificada, la fracción es un natural: el menor conjunto al que pertenece es el de los naturales.</>,
+          trozos: [{ quebrado: ["45", "9"], ancho: 1.1 }].concat(queEs("5", 0.5))
+        },
+        {
+          conjunto: "Q",
+          rotulo: <Mates tex="-\frac{11}{8}" />,
+          nombre: "menos 11 octavos",
+          tex: "-\\frac{11}{8}=-1{,}375\\in\\mathbb Q",
+          frase: <>Es un cociente de enteros que no da un entero: es racional.</>,
+          trozos: [
+            { contenido: MENOS, ancho: 0.78, fuerte: true },
+            { quebrado: ["11", "8"], ancho: 1.1, fuerte: true }
+          ]
+        },
+        {
+          conjunto: "N",
+          rotulo: <Mates tex="\sqrt{121}" />,
+          nombre: "la raíz de 121",
+          tex: "\\sqrt{121}=11\\in\\mathbb N",
+          frase: (
+            <>
+              Lleva una raíz, pero vale <Mates tex="11" />: es un natural.
+            </>
+          ),
+          trozos: [{ raiz: true, contenido: "121", ancho: 1.5 }].concat(queEs("11", 1))
+        },
+        {
+          conjunto: "I",
+          rotulo: <Mates tex="\sqrt{50}" />,
+          nombre: "la raíz de 50",
+          tex: "\\sqrt{50}\\in\\mathbb I",
+          frase: (
+            <>
+              Es irracional, porque <Mates tex="50" /> no es un cuadrado perfecto.
+            </>
+          ),
+          trozos: [{ raiz: true, contenido: "50", ancho: 1, fuerte: true }]
+        },
+        {
+          conjunto: "I",
+          rotulo: <Mates tex="\frac{\pi}{3}" />,
+          nombre: "pi tercios",
+          tex: "\\frac{\\pi}{3}\\in\\mathbb I",
+          frase: (
+            <>
+              Es irracional: si fuera racional, también lo sería su triple, <Mates tex="\pi" />.
+            </>
+          ),
+          trozos: [{ quebrado: [cursiva("π"), "3"], ancho: 0.8, fuerte: true }]
+        }
+      ];
+
+      const ESTACION_DE_POTENCIAS = estacionDePotencias({
+        clave: "potencias",
+        nombre: "Potencias",
+        bases: [2, 3, 5, 10],
+        conSigno: false,
+        inicial: { base: 2, n: -3 },
+        pista: PISTA_DE_POTENCIAS
+      });
+
+
+      const ESTACIONES_NUMEROS_REALES = [
+        estacionDeConjuntos({
+          clave: "conjuntos",
+          nombre: "Números reales",
+          numeros: NUMEROS_DE_MATEMATICAS_I,
+          inicial: 4,
+          pista: PISTA_DE_CONJUNTOS
+        }),
+        estacionDePotencias({
+          clave: "potencias",
+          nombre: "Potencias",
+          bases: [2, 3, 5, 10],
+          conSigno: true,
+          inicial: { base: 2, signo: 1, n: -3 },
+          pista: PISTA_DE_POTENCIAS
+        }),
+        estacionDelExponente({
+          clave: "radicales",
+          nombre: "Radicales",
+          bases: [5, 27],
+          inicial: { base: 5, m: 2, n: 3 },
+          numeradores: 4,
+          pista: PISTA_DEL_EXPONENTE
+        }),
+        estacionDeRacionalizar({
+          clave: "racionalizar",
+          nombre: "Operar con radicales",
+          numeradores: [3, 3, 1],
+          base: 2,
+          suma: false,
+          inicial: { caso: 1, a: 5, n: 5, k: 3, r: 3, b: 1 },
+          pista: PISTA_DE_RACIONALIZAR
+        }),
+        estacionDeSaltos({
+          clave: "logaritmos",
+          nombre: "Logaritmos",
+          inicial: { x: 100, y: 10, op: "por" },
+          pista: PISTA_DE_SALTOS
+        }),
+        estacionDeDespejar({
+          clave: "despejar",
+          nombre: "Despejar un exponente",
+          bases: [2, 3, Math.E, 10],
+          inicial: { base: 3, b: 7 },
+          alturas: { min: 2, max: 10, salto: 1 },
+          ventana: [-1, 3.567, 10],
+          cuenta: "ln",
           pista: (
             <>
               Toca el dibujo para cambiar la altura. Resolver <Mates tex="a^{x}=b" /> es buscar el exponente con el que la
               curva llega a esa altura: ese exponente es un logaritmo.
             </>
           )
-        }
+        })
+      ];
+
+
+      const ESTACIONES_REALES_SOCIALES = [
+        estacionDeConjuntos({
+          clave: "conjuntos",
+          nombre: "Números reales",
+          numeros: NUMEROS_DE_SOCIALES,
+          inicial: 4,
+          pista: PISTA_DE_CONJUNTOS
+        }),
+        ESTACION_DE_POTENCIAS,
+        estacionDelExponente({
+          clave: "radicales",
+          nombre: "Radicales",
+          bases: [8, 5],
+          inicial: { base: 8, m: 2, n: 3 },
+          numeradores: 4,
+          pista: PISTA_DEL_EXPONENTE
+        }),
+        estacionDeRacionalizar({
+          clave: "racionalizar",
+          nombre: "Operar con radicales",
+          numeradores: [6, 10, 4],
+          base: 5,
+          suma: false,
+          inicial: { caso: 0, a: 3, n: 3, k: 1, r: 5, b: 1 },
+          pista: PISTA_DE_RACIONALIZAR
+        }),
+        estacionDeSaltos({
+          clave: "logaritmos",
+          nombre: "Logaritmos",
+          inicial: { x: 10, y: 10, op: "por" },
+          pista: PISTA_DE_SALTOS
+        }),
+        estacionDeDespejar({
+          clave: "despejar",
+          nombre: "Despejar un exponente",
+          bases: [1.03],
+          inicial: { base: 1.03, b: 2 },
+          alturas: { min: 1.5, max: 2.5, salto: 0.5 },
+          ventana: [-2, 34, 2.7],
+          marcas: [0, 10, 20, 30],
+          cuenta: "log",
+          pista: (
+            <>
+              Toca el dibujo para cambiar la altura. Es la pregunta de cuándo se duplica un capital al{" "}
+              <Mates tex="3\,\%" />: el exponente se despeja tomando logaritmos.
+            </>
+          )
+        }),
+        estacionDeIntervalos({
+          clave: "recta",
+          nombre: "Recta real",
+          fijo: [-2, 3, false, true],
+          inicial: { p: 1, q: 5, ip: true, iq: false },
+          pista: PISTA_DE_INTERVALOS
+        }),
+        estacionDeDecimales({
+          clave: "repaso",
+          nombre: "Repaso de la ESO",
+          fracciones: [
+            [7, 8],
+            [5, 11],
+            [7, 12]
+          ],
+          pista: PISTA_DE_DECIMALES
+        })
+      ];
+
+
+      const ESTACIONES_REALES_CUARTO = [
+        estacionDeConjuntos({
+          clave: "conjuntos",
+          nombre: "Números reales",
+          numeros: NUMEROS_DE_CUARTO,
+          inicial: 4,
+          pista: PISTA_DE_CONJUNTOS
+        }),
+        estacionDeDecimales({
+          clave: "decimales",
+          nombre: "Decimales y fracciones",
+          fracciones: [
+            [7, 8],
+            [5, 11],
+            [7, 12],
+            [9, 40],
+            [4, 33],
+            [11, 30]
+          ],
+          pista: PISTA_DE_DECIMALES
+        }),
+        estacionDeIntervalos({
+          clave: "recta",
+          nombre: "Recta real",
+          fijo: [-2, 3, true, false],
+          inicial: { p: 0, q: 5, ip: false, iq: true },
+          pista: PISTA_DE_INTERVALOS
+        }),
+        estacionDeErrores({
+          clave: "errores",
+          nombre: "Aproximaciones y errores",
+          numerador: 5,
+          denominador: 12,
+          decimales: [1, 2, 3],
+          inicial: 2,
+          ventana: [0.395, 0.425, 0.01],
+          pista: (
+            <>
+              Cambia el número de cifras decimales. Cuanto más cerca queda la aproximación, menor es el error absoluto; el
+              relativo dice cuánto supone respecto del número.
+            </>
+          )
+        }),
+        ESTACION_DE_POTENCIAS,
+        estacionDelExponente({
+          clave: "radicales",
+          nombre: "Radicales",
+          bases: [27, 4],
+          inicial: { base: 27, m: 2, n: 3 },
+          numeradores: 5,
+          pista: PISTA_DEL_EXPONENTE
+        }),
+        estacionDeRacionalizar({
+          clave: "racionalizar",
+          nombre: "Operar con radicales",
+          numeradores: [15, 6, 5],
+          base: 2,
+          suma: true,
+          inicial: { caso: 0, a: 3, n: 3, k: 2, r: 6, b: 1 },
+          pista: PISTA_DE_RACIONALIZAR
+        }),
+        estacionDeSaltos({
+          clave: "logaritmos",
+          nombre: "Logaritmos",
+          inicial: { x: 100, y: 100, op: "por" },
+          pista: PISTA_DE_SALTOS
+        })
       ];
 
 
@@ -18114,8 +20402,64 @@ void main() {
         );
       }
 
+      function ResumenAlgebra({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Álgebra, de un vistazo"
+            estaciones={ESTACIONES_ALGEBRA}
+            reparto={LO_ESCRITO["resumen-algebra"]}
+          />
+        );
+      }
+
+      function ResumenAlgebraSociales({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Álgebra, de un vistazo"
+            estaciones={ESTACIONES_ALGEBRA_SOCIALES}
+            reparto={LO_ESCRITO["resumen-algebra-sociales"]}
+          />
+        );
+      }
+
+      function ResumenRealesSociales({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Números reales, de un vistazo"
+            estaciones={ESTACIONES_REALES_SOCIALES}
+            reparto={LO_ESCRITO["resumen-reales-sociales"]}
+          />
+        );
+      }
+
+      function ResumenRealesCuarto({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Números reales, de un vistazo"
+            estaciones={ESTACIONES_REALES_CUARTO}
+            reparto={LO_ESCRITO["resumen-reales-cuarto"]}
+          />
+        );
+      }
+
       window.Resumenes = {
-        "resumen-numeros-reales": ResumenNumerosReales
+        "resumen-numeros-reales": ResumenNumerosReales,
+        "resumen-algebra": ResumenAlgebra,
+        "resumen-algebra-sociales": ResumenAlgebraSociales,
+        "resumen-reales-sociales": ResumenRealesSociales,
+        "resumen-reales-cuarto": ResumenRealesCuarto
       };
     })();
   </script>
