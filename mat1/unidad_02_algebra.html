@@ -17706,11 +17706,13 @@ Bachillerato</p>
         ponerZoom(minimo);
         if (!cabe()) {
           if (a.partible) {
+            partirSoloEnTablas();
             return 0;
           }
           a.partible = true;
           a.tarjeta.classList.add("ampliar-partible");
           if (!cabe()) {
+            partirSoloEnTablas();
             return 0;
           }
         }
@@ -17730,6 +17732,15 @@ Bachillerato</p>
           }
         }
         return Math.max(minimo, Math.floor(abajo * 20) / 20);
+      }
+      function partirSoloEnTablas() {
+        var a = ampliacion;
+        var enTabla = a.tarjeta.querySelectorAll("td .math.inline, th .math.inline");
+        if (!Array.prototype.some.call(enTabla, visible)) {
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          partirLoImprescindible();
+        }
       }
       function evitarPartir(zoom) {
         var a = ampliacion;
