@@ -12070,7 +12070,7 @@ Enfoques NS</p>
         });
         formulas
           .filter(function (formula) {
-            var caja = formula.closest("p, li, dd, dt, figcaption, div");
+            var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
             if (!caja || formula.closest("td, th")) {
               return false;
             }
@@ -12124,11 +12124,13 @@ Enfoques NS</p>
         ponerZoom(minimo);
         if (!cabe()) {
           if (a.partible) {
+            partirSoloEnTablas();
             return 0;
           }
           a.partible = true;
           a.tarjeta.classList.add("ampliar-partible");
           if (!cabe()) {
+            partirSoloEnTablas();
             return 0;
           }
         }
@@ -12148,6 +12150,15 @@ Enfoques NS</p>
           }
         }
         return Math.max(minimo, Math.floor(abajo * 20) / 20);
+      }
+      function partirSoloEnTablas() {
+        var a = ampliacion;
+        var enTabla = a.tarjeta.querySelectorAll("td .math.inline, th .math.inline");
+        if (!Array.prototype.some.call(enTabla, visible)) {
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          partirLoImprescindible();
+        }
       }
       function evitarPartir(zoom) {
         var a = ampliacion;
@@ -19749,6 +19760,16 @@ Enfoques NS</p>
                   positivo.
                 </>
               )
+            },
+            {
+              nombre: "El término, desde las sumas",
+              tex: "u_1=S_1\\qquad u_n=S_n-S_{n-1}",
+              texto: (
+                <>
+                  Para <Mates tex="n\geq2" />: <Mates tex="S_n" /> suma lo mismo que <Mates tex="S_{n-1}" /> y,
+                  además, <Mates tex="u_n" />. Vale para cualquier sucesión.
+                </>
+              )
             }
           ],
           ojo: [
@@ -19763,6 +19784,10 @@ Enfoques NS</p>
             </>,
             <>
               <Mates tex="S_n=\frac n2(u_1+u_n)" /> necesita el último término sumado, no el siguiente.
+            </>,
+            <>
+              Con <Mates tex="S_n=n^2+4n" />, <Mates tex="u_2=S_2-S_1=7" />, no <Mates tex="S_2=12" />:{" "}
+              <Mates tex="S_2" /> suma los dos primeros términos.
             </>
           ]
         },
