@@ -4491,71 +4491,177 @@
       grid-template-columns: 1fr;
     }
 
-    .boton-ver-solucion {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      width: fit-content;
-      min-height: 0;
-      margin: 0.75rem 0 0;
-      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
-      color: var(--verde);
-      background: #ffffff;
-      border: 1.5px solid rgb(4 120 87 / 0.38);
-      border-radius: 999px;
-      box-shadow: none;
-      font-size: 0.84rem;
-      font-weight: 750;
-      line-height: 1.2;
+    .sol-iconos {
+      display: inline-flex;
+      gap: 0.4rem;
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      white-space: nowrap;
     }
 
-    .boton-ver-solucion svg {
+    .sol-ico {
+      display: inline-grid;
+      place-items: center;
       flex: none;
-      width: 1.05em;
-      height: 1.05em;
+      width: 2.1rem;
+      height: 2.1rem;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: none;
+      cursor: pointer;
+      transform: none;
     }
 
-    .boton-ver-solucion .flecha-ver-solucion {
-      transition: transform 160ms ease;
+    .sol-ico svg {
+      width: 1.15rem;
+      height: 1.15rem;
     }
 
-    .boton-ver-solucion[aria-expanded="true"] {
+    .sol-ico.ojo {
+      color: var(--verde);
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+    }
+
+    .sol-ico.lapiz {
+      color: var(--acento);
+      border: 1.5px solid rgb(29 78 216 / 0.32);
+    }
+
+    .sol-ico.ojo[aria-expanded="true"] {
       background: var(--verde-suave);
       border-color: var(--verde);
     }
 
-    .boton-ver-solucion[aria-expanded="true"] .flecha-ver-solucion {
-      transform: rotate(180deg);
+    .sol-ico.lapiz[aria-expanded="true"] {
+      background: var(--acento-suave);
+      border-color: var(--acento);
     }
 
-    .boton-ver-solucion:focus-visible {
-      color: #ffffff;
-      background: var(--verde);
-      border-color: var(--verde);
-      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+    .sol-ico:focus-visible {
+      outline: 3px solid rgb(29 78 216 / 0.35);
+      outline-offset: 1px;
       transform: none;
     }
 
     @media (hover: hover) {
-      .boton-ver-solucion:hover {
-        color: #ffffff;
-        background: var(--verde);
+      .sol-ico.ojo:hover {
+        background: var(--verde-suave);
         border-color: var(--verde);
+      }
+
+      .sol-ico.lapiz:hover {
+        background: var(--acento-suave);
+        border-color: var(--acento);
       }
     }
 
-    .solucion-ejercicio {
-      margin: 0.65rem 0 0.15rem;
-      padding: 0.85rem 1rem 0.9rem;
+    .sol-chip {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0.15rem 0 0.15rem 0.55rem;
+      padding: 0.12em 0.6em 0.16em;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.35);
+      border-radius: 0.65em;
+      vertical-align: middle;
+      white-space: normal;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .sol-chip .katex-html,
+    .sol-resultado .katex-html {
+      white-space: nowrap;
+    }
+
+    .sol-resultado {
+      margin: 0.55rem 0 0.2rem;
+      padding: 0.5rem 0.95rem 0.55rem;
       background: var(--verde-suave);
       border: 1px solid rgb(4 120 87 / 0.18);
       border-left: 0.3rem solid var(--verde);
       border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      overflow-x: auto;
+    }
+
+    .sol-linea + .sol-linea {
+      margin-top: 0.3rem;
+    }
+
+    .sol-pasos {
+      margin: 0.5rem 0 0.6rem;
+      padding: 0.55rem 0.95rem 0.6rem;
+      background: var(--acento-suave);
+      border: 1px solid rgb(29 78 216 / 0.16);
+      border-left: 0.3rem solid var(--acento);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
       animation: entrar-detalle 260ms ease-out;
     }
 
-    .solucion-ejercicio.esta-plegado {
+    .sol-pasos > :first-child,
+    .sol-pasos > .sol-letra + * {
+      margin-top: 0;
+    }
+
+    .sol-pasos > :last-child {
+      margin-bottom: 0;
+    }
+
+    .sol-pasos .math.inline.desliza {
+      display: inline-block;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      vertical-align: middle;
+    }
+
+    .sol-pasos .math.display {
+      margin: 0.5rem 0;
+      padding: 0.5rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    .sol-letra {
+      margin-right: 0.45em;
+      color: var(--texto-suave);
+      font-weight: 650;
+    }
+
+    .sol-pasos > .sol-letra {
+      display: block;
+      margin: 0 0 0.25rem;
+    }
+
+    .sol-chip.esta-plegado,
+    .sol-resultado.esta-plegado,
+    .sol-pasos.esta-plegado {
       display: none;
+    }
+
+    .sol-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.2rem;
+      margin: 0.75rem 0 0;
+    }
+
+    .sol-apartado {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .sol-apartado .sol-iconos,
+    .sol-fila > .sol-iconos {
+      margin-left: 0;
+    }
+
+    .sol-fila {
+      margin: 0.6rem 0 0;
     }
 
     section.ejercicios ol.lista-solucion-ejercicio {
@@ -4569,16 +4675,28 @@
       padding: 0;
     }
 
-    .solucion-ejercicio > figure {
+    .sol-pasos > figure {
       margin: 0 0 0.7rem;
     }
 
-    .solucion-ejercicio .math.display {
-      margin: 0.6rem 0;
-      padding: 0.55rem 0.85rem;
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
       background: #ffffff;
-      border: 1px solid var(--borde);
-      border-radius: 0.65rem;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
     }
 
     #contenido-unidad li.solo-formula-con-solucion > .math.display:first-child {
@@ -4595,42 +4713,53 @@
         display: none !important;
       }
 
-      html.modo-clase .boton-ver-solucion,
-      html.modo-clase .solucion-ejercicio {
+      html.modo-clase .sol-iconos,
+      html.modo-clase .sol-fila,
+      html.modo-clase .sol-chip,
+      html.modo-clase .sol-barra,
+      html.modo-clase .sol-abiertos,
+      html.modo-clase .sol-resultado,
+      html.modo-clase .sol-pasos {
         display: none !important;
       }
     }
 
     @media print {
-      .boton-ver-solucion,
-      .solucion-ejercicio {
+      .sol-iconos,
+      .sol-fila,
+      .sol-chip,
+      .sol-barra,
+      .sol-abiertos,
+      .sol-resultado,
+      .sol-pasos {
         display: none !important;
       }
     }
 
     @media screen and (max-width: 42rem) {
-      .solucion-ejercicio {
+      .sol-pasos,
+      .sol-resultado {
         margin-inline: -0.45rem;
         padding: 0.65rem 0.55rem 0.7rem 0.6rem;
       }
 
-      .solucion-ejercicio ol[type="a"],
-      .solucion-ejercicio ul {
+      ol[type="a"] > li > .sol-pasos {
+        margin-left: calc(-40px - 0.45rem);
+      }
+
+      .sol-pasos ol[type="a"],
+      .sol-pasos ul {
         padding-left: 1.35rem;
       }
 
-      .solucion-ejercicio .math.display {
+      .sol-pasos .math.display {
         padding: 0.5rem 0.45rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .solucion-ejercicio {
+      .sol-pasos {
         animation: none;
-      }
-
-      .boton-ver-solucion .flecha-ver-solucion {
-        transition: none;
       }
     }
 
@@ -5756,39 +5885,40 @@ SM</em></p>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">
                 <li><span
-                class="math inline">\(\frac{3}{8}=0{,}375\)</span> y
+                class="math inline">\(\frac{3}{8}=\boxed{0{,}375}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(0{,}45=\frac{45}{100}=\boxed{\frac{9}{20}}\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\((-2)^{3}=\boxed{-8}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(0{,}45=\frac{45}{100}=\frac{9}{20}\)</span>.</span></li>
+                class="math inline">\(-2^{4}=\boxed{-16}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(5^{0}=\boxed{1}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(2^{-3}=\boxed{\frac{1}{8}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\((-2)^{3}=-8\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-2^{4}=-16\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(5^{0}=1\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(2^{-3}=\frac{1}{8}\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(8-2\cdot(-2)^{2}+3=8-8+3=3\)</span>.</span></li>
+                class="math inline">\(8-2\cdot(-2)^{2}+3=8-8+3=\boxed{3}\)</span>.</span></li>
                 <li><span
-                class="math inline">\(1{,}496\cdot10^{8}\)</span> km y
-                <span class="math inline">\(7\cdot10^{-5}\)</span>
+                class="math inline">\(\boxed{1{,}496\cdot10^{8}}\)</span>
+                km y <span
+                class="math inline">\(\boxed{7\cdot10^{-5}}\)</span>
                 m.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(13\)</span>;</span> <span
+                class="math inline">\(\boxed{13}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>;</span> <span
+                class="math inline">\(\boxed{-3}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(0{,}5\)</span>.</span></li>
+                class="math inline">\(\boxed{0{,}5}\)</span>.</span></li>
                 <li>El coche gasta <span
                 class="math inline">\(\frac{9}{150}=0{,}06\)</span>
                 litros por kilómetro, así que necesita <span
-                class="math inline">\(0{,}06\cdot400=24\)</span>
+                class="math inline">\(0{,}06\cdot400=\boxed{24}\)</span>
                 litros.</li>
-                <li><span class="math inline">\(3{,}14\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(2720\)</span>.</span></li>
+                <li><span class="math inline">\(\boxed{3{,}14}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{2720}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(65\%&lt;0{,}66&lt;\frac{2}{3}\)</span>,</span>
+                class="math inline">\(\boxed{65\%&lt;0{,}66&lt;\frac{2}{3}}\)</span>,</span>
                 porque <span class="math inline">\(65\%=0{,}65\)</span>
                 y <span
                 class="math inline">\(\frac{2}{3}=0{,}666\ldots\)</span></li>
@@ -5965,29 +6095,34 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-\frac{20}{5}=-4\in\mathbb
-                Z\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(0{,}\overline{4}=\frac{4}{9}\in\mathbb
-                Q\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{144}=12\in\mathbb
-                N\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{40}\in\mathbb
-                I\)</span>,</span> porque <span
+                class="math inline">\(-\frac{20}{5}=\boxed{-4\in\mathbb
+                Z}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(0{,}\overline{4}=\boxed{\frac{4}{9}\in\mathbb
+                Q}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\sqrt{144}=\boxed{12\in\mathbb
+                N}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt{40}\in\mathbb
+                I}\)</span>,</span> porque <span
                 class="math inline">\(40\)</span> no es un cuadrado
                 perfecto; <span class="formula-con-signo"><span
-                class="math inline">\(\frac{\pi}{6}\in\mathbb
-                I\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(-3{,}2\in\mathbb
-                Q\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(1{,}020020002\ldots\in\mathbb
-                I\)</span>,</span> porque sus cifras no se repiten
+                class="math inline">\(\boxed{\frac{\pi}{6}\in\mathbb
+                I}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{-3{,}2\in\mathbb
+                Q}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{1{,}020020002\ldots\in\mathbb
+                I}\)</span>,</span> porque sus cifras no se repiten
                 periódicamente.</li>
                 <li>Por ejemplo, <span class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>;</span> <span
+                class="math inline">\(\boxed{-3}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{2}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\sqrt2\)</span>.</span></li>
+                class="math inline">\(\boxed{\frac{1}{2}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt2}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -6134,47 +6269,58 @@ SM</em></p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="3" type="1">
-                <li><span class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
                 class="math inline">\(\frac{9}{16}\)</span>:</span>
-                exacto, porque <span
+                exacto</span>,</span> porque <span
                 class="math inline">\(16=2^{4}\)</span> <span
                 class="formula-con-signo">(<span
                 class="math inline">\(0{,}5625\)</span>).</span> <span
+                class="final-con-signo"><span class="final"><span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{7}{18}\)</span>:</span>
-                periódico mixto, porque <span
+                periódico mixto</span>,</span> porque <span
                 class="math inline">\(18=2\cdot3^{2}\)</span> <span
                 class="formula-con-signo">(<span
                 class="math inline">\(0{,}3\overline{8}\)</span>).</span>
-                <span class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final"><span
+                class="formula-con-signo"><span
                 class="math inline">\(\frac{16}{27}\)</span>:</span>
-                periódico puro, porque <span
+                periódico puro</span>,</span> porque <span
                 class="math inline">\(27=3^{3}\)</span> <span
                 class="formula-con-signo">(<span
                 class="math inline">\(0{,}\overline{592}\)</span>).</span>
-                <span class="formula-con-signo"><span
+                <span class="final"><span
+                class="formula-con-signo"><span
                 class="math inline">\(\frac{26}{65}=\frac{2}{5}\)</span>:</span>
-                exacto <span class="formula-con-signo">(<span
+                exacto</span> <span class="formula-con-signo">(<span
                 class="math inline">\(0{,}4\)</span>),</span> aunque
                 <span class="math inline">\(65\)</span> tenga el factor
                 <span class="formula-con-signo"><span
                 class="math inline">\(13\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
                 class="math inline">\(\frac{21}{8}=2{,}625\)</span>,</span>
-                exacto; <span class="formula-con-signo"><span
+                exacto</span>;</span> <span
+                class="final-con-signo"><span class="final"><span
+                class="formula-con-signo"><span
                 class="math inline">\(\frac{2}{9}=0{,}\overline{2}\)</span>,</span>
-                periódico puro; <span class="formula-con-signo"><span
+                periódico puro</span>;</span> <span
+                class="final-con-signo"><span class="final"><span
+                class="formula-con-signo"><span
                 class="math inline">\(\frac{11}{45}=0{,}2\overline{4}\)</span>,</span>
-                periódico mixto.</li>
-                <li>Cada pueblo recibe <span
+                periódico mixto</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Cada pueblo recibe <span
                 class="math inline">\(\frac{1000}{3}\)</span> litros, es
                 decir, <span
                 class="math inline">\(333{,}\overline{3}\)</span>
-                litros. El denominador <span
-                class="math inline">\(3\)</span> produce un decimal
-                periódico, así que ninguna unidad decimal (litros,
-                decilitros, mililitros) da un reparto exacto: en
-                mililitros serían <span
+                litros</span>.</span> <span
+                class="final-con-signo"><span class="final">El
+                denominador <span class="math inline">\(3\)</span>
+                produce un decimal periódico, así que ninguna unidad
+                decimal (litros, decilitros, mililitros) da un reparto
+                exacto</span>:</span> en mililitros serían <span
                 class="math inline">\(333\,333{,}\overline{3}\)</span>
                 y, si cada pueblo recibe <span
                 class="math inline">\(333\,333\)</span> mL, sobra <span
@@ -6344,34 +6490,36 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="6" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(0{,}85=\frac{85}{100}=\frac{17}{20}\)</span>;</span>
+                class="math inline">\(0{,}85=\frac{85}{100}=\boxed{\frac{17}{20}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(0{,}\overline{1}=\frac{1}{9}\)</span>;</span>
+                class="math inline">\(0{,}\overline{1}=\boxed{\frac{1}{9}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(2{,}\overline{18}=\frac{218-2}{99}=\frac{216}{99}=\frac{24}{11}\)</span>;</span>
+                class="math inline">\(2{,}\overline{18}=\frac{218-2}{99}=\frac{216}{99}=\boxed{\frac{24}{11}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(0{,}5\overline{3}=\frac{53-5}{90}=\frac{48}{90}=\frac{8}{15}\)</span>.</span></li>
+                class="math inline">\(0{,}5\overline{3}=\frac{53-5}{90}=\frac{48}{90}=\boxed{\frac{8}{15}}\)</span>.</span></li>
                 <li><span
                 class="math inline">\(0{,}\overline{8}=\frac{8}{9}\)</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(\frac{8}{9}\cdot\frac{1}{4}=\frac{2}{9}\)</span>.</span>
+                class="math inline">\(\frac{8}{9}\cdot\frac{1}{4}=\boxed{\frac{2}{9}}\)</span>.</span>
                 Además, <span
                 class="math inline">\(1{,}\overline{5}=\frac{15-1}{9}=\frac{14}{9}\)</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(0{,}\overline{2}=\frac{2}{9}\)</span>,</span>
                 luego <span class="formula-con-signo"><span
-                class="math inline">\(\frac{14}{9}-\frac{2}{9}=\frac{12}{9}=\frac{4}{3}\)</span>.</span></li>
+                class="math inline">\(\frac{14}{9}-\frac{2}{9}=\frac{12}{9}=\boxed{\frac{4}{3}}\)</span>.</span></li>
                 <li><span
-                class="math inline">\(0{,}\overline{54}=\frac{54}{99}=\frac{6}{11}\)</span>
+                class="math inline">\(0{,}\overline{54}=\frac{54}{99}=\boxed{\frac{6}{11}}\)</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(1{,}2\overline{3}=\frac{123-12}{90}=\frac{111}{90}=\frac{37}{30}\)</span>.</span>
-                <span class="math inline">\(\frac{7}{125}\)</span> es
-                exacto, porque <span
+                class="math inline">\(1{,}2\overline{3}=\frac{123-12}{90}=\frac{111}{90}=\boxed{\frac{37}{30}}\)</span>.</span>
+                <span class="final-con-signo"><span class="final"><span
+                class="math inline">\(\frac{7}{125}\)</span> es
+                exacto</span>,</span> porque <span
                 class="math inline">\(125=5^{3}\)</span> <span
                 class="formula-con-signo">(<span
                 class="math inline">\(0{,}056\)</span>);</span> <span
+                class="final-con-signo"><span class="final"><span
                 class="math inline">\(\frac{7}{22}\)</span> es periódico
-                mixto, porque <span
+                mixto</span>,</span> porque <span
                 class="math inline">\(22=2\cdot11\)</span> <span
                 class="formula-con-signo">(<span
                 class="math inline">\(0{,}3\overline{18}\)</span>).</span></li>
@@ -6670,47 +6818,52 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="9" type="1">
                 <li>Por ejemplo, <span
-                class="math inline">\(5{,}25\)</span> es racional y
-                <span
-                class="math inline">\(\sqrt{28}=5{,}2915\ldots\)</span>
+                class="math inline">\(\boxed{5{,}25}\)</span> es
+                racional y <span
+                class="math inline">\(\boxed{\sqrt{28}}=5{,}2915\ldots\)</span>
                 es irracional, porque <span
                 class="math inline">\(28\)</span> no es un cuadrado
                 perfecto.</li>
                 <li><span class="math inline">\(\sqrt{196}=14\)</span>
                 es natural. <span
-                class="math inline">\(\sqrt{21}\)</span> es irracional,
-                porque <span class="math inline">\(21\)</span> no es un
-                cuadrado perfecto. <span
-                class="math inline">\(1{,}4142\)</span> es racional: un
-                decimal exacto, aunque se parezca a <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt{21}}\)</span> es
+                irracional, porque <span
+                class="math inline">\(21\)</span> no es un cuadrado
+                perfecto. <span class="math inline">\(1{,}4142\)</span>
+                es racional: un decimal exacto, aunque se parezca a
+                <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt2\)</span>.</span> <span
-                class="math inline">\(\frac{\pi}{2}\)</span> es
+                class="math inline">\(\boxed{\frac{\pi}{2}}\)</span> es
                 irracional: si fuera una fracción, <span
                 class="math inline">\(\pi\)</span> sería el doble de una
                 fracción, es decir, racional. <span
                 class="math inline">\(0{,}\overline{7}=\frac{7}{9}\)</span>
                 es racional. <span
-                class="math inline">\(0{,}123456789101112\ldots\)</span>
+                class="math inline">\(\boxed{0{,}123456789101112\ldots}\)</span>
                 es irracional: no es periódico, porque más adelante
                 aparecen números como <span
                 class="math inline">\(1000\ldots0\)</span> con tantos
                 ceros seguidos como se quiera, y ningún período fijo
                 podría contenerlos.</li>
                 <li><ol type="a">
-                <li><strong>Verdadera.</strong> Por ejemplo, <span
+                <li><strong><span class="final-con-signo"><span
+                class="final">Verdadera</span>.</span></strong> Por
+                ejemplo, <span
                 class="math inline">\(\frac{5}{2}\)</span> es racional y
                 no es entero.</li>
-                <li><strong>Falsa.</strong> Los dos sumandos son
-                irracionales, pero la suma vale <span
+                <li><strong><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span></strong> Los dos
+                sumandos son irracionales, pero la suma vale <span
                 class="formula-con-signo"><span
                 class="math inline">\(1+3=4\)</span>:</span> las raíces
                 se anulan.</li>
-                <li><strong>Falsa.</strong> Todo decimal periódico tiene
-                fracción generatriz, por largo que sea su período: <span
-                class="formula-con-signo"><span
+                <li><strong><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span></strong> Todo decimal
+                periódico tiene fracción generatriz, por largo que sea
+                su período: <span class="formula-con-signo"><span
                 class="math inline">\(2{,}\overline{142857}=2+\frac{142857}{999999}=2+\frac{1}{7}=\frac{15}{7}\)</span>.</span></li>
-                <li><strong>Falsa.</strong> <span
+                <li><strong><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span></strong> <span
                 class="formula-con-signo"><span
                 class="math inline">\(1{,}2^{2}=1{,}44\)</span>,</span>
                 así que <span class="formula-con-signo"><span
@@ -6867,7 +7020,7 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(0{,}7\overline{2}&lt;\frac{8}{11}&lt;\sqrt{0{,}53}&lt;0{,}73&lt;74\%\)</span>,</span>
+                class="math inline">\(\boxed{0{,}7\overline{2}&lt;\frac{8}{11}&lt;\sqrt{0{,}53}&lt;0{,}73&lt;74\%}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(0{,}7\overline{2}=0{,}7222\ldots\)</span>,</span>
                 <span class="formula-con-signo"><span
@@ -6878,16 +7031,16 @@ SM</em></p>
                 class="math inline">\(74\%=0{,}74\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-12&lt;-9\)</span>:</span> en la
-                recta queda a la izquierda.</li>
+                class="math inline">\(\boxed{-12&lt;-9}\)</span>:</span>
+                en la recta queda a la izquierda.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-0{,}8&gt;-3\)</span>.</span></li>
+                class="math inline">\(\boxed{-0{,}8&gt;-3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{5}{8}&lt;\frac{7}{11}\)</span>,</span>
+                class="math inline">\(\boxed{\frac{5}{8}&lt;\frac{7}{11}}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(\frac{55}{88}&lt;\frac{56}{88}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(1{,}\overline{2}&gt;1{,}22\)</span>,</span>
+                class="math inline">\(\boxed{1{,}\overline{2}&gt;1{,}22}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(1{,}222\ldots&gt;1{,}220\)</span>.</span></li>
                 </ol></li>
@@ -6895,14 +7048,15 @@ SM</em></p>
                 <li>Al multiplicar por <span
                 class="math inline">\(-2\)</span> la desigualdad cambia
                 de sentido: <span class="formula-con-signo"><span
-                class="math inline">\(6&gt;-2\)</span>.</span></li>
-                <li>Al multiplicar por <span
-                class="math inline">\(-2\)</span> cambia el sentido:
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{6&gt;-2}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span class="final">Al
+                multiplicar por <span class="math inline">\(-2\)</span>
+                cambia el sentido</span>:</span> <span
+                class="formula-con-signo"><span
                 class="math inline">\(-2{,}84&lt;-2\sqrt2&lt;-2{,}82\)</span>.</span>
                 Al sumar <span class="math inline">\(3\)</span> se
                 conserva: <span class="formula-con-signo"><span
-                class="math inline">\(0{,}16&lt;3-2\sqrt2&lt;0{,}18\)</span>.</span>
+                class="math inline">\(\boxed{0{,}16&lt;3-2\sqrt2&lt;0{,}18}\)</span>.</span>
                 Con la calculadora, <span
                 class="math inline">\(3-2\sqrt2=0{,}1715\ldots\)</span></li>
                 </ol></li>
@@ -7013,7 +7167,8 @@ SM</em></p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="4" type="1">
-                <li><span
+                <li><span class="final-con-signo"><span
+                class="final"><span
                 class="math inline">\(\frac{11}{3}=3+\frac{2}{3}\)</span>
                 se sitúa dividiendo en tercios la unidad que va del
                 <span class="math inline">\(3\)</span> al <span
@@ -7042,15 +7197,15 @@ SM</em></p>
                 y <span
                 class="math inline">\(\sqrt{11}=3{,}3166\ldots\)</span>
                 queda entre <span class="math inline">\(3{,}31\)</span>
-                y <span class="formula-con-signo"><span
-                class="math inline">\(3{,}32\)</span>.</span></li>
+                y <span
+                class="math inline">\(3{,}32\)</span></span>.</span></li>
                 <li>Los dos números distan <span
                 class="formula-con-signo"><span
                 class="math inline">\(1{,}45-(-0{,}75)=2{,}2\)</span>,</span>
                 así que el punto medio está a <span
                 class="math inline">\(1{,}1\)</span> de cada uno: <span
                 class="formula-con-signo"><span
-                class="math inline">\(-0{,}75+1{,}1=0{,}35=\frac{7}{20}\)</span>.</span></li>
+                class="math inline">\(-0{,}75+1{,}1=\boxed{0{,}35=\frac{7}{20}}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -7235,23 +7390,25 @@ SM</em></p>
                 <ol start="6" type="1">
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\((-3,6]\)</span>.</span></li>
+                class="math inline">\(\boxed{(-3,6]}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\([-2,+\infty)\)</span>.</span></li>
+                class="math inline">\(\boxed{[-2,+\infty)}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\((-\infty;\,4{,}5)\)</span>.</span></li>
+                class="math inline">\(\boxed{(-\infty;\,4{,}5)}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\left[\frac{1}{2},\frac{3}{2}\right]\)</span>.</span></li>
+                class="math inline">\(\boxed{\left[\frac{1}{2},\frac{3}{2}\right]}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-6\leq x\leq-1\)</span>;</span>
+                class="math inline">\(\boxed{-6\leq
+                x\leq-1}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\leq2{,}5}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(x\leq2{,}5\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(x&gt;0\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-3&lt;x&lt;3\)</span>.</span> En
-                la recta, los extremos incluidos <span
+                class="math inline">\(\boxed{x&gt;0}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{-3&lt;x&lt;3}\)</span>.</span>
+                <span class="final-con-signo"><span class="final">En la
+                recta, los extremos incluidos <span
                 class="formula-con-signo">(<span
                 class="math inline">\(-6\)</span>,</span> <span
                 class="math inline">\(-1\)</span> y <span
@@ -7262,31 +7419,33 @@ SM</em></p>
                 class="math inline">\(0\)</span>,</span> <span
                 class="math inline">\(-3\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(3\)</span>),</span> huecos.</li>
+                class="math inline">\(3\)</span>),</span>
+                huecos</span>.</span></li>
                 <li><ol type="a">
                 <li>Carga <span class="math inline">\(c\)</span> en
                 kilos: <span class="formula-con-signo"><span
-                class="math inline">\((0,450]\)</span>.</span></li>
+                class="math inline">\(\boxed{(0,450]}\)</span>.</span></li>
                 <li>Temperatura <span class="math inline">\(t\)</span>
                 en grados: <span class="formula-con-signo"><span
-                class="math inline">\([2,8]\)</span>.</span></li>
+                class="math inline">\(\boxed{[2,8]}\)</span>.</span></li>
                 <li>Edad <span class="math inline">\(e\)</span> en años:
                 <span class="formula-con-signo"><span
-                class="math inline">\([12,+\infty)\)</span>.</span></li>
-                <li>Son <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{[12,+\infty)}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Son <span class="formula-con-signo"><span
                 class="math inline">\(-3\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(-1\)</span>,</span> <span
                 class="math inline">\(0\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(1\)</span>.</span> No es un
+                class="math inline">\(1\)</span></span>.</span> <span
+                class="final-con-signo"><span class="final">No es un
                 intervalo, porque le faltan los números que hay entre
                 ellos, como <span class="formula-con-signo"><span
                 class="math inline">\(0{,}5\)</span>,</span> y un
                 intervalo contiene todos los reales comprendidos entre
-                sus extremos.</li>
+                sus extremos</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -7475,35 +7634,38 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="9" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(A\cap B=[-2,1]\)</span>;</span>
-                <span class="formula-con-signo"><span
-                class="math inline">\(A\cup B=(-5,4)\)</span>;</span>
-                <span class="formula-con-signo"><span
-                class="math inline">\(A\cap C=\emptyset\)</span>,</span>
-                porque ningún número es a la vez menor o igual que <span
+                class="math inline">\(\boxed{A\cap
+                B=[-2,1]}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{A\cup
+                B=(-5,4)}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{A\cap
+                C=\emptyset}\)</span>,</span> porque ningún número es a
+                la vez menor o igual que <span
                 class="math inline">\(1\)</span> y mayor que <span
                 class="formula-con-signo"><span
                 class="math inline">\(6\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(B\cup
-                C=[-2,4)\cup(6,+\infty)\)</span>,</span> que no es un
+                class="math inline">\(\boxed{B\cup
+                C=[-2,4)\cup(6,+\infty)}\)</span>,</span> que no es un
                 intervalo, porque <span class="math inline">\(B\)</span>
                 y <span class="math inline">\(C\)</span> no se
                 tocan.</li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\([-1,+\infty)\)</span>:</span> el
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{[-1,+\infty)}\)</span>:</span>
+                el <span class="formula-con-signo"><span
                 class="math inline">\(3\)</span>,</span> que no está en
                 el primero, sí está en el segundo.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\emptyset\)</span>.</span></li>
+                class="math inline">\(\boxed{\emptyset}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\((-\infty,-1]\)</span>.</span></li>
+                class="math inline">\(\boxed{(-\infty,-1]}\)</span>.</span></li>
                 <li>Por ejemplo, <span
-                class="math inline">\((-2,1]\)</span> y <span
+                class="math inline">\(\boxed{(-2,1]}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\([0,4)\)</span>.</span></li>
+                class="math inline">\(\boxed{[0,4)}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -7682,46 +7844,48 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="11" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(17\)</span>;</span> <span
+                class="math inline">\(\boxed{17}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(9\)</span>;</span> <span
+                class="math inline">\(\boxed{9}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(6-11=-5\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(7\cdot5=35\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(|3-10|=7\)</span>.</span></li>
+                class="math inline">\(6-11=\boxed{-5}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(7\cdot5=\boxed{35}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(|3-10|=\boxed{7}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(9\)</span>;</span> <span
+                class="math inline">\(\boxed{9}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(|-4-7|=11\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(|-3-(-8)|=5\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(|1{,}75-(-2{,}5)|=4{,}25\)</span>.</span></li>
+                class="math inline">\(|-4-7|=\boxed{11}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(|-3-(-8)|=\boxed{5}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(|1{,}75-(-2{,}5)|=\boxed{4{,}25}\)</span>.</span></li>
                 <li><ol type="a">
                 <li>Los números que distan <span
                 class="math inline">\(4\)</span> de <span
                 class="formula-con-signo"><span
                 class="math inline">\(7\)</span>:</span> <span
-                class="math inline">\(x=11\)</span> o <span
+                class="math inline">\(\boxed{x=11}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=3\)</span>.</span></li>
+                class="math inline">\(\boxed{x=3}\)</span>.</span></li>
                 <li>Los números que distan <span
                 class="math inline">\(2\)</span> de <span
                 class="formula-con-signo"><span
                 class="math inline">\(-6\)</span>:</span> <span
-                class="math inline">\(x=-4\)</span> o <span
+                class="math inline">\(\boxed{x=-4}\)</span> o <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=-8\)</span>.</span></li>
-                <li><span class="math inline">\(x=9\)</span> o <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=-9\)</span>.</span></li>
+                class="math inline">\(\boxed{x=-8}\)</span>.</span></li>
+                <li><span class="math inline">\(\boxed{x=9}\)</span> o
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=-9}\)</span>.</span></li>
                 <li>Solo <span class="formula-con-signo"><span
-                class="math inline">\(x=2{,}5\)</span>:</span> la
-                distancia es <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=2{,}5}\)</span>:</span>
+                la distancia es <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>.</span></li>
-                <li>Ninguno: un valor absoluto nunca es negativo.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Ninguno</span>:</span> un valor absoluto
+                nunca es negativo.</li>
                 </ol></li>
                 <li>A <span class="math inline">\(4\)</span> unidades de
                 <span class="math inline">\(-3\)</span> están <span
@@ -7733,9 +7897,10 @@ SM</em></p>
                 class="math inline">\(8\)</span>,</span> <span
                 class="math inline">\(1\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(15\)</span>.</span> Solo el <span
-                class="math inline">\(1\)</span> cumple las dos
-                condiciones.</li>
+                class="math inline">\(15\)</span>.</span> <span
+                class="final-con-signo"><span class="final">Solo el
+                <span class="math inline">\(1\)</span> cumple las dos
+                condiciones</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -7931,55 +8096,69 @@ SM</em></p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
-                <li>Truncado: <span class="formula-con-signo"><span
+                <li><span class="final-con-signo"><span
+                class="final">Truncado: <span
+                class="formula-con-signo"><span
                 class="math inline">\(4{,}3\)</span>;</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(4{,}35\)</span>;</span> <span
+                class="math inline">\(4{,}358\)</span></span>.</span>
+                <span class="final-con-signo"><span
+                class="final">Redondeado: <span
                 class="formula-con-signo"><span
-                class="math inline">\(4{,}358\)</span>.</span>
-                Redondeado: <span class="formula-con-signo"><span
                 class="math inline">\(4{,}4\)</span>;</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(4{,}36\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(4{,}359\)</span>.</span></li>
+                class="math inline">\(4{,}359\)</span></span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(48{,}3\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(48{,}28\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(6500\)</span>,</span> porque al
-                subir el <span class="math inline">\(9\)</span> de las
-                decenas se lleva una a las centenas; <span
-                class="formula-con-signo"><span
-                class="math inline">\(6500\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-0{,}086\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(1\,235\,000\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(0{,}0507\)</span>:</span> tres,
-                porque el cero intermedio cuenta y los iniciales solo
-                colocan la coma. <span class="formula-con-signo"><span
-                class="math inline">\(3{,}40\)</span>:</span> tres.
+                class="math inline">\(\boxed{48{,}3}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(90{,}01\)</span>:</span> cuatro.
+                class="math inline">\(\boxed{48{,}28}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(0{,}000800\)</span>:</span> tres,
-                porque los ceros finales se han escrito a
-                propósito.</li>
-                <li><span class="math inline">\(4{,}01\)</span> m; <span
-                class="math inline">\(0{,}0155\)</span> kg; <span
-                class="math inline">\(30{,}0\)</span> s; <span
-                class="math inline">\(83\,500\)</span> habitantes.</li>
+                class="math inline">\(\boxed{6500}\)</span>,</span>
+                porque al subir el <span
+                class="math inline">\(9\)</span> de las decenas se lleva
+                una a las centenas; <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{6500}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{-0{,}086}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{1\,235\,000}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
+                class="math inline">\(0{,}0507\)</span>:</span>
+                tres</span>,</span> porque el cero intermedio cuenta y
+                los iniciales solo colocan la coma. <span
+                class="final-con-signo"><span class="final"><span
+                class="formula-con-signo"><span
+                class="math inline">\(3{,}40\)</span>:</span>
+                tres</span>.</span> <span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
+                class="math inline">\(90{,}01\)</span>:</span>
+                cuatro</span>.</span> <span
+                class="final-con-signo"><span class="final"><span
+                class="formula-con-signo"><span
+                class="math inline">\(0{,}000800\)</span>:</span>
+                tres</span>,</span> porque los ceros finales se han
+                escrito a propósito.</li>
+                <li><span class="math inline">\(\boxed{4{,}01}\)</span>
+                m; <span class="math inline">\(\boxed{0{,}0155}\)</span>
+                kg; <span class="math inline">\(\boxed{30{,}0}\)</span>
+                s; <span class="math inline">\(\boxed{83\,500}\)</span>
+                habitantes.</li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(172:55=3{,}127\ldots\)</span>,</span>
-                pero hay que aproximar por exceso: <span
-                class="math inline">\(4\)</span> autobuses.</li>
+                pero <span class="final-con-signo"><span
+                class="final">hay que aproximar por exceso: <span
+                class="math inline">\(4\)</span>
+                autobuses</span>.</span></li>
                 <li>Los dos datos tienen dos cifras significativas, así
-                que el área se da con dos: <span
-                class="math inline">\(12\)</span> cm².</li>
+                que <span class="final-con-signo"><span class="final">el
+                área se da con dos: <span
+                class="math inline">\(12\)</span>
+                cm²</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8099,52 +8278,62 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="6" type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(E_{a}=0{,}35\)</span> km
-                y <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{0{,}35}{10{,}0}=3{,}5\%\)</span>.</span></li>
-                <li><span class="math inline">\(E_{a}=0{,}04\)</span> L
-                y <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{0{,}04}{2{,}00}=2\%\)</span>.</span></li>
-                <li><span class="math inline">\(E_{a}=0{,}02\)</span> s
-                y <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{0{,}02}{0{,}250}=8\%\)</span>.</span></li>
+                <li><span
+                class="math inline">\(\boxed{E_{a}=0{,}35}\)</span> km y
+                <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{0{,}35}{10{,}0}=\boxed{3{,}5\%}\)</span>.</span></li>
+                <li><span
+                class="math inline">\(\boxed{E_{a}=0{,}04}\)</span> L y
+                <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{0{,}04}{2{,}00}=\boxed{2\%}\)</span>.</span></li>
+                <li><span
+                class="math inline">\(\boxed{E_{a}=0{,}02}\)</span> s y
+                <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{0{,}02}{0{,}250}=\boxed{8\%}\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><span
-                class="math inline">\(E_{a}=|2500-2457|=43\)</span> m y
-                <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{43}{2500}=1{,}72\%\)</span>.</span></li>
-                <li>Por redondeo, <span
+                class="math inline">\(E_{a}=|2500-2457|=\boxed{43}\)</span>
+                m y <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{43}{2500}=\boxed{1{,}72\%}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Por redondeo, <span
                 class="math inline">\(2457\approx2500\)</span> m, y el
                 error respecto de la distancia oficial pasa a ser <span
                 class="formula-con-signo"><span
                 class="math inline">\(0\)</span>:</span> el redondeo ha
-                borrado la diferencia. Por truncamiento, <span
-                class="math inline">\(2400\)</span> m: <span
-                class="math inline">\(E_{a}=100\)</span> m y <span
-                class="formula-con-signo"><span
+                borrado la diferencia</span>.</span> <span
+                class="final-con-signo"><span class="final">Por
+                truncamiento, <span class="math inline">\(2400\)</span>
+                m: <span class="math inline">\(E_{a}=100\)</span> m y
+                <span class="formula-con-signo"><span
                 class="math inline">\(E_{r}=4\%\)</span>,</span> más del
-                doble del error de la medida. Aproximar con pocas cifras
-                puede esconder o exagerar un error real.</li>
+                doble del error de la medida</span>.</span> Aproximar
+                con pocas cifras puede esconder o exagerar un error
+                real.</li>
                 </ol></li>
                 <li>Ciudad: <span
-                class="math inline">\(E_{a}=4300\)</span> habitantes y
-                <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{4300}{184\,300}\approx2{,}3\%\)</span>.</span>
-                Pueblo: <span class="math inline">\(E_{a}=460\)</span>
+                class="math inline">\(\boxed{E_{a}=4300}\)</span>
                 habitantes y <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{460}{2460}\approx18{,}7\%\)</span>.</span>
-                Es mejor la de la ciudad: su error absoluto es mayor,
-                pero comparado con el total es mucho menor, y eso es lo
-                que mide el error relativo.</li>
+                class="math inline">\(E_{r}=\frac{4300}{184\,300}\approx\boxed{2{,}3\%}\)</span>.</span>
+                Pueblo: <span
+                class="math inline">\(\boxed{E_{a}=460}\)</span>
+                habitantes y <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{460}{2460}\approx\boxed{18{,}7\%}\)</span>.</span>
+                <span class="final-con-signo"><span class="final">Es
+                mejor la de la ciudad: su error absoluto es mayor, pero
+                comparado con el total es mucho menor, y eso es lo que
+                mide el error relativo</span>.</span></li>
                 <li>Cada cuenta recibe <span
                 class="math inline">\(0{,}43\)</span> €: <span
-                class="math inline">\(E_{a}=0{,}0037\)</span> € y <span
-                class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{0{,}0037}{0{,}4263}\approx0{,}87\%\)</span>.</span>
+                class="math inline">\(\boxed{E_{a}=0{,}0037}\)</span> €
+                y <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}=\frac{0{,}0037}{0{,}4263}\approx\boxed{0{,}87\%}\)</span>.</span>
                 En todas las cuentas el redondeo suma <span
-                class="math inline">\(0{,}0037\cdot50\,000=185\)</span>
-                €, que paga el banco: salen ganando los clientes.</li>
+                class="math inline">\(0{,}0037\cdot50\,000=\boxed{185}\)</span>
+                €, que paga el banco: <span
+                class="final-con-signo"><span class="final">salen
+                ganando los clientes</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -8400,46 +8589,46 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-125\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-25\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-\frac{1}{32}\)</span>;</span>
+                class="math inline">\(\boxed{-125}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\frac{9}{25}\)</span>;</span>
-                <span class="formula-con-signo"><span
-                class="math inline">\(1\)</span>;</span> <span
+                class="math inline">\(\boxed{-25}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-1\)</span>.</span></li>
+                class="math inline">\(\boxed{-\frac{1}{32}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{9}{25}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{1}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{-1}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(7^{5-8+2}=7^{-1}=\frac{1}{7}\)</span>.</span></li>
+                class="math inline">\(7^{5-8+2}=7^{-1}=\boxed{\frac{1}{7}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(5^{-6+7}=5^{1}=5\)</span>.</span></li>
+                class="math inline">\(5^{-6+7}=5^{1}=\boxed{5}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(6^{5-6}=6^{-1}=\frac{1}{6}\)</span>.</span></li>
+                class="math inline">\(6^{5-6}=6^{-1}=\boxed{\frac{1}{6}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x^{-6+4}=x^{-2}=\frac{1}{x^{2}}\)</span>.</span></li>
+                class="math inline">\(x^{-6+4}=x^{-2}=\boxed{\frac{1}{x^{2}}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(9a^{4}b^{-2}=\frac{9a^{4}}{b^{2}}\)</span>.</span></li>
+                class="math inline">\(9a^{4}b^{-2}=\boxed{\frac{9a^{4}}{b^{2}}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{8x^{-3}}{4x^{-5}}=2x^{2}\)</span>.</span></li>
+                class="math inline">\(\frac{8x^{-3}}{4x^{-5}}=\boxed{2x^{2}}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{3}+\frac{1}{9}=\frac{4}{9}\)</span>;</span>
+                class="math inline">\(\frac{1}{3}+\frac{1}{9}=\boxed{\frac{4}{9}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\left(\frac{1}{2}-\frac{1}{4}\right)^{-2}=\left(\frac{1}{4}\right)^{-2}=16\)</span>;</span>
+                class="math inline">\(\left(\frac{1}{2}-\frac{1}{4}\right)^{-2}=\left(\frac{1}{4}\right)^{-2}=\boxed{16}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\frac{3}{2}:\frac{1}{2}=3\)</span>.</span></li>
+                class="math inline">\(\frac{3}{2}:\frac{1}{2}=\boxed{3}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{2^{6}\cdot2^{-6}}{2^{-4}}=2^{4}=16\)</span>.</span></li>
+                class="math inline">\(\frac{2^{6}\cdot2^{-6}}{2^{-4}}=2^{4}=\boxed{16}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{3^{-4}\cdot3^{9}}{3^{4}}=3^{1}=3\)</span>.</span></li>
+                class="math inline">\(\frac{3^{-4}\cdot3^{9}}{3^{4}}=3^{1}=\boxed{3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{2^{2}\cdot3^{2}\cdot2^{-2}\cdot3^{-1}}{2\cdot3^{2}\cdot2^{-3}}=\frac{3}{2^{-2}\cdot3^{2}}=\frac{2^{2}}{3}=\frac{4}{3}\)</span>.</span></li>
+                class="math inline">\(\frac{2^{2}\cdot3^{2}\cdot2^{-2}\cdot3^{-1}}{2\cdot3^{2}\cdot2^{-3}}=\frac{3}{2^{-2}\cdot3^{2}}=\frac{2^{2}}{3}=\boxed{\frac{4}{3}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{3^{4}}{2^{4}}\cdot\frac{2^{5}}{3^{5}}=\frac{2}{3}\)</span>.</span></li>
+                class="math inline">\(\frac{3^{4}}{2^{4}}\cdot\frac{2^{5}}{3^{5}}=\boxed{\frac{2}{3}}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8742,47 +8931,50 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="5" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(2\cdot10^{11}\)</span>;</span>
-                <span class="math inline">\(2{,}5\cdot10^{-5}\)</span>
+                class="math inline">\(\boxed{2\cdot10^{11}}\)</span>;</span>
+                <span
+                class="math inline">\(\boxed{2{,}5\cdot10^{-5}}\)</span>
                 kg; <span class="formula-con-signo"><span
-                class="math inline">\(5{,}08\cdot10^{6}\)</span>;</span>
+                class="math inline">\(\boxed{5{,}08\cdot10^{6}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(3{,}09\cdot10^{-7}\)</span>;</span>
+                class="math inline">\(\boxed{3{,}09\cdot10^{-7}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(6{,}2\cdot10^{6}\)</span>;</span>
+                class="math inline">\(\boxed{6{,}2\cdot10^{6}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(4{,}7\cdot10^{-6}\)</span>.</span></li>
+                class="math inline">\(\boxed{4{,}7\cdot10^{-6}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(7\cdot10^{-4}&lt;7{,}1\cdot10^{-3}&lt;8{,}2\cdot10^{-3}&lt;0{,}05&lt;6{,}9\cdot10^{-2}\)</span>,</span>
+                class="math inline">\(\boxed{7\cdot10^{-4}&lt;7{,}1\cdot10^{-3}&lt;8{,}2\cdot10^{-3}&lt;0{,}05&lt;6{,}9\cdot10^{-2}}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(0{,}05=5\cdot10^{-2}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(5{,}2\cdot10^{7}+0{,}45\cdot10^{7}=5{,}65\cdot10^{7}\)</span>.</span></li>
+                class="math inline">\(5{,}2\cdot10^{7}+0{,}45\cdot10^{7}=\boxed{5{,}65\cdot10^{7}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(8{,}4\cdot10^{-3}-0{,}9\cdot10^{-3}=7{,}5\cdot10^{-3}\)</span>.</span></li>
+                class="math inline">\(8{,}4\cdot10^{-3}-0{,}9\cdot10^{-3}=\boxed{7{,}5\cdot10^{-3}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(20\cdot10^{5}=2\cdot10^{6}\)</span>.</span></li>
+                class="math inline">\(20\cdot10^{5}=\boxed{2\cdot10^{6}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(8\cdot10^{9}\)</span>.</span></li>
+                class="math inline">\(\boxed{8\cdot10^{9}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(81\cdot10^{-8}=8{,}1\cdot10^{-7}\)</span>.</span></li>
+                class="math inline">\(81\cdot10^{-8}=\boxed{8{,}1\cdot10^{-7}}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{2\cdot10^{12}}{3{,}5\cdot10^{6}}\approx0{,}571\cdot10^{6}=5{,}71\cdot10^{5}\)</span>:</span>
-                unas <span class="math inline">\(571\,000\)</span>
-                fotos.</li>
+                class="math inline">\(\frac{2\cdot10^{12}}{3{,}5\cdot10^{6}}\approx0{,}571\cdot10^{6}=\boxed{5{,}71\cdot10^{5}}\)</span>:</span>
+                <span class="final-con-signo"><span class="final">unas
+                <span class="math inline">\(571\,000\)</span>
+                fotos</span>.</span></li>
                 <li><ol type="a">
                 <li><span
-                class="math inline">\(5\cdot60\cdot24\cdot365=2\,628\,000\approx2{,}63\cdot10^{6}\)</span>
+                class="math inline">\(5\cdot60\cdot24\cdot365=2\,628\,000\approx\boxed{2{,}63\cdot10^{6}}\)</span>
                 litros.</li>
                 <li>En <span class="math inline">\(80\)</span> años,
                 <span
                 class="math inline">\(80\cdot2{,}628\cdot10^{6}\approx2{,}10\cdot10^{8}\)</span>
                 litros, y <span class="formula-con-signo"><span
                 class="math inline">\(\frac{2{,}10\cdot10^{8}}{2{,}5\cdot10^{6}}=0{,}84\cdot10^{2}=84\)</span>:</span>
-                unas <span class="math inline">\(84\)</span>
-                piscinas.</li>
+                <span class="final-con-signo"><span class="final">unas
+                <span class="math inline">\(84\)</span>
+                piscinas</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -8941,39 +9133,47 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(5\)</span>;</span> <span
+                class="math inline">\(\boxed{5}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-11\)</span>;</span> <span
+                class="math inline">\(\boxed{-11}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-1\)</span>;</span> <span
+                class="math inline">\(\boxed{-1}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(0{,}8\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(0{,}1\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{2}{7}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-0{,}2\)</span>;</span> la última
-                no es un número real, porque el índice es par y el
-                radicando, negativo.</li>
-                <li>Existe y es positiva; no existe, porque el índice es
-                par y el radicando, negativo; existe y es negativa,
-                porque el índice es impar; no existe, porque <span
+                class="math inline">\(\boxed{0{,}8}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{0{,}1}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{2}{7}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{-0{,}2}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">la
+                última no es un número real</span>,</span> porque el
+                índice es par y el radicando, negativo.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Existe y es positiva</span>;</span> <span
+                class="final-con-signo"><span class="final">no
+                existe</span>,</span> porque el índice es par y el
+                radicando, negativo; <span class="final-con-signo"><span
+                class="final">existe y es negativa</span>,</span> porque
+                el índice es impar; <span class="final-con-signo"><span
+                class="final">no existe</span>,</span> porque <span
                 class="math inline">\(2-7=-5\)</span> y el índice es
-                par; existe y es negativa, porque <span
-                class="math inline">\(2-7=-5\)</span> y el índice es
-                impar.</li>
+                par; <span class="final-con-signo"><span
+                class="final">existe y es negativa</span>,</span> porque
+                <span class="math inline">\(2-7=-5\)</span> y el índice
+                es impar.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(7\)</span>;</span> <span
+                class="math inline">\(\boxed{7}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(7\)</span>;</span> <span
+                class="math inline">\(\boxed{7}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>,</span> porque con
-                índice impar no se pierde el signo; y <span
+                class="math inline">\(\boxed{-2}\)</span>,</span> porque
+                con índice impar no se pierde el signo; y <span
                 class="formula-con-signo"><span
-                class="math inline">\(\sqrt{(3-\pi)^{2}}=|3-\pi|=\pi-3\approx0{,}14\)</span>,</span>
-                porque <span class="math inline">\(3-\pi\)</span> es
-                negativo y una raíz cuadrada nunca lo es.</li>
+                class="math inline">\(\sqrt{(3-\pi)^{2}}=|3-\pi|=\boxed{\pi-3\approx0{,}14}\)</span>,</span>
+                <span class="final-con-signo"><span class="final">porque
+                <span class="math inline">\(3-\pi\)</span> es negativo y
+                una raíz cuadrada nunca lo es</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -9101,33 +9301,33 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="4" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(256^{\frac{1}{4}}=2^{\frac{8}{4}}=4\)</span>;</span>
+                class="math inline">\(256^{\frac{1}{4}}=2^{\frac{8}{4}}=\boxed{4}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(36^{\frac{1}{4}}=6^{\frac{2}{4}}=6^{\frac{1}{2}}=\sqrt6\)</span>;</span>
+                class="math inline">\(36^{\frac{1}{4}}=6^{\frac{2}{4}}=\boxed{6^{\frac{1}{2}}=\sqrt6}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(7^{\frac{6}{3}}=7^{2}=49\)</span>;</span>
+                class="math inline">\(7^{\frac{6}{3}}=7^{2}=\boxed{49}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(16^{\frac{1}{8}}=2^{\frac{4}{8}}=2^{\frac{1}{2}}=\sqrt2\)</span>;</span>
+                class="math inline">\(16^{\frac{1}{8}}=2^{\frac{4}{8}}=\boxed{2^{\frac{1}{2}}=\sqrt2}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(125^{\frac{1}{9}}=5^{\frac{3}{9}}=5^{\frac{1}{3}}=\sqrt[3]{5}\)</span>.</span></li>
+                class="math inline">\(125^{\frac{1}{9}}=5^{\frac{3}{9}}=\boxed{5^{\frac{1}{3}}=\sqrt[3]{5}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(16\)</span>;</span> <span
+                class="math inline">\(\boxed{16}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(243\)</span>;</span> <span
+                class="math inline">\(\boxed{243}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(1000\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{81}\)</span>;</span>
+                class="math inline">\(\boxed{1000}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(25\)</span>;</span> <span
+                class="math inline">\(\boxed{\frac{1}{81}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{25}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(0{,}001\)</span>.</span></li>
+                class="math inline">\(\boxed{0{,}001}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x^{\frac{1}{2}+\frac{3}{4}}=x^{\frac{5}{4}}\)</span>;</span>
+                class="math inline">\(x^{\frac{1}{2}+\frac{3}{4}}=\boxed{x^{\frac{5}{4}}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(x^{4}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(x^{\frac{1}{2}+\frac{1}{3}-\frac{1}{6}}=x^{\frac{2}{3}}=\sqrt[3]{x^{2}}\)</span>.</span></li>
+                class="math inline">\(\boxed{x^{4}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(x^{\frac{1}{2}+\frac{1}{3}-\frac{1}{6}}=\boxed{x^{\frac{2}{3}}=\sqrt[3]{x^{2}}}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -9206,13 +9406,13 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="7" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[12]{7^{4}}=\sqrt[3]{7}\)</span>;</span>
+                class="math inline">\(\sqrt[12]{7^{4}}=\boxed{\sqrt[3]{7}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[6]{11^{2}}=\sqrt[3]{11}\)</span>;</span>
+                class="math inline">\(\sqrt[6]{11^{2}}=\boxed{\sqrt[3]{11}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[4]{a^{3}}\)</span>;</span>
+                class="math inline">\(\boxed{\sqrt[4]{a^{3}}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[4]{3^{3}}=\sqrt[4]{27}\)</span>.</span></li>
+                class="math inline">\(\sqrt[4]{3^{3}}=\boxed{\sqrt[4]{27}}\)</span>.</span></li>
                 <li>Índice común <span class="formula-con-signo"><span
                 class="math inline">\(12\)</span>:</span> <span
                 class="formula-con-signo"><span
@@ -9222,15 +9422,15 @@ SM</em></p>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt[6]{15}=\sqrt[12]{15^{2}}=\sqrt[12]{225}\)</span>.</span>
                 Por tanto, <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[4]{6}&lt;\sqrt[6]{15}&lt;\sqrt[3]{4}\)</span>.</span></li>
+                class="math inline">\(\boxed{\sqrt[4]{6}&lt;\sqrt[6]{15}&lt;\sqrt[3]{4}}\)</span>.</span></li>
                 <li>Con índice <span class="formula-con-signo"><span
                 class="math inline">\(15\)</span>,</span> <span
                 class="math inline">\(\sqrt[5]{6}=\sqrt[15]{6^{3}}=\sqrt[15]{216}\)</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt[3]{3}=\sqrt[15]{3^{5}}=\sqrt[15]{243}\)</span>:</span>
                 es mayor <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[3]{3}\)</span>.</span> Con
-                índice <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt[3]{3}}\)</span>.</span>
+                Con índice <span class="formula-con-signo"><span
                 class="math inline">\(12\)</span>,</span> <span
                 class="math inline">\(\sqrt2=\sqrt[12]{2^{6}}=\sqrt[12]{64}\)</span>
                 y <span class="formula-con-signo"><span
@@ -9240,7 +9440,7 @@ SM</em></p>
                 class="formula-con-signo"><span
                 class="math inline">\(64&lt;k&lt;81\)</span>,</span> por
                 ejemplo <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[12]{70}\)</span>.</span></li>
+                class="math inline">\(\boxed{\sqrt[12]{70}}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -9335,28 +9535,28 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="10" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(3\cdot10=30\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{9}{4}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(2\cdot5=10\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\sqrt{36}=6\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\sqrt[3]{\frac{1}{27}}=\frac{1}{3}\)</span>;</span>
+                class="math inline">\(3\cdot10=\boxed{30}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[6]{10^{6}}=10\)</span>;</span>
+                class="math inline">\(\boxed{\frac{9}{4}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[5]{2^{10}}=2^{2}=4\)</span>.</span></li>
+                class="math inline">\(2\cdot5=\boxed{10}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\sqrt{36}=\boxed{6}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\sqrt[3]{\frac{1}{27}}=\boxed{\frac{1}{3}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\sqrt[6]{10^{6}}=\boxed{10}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\sqrt[5]{2^{10}}=2^{2}=\boxed{4}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{64+36}=\sqrt{100}=10\)</span>,</span>
+                class="math inline">\(\sqrt{64+36}=\sqrt{100}=\boxed{10}\)</span>,</span>
                 mientras que <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{64}+\sqrt{36}=8+6=14\)</span>.</span>
-                Solo coinciden si <span
-                class="math inline">\(a=0\)</span> o <span
+                class="math inline">\(\sqrt{64}+\sqrt{36}=8+6=\boxed{14}\)</span>.</span>
+                <span class="final-con-signo"><span class="final">Solo
+                coinciden si <span class="math inline">\(a=0\)</span> o
+                <span class="math inline">\(b=0\)</span></span>:</span>
+                al elevar al cuadrado, <span
                 class="formula-con-signo"><span
-                class="math inline">\(b=0\)</span>:</span> al elevar al
-                cuadrado, <span class="formula-con-signo"><span
                 class="math inline">\(\left(\sqrt a+\sqrt
                 b\right)^{2}=a+b+2\sqrt{ab}\)</span>,</span> que vale
                 <span class="math inline">\(a+b\)</span> solo cuando
@@ -9498,30 +9698,30 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="12" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{2^{2}\cdot5^{2}\cdot7}=10\sqrt7\)</span>;</span>
+                class="math inline">\(\sqrt{2^{2}\cdot5^{2}\cdot7}=\boxed{10\sqrt7}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[3]{2^{3}\cdot3^{3}\cdot5}=6\sqrt[3]{5}\)</span>;</span>
+                class="math inline">\(\sqrt[3]{2^{3}\cdot3^{3}\cdot5}=\boxed{6\sqrt[3]{5}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(2^{2}\cdot5\sqrt[4]{2}=20\sqrt[4]{2}\)</span>;</span>
+                class="math inline">\(2^{2}\cdot5\sqrt[4]{2}=\boxed{20\sqrt[4]{2}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(2a\sqrt{3a}\)</span>.</span></li>
+                class="math inline">\(\boxed{2a\sqrt{3a}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{75}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\sqrt[3]{80}\)</span>;</span>
+                class="math inline">\(\boxed{\sqrt{75}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{\frac{12}{4}}=\sqrt3\)</span>;</span>
+                class="math inline">\(\boxed{\sqrt[3]{80}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[3]{(-2)^{3}\cdot3}=\sqrt[3]{-24}\)</span>;</span>
+                class="math inline">\(\sqrt{\frac{12}{4}}=\boxed{\sqrt3}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{a^{5}}\)</span>.</span></li>
+                class="math inline">\(\sqrt[3]{(-2)^{3}\cdot3}=\boxed{\sqrt[3]{-24}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt{a^{5}}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(4\sqrt3=\sqrt{48}\)</span>,</span>
                 <span class="math inline">\(3\sqrt6=\sqrt{54}\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(5\sqrt2=\sqrt{50}\)</span>,</span>
                 así que <span class="formula-con-signo"><span
-                class="math inline">\(4\sqrt3&lt;5\sqrt2&lt;3\sqrt6\)</span>.</span></li>
+                class="math inline">\(\boxed{4\sqrt3&lt;5\sqrt2&lt;3\sqrt6}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -9638,30 +9838,30 @@ SM</em></p>
                 <ol start="15" type="1">
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(2\sqrt{19}-9\sqrt{19}+10\sqrt{19}=3\sqrt{19}\)</span>.</span></li>
+                class="math inline">\(2\sqrt{19}-9\sqrt{19}+10\sqrt{19}=\boxed{3\sqrt{19}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(2\sqrt[3]{6}+6\sqrt[3]{6}-5\sqrt[3]{6}=3\sqrt[3]{6}\)</span>.</span></li>
+                class="math inline">\(2\sqrt[3]{6}+6\sqrt[3]{6}-5\sqrt[3]{6}=\boxed{3\sqrt[3]{6}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{90}=3\sqrt{10}\)</span>.</span></li>
+                class="math inline">\(\sqrt{90}=\boxed{3\sqrt{10}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[4]{2500}=\sqrt[4]{5^{4}\cdot4}=5\sqrt[4]{4}=5\sqrt2\)</span>.</span></li>
+                class="math inline">\(\sqrt[4]{2500}=\sqrt[4]{5^{4}\cdot4}=5\sqrt[4]{4}=\boxed{5\sqrt2}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt[6]{6^{2}}\cdot\sqrt[6]{2^{3}}=\sqrt[6]{36\cdot8}=\sqrt[6]{288}\)</span>.</span></li>
+                class="math inline">\(\sqrt[6]{6^{2}}\cdot\sqrt[6]{2^{3}}=\sqrt[6]{36\cdot8}=\boxed{\sqrt[6]{288}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{\sqrt[10]{16^{2}}}{\sqrt[10]{2^{5}}}=\sqrt[10]{\frac{2^{8}}{2^{5}}}=\sqrt[10]{8}\)</span>.</span></li>
+                class="math inline">\(\frac{\sqrt[10]{16^{2}}}{\sqrt[10]{2^{5}}}=\sqrt[10]{\frac{2^{8}}{2^{5}}}=\boxed{\sqrt[10]{8}}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(16-3=13\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(10+6\sqrt{10}+9=19+6\sqrt{10}\)</span>;</span>
+                class="math inline">\(16-3=\boxed{13}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(6+8\sqrt3-\sqrt3-4=2+7\sqrt3\)</span>.</span></li>
+                class="math inline">\(10+6\sqrt{10}+9=\boxed{19+6\sqrt{10}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(6+8\sqrt3-\sqrt3-4=\boxed{2+7\sqrt3}\)</span>.</span></li>
                 <li>Perímetro: <span
-                class="math inline">\(2\left(3+\sqrt5\right)+2\left(3-\sqrt5\right)=12\)</span>
+                class="math inline">\(2\left(3+\sqrt5\right)+2\left(3-\sqrt5\right)=\boxed{12}\)</span>
                 cm. Área: <span
-                class="math inline">\(\left(3+\sqrt5\right)\left(3-\sqrt5\right)=9-5=4\)</span>
+                class="math inline">\(\left(3+\sqrt5\right)\left(3-\sqrt5\right)=9-5=\boxed{4}\)</span>
                 cm². Diagonal: <span
-                class="math inline">\(\sqrt{\left(3+\sqrt5\right)^{2}+\left(3-\sqrt5\right)^{2}}=\sqrt{\left(14+6\sqrt5\right)+\left(14-6\sqrt5\right)}=\sqrt{28}=2\sqrt7\)</span>
+                class="math inline">\(\sqrt{\left(3+\sqrt5\right)^{2}+\left(3-\sqrt5\right)^{2}}=\sqrt{\left(14+6\sqrt5\right)+\left(14-6\sqrt5\right)}=\sqrt{28}=\boxed{2\sqrt7}\)</span>
                 cm.</li>
                 </ol>
                 </div>
@@ -9790,25 +9990,25 @@ SM</em></p>
                 <ol start="18" type="1">
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{21\sqrt7}{7}=3\sqrt7\)</span>.</span></li>
+                class="math inline">\(\frac{21\sqrt7}{7}=\boxed{3\sqrt7}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{5\sqrt{10}}{3\cdot10}=\frac{\sqrt{10}}{6}\)</span>.</span></li>
+                class="math inline">\(\frac{5\sqrt{10}}{3\cdot10}=\boxed{\frac{\sqrt{10}}{6}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{9\sqrt[3]{3^{2}}}{3}=3\sqrt[3]{9}\)</span>.</span></li>
+                class="math inline">\(\frac{9\sqrt[3]{3^{2}}}{3}=\boxed{3\sqrt[3]{9}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{\sqrt5+2}{5-4}=\sqrt5+2\)</span>.</span></li>
+                class="math inline">\(\frac{\sqrt5+2}{5-4}=\boxed{\sqrt5+2}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{4\left(\sqrt{11}-\sqrt7\right)}{11-7}=\sqrt{11}-\sqrt7\)</span>.</span></li>
+                class="math inline">\(\frac{4\left(\sqrt{11}-\sqrt7\right)}{11-7}=\boxed{\sqrt{11}-\sqrt7}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{\left(4-\sqrt{15}\right)^{2}}{16-15}=16-8\sqrt{15}+15=31-8\sqrt{15}\)</span>.</span></li>
+                class="math inline">\(\frac{\left(4-\sqrt{15}\right)^{2}}{16-15}=16-8\sqrt{15}+15=\boxed{31-8\sqrt{15}}\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{\left(\sqrt3+1\right)-\left(\sqrt3-1\right)}{3-1}=\frac{2}{2}=1\)</span>.</span></li>
+                class="math inline">\(\frac{\left(\sqrt3+1\right)-\left(\sqrt3-1\right)}{3-1}=\frac{2}{2}=\boxed{1}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(2\sqrt3-\sqrt3+3\sqrt3=4\sqrt3\)</span>.</span></li>
+                class="math inline">\(2\sqrt3-\sqrt3+3\sqrt3=\boxed{4\sqrt3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{2}+\frac{2\left(2-\sqrt2\right)}{4-2}=\frac{1}{2}+2-\sqrt2=\frac{5}{2}-\sqrt2\)</span>.</span></li>
+                class="math inline">\(\frac{1}{2}+\frac{2\left(2-\sqrt2\right)}{4-2}=\frac{1}{2}+2-\sqrt2=\boxed{\frac{5}{2}-\sqrt2}\)</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -10018,64 +10218,66 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(5\)</span>;</span> <span
+                class="math inline">\(\boxed{5}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{3}{4}\)</span>;</span> <span
+                class="math inline">\(\boxed{\frac{3}{4}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{1}{3}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{1}{2}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{-2}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{3}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{2}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{2}{5}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>.</span></li>
+                class="math inline">\(\boxed{\frac{2}{5}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{-3}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x=2^{6}=64\)</span>.</span></li>
+                class="math inline">\(x=2^{6}=\boxed{64}\)</span>.</span></li>
                 <li><span class="math inline">\(x^{2}=49\)</span> y la
                 base es positiva, luego <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=7\)</span>.</span></li>
+                class="math inline">\(\boxed{x=7}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(12^{x}=\frac{1}{1728}=12^{-3}\)</span>,</span>
                 luego <span class="formula-con-signo"><span
-                class="math inline">\(x=-3\)</span>.</span></li>
+                class="math inline">\(\boxed{x=-3}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(x^{-2}=\frac{1}{4}\)</span>,</span>
                 es decir, <span class="formula-con-signo"><span
                 class="math inline">\(x^{2}=4\)</span>,</span> luego
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>.</span></li>
+                class="math inline">\(\boxed{x=2}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x=9^{\frac{3}{2}}=\left(\sqrt9\right)^{3}=27\)</span>.</span></li>
+                class="math inline">\(x=9^{\frac{3}{2}}=\left(\sqrt9\right)^{3}=\boxed{27}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x=8^{-\frac{4}{3}}=\frac{1}{\left(\sqrt[3]{8}\right)^{4}}=\frac{1}{16}\)</span>.</span></li>
+                class="math inline">\(x=8^{-\frac{4}{3}}=\frac{1}{\left(\sqrt[3]{8}\right)^{4}}=\boxed{\frac{1}{16}}\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(2^{5}=32&lt;50&lt;64=2^{6}\)</span>,</span>
-                <span class="math inline">\(\log_{2}50\)</span> está
-                entre <span class="math inline">\(5\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(6\)</span>;</span> como <span
-                class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final"><span
+                class="math inline">\(\log_{2}50\)</span> está entre
+                <span class="math inline">\(5\)</span> y <span
+                class="math inline">\(6\)</span></span>;</span> como
+                <span class="formula-con-signo"><span
                 class="math inline">\(10^{3}&lt;3500&lt;10^{4}\)</span>,</span>
-                <span class="math inline">\(\log_{10}3500\)</span> está
-                entre <span class="math inline">\(3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(4\)</span>.</span></li>
-                <li>No existe: ninguna potencia de <span
+                <span class="final-con-signo"><span class="final"><span
+                class="math inline">\(\log_{10}3500\)</span> está entre
+                <span class="math inline">\(3\)</span> y <span
+                class="math inline">\(4\)</span></span>.</span></li>
+                <li><span class="final-con-signo"><span class="final">No
+                existe</span>:</span> ninguna potencia de <span
                 class="math inline">\(2\)</span> vale <span
                 class="formula-con-signo"><span
-                class="math inline">\(0\)</span>.</span> Con base <span
-                class="math inline">\(-2\)</span> las potencias cambian
-                de signo y algunas ni existen, como <span
+                class="math inline">\(0\)</span>.</span> <span
+                class="final-con-signo"><span class="final">Con base
+                <span class="math inline">\(-2\)</span> las potencias
+                cambian de signo y algunas ni existen, como <span
                 class="formula-con-signo"><span
                 class="math inline">\((-2)^{\frac{1}{2}}\)</span>,</span>
                 así que la base de un logaritmo tiene que ser
-                positiva.</li>
+                positiva</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -10161,15 +10363,16 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="4" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(5\)</span>;</span> <span
+                class="math inline">\(\boxed{5}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-1{,}523\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(1{,}778\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(2{,}303\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(3{,}401\)</span>.</span> Y <span
+                class="math inline">\(\boxed{-1{,}523}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{1{,}778}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{2{,}303}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{3{,}401}\)</span>.</span> Y
+                <span
                 class="math inline">\(10^{1{,}778}\approx60\)</span>
                 (con todos los decimales de la calculadora, exactamente
                 <span class="formula-con-signo"><span
@@ -10179,19 +10382,19 @@ SM</em></p>
                 class="formula-con-signo"><span
                 class="math inline">\(60\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x=10^{8}=100\,000\,000\)</span>;</span>
+                class="math inline">\(x=10^{8}=\boxed{100\,000\,000}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=10^{-5}=0{,}00001\)</span>;</span>
+                class="math inline">\(x=10^{-5}=\boxed{0{,}00001}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=e^{2}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=10^{\frac{1}{2}}=\sqrt{10}\)</span>.</span>
-                Un logaritmo negativo no hace negativo el número: <span
+                class="math inline">\(\boxed{x=e^{2}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(x=10^{\frac{1}{2}}=\boxed{\sqrt{10}}\)</span>.</span>
+                <span class="final-con-signo"><span class="final">Un
+                logaritmo negativo no hace negativo el número: <span
                 class="math inline">\(10^{-5}=0{,}00001\)</span> es
                 positivo, y solo dice que está entre <span
                 class="math inline">\(0\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(1\)</span>.</span></li>
+                class="math inline">\(1\)</span></span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -10472,49 +10675,54 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="6" type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log70=\log7+1\approx1{,}845\)</span>;</span>
+                class="math inline">\(\log70=\log7+1\approx\boxed{1{,}845}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log0{,}7=\log7-1\approx-0{,}155\)</span>;</span>
+                class="math inline">\(\log0{,}7=\log7-1\approx\boxed{-0{,}155}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log49=2\log7\approx1{,}690\)</span>;</span>
+                class="math inline">\(\log49=2\log7\approx\boxed{1{,}690}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log7000=\log7+3\approx3{,}845\)</span>;</span>
+                class="math inline">\(\log7000=\log7+3\approx\boxed{3{,}845}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log\sqrt7=\frac{1}{2}\log7\approx0{,}423\)</span>;</span>
+                class="math inline">\(\log\sqrt7=\frac{1}{2}\log7\approx\boxed{0{,}423}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log0{,}0049=2\log7-4\approx-2{,}310\)</span>.</span></li>
+                class="math inline">\(\log0{,}0049=2\log7-4\approx\boxed{-2{,}310}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(6-3+2=5\)</span>.</span></li>
+                class="math inline">\(6-3+2=\boxed{5}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_{3}25=\frac{\log25}{\log3}\approx2{,}93\)</span>;</span>
+                class="math inline">\(\log_{3}25=\frac{\log25}{\log3}\approx\boxed{2{,}93}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log_{5}0{,}4=\frac{\log0{,}4}{\log5}\approx-0{,}57\)</span>;</span>
+                class="math inline">\(\log_{5}0{,}4=\frac{\log0{,}4}{\log5}\approx\boxed{-0{,}57}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log_{\frac{1}{2}}40=\frac{\log40}{\log0{,}5}\approx-5{,}32\)</span>.</span></li>
+                class="math inline">\(\log_{\frac{1}{2}}40=\frac{\log40}{\log0{,}5}\approx\boxed{-5{,}32}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-1+5\log x+\log y\)</span>;</span>
-                <span class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{2}\log x+\frac{3}{2}\log
-                y\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(3-2\ln x\)</span>.</span> Y <span
+                class="math inline">\(\boxed{-1+5\log x+\log
+                y}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(1{,}20-2\cdot0{,}40=0{,}40\)</span>;</span>
+                class="math inline">\(\boxed{\frac{1}{2}\log
+                x+\frac{3}{2}\log y}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{3-2\ln x}\)</span>.</span>
+                Y <span class="formula-con-signo"><span
+                class="math inline">\(1{,}20-2\cdot0{,}40=\boxed{0{,}40}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(0{,}40+\frac{1}{4}\cdot1{,}20=0{,}70\)</span>.</span></li>
+                class="math inline">\(0{,}40+\frac{1}{4}\cdot1{,}20=\boxed{0{,}70}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log\frac{xy^{4}}{z^{2}}\)</span>.</span></li>
+                class="math inline">\(\boxed{\log\frac{xy^{4}}{z^{2}}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\ln\frac{a^{2}}{ab^{2}}=\ln\frac{a}{b^{2}}\)</span>.</span></li>
+                class="math inline">\(\ln\frac{a^{2}}{ab^{2}}=\boxed{\ln\frac{a}{b^{2}}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(\log
                 A=\log\frac{2^{3}\cdot5}{4^{2}}=\log\frac{40}{16}=\log2{,}5\)</span>,</span>
                 luego <span class="formula-con-signo"><span
-                class="math inline">\(A=2{,}5\)</span>.</span></li>
-                <li>La primera, sí: <span
+                class="math inline">\(\boxed{A=2{,}5}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span class="final">La
+                primera, sí</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(\log50+\log2=\log(50\cdot2)=\log100=2\)</span>.</span>
-                La segunda, no: <span class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final">La
+                segunda, no</span>:</span> <span
+                class="formula-con-signo"><span
                 class="math inline">\(\log(20-10)=\log10=1\)</span>,</span>
                 mientras que <span class="formula-con-signo"><span
                 class="math inline">\(\log20-\log10=\log2\approx0{,}301\)</span>.</span></li>
@@ -10947,117 +11155,130 @@ SM</em></p>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-\sqrt{576}=-24\in\mathbb
-                Z\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(0{,}\overline{09}=\frac{9}{99}=\frac{1}{11}\in\mathbb
-                Q\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(\frac{355}{113}\in\mathbb
-                Q\)</span>,</span> aunque se parezca mucho a <span
+                class="math inline">\(-\sqrt{576}=\boxed{-24\in\mathbb
+                Z}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(0{,}\overline{09}=\frac{9}{99}=\boxed{\frac{1}{11}\in\mathbb
+                Q}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{355}{113}\in\mathbb
+                Q}\)</span>,</span> aunque se parezca mucho a <span
                 class="formula-con-signo"><span
                 class="math inline">\(\pi\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\sqrt{27}\in\mathbb
-                I\)</span>,</span> porque <span
+                class="math inline">\(\boxed{\sqrt{27}\in\mathbb
+                I}\)</span>,</span> porque <span
                 class="math inline">\(27\)</span> no es un cuadrado
                 perfecto; <span class="formula-con-signo"><span
-                class="math inline">\((\pi+1)-\pi=1\in\mathbb
-                N\)</span>;</span> <span class="formula-con-signo"><span
-                class="math inline">\(7{,}07\in\mathbb
-                Q\)</span>.</span></li>
-                <li><span
-                class="math inline">\(1{,}\overline{90}=\frac{190-1}{99}=\frac{189}{99}=\frac{21}{11}\)</span>
-                y <span class="formula-con-signo"><span
-                class="math inline">\(0{,}6\overline{1}=\frac{61-6}{90}=\frac{55}{90}=\frac{11}{18}\)</span>.</span>
-                El producto es <span class="formula-con-signo"><span
-                class="math inline">\(\frac{21}{11}\cdot\frac{11}{18}=\frac{21}{18}=\frac{7}{6}\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(A\cap B=[0,2]\)</span>;</span>
-                <span class="formula-con-signo"><span
-                class="math inline">\(A\cup B=(-4,5)\)</span>.</span> A
-                distancia <span class="math inline">\(4\)</span> de
-                <span class="math inline">\(1\)</span> están <span
-                class="math inline">\(5\)</span> y <span
+                class="math inline">\((\pi+1)-\pi=\boxed{1\in\mathbb
+                N}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>:</span> el <span
+                class="math inline">\(\boxed{7{,}07\in\mathbb
+                Q}\)</span>.</span></li>
+                <li><span
+                class="math inline">\(1{,}\overline{90}=\frac{190-1}{99}=\frac{189}{99}=\boxed{\frac{21}{11}}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(0{,}6\overline{1}=\frac{61-6}{90}=\frac{55}{90}=\boxed{\frac{11}{18}}\)</span>.</span>
+                El producto es <span class="formula-con-signo"><span
+                class="math inline">\(\frac{21}{11}\cdot\frac{11}{18}=\frac{21}{18}=\boxed{\frac{7}{6}}\)</span>.</span></li>
+                <li><span class="formula-con-signo"><span
+                class="math inline">\(\boxed{A\cap
+                B=[0,2]}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{A\cup
+                B=(-4,5)}\)</span>.</span> <span
+                class="final-con-signo"><span class="final">A distancia
+                <span class="math inline">\(4\)</span> de <span
+                class="math inline">\(1\)</span> están <span
+                class="math inline">\(5\)</span> y <span
+                class="math inline">\(-3\)</span></span>:</span> <span
+                class="final-con-signo"><span class="final">el <span
                 class="math inline">\(-3\)</span> pertenece a <span
                 class="formula-con-signo"><span
                 class="math inline">\(A\cup B\)</span>,</span> pero el
-                <span class="math inline">\(5\)</span> no, porque está
-                excluido.</li>
+                <span class="math inline">\(5\)</span> no</span>,</span>
+                porque está excluido.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{4}{7}=0{,}571428\ldots\approx0{,}57\)</span>.</span>
+                class="math inline">\(\frac{4}{7}=0{,}571428\ldots\approx\boxed{0{,}57}\)</span>.</span>
                 <span
-                class="math inline">\(E_{a}=0{,}571428\ldots-0{,}57=0{,}001428\ldots\approx0{,}0014\)</span>
+                class="math inline">\(E_{a}=0{,}571428\ldots-0{,}57=0{,}001428\ldots\approx\boxed{0{,}0014}\)</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}=\frac{0{,}001428\ldots}{0{,}571428\ldots}=0{,}0025=0{,}25\%\)</span>.</span></li>
+                class="math inline">\(E_{r}=\frac{0{,}001428\ldots}{0{,}571428\ldots}=0{,}0025=\boxed{0{,}25\%}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{a^{6}b^{-4}}{a^{4}b^{-5}}=a^{2}b\)</span>;</span>
+                class="math inline">\(\frac{a^{6}b^{-4}}{a^{4}b^{-5}}=\boxed{a^{2}b}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(4\cdot10^{-8}\)</span>.</span></li>
+                class="math inline">\(\boxed{4\cdot10^{-8}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(12\sqrt2-2\sqrt2+9\sqrt2=19\sqrt2\)</span>;</span>
+                class="math inline">\(12\sqrt2-2\sqrt2+9\sqrt2=\boxed{19\sqrt2}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\frac{6\sqrt{42}}{42}=\frac{\sqrt{42}}{7}\)</span>;</span>
+                class="math inline">\(\frac{6\sqrt{42}}{42}=\boxed{\frac{\sqrt{42}}{7}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\frac{6\left(\sqrt{22}+4\right)}{22-16}=\sqrt{22}+4\)</span>.</span></li>
+                class="math inline">\(\frac{6\left(\sqrt{22}+4\right)}{22-16}=\boxed{\sqrt{22}+4}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(3\)</span>;</span> <span
+                class="math inline">\(\boxed{3}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>;</span> <span
+                class="math inline">\(\boxed{-2}\)</span>;</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{5}{2}\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{3}{4}\)</span>,</span>
+                class="math inline">\(\boxed{\frac{5}{2}}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac{3}{4}}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(25^{\frac{3}{4}}=5^{\frac{3}{2}}=5\sqrt5\)</span>;</span>
                 <span class="formula-con-signo"><span
                 class="math inline">\(x^{\frac{3}{2}}=8\)</span>,</span>
                 luego <span class="formula-con-signo"><span
-                class="math inline">\(x=8^{\frac{2}{3}}=4\)</span>.</span></li>
+                class="math inline">\(x=8^{\frac{2}{3}}=\boxed{4}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{1+\sqrt2}=\frac{\sqrt2-1}{\left(\sqrt2+1\right)\left(\sqrt2-1\right)}=\frac{\sqrt2-1}{2-1}=\sqrt2-1\)</span>.</span></li>
+                class="math inline">\(\frac{1}{1+\sqrt2}=\frac{\sqrt2-1}{\left(\sqrt2+1\right)\left(\sqrt2-1\right)}=\frac{\sqrt2-1}{2-1}=\boxed{\sqrt2-1}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(1+\sqrt2=2{,}41421\ldots\approx2{,}41\)</span>.</span>
+                class="math inline">\(1+\sqrt2=2{,}41421\ldots\approx\boxed{2{,}41}\)</span>.</span>
                 <span
-                class="math inline">\(E_{a}\approx0{,}0042\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(E_{r}\approx\frac{0{,}0042}{2{,}4142}\approx0{,}17\%\)</span>.</span></li>
+                class="math inline">\(\boxed{E_{a}\approx0{,}0042}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(E_{r}\approx\frac{0{,}0042}{2{,}4142}\approx\boxed{0{,}17\%}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(\frac{1{,}9\cdot10^{27}}{5{,}97\cdot10^{24}}\approx0{,}318\cdot10^{3}\approx3{,}2\cdot10^{2}\)</span>,</span>
-                unas <span class="math inline">\(320\)</span> veces: el
-                titular es correcto como aproximación.</li>
+                <span class="final-con-signo"><span class="final">unas
+                <span class="math inline">\(320\)</span> veces: el
+                titular es correcto como
+                aproximación</span>.</span></li>
                 <li><span
                 class="math inline">\(2{,}6\cdot10^{13}\cdot7{,}5\cdot10^{-6}=19{,}5\cdot10^{7}=1{,}95\cdot10^{8}\)</span>
                 m, es decir, <span
-                class="math inline">\(1{,}95\cdot10^{5}\)</span> km. La
-                fila daría <span
-                class="math inline">\(\frac{1{,}95\cdot10^{5}}{4\cdot10^{4}}\approx4{,}9\)</span>
+                class="math inline">\(\boxed{1{,}95\cdot10^{5}}\)</span>
+                km. La fila daría <span
+                class="math inline">\(\frac{1{,}95\cdot10^{5}}{4\cdot10^{4}}\approx\boxed{4{,}9}\)</span>
                 vueltas a la Tierra.</li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log2^{50}=50\log2\approx15{,}05\)</span>,</span>
+                class="math inline">\(\log2^{50}=50\log2\approx\boxed{15{,}05}\)</span>,</span>
                 así que <span class="formula-con-signo"><span
-                class="math inline">\(2^{50}=10^{15{,}05}=10^{0{,}05}\cdot10^{15}\approx1{,}1\cdot10^{15}\)</span>.</span></li>
+                class="math inline">\(2^{50}=10^{15{,}05}=10^{0{,}05}\cdot10^{15}\approx\boxed{1{,}1\cdot10^{15}}\)</span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(10^{15}\leq2^{50}&lt;10^{16}\)</span>,</span>
-                tiene <span class="math inline">\(16\)</span>
-                cifras.</li>
+                <span class="final-con-signo"><span class="final">tiene
+                <span class="math inline">\(16\)</span>
+                cifras</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Por Pitágoras, <span
-                class="math inline">\(\sqrt{12^{2}-6^{2}}=\sqrt{108}=6\sqrt3\approx10{,}4\)</span>
-                cm: para dibujar con regla hace falta un valor
-                aproximado, a los milímetros.</li>
+                class="math inline">\(\sqrt{12^{2}-6^{2}}=\sqrt{108}=6\sqrt3\approx\boxed{10{,}4}\)</span>
+                cm: <span class="final-con-signo"><span
+                class="final">para dibujar con regla hace falta un valor
+                aproximado, a los milímetros</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{294}=\sqrt{7^{2}\cdot6}=7\sqrt6\)</span>:</span>
-                conviene la forma exacta.</li>
+                class="math inline">\(\sqrt{294}=\sqrt{7^{2}\cdot6}=\boxed{7\sqrt6}\)</span>:</span>
+                <span class="final-con-signo"><span
+                class="final">conviene la forma
+                exacta</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(\log_{2}300=\frac{\log300}{\log2}\approx8{,}23\)</span>,</span>
-                pero las rondas son un número entero: hacen falta <span
-                class="formula-con-signo"><span
-                class="math inline">\(9\)</span>.</span></li>
+                pero <span class="final-con-signo"><span
+                class="final">las rondas son un número entero: hacen
+                falta <span
+                class="math inline">\(9\)</span></span>.</span></li>
                 </ol></li>
                 <li><span class="math inline">\(9\cdot3=27\)</span> y
                 <span class="formula-con-signo"><span
@@ -11065,70 +11286,80 @@ SM</em></p>
                 así que el producto es <span
                 class="formula-con-signo"><span
                 class="math inline">\(27\cdot10^{-3}=2{,}7\cdot10^{-2}\)</span>.</span>
-                Los dos primeros resultados son correctos, pero solo el
-                segundo está en notación científica. El tercero movió
-                mal el exponente: al pasar de <span
+                <span class="final-con-signo"><span class="final">Los
+                dos primeros resultados son correctos</span>,</span>
+                pero <span class="final-con-signo"><span
+                class="final">solo el segundo está en notación
+                científica</span>.</span> <span
+                class="final-con-signo"><span class="final">El tercero
+                movió mal el exponente: al pasar de <span
                 class="math inline">\(27\)</span> a <span
                 class="math inline">\(2{,}7\)</span> la parte decimal se
                 divide entre <span class="formula-con-signo"><span
                 class="math inline">\(10\)</span>,</span> así que el
                 exponente sube una unidad, de <span
                 class="math inline">\(-3\)</span> a <span
-                class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>.</span></li>
+                class="math inline">\(-2\)</span></span>.</span></li>
                 <li><ol type="a">
                 <li>En la generación <span
                 class="math inline">\(n\)</span> el modelo predice <span
-                class="math inline">\(2^{n}\)</span> antepasados. En la
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{2^{n}}\)</span>
+                antepasados. En la <span class="formula-con-signo"><span
                 class="math inline">\(20\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(2^{20}=1\,048\,576\approx1{,}05\cdot10^{6}\)</span>:</span>
+                class="math inline">\(2^{20}=1\,048\,576\approx\boxed{1{,}05\cdot10^{6}}\)</span>:</span>
                 más de un millón.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log_{2}\left(1{,}1\cdot10^{11}\right)=\frac{\log\left(1{,}1\cdot10^{11}\right)}{\log2}\approx\frac{11{,}04}{0{,}301}\approx36{,}7\)</span>.</span>
+                class="math inline">\(\log_{2}\left(1{,}1\cdot10^{11}\right)=\frac{\log\left(1{,}1\cdot10^{11}\right)}{\log2}\approx\frac{11{,}04}{0{,}301}\approx\boxed{36{,}7}\)</span>.</span>
                 Como <span class="math inline">\(2^{36}\)</span> todavía
                 no llega y <span class="math inline">\(2^{37}\)</span>
-                ya lo supera, es la generación <span
-                class="formula-con-signo"><span
-                class="math inline">\(37\)</span>:</span> hace unos
+                ya lo supera, <span class="final-con-signo"><span
+                class="final">es la generación <span
+                class="math inline">\(37\)</span></span>:</span> <span
+                class="final-con-signo"><span class="final">hace unos
                 <span class="math inline">\(37\cdot25=925\)</span> años,
-                alrededor del año 1100.</li>
-                <li>La suposición falsa es que los <span
+                alrededor del año 1100</span>.</span></li>
+                <li><span class="final-con-signo"><span class="final">La
+                suposición falsa es que los <span
                 class="math inline">\(2^{n}\)</span> antepasados sean
-                todos personas distintas. No lo son: al ir hacia atrás,
-                las ramas del árbol se cruzan y una misma persona ocupa
-                muchas casillas a la vez. Los demógrafos lo llaman
-                colapso de pedigrí, y su consecuencia es que cualquier
-                par de personas de una misma región comparte antepasados
-                a poca distancia.</li>
+                todos personas distintas</span>.</span> No lo son: <span
+                class="final-con-signo"><span class="final">al ir hacia
+                atrás, las ramas del árbol se cruzan y una misma persona
+                ocupa muchas casillas a la vez</span>.</span> Los
+                demógrafos lo llaman colapso de pedigrí, y su
+                consecuencia es que cualquier par de personas de una
+                misma región comparte antepasados a poca distancia.</li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Saliva: <span
-                class="math inline">\(10^{-6{,}5}\)</span> mol/L. Zumo:
-                <span class="math inline">\(10^{-3{,}5}\)</span> mol/L.
-                La del zumo es <span
-                class="math inline">\(10^{3}\)</span> veces mayor: mil
-                veces.</li>
-                <li><span class="math inline">\(10^{-5{,}6}\)</span> y
-                <span class="math inline">\(10^{-4{,}3}\)</span> mol/L;
-                el cociente es <span class="formula-con-signo"><span
-                class="math inline">\(10^{-4{,}3-(-5{,}6)}=10^{1{,}3}\approx20\)</span>:</span>
+                class="math inline">\(\boxed{10^{-6{,}5}}\)</span>
+                mol/L. Zumo: <span
+                class="math inline">\(\boxed{10^{-3{,}5}}\)</span>
+                mol/L. La del zumo es <span
+                class="math inline">\(\boxed{10^{3}}\)</span> veces
+                mayor: mil veces.</li>
+                <li><span
+                class="math inline">\(\boxed{10^{-5{,}6}}\)</span> y
+                <span class="math inline">\(\boxed{10^{-4{,}3}}\)</span>
+                mol/L; el cociente es <span
+                class="formula-con-signo"><span
+                class="math inline">\(10^{-4{,}3-(-5{,}6)}=\boxed{10^{1{,}3}\approx20}\)</span>:</span>
                 unas veinte veces más.</li>
                 <li><span
-                class="math inline">\(10^{-4{,}3}\approx5{,}0\cdot10^{-5}\)</span>
+                class="math inline">\(10^{-4{,}3}\approx\boxed{5{,}0\cdot10^{-5}}\)</span>
                 mol/L.</li>
                 <li>Las concentraciones son <span
                 class="math inline">\(10^{-6{,}8}\)</span> y <span
                 class="math inline">\(10^{-6{,}2}\)</span> mol/L, y su
                 cociente, <span class="formula-con-signo"><span
-                class="math inline">\(10^{-6{,}2-(-6{,}8)}=10^{0{,}6}\approx4\)</span>:</span>
-                unas cuatro veces mayor. Por ejemplo: el pH es una
+                class="math inline">\(10^{-6{,}2-(-6{,}8)}=\boxed{10^{0{,}6}\approx4}\)</span>:</span>
+                unas cuatro veces mayor. Por ejemplo: <span
+                class="final-con-signo"><span class="final">el pH es una
                 escala logarítmica, así que cada décima menos no resta
                 «una décima de acidez», sino que multiplica la
                 concentración por un mismo factor; seis décimas la
                 multiplican casi por cuatro, y eso cambia la química del
-                agua de la que viven peces y algas.</li>
+                agua de la que viven peces y algas</span>.</span></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -11185,47 +11416,49 @@ SM</em></p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><span
-                class="math inline">\(0{,}\overline{21}=\frac{21}{99}=\frac{7}{33}\in\mathbb
-                Q\)</span> y <span class="formula-con-signo"><span
-                class="math inline">\(\sqrt{33}\in\mathbb
-                I\)</span>,</span> porque <span
+                class="math inline">\(0{,}\overline{21}=\frac{21}{99}=\boxed{\frac{7}{33}\in\mathbb
+                Q}\)</span> y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\sqrt{33}\in\mathbb
+                I}\)</span>,</span> porque <span
                 class="math inline">\(33\)</span> no es un cuadrado
                 perfecto.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{305-3}{99}=\frac{302}{99}\)</span>.</span></li>
+                class="math inline">\(\frac{305-3}{99}=\boxed{\frac{302}{99}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(|2-(-7)|=9\)</span>.</span></li>
+                class="math inline">\(|2-(-7)|=\boxed{9}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\((-1,4]\)</span>,</span> y su
-                intersección con <span
+                class="math inline">\(\boxed{(-1,4]}\)</span>,</span> y
+                su intersección con <span
                 class="math inline">\([2,+\infty)\)</span> es <span
                 class="formula-con-signo"><span
-                class="math inline">\([2,4]\)</span>.</span></li>
+                class="math inline">\(\boxed{[2,4]}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(4{,}80\)</span>;</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(E_{a}=|4{,}7958\ldots-4{,}80|\approx0{,}0042\)</span>.</span></li>
+                class="math inline">\(\boxed{4{,}80}\)</span>;</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(E_{a}=|4{,}7958\ldots-4{,}80|\approx\boxed{0{,}0042}\)</span>.</span></li>
                 <li><span
-                class="math inline">\(4{,}08\cdot10^{-5}\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(6\cdot10^{5}\)</span>.</span></li>
-                <li>Falso: son semejantes y se suman los coeficientes,
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{4{,}08\cdot10^{-5}}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{6\cdot10^{5}}\)</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>:</span> son semejantes y se
+                suman los coeficientes, <span
+                class="formula-con-signo"><span
                 class="math inline">\(5\sqrt3\)</span>.</span></li>
                 <li><span
-                class="math inline">\(\sqrt{252}=\sqrt{6^{2}\cdot7}=6\sqrt7\)</span>
+                class="math inline">\(\sqrt{252}=\sqrt{6^{2}\cdot7}=\boxed{6\sqrt7}\)</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(\frac{26}{\sqrt{13}}=\frac{26\sqrt{13}}{13}=2\sqrt{13}\)</span>.</span></li>
+                class="math inline">\(\frac{26}{\sqrt{13}}=\frac{26\sqrt{13}}{13}=\boxed{2\sqrt{13}}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(-\frac{1}{2}\)</span>,</span>
+                class="math inline">\(\boxed{-\frac{1}{2}}\)</span>,</span>
                 porque <span class="formula-con-signo"><span
                 class="math inline">\(3^{-\frac{1}{2}}=\frac{1}{\sqrt3}\)</span>;</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(0\)</span>.</span></li>
+                class="math inline">\(\boxed{0}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log\frac{x^{4}}{y^{2}}\)</span>;</span>
+                class="math inline">\(\boxed{\log\frac{x^{4}}{y^{2}}}\)</span>;</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(\log_{3}10=\frac{\log10}{\log3}=\frac{1}{\log3}\approx2{,}10\)</span>.</span></li>
+                class="math inline">\(\log_{3}10=\frac{\log10}{\log3}=\frac{1}{\log3}\approx\boxed{2{,}10}\)</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -11772,7 +12005,7 @@ SM</em></p>
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
-          : formula.closest("p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
+          : formula.closest(".final, p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
       }
       function repartirFormulas() {
         if (document.documentElement.classList.contains("ampliando")) {
@@ -12003,13 +12236,20 @@ SM</em></p>
         'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
         '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
         '<circle cx="12" cy="12" r="2.8"></circle></svg>';
-      var FLECHA =
-        '<svg class="flecha-ver-solucion" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
-        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="m6 9 6 6 6-6"></path></svg>';
-      var VER = "Ver solución";
-      var OCULTAR = "Ocultar solución";
-      var paneles = [];
+      var LAPIZ =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z"></path>' +
+        '<path d="M13.6 6.9l3 3"></path></svg>';
+      var RESULTADO = "Resultado";
+      var PASO_A_PASO = "Paso a paso";
+      var LETRAS = "abcdefgh";
+      var MARCA = /(^|[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-h])\)\u00a0/g;
+      var ETIQUETA = /\\text\{([a-h])\)\s*\}/g;
+      var VACIAS = ["soluciones", "solución", "solucion", "resultado", "resultados",
+        "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
+      var unidades = [];
+      var cuenta = 0;
 
       function numerosDeLaLista(lista) {
         var primero = parseInt(lista.getAttribute("start") || "1", 10);
@@ -12086,19 +12326,14 @@ SM</em></p>
           );
         });
       }
-      function soloFormula(ejercicio) {
-        var formula = ejercicio.firstElementChild;
+      function soloFormula(elemento) {
+        var formula = elemento.firstElementChild;
         return Boolean(
           formula &&
-            formula === ejercicio.lastElementChild &&
+            formula === elemento.lastElementChild &&
             formula.matches(".math.display") &&
-            !ejercicio.matches(".formula-tras-texto, .formula-abre")
+            !elemento.matches(".formula-tras-texto, .formula-abre")
         );
-      }
-      function plegar(panel) {
-        panel.caja.classList.add("esta-plegado");
-        panel.boton.setAttribute("aria-expanded", "false");
-        panel.rotulo.textContent = VER;
       }
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
@@ -12141,12 +12376,742 @@ SM</em></p>
           }
         });
       }
-      function encogerLasAbiertas() {
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild && !panel.caja.classList.contains("esta-plegado")) {
-            encogerCuentas(panel.caja);
+      function anchoDentro(elemento) {
+        var estilo = window.getComputedStyle(elemento);
+        return elemento.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+      }
+      function anchoDeRenglon(pieza) {
+        var marco = pieza.closest(".final, .sol-chip");
+        var renglon = (marco || pieza).parentElement.closest("p, li, dd, dt, figcaption, div");
+        var ancho = anchoDentro(renglon);
+        if (marco) {
+          var estilo = window.getComputedStyle(marco);
+          ancho -=
+            marco.offsetWidth -
+            anchoDentro(marco) +
+            parseFloat(estilo.marginLeft) +
+            parseFloat(estilo.marginRight);
+          if (marco.classList.contains("final")) {
+            ancho -= 0.7 * parseFloat(estilo.fontSize);
+          }
+        }
+        return ancho;
+      }
+      function piezasQueNoSeParten(caja) {
+        var piezas = [];
+        Array.prototype.forEach.call(caja.querySelectorAll(".katex-html"), function (html) {
+          if (html.closest(".math.display, .katex-display, td, th")) {
+            return;
+          }
+          var formula = html.closest(".math.inline");
+          if (!formula || formula.classList.contains("formula-corta")) {
+            piezas.push(html);
+          } else {
+            Array.prototype.push.apply(piezas, html.querySelectorAll(":scope > .base"));
           }
         });
+        return piezas;
+      }
+      function pegadoA(pieza) {
+        var formula = pieza.closest(".math.inline");
+        var envoltura = formula && formula.parentElement;
+        if (!envoltura || !envoltura.classList.contains("formula-con-signo")) {
+          return 0;
+        }
+        var bases = formula.querySelectorAll(".katex-html > .base");
+        var entera = pieza.classList.contains("katex-html");
+        var rango = document.createRange();
+        var medida = 0;
+        if (entera || pieza === bases[bases.length - 1]) {
+          rango.setStartAfter(formula);
+          rango.setEnd(envoltura, envoltura.childNodes.length);
+          medida += rango.getBoundingClientRect().width;
+        }
+        if (entera || pieza === bases[0]) {
+          rango.setStart(envoltura, 0);
+          rango.setEndBefore(formula);
+          medida += rango.getBoundingClientRect().width;
+        }
+        return medida;
+      }
+      function encogerLasCajas(caja) {
+        var piezas = piezasQueNoSeParten(caja);
+        piezas.forEach(function (pieza) {
+          pieza.style.fontSize = "";
+        });
+        var encogidas = 0;
+        piezas.forEach(function (pieza) {
+          if (!pieza.getClientRects().length) {
+            return;
+          }
+          var ancho = anchoDeRenglon(pieza);
+          var mide = pieza.getBoundingClientRect().width + pegadoA(pieza);
+          if (ancho > 0 && mide > ancho + 1) {
+            pieza.style.fontSize = Math.max(TOPE_DE_ENCOGER, Math.floor((99 * ancho) / mide)) + "%";
+            encogidas++;
+          }
+        });
+        return encogidas;
+      }
+      function deslizarLasQueNoCaben(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var derecha =
+          caja.getBoundingClientRect().right -
+          parseFloat(estilo.borderRightWidth) -
+          parseFloat(estilo.paddingRight);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          formula.classList.remove("desliza");
+        });
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          if (formula.getBoundingClientRect().right > derecha + 2) {
+            formula.classList.add("desliza");
+          }
+        });
+      }
+      function ajustarLasCajas(caja) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+          return;
+        }
+        var encogidas = encogerLasCajas(caja);
+        if (!caja.classList.contains("sol-pasos")) {
+          return;
+        }
+        if (encogidas) {
+          caja.classList.add("sol-repartir");
+          caja.classList.remove("sol-repartir");
+        }
+        Promise.resolve().then(function () {
+          deslizarLasQueNoCaben(caja);
+        });
+      }
+      function encogerLasAbiertas() {
+        unidades.forEach(function (unidad) {
+          ["pasos", "chip"].forEach(function (que) {
+            var caja = unidad[que];
+            if (!caja || !caja.firstChild || caja.classList.contains("esta-plegado")) {
+              return;
+            }
+            if (que === "pasos") {
+              encogerCuentas(caja);
+            }
+            ajustarLasCajas(caja);
+          });
+        });
+      }
+
+
+      function texDe(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent : formula.textContent;
+        tex = tex.trim();
+        if (tex.slice(0, 2) === "\\(" || tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\)" || tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      function trocearCajas(tex) {
+        var cajas = [];
+        var resto = "";
+        var desde = 0;
+        var i = tex.indexOf("\\boxed{");
+        while (i !== -1) {
+          resto += tex.slice(desde, i);
+          var j = i + 7;
+          var nivel = 1;
+          while (j < tex.length && nivel > 0) {
+            var signo = tex.charAt(j);
+            if (signo === "\\") {
+              j += 2;
+              continue;
+            }
+            nivel += signo === "{" ? 1 : signo === "}" ? -1 : 0;
+            j++;
+          }
+          cajas.push(tex.slice(i + 7, j - 1));
+          desde = j;
+          i = tex.indexOf("\\boxed{", j);
+        }
+        return { cajas: cajas, resto: resto + tex.slice(desde) };
+      }
+      function resultadosDe(raiz) {
+        var lista = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType !== 1) {
+              return;
+            }
+            if (hijo.classList.contains("final")) {
+              lista.push({ html: hijo.innerHTML });
+            } else if (hijo.classList.contains("math")) {
+              trocearCajas(texDe(hijo)).cajas.forEach(function (tex) {
+                lista.push({ tex: tex });
+              });
+            } else {
+              recorrer(hijo);
+            }
+          });
+        })(raiz);
+        return lista;
+      }
+      function pintarTex(tex, enBloque) {
+        if (!window.katex) {
+          return tex;
+        }
+        return window.katex.renderToString(tex, { displayMode: Boolean(enBloque), throwOnError: false });
+      }
+      function unir(lista) {
+        var trozos = lista.map(function (resultado) {
+          return resultado.html !== undefined ? resultado.html : pintarTex(resultado.tex);
+        });
+        if (trozos.length < 2) {
+          return trozos.join("");
+        }
+        var frases = lista.some(function (resultado) {
+          return resultado.html !== undefined;
+        });
+        if (frases) {
+          return trozos.join("; ");
+        }
+        return trozos.slice(0, -1).join(", ") + " y " + trozos[trozos.length - 1];
+      }
+      function quedaAlgo(texto) {
+        var palabras = texto
+          .replace(/\\(qquad|quad|text|displaystyle)\b/g, " ")
+          .split(/[\s.,;:¡!¿?()&{}\[\]]+/)
+          .filter(function (palabra) {
+            return palabra && VACIAS.indexOf(palabra.toLowerCase()) === -1;
+          });
+        return palabras.join("").length >= 3;
+      }
+      function normalTex(tex) {
+        return tex
+          .replace(/\\[dt]frac/g, "\\frac")
+          .replace(/\\left|\\right|\\[,;!]|&/g, "")
+          .replace(/\{-\}/g, "-")
+          .replace(/\s+/g, "");
+      }
+      function sinLoDelEnunciado(resto, enunciado) {
+        var limpio = normalTex(resto);
+        for (var i = 0; i < enunciado.length; i++) {
+          var copiado = normalTex(enunciado[i]);
+          if (copiado && limpio.indexOf(copiado + "=") === 0) {
+            return limpio.slice(copiado.length + 1);
+          }
+        }
+        return resto;
+      }
+      function formulasDe(elemento) {
+        return Array.prototype.filter
+          .call(elemento.querySelectorAll(".math"), function (formula) {
+            return formula.parentElement.closest("li") === elemento;
+          })
+          .map(texDe);
+      }
+      function diceMasQueElResultado(raiz, enunciado) {
+        var copia = raiz.cloneNode(true);
+        Array.prototype.forEach.call(copia.querySelectorAll(".final"), function (frase) {
+          frase.parentNode.removeChild(frase);
+        });
+        Array.prototype.forEach.call(copia.querySelectorAll(".math"), function (formula) {
+          formula.parentNode.replaceChild(
+            document.createTextNode(
+              " " + sinLoDelEnunciado(trocearCajas(texDe(formula)).resto, enunciado || []) + " "
+            ),
+            formula
+          );
+        });
+        return quedaAlgo(copia.textContent.replace(/^\s*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+\s*:/, " "));
+      }
+      function tieneResultado(raiz) {
+        return raiz.textContent.indexOf("\\boxed{") !== -1 || Boolean(raiz.querySelector(".final"));
+      }
+
+
+      function marcasDe(contenedor) {
+        var marcas = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType === 3) {
+              MARCA.lastIndex = 0;
+              var hallada;
+              while ((hallada = MARCA.exec(hijo.data))) {
+                marcas.push({ letra: hallada[2], nodo: hijo, indice: hallada.index + hallada[1].length });
+              }
+            } else if (hijo.nodeType === 1 && !hijo.matches(".math, ol, ul, .sol-iconos")) {
+              recorrer(hijo);
+            }
+          });
+        })(contenedor);
+        return marcas;
+      }
+      function etiquetasDe(tex) {
+        var letras = [];
+        var hallada;
+        ETIQUETA.lastIndex = 0;
+        while ((hallada = ETIQUETA.exec(tex))) {
+          letras.push(hallada[1]);
+        }
+        return letras;
+      }
+      function seguidas(letras, desde) {
+        return letras.every(function (letra, lugar) {
+          return letra === LETRAS.charAt(desde + lugar);
+        });
+      }
+      function hijosConContenido(elemento) {
+        return Array.prototype.filter.call(elemento.childNodes, function (nodo) {
+          return nodo.nodeType === 1 || (nodo.nodeType === 3 && nodo.textContent.trim() !== "");
+        });
+      }
+      function apartadosDelEnunciado(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista) {
+          var primera = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          return {
+            forma: "lista",
+            letras: Array.prototype.map.call(lista.children, function (li, lugar) {
+              return LETRAS.charAt(primera + lugar);
+            }),
+            elementos: Array.prototype.slice.call(lista.children)
+          };
+        }
+        var letras = marcasDe(ejercicio).map(function (marca) {
+          return marca.letra;
+        });
+        if (letras.length < 2) {
+          letras = [];
+          Array.prototype.forEach.call(ejercicio.querySelectorAll(".math.display"), function (formula) {
+            if (!formula.closest("ol ol")) {
+              letras = letras.concat(etiquetasDe(texDe(formula)));
+            }
+          });
+        }
+        if (letras.length >= 2 && seguidas(letras, 0)) {
+          return { forma: "otra", letras: letras };
+        }
+        return { forma: "ninguna", letras: [] };
+      }
+      function trozosConMarcas(contenedor, primera) {
+        var marcas = marcasDe(contenedor);
+        var letras = marcas.map(function (marca) {
+          return marca.letra;
+        });
+        var desde = primera ? LETRAS.indexOf(primera) + 1 : 0;
+        if (!seguidas(letras, desde) || (!primera && !marcas.length)) {
+          return null;
+        }
+        function corte(marca) {
+          var padre = marca.nodo.parentNode;
+          var r = document.createRange();
+          if (marca.indice === 0 && padre !== contenedor && padre.firstChild === marca.nodo &&
+              padre.classList.contains("formula-con-signo")) {
+            r.setStartBefore(padre);
+          } else {
+            r.setStart(marca.nodo, marca.indice);
+          }
+          return r;
+        }
+        var cortes = marcas.map(corte);
+        function tramo(inicio, fin) {
+          var r = document.createRange();
+          if (inicio) {
+            r.setStart(inicio.startContainer, inicio.startOffset);
+          } else {
+            r.setStart(contenedor, 0);
+          }
+          if (fin) {
+            r.setEnd(fin.startContainer, fin.startOffset);
+          } else {
+            r.setEnd(contenedor, contenedor.childNodes.length);
+          }
+          return r;
+        }
+        var trozos = [];
+        if (primera) {
+          trozos.push({ letra: primera, rango: tramo(null, cortes[0]) });
+        } else if (tramo(null, cortes[0]).toString().replace(/\s/g, "") !== "") {
+          return null;
+        }
+        marcas.forEach(function (marca, lugar) {
+          trozos.push({ letra: marca.letra, rango: tramo(cortes[lugar], cortes[lugar + 1]) });
+        });
+        return trozos;
+      }
+      function trozosDeFormula(tex) {
+        var limpio = tex.trim();
+        var alineado = limpio.indexOf("\\begin{aligned}") === 0 && limpio.slice(-13) === "\\end{aligned}"
+          ? [limpio, limpio.slice(15, -13)]
+          : null;
+        var trozos = [];
+        if (alineado) {
+          var filas = alineado[1].split(/\\\\(?:\[[^\]]*\])?/);
+          var mala = filas.some(function (fila) {
+            return etiquetasDe(fila).length > 1;
+          });
+          if (mala) {
+            return null;
+          }
+          filas.forEach(function (fila) {
+            var letras = etiquetasDe(fila);
+            if (letras.length) {
+              trozos.push({ letra: letras[0], filas: [fila.replace(ETIQUETA, "")] });
+            } else if (trozos.length && fila.trim()) {
+              trozos[trozos.length - 1].filas.push(fila);
+            }
+          });
+          return trozos.map(function (trozo) {
+            var hueco = trozo.filas.some(function (fila) {
+              return fila.indexOf("\\frac") !== -1;
+            });
+            return {
+              letra: trozo.letra,
+              tex: "\\begin{aligned}" + trozo.filas.join(hueco ? "\\\\[6pt]" : "\\\\") + "\\end{aligned}"
+            };
+          });
+        }
+        var partes = tex.split(/\\text\{([a-h])\)\s*\}/);
+        if (partes[0].replace(/\\q?quad|\s/g, "") !== "") {
+          return null;
+        }
+        for (var i = 1; i < partes.length; i += 2) {
+          trozos.push({
+            letra: partes[i],
+            tex: partes[i + 1].replace(/\\qquad/g, " ").trim()
+          });
+        }
+        return trozos;
+      }
+      function partesDeLaRespuesta(solucion) {
+        var hijos = hijosConContenido(solucion);
+        if (hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].matches('ol[type="a"]')) {
+          var lista = hijos[0];
+          var inicio = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          var partes = [];
+          var vale = Array.prototype.every.call(lista.children, function (li, lugar) {
+            var letra = LETRAS.charAt(inicio + lugar);
+            if (!marcasDe(li).length) {
+              partes.push({ letra: letra, nodos: li });
+              return true;
+            }
+            var trozos = trozosConMarcas(li, letra);
+            if (!trozos) {
+              return false;
+            }
+            partes = partes.concat(trozos);
+            return true;
+          });
+          return vale && seguidas(partes.map(function (parte) { return parte.letra; }), 0) ? partes : null;
+        }
+        var contenedor = hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].tagName === "P" ? hijos[0] : solucion;
+        var formulas = Array.prototype.filter.call(hijosConContenido(contenedor), function (nodo) {
+          return nodo.nodeType === 1 && nodo.matches(".math.display");
+        });
+        if (formulas.length === 1 && hijosConContenido(contenedor).length === 1) {
+          var deFormula = trozosDeFormula(texDe(formulas[0]));
+          return deFormula && deFormula.length >= 2 ? deFormula : null;
+        }
+        var conMarcas = trozosConMarcas(contenedor, null);
+        return conMarcas && conMarcas.length >= 2 ? conMarcas : null;
+      }
+      function copiaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        if (parte.nodos) {
+          Array.prototype.forEach.call(parte.nodos.childNodes, function (nodo) {
+            trozo.appendChild(nodo.cloneNode(true));
+          });
+        } else if (parte.rango) {
+          trozo.appendChild(parte.rango.cloneContents());
+          var primero = trozo;
+          while (primero && primero.nodeType !== 3) {
+            primero = primero.firstChild;
+          }
+          if (primero) {
+            primero.data = primero.data.replace(/^\s*[a-h]\)\u00a0\s{0,20}/, "");
+          }
+        } else if (parte.tex !== undefined) {
+          var formula = document.createElement("span");
+          formula.className = "math display";
+          formula.innerHTML = pintarTex(parte.tex, true);
+          trozo.appendChild(formula);
+        }
+        return trozo;
+      }
+      function resultadosDeLaParte(parte) {
+        if (parte.tex !== undefined) {
+          return trocearCajas(parte.tex).cajas.map(function (tex) {
+            return { tex: tex };
+          });
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return resultadosDe(envoltura);
+      }
+      function parteConResultado(parte) {
+        if (parte.tex !== undefined) {
+          return parte.tex.indexOf("\\boxed{") !== -1;
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return tieneResultado(envoltura);
+      }
+      function parteConPasos(parte, enunciado) {
+        if (parte.tex !== undefined) {
+          return quedaAlgo(
+            sinLoDelEnunciado(trocearCajas(parte.tex).resto, enunciado || []).replace(/\\[a-zA-Z]+/g, " x ")
+          );
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return diceMasQueElResultado(envoltura, enunciado);
+      }
+
+
+      function boton(clase, icono, rotulo, letra) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "sol-ico " + clase;
+        b.innerHTML = icono;
+        b.title = rotulo;
+        b.setAttribute("aria-label", rotulo + (letra ? " del apartado " + letra + ")" : ""));
+        b.setAttribute("aria-expanded", "false");
+        return b;
+      }
+      function hueco(etiqueta, clase) {
+        var caja = document.createElement(etiqueta);
+        caja.className = clase + " plegable esta-plegado";
+        caja.id = "solucion-" + ++cuenta;
+        return caja;
+      }
+      function plegar(unidad, vaciar) {
+        [["ojo", "chip"], ["lapiz", "pasos"]].forEach(function (par) {
+          var b = unidad[par[0]];
+          var caja = unidad[par[1]];
+          if (!b || !caja) {
+            return;
+          }
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          if (vaciar) {
+            caja.textContent = "";
+          }
+        });
+      }
+      function abrir(unidad, que) {
+        var b = unidad[que === "chip" ? "ojo" : "lapiz"];
+        var caja = unidad[que];
+        var otra = que === "chip" ? "pasos" : "chip";
+        var abierta = !caja.classList.contains("esta-plegado");
+        if (unidad[otra]) {
+          unidad[otra].classList.add("esta-plegado");
+          unidad[otra === "chip" ? "ojo" : "lapiz"].setAttribute("aria-expanded", "false");
+        }
+        if (abierta) {
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          return;
+        }
+        if (!caja.firstChild) {
+          unidad.llenar[que](caja);
+        }
+        caja.classList.remove("esta-plegado");
+        b.setAttribute("aria-expanded", "true");
+        if (que === "pasos") {
+          encogerCuentas(caja);
+        }
+        Promise.resolve().then(function () {
+          ajustarLasCajas(caja);
+        });
+      }
+      function prepararBotones(datos) {
+        var unidad = { llenar: {} };
+        var iconos = document.createElement("span");
+        iconos.className = "sol-iconos";
+        if (datos.resultados) {
+          unidad.ojo = boton("ojo", OJO, RESULTADO, datos.letra);
+          unidad.chip = hueco(datos.chipEnBloque ? "div" : "span", datos.chipEnBloque ? "sol-resultado" : "sol-chip");
+          unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
+          unidad.llenar.chip = datos.resultados;
+          unidad.ojo.addEventListener("click", function () {
+            abrir(unidad, "chip");
+          });
+          iconos.appendChild(unidad.ojo);
+        }
+        if (datos.pasos) {
+          unidad.lapiz = boton("lapiz", LAPIZ, PASO_A_PASO, datos.letra);
+          unidad.pasos = hueco("div", "sol-pasos");
+          unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
+          unidad.llenar.pasos = datos.pasos;
+          unidad.lapiz.addEventListener("click", function () {
+            abrir(unidad, "pasos");
+          });
+          iconos.appendChild(unidad.lapiz);
+        }
+        unidad.iconos = iconos;
+        unidades.push(unidad);
+        return unidad;
+      }
+      function sitioDeLosBotones(elemento) {
+        var hijos = hijosConContenido(elemento);
+        var ultimo = hijos[hijos.length - 1];
+        var destino = ultimo && ultimo.nodeType === 1 && ultimo.tagName === "P" ? ultimo : elemento;
+        var dentro = hijosConContenido(destino);
+        var final = dentro[dentro.length - 1];
+        if (final && final.nodeType === 1 && final.matches(".math.display, ol, ul, table, figure, div, p, blockquote")) {
+          var fila = document.createElement("div");
+          fila.className = "sol-fila";
+          elemento.appendChild(fila);
+          return fila;
+        }
+        return destino;
+      }
+      function ponerIconos(destino, unidad) {
+        if (!destino.classList.contains("sol-fila")) {
+          destino.appendChild(document.createTextNode(" "));
+        }
+        destino.appendChild(unidad.iconos);
+        if (unidad.chip && unidad.chip.tagName === "SPAN") {
+          destino.appendChild(unidad.chip);
+        }
+      }
+      function letraDelante(letra) {
+        var marca = document.createElement("span");
+        marca.className = "sol-letra";
+        marca.textContent = letra + ")";
+        return marca;
+      }
+      function llenarResultados(lista, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          var dentro = document.createElement("span");
+          dentro.innerHTML = unir(lista());
+          caja.appendChild(dentro);
+        };
+      }
+      function llenarPasos(copia, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          caja.appendChild(copia());
+        };
+      }
+
+      function porEjercicio(ejercicio, numero, solucion, partes, figuras) {
+        var conResultado = tieneResultado(solucion);
+        var unidad = prepararBotones({
+          resultados: conResultado
+            ? function (caja) {
+                if (partes) {
+                  partes.forEach(function (parte) {
+                    var lista = resultadosDeLaParte(parte);
+                    if (!lista.length) {
+                      return;
+                    }
+                    var linea = document.createElement("div");
+                    linea.className = "sol-linea";
+                    linea.appendChild(letraDelante(parte.letra));
+                    var dentro = document.createElement("span");
+                    dentro.innerHTML = unir(lista);
+                    linea.appendChild(dentro);
+                    caja.appendChild(linea);
+                  });
+                } else {
+                  var dentro = document.createElement("span");
+                  dentro.innerHTML = unir(resultadosDe(solucion));
+                  caja.appendChild(dentro);
+                }
+              }
+            : null,
+          chipEnBloque: Boolean(partes),
+          pasos: !conResultado || diceMasQueElResultado(solucion, formulasDe(ejercicio)) || figuras.length
+            ? function (caja) {
+                figuras.forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ejercicio";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+              }
+            : null
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (unidad.chip && unidad.chip.tagName === "DIV") {
+          ejercicio.appendChild(unidad.chip);
+        }
+        if (unidad.pasos) {
+          ejercicio.appendChild(unidad.pasos);
+        }
+      }
+      function datosDeLaParte(parte, letra, chipEnBloque, enunciado) {
+        return {
+          letra: letra,
+          chipEnBloque: chipEnBloque,
+          resultados: parteConResultado(parte)
+            ? llenarResultados(function () {
+                return resultadosDeLaParte(parte);
+              }, chipEnBloque ? letra : null)
+            : null,
+          pasos: parteConPasos(parte, enunciado) || !parteConResultado(parte)
+            ? llenarPasos(function () {
+                return copiaDe(parte);
+              }, chipEnBloque ? letra : null)
+            : null
+        };
+      }
+      function porApartadosEnLista(apartados, partes) {
+        apartados.elementos.forEach(function (li, lugar) {
+          var unidad = prepararBotones(
+            datosDeLaParte(partes[lugar], apartados.letras[lugar], false, formulasDe(li))
+          );
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          if (soloFormula(li)) {
+            li.classList.add("solo-formula-con-solucion");
+          }
+          ponerIconos(sitioDeLosBotones(li), unidad);
+          if (unidad.pasos) {
+            li.appendChild(unidad.pasos);
+          }
+        });
+      }
+      function porApartadosEnFila(ejercicio, partes) {
+        var fila = document.createElement("div");
+        fila.className = "sol-barra";
+        var abiertos = document.createElement("div");
+        abiertos.className = "sol-abiertos";
+        partes.forEach(function (parte) {
+          var unidad = prepararBotones(datosDeLaParte(parte, parte.letra, true));
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          var pareja = document.createElement("span");
+          pareja.className = "sol-apartado";
+          pareja.appendChild(letraDelante(parte.letra));
+          pareja.appendChild(unidad.iconos);
+          fila.appendChild(pareja);
+          if (unidad.chip) {
+            abiertos.appendChild(unidad.chip);
+          }
+          if (unidad.pasos) {
+            abiertos.appendChild(unidad.pasos);
+          }
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ejercicio.appendChild(fila);
+        ejercicio.appendChild(abiertos);
       }
 
       var repartos = [];
@@ -12201,43 +13166,20 @@ SM</em></p>
           Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
             var numero = suyos[primero + lugar];
             var solucion = reparto.soluciones.children[primero + lugar];
-            var caja = document.createElement("div");
-            caja.className = "solucion-ejercicio plegable esta-plegado";
-            caja.id = "solucion-ejercicio-" + (paneles.length + 1);
-            var boton = document.createElement("button");
-            boton.type = "button";
-            boton.className = "boton-ver-solucion";
-            boton.setAttribute("aria-expanded", "false");
-            boton.setAttribute("aria-controls", caja.id);
-            boton.innerHTML = OJO + '<span class="rotulo-ver-solucion"></span>' + FLECHA;
-            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-ver-solucion") };
-            panel.rotulo.textContent = VER;
-            paneles.push(panel);
-            boton.addEventListener("click", function () {
-              if (!caja.firstChild) {
-                (figuras[numero] || []).forEach(function (figura) {
-                  caja.appendChild(figura.cloneNode(true));
-                });
-                var lista = document.createElement("ol");
-                lista.className = "lista-solucion-ejercicio";
-                lista.setAttribute("start", String(numero));
-                lista.appendChild(solucion.cloneNode(true));
-                caja.appendChild(lista);
-              }
-              if (caja.classList.contains("esta-plegado")) {
-                caja.classList.remove("esta-plegado");
-                boton.setAttribute("aria-expanded", "true");
-                panel.rotulo.textContent = OCULTAR;
-                encogerCuentas(caja);
-              } else {
-                plegar(panel);
-              }
-            });
-            if (soloFormula(ejercicio)) {
-              ejercicio.classList.add("solo-formula-con-solucion");
+            var suyas = figuras[numero] || [];
+            var apartados = apartadosDelEnunciado(ejercicio);
+            var partes = apartados.forma === "ninguna" ? null : partesDeLaRespuesta(solucion);
+            var casan = Boolean(
+              partes &&
+                partes.map(function (parte) { return parte.letra; }).join() === apartados.letras.join()
+            );
+            if (casan && !suyas.length && apartados.forma === "lista") {
+              porApartadosEnLista(apartados, partes);
+            } else if (casan && !suyas.length) {
+              porApartadosEnFila(ejercicio, partes);
+            } else {
+              porEjercicio(ejercicio, numero, solucion, casan ? partes : null, suyas);
             }
-            ejercicio.appendChild(boton);
-            ejercicio.appendChild(caja);
           });
         });
 
@@ -12276,11 +13218,8 @@ SM</em></p>
         if (!document.documentElement.classList.contains("modo-clase")) {
           return;
         }
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild) {
-            plegar(panel);
-            panel.caja.textContent = "";
-          }
+        unidades.forEach(function (unidad) {
+          plegar(unidad, true);
         });
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
@@ -12821,7 +13760,7 @@ SM</em></p>
         });
         formulas
           .filter(function (formula) {
-            var caja = formula.closest("p, li, dd, dt, figcaption, div");
+            var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
             if (!caja || formula.closest("td, th")) {
               return false;
             }
