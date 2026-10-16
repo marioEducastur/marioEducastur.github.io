@@ -4491,71 +4491,177 @@
       grid-template-columns: 1fr;
     }
 
-    .boton-ver-solucion {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      width: fit-content;
-      min-height: 0;
-      margin: 0.75rem 0 0;
-      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
-      color: var(--verde);
-      background: #ffffff;
-      border: 1.5px solid rgb(4 120 87 / 0.38);
-      border-radius: 999px;
-      box-shadow: none;
-      font-size: 0.84rem;
-      font-weight: 750;
-      line-height: 1.2;
+    .sol-iconos {
+      display: inline-flex;
+      gap: 0.4rem;
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      white-space: nowrap;
     }
 
-    .boton-ver-solucion svg {
+    .sol-ico {
+      display: inline-grid;
+      place-items: center;
       flex: none;
-      width: 1.05em;
-      height: 1.05em;
+      width: 2.1rem;
+      height: 2.1rem;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: none;
+      cursor: pointer;
+      transform: none;
     }
 
-    .boton-ver-solucion .flecha-ver-solucion {
-      transition: transform 160ms ease;
+    .sol-ico svg {
+      width: 1.15rem;
+      height: 1.15rem;
     }
 
-    .boton-ver-solucion[aria-expanded="true"] {
+    .sol-ico.ojo {
+      color: var(--verde);
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+    }
+
+    .sol-ico.lapiz {
+      color: var(--acento);
+      border: 1.5px solid rgb(29 78 216 / 0.32);
+    }
+
+    .sol-ico.ojo[aria-expanded="true"] {
       background: var(--verde-suave);
       border-color: var(--verde);
     }
 
-    .boton-ver-solucion[aria-expanded="true"] .flecha-ver-solucion {
-      transform: rotate(180deg);
+    .sol-ico.lapiz[aria-expanded="true"] {
+      background: var(--acento-suave);
+      border-color: var(--acento);
     }
 
-    .boton-ver-solucion:focus-visible {
-      color: #ffffff;
-      background: var(--verde);
-      border-color: var(--verde);
-      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+    .sol-ico:focus-visible {
+      outline: 3px solid rgb(29 78 216 / 0.35);
+      outline-offset: 1px;
       transform: none;
     }
 
     @media (hover: hover) {
-      .boton-ver-solucion:hover {
-        color: #ffffff;
-        background: var(--verde);
+      .sol-ico.ojo:hover {
+        background: var(--verde-suave);
         border-color: var(--verde);
+      }
+
+      .sol-ico.lapiz:hover {
+        background: var(--acento-suave);
+        border-color: var(--acento);
       }
     }
 
-    .solucion-ejercicio {
-      margin: 0.65rem 0 0.15rem;
-      padding: 0.85rem 1rem 0.9rem;
+    .sol-chip {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0.15rem 0 0.15rem 0.55rem;
+      padding: 0.12em 0.6em 0.16em;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.35);
+      border-radius: 0.65em;
+      vertical-align: middle;
+      white-space: normal;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .sol-chip .katex-html,
+    .sol-resultado .katex-html {
+      white-space: nowrap;
+    }
+
+    .sol-resultado {
+      margin: 0.55rem 0 0.2rem;
+      padding: 0.5rem 0.95rem 0.55rem;
       background: var(--verde-suave);
       border: 1px solid rgb(4 120 87 / 0.18);
       border-left: 0.3rem solid var(--verde);
       border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      overflow-x: auto;
+    }
+
+    .sol-linea + .sol-linea {
+      margin-top: 0.3rem;
+    }
+
+    .sol-pasos {
+      margin: 0.5rem 0 0.6rem;
+      padding: 0.55rem 0.95rem 0.6rem;
+      background: var(--acento-suave);
+      border: 1px solid rgb(29 78 216 / 0.16);
+      border-left: 0.3rem solid var(--acento);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
       animation: entrar-detalle 260ms ease-out;
     }
 
-    .solucion-ejercicio.esta-plegado {
+    .sol-pasos > :first-child,
+    .sol-pasos > .sol-letra + * {
+      margin-top: 0;
+    }
+
+    .sol-pasos > :last-child {
+      margin-bottom: 0;
+    }
+
+    .sol-pasos .math.inline.desliza {
+      display: inline-block;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      vertical-align: middle;
+    }
+
+    .sol-pasos .math.display {
+      margin: 0.5rem 0;
+      padding: 0.5rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    .sol-letra {
+      margin-right: 0.45em;
+      color: var(--texto-suave);
+      font-weight: 650;
+    }
+
+    .sol-pasos > .sol-letra {
+      display: block;
+      margin: 0 0 0.25rem;
+    }
+
+    .sol-chip.esta-plegado,
+    .sol-resultado.esta-plegado,
+    .sol-pasos.esta-plegado {
       display: none;
+    }
+
+    .sol-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.2rem;
+      margin: 0.75rem 0 0;
+    }
+
+    .sol-apartado {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .sol-apartado .sol-iconos,
+    .sol-fila > .sol-iconos {
+      margin-left: 0;
+    }
+
+    .sol-fila {
+      margin: 0.6rem 0 0;
     }
 
     section.ejercicios ol.lista-solucion-ejercicio {
@@ -4569,16 +4675,28 @@
       padding: 0;
     }
 
-    .solucion-ejercicio > figure {
+    .sol-pasos > figure {
       margin: 0 0 0.7rem;
     }
 
-    .solucion-ejercicio .math.display {
-      margin: 0.6rem 0;
-      padding: 0.55rem 0.85rem;
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
       background: #ffffff;
-      border: 1px solid var(--borde);
-      border-radius: 0.65rem;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
     }
 
     #contenido-unidad li.solo-formula-con-solucion > .math.display:first-child {
@@ -4595,42 +4713,53 @@
         display: none !important;
       }
 
-      html.modo-clase .boton-ver-solucion,
-      html.modo-clase .solucion-ejercicio {
+      html.modo-clase .sol-iconos,
+      html.modo-clase .sol-fila,
+      html.modo-clase .sol-chip,
+      html.modo-clase .sol-barra,
+      html.modo-clase .sol-abiertos,
+      html.modo-clase .sol-resultado,
+      html.modo-clase .sol-pasos {
         display: none !important;
       }
     }
 
     @media print {
-      .boton-ver-solucion,
-      .solucion-ejercicio {
+      .sol-iconos,
+      .sol-fila,
+      .sol-chip,
+      .sol-barra,
+      .sol-abiertos,
+      .sol-resultado,
+      .sol-pasos {
         display: none !important;
       }
     }
 
     @media screen and (max-width: 42rem) {
-      .solucion-ejercicio {
+      .sol-pasos,
+      .sol-resultado {
         margin-inline: -0.45rem;
         padding: 0.65rem 0.55rem 0.7rem 0.6rem;
       }
 
-      .solucion-ejercicio ol[type="a"],
-      .solucion-ejercicio ul {
+      ol[type="a"] > li > .sol-pasos {
+        margin-left: calc(-40px - 0.45rem);
+      }
+
+      .sol-pasos ol[type="a"],
+      .sol-pasos ul {
         padding-left: 1.35rem;
       }
 
-      .solucion-ejercicio .math.display {
+      .sol-pasos .math.display {
         padding: 0.5rem 0.45rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .solucion-ejercicio {
+      .sol-pasos {
         animation: none;
-      }
-
-      .boton-ver-solucion .flecha-ver-solucion {
-        transition: none;
       }
     }
 
@@ -5760,10 +5889,10 @@ Bachillerato</p>
                 <ol type="1">
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(x^2+6x+9-\left(x^2-1\right)=6x+10\)</span>:</span>
+                class="math inline">\(x^2+6x+9-\left(x^2-1\right)=\boxed{6x+10}\)</span>:</span>
                 el paréntesis cambia el signo de todo el producto.</li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(6x^3-9x^2=3x^2(2x-3)\)</span>.</span></li>
+                class="math inline">\(6x^3-9x^2=\boxed{3x^2(2x-3)}\)</span>.</span></li>
                 </ol></li>
                 <li><ol type="a">
                 <li>Con <span class="math inline">\(a=2\)</span> y
@@ -5780,57 +5909,59 @@ Bachillerato</p>
                 class="math inline">\(4\)</span>,</span> <span
                 class="math inline">\(3\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(0\)</span>:</span> cociente <span
-                class="math inline">\(x^2+4x+3\)</span> y resto <span
-                class="formula-con-signo"><span
-                class="math inline">\(0\)</span>.</span></li>
+                class="math inline">\(0\)</span>:</span> <span
+                class="final-con-signo"><span class="final">cociente
+                <span class="math inline">\(x^2+4x+3\)</span> y resto
+                <span
+                class="math inline">\(0\)</span></span>.</span></li>
                 <li>Como <span class="formula-con-signo"><span
                 class="math inline">\(x^2+4x+3=(x+1)(x+3)\)</span>,</span>
                 queda <span class="formula-con-signo"><span
-                class="math inline">\(P(x)=(x-2)(x+1)(x+3)\)</span>.</span></li>
+                class="math inline">\(\boxed{P(x)=(x-2)(x+1)(x+3)}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(x+3)(x-3)}{x(x+3)}=\frac{x-3}{x}\)</span>,</span>
+                class="math inline">\(\frac{(x+3)(x-3)}{x(x+3)}=\boxed{\frac{x-3}{x}}\)</span>,</span>
                 con <span class="math inline">\(x\neq0\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\neq-3\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(x=\frac{7\pm\sqrt{49-40}}{2}=\frac{7\pm3}{2}\)</span>:</span>
-                soluciones <span class="math inline">\(5\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(2\)</span>.</span></li>
+                soluciones <span
+                class="math inline">\(\boxed{5}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{2}\)</span>.</span></li>
                 <li><ol type="a">
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\log2+\log50=\log100=2\)</span>:</span>
+                class="math inline">\(\log2+\log50=\log100=\boxed{2}\)</span>:</span>
                 la suma de logaritmos es el logaritmo del producto.</li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(32=2^5\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=5\)</span>.</span></li>
+                class="math inline">\(\boxed{x=5}\)</span>.</span></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(x+x^2=42\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\(x^2+x-42=(x-6)(x+7)=0\)</span>:</span>
-                el número es <span class="math inline">\(6\)</span> o
+                <span class="final-con-signo"><span class="final">el
+                número es <span class="math inline">\(6\)</span> o <span
+                class="math inline">\(-7\)</span></span>.</span> Los dos
+                valen: <span class="math inline">\(6+36=42\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(-7\)</span>.</span> Los dos valen:
-                <span class="math inline">\(6+36=42\)</span> y <span
-                class="formula-con-signo"><span
                 class="math inline">\(-7+49=42\)</span>.</span></li>
                 <li>Sumando las dos ecuaciones, <span
                 class="formula-con-signo"><span
                 class="math inline">\(5x=15\)</span>:</span> <span
-                class="math inline">\(x=3\)</span> e <span
+                class="math inline">\(\boxed{x=3}\)</span> e <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=1\)</span>.</span></li>
+                class="math inline">\(\boxed{y=1}\)</span>.</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(3x&lt;12\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\(x&lt;4\)</span>:</span> el
                 intervalo <span class="formula-con-signo"><span
-                class="math inline">\((-\infty,4)\)</span>,</span> sin
-                el extremo, porque la desigualdad es estricta.</li>
+                class="math inline">\(\boxed{(-\infty,4)}\)</span>,</span>
+                sin el extremo, porque la desigualdad es estricta.</li>
                 </ol>
                 </div>
                 <p>Si has dudado en las cuestiones 1 y 2, presta
@@ -6042,41 +6173,46 @@ Bachillerato</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
-                <li><p>Son polinomios a), de grado 3, con coeficiente
-                principal <span class="math inline">\(-2\)</span> y
-                término independiente <span
-                class="formula-con-signo"><span
+                <li><p><span class="final-con-signo"><span
+                class="final">Son polinomios a), de grado 3, con
+                coeficiente principal <span
+                class="math inline">\(-2\)</span> y término
+                independiente <span class="formula-con-signo"><span
                 class="math inline">\(-4\)</span>,</span> y c), de grado
                 4, con coeficiente principal <span
                 class="math inline">\(\frac13\)</span> y término
-                independiente <span class="formula-con-signo"><span
-                class="math inline">\(0\)</span>.</span> No lo son b),
-                porque <span
+                independiente <span
+                class="math inline">\(0\)</span></span>.</span> <span
+                class="final-con-signo"><span class="final">No lo son
+                b), porque <span
                 class="math inline">\(\frac{2}{x}+1=2x^{-1}+1\)</span>
                 tiene exponente negativo, ni d), porque <span
                 class="math inline">\(2\sqrt{x}=2x^{1/2}\)</span> lo
-                tiene fraccionario.</p></li>
+                tiene fraccionario</span>.</span></p></li>
                 <li><ol type="a">
-                <li><p>Caben <span class="math inline">\(10\)</span> y
-                <span class="math inline">\(12\)</span> personas: cada
-                mesa nueva añade dos sitios.</p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Caben <span
+                class="math inline">\(10\)</span> y <span
+                class="math inline">\(12\)</span>
+                personas</span>:</span> cada mesa nueva añade dos
+                sitios.</p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(S(n)=2n+2\)</span>:</span> dos
-                personas por mesa, una a cada lado, más las dos de las
-                cabeceras.</p></li>
+                class="math inline">\(\boxed{S(n)=2n+2}\)</span>:</span>
+                dos personas por mesa, una a cada lado, más las dos de
+                las cabeceras.</p></li>
                 <li><p><span class="math inline">\(2n+2=30\)</span> da
-                <span class="math inline">\(n=14\)</span>
+                <span class="math inline">\(\boxed{n=14}\)</span>
                 mesas.</p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(2)=8-8+5=5\)</span>.</span></p></li>
+                class="math inline">\(P(2)=8-8+5=\boxed{5}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(-1)=-1-2+5=2\)</span>.</span></p></li>
+                class="math inline">\(P(-1)=-1-2+5=\boxed{2}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(0)=5\)</span>:</span> el valor
-                en <span class="math inline">\(0\)</span> es siempre el
-                término independiente.</p></li>
+                class="math inline">\(P(0)=\boxed{5}\)</span>:</span> el
+                valor en <span class="math inline">\(0\)</span> es
+                siempre el término independiente.</p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -6416,9 +6552,9 @@ Bachillerato</p>
                 <ol start="4" type="1">
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(x)+Q(x)=2x^3+x^2-4x+4\)</span>.</span></p></li>
+                class="math inline">\(P(x)+Q(x)=\boxed{2x^3+x^2-4x+4}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(x)-2Q(x)=2x^3-2x^2+5x+4\)</span>.</span></p></li>
+                class="math inline">\(P(x)-2Q(x)=\boxed{2x^3-2x^2+5x+4}\)</span>.</span></p></li>
                 <li><p>Cada término de <span
                 class="math inline">\(P\)</span> por cada término de
                 <span class="formula-con-signo"><span
@@ -6427,21 +6563,21 @@ Bachillerato</p>
                 \begin{aligned}
                 &amp;P(x)\cdot Q(x)\\
                 ={}&amp;2x^5-6x^4-x^3+3x^2+4x^2-12x\\
-                ={}&amp;2x^5-6x^4-x^3+7x^2-12x
+                ={}&amp;\boxed{2x^5-6x^4-x^3+7x^2-12x}
                 \end{aligned}
                 \]</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(-2)=-16+2+4=-10\)</span>.</span></p></li>
+                class="math inline">\(P(-2)=-16+2+4=\boxed{-10}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\((2x+5)^2=4x^2+20x+25\)</span>.</span></p></li>
+                class="math inline">\((2x+5)^2=\boxed{4x^2+20x+25}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\((4x-3)(4x+3)=16x^2-9\)</span>.</span></p></li>
+                class="math inline">\((4x-3)(4x+3)=\boxed{16x^2-9}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\((3x-2)^2=9x^2-12x+4\)</span>.</span></p></li>
+                class="math inline">\((3x-2)^2=\boxed{9x^2-12x+4}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(x^2+8x+16-\left(x^2-8x+16\right)=16x\)</span>.</span></p></li>
+                class="math inline">\(x^2+8x+16-\left(x^2-8x+16\right)=\boxed{16x}\)</span>.</span></p></li>
                 </ol></li>
                 <li><p>Con <span class="math inline">\(a=1\)</span> y
                 coeficientes <span class="formula-con-signo"><span
@@ -6449,10 +6585,11 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> <span
                 class="math inline">\(-13\)</span> y <span
-                class="math inline">\(6\)</span> se obtiene cociente
+                class="math inline">\(6\)</span> se obtiene <span
+                class="final-con-signo"><span class="final">cociente
                 <span class="math inline">\(2x^2+3x-10\)</span> y resto
-                <span class="formula-con-signo"><span
-                class="math inline">\(-4\)</span>:</span></p>
+                <span
+                class="math inline">\(-4\)</span></span>:</span></p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 &amp;2x^3+x^2-13x+6\\
@@ -6482,13 +6619,15 @@ Bachillerato</p>
                 class="math inline">\(1\)</span>,</span> <span
                 class="math inline">\(0\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-5\)</span>:</span> cociente <span
-                class="math inline">\(x^3-2x^2+x\)</span> y resto <span
+                class="math inline">\(-5\)</span>:</span> <span
+                class="final-con-signo"><span class="final">cociente
+                <span class="math inline">\(x^3-2x^2+x\)</span> y resto
+                <span
+                class="math inline">\(-5\)</span></span>.</span></p></li>
+                <li><p><span
+                class="math inline">\(\boxed{C(x)=x+2}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-5\)</span>.</span></p></li>
-                <li><p><span class="math inline">\(C(x)=x+2\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(R(x)=-2x+1\)</span>.</span>
+                class="math inline">\(\boxed{R(x)=-2x+1}\)</span>.</span>
                 Comprobación:</p>
                 <p><span class="math display">\[
                 \begin{aligned}
@@ -6501,7 +6640,7 @@ Bachillerato</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 D(x)&amp;=\left(x^2+2\right)(3x-1)+x+5\\
-                &amp;=3x^3-x^2+7x+3
+                &amp;=\boxed{3x^3-x^2+7x+3}
                 \end{aligned}
                 \]</span></p></li>
                 </ol>
@@ -6926,21 +7065,25 @@ Bachillerato</p>
                 <ol start="10" type="1">
                 <li><ol type="a">
                 <li><p>El resto es <span class="formula-con-signo"><span
-                class="math inline">\(P(2)=8-12+4-7=-7\)</span>.</span></p></li>
+                class="math inline">\(P(2)=8-12+4-7=\boxed{-7}\)</span>.</span></p></li>
                 <li><p>Como no es cero, <span
+                class="final-con-signo"><span class="final"><span
                 class="math inline">\(x-2\)</span> no es un
-                factor.</p></li>
+                factor</span>.</span></p></li>
                 </ol></li>
                 <li><p>Debe ser <span class="formula-con-signo"><span
                 class="math inline">\(P(2)=8+2k-6=0\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
-                class="math inline">\(k=-1\)</span>.</span></p></li>
+                class="math inline">\(\boxed{k=-1}\)</span>.</span></p></li>
                 <li><ol type="a">
-                <li><p>No: una raíz entera divide al término
-                independiente, y <span class="math inline">\(6\)</span>
-                no divide a <span class="formula-con-signo"><span
+                <li><p><span class="final-con-signo"><span
+                class="final">No</span>:</span> una raíz entera divide
+                al término independiente, y <span
+                class="math inline">\(6\)</span> no divide a <span
+                class="formula-con-signo"><span
                 class="math inline">\(10\)</span>.</span></p></li>
-                <li><p>Tampoco, aunque <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Tampoco</span>,</span> aunque <span
                 class="math inline">\(-2\)</span> sí sea divisor de
                 <span class="formula-con-signo"><span
                 class="math inline">\(10\)</span>:</span> <span
@@ -6950,44 +7093,50 @@ Bachillerato</p>
                 no basta: hay que comprobarlo.</p></li>
                 </ol></li>
                 <li><ol type="a">
-                <li><p><strong>Verdadera.</strong> En <span
+                <li><p><strong><span class="final-con-signo"><span
+                class="final">Verdadera</span>.</span></strong> En <span
                 class="math inline">\(x=2\)</span> vale <span
                 class="formula-con-signo"><span
                 class="math inline">\(8-12+4=0\)</span>,</span> y por el
                 teorema del factor <span
                 class="math inline">\(x-2\)</span> lo divide.</p></li>
-                <li><p><strong>Falsa.</strong> <span
+                <li><p><strong><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span></strong> <span
                 class="math inline">\(x^3+2x=x\left(x^2+2\right)\)</span>
                 y <span class="math inline">\(x^2+2\geq2\)</span> no se
                 anula nunca: la única raíz real es <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=0\)</span>.</span></p></li>
-                <li><p><strong>Falsa.</strong> Por el teorema del resto,
-                el resto es <span class="formula-con-signo"><span
+                <li><p><strong><span class="final-con-signo"><span
+                class="final">Falsa</span>.</span></strong> Por el
+                teorema del resto, el resto es <span
+                class="formula-con-signo"><span
                 class="math inline">\((-1)^5-2\cdot(-1)+3=4\)</span>,</span>
                 no <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>.</span></p></li>
                 </ol></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(x)=2(x+2)(x-1)(x-3)\)</span>.</span>
+                class="math inline">\(\boxed{P(x)=2(x+2)(x-1)(x-3)}\)</span>.</span>
                 Desarrollado, <span class="formula-con-signo"><span
-                class="math inline">\(P(x)=2x^3-4x^2-10x+12\)</span>;</span>
+                class="math inline">\(\boxed{P(x)=2x^3-4x^2-10x+12}\)</span>;</span>
                 las dos formas valen.</p></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(3x^3-12x=3x\left(x^2-4\right)=3x(x-2)(x+2)\)</span>;</span>
-                raíces <span class="formula-con-signo"><span
+                class="math inline">\(3x^3-12x=3x\left(x^2-4\right)=\boxed{3x(x-2)(x+2)}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">raíces
+                <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>,</span> <span
                 class="math inline">\(2\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span>
-                simples.</p></li>
+                simples</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(x^3+8x^2+16x=x\left(x^2+8x+16\right)=x(x+4)^2\)</span>;</span>
-                la raíz <span class="math inline">\(0\)</span> es simple
-                y la raíz <span class="formula-con-signo"><span
+                class="math inline">\(x^3+8x^2+16x=x\left(x^2+8x+16\right)=\boxed{x(x+4)^2}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">la
+                raíz <span class="math inline">\(0\)</span> es simple y
+                la raíz <span class="formula-con-signo"><span
                 class="math inline">\(-4\)</span>,</span>
-                doble.</p></li>
+                doble</span>.</span></p></li>
                 <li><p>Probando divisores de <span
                 class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span> <span
@@ -6997,57 +7146,60 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+3x+2=(x+1)(x+2)\)</span>.</span>
                 Así, <span class="formula-con-signo"><span
-                class="math inline">\(x^3+2x^2-x-2=(x-1)(x+1)(x+2)\)</span>;</span>
-                raíces <span class="formula-con-signo"><span
+                class="math inline">\(x^3+2x^2-x-2=\boxed{(x-1)(x+1)(x+2)}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">raíces
+                <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> <span
                 class="math inline">\(-1\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span>
-                simples.</p></li>
+                simples</span>.</span></p></li>
                 <li><p>La fórmula da <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=\frac{7\pm5}{4}\)</span>,</span>
-                es decir, <span class="math inline">\(3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac12\)</span>:</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(2x^2-7x+3=2(x-3)\left(x-\frac12\right)=(x-3)(2x-1)\)</span>;</span>
-                las dos raíces son simples.</p></li>
+                es decir, <span class="math inline">\(\boxed{3}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac12}\)</span>:</span>
+                <span class="formula-con-signo"><span
+                class="math inline">\(2x^2-7x+3=2(x-3)\left(x-\frac12\right)=\boxed{(x-3)(2x-1)}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">las
+                dos raíces son simples</span>.</span></p></li>
                 <li><p><span class="math inline">\(x=2\)</span> anula el
                 polinomio; al dividir entre <span
                 class="math inline">\(x-2\)</span> queda <span
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+x-6=(x-2)(x+3)\)</span>.</span>
                 Así, <span class="formula-con-signo"><span
-                class="math inline">\(x^3-x^2-8x+12=(x-2)^2(x+3)\)</span>;</span>
-                la raíz <span class="math inline">\(2\)</span> es doble
-                y la raíz <span class="formula-con-signo"><span
+                class="math inline">\(x^3-x^2-8x+12=\boxed{(x-2)^2(x+3)}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">la
+                raíz <span class="math inline">\(2\)</span> es doble y
+                la raíz <span class="formula-con-signo"><span
                 class="math inline">\(-3\)</span>,</span>
-                simple.</p></li>
+                simple</span>.</span></p></li>
                 <li><p><span class="math inline">\(x=2\)</span> anula el
                 polinomio; al dividir entre <span
                 class="math inline">\(x-2\)</span> queda <span
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+9\)</span>,</span> que es
                 irreducible. Así, <span class="formula-con-signo"><span
-                class="math inline">\(x^3-2x^2+9x-18=(x-2)\left(x^2+9\right)\)</span>;</span>
-                la única raíz real es <span
-                class="formula-con-signo"><span
+                class="math inline">\(x^3-2x^2+9x-18=\boxed{(x-2)\left(x^2+9\right)}\)</span>;</span>
+                <span class="final-con-signo"><span class="final">la
+                única raíz real es <span class="formula-con-signo"><span
                 class="math inline">\(2\)</span>,</span>
-                simple.</p></li>
+                simple</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Debe ser <span class="formula-con-signo"><span
                 class="math inline">\(P(-2)=-8+4k+8-4=0\)</span>,</span>
                 así que <span class="formula-con-signo"><span
-                class="math inline">\(k=1\)</span>.</span></p></li>
+                class="math inline">\(\boxed{k=1}\)</span>.</span></p></li>
                 <li><p>Dividiendo <span
                 class="math inline">\(x^3+x^2-4x-4\)</span> entre <span
                 class="math inline">\(x+2\)</span> queda el cociente
                 <span class="formula-con-signo"><span
                 class="math inline">\(x^2-x-2=(x-2)(x+1)\)</span>.</span>
                 Por tanto, <span class="formula-con-signo"><span
-                class="math inline">\(P(x)=(x+2)(x-2)(x+1)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{P(x)=(x+2)(x-2)(x+1)}\)</span>.</span></p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -7258,28 +7410,34 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="17" type="1">
                 <li><ol type="a">
-                <li><p><span class="math inline">\(x\neq4\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(x\neq-4\)</span>.</span></p></li>
-                <li><p>Sin restricciones, porque <span
-                class="math inline">\(x^2+6\)</span> nunca se
+                <li><p><span
+                class="math inline">\(\boxed{x\neq4}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq-4}\)</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Sin restricciones</span>,</span> porque
+                <span class="math inline">\(x^2+6\)</span> nunca se
                 anula.</p></li>
-                <li><p><span class="math inline">\(x\neq0\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(x\neq7\)</span>,</span> porque
-                <span class="formula-con-signo"><span
+                <li><p><span
+                class="math inline">\(\boxed{x\neq0}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq7}\)</span>,</span>
+                porque <span class="formula-con-signo"><span
                 class="math inline">\(x^2-7x=x(x-7)\)</span>.</span></p></li>
                 </ol></li>
-                <li><p>Se han cancelado <strong>sumandos</strong>: el
-                <span class="math inline">\(x^2\)</span> del numerador
-                con el <span class="math inline">\(x^2\)</span> del
+                <li><p><span class="final-con-signo"><span
+                class="final">Se han cancelado
+                <strong>sumandos</strong></span>:</span> el <span
+                class="math inline">\(x^2\)</span> del numerador con el
+                <span class="math inline">\(x^2\)</span> del
                 denominador, que no son factores ni del uno ni del otro.
-                Con <span class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final">Con
+                <span class="formula-con-signo"><span
                 class="math inline">\(x=1\)</span>,</span> la fracción
                 original vale <span
                 class="math inline">\(\frac{6}{2}=3\)</span> y la
-                «simplificada», <span class="formula-con-signo"><span
-                class="math inline">\(\frac{5}{1}=5\)</span>.</span>
+                «simplificada», <span
+                class="math inline">\(\frac{5}{1}=5\)</span></span>.</span>
                 Factorizada, la fracción es <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{x^2+5}{x(x+1)}\)</span>,</span>
@@ -7288,23 +7446,23 @@ Bachillerato</p>
                 simplificar.</p></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(x+2)(x-2)}{(x-2)^2}=\frac{x+2}{x-2}\)</span>,</span>
+                class="math inline">\(\frac{(x+2)(x-2)}{(x-2)^2}=\boxed{\frac{x+2}{x-2}}\)</span>,</span>
                 con <span class="formula-con-signo"><span
-                class="math inline">\(x\neq2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x\neq2}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{x^2(x+2)}{(x+2)^2}=\frac{x^2}{x+2}\)</span>,</span>
+                class="math inline">\(\frac{x^2(x+2)}{(x+2)^2}=\boxed{\frac{x^2}{x+2}}\)</span>,</span>
                 con <span class="formula-con-signo"><span
-                class="math inline">\(x\neq-2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x\neq-2}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(x-2)(x-3)}{(x-3)(x+3)}=\frac{x-2}{x+3}\)</span>,</span>
-                con <span class="math inline">\(x\neq3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\neq-3\)</span>.</span></p></li>
+                class="math inline">\(\frac{(x-2)(x-3)}{(x-3)(x+3)}=\boxed{\frac{x-2}{x+3}}\)</span>,</span>
+                con <span class="math inline">\(\boxed{x\neq3}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq-3}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{2(x+2)(x-2)}{x(x+2)}=\frac{2(x-2)}{x}\)</span>,</span>
-                con <span class="math inline">\(x\neq0\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\neq-2\)</span>.</span></p></li>
+                class="math inline">\(\frac{2(x+2)(x-2)}{x(x+2)}=\boxed{\frac{2(x-2)}{x}}\)</span>,</span>
+                con <span class="math inline">\(\boxed{x\neq0}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq-2}\)</span>.</span></p></li>
                 </ol></li>
                 <li><p>Se factoriza el denominador pedido: <span
                 class="formula-con-signo"><span
@@ -7314,7 +7472,7 @@ Bachillerato</p>
                 class="math inline">\(x+7\)</span>,</span> así que se
                 multiplican por él el numerador y el denominador: <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{4}{x-7}=\frac{4(x+7)}{(x-7)(x+7)}=\frac{4x+28}{x^2-49}\)</span>.</span></p></li>
+                class="math inline">\(\frac{4}{x-7}=\frac{4(x+7)}{(x-7)(x+7)}=\boxed{\frac{4x+28}{x^2-49}}\)</span>.</span></p></li>
                 </ol>
                 </div>
                 </section>
@@ -7420,23 +7578,26 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="21" type="1">
                 <li><ol type="a">
-                <li><p>Cada acertante recibe <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Cada acertante recibe <span
                 class="math inline">\(\frac{600}{x}\)</span>
-                euros.</p></li>
-                <li><p>Con cinco acertantes más, <span
+                euros</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Con cinco acertantes más, <span
                 class="math inline">\(\frac{600}{x+5}\)</span>
-                euros.</p></li>
+                euros</span>.</span></p></li>
                 <li><p>La diferencia es</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 \frac{600}{x}-\frac{600}{x+5}&amp;=\frac{600(x+5)-600x}{x(x+5)}\\[6pt]
-                &amp;=\frac{3000}{x(x+5)}
+                &amp;=\boxed{\frac{3000}{x(x+5)}}
                 \end{aligned}
                 \]</span></p>
-                <p>que para <span class="math inline">\(x=20\)</span>
-                vale <span
+                <p>que <span class="final-con-signo"><span
+                class="final">para <span
+                class="math inline">\(x=20\)</span> vale <span
                 class="math inline">\(\frac{3000}{20\cdot25}=6\)</span>
-                euros: cada uno de los <span
+                euros</span>:</span> cada uno de los <span
                 class="math inline">\(20\)</span> acertantes cobraría
                 <span class="formula-con-signo"><span
                 class="math inline">\(6\)</span> €</span>
@@ -7447,11 +7608,11 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(x^2\)</span>:</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(\frac{3x}{x^2}+\frac{2}{x^2}=\frac{3x+2}{x^2}\)</span>,</span>
+                class="math inline">\(\frac{3x}{x^2}+\frac{2}{x^2}=\boxed{\frac{3x+2}{x^2}}\)</span>,</span>
                 con <span class="formula-con-signo"><span
                 class="math inline">\(x\neq0\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{2(x+1)+3(x-1)}{(x-1)(x+1)}=\frac{5x-1}{(x-1)(x+1)}\)</span>,</span>
+                class="math inline">\(\frac{2(x+1)+3(x-1)}{(x-1)(x+1)}=\boxed{\frac{5x-1}{(x-1)(x+1)}}\)</span>,</span>
                 con <span class="formula-con-signo"><span
                 class="math inline">\(x\neq\pm1\)</span>.</span></p></li>
                 <li><p>Con el signo repartido a todo el segundo
@@ -7460,7 +7621,7 @@ Bachillerato</p>
                 \begin{aligned}
                 &amp;\frac{x^2-(x-1)(x+3)}{x(x+3)}\\[6pt]
                 ={}&amp;\frac{x^2-\left(x^2+2x-3\right)}{x(x+3)}\\[6pt]
-                ={}&amp;\frac{3-2x}{x(x+3)}
+                ={}&amp;\boxed{\frac{3-2x}{x(x+3)}}
                 \end{aligned}
                 \]</span></p>
                 <p>con <span class="math inline">\(x\neq0\)</span> y
@@ -7473,7 +7634,7 @@ Bachillerato</p>
                 <p><span class="math display">\[
                 \begin{aligned}
                 \frac{x+3-6}{(x-3)(x+3)}&amp;=\frac{x-3}{(x-3)(x+3)}\\[6pt]
-                &amp;=\frac{1}{x+3}
+                &amp;=\boxed{\frac{1}{x+3}}
                 \end{aligned}
                 \]</span></p>
                 <p>con <span class="math inline">\(x\neq3\)</span> y
@@ -7551,12 +7712,12 @@ Bachillerato</p>
                 <ol start="23" type="1">
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(2x+3)(2x-3)\cdot6x^2}{3x\,(2x+3)}=2x(2x-3)\)</span>,</span>
+                class="math inline">\(\frac{(2x+3)(2x-3)\cdot6x^2}{3x\,(2x+3)}=\boxed{2x(2x-3)}\)</span>,</span>
                 con <span class="math inline">\(x\neq0\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\neq-\frac32\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{x(x-1)}{x+2}\cdot\frac{x(x+2)}{x-1}=x^2\)</span>,</span>
+                class="math inline">\(\frac{x(x-1)}{x+2}\cdot\frac{x(x+2)}{x-1}=\boxed{x^2}\)</span>,</span>
                 con <span class="formula-con-signo"><span
                 class="math inline">\(x\neq-2\)</span>,</span> <span
                 class="math inline">\(x\neq0\)</span> y <span
@@ -7564,12 +7725,12 @@ Bachillerato</p>
                 class="math inline">\(x\neq1\)</span>.</span></p></li>
                 </ol></li>
                 <li><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(x+4)(x-4)}{x(x+4)}\cdot\frac{2x}{x-4}=2\)</span>,</span>
+                class="math inline">\(\frac{(x+4)(x-4)}{x(x+4)}\cdot\frac{2x}{x-4}=\boxed{2}\)</span>,</span>
                 con <span class="formula-con-signo"><span
-                class="math inline">\(x\neq0\)</span>,</span> <span
-                class="math inline">\(x\neq-4\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\neq4\)</span>:</span> la
+                class="math inline">\(\boxed{x\neq0}\)</span>,</span>
+                <span class="math inline">\(\boxed{x\neq-4}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq4}\)</span>:</span> la
                 expresión vale <span class="math inline">\(2\)</span>
                 siempre que existe.</li>
                 </ol>
@@ -8041,43 +8202,50 @@ Bachillerato</p>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x=\frac{5\pm\sqrt{25+24}}{4}=\frac{5\pm7}{4}\)</span>:</span>
-                soluciones <span class="math inline">\(3\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(-\frac12\)</span>.</span></p></li>
+                soluciones <span
+                class="math inline">\(\boxed{3}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{-\frac12}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(3x^2-12x=3x(x-4)=0\)</span>:</span>
-                soluciones <span class="math inline">\(0\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(4\)</span>.</span> Dividir entre
-                <span class="math inline">\(x\)</span> habría perdido la
-                solución <span class="formula-con-signo"><span
+                soluciones <span
+                class="math inline">\(\boxed{0}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{4}\)</span>.</span> Dividir
+                entre <span class="math inline">\(x\)</span> habría
+                perdido la solución <span
+                class="formula-con-signo"><span
                 class="math inline">\(x=0\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x-6=\pm2\)</span>:</span>
-                soluciones <span class="math inline">\(8\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(4\)</span>.</span></p></li>
+                soluciones <span
+                class="math inline">\(\boxed{8}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{4}\)</span>.</span></p></li>
                 <li><p>Desarrollando: <span
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+3x-10=8\iff
                 x^2+3x-18=0\)</span>:</span> soluciones <span
-                class="math inline">\(3\)</span> y <span
+                class="math inline">\(\boxed{3}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-6\)</span>.</span> No es válido
-                igualar cada factor a <span
+                class="math inline">\(\boxed{-6}\)</span>.</span> No es
+                válido igualar cada factor a <span
                 class="formula-con-signo"><span
                 class="math inline">\(8\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(\Delta=16-16=0\)</span>:</span>
-                una solución doble.</p></li>
+                <span class="final-con-signo"><span class="final">una
+                solución doble</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(\Delta=9-20=-11&lt;0\)</span>:</span>
-                ninguna.</p></li>
+                <span class="final-con-signo"><span
+                class="final">ninguna</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(\Delta=1+8=9&gt;0\)</span>:</span>
-                dos soluciones distintas.</p></li>
+                <span class="final-con-signo"><span class="final">dos
+                soluciones distintas</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Con <span class="formula-con-signo"><span
@@ -8087,10 +8255,10 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(z=9\)</span>,</span> y al deshacer
                 el cambio quedan <span
-                class="math inline">\(x=\pm1\)</span> y <span
+                class="math inline">\(\boxed{x=\pm1}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=\pm3\)</span>:</span> cuatro
-                soluciones.</p></li>
+                class="math inline">\(\boxed{x=\pm3}\)</span>:</span>
+                cuatro soluciones.</p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(z=x^2\)</span>:</span> <span
                 class="math inline">\(z^2+z-12=0\)</span> da <span
@@ -8099,17 +8267,17 @@ Bachillerato</p>
                 class="math inline">\(z=-4\)</span>;</span> solo <span
                 class="math inline">\(x^2=3\)</span> produce soluciones,
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=\pm\sqrt3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=\pm\sqrt3}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x^3-16x=0\iff
                 x(x-4)(x+4)=0\)</span>:</span> soluciones <span
                 class="formula-con-signo"><span
-                class="math inline">\(0\)</span>,</span> <span
-                class="math inline">\(4\)</span> y <span
+                class="math inline">\(\boxed{0}\)</span>,</span> <span
+                class="math inline">\(\boxed{4}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-4\)</span>.</span></p></li>
+                class="math inline">\(\boxed{-4}\)</span>.</span></p></li>
                 <li><p>Probando divisores de <span
                 class="formula-con-signo"><span
                 class="math inline">\(-6\)</span>,</span> <span
@@ -8121,19 +8289,19 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(3\)</span>.</span> Soluciones:
                 <span class="formula-con-signo"><span
-                class="math inline">\(1\)</span>,</span> <span
-                class="math inline">\(2\)</span> y <span
+                class="math inline">\(\boxed{1}\)</span>,</span> <span
+                class="math inline">\(\boxed{2}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{3}\)</span>.</span></p></li>
                 <li><p><span class="math inline">\(x=-1\)</span> anula
                 el polinomio, y con Ruffini queda <span
                 class="formula-con-signo"><span
                 class="math inline">\((x+1)\left(x^2-9\right)=0\)</span>.</span>
                 Soluciones: <span class="formula-con-signo"><span
-                class="math inline">\(-1\)</span>,</span> <span
-                class="math inline">\(3\)</span> y <span
+                class="math inline">\(\boxed{-1}\)</span>,</span> <span
+                class="math inline">\(\boxed{3}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{-3}\)</span>.</span></p></li>
                 </ol></li>
                 <li>Si el ancho mide <span
                 class="math inline">\(x\)</span> metros, el largo mide
@@ -8145,10 +8313,11 @@ Bachillerato</p>
                 soluciones <span class="math inline">\(x=10\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(x=-15\)</span>.</span> Una
-                longitud no puede ser negativa: la parcela mide <span
-                class="math inline">\(10\ \text{m}\)</span> de ancho y
-                <span class="math inline">\(15\ \text{m}\)</span> de
-                largo.</li>
+                longitud no puede ser negativa: <span
+                class="final-con-signo"><span class="final">la parcela
+                mide <span class="math inline">\(10\ \text{m}\)</span>
+                de ancho y <span class="math inline">\(15\
+                \text{m}\)</span> de largo</span>.</span></li>
                 </ol>
                 </div>
                 </section>
@@ -8288,9 +8457,10 @@ Bachillerato</p>
                 class="math inline">\(\frac{12}{3}=4\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{12}{-4}=-3\)</span>.</span>
-                Soluciones: <span class="math inline">\(3\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(-4\)</span>.</span></p></li>
+                Soluciones: <span
+                class="math inline">\(\boxed{3}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{-4}\)</span>.</span></p></li>
                 <li><p>Condiciones <span
                 class="math inline">\(x\neq1\)</span> y <span
                 class="formula-con-signo"><span
@@ -8306,7 +8476,7 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(-\frac15\)</span>).</span>
                 Solución: <span class="formula-con-signo"><span
-                class="math inline">\(x=-14\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=-14}\)</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(x^2-4=(x+2)(x-2)\)</span>,</span>
                 condiciones <span
@@ -8323,14 +8493,16 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{2}{77}\)</span>).</span>
                 Solución: <span class="formula-con-signo"><span
-                class="math inline">\(x=9\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=9}\)</span>.</span></p></li>
                 <li><p>Con las mismas condiciones que en c), <span
                 class="math inline">\(2(x+2)-(x-2)=8\)</span> da <span
                 class="formula-con-signo"><span
                 class="math inline">\(x+6=8\)</span>:</span> la única
                 candidata es <span class="formula-con-signo"><span
                 class="math inline">\(x=2\)</span>,</span> prohibida por
-                anular denominadores. No tiene solución.</p></li>
+                anular denominadores. <span
+                class="final-con-signo"><span class="final">No tiene
+                solución</span>.</span></p></li>
                 </ol></li>
                 <li><p>Cada uno paga <span
                 class="math inline">\(\frac{480}{x}\)</span> euros; con
@@ -8349,12 +8521,13 @@ Bachillerato</p>
                 <p>con candidatas <span class="math inline">\(6\)</span>
                 y <span class="formula-con-signo"><span
                 class="math inline">\(-8\)</span>.</span> Un número de
-                personas no puede ser negativo: son <span
-                class="math inline">\(6\)</span> amigos. Comprobación:
-                pagan <span class="math inline">\(80\)</span> € cada
-                uno, y si fueran <span class="math inline">\(8\)</span>
-                pagarían <span class="math inline">\(60\)</span>
-                €.</p></li>
+                personas no puede ser negativo: <span
+                class="final-con-signo"><span class="final">son <span
+                class="math inline">\(6\)</span> amigos</span>.</span>
+                Comprobación: pagan <span
+                class="math inline">\(80\)</span> € cada uno, y si
+                fueran <span class="math inline">\(8\)</span> pagarían
+                <span class="math inline">\(60\)</span> €.</p></li>
                 </ol>
                 </div>
                 </section>
@@ -8550,7 +8723,7 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(2x-1=9\)</span>:</span> candidata
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=5\)</span>,</span> que
+                class="math inline">\(\boxed{x=5}\)</span>,</span> que
                 comprueba, porque <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt9=3\)</span>.</span></p></li>
                 <li><p>Elevando al cuadrado, <span
@@ -8558,19 +8731,19 @@ Bachillerato</p>
                 class="math inline">\(x^2-5=4\)</span>,</span> es decir,
                 <span class="formula-con-signo"><span
                 class="math inline">\(x^2=9\)</span>:</span> candidatas
-                <span class="math inline">\(3\)</span> y <span
+                <span class="math inline">\(\boxed{3}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>.</span> Las dos
-                comprueban, porque <span
+                class="math inline">\(\boxed{-3}\)</span>.</span> Las
+                dos comprueban, porque <span
                 class="math inline">\(\sqrt{9-5}=2\)</span> en ambos
                 casos: dos soluciones.</p></li>
                 <li><p>Elevando al cuadrado: <span
                 class="formula-con-signo"><span
                 class="math inline">\(5x-1=x^2+2x+1\iff
                 x^2-3x+2=0\)</span>,</span> con candidatas <span
-                class="math inline">\(1\)</span> y <span
+                class="math inline">\(\boxed{1}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(2\)</span>.</span> Ambas
+                class="math inline">\(\boxed{2}\)</span>.</span> Ambas
                 comprueban <span class="formula-con-signo">(<span
                 class="math inline">\(\sqrt4=2\)</span></span> y <span
                 class="formula-con-signo"><span
@@ -8595,10 +8768,12 @@ Bachillerato</p>
                 class="math inline">\(2-2=0\neq4\)</span>,</span>
                 fantasma. Solución única: <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=7\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=7}\)</span>.</span></p></li>
                 </ol></li>
-                <li><p>Falta comprobar las candidatas en la ecuación
-                original. Para <span class="formula-con-signo"><span
+                <li><p><span class="final-con-signo"><span
+                class="final">Falta comprobar las candidatas en la
+                ecuación original</span>.</span> Para <span
+                class="formula-con-signo"><span
                 class="math inline">\(x=6\)</span>:</span> <span
                 class="math inline">\(\sqrt9=3\)</span> y <span
                 class="formula-con-signo"><span
@@ -8611,11 +8786,12 @@ Bachillerato</p>
                 class="math inline">\(1-3=-2\)</span>:</span> es un
                 fantasma creado al elevar al cuadrado. La única solución
                 es <span class="formula-con-signo"><span
-                class="math inline">\(x=6\)</span>.</span></p></li>
-                <li><p>Una raíz cuadrada nunca es negativa, así que no
-                puede valer <span class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>.</span> Si se elevara
-                al cuadrado saldría la candidata <span
+                class="math inline">\(\boxed{x=6}\)</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Una raíz cuadrada nunca es negativa, así
+                que no puede valer <span
+                class="math inline">\(-3\)</span></span>.</span> Si se
+                elevara al cuadrado saldría la candidata <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=13\)</span>,</span> que es un
                 fantasma: <span class="formula-con-signo"><span
@@ -8803,15 +8979,15 @@ Bachillerato</p>
                 definición, <span
                 class="math inline">\(5x-1=3^2=9\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> que cumple la
-                condición.</p></li>
+                class="math inline">\(\boxed{x=2}\)</span>,</span> que
+                cumple la condición.</p></li>
                 <li><p>Condición <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;1\)</span>.</span> Por la
                 definición, <span
                 class="math inline">\(x-1=2^3=8\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=9\)</span>,</span> que cumple la
-                condición.</p></li>
+                class="math inline">\(\boxed{x=9}\)</span>,</span> que
+                cumple la condición.</p></li>
                 <li><p>Condición <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>.</span> Agrupando,
                 <span class="formula-con-signo"><span
@@ -8820,8 +8996,8 @@ Bachillerato</p>
                 class="math inline">\(\frac{x+9}{x}=10\)</span>,</span>
                 es decir, <span class="math inline">\(x+9=10x\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>,</span> que cumple la
-                condición.</p></li>
+                class="math inline">\(\boxed{x=1}\)</span>,</span> que
+                cumple la condición.</p></li>
                 <li><p>Condición <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;1\)</span>.</span> Agrupando,
                 <span class="formula-con-signo"><span
@@ -8831,7 +9007,7 @@ Bachillerato</p>
                 candidatas <span class="math inline">\(3\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>.</span> Solo <span
-                class="math inline">\(x=3\)</span> cumple la
+                class="math inline">\(\boxed{x=3}\)</span> cumple la
                 condición.</p></li>
                 </ol></li>
                 <li><ol type="a">
@@ -8845,7 +9021,7 @@ Bachillerato</p>
                 class="math inline">\(4\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-1\)</span>.</span> Solo <span
-                class="math inline">\(x=4\)</span> cumple la
+                class="math inline">\(\boxed{x=4}\)</span> cumple la
                 condición.</p></li>
                 <li><p>Condición <span
                 class="math inline">\(x&gt;2\)</span> (la más exigente
@@ -8859,7 +9035,7 @@ Bachillerato</p>
                 candidatas <span class="math inline">\(4\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(-6\)</span>.</span> Solo <span
-                class="math inline">\(x=4\)</span> cumple <span
+                class="math inline">\(\boxed{x=4}\)</span> cumple <span
                 class="formula-con-signo"><span
                 class="math inline">\(x&gt;2\)</span>,</span> y
                 comprueba: <span class="formula-con-signo"><span
@@ -8873,8 +9049,8 @@ Bachillerato</p>
                 class="math inline">\(\log(10x)=\log(x+18)\)</span>,</span>
                 así que <span class="math inline">\(10x=x+18\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> que cumple la
-                condición.</p></li>
+                class="math inline">\(\boxed{x=2}\)</span>,</span> que
+                cumple la condición.</p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -9190,12 +9366,12 @@ Bachillerato</p>
                 class="math inline">\(81=3^4\)</span>,</span> así que
                 <span class="math inline">\(x+2=4\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=2}\)</span>.</span></p></li>
                 <li><p>Primero se aísla la potencia: <span
                 class="formula-con-signo"><span
                 class="math inline">\(2^x=8=2^3\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=3}\)</span>.</span></p></li>
                 <li><p><span class="math inline">\(9=3^2\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(27=3^3\)</span>:</span> <span
@@ -9203,12 +9379,12 @@ Bachillerato</p>
                 class="math inline">\(3^{2x}=3^{3x-3}\)</span>,</span>
                 así que <span class="math inline">\(2x=3x-3\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=3}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(\frac18=2^{-3}\)</span>,</span>
                 así que <span class="math inline">\(x-1=-3\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=-2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=-2}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Con <span class="formula-con-signo"><span
@@ -9217,9 +9393,10 @@ Bachillerato</p>
                 class="math inline">\(z=1\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(z=3\)</span>,</span> y deshaciendo
-                el cambio, <span class="math inline">\(x=0\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>.</span></p></li>
+                el cambio, <span
+                class="math inline">\(\boxed{x=0}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=1}\)</span>.</span></p></li>
                 <li><p>Con <span class="math inline">\(z=2^x\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(2^{x+1}=2\cdot2^x=2z\)</span>,</span>
@@ -9228,7 +9405,7 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(z=8\)</span>,</span> y al deshacer
                 el cambio, <span class="formula-con-signo"><span
-                class="math inline">\(x=3\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=3}\)</span>.</span></p></li>
                 <li><p>Como <span class="formula-con-signo"><span
                 class="math inline">\(4^x=\left(2^x\right)^2\)</span>,</span>
                 con <span class="formula-con-signo"><span
@@ -9237,9 +9414,9 @@ Bachillerato</p>
                 class="math inline">\(z=1\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(z=4\)</span>,</span> es decir,
-                <span class="math inline">\(x=0\)</span> y <span
+                <span class="math inline">\(\boxed{x=0}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=2}\)</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(z=3^x\)</span>,</span> <span
                 class="math inline">\(9^x=z^2\)</span> y <span
@@ -9253,23 +9430,23 @@ Bachillerato</p>
                 nada, porque una exponencial siempre es positiva; de
                 <span class="math inline">\(3^x=9\)</span> sale <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=2}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x\log3=\log20\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(x=\frac{\log20}{\log3}\approx\frac{1{,}3010}{0{,}4771}\approx2{,}73\)</span>.</span></p></li>
+                class="math inline">\(x=\frac{\log20}{\log3}\approx\frac{1{,}3010}{0{,}4771}\approx\boxed{2{,}73}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x\log5=\log2\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(x=\frac{\log2}{\log5}\approx\frac{0{,}3010}{0{,}6990}\approx0{,}43\)</span>.</span></p></li>
+                class="math inline">\(x=\frac{\log2}{\log5}\approx\frac{0{,}3010}{0{,}6990}\approx\boxed{0{,}43}\)</span>.</span></p></li>
                 <li><p>Primero se aísla la potencia: <span
                 class="formula-con-signo"><span
                 class="math inline">\(3^x=25\)</span>.</span> Entonces
                 <span class="math inline">\(x\log3=\log25\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(x=\frac{\log25}{\log3}\approx\frac{1{,}3979}{0{,}4771}\approx2{,}93\)</span>.</span></p></li>
+                class="math inline">\(x=\frac{\log25}{\log3}\approx\frac{1{,}3979}{0{,}4771}\approx\boxed{2{,}93}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Perder un <span
@@ -9280,9 +9457,9 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(0{,}98\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(P(t)=5000\cdot0{,}98^t\)</span>.</span></p></li>
+                class="math inline">\(\boxed{P(t)=5000\cdot0{,}98^t}\)</span>.</span></p></li>
                 <li><p><span
-                class="math inline">\(P(10)=5000\cdot0{,}98^{10}\approx4085\)</span>
+                class="math inline">\(P(10)=5000\cdot0{,}98^{10}\approx\boxed{4085}\)</span>
                 habitantes.</p></li>
                 <li><p>Se resuelve <span
                 class="math inline">\(5000\cdot0{,}98^t=4000\)</span>
@@ -9301,10 +9478,11 @@ Bachillerato</p>
                 habitantes y a los <span class="formula-con-signo"><span
                 class="math inline">\(12\)</span>,</span> unos <span
                 class="formula-con-signo"><span
-                class="math inline">\(3924\)</span>:</span> baja de los
+                class="math inline">\(3924\)</span>:</span> <span
+                class="final-con-signo"><span class="final">baja de los
                 <span class="math inline">\(4000\)</span> durante el año
-                <span class="formula-con-signo"><span
-                class="math inline">\(12\)</span>.</span></p></li>
+                <span
+                class="math inline">\(12\)</span></span>.</span></p></li>
                 </ol></li>
                 <li><p>La ecuación es <span
                 class="formula-con-signo"><span
@@ -9324,9 +9502,11 @@ Bachillerato</p>
                 seguidores y a los <span class="formula-con-signo"><span
                 class="math inline">\(11\)</span>,</span> unos <span
                 class="formula-con-signo"><span
-                class="math inline">\(11\,145\)</span>:</span> supera
-                los <span class="math inline">\(10\,000\)</span> a los
-                <span class="math inline">\(11\)</span> meses.</p></li>
+                class="math inline">\(11\,145\)</span>:</span> <span
+                class="final-con-signo"><span class="final">supera los
+                <span class="math inline">\(10\,000\)</span> a los <span
+                class="math inline">\(11\)</span>
+                meses</span>.</span></p></li>
                 </ol>
                 </div>
                 </section>
@@ -9780,23 +9960,26 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(4x=8\)</span>.</span> Solución
                 única <span class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> <span
+                class="math inline">\(\boxed{x=2}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=3\)</span>:</span> sistema
-                compatible determinado; las dos rectas se cortan en el
-                punto <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{y=3}\)</span>:</span>
+                sistema compatible determinado; las dos rectas se cortan
+                en el punto <span class="formula-con-signo"><span
                 class="math inline">\((2,3)\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p>La segunda ecuación es el doble de la primera:
-                las dos representan la misma recta y el sistema es
-                compatible indeterminado, con infinitas
-                soluciones.</p></li>
+                las dos representan la misma recta y <span
+                class="final-con-signo"><span class="final">el sistema
+                es compatible indeterminado, con infinitas
+                soluciones</span>.</span></p></li>
                 <li><p><span class="math inline">\(4x-2y\)</span>
                 tendría que valer a la vez <span
                 class="math inline">\(6\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(5\)</span>:</span> las rectas son
-                paralelas y el sistema es incompatible.</p></li>
+                paralelas y <span class="final-con-signo"><span
+                class="final">el sistema es
+                incompatible</span>.</span></p></li>
                 </ol></li>
                 <li><p>Con <span class="math inline">\(E_2\leftarrow
                 E_2-2E_1\)</span> y <span
@@ -9816,11 +9999,11 @@ Bachillerato</p>
                 class="math inline">\(x=5-2y-z=1\)</span>.</span>
                 Sistema compatible determinado con solución <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>,</span> <span
+                class="math inline">\(\boxed{x=1}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=1\)</span>,</span> <span
+                class="math inline">\(\boxed{y=1}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(z=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{z=2}\)</span>.</span></p></li>
                 <li><p>Ha transformado solo el miembro izquierdo: el
                 término independiente también cambia, <span
                 class="formula-con-signo"><span
@@ -9844,12 +10027,12 @@ Bachillerato</p>
                 class="math inline">\(x=6-1-3=2\)</span>:</span>
                 compatible determinado con solución <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> <span
+                class="math inline">\(\boxed{x=2}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=1\)</span>,</span> <span
+                class="math inline">\(\boxed{y=1}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(z=3\)</span>,</span> que verifica
-                las tres ecuaciones.</p></li>
+                class="math inline">\(\boxed{z=3}\)</span>,</span> que
+                verifica las tres ecuaciones.</p></li>
                 <li><p>Con <span class="math inline">\(E_2\leftarrow
                 E_2-2E_1\)</span> y <span
                 class="math inline">\(E_3\leftarrow E_3-E_1\)</span>
@@ -9868,11 +10051,11 @@ Bachillerato</p>
                 class="math inline">\(x=1-y+z=2\)</span>.</span> Sistema
                 compatible determinado con solución <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> <span
+                class="math inline">\(\boxed{x=2}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=1\)</span>,</span> <span
+                class="math inline">\(\boxed{y=1}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(z=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{z=2}\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p>La tercera ecuación es el doble de la primera: al
                 escalonar aparece <span class="formula-con-signo"><span
@@ -9884,19 +10067,22 @@ Bachillerato</p>
                 class="math inline">\(x+z=2\)</span>.</span> Con <span
                 class="formula-con-signo"><span
                 class="math inline">\(z=t\)</span>,</span> las
-                soluciones son <span class="formula-con-signo"><span
+                soluciones son <span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
                 class="math inline">\(x=2-t\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(y=1\)</span>,</span> <span
                 class="math inline">\(z=t\)</span> para todo <span
-                class="formula-con-signo"><span
-                class="math inline">\(t\in\mathbb R\)</span>:</span>
-                compatible indeterminado.</p></li>
+                class="math inline">\(t\in\mathbb
+                R\)</span></span>:</span> compatible
+                indeterminado.</p></li>
                 <li><p>Las mismas transformaciones llevan a la fila
                 <span class="formula-con-signo"><span
-                class="math inline">\(0=1\)</span>:</span> incompatible,
-                sin soluciones. Mismos coeficientes, distinto término
-                independiente.</p></li>
+                class="math inline">\(0=1\)</span>:</span> <span
+                class="final-con-signo"><span
+                class="final">incompatible, sin
+                soluciones</span>.</span> Mismos coeficientes, distinto
+                término independiente.</p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -10019,9 +10205,10 @@ Bachillerato</p>
                 soluciones <span class="math inline">\(x=1\)</span> y
                 <span class="formula-con-signo"><span
                 class="math inline">\(x=4\)</span>.</span> Los puntos de
-                corte son <span class="math inline">\((1,0)\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\((4,3)\)</span>.</span></p></li>
+                corte son <span
+                class="math inline">\(\boxed{(1,0)}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{(4,3)}\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(y=8-x\)</span>:</span> <span
@@ -10033,9 +10220,9 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(5\)</span>.</span> Las soluciones
                 del sistema son <span
-                class="math inline">\((3,5)\)</span> y <span
+                class="math inline">\(\boxed{(3,5)}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\((5,3)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(5,3)}\)</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(x=y+1\)</span>:</span> <span
                 class="formula-con-signo"><span
@@ -10048,10 +10235,10 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(y=-5\)</span>.</span> Las
                 soluciones del sistema son <span
-                class="math inline">\((5,4)\)</span> y <span
+                class="math inline">\(\boxed{(5,4)}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\((-4,-5)\)</span>,</span> y las dos
-                verifican ambas ecuaciones.</p></li>
+                class="math inline">\(\boxed{(-4,-5)}\)</span>,</span> y
+                las dos verifican ambas ecuaciones.</p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -10232,10 +10419,11 @@ Bachillerato</p>
                 class="math inline">\(3e+42-4e=34\)</span>,</span> es
                 decir, <span class="math inline">\(e=8\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(m=5\)</span>.</span> La entrada
+                class="math inline">\(m=5\)</span>.</span> <span
+                class="final-con-signo"><span class="final">La entrada
                 cuesta <span class="math inline">\(8\)</span> € y el
-                menú, <span class="math inline">\(5\)</span> €.
-                Comprobación: <span
+                menú, <span class="math inline">\(5\)</span>
+                €</span>.</span> Comprobación: <span
                 class="math inline">\(24+10=34\)</span> €.</p></li>
                 <li><p>Si <span class="formula-con-signo"><span
                 class="math inline">\(a\)</span>,</span> <span
@@ -10253,10 +10441,12 @@ Bachillerato</p>
                 class="math inline">\(b=15\)</span>,</span> <span
                 class="math inline">\(a=30\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(c=25\)</span>.</span> Aportan
+                class="math inline">\(c=25\)</span>.</span> <span
+                class="final-con-signo"><span class="final">Aportan
                 <span class="math inline">\(30\)</span> €, <span
                 class="math inline">\(15\)</span> € y <span
-                class="math inline">\(25\)</span> €.</p></li>
+                class="math inline">\(25\)</span>
+                €</span>.</span></p></li>
                 <li><p>Si <span class="math inline">\(x\)</span> e <span
                 class="math inline">\(y\)</span> son los lados, <span
                 class="math inline">\(x+y=14\)</span> y <span
@@ -10268,10 +10458,11 @@ Bachillerato</p>
                 class="math inline">\(x^2-14x+48=0\)</span>,</span> con
                 soluciones <span class="math inline">\(6\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(8\)</span>.</span> Los lados miden
-                <span class="math inline">\(6\)</span> y <span
-                class="formula-con-signo"><span class="math inline">\(8\
-                \text{cm}\)</span>.</span></p></li>
+                class="math inline">\(8\)</span>.</span> <span
+                class="final-con-signo"><span class="final">Los lados
+                miden <span class="math inline">\(6\)</span> y <span
+                class="math inline">\(8\
+                \text{cm}\)</span></span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(p\)</span>,</span> <span
                 class="math inline">\(m\)</span> y <span
@@ -10292,11 +10483,12 @@ Bachillerato</p>
                 class="math inline">\(g=10\)</span>,</span> <span
                 class="math inline">\(p=20\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(m=30\)</span>.</span> Ha vendido
+                class="math inline">\(m=30\)</span>.</span> <span
+                class="final-con-signo"><span class="final">Ha vendido
                 <span class="math inline">\(20\)</span> macetas
                 pequeñas, <span class="math inline">\(30\)</span>
                 medianas y <span class="math inline">\(10\)</span>
-                grandes. Comprobación: <span
+                grandes</span>.</span> Comprobación: <span
                 class="math inline">\(40+150+80=270\)</span> €.</p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(c\)</span>,</span> <span
@@ -10328,10 +10520,11 @@ Bachillerato</p>
                 class="math inline">\(z=3\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(c=10{,}5-6-3=1{,}5\)</span>.</span>
-                El café cuesta <span
-                class="math inline">\(1{,}50\)</span> €, la tostada
-                <span class="math inline">\(2\)</span> € y el zumo <span
-                class="math inline">\(3\)</span> €. Comprobación: <span
+                <span class="final-con-signo"><span class="final">El
+                café cuesta <span class="math inline">\(1{,}50\)</span>
+                €, la tostada <span class="math inline">\(2\)</span> € y
+                el zumo <span class="math inline">\(3\)</span>
+                €</span>.</span> Comprobación: <span
                 class="math inline">\(4{,}50+4+3=11{,}50\)</span>
                 €.</p></li>
                 </ol>
@@ -10512,15 +10705,15 @@ Bachillerato</p>
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\(x&lt;\frac{10}{3}\)</span>:</span>
                 el intervalo <span class="formula-con-signo"><span
-                class="math inline">\(\left(-\infty,\frac{10}{3}\right)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{\left(-\infty,\frac{10}{3}\right)}\)</span>.</span></p></li>
                 <li><p><span class="math inline">\(-2x\leq6\)</span> y,
                 al dividir entre <span class="formula-con-signo"><span
                 class="math inline">\(-2\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\geq-3\)</span>:</span> el
                 intervalo <span class="formula-con-signo"><span
-                class="math inline">\([-3,+\infty)\)</span>.</span> El
-                sentido cambia al dividir entre un negativo.</p></li>
+                class="math inline">\(\boxed{[-3,+\infty)}\)</span>.</span>
+                El sentido cambia al dividir entre un negativo.</p></li>
                 <li><p>Multiplicando por <span
                 class="formula-con-signo"><span
                 class="math inline">\(6\)</span>,</span> que es positivo
@@ -10533,7 +10726,7 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(x\leq2\)</span>:</span> el
                 intervalo <span class="formula-con-signo"><span
-                class="math inline">\((-\infty,2]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-\infty,2]}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Operando, <span class="formula-con-signo"><span
@@ -10543,19 +10736,20 @@ Bachillerato</p>
                 para todo <span class="formula-con-signo"><span
                 class="math inline">\(x\)</span>.</span> La solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\(\mathbb
-                R\)</span>.</span></p></li>
+                class="math inline">\(\boxed{\mathbb
+                R}\)</span>.</span></p></li>
                 <li><p>Operando, <span class="formula-con-signo"><span
                 class="math inline">\(2x+1&gt;2x+4\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\(1&gt;4\)</span>:</span> falso para
                 todo <span class="formula-con-signo"><span
-                class="math inline">\(x\)</span>.</span> No tiene
-                solución.</p></li>
+                class="math inline">\(x\)</span>.</span> <span
+                class="final-con-signo"><span class="final">No tiene
+                solución</span>.</span></p></li>
                 </ol></li>
                 <li>Por ejemplo, <span class="formula-con-signo"><span
-                class="math inline">\(2x+1\leq11\)</span>,</span> cuya
-                solución es <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{2x+1\leq11}\)</span>,</span>
+                cuya solución es <span class="formula-con-signo"><span
                 class="math inline">\(x\leq5\)</span>.</span> Cualquier
                 inecuación equivalente vale.</li>
                 </ol>
@@ -10824,7 +11018,7 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(+\)</span>.</span> Solución: <span
                 class="formula-con-signo"><span
-                class="math inline">\((-6,1)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-6,1)}\)</span>.</span></p></li>
                 <li><p>Las raíces de <span
                 class="math inline">\(x^2-11x+28=(x-4)(x-7)\)</span> son
                 <span class="math inline">\(4\)</span> y <span
@@ -10832,7 +11026,7 @@ Bachillerato</p>
                 class="math inline">\(7\)</span>;</span> el producto es
                 positivo fuera de ellas. Solución: <span
                 class="formula-con-signo"><span
-                class="math inline">\((-\infty,4)\cup(7,+\infty)\)</span>,</span>
+                class="math inline">\(\boxed{(-\infty,4)\cup(7,+\infty)}\)</span>,</span>
                 con las raíces excluidas por ser la desigualdad
                 estricta.</p></li>
                 <li><p>Multiplicando por <span
@@ -10844,15 +11038,15 @@ Bachillerato</p>
                 class="math inline">\((x-4)(x+3)\leq0\)</span>:</span>
                 el producto es negativo o nulo entre las raíces. La
                 solución es <span class="formula-con-signo"><span
-                class="math inline">\([-3,4]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{[-3,4]}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x^2-16&lt;0\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\((x-4)(x+4)&lt;0\)</span>:</span>
                 el producto es negativo entre las raíces. La solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\((-4,4)\)</span>,</span> y no solo
-                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{(-4,4)}\)</span>,</span> y
+                no solo <span class="formula-con-signo"><span
                 class="math inline">\(x&lt;4\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
@@ -10874,7 +11068,7 @@ Bachillerato</p>
                 class="math inline">\(-\)</span> y <span
                 class="math inline">\(+\)</span> para el producto.
                 Solución: <span class="formula-con-signo"><span
-                class="math inline">\((-3,1)\cup(4,+\infty)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-3,1)\cup(4,+\infty)}\)</span>.</span></p></li>
                 <li><p><span class="math inline">\(x^3-x\leq0\)</span>
                 con <span class="formula-con-signo"><span
                 class="math inline">\(x^3-x=x(x-1)(x+1)\)</span>:</span>
@@ -10889,7 +11083,7 @@ Bachillerato</p>
                 class="math inline">\((0,1)\)</span>.</span> Con las
                 raíces incluidas, la solución es <span
                 class="formula-con-signo"><span
-                class="math inline">\((-\infty,-1]\cup[0,1]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-\infty,-1]\cup[0,1]}\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p>Su discriminante es <span
@@ -10897,8 +11091,8 @@ Bachillerato</p>
                 coeficiente principal es positivo: el polinomio es
                 siempre positivo. La solución es <span
                 class="formula-con-signo"><span
-                class="math inline">\(\mathbb
-                R\)</span>.</span></p></li>
+                class="math inline">\(\boxed{\mathbb
+                R}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x^2-10x+25=(x-5)^2\)</span>,</span>
                 que es positivo salvo en <span
@@ -10907,33 +11101,38 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>.</span> La solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\(\mathbb
-                R\setminus\{5\}\)</span>:</span> todos los números menos
-                el <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{\mathbb
+                R\setminus\{5\}}\)</span>:</span> todos los números
+                menos el <span class="formula-con-signo"><span
                 class="math inline">\(5\)</span>.</span></p></li>
                 <li><p><span class="math inline">\(x^2+4\geq4\)</span>
                 para todo <span class="formula-con-signo"><span
                 class="math inline">\(x\)</span>:</span> nunca es
-                negativo. No tiene solución.</p></li>
+                negativo. <span class="final-con-signo"><span
+                class="final">No tiene solución</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(B(5)=-25+150-200=-75\)</span>:</span>
-                con <span class="math inline">\(5\)</span> mochilas
-                pierde <span class="math inline">\(75\)</span> €. <span
-                class="formula-con-signo"><span
+                <span class="final-con-signo"><span class="final">con
+                <span class="math inline">\(5\)</span> mochilas pierde
+                <span class="math inline">\(75\)</span> €</span>.</span>
+                <span class="formula-con-signo"><span
                 class="math inline">\(B(12)=-144+360-200=16\)</span>:</span>
-                con <span class="math inline">\(12\)</span> gana <span
-                class="math inline">\(16\)</span> €.</p></li>
+                <span class="final-con-signo"><span class="final">con
+                <span class="math inline">\(12\)</span> gana <span
+                class="math inline">\(16\)</span>
+                €</span>.</span></p></li>
                 <li><p><span class="math inline">\(B(x)=0\)</span>
                 equivale a <span class="formula-con-signo"><span
                 class="math inline">\(x^2-30x+200=0\)</span>,</span> con
                 soluciones <span class="math inline">\(10\)</span> y
                 <span class="formula-con-signo"><span
-                class="math inline">\(20\)</span>:</span> con <span
+                class="math inline">\(20\)</span>:</span> <span
+                class="final-con-signo"><span class="final">con <span
                 class="math inline">\(10\)</span> o con <span
                 class="math inline">\(20\)</span> mochilas el beneficio
-                es cero.</p></li>
+                es cero</span>.</span></p></li>
                 <li><p><span
                 class="math inline">\(-x^2+30x-200&gt;0\)</span>
                 equivale, cambiando el signo y el sentido, a <span
@@ -10944,17 +11143,22 @@ Bachillerato</p>
                 el producto es negativo entre las raíces, <span
                 class="formula-con-signo"><span
                 class="math inline">\(10&lt;x&lt;20\)</span>.</span>
-                Tiene beneficio si fabrica entre <span
+                <span class="final-con-signo"><span class="final">Tiene
+                beneficio si fabrica entre <span
                 class="math inline">\(11\)</span> y <span
-                class="math inline">\(19\)</span> mochilas.</p></li>
+                class="math inline">\(19\)</span>
+                mochilas</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(B(14)=24\)</span>,</span> <span
-                class="math inline">\(B(15)=25\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(B(16)=24\)</span>:</span> el mayor
-                beneficio, <span class="math inline">\(25\)</span> €, se
-                consigue con <span class="math inline">\(15\)</span>
-                mochilas, justo en el centro del intervalo.</p></li>
+                class="math inline">\(\boxed{B(14)=24}\)</span>,</span>
+                <span class="math inline">\(\boxed{B(15)=25}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{B(16)=24}\)</span>:</span>
+                <span class="final-con-signo"><span class="final">el
+                mayor beneficio, <span class="math inline">\(25\)</span>
+                €, se consigue con <span
+                class="math inline">\(15\)</span>
+                mochilas</span>,</span> justo en el centro del
+                intervalo.</p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -11158,10 +11362,10 @@ Bachillerato</p>
                 class="math inline">\(-2\)</span> (denominador). El
                 cociente es negativo entre ellos: la solución es <span
                 class="formula-con-signo"><span
-                class="math inline">\((-2,3]\)</span>,</span> con <span
-                class="math inline">\(3\)</span> incluido y <span
-                class="math inline">\(-2\)</span> excluido por anular el
-                denominador.</p></li>
+                class="math inline">\(\boxed{(-2,3]}\)</span>,</span>
+                con <span class="math inline">\(3\)</span> incluido y
+                <span class="math inline">\(-2\)</span> excluido por
+                anular el denominador.</p></li>
                 <li><p>Puntos críticos <span
                 class="math inline">\(3\)</span> (numerador, porque
                 <span class="formula-con-signo"><span
@@ -11179,8 +11383,8 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(+\)</span>:</span> la solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\((-4,3)\)</span>,</span> con los
-                dos extremos fuera.</p></li>
+                class="math inline">\(\boxed{(-4,3)}\)</span>,</span>
+                con los dos extremos fuera.</p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(x^2-4=(x-2)(x+2)\)</span>,</span>
                 los puntos críticos son <span
@@ -11205,7 +11409,7 @@ Bachillerato</p>
                 class="math inline">\(+\)</span>.</span> La desigualdad
                 es estricta, así que ningún punto crítico entra: <span
                 class="formula-con-signo"><span
-                class="math inline">\((-2,0)\cup(2,+\infty)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-2,0)\cup(2,+\infty)}\)</span>.</span></p></li>
                 </ol></li>
                 <li><p>Para <span class="formula-con-signo"><span
                 class="math inline">\(x=0\)</span>,</span> la «solución»
@@ -11233,8 +11437,8 @@ Bachillerato</p>
                 class="math inline">\(2\)</span> (denominador). El
                 cociente es positivo solo entre ellos, así que la
                 solución es <span class="formula-con-signo"><span
-                class="math inline">\((2,3]\)</span>:</span> el <span
-                class="math inline">\(3\)</span> entra y el <span
+                class="math inline">\(\boxed{(2,3]}\)</span>:</span> el
+                <span class="math inline">\(3\)</span> entra y el <span
                 class="math inline">\(2\)</span> queda fuera por anular
                 el denominador.</p></li>
                 <li><p><span
@@ -11255,7 +11459,7 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(-\)</span>.</span> La solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\((-\infty,1)\cup[9,+\infty)\)</span>:</span>
+                class="math inline">\(\boxed{(-\infty,1)\cup[9,+\infty)}\)</span>:</span>
                 entra el <span class="math inline">\(9\)</span> y queda
                 fuera el <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>.</span></p></li>
@@ -11445,7 +11649,7 @@ Bachillerato</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(x&lt;4\)</span>:</span> la
                 intersección es <span class="formula-con-signo"><span
-                class="math inline">\([1,4)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{[1,4)}\)</span>.</span></p></li>
                 <li><p>La primera es <span
                 class="formula-con-signo"><span
                 class="math inline">\((x-5)(x+1)\leq0\)</span>,</span>
@@ -11454,31 +11658,34 @@ Bachillerato</p>
                 da <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;2\)</span>.</span> La
                 intersección es <span class="formula-con-signo"><span
-                class="math inline">\((2,5]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(2,5]}\)</span>.</span></p></li>
                 <li><p>Con <span class="math inline">\(s\)</span>
                 sesiones, la cuota fija compensa cuando <span
                 class="formula-con-signo"><span
                 class="math inline">\(3s&gt;30\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
-                class="math inline">\(s&gt;10\)</span>:</span> a partir
-                de <span class="math inline">\(11\)</span> sesiones
-                mensuales. Con exactamente <span
+                class="math inline">\(s&gt;10\)</span>:</span> <span
+                class="final-con-signo"><span class="final">a partir de
+                <span class="math inline">\(11\)</span> sesiones
+                mensuales</span>.</span> Con exactamente <span
                 class="formula-con-signo"><span
                 class="math inline">\(10\)</span>,</span> las dos
                 opciones cuestan lo mismo.</p></li>
-                <li><p>Es el triángulo de vértices <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Es el triángulo de vértices <span
                 class="formula-con-signo"><span
                 class="math inline">\((0,0)\)</span>,</span> <span
                 class="math inline">\((3,0)\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\((3,3)\)</span>,</span> bordes
-                incluidos: por debajo de la recta <span
+                incluidos</span>:</span> por debajo de la recta <span
                 class="formula-con-signo"><span
                 class="math inline">\(y=x\)</span>,</span> por encima
                 del eje horizontal y a la izquierda de la recta vertical
                 <span class="formula-con-signo"><span
                 class="math inline">\(x=3\)</span>.</span></p></li>
-                <li><p>Es el cuadrilátero de vértices <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Es el cuadrilátero de vértices <span
                 class="formula-con-signo"><span
                 class="math inline">\((0,0)\)</span>,</span> <span
                 class="formula-con-signo"><span
@@ -11486,7 +11693,7 @@ Bachillerato</p>
                 class="math inline">\((4,3)\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\((0,5)\)</span>,</span> bordes
-                incluidos. Los vértices <span
+                incluidos</span>.</span> Los vértices <span
                 class="math inline">\((5,0)\)</span> y <span
                 class="math inline">\((0,5)\)</span> son los cortes de
                 las rectas <span class="math inline">\(3x+y=15\)</span>
@@ -12044,74 +12251,80 @@ Bachillerato</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="70" type="1">
-                <li><p>No tiene razón. Ser solución exige cumplir
-                <strong>todas</strong> las ecuaciones: <span
-                class="math inline">\(3+4=7\)</span> se cumple, pero
-                <span class="formula-con-signo"><span
+                <li><p><span class="final-con-signo"><span
+                class="final">No tiene razón</span>.</span> Ser solución
+                exige cumplir <strong>todas</strong> las ecuaciones:
+                <span class="math inline">\(3+4=7\)</span> se cumple,
+                pero <span class="formula-con-signo"><span
                 class="math inline">\(2\cdot3-4=2\neq1\)</span>.</span>
                 Basta un fallo para descartar.</p></li>
-                <li><p>Dividir entre <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Dividir entre <span
                 class="math inline">\(x\)</span> solo es legal si <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\neq0\)</span>,</span> y aquí
                 <span class="math inline">\(x=0\)</span> es precisamente
-                una solución: se pierde por el camino. Correcto: <span
-                class="formula-con-signo"><span
+                una solución: se pierde por el camino</span>.</span>
+                Correcto: <span class="formula-con-signo"><span
                 class="math inline">\(2x^2-7x=0\)</span>,</span> factor
                 común <span class="formula-con-signo"><span
                 class="math inline">\(x(2x-7)=0\)</span>,</span>
-                soluciones <span class="math inline">\(0\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(\frac72\)</span>.</span></p></li>
+                soluciones <span
+                class="math inline">\(\boxed{0}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\boxed{\frac72}\)</span>.</span></p></li>
                 <li><ol type="a">
-                <li><p>Racional: anotar <span
+                <li><p><span class="final-con-signo"><span
+                class="final">Racional: anotar <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\neq4\)</span>,</span> <span
                 class="math inline">\(x\neq0\)</span> y multiplicar en
-                cruz.</p></li>
-                <li><p>Exponencial sin bases comunes: tomar
-                logaritmos.</p></li>
-                <li><p>Con radical: elevar al cuadrado y comprobar las
-                candidatas.</p></li>
-                <li><p>Polinómica: factor común <span
-                class="formula-con-signo"><span
-                class="math inline">\(x^2\)</span>.</span></p></li>
+                cruz</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Exponencial sin bases comunes: tomar
+                logaritmos</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Con radical: elevar al cuadrado y
+                comprobar las candidatas</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">Polinómica: factor común <span
+                class="math inline">\(x^2\)</span></span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(x^3-x^2-6x=x\left(x^2-x-6\right)=x(x-3)(x+2)\)</span>:</span>
-                raíces <span class="formula-con-signo"><span
+                class="math inline">\(x^3-x^2-6x=x\left(x^2-x-6\right)=\boxed{x(x-3)(x+2)}\)</span>:</span>
+                <span class="final-con-signo"><span class="final">raíces
+                <span class="formula-con-signo"><span
                 class="math inline">\(0\)</span>,</span> <span
                 class="math inline">\(3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>.</span></p></li>
+                class="math inline">\(-2\)</span></span>.</span></p></li>
                 <li><p><span class="math inline">\(x=1\)</span> anula el
                 polinomio, y con Ruffini queda <span
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+x-6=(x-2)(x+3)\)</span>.</span>
                 Así, <span class="formula-con-signo"><span
-                class="math inline">\(x^3-7x+6=(x-1)(x-2)(x+3)\)</span>:</span>
-                raíces <span class="formula-con-signo"><span
+                class="math inline">\(x^3-7x+6=\boxed{(x-1)(x-2)(x+3)}\)</span>:</span>
+                <span class="final-con-signo"><span class="final">raíces
+                <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> <span
                 class="math inline">\(2\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(-3\)</span>.</span></p></li>
+                class="math inline">\(-3\)</span></span>.</span></p></li>
                 </ol></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{(x-1)^2}{(x-1)(x+1)}=\frac{x-1}{x+1}\)</span>,</span>
-                con <span class="math inline">\(x\neq1\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\neq-1\)</span>.</span></p></li>
+                class="math inline">\(\frac{(x-1)^2}{(x-1)(x+1)}=\boxed{\frac{x-1}{x+1}}\)</span>,</span>
+                con <span class="math inline">\(\boxed{x\neq1}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq-1}\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(P(x)=(x-1)(x-5)\)</span>.</span></p></li>
-                <li><p><span class="math inline">\(x=1\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=5\)</span>.</span></p></li>
+                class="math inline">\(\boxed{P(x)=(x-1)(x-5)}\)</span>.</span></p></li>
+                <li><p><span class="math inline">\(\boxed{x=1}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=5}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\([1,5]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{[1,5]}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\((-\infty,1)\cup(5,+\infty)\)</span>:</span>
+                class="math inline">\(\boxed{(-\infty,1)\cup(5,+\infty)}\)</span>:</span>
                 la misma factorización responde a las cuatro
                 preguntas.</p></li>
                 </ol></li>
@@ -12122,7 +12335,7 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(4(x-1)=3(x+2)\)</span>,</span> así
                 que <span class="formula-con-signo"><span
-                class="math inline">\(x=10\)</span>,</span>
+                class="math inline">\(\boxed{x=10}\)</span>,</span>
                 válida.</p></li>
                 <li><p>Elevando al cuadrado, <span
                 class="formula-con-signo"><span
@@ -12135,8 +12348,8 @@ Bachillerato</p>
                 class="math inline">\(x=-2\)</span> es fantasma (daría
                 <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt4=-2\)</span>)</span> y <span
-                class="math inline">\(x=4\)</span> comprueba: <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=4}\)</span> comprueba:
+                <span class="formula-con-signo"><span
                 class="math inline">\(\sqrt{16}=4\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
@@ -12144,14 +12357,14 @@ Bachillerato</p>
                 class="math inline">\(27^x=3^{3x}\)</span>,</span> así
                 que <span class="math inline">\(x+2=3x\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=1\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=1}\)</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;3\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{2x}{x-3}=10\)</span>,</span>
                 de donde <span class="math inline">\(2x=10x-30\)</span>
                 y <span class="formula-con-signo"><span
-                class="math inline">\(x=\frac{15}{4}\)</span>,</span>
+                class="math inline">\(\boxed{x=\frac{15}{4}}\)</span>,</span>
                 que cumple la condición.</p></li>
                 </ol></li>
                 <li><p>Con <span class="formula-con-signo"><span
@@ -12174,10 +12387,10 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(3a=12\)</span>,</span> de donde
                 <span class="formula-con-signo"><span
-                class="math inline">\(a=4\)</span>,</span> <span
-                class="math inline">\(b=8\)</span> y <span
+                class="math inline">\(\boxed{a=4}\)</span>,</span> <span
+                class="math inline">\(\boxed{b=8}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(c=12\)</span>.</span></p></li>
+                class="math inline">\(\boxed{c=12}\)</span>.</span></p></li>
                 <li><p>De <span class="formula-con-signo"><span
                 class="math inline">\(y=30-x\)</span>:</span> <span
                 class="formula-con-signo"><span
@@ -12185,16 +12398,16 @@ Bachillerato</p>
                 <span class="math inline">\(x=5\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=-6\)</span>.</span> Los puntos
-                son <span class="math inline">\((5,25)\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\((-6,36)\)</span>.</span></p></li>
+                son <span class="math inline">\(\boxed{(5,25)}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{(-6,36)}\)</span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x^2-3x-10&lt;0\)</span>,</span> es
                 decir, <span class="formula-con-signo"><span
                 class="math inline">\((x-5)(x+2)&lt;0\)</span>:</span>
                 el producto es negativo entre las raíces. La solución es
                 <span class="formula-con-signo"><span
-                class="math inline">\((-2,5)\)</span>.</span></p></li>
+                class="math inline">\(\boxed{(-2,5)}\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p>Perder un <span
                 class="math inline">\(15\%\)</span> es quedarse con el
@@ -12204,9 +12417,9 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(0{,}85\)</span>,</span> así que
                 <span class="formula-con-signo"><span
-                class="math inline">\(V(t)=24\,000\cdot0{,}85^t\)</span>.</span></p></li>
+                class="math inline">\(\boxed{V(t)=24\,000\cdot0{,}85^t}\)</span>.</span></p></li>
                 <li><p><span
-                class="math inline">\(V(3)=24\,000\cdot0{,}85^3=14\,739\)</span>
+                class="math inline">\(V(3)=24\,000\cdot0{,}85^3=\boxed{14\,739}\)</span>
                 €.</p></li>
                 <li><p>La mitad son <span
                 class="math inline">\(12\,000\)</span> €. Se resuelve
@@ -12225,8 +12438,10 @@ Bachillerato</p>
                 vale <span class="math inline">\(12\,528{,}15\)</span> €
                 y a los <span class="formula-con-signo"><span
                 class="math inline">\(5\)</span>,</span> <span
-                class="math inline">\(10\,648{,}93\)</span> €: pasa a
-                valer menos de la mitad durante el quinto año.</p></li>
+                class="math inline">\(10\,648{,}93\)</span> €: <span
+                class="final-con-signo"><span class="final">pasa a valer
+                menos de la mitad durante el quinto
+                año</span>.</span></p></li>
                 <li><p><span
                 class="math inline">\(24\,000\cdot0{,}85^t=6000\)</span>
                 da <span class="math inline">\(0{,}85^t=0{,}25\)</span>
@@ -12238,37 +12453,41 @@ Bachillerato</p>
                 class="math inline">\(9\)</span>.</span> Como
                 <code>B1</code> es el año <span
                 class="formula-con-signo"><span
-                class="math inline">\(0\)</span>,</span> el año <span
+                class="math inline">\(0\)</span>,</span> <span
+                class="final-con-signo"><span class="final">el año <span
                 class="math inline">\(9\)</span> está en la celda
                 <code>B10</code>, que marca <span
-                class="math inline">\(5558{,}81\)</span> €; la celda
-                <code>B9</code>, del año <span
+                class="math inline">\(5558{,}81\)</span>
+                €</span>;</span> la celda <code>B9</code>, del año <span
                 class="formula-con-signo"><span
                 class="math inline">\(8\)</span>,</span> todavía marca
-                <span class="math inline">\(6539{,}77\)</span> €. En la
-                hoja se comprueba bajando por la columna hasta el primer
-                valor menor que <span class="formula-con-signo"><span
-                class="math inline">\(6000\)</span>.</span></p></li>
+                <span class="math inline">\(6539{,}77\)</span> €. <span
+                class="final-con-signo"><span class="final">En la hoja
+                se comprueba bajando por la columna hasta el primer
+                valor menor que <span
+                class="math inline">\(6000\)</span></span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\(x+y=20\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(xy=96\)</span>:</span> dimensiones
+                class="math inline">\(xy=96\)</span>:</span> <span
+                class="final-con-signo"><span class="final">dimensiones
                 <span class="math inline">\(8\)</span> y <span
-                class="formula-con-signo"><span
                 class="math inline">\(12\
-                \text{m}\)</span>.</span></p></li>
+                \text{m}\)</span></span>.</span></p></li>
                 <li><p><span
                 class="math inline">\(x(20-x)\geq96\)</span> equivale a
                 <span class="formula-con-signo"><span
                 class="math inline">\(x^2-20x+96\leq0\)</span>,</span>
                 es decir, <span class="formula-con-signo"><span
                 class="math inline">\((x-8)(x-12)\leq0\)</span>:</span>
-                anchuras entre <span class="math inline">\(8\)</span> y
-                <span class="formula-con-signo"><span
+                <span class="final-con-signo"><span
+                class="final">anchuras entre <span
+                class="math inline">\(8\)</span> y <span
+                class="formula-con-signo"><span
                 class="math inline">\(12\ \text{m}\)</span>,</span>
-                extremos incluidos.</p></li>
+                extremos incluidos</span>.</span></p></li>
                 <li><p>Por la simetría del producto, <span
                 class="formula-con-signo"><span
                 class="math inline">\(A(8)=A(12)\)</span>,</span> <span
@@ -12276,38 +12495,45 @@ Bachillerato</p>
                 class="math inline">\(A(9)=A(11)\)</span>…,</span> y el
                 máximo está en el centro, <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=10\)</span>:</span> el área vale
-                como mucho <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=10}\)</span>:</span> el
+                área vale como mucho <span
+                class="formula-con-signo"><span
                 class="math inline">\(100\ \text{m}^2\)</span>,</span> y
                 solo la alcanza el cuadrado de <span
                 class="formula-con-signo"><span
                 class="math inline">\(10\times10\)</span>.</span></p></li>
                 </ol></li>
                 <li><ol type="a">
-                <li><p><span class="formula-con-signo"><span
+                <li><p><span class="final-con-signo"><span
+                class="final"><span class="formula-con-signo"><span
                 class="math inline">\(2x+4y\leq40\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(x\geq4\)</span>,</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(y\geq0\)</span>,</span> con <span
                 class="math inline">\(x\)</span> e <span
-                class="math inline">\(y\)</span> enteros.</p></li>
-                <li><p>El triángulo de vértices <span
+                class="math inline">\(y\)</span>
+                enteros</span>.</span></p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final">El triángulo de vértices <span
                 class="formula-con-signo"><span
                 class="math inline">\((4,0)\)</span>,</span> <span
                 class="math inline">\((20,0)\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\((4,8)\)</span>,</span> bordes
-                incluidos: los planes posibles son sus puntos de
-                coordenadas enteras.</p></li>
-                <li><p><span class="math inline">\(10\)</span> sillas y
-                <span class="math inline">\(5\)</span> mesas: <span
-                class="math inline">\(20+20=40\)</span> horas, justo en
-                el límite: sí. <span class="math inline">\(6\)</span>
-                sillas y <span class="math inline">\(8\)</span> mesas:
-                <span class="formula-con-signo"><span
+                incluidos</span>:</span> los planes posibles son sus
+                puntos de coordenadas enteras.</p></li>
+                <li><p><span class="final-con-signo"><span
+                class="final"><span class="math inline">\(10\)</span>
+                sillas y <span class="math inline">\(5\)</span> mesas:
+                <span class="math inline">\(20+20=40\)</span> horas,
+                justo en el límite: sí</span>.</span> <span
+                class="final-con-signo"><span class="final"><span
+                class="math inline">\(6\)</span> sillas y <span
+                class="math inline">\(8\)</span> mesas: <span
+                class="formula-con-signo"><span
                 class="math inline">\(12+32=44&gt;40\)</span>:</span>
-                no.</p></li>
+                no</span>.</span></p></li>
                 </ol></li>
                 </ol>
                 </div>
@@ -12373,17 +12599,18 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(x^2-x-6=(x-3)(x+2)\)</span>:</span>
                 <span class="formula-con-signo"><span
-                class="math inline">\(P(x)=(x-2)(x-3)(x+2)\)</span>,</span>
-                con raíces <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{P(x)=(x-2)(x-3)(x+2)}\)</span>,</span>
+                con <span class="final-con-signo"><span
+                class="final">raíces <span
+                class="formula-con-signo"><span
                 class="math inline">\(2\)</span>,</span> <span
                 class="math inline">\(3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(-2\)</span>.</span></p></li>
+                class="math inline">\(-2\)</span></span>.</span></p></li>
                 <li><p><span class="formula-con-signo"><span
-                class="math inline">\(\frac{x-(x-3)}{(x+3)(x-3)}=\frac{3}{x^2-9}\)</span>,</span>
-                con <span class="math inline">\(x\neq3\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(x\neq-3\)</span>.</span></p></li>
+                class="math inline">\(\frac{x-(x-3)}{(x+3)(x-3)}=\boxed{\frac{3}{x^2-9}}\)</span>,</span>
+                con <span class="math inline">\(\boxed{x\neq3}\)</span>
+                y <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{x\neq-3}\)</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p>Aislando y elevando: <span
                 class="formula-con-signo"><span
@@ -12400,14 +12627,14 @@ Bachillerato</p>
                 class="formula-con-signo">(<span
                 class="math inline">\(\sqrt9+1=4\)</span>).</span>
                 Solución: <span class="formula-con-signo"><span
-                class="math inline">\(x=4\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=4}\)</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(x&gt;0\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(\frac{x+6}{x}=4\)</span>,</span>
                 de donde <span class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>,</span> válida: <span
-                class="formula-con-signo"><span
+                class="math inline">\(\boxed{x=2}\)</span>,</span>
+                válida: <span class="formula-con-signo"><span
                 class="math inline">\(\log_28-\log_22=3-1=2\)</span>.</span></p></li>
                 </ol></li>
                 <li><p>Con <span class="formula-con-signo"><span
@@ -12416,9 +12643,9 @@ Bachillerato</p>
                 class="math inline">\(z=2\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(z=4\)</span>,</span> es decir,
-                <span class="math inline">\(x=1\)</span> y <span
+                <span class="math inline">\(\boxed{x=1}\)</span> y <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>.</span></p></li>
+                class="math inline">\(\boxed{x=2}\)</span>.</span></p></li>
                 <li><p>Con <span class="math inline">\(E_2\leftarrow
                 E_2-2E_1\)</span> y <span
                 class="formula-con-signo"><span
@@ -12430,27 +12657,28 @@ Bachillerato</p>
                 restando, <span class="formula-con-signo"><span
                 class="math inline">\(2z=2\)</span>.</span> Así <span
                 class="formula-con-signo"><span
-                class="math inline">\(z=1\)</span>,</span> <span
+                class="math inline">\(\boxed{z=1}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=3\)</span>,</span> <span
+                class="math inline">\(\boxed{y=3}\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\(x=2\)</span>:</span> compatible
-                determinado.</p></li>
+                class="math inline">\(\boxed{x=2}\)</span>:</span> <span
+                class="final-con-signo"><span class="final">compatible
+                determinado</span>.</span></p></li>
                 <li><ol type="a">
                 <li><p><span class="formula-con-signo"><span
                 class="math inline">\((x+5)(x-3)\leq0\)</span>:</span>
                 el producto es negativo o nulo entre las raíces. La
                 solución es <span class="formula-con-signo"><span
-                class="math inline">\([-5,3]\)</span>.</span></p></li>
+                class="math inline">\(\boxed{[-5,3]}\)</span>.</span></p></li>
                 <li><p>Puntos críticos <span
                 class="math inline">\(2\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-1\)</span>:</span> el cociente es
                 negativo entre ellos. La solución es <span
                 class="formula-con-signo"><span
-                class="math inline">\((-1,2]\)</span>,</span> con el
-                <span class="math inline">\(-1\)</span> excluido por el
-                denominador.</p></li>
+                class="math inline">\(\boxed{(-1,2]}\)</span>,</span>
+                con el <span class="math inline">\(-1\)</span> excluido
+                por el denominador.</p></li>
                 </ol></li>
                 <li><p><span
                 class="math inline">\(3000\cdot1{,}04^t=4000\)</span> da
@@ -12461,8 +12689,9 @@ Bachillerato</p>
                 class="math inline">\(t\log1{,}04=\log\frac43\)</span>,</span>
                 de donde <span class="formula-con-signo"><span
                 class="math inline">\(t\approx\frac{0{,}12494}{0{,}017033}\approx7{,}3\)</span>:</span>
-                hacen falta <span class="math inline">\(8\)</span> años
-                completos.</p></li>
+                <span class="final-con-signo"><span class="final">hacen
+                falta <span class="math inline">\(8\)</span> años
+                completos</span>.</span></p></li>
                 <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(y=10-x\)</span>:</span> <span
                 class="formula-con-signo"><span
@@ -12474,9 +12703,9 @@ Bachillerato</p>
                 <span class="math inline">\(x=4\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(x=6\)</span>.</span> Soluciones:
-                <span class="math inline">\((4,6)\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\((6,4)\)</span>.</span></p></li>
+                <span class="math inline">\(\boxed{(4,6)}\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\boxed{(6,4)}\)</span>.</span></p></li>
                 </ol>
                 </div>
                 </section>
@@ -13023,7 +13252,7 @@ Bachillerato</p>
       function cajaDeLaFormula(formula) {
         return formula.closest("td, th")
           ? null
-          : formula.closest("p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
+          : formula.closest(".final, p, li, dd, dt, figcaption, h1, h2, h3, h4, h5, h6, div");
       }
       function repartirFormulas() {
         if (document.documentElement.classList.contains("ampliando")) {
@@ -13254,13 +13483,20 @@ Bachillerato</p>
         'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
         '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
         '<circle cx="12" cy="12" r="2.8"></circle></svg>';
-      var FLECHA =
-        '<svg class="flecha-ver-solucion" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
-        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="m6 9 6 6 6-6"></path></svg>';
-      var VER = "Ver solución";
-      var OCULTAR = "Ocultar solución";
-      var paneles = [];
+      var LAPIZ =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z"></path>' +
+        '<path d="M13.6 6.9l3 3"></path></svg>';
+      var RESULTADO = "Resultado";
+      var PASO_A_PASO = "Paso a paso";
+      var LETRAS = "abcdefgh";
+      var MARCA = /(^|[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-h])\)\u00a0/g;
+      var ETIQUETA = /\\text\{([a-h])\)\s*\}/g;
+      var VACIAS = ["soluciones", "solución", "solucion", "resultado", "resultados",
+        "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
+      var unidades = [];
+      var cuenta = 0;
 
       function numerosDeLaLista(lista) {
         var primero = parseInt(lista.getAttribute("start") || "1", 10);
@@ -13337,19 +13573,14 @@ Bachillerato</p>
           );
         });
       }
-      function soloFormula(ejercicio) {
-        var formula = ejercicio.firstElementChild;
+      function soloFormula(elemento) {
+        var formula = elemento.firstElementChild;
         return Boolean(
           formula &&
-            formula === ejercicio.lastElementChild &&
+            formula === elemento.lastElementChild &&
             formula.matches(".math.display") &&
-            !ejercicio.matches(".formula-tras-texto, .formula-abre")
+            !elemento.matches(".formula-tras-texto, .formula-abre")
         );
-      }
-      function plegar(panel) {
-        panel.caja.classList.add("esta-plegado");
-        panel.boton.setAttribute("aria-expanded", "false");
-        panel.rotulo.textContent = VER;
       }
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
@@ -13392,12 +13623,742 @@ Bachillerato</p>
           }
         });
       }
-      function encogerLasAbiertas() {
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild && !panel.caja.classList.contains("esta-plegado")) {
-            encogerCuentas(panel.caja);
+      function anchoDentro(elemento) {
+        var estilo = window.getComputedStyle(elemento);
+        return elemento.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+      }
+      function anchoDeRenglon(pieza) {
+        var marco = pieza.closest(".final, .sol-chip");
+        var renglon = (marco || pieza).parentElement.closest("p, li, dd, dt, figcaption, div");
+        var ancho = anchoDentro(renglon);
+        if (marco) {
+          var estilo = window.getComputedStyle(marco);
+          ancho -=
+            marco.offsetWidth -
+            anchoDentro(marco) +
+            parseFloat(estilo.marginLeft) +
+            parseFloat(estilo.marginRight);
+          if (marco.classList.contains("final")) {
+            ancho -= 0.7 * parseFloat(estilo.fontSize);
+          }
+        }
+        return ancho;
+      }
+      function piezasQueNoSeParten(caja) {
+        var piezas = [];
+        Array.prototype.forEach.call(caja.querySelectorAll(".katex-html"), function (html) {
+          if (html.closest(".math.display, .katex-display, td, th")) {
+            return;
+          }
+          var formula = html.closest(".math.inline");
+          if (!formula || formula.classList.contains("formula-corta")) {
+            piezas.push(html);
+          } else {
+            Array.prototype.push.apply(piezas, html.querySelectorAll(":scope > .base"));
           }
         });
+        return piezas;
+      }
+      function pegadoA(pieza) {
+        var formula = pieza.closest(".math.inline");
+        var envoltura = formula && formula.parentElement;
+        if (!envoltura || !envoltura.classList.contains("formula-con-signo")) {
+          return 0;
+        }
+        var bases = formula.querySelectorAll(".katex-html > .base");
+        var entera = pieza.classList.contains("katex-html");
+        var rango = document.createRange();
+        var medida = 0;
+        if (entera || pieza === bases[bases.length - 1]) {
+          rango.setStartAfter(formula);
+          rango.setEnd(envoltura, envoltura.childNodes.length);
+          medida += rango.getBoundingClientRect().width;
+        }
+        if (entera || pieza === bases[0]) {
+          rango.setStart(envoltura, 0);
+          rango.setEndBefore(formula);
+          medida += rango.getBoundingClientRect().width;
+        }
+        return medida;
+      }
+      function encogerLasCajas(caja) {
+        var piezas = piezasQueNoSeParten(caja);
+        piezas.forEach(function (pieza) {
+          pieza.style.fontSize = "";
+        });
+        var encogidas = 0;
+        piezas.forEach(function (pieza) {
+          if (!pieza.getClientRects().length) {
+            return;
+          }
+          var ancho = anchoDeRenglon(pieza);
+          var mide = pieza.getBoundingClientRect().width + pegadoA(pieza);
+          if (ancho > 0 && mide > ancho + 1) {
+            pieza.style.fontSize = Math.max(TOPE_DE_ENCOGER, Math.floor((99 * ancho) / mide)) + "%";
+            encogidas++;
+          }
+        });
+        return encogidas;
+      }
+      function deslizarLasQueNoCaben(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var derecha =
+          caja.getBoundingClientRect().right -
+          parseFloat(estilo.borderRightWidth) -
+          parseFloat(estilo.paddingRight);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          formula.classList.remove("desliza");
+        });
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          if (formula.getBoundingClientRect().right > derecha + 2) {
+            formula.classList.add("desliza");
+          }
+        });
+      }
+      function ajustarLasCajas(caja) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+          return;
+        }
+        var encogidas = encogerLasCajas(caja);
+        if (!caja.classList.contains("sol-pasos")) {
+          return;
+        }
+        if (encogidas) {
+          caja.classList.add("sol-repartir");
+          caja.classList.remove("sol-repartir");
+        }
+        Promise.resolve().then(function () {
+          deslizarLasQueNoCaben(caja);
+        });
+      }
+      function encogerLasAbiertas() {
+        unidades.forEach(function (unidad) {
+          ["pasos", "chip"].forEach(function (que) {
+            var caja = unidad[que];
+            if (!caja || !caja.firstChild || caja.classList.contains("esta-plegado")) {
+              return;
+            }
+            if (que === "pasos") {
+              encogerCuentas(caja);
+            }
+            ajustarLasCajas(caja);
+          });
+        });
+      }
+
+
+      function texDe(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent : formula.textContent;
+        tex = tex.trim();
+        if (tex.slice(0, 2) === "\\(" || tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\)" || tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      function trocearCajas(tex) {
+        var cajas = [];
+        var resto = "";
+        var desde = 0;
+        var i = tex.indexOf("\\boxed{");
+        while (i !== -1) {
+          resto += tex.slice(desde, i);
+          var j = i + 7;
+          var nivel = 1;
+          while (j < tex.length && nivel > 0) {
+            var signo = tex.charAt(j);
+            if (signo === "\\") {
+              j += 2;
+              continue;
+            }
+            nivel += signo === "{" ? 1 : signo === "}" ? -1 : 0;
+            j++;
+          }
+          cajas.push(tex.slice(i + 7, j - 1));
+          desde = j;
+          i = tex.indexOf("\\boxed{", j);
+        }
+        return { cajas: cajas, resto: resto + tex.slice(desde) };
+      }
+      function resultadosDe(raiz) {
+        var lista = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType !== 1) {
+              return;
+            }
+            if (hijo.classList.contains("final")) {
+              lista.push({ html: hijo.innerHTML });
+            } else if (hijo.classList.contains("math")) {
+              trocearCajas(texDe(hijo)).cajas.forEach(function (tex) {
+                lista.push({ tex: tex });
+              });
+            } else {
+              recorrer(hijo);
+            }
+          });
+        })(raiz);
+        return lista;
+      }
+      function pintarTex(tex, enBloque) {
+        if (!window.katex) {
+          return tex;
+        }
+        return window.katex.renderToString(tex, { displayMode: Boolean(enBloque), throwOnError: false });
+      }
+      function unir(lista) {
+        var trozos = lista.map(function (resultado) {
+          return resultado.html !== undefined ? resultado.html : pintarTex(resultado.tex);
+        });
+        if (trozos.length < 2) {
+          return trozos.join("");
+        }
+        var frases = lista.some(function (resultado) {
+          return resultado.html !== undefined;
+        });
+        if (frases) {
+          return trozos.join("; ");
+        }
+        return trozos.slice(0, -1).join(", ") + " y " + trozos[trozos.length - 1];
+      }
+      function quedaAlgo(texto) {
+        var palabras = texto
+          .replace(/\\(qquad|quad|text|displaystyle)\b/g, " ")
+          .split(/[\s.,;:¡!¿?()&{}\[\]]+/)
+          .filter(function (palabra) {
+            return palabra && VACIAS.indexOf(palabra.toLowerCase()) === -1;
+          });
+        return palabras.join("").length >= 3;
+      }
+      function normalTex(tex) {
+        return tex
+          .replace(/\\[dt]frac/g, "\\frac")
+          .replace(/\\left|\\right|\\[,;!]|&/g, "")
+          .replace(/\{-\}/g, "-")
+          .replace(/\s+/g, "");
+      }
+      function sinLoDelEnunciado(resto, enunciado) {
+        var limpio = normalTex(resto);
+        for (var i = 0; i < enunciado.length; i++) {
+          var copiado = normalTex(enunciado[i]);
+          if (copiado && limpio.indexOf(copiado + "=") === 0) {
+            return limpio.slice(copiado.length + 1);
+          }
+        }
+        return resto;
+      }
+      function formulasDe(elemento) {
+        return Array.prototype.filter
+          .call(elemento.querySelectorAll(".math"), function (formula) {
+            return formula.parentElement.closest("li") === elemento;
+          })
+          .map(texDe);
+      }
+      function diceMasQueElResultado(raiz, enunciado) {
+        var copia = raiz.cloneNode(true);
+        Array.prototype.forEach.call(copia.querySelectorAll(".final"), function (frase) {
+          frase.parentNode.removeChild(frase);
+        });
+        Array.prototype.forEach.call(copia.querySelectorAll(".math"), function (formula) {
+          formula.parentNode.replaceChild(
+            document.createTextNode(
+              " " + sinLoDelEnunciado(trocearCajas(texDe(formula)).resto, enunciado || []) + " "
+            ),
+            formula
+          );
+        });
+        return quedaAlgo(copia.textContent.replace(/^\s*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+\s*:/, " "));
+      }
+      function tieneResultado(raiz) {
+        return raiz.textContent.indexOf("\\boxed{") !== -1 || Boolean(raiz.querySelector(".final"));
+      }
+
+
+      function marcasDe(contenedor) {
+        var marcas = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType === 3) {
+              MARCA.lastIndex = 0;
+              var hallada;
+              while ((hallada = MARCA.exec(hijo.data))) {
+                marcas.push({ letra: hallada[2], nodo: hijo, indice: hallada.index + hallada[1].length });
+              }
+            } else if (hijo.nodeType === 1 && !hijo.matches(".math, ol, ul, .sol-iconos")) {
+              recorrer(hijo);
+            }
+          });
+        })(contenedor);
+        return marcas;
+      }
+      function etiquetasDe(tex) {
+        var letras = [];
+        var hallada;
+        ETIQUETA.lastIndex = 0;
+        while ((hallada = ETIQUETA.exec(tex))) {
+          letras.push(hallada[1]);
+        }
+        return letras;
+      }
+      function seguidas(letras, desde) {
+        return letras.every(function (letra, lugar) {
+          return letra === LETRAS.charAt(desde + lugar);
+        });
+      }
+      function hijosConContenido(elemento) {
+        return Array.prototype.filter.call(elemento.childNodes, function (nodo) {
+          return nodo.nodeType === 1 || (nodo.nodeType === 3 && nodo.textContent.trim() !== "");
+        });
+      }
+      function apartadosDelEnunciado(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista) {
+          var primera = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          return {
+            forma: "lista",
+            letras: Array.prototype.map.call(lista.children, function (li, lugar) {
+              return LETRAS.charAt(primera + lugar);
+            }),
+            elementos: Array.prototype.slice.call(lista.children)
+          };
+        }
+        var letras = marcasDe(ejercicio).map(function (marca) {
+          return marca.letra;
+        });
+        if (letras.length < 2) {
+          letras = [];
+          Array.prototype.forEach.call(ejercicio.querySelectorAll(".math.display"), function (formula) {
+            if (!formula.closest("ol ol")) {
+              letras = letras.concat(etiquetasDe(texDe(formula)));
+            }
+          });
+        }
+        if (letras.length >= 2 && seguidas(letras, 0)) {
+          return { forma: "otra", letras: letras };
+        }
+        return { forma: "ninguna", letras: [] };
+      }
+      function trozosConMarcas(contenedor, primera) {
+        var marcas = marcasDe(contenedor);
+        var letras = marcas.map(function (marca) {
+          return marca.letra;
+        });
+        var desde = primera ? LETRAS.indexOf(primera) + 1 : 0;
+        if (!seguidas(letras, desde) || (!primera && !marcas.length)) {
+          return null;
+        }
+        function corte(marca) {
+          var padre = marca.nodo.parentNode;
+          var r = document.createRange();
+          if (marca.indice === 0 && padre !== contenedor && padre.firstChild === marca.nodo &&
+              padre.classList.contains("formula-con-signo")) {
+            r.setStartBefore(padre);
+          } else {
+            r.setStart(marca.nodo, marca.indice);
+          }
+          return r;
+        }
+        var cortes = marcas.map(corte);
+        function tramo(inicio, fin) {
+          var r = document.createRange();
+          if (inicio) {
+            r.setStart(inicio.startContainer, inicio.startOffset);
+          } else {
+            r.setStart(contenedor, 0);
+          }
+          if (fin) {
+            r.setEnd(fin.startContainer, fin.startOffset);
+          } else {
+            r.setEnd(contenedor, contenedor.childNodes.length);
+          }
+          return r;
+        }
+        var trozos = [];
+        if (primera) {
+          trozos.push({ letra: primera, rango: tramo(null, cortes[0]) });
+        } else if (tramo(null, cortes[0]).toString().replace(/\s/g, "") !== "") {
+          return null;
+        }
+        marcas.forEach(function (marca, lugar) {
+          trozos.push({ letra: marca.letra, rango: tramo(cortes[lugar], cortes[lugar + 1]) });
+        });
+        return trozos;
+      }
+      function trozosDeFormula(tex) {
+        var limpio = tex.trim();
+        var alineado = limpio.indexOf("\\begin{aligned}") === 0 && limpio.slice(-13) === "\\end{aligned}"
+          ? [limpio, limpio.slice(15, -13)]
+          : null;
+        var trozos = [];
+        if (alineado) {
+          var filas = alineado[1].split(/\\\\(?:\[[^\]]*\])?/);
+          var mala = filas.some(function (fila) {
+            return etiquetasDe(fila).length > 1;
+          });
+          if (mala) {
+            return null;
+          }
+          filas.forEach(function (fila) {
+            var letras = etiquetasDe(fila);
+            if (letras.length) {
+              trozos.push({ letra: letras[0], filas: [fila.replace(ETIQUETA, "")] });
+            } else if (trozos.length && fila.trim()) {
+              trozos[trozos.length - 1].filas.push(fila);
+            }
+          });
+          return trozos.map(function (trozo) {
+            var hueco = trozo.filas.some(function (fila) {
+              return fila.indexOf("\\frac") !== -1;
+            });
+            return {
+              letra: trozo.letra,
+              tex: "\\begin{aligned}" + trozo.filas.join(hueco ? "\\\\[6pt]" : "\\\\") + "\\end{aligned}"
+            };
+          });
+        }
+        var partes = tex.split(/\\text\{([a-h])\)\s*\}/);
+        if (partes[0].replace(/\\q?quad|\s/g, "") !== "") {
+          return null;
+        }
+        for (var i = 1; i < partes.length; i += 2) {
+          trozos.push({
+            letra: partes[i],
+            tex: partes[i + 1].replace(/\\qquad/g, " ").trim()
+          });
+        }
+        return trozos;
+      }
+      function partesDeLaRespuesta(solucion) {
+        var hijos = hijosConContenido(solucion);
+        if (hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].matches('ol[type="a"]')) {
+          var lista = hijos[0];
+          var inicio = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          var partes = [];
+          var vale = Array.prototype.every.call(lista.children, function (li, lugar) {
+            var letra = LETRAS.charAt(inicio + lugar);
+            if (!marcasDe(li).length) {
+              partes.push({ letra: letra, nodos: li });
+              return true;
+            }
+            var trozos = trozosConMarcas(li, letra);
+            if (!trozos) {
+              return false;
+            }
+            partes = partes.concat(trozos);
+            return true;
+          });
+          return vale && seguidas(partes.map(function (parte) { return parte.letra; }), 0) ? partes : null;
+        }
+        var contenedor = hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].tagName === "P" ? hijos[0] : solucion;
+        var formulas = Array.prototype.filter.call(hijosConContenido(contenedor), function (nodo) {
+          return nodo.nodeType === 1 && nodo.matches(".math.display");
+        });
+        if (formulas.length === 1 && hijosConContenido(contenedor).length === 1) {
+          var deFormula = trozosDeFormula(texDe(formulas[0]));
+          return deFormula && deFormula.length >= 2 ? deFormula : null;
+        }
+        var conMarcas = trozosConMarcas(contenedor, null);
+        return conMarcas && conMarcas.length >= 2 ? conMarcas : null;
+      }
+      function copiaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        if (parte.nodos) {
+          Array.prototype.forEach.call(parte.nodos.childNodes, function (nodo) {
+            trozo.appendChild(nodo.cloneNode(true));
+          });
+        } else if (parte.rango) {
+          trozo.appendChild(parte.rango.cloneContents());
+          var primero = trozo;
+          while (primero && primero.nodeType !== 3) {
+            primero = primero.firstChild;
+          }
+          if (primero) {
+            primero.data = primero.data.replace(/^\s*[a-h]\)\u00a0\s{0,20}/, "");
+          }
+        } else if (parte.tex !== undefined) {
+          var formula = document.createElement("span");
+          formula.className = "math display";
+          formula.innerHTML = pintarTex(parte.tex, true);
+          trozo.appendChild(formula);
+        }
+        return trozo;
+      }
+      function resultadosDeLaParte(parte) {
+        if (parte.tex !== undefined) {
+          return trocearCajas(parte.tex).cajas.map(function (tex) {
+            return { tex: tex };
+          });
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return resultadosDe(envoltura);
+      }
+      function parteConResultado(parte) {
+        if (parte.tex !== undefined) {
+          return parte.tex.indexOf("\\boxed{") !== -1;
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return tieneResultado(envoltura);
+      }
+      function parteConPasos(parte, enunciado) {
+        if (parte.tex !== undefined) {
+          return quedaAlgo(
+            sinLoDelEnunciado(trocearCajas(parte.tex).resto, enunciado || []).replace(/\\[a-zA-Z]+/g, " x ")
+          );
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return diceMasQueElResultado(envoltura, enunciado);
+      }
+
+
+      function boton(clase, icono, rotulo, letra) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "sol-ico " + clase;
+        b.innerHTML = icono;
+        b.title = rotulo;
+        b.setAttribute("aria-label", rotulo + (letra ? " del apartado " + letra + ")" : ""));
+        b.setAttribute("aria-expanded", "false");
+        return b;
+      }
+      function hueco(etiqueta, clase) {
+        var caja = document.createElement(etiqueta);
+        caja.className = clase + " plegable esta-plegado";
+        caja.id = "solucion-" + ++cuenta;
+        return caja;
+      }
+      function plegar(unidad, vaciar) {
+        [["ojo", "chip"], ["lapiz", "pasos"]].forEach(function (par) {
+          var b = unidad[par[0]];
+          var caja = unidad[par[1]];
+          if (!b || !caja) {
+            return;
+          }
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          if (vaciar) {
+            caja.textContent = "";
+          }
+        });
+      }
+      function abrir(unidad, que) {
+        var b = unidad[que === "chip" ? "ojo" : "lapiz"];
+        var caja = unidad[que];
+        var otra = que === "chip" ? "pasos" : "chip";
+        var abierta = !caja.classList.contains("esta-plegado");
+        if (unidad[otra]) {
+          unidad[otra].classList.add("esta-plegado");
+          unidad[otra === "chip" ? "ojo" : "lapiz"].setAttribute("aria-expanded", "false");
+        }
+        if (abierta) {
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          return;
+        }
+        if (!caja.firstChild) {
+          unidad.llenar[que](caja);
+        }
+        caja.classList.remove("esta-plegado");
+        b.setAttribute("aria-expanded", "true");
+        if (que === "pasos") {
+          encogerCuentas(caja);
+        }
+        Promise.resolve().then(function () {
+          ajustarLasCajas(caja);
+        });
+      }
+      function prepararBotones(datos) {
+        var unidad = { llenar: {} };
+        var iconos = document.createElement("span");
+        iconos.className = "sol-iconos";
+        if (datos.resultados) {
+          unidad.ojo = boton("ojo", OJO, RESULTADO, datos.letra);
+          unidad.chip = hueco(datos.chipEnBloque ? "div" : "span", datos.chipEnBloque ? "sol-resultado" : "sol-chip");
+          unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
+          unidad.llenar.chip = datos.resultados;
+          unidad.ojo.addEventListener("click", function () {
+            abrir(unidad, "chip");
+          });
+          iconos.appendChild(unidad.ojo);
+        }
+        if (datos.pasos) {
+          unidad.lapiz = boton("lapiz", LAPIZ, PASO_A_PASO, datos.letra);
+          unidad.pasos = hueco("div", "sol-pasos");
+          unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
+          unidad.llenar.pasos = datos.pasos;
+          unidad.lapiz.addEventListener("click", function () {
+            abrir(unidad, "pasos");
+          });
+          iconos.appendChild(unidad.lapiz);
+        }
+        unidad.iconos = iconos;
+        unidades.push(unidad);
+        return unidad;
+      }
+      function sitioDeLosBotones(elemento) {
+        var hijos = hijosConContenido(elemento);
+        var ultimo = hijos[hijos.length - 1];
+        var destino = ultimo && ultimo.nodeType === 1 && ultimo.tagName === "P" ? ultimo : elemento;
+        var dentro = hijosConContenido(destino);
+        var final = dentro[dentro.length - 1];
+        if (final && final.nodeType === 1 && final.matches(".math.display, ol, ul, table, figure, div, p, blockquote")) {
+          var fila = document.createElement("div");
+          fila.className = "sol-fila";
+          elemento.appendChild(fila);
+          return fila;
+        }
+        return destino;
+      }
+      function ponerIconos(destino, unidad) {
+        if (!destino.classList.contains("sol-fila")) {
+          destino.appendChild(document.createTextNode(" "));
+        }
+        destino.appendChild(unidad.iconos);
+        if (unidad.chip && unidad.chip.tagName === "SPAN") {
+          destino.appendChild(unidad.chip);
+        }
+      }
+      function letraDelante(letra) {
+        var marca = document.createElement("span");
+        marca.className = "sol-letra";
+        marca.textContent = letra + ")";
+        return marca;
+      }
+      function llenarResultados(lista, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          var dentro = document.createElement("span");
+          dentro.innerHTML = unir(lista());
+          caja.appendChild(dentro);
+        };
+      }
+      function llenarPasos(copia, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          caja.appendChild(copia());
+        };
+      }
+
+      function porEjercicio(ejercicio, numero, solucion, partes, figuras) {
+        var conResultado = tieneResultado(solucion);
+        var unidad = prepararBotones({
+          resultados: conResultado
+            ? function (caja) {
+                if (partes) {
+                  partes.forEach(function (parte) {
+                    var lista = resultadosDeLaParte(parte);
+                    if (!lista.length) {
+                      return;
+                    }
+                    var linea = document.createElement("div");
+                    linea.className = "sol-linea";
+                    linea.appendChild(letraDelante(parte.letra));
+                    var dentro = document.createElement("span");
+                    dentro.innerHTML = unir(lista);
+                    linea.appendChild(dentro);
+                    caja.appendChild(linea);
+                  });
+                } else {
+                  var dentro = document.createElement("span");
+                  dentro.innerHTML = unir(resultadosDe(solucion));
+                  caja.appendChild(dentro);
+                }
+              }
+            : null,
+          chipEnBloque: Boolean(partes),
+          pasos: !conResultado || diceMasQueElResultado(solucion, formulasDe(ejercicio)) || figuras.length
+            ? function (caja) {
+                figuras.forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ejercicio";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+              }
+            : null
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (unidad.chip && unidad.chip.tagName === "DIV") {
+          ejercicio.appendChild(unidad.chip);
+        }
+        if (unidad.pasos) {
+          ejercicio.appendChild(unidad.pasos);
+        }
+      }
+      function datosDeLaParte(parte, letra, chipEnBloque, enunciado) {
+        return {
+          letra: letra,
+          chipEnBloque: chipEnBloque,
+          resultados: parteConResultado(parte)
+            ? llenarResultados(function () {
+                return resultadosDeLaParte(parte);
+              }, chipEnBloque ? letra : null)
+            : null,
+          pasos: parteConPasos(parte, enunciado) || !parteConResultado(parte)
+            ? llenarPasos(function () {
+                return copiaDe(parte);
+              }, chipEnBloque ? letra : null)
+            : null
+        };
+      }
+      function porApartadosEnLista(apartados, partes) {
+        apartados.elementos.forEach(function (li, lugar) {
+          var unidad = prepararBotones(
+            datosDeLaParte(partes[lugar], apartados.letras[lugar], false, formulasDe(li))
+          );
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          if (soloFormula(li)) {
+            li.classList.add("solo-formula-con-solucion");
+          }
+          ponerIconos(sitioDeLosBotones(li), unidad);
+          if (unidad.pasos) {
+            li.appendChild(unidad.pasos);
+          }
+        });
+      }
+      function porApartadosEnFila(ejercicio, partes) {
+        var fila = document.createElement("div");
+        fila.className = "sol-barra";
+        var abiertos = document.createElement("div");
+        abiertos.className = "sol-abiertos";
+        partes.forEach(function (parte) {
+          var unidad = prepararBotones(datosDeLaParte(parte, parte.letra, true));
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          var pareja = document.createElement("span");
+          pareja.className = "sol-apartado";
+          pareja.appendChild(letraDelante(parte.letra));
+          pareja.appendChild(unidad.iconos);
+          fila.appendChild(pareja);
+          if (unidad.chip) {
+            abiertos.appendChild(unidad.chip);
+          }
+          if (unidad.pasos) {
+            abiertos.appendChild(unidad.pasos);
+          }
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ejercicio.appendChild(fila);
+        ejercicio.appendChild(abiertos);
       }
 
       var repartos = [];
@@ -13452,43 +14413,20 @@ Bachillerato</p>
           Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
             var numero = suyos[primero + lugar];
             var solucion = reparto.soluciones.children[primero + lugar];
-            var caja = document.createElement("div");
-            caja.className = "solucion-ejercicio plegable esta-plegado";
-            caja.id = "solucion-ejercicio-" + (paneles.length + 1);
-            var boton = document.createElement("button");
-            boton.type = "button";
-            boton.className = "boton-ver-solucion";
-            boton.setAttribute("aria-expanded", "false");
-            boton.setAttribute("aria-controls", caja.id);
-            boton.innerHTML = OJO + '<span class="rotulo-ver-solucion"></span>' + FLECHA;
-            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-ver-solucion") };
-            panel.rotulo.textContent = VER;
-            paneles.push(panel);
-            boton.addEventListener("click", function () {
-              if (!caja.firstChild) {
-                (figuras[numero] || []).forEach(function (figura) {
-                  caja.appendChild(figura.cloneNode(true));
-                });
-                var lista = document.createElement("ol");
-                lista.className = "lista-solucion-ejercicio";
-                lista.setAttribute("start", String(numero));
-                lista.appendChild(solucion.cloneNode(true));
-                caja.appendChild(lista);
-              }
-              if (caja.classList.contains("esta-plegado")) {
-                caja.classList.remove("esta-plegado");
-                boton.setAttribute("aria-expanded", "true");
-                panel.rotulo.textContent = OCULTAR;
-                encogerCuentas(caja);
-              } else {
-                plegar(panel);
-              }
-            });
-            if (soloFormula(ejercicio)) {
-              ejercicio.classList.add("solo-formula-con-solucion");
+            var suyas = figuras[numero] || [];
+            var apartados = apartadosDelEnunciado(ejercicio);
+            var partes = apartados.forma === "ninguna" ? null : partesDeLaRespuesta(solucion);
+            var casan = Boolean(
+              partes &&
+                partes.map(function (parte) { return parte.letra; }).join() === apartados.letras.join()
+            );
+            if (casan && !suyas.length && apartados.forma === "lista") {
+              porApartadosEnLista(apartados, partes);
+            } else if (casan && !suyas.length) {
+              porApartadosEnFila(ejercicio, partes);
+            } else {
+              porEjercicio(ejercicio, numero, solucion, casan ? partes : null, suyas);
             }
-            ejercicio.appendChild(boton);
-            ejercicio.appendChild(caja);
           });
         });
 
@@ -13527,11 +14465,8 @@ Bachillerato</p>
         if (!document.documentElement.classList.contains("modo-clase")) {
           return;
         }
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild) {
-            plegar(panel);
-            panel.caja.textContent = "";
-          }
+        unidades.forEach(function (unidad) {
+          plegar(unidad, true);
         });
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
@@ -14072,7 +15007,7 @@ Bachillerato</p>
         });
         formulas
           .filter(function (formula) {
-            var caja = formula.closest("p, li, dd, dt, figcaption, div");
+            var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
             if (!caja || formula.closest("td, th")) {
               return false;
             }
