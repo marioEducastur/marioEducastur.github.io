@@ -4609,101 +4609,196 @@
       color: rgb(255 255 255 / 0.88);
     }
 
-    .boton-solucion-ib {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      width: fit-content;
-      min-height: 0;
-      margin: 0.75rem 0 0;
-      padding: 0.3rem 0.8rem 0.32rem 0.62rem;
-      color: var(--verde);
-      background: #ffffff;
-      border: 1.5px solid rgb(4 120 87 / 0.38);
-      border-radius: 999px;
-      box-shadow: none;
-      font-size: 0.84rem;
-      font-weight: 750;
-      line-height: 1.2;
+    .sol-iconos {
+      display: inline-flex;
+      gap: 0.4rem;
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      white-space: nowrap;
     }
 
-    .boton-solucion-ib svg {
+    .sol-ico {
+      display: inline-grid;
+      place-items: center;
       flex: none;
-      width: 1.05em;
-      height: 1.05em;
+      width: 2.1rem;
+      height: 2.1rem;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: none;
+      cursor: pointer;
+      transform: none;
     }
 
-    .boton-solucion-ib .flecha-solucion-ib {
-      transition: transform 160ms ease;
+    .sol-ico svg {
+      width: 1.15rem;
+      height: 1.15rem;
     }
 
-    .boton-solucion-ib[aria-expanded="true"] {
+    .sol-ico.ojo {
+      color: var(--verde);
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+    }
+
+    .sol-ico.lapiz {
+      color: var(--acento);
+      border: 1.5px solid rgb(29 78 216 / 0.32);
+    }
+
+    .sol-ico.ojo[aria-expanded="true"] {
       background: var(--verde-suave);
       border-color: var(--verde);
     }
 
-    .boton-solucion-ib[aria-expanded="true"] .flecha-solucion-ib {
-      transform: rotate(180deg);
+    .sol-ico.lapiz[aria-expanded="true"] {
+      background: var(--acento-suave);
+      border-color: var(--acento);
     }
 
-    .boton-solucion-ib:focus-visible {
-      color: #ffffff;
-      background: var(--verde);
-      border-color: var(--verde);
-      box-shadow: 0 0 0 3px rgb(4 120 87 / 0.25);
+    .sol-ico:focus-visible {
+      outline: 3px solid rgb(29 78 216 / 0.35);
+      outline-offset: 1px;
       transform: none;
     }
 
     @media (hover: hover) {
-      .boton-solucion-ib:hover {
-        color: #ffffff;
-        background: var(--verde);
+      .sol-ico.ojo:hover {
+        background: var(--verde-suave);
         border-color: var(--verde);
+      }
+
+      .sol-ico.lapiz:hover {
+        background: var(--acento-suave);
+        border-color: var(--acento);
       }
     }
 
-    .solucion-ib {
-      margin: 0.65rem 0 0.15rem;
-      padding: 0.85rem 1rem 0.9rem;
+    .sol-chip {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0.15rem 0 0.15rem 0.55rem;
+      padding: 0.12em 0.6em 0.16em;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.35);
+      border-radius: 0.65em;
+      vertical-align: middle;
+      white-space: normal;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .sol-chip .katex-html,
+    .sol-resultado .katex-html {
+      white-space: nowrap;
+    }
+
+    .sol-resultado {
+      margin: 0.55rem 0 0.2rem;
+      padding: 0.5rem 0.95rem 0.55rem;
       background: var(--verde-suave);
       border: 1px solid rgb(4 120 87 / 0.18);
       border-left: 0.3rem solid var(--verde);
       border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      overflow-x: auto;
+    }
+
+    .sol-linea + .sol-linea {
+      margin-top: 0.3rem;
+    }
+
+    .sol-pasos {
+      margin: 0.5rem 0 0.6rem;
+      padding: 0.55rem 0.95rem 0.6rem;
+      background: var(--acento-suave);
+      border: 1px solid rgb(29 78 216 / 0.16);
+      border-left: 0.3rem solid var(--acento);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
       animation: entrar-detalle 260ms ease-out;
     }
 
-    .solucion-ib.esta-plegado {
-      display: none;
+    .sol-pasos > :first-child,
+    .sol-pasos > .sol-letra + * {
+      margin-top: 0;
     }
 
-    section.ejercicios ol.lista-solucion-ib {
-      margin: 0;
-      padding: 0;
-      list-style: none;
+    .sol-pasos > :last-child {
+      margin-bottom: 0;
     }
 
-    section.ejercicios ol.lista-solucion-ib > li {
-      margin: 0;
-      padding: 0;
+    .sol-pasos .math.inline.desliza {
+      display: inline-block;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      vertical-align: middle;
     }
 
-    .solucion-ib > figure {
-      margin: 0 0 0.7rem;
-    }
-
-    .solucion-ib .math.display {
-      margin: 0.6rem 0;
-      padding: 0.55rem 0.85rem;
+    .sol-pasos .math.display {
+      margin: 0.5rem 0;
+      padding: 0.5rem 0.85rem;
       background: #ffffff;
       border: 1px solid var(--borde);
       border-radius: 0.65rem;
     }
 
-    #contenido-unidad li.solo-formula-ib > .math.display:first-child {
-      display: inline-block;
-      width: auto;
-      max-width: 100%;
-      vertical-align: middle;
+    .sol-letra {
+      margin-right: 0.45em;
+      color: var(--texto-suave);
+      font-weight: 650;
+    }
+
+    .sol-pasos > .sol-entrada {
+      margin: 0 0 0.35rem;
+    }
+
+    .sol-pasos > .sol-letra {
+      display: block;
+      margin: 0 0 0.25rem;
+    }
+
+    .sol-chip.esta-plegado,
+    .sol-resultado.esta-plegado,
+    .sol-pasos.esta-plegado {
+      display: none;
+    }
+
+    .sol-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.2rem;
+      margin: 0.75rem 0 0;
+    }
+
+    .sol-apartado {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .sol-apartado .sol-iconos,
+    .sol-fila > .sol-iconos {
+      margin-left: 0;
+    }
+
+    .sol-fila {
+      margin: 0.6rem 0 0;
+    }
+
+    section.ejercicios ol.lista-solucion-ejercicio {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    section.ejercicios ol.lista-solucion-ejercicio > li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .sol-pasos > figure {
+      margin: 0 0 0.7rem;
     }
 
     #contenido-unidad .final {
@@ -4726,50 +4821,70 @@
       border-radius: 0.3em;
     }
 
+    #contenido-unidad li.solo-formula-con-solucion > .math.display:first-child {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
     @media screen {
-      html:not(.modo-clase) .boton-soluciones.repartido-ib,
-      html:not(.modo-clase) .resultado.plegable.repartido-ib {
+      html:not(.modo-clase) .boton-soluciones.respuestas-repartidas,
+      html:not(.modo-clase) .resultado.plegable.respuestas-repartidas,
+      html:not(.modo-clase) section.respuestas-repartidas {
         display: none !important;
       }
 
-      html.modo-clase .boton-solucion-ib,
-      html.modo-clase .solucion-ib {
+      html.modo-clase .sol-iconos,
+      html.modo-clase .sol-fila,
+      html.modo-clase .sol-chip,
+      html.modo-clase .sol-barra,
+      html.modo-clase .sol-abiertos,
+      html.modo-clase .sol-resultado,
+      html.modo-clase .sol-pasos {
         display: none !important;
       }
     }
 
     @media print {
-      .boton-solucion-ib,
-      .solucion-ib {
+      .sol-iconos,
+      .sol-fila,
+      .sol-chip,
+      .sol-barra,
+      .sol-abiertos,
+      .sol-resultado,
+      .sol-pasos {
         display: none !important;
       }
     }
 
     @media screen and (max-width: 42rem) {
-      .solucion-ib {
+      .sol-pasos,
+      .sol-resultado {
         margin-inline: -0.45rem;
         padding: 0.65rem 0.55rem 0.7rem 0.6rem;
       }
 
-      .solucion-ib ol[type="a"],
-      .solucion-ib ul {
+      ol[type="a"] > li > .sol-pasos {
+        margin-left: calc(-40px - 0.45rem);
+      }
+
+      .sol-pasos ol[type="a"],
+      .sol-pasos ul {
         padding-left: 1.35rem;
       }
 
-      .solucion-ib .math.display {
+      .sol-pasos .math.display {
         padding: 0.5rem 0.45rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .solucion-ib {
+      .sol-pasos {
         animation: none;
       }
-
-      .boton-solucion-ib .flecha-solucion-ib {
-        transition: none;
-      }
     }
+
 
     .pie-autoria {
       max-width: 46rem;
@@ -4919,18 +5034,16 @@ Enfoques NS</p>
                 <li>Resuelva el sistema <span
                 class="formula-con-signo"><span
                 class="math inline">\(a+2b=16\)</span>,</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(a+7b=41\)</span>.</span></li>
+                class="math inline">\(a+7b=41\)</span></li>
                 <li>Resuelva:
                 <ol type="a">
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(2^n=1024\)</span>.</span></li>
+                <li><span class="math inline">\(2^n=1024\)</span></li>
                 <li><span class="formula-con-signo"><span
                 class="math inline">\(3\cdot1{,}5^n=60\)</span>,</span>
                 con tres cifras significativas.</li>
                 </ol></li>
-                <li>Calcule <span class="formula-con-signo"><span
-                class="math inline">\(1+2+3+\cdots+10\)</span>.</span></li>
+                <li>Calcule <span
+                class="math inline">\(1+2+3+\cdots+10\)</span></li>
                 </ol>
                 <section id="comprueba-tus-respuestas"
                 class="level4 unnumbered">
@@ -5084,22 +5197,21 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol type="1">
-                <li>Escriba los cuatro primeros términos: <span
-                class="math display">\[
-                \begin{aligned}
-                \text{a) }&amp;u_n=3n-5\\
-                \text{b) }&amp;u_n=(-1)^n n^2\\
-                \text{c) }&amp;u_n=\frac{n+3}{2n}
-                \end{aligned}
-                \]</span></li>
+                <li>Escriba los cuatro primeros términos:
+                <ol type="a">
+                <li><p><span
+                class="math inline">\(u_n=3n-5\)</span></p></li>
+                <li><p><span class="math inline">\(u_n=(-1)^n
+                n^2\)</span></p></li>
+                <li><p><span
+                class="math inline">\(u_n=\dfrac{n+3}{2n}\)</span></p></li>
+                </ol></li>
                 <li>Escriba los cuatro primeros términos:
                 <ol type="a">
                 <li><span class="math inline">\(u_1=2\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_{n+1}=u_n^2-1\)</span>.</span></li>
+                class="math inline">\(u_{n+1}=u_n^2-1\)</span></li>
                 <li><span class="math inline">\(u_1=100\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_{n+1}=\frac12u_n+10\)</span>.</span></li>
+                class="math inline">\(u_{n+1}=\frac12u_n+10\)</span></li>
                 </ol></li>
                 <li>Halle un término general para cada sucesión:
                 <ol type="a">
@@ -5484,22 +5596,24 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="6" type="1">
-                <li>Calcule: <span class="math display">\[
-                \begin{aligned}
-                \text{a) }&amp;\sum_{k=1}^{5}(4k-3)\\
-                \text{b) }&amp;\sum_{k=2}^{5}3^k\\
-                \text{c) }&amp;\sum_{k=1}^{20}7
-                \end{aligned}
-                \]</span></li>
-                <li>Escriba con notación sigma: <span
-                class="math display">\[
-                \begin{aligned}
-                \text{a) }&amp;2+4+6+\cdots+40\\
-                \text{b)
-                }&amp;\frac17+\frac{1}{49}+\frac{1}{343}+\frac{1}{2401}\\
-                \text{c) }&amp;10-30+90-270+810
-                \end{aligned}
-                \]</span></li>
+                <li>Calcule:
+                <ol type="a">
+                <li><span
+                class="math inline">\(\sum\limits_{k=1}^{5}(4k-3)\)</span></li>
+                <li><span
+                class="math inline">\(\sum\limits_{k=2}^{5}3^k\)</span></li>
+                <li><span
+                class="math inline">\(\sum\limits_{k=1}^{20}7\)</span></li>
+                </ol></li>
+                <li>Escriba con notación sigma:
+                <ol type="a">
+                <li><p><span
+                class="math inline">\(2+4+6+\cdots+40\)</span></p></li>
+                <li><p><span
+                class="math inline">\(\dfrac17+\dfrac{1}{49}+\dfrac{1}{343}+\dfrac{1}{2401}\)</span></p></li>
+                <li><p><span
+                class="math inline">\(10-30+90-270+810\)</span></p></li>
+                </ol></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
@@ -5735,14 +5849,12 @@ Enfoques NS</p>
                 <ol start="8" type="1">
                 <li>En una progresión aritmética, <span
                 class="math inline">\(u_1=12\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(d=-3\)</span>.</span>
+                class="math inline">\(d=-3\)</span>
                 <ol type="a">
-                <li>Halle <span class="formula-con-signo"><span
-                class="math inline">\(u_{20}\)</span>.</span></li>
+                <li>Halle <span
+                class="math inline">\(u_{20}\)</span></li>
                 <li>Halle qué término vale <span
-                class="formula-con-signo"><span
-                class="math inline">\(-60\)</span>.</span></li>
+                class="math inline">\(-60\)</span></li>
                 <li>Halle el primer término negativo.</li>
                 </ol></li>
                 <li>En una progresión aritmética, <span
@@ -5752,8 +5864,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(d\)</span>,</span> <span
                 class="math inline">\(u_1\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_{30}\)</span>.</span></li>
+                class="math inline">\(u_{30}\)</span></li>
                 <li>Los números <span class="formula-con-signo"><span
                 class="math inline">\(2x+3\)</span>,</span> <span
                 class="math inline">\(5x-1\)</span> y <span
@@ -5995,10 +6106,10 @@ Enfoques NS</p>
                 class="math inline">\(30\)</span> primeros términos de
                 <span
                 class="math inline">\(11+17+23+\cdots\)</span></li>
-                <li>La suma <span class="formula-con-signo"><span
-                class="math inline">\(50+47+44+\cdots+2\)</span>.</span></li>
-                <li><span class="formula-con-signo"><span
-                class="math inline">\(\sum\limits_{k=1}^{40}(7k-3)\)</span>.</span></li>
+                <li>La suma <span
+                class="math inline">\(50+47+44+\cdots+2\)</span></li>
+                <li><span
+                class="math inline">\(\sum\limits_{k=1}^{40}(7k-3)\)</span></li>
                 </ol></li>
                 <li>Un auditorio tiene <span
                 class="math inline">\(22\)</span> butacas en la primera
@@ -6006,8 +6117,7 @@ Enfoques NS</p>
                 class="math inline">\(3\)</span> más que la anterior.
                 <ol type="a">
                 <li>Halle cuántas butacas hay en la fila <span
-                class="formula-con-signo"><span
-                class="math inline">\(15\)</span>.</span></li>
+                class="math inline">\(15\)</span></li>
                 <li>Halle cuántas butacas hay en total si tiene <span
                 class="math inline">\(15\)</span> filas.</li>
                 <li>Halle cuántas filas necesita como mínimo para tener
@@ -6015,12 +6125,11 @@ Enfoques NS</p>
                 </ol></li>
                 <li>La suma de los <span
                 class="math inline">\(n\)</span> primeros términos de
-                una sucesión es <span class="formula-con-signo"><span
-                class="math inline">\(S_n=5n^2-2n\)</span>.</span>
+                una sucesión es <span
+                class="math inline">\(S_n=5n^2-2n\)</span>
                 <ol type="a">
                 <li>Halle <span class="math inline">\(u_1\)</span> y
-                <span class="formula-con-signo"><span
-                class="math inline">\(u_2\)</span>.</span></li>
+                <span class="math inline">\(u_2\)</span></li>
                 <li>Muestre que <span
                 class="math inline">\(u_n=10n-7\)</span> y deduzca que
                 la sucesión es una progresión aritmética.</li>
@@ -6163,22 +6272,19 @@ Enfoques NS</p>
                 <span class="math inline">\(n\)</span> primeros términos
                 es <span class="formula-con-signo"><span
                 class="math inline">\(175\)</span>.</span> Halle el
-                valor de <span class="formula-con-signo"><span
-                class="math inline">\(n\)</span>.</span></li>
+                valor de <span class="math inline">\(n\)</span></li>
                 <li><strong>(Ficha de sucesiones, 4)</strong> Halle
                 cuántos números impares consecutivos, comenzando en
                 <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> deben sumarse
                 para obtener un total de <span
-                class="formula-con-signo"><span
-                class="math inline">\(1681\)</span>.</span></li>
+                class="math inline">\(1681\)</span></li>
                 <li><strong>(Ficha de sucesiones, 5)</strong>
                 <ol type="a">
                 <li>Halle cuántos múltiplos de <span
                 class="math inline">\(7\)</span> hay comprendidos entre
                 <span class="math inline">\(16\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(200\)</span>.</span></li>
+                class="math inline">\(200\)</span></li>
                 <li>Halle su suma.</li>
                 </ol></li>
                 <li><strong>(Ficha de sucesiones, 6)</strong> Las
@@ -6385,7 +6491,7 @@ Enfoques NS</p>
                 <li>Muestre que las subidas son casi constantes y halle
                 la diferencia media.</li>
                 <li>Utilice un modelo aritmético para predecir el precio
-                en 2026.</li>
+                en 2026</li>
                 <li>Comente la fiabilidad de la predicción.</li>
                 </ol></li>
                 </ol>
@@ -6535,14 +6641,11 @@ Enfoques NS</p>
                 <ol start="20" type="1">
                 <li>Una progresión geométrica tiene <span
                 class="math inline">\(u_1=125\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(r=\frac15\)</span>.</span>
+                class="math inline">\(r=\frac15\)</span>
                 <ol type="a">
-                <li>Halle <span class="formula-con-signo"><span
-                class="math inline">\(u_6\)</span>.</span></li>
+                <li>Halle <span class="math inline">\(u_6\)</span></li>
                 <li>Halle qué término vale <span
-                class="formula-con-signo"><span
-                class="math inline">\(\frac{1}{625}\)</span>.</span></li>
+                class="math inline">\(\frac{1}{625}\)</span></li>
                 </ol></li>
                 <li>En una progresión geométrica, <span
                 class="math inline">\(u_2=-6\)</span> y <span
@@ -6551,8 +6654,7 @@ Enfoques NS</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(r\)</span>,</span> <span
                 class="math inline">\(u_1\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_{10}\)</span>.</span></li>
+                class="math inline">\(u_{10}\)</span></li>
                 <li>En una progresión geométrica, <span
                 class="math inline">\(u_3=36\)</span> y <span
                 class="formula-con-signo"><span
@@ -6572,8 +6674,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(r=1{,}2\)</span>.</span> Halle el
                 primer término mayor que <span
-                class="formula-con-signo"><span
-                class="math inline">\(100\)</span>.</span></li>
+                class="math inline">\(100\)</span></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
@@ -6702,8 +6803,7 @@ Enfoques NS</p>
                 class="formula-con-signo"><span
                 class="math inline">\(1{,}05\)</span>.</span> Halle el
                 menor de los términos mayores que <span
-                class="formula-con-signo"><span
-                class="math inline">\(500\)</span>.</span></li>
+                class="math inline">\(500\)</span></li>
                 <li><strong>(Ficha de sucesiones, 8)</strong> El segundo
                 término de una progresión geométrica es <span
                 class="math inline">\(9\)</span> y el sexto, <span
@@ -6730,11 +6830,10 @@ Enfoques NS</p>
                 término es igual a la suma de siete veces el tercer
                 término y seis veces el cuarto.
                 <ol type="a">
-                <li>Muestre que <span class="formula-con-signo"><span
-                class="math inline">\(6r^3+7r^2-1=0\)</span>.</span></li>
+                <li>Muestre que <span
+                class="math inline">\(6r^3+7r^2-1=0\)</span></li>
                 <li>Halle los tres valores posibles de <span
-                class="formula-con-signo"><span
-                class="math inline">\(r\)</span>.</span></li>
+                class="math inline">\(r\)</span></li>
                 </ol></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
@@ -7063,8 +7162,7 @@ Enfoques NS</p>
                 <li>Halle cuántos términos de <span
                 class="math inline">\(2+2{,}4+2{,}88+\cdots\)</span> hay
                 que sumar para superar <span
-                class="formula-con-signo"><span
-                class="math inline">\(500\)</span>.</span></li>
+                class="math inline">\(500\)</span></li>
                 <li>Una empresa vende <span
                 class="math inline">\(5000\)</span> unidades el primer
                 año, y cada año vende un <span
@@ -7373,13 +7471,15 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
                 <ol start="33" type="1">
-                <li>Halle la suma: <span class="math display">\[
-                \begin{aligned}
-                \text{a) }&amp;45+15+5+\cdots\\
-                \text{b) }&amp;8-4+2-1+\cdots\\
-                \text{c) }&amp;\sum_{k=1}^{\infty}3\cdot0{,}2^k
-                \end{aligned}
-                \]</span></li>
+                <li>Halle la suma:
+                <ol type="a">
+                <li><span
+                class="math inline">\(45+15+5+\cdots\)</span></li>
+                <li><span
+                class="math inline">\(8-4+2-1+\cdots\)</span></li>
+                <li><span
+                class="math inline">\(\sum\limits_{k=1}^{\infty}3\cdot0{,}2^k\)</span></li>
+                </ol></li>
                 <li>Escriba <span
                 class="math inline">\(2{,}\overline{15}\)</span> como
                 fracción utilizando una serie geométrica.</li>
@@ -7390,8 +7490,7 @@ Enfoques NS</p>
                 class="math inline">\(x\)</span> para los que tiene
                 suma.</li>
                 <li>Halle <span class="math inline">\(x\)</span> si la
-                suma es <span class="formula-con-signo"><span
-                class="math inline">\(3\)</span>.</span></li>
+                suma es <span class="math inline">\(3\)</span></li>
                 </ol></li>
                 <li>En cada oscilación, un péndulo recorre el <span
                 class="math inline">\(90\%\)</span> del arco de la
@@ -7544,11 +7643,9 @@ Enfoques NS</p>
                 class="math inline">\(x\)</span> para los que la serie
                 converge.</li>
                 <li>Halle la suma cuando <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=1{,}2\)</span>.</span></li>
+                class="math inline">\(x=1{,}2\)</span></li>
                 <li>Halle la suma cuando <span
-                class="formula-con-signo"><span
-                class="math inline">\(x=-1{,}2\)</span>.</span></li>
+                class="math inline">\(x=-1{,}2\)</span></li>
                 </ol></li>
                 <li><strong>(Libreta)</strong> La suma infinita de una
                 progresión geométrica es <span
@@ -8116,8 +8213,7 @@ Enfoques NS</p>
                 class="math inline">\(u_2=2\)</span> y, para <span
                 class="formula-con-signo"><span
                 class="math inline">\(n\geq3\)</span>,</span> <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_n=3u_{n-1}-2u_{n-2}\)</span>.</span>
+                class="math inline">\(u_n=3u_{n-1}-2u_{n-2}\)</span>
                 <ol type="a">
                 <li>Escriba los seis primeros términos de la
                 sucesión.</li>
@@ -8132,8 +8228,7 @@ Enfoques NS</p>
                 diferencia o la razón. Calcule el término <span
                 class="math inline">\(8\)</span> de cada una e indique,
                 además, cómo se puede calcular el término <span
-                class="formula-con-signo"><span
-                class="math inline">\(576\)</span>.</span>
+                class="math inline">\(576\)</span>
                 <ol type="a">
                 <li><span class="math inline">\(1;\ 4;\ 9;\ 16;\
                 \ldots\)</span></li>
@@ -8554,8 +8649,7 @@ Enfoques NS</p>
                 <li><strong>[Puntuación máxima: 6]</strong> En una
                 progresión aritmética, <span
                 class="math inline">\(u_4=14\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(u_9=-6\)</span>.</span>
+                class="math inline">\(u_9=-6\)</span>
                 <ol type="a">
                 <li>Halle la diferencia <span
                 class="formula-con-signo"><span
@@ -8573,8 +8667,7 @@ Enfoques NS</p>
                 <li><strong>[Puntuación máxima: 7]</strong> Una
                 progresión geométrica tiene <span
                 class="math inline">\(u_2=8\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(S_\infty=50\)</span>.</span>
+                class="math inline">\(S_\infty=50\)</span>
                 <ol type="a">
                 <li>Muestre que la razón cumple <span
                 class="formula-con-signo"><span
@@ -9773,13 +9866,20 @@ Enfoques NS</p>
         'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
         '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
         '<circle cx="12" cy="12" r="2.8"></circle></svg>';
-      var FLECHA =
-        '<svg class="flecha-solucion-ib" viewBox="0 0 24 24" aria-hidden="true" fill="none" ' +
-        'stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="m6 9 6 6 6-6"></path></svg>';
-      var VER = "Ver solución";
-      var OCULTAR = "Ocultar solución";
-      var paneles = [];
+      var LAPIZ =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z"></path>' +
+        '<path d="M13.6 6.9l3 3"></path></svg>';
+      var RESULTADO = "Resultado";
+      var PASO_A_PASO = "Paso a paso";
+      var LETRAS = "abcdefgh";
+      var MARCA = /(^|[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-h])\)\u00a0/g;
+      var ETIQUETA = /\\text\{([a-h])\)\s*\}/g;
+      var VACIAS = ["soluciones", "solución", "solucion", "resultado", "resultados",
+        "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
+      var unidades = [];
+      var cuenta = 0;
 
       function numerosDeLaLista(lista) {
         var primero = parseInt(lista.getAttribute("start") || "1", 10);
@@ -9787,7 +9887,38 @@ Enfoques NS</p>
           return primero + lugar;
         });
       }
-      function listaDeEjercicios(bloque) {
+      function numerosDeLasListas(listas) {
+        return listas.reduce(function (todos, lista) {
+          return todos.concat(numerosDeLaLista(lista));
+        }, []);
+      }
+      function esDeEnunciados(lista) {
+        return Boolean(
+          lista.closest("section.ejercicios") &&
+            !lista.closest(".bloque-didactico, .interactivo, .interactivo-host") &&
+            !lista.parentElement.closest("li")
+        );
+      }
+      function respuestasDelBloque(bloque) {
+        var lista = null;
+        var vale = Array.prototype.every.call(bloque.children, function (hijo) {
+          if (hijo.tagName === "OL") {
+            var primera = !lista;
+            lista = hijo;
+            return primera;
+          }
+          if (hijo.matches("figure") || (hijo.matches("p") && hijo.querySelector("img"))) {
+            return true;
+          }
+          if (!lista && hijo.matches("p") && !hijo.querySelector(":scope > .etiqueta-bloque")) {
+            return true;
+          }
+          var rotulo = hijo.matches("p") ? hijo.querySelector(":scope > .etiqueta-bloque") : null;
+          return Boolean(rotulo && hijo.textContent.trim() === rotulo.textContent.trim());
+        });
+        return vale ? lista : null;
+      }
+      function listaDeDelante(bloque) {
         var nodo = bloque;
         for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
           var anterior = nodo.previousElementSibling;
@@ -9795,7 +9926,7 @@ Enfoques NS</p>
             anterior = anterior.previousElementSibling;
           }
           if (anterior) {
-            return anterior.tagName === "OL" ? anterior : null;
+            return anterior.tagName === "OL" && esDeEnunciados(anterior) ? anterior : null;
           }
           nodo = nodo.parentElement && nodo.parentElement.matches("section")
             ? nodo.parentElement
@@ -9803,19 +9934,39 @@ Enfoques NS</p>
         }
         return null;
       }
-      function soloFormula(ejercicio) {
-        var formula = ejercicio.firstElementChild;
-        if (!formula || formula !== ejercicio.lastElementChild || !formula.matches(".math.display")) {
-          return false;
+      function listasDeSuSeccion(bloque, casadas) {
+        var ambito = null;
+        for (
+          var madre = bloque.closest("section.ejercicios");
+          madre;
+          madre = madre.parentElement.closest("section.ejercicios")
+        ) {
+          ambito = madre;
         }
-        return Array.prototype.every.call(ejercicio.childNodes, function (nodo) {
-          return nodo === formula || nodo.textContent.trim() === "";
+        if (!ambito) {
+          var suya = bloque.parentElement;
+          var delante = suya && suya.matches("section") ? suya.previousElementSibling : null;
+          ambito = delante && delante.matches("section.ejercicios") ? delante : null;
+        }
+        if (!ambito) {
+          return [];
+        }
+        return Array.prototype.filter.call(ambito.querySelectorAll("ol"), function (lista) {
+          return (
+            esDeEnunciados(lista) &&
+            casadas.indexOf(lista) === -1 &&
+            Boolean(lista.compareDocumentPosition(bloque) & Node.DOCUMENT_POSITION_FOLLOWING)
+          );
         });
       }
-      function plegar(panel) {
-        panel.caja.classList.add("esta-plegado");
-        panel.boton.setAttribute("aria-expanded", "false");
-        panel.rotulo.textContent = VER;
+      function soloFormula(elemento) {
+        var formula = elemento.firstElementChild;
+        return Boolean(
+          formula &&
+            formula === elemento.lastElementChild &&
+            formula.matches(".math.display") &&
+            !elemento.matches(".formula-tras-texto, .formula-abre")
+        );
       }
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
@@ -9858,90 +10009,874 @@ Enfoques NS</p>
           }
         });
       }
-      function encogerLasAbiertas() {
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild && !panel.caja.classList.contains("esta-plegado")) {
-            encogerCuentas(panel.caja);
+      function anchoDentro(elemento) {
+        var estilo = window.getComputedStyle(elemento);
+        return elemento.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+      }
+      function anchoDeRenglon(pieza) {
+        var marco = pieza.closest(".final, .sol-chip");
+        var renglon = (marco || pieza).parentElement.closest("p, li, dd, dt, figcaption, div");
+        var ancho = anchoDentro(renglon);
+        if (marco) {
+          var estilo = window.getComputedStyle(marco);
+          ancho -=
+            marco.offsetWidth -
+            anchoDentro(marco) +
+            parseFloat(estilo.marginLeft) +
+            parseFloat(estilo.marginRight);
+          if (marco.classList.contains("final")) {
+            ancho -= 0.7 * parseFloat(estilo.fontSize);
+          }
+        }
+        return ancho;
+      }
+      function piezasQueNoSeParten(caja) {
+        var piezas = [];
+        Array.prototype.forEach.call(caja.querySelectorAll(".katex-html"), function (html) {
+          if (html.closest(".math.display, .katex-display, td, th")) {
+            return;
+          }
+          var formula = html.closest(".math.inline");
+          if (!formula || formula.classList.contains("formula-corta")) {
+            piezas.push(html);
+          } else {
+            Array.prototype.push.apply(piezas, html.querySelectorAll(":scope > .base"));
+          }
+        });
+        return piezas;
+      }
+      function pegadoA(pieza) {
+        var formula = pieza.closest(".math.inline");
+        var envoltura = formula && formula.parentElement;
+        if (!envoltura || !envoltura.classList.contains("formula-con-signo")) {
+          return 0;
+        }
+        var bases = formula.querySelectorAll(".katex-html > .base");
+        var entera = pieza.classList.contains("katex-html");
+        var rango = document.createRange();
+        var medida = 0;
+        if (entera || pieza === bases[bases.length - 1]) {
+          rango.setStartAfter(formula);
+          rango.setEnd(envoltura, envoltura.childNodes.length);
+          medida += rango.getBoundingClientRect().width;
+        }
+        if (entera || pieza === bases[0]) {
+          rango.setStart(envoltura, 0);
+          rango.setEndBefore(formula);
+          medida += rango.getBoundingClientRect().width;
+        }
+        return medida;
+      }
+      function encogerLasCajas(caja) {
+        var piezas = piezasQueNoSeParten(caja);
+        piezas.forEach(function (pieza) {
+          pieza.style.fontSize = "";
+        });
+        var encogidas = 0;
+        piezas.forEach(function (pieza) {
+          if (!pieza.getClientRects().length) {
+            return;
+          }
+          var ancho = anchoDeRenglon(pieza);
+          var mide = pieza.getBoundingClientRect().width + pegadoA(pieza);
+          if (ancho > 0 && mide > ancho + 1) {
+            pieza.style.fontSize = Math.max(TOPE_DE_ENCOGER, Math.floor((99 * ancho) / mide)) + "%";
+            encogidas++;
+          }
+        });
+        return encogidas;
+      }
+      function deslizarLasQueNoCaben(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var derecha =
+          caja.getBoundingClientRect().right -
+          parseFloat(estilo.borderRightWidth) -
+          parseFloat(estilo.paddingRight);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          formula.classList.remove("desliza");
+        });
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          if (formula.getBoundingClientRect().right > derecha + 2) {
+            formula.classList.add("desliza");
           }
         });
       }
-
-      Array.prototype.forEach.call(
-        contenido.querySelectorAll(".resultado.plegable"),
-        function (bloque) {
-          var listas = bloque.querySelectorAll(":scope > ol");
-          var ejercicios = listaDeEjercicios(bloque);
-          if (listas.length !== 1 || !ejercicios || !ejercicios.closest("section.ejercicios")) {
-            return;
-          }
-          var soluciones = listas[0];
-          var suyos = numerosDeLaLista(ejercicios);
-          if (suyos.join() !== numerosDeLaLista(soluciones).join()) {
-            return;
-          }
-          var figuras = {};
-          Array.prototype.forEach.call(bloque.children, function (hijo) {
-            var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
-            if (!imagen) {
+      function ajustarLasCajas(caja) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+          return;
+        }
+        var encogidas = encogerLasCajas(caja);
+        if (!caja.classList.contains("sol-pasos")) {
+          return;
+        }
+        if (encogidas) {
+          caja.classList.add("sol-repartir");
+          caja.classList.remove("sol-repartir");
+        }
+        Promise.resolve().then(function () {
+          deslizarLasQueNoCaben(caja);
+        });
+      }
+      function encogerLasAbiertas() {
+        unidades.forEach(function (unidad) {
+          ["pasos", "chip"].forEach(function (que) {
+            var caja = unidad[que];
+            if (!caja || !caja.firstChild || caja.classList.contains("esta-plegado")) {
               return;
             }
-            var nombrado = /ejercicio\s+(\d+)/.exec(hijo.textContent + " " + (imagen.alt || ""));
-            var numero = nombrado ? parseInt(nombrado[1], 10) : suyos[0];
-            if (suyos.indexOf(numero) === -1) {
-              numero = suyos[0];
+            if (que === "pasos") {
+              encogerCuentas(caja);
             }
-            (figuras[numero] = figuras[numero] || []).push(hijo);
+            ajustarLasCajas(caja);
           });
+        });
+      }
 
-          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
-            var numero = suyos[lugar];
-            var solucion = soluciones.children[lugar];
-            var caja = document.createElement("div");
-            caja.className = "solucion-ib plegable esta-plegado";
-            caja.id = "solucion-ib-" + (paneles.length + 1);
-            var boton = document.createElement("button");
-            boton.type = "button";
-            boton.className = "boton-solucion-ib";
-            boton.setAttribute("aria-expanded", "false");
-            boton.setAttribute("aria-controls", caja.id);
-            boton.innerHTML = OJO + '<span class="rotulo-solucion-ib"></span>' + FLECHA;
-            var panel = { caja: caja, boton: boton, rotulo: boton.querySelector(".rotulo-solucion-ib") };
-            panel.rotulo.textContent = VER;
-            paneles.push(panel);
-            boton.addEventListener("click", function () {
-              if (!caja.firstChild) {
-                (figuras[numero] || []).forEach(function (figura) {
+
+      function texDe(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent : formula.textContent;
+        tex = tex.trim();
+        if (tex.slice(0, 2) === "\\(" || tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\)" || tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      function trocearCajas(tex) {
+        var cajas = [];
+        var resto = "";
+        var desde = 0;
+        var i = tex.indexOf("\\boxed{");
+        while (i !== -1) {
+          resto += tex.slice(desde, i);
+          var j = i + 7;
+          var nivel = 1;
+          while (j < tex.length && nivel > 0) {
+            var signo = tex.charAt(j);
+            if (signo === "\\") {
+              j += 2;
+              continue;
+            }
+            nivel += signo === "{" ? 1 : signo === "}" ? -1 : 0;
+            j++;
+          }
+          cajas.push(tex.slice(i + 7, j - 1));
+          desde = j;
+          i = tex.indexOf("\\boxed{", j);
+        }
+        return { cajas: cajas, resto: resto + tex.slice(desde) };
+      }
+      function resultadosDe(raiz) {
+        var lista = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType !== 1) {
+              return;
+            }
+            if (hijo.classList.contains("final")) {
+              lista.push({ html: hijo.innerHTML });
+            } else if (hijo.classList.contains("math")) {
+              trocearCajas(texDe(hijo)).cajas.forEach(function (tex) {
+                lista.push({ tex: tex });
+              });
+            } else {
+              recorrer(hijo);
+            }
+          });
+        })(raiz);
+        return lista;
+      }
+      function pintarTex(tex, enBloque) {
+        if (!window.katex) {
+          return tex;
+        }
+        return window.katex.renderToString(tex, { displayMode: Boolean(enBloque), throwOnError: false });
+      }
+      function unir(lista) {
+        var trozos = lista.map(function (resultado) {
+          return resultado.html !== undefined ? resultado.html : pintarTex(resultado.tex);
+        });
+        if (trozos.length < 2) {
+          return trozos.join("");
+        }
+        var frases = lista.some(function (resultado) {
+          return resultado.html !== undefined;
+        });
+        if (frases) {
+          return trozos.join("; ");
+        }
+        return trozos.slice(0, -1).join(", ") + " y " + trozos[trozos.length - 1];
+      }
+      function quedaAlgo(texto) {
+        var palabras = texto
+          .replace(/\\(qquad|quad|text|displaystyle)\b/g, " ")
+          .split(/[\s.,;:¡!¿?()&{}\[\]]+/)
+          .filter(function (palabra) {
+            return palabra && VACIAS.indexOf(palabra.toLowerCase()) === -1;
+          });
+        return palabras.join("").length >= 3;
+      }
+      function normalTex(tex) {
+        return tex
+          .replace(/\\[dt]frac/g, "\\frac")
+          .replace(/\\left|\\right|\\[,;!]|&/g, "")
+          .replace(/\{-\}/g, "-")
+          .replace(/\s+/g, "");
+      }
+      function sinLoDelEnunciado(resto, enunciado) {
+        var limpio = normalTex(resto);
+        for (var i = 0; i < enunciado.length; i++) {
+          var copiado = normalTex(enunciado[i]);
+          if (copiado && limpio.indexOf(copiado + "=") === 0) {
+            return limpio.slice(copiado.length + 1);
+          }
+        }
+        return resto;
+      }
+      function formulasDe(elemento) {
+        return Array.prototype.filter
+          .call(elemento.querySelectorAll(".math"), function (formula) {
+            return formula.parentElement.closest("li") === elemento;
+          })
+          .map(texDe);
+      }
+      function diceMasQueElResultado(raiz, enunciado) {
+        var copia = raiz.cloneNode(true);
+        Array.prototype.forEach.call(copia.querySelectorAll(".final"), function (frase) {
+          frase.parentNode.removeChild(frase);
+        });
+        Array.prototype.forEach.call(copia.querySelectorAll(".math"), function (formula) {
+          formula.parentNode.replaceChild(
+            document.createTextNode(
+              " " + sinLoDelEnunciado(trocearCajas(texDe(formula)).resto, enunciado || []) + " "
+            ),
+            formula
+          );
+        });
+        return quedaAlgo(copia.textContent.replace(/^\s*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+\s*:/, " "));
+      }
+      function tieneResultado(raiz) {
+        return raiz.textContent.indexOf("\\boxed{") !== -1 || Boolean(raiz.querySelector(".final"));
+      }
+
+
+      function marcasDe(contenedor) {
+        var marcas = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType === 3) {
+              MARCA.lastIndex = 0;
+              var hallada;
+              while ((hallada = MARCA.exec(hijo.data))) {
+                marcas.push({ letra: hallada[2], nodo: hijo, indice: hallada.index + hallada[1].length });
+              }
+            } else if (hijo.nodeType === 1 && !hijo.matches(".math, ol, ul, .sol-iconos")) {
+              recorrer(hijo);
+            }
+          });
+        })(contenedor);
+        return marcas;
+      }
+      function etiquetasDe(tex) {
+        var letras = [];
+        var hallada;
+        ETIQUETA.lastIndex = 0;
+        while ((hallada = ETIQUETA.exec(tex))) {
+          letras.push(hallada[1]);
+        }
+        return letras;
+      }
+      function seguidas(letras, desde) {
+        return letras.every(function (letra, lugar) {
+          return letra === LETRAS.charAt(desde + lugar);
+        });
+      }
+      function hijosConContenido(elemento) {
+        return Array.prototype.filter.call(elemento.childNodes, function (nodo) {
+          return nodo.nodeType === 1 || (nodo.nodeType === 3 && nodo.textContent.trim() !== "");
+        });
+      }
+      function apartadosDelEnunciado(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista) {
+          var primera = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          return {
+            forma: "lista",
+            letras: Array.prototype.map.call(lista.children, function (li, lugar) {
+              return LETRAS.charAt(primera + lugar);
+            }),
+            elementos: Array.prototype.slice.call(lista.children)
+          };
+        }
+        var letras = marcasDe(ejercicio).map(function (marca) {
+          return marca.letra;
+        });
+        if (letras.length < 2) {
+          letras = [];
+          Array.prototype.forEach.call(ejercicio.querySelectorAll(".math.display"), function (formula) {
+            if (!formula.closest("ol ol")) {
+              letras = letras.concat(etiquetasDe(texDe(formula)));
+            }
+          });
+        }
+        if (letras.length >= 2 && seguidas(letras, 0)) {
+          return { forma: "otra", letras: letras };
+        }
+        return { forma: "ninguna", letras: [] };
+      }
+      function trozosConMarcas(contenedor, primera) {
+        var marcas = marcasDe(contenedor);
+        var letras = marcas.map(function (marca) {
+          return marca.letra;
+        });
+        var desde = primera ? LETRAS.indexOf(primera) + 1 : 0;
+        if (!seguidas(letras, desde) || (!primera && !marcas.length)) {
+          return null;
+        }
+        function corte(marca) {
+          var padre = marca.nodo.parentNode;
+          var r = document.createRange();
+          if (marca.indice === 0 && padre !== contenedor && padre.firstChild === marca.nodo &&
+              padre.classList.contains("formula-con-signo")) {
+            r.setStartBefore(padre);
+          } else {
+            r.setStart(marca.nodo, marca.indice);
+          }
+          return r;
+        }
+        var cortes = marcas.map(corte);
+        function tramo(inicio, fin) {
+          var r = document.createRange();
+          if (inicio) {
+            r.setStart(inicio.startContainer, inicio.startOffset);
+          } else {
+            r.setStart(contenedor, 0);
+          }
+          if (fin) {
+            r.setEnd(fin.startContainer, fin.startOffset);
+          } else {
+            r.setEnd(contenedor, contenedor.childNodes.length);
+          }
+          return r;
+        }
+        var trozos = [];
+        if (primera) {
+          trozos.push({ letra: primera, rango: tramo(null, cortes[0]) });
+        } else if (tramo(null, cortes[0]).toString().replace(/\s/g, "") !== "") {
+          return null;
+        }
+        marcas.forEach(function (marca, lugar) {
+          trozos.push({ letra: marca.letra, rango: tramo(cortes[lugar], cortes[lugar + 1]) });
+        });
+        return trozos;
+      }
+      function trozosDeFormula(tex) {
+        var limpio = tex.trim();
+        var alineado = limpio.indexOf("\\begin{aligned}") === 0 && limpio.slice(-13) === "\\end{aligned}"
+          ? [limpio, limpio.slice(15, -13)]
+          : null;
+        var trozos = [];
+        if (alineado) {
+          var filas = alineado[1].split(/\\\\(?:\[[^\]]*\])?/);
+          var mala = filas.some(function (fila) {
+            return etiquetasDe(fila).length > 1;
+          });
+          if (mala) {
+            return null;
+          }
+          filas.forEach(function (fila) {
+            var letras = etiquetasDe(fila);
+            if (letras.length) {
+              trozos.push({ letra: letras[0], filas: [fila.replace(ETIQUETA, "")] });
+            } else if (trozos.length && fila.trim()) {
+              trozos[trozos.length - 1].filas.push(fila);
+            }
+          });
+          return trozos.map(function (trozo) {
+            var hueco = trozo.filas.some(function (fila) {
+              return fila.indexOf("\\frac") !== -1;
+            });
+            return {
+              letra: trozo.letra,
+              tex: "\\begin{aligned}" + trozo.filas.join(hueco ? "\\\\[6pt]" : "\\\\") + "\\end{aligned}"
+            };
+          });
+        }
+        var partes = tex.split(/\\text\{([a-h])\)\s*\}/);
+        if (partes[0].replace(/\\q?quad|\s/g, "") !== "") {
+          return null;
+        }
+        for (var i = 1; i < partes.length; i += 2) {
+          trozos.push({
+            letra: partes[i],
+            tex: partes[i + 1].replace(/\\qquad/g, " ").trim()
+          });
+        }
+        return trozos;
+      }
+      function entradaComun(hijos) {
+        var ultimo = hijos[hijos.length - 1];
+        if (hijos.length < 2 || !(ultimo.nodeType === 1 && ultimo.matches('ol[type="a"]'))) {
+          return null;
+        }
+        var antes = hijos.slice(0, -1);
+        var vale = antes.every(function (nodo) {
+          return nodo.nodeType === 3 || !nodo.matches("ol, ul, figure, table");
+        });
+        return vale ? antes : null;
+      }
+      function partesDeLaLista(lista) {
+        var inicio = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+        var partes = [];
+        var vale = Array.prototype.every.call(lista.children, function (li, lugar) {
+          var letra = LETRAS.charAt(inicio + lugar);
+          if (!marcasDe(li).length) {
+            partes.push({ letra: letra, nodos: li });
+            return true;
+          }
+          var trozos = trozosConMarcas(li, letra);
+          if (!trozos) {
+            return false;
+          }
+          partes = partes.concat(trozos);
+          return true;
+        });
+        return vale && seguidas(partes.map(function (parte) { return parte.letra; }), 0) ? partes : null;
+      }
+      function partesDeLaRespuesta(solucion) {
+        var hijos = hijosConContenido(solucion);
+        var entrada = entradaComun(hijos);
+        if (entrada) {
+          var conEntrada = partesDeLaLista(hijos[hijos.length - 1]);
+          (conEntrada || []).forEach(function (parte) {
+            parte.entrada = entrada;
+          });
+          return conEntrada;
+        }
+        if (hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].matches('ol[type="a"]')) {
+          return partesDeLaLista(hijos[0]);
+        }
+        var contenedor = hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].tagName === "P" ? hijos[0] : solucion;
+        var formulas = Array.prototype.filter.call(hijosConContenido(contenedor), function (nodo) {
+          return nodo.nodeType === 1 && nodo.matches(".math.display");
+        });
+        if (formulas.length === 1 && hijosConContenido(contenedor).length === 1) {
+          var deFormula = trozosDeFormula(texDe(formulas[0]));
+          return deFormula && deFormula.length >= 2 ? deFormula : null;
+        }
+        var conMarcas = trozosConMarcas(contenedor, null);
+        return conMarcas && conMarcas.length >= 2 ? conMarcas : null;
+      }
+      function copiaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        if (parte.nodos) {
+          Array.prototype.forEach.call(parte.nodos.childNodes, function (nodo) {
+            trozo.appendChild(nodo.cloneNode(true));
+          });
+        } else if (parte.rango) {
+          trozo.appendChild(parte.rango.cloneContents());
+          var primero = trozo;
+          while (primero && primero.nodeType !== 3) {
+            primero = primero.firstChild;
+          }
+          if (primero) {
+            primero.data = primero.data.replace(/^\s*[a-h]\)\u00a0\s{0,20}/, "");
+          }
+        } else if (parte.tex !== undefined) {
+          var formula = document.createElement("span");
+          formula.className = "math display";
+          formula.innerHTML = pintarTex(parte.tex, true);
+          trozo.appendChild(formula);
+        }
+        return trozo;
+      }
+      function entradaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        var parrafo = null;
+        (parte.entrada || []).forEach(function (nodo) {
+          if (nodo.nodeType === 1 && nodo.matches("p, div")) {
+            parrafo = null;
+            trozo.appendChild(nodo.cloneNode(true));
+            return;
+          }
+          if (!parrafo) {
+            parrafo = document.createElement("p");
+            parrafo.className = "sol-entrada";
+            trozo.appendChild(parrafo);
+          }
+          parrafo.appendChild(nodo.cloneNode(true));
+        });
+        return trozo;
+      }
+      function resultadosDeLaParte(parte) {
+        if (parte.tex !== undefined) {
+          return trocearCajas(parte.tex).cajas.map(function (tex) {
+            return { tex: tex };
+          });
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return resultadosDe(envoltura);
+      }
+      function parteConResultado(parte) {
+        if (parte.tex !== undefined) {
+          return parte.tex.indexOf("\\boxed{") !== -1;
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return tieneResultado(envoltura);
+      }
+      function parteConPasos(parte, enunciado) {
+        if (parte.entrada && parte.entrada.length) {
+          return true;
+        }
+        if (parte.tex !== undefined) {
+          return quedaAlgo(
+            sinLoDelEnunciado(trocearCajas(parte.tex).resto, enunciado || []).replace(/\\[a-zA-Z]+/g, " x ")
+          );
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return diceMasQueElResultado(envoltura, enunciado);
+      }
+
+
+      function boton(clase, icono, rotulo, letra) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "sol-ico " + clase;
+        b.innerHTML = icono;
+        b.title = rotulo;
+        b.setAttribute("aria-label", rotulo + (letra ? " del apartado " + letra + ")" : ""));
+        b.setAttribute("aria-expanded", "false");
+        return b;
+      }
+      function hueco(etiqueta, clase) {
+        var caja = document.createElement(etiqueta);
+        caja.className = clase + " plegable esta-plegado";
+        caja.id = "solucion-" + ++cuenta;
+        return caja;
+      }
+      function plegar(unidad, vaciar) {
+        [["ojo", "chip"], ["lapiz", "pasos"]].forEach(function (par) {
+          var b = unidad[par[0]];
+          var caja = unidad[par[1]];
+          if (!b || !caja) {
+            return;
+          }
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          if (vaciar) {
+            caja.textContent = "";
+          }
+        });
+      }
+      function abrir(unidad, que) {
+        var b = unidad[que === "chip" ? "ojo" : "lapiz"];
+        var caja = unidad[que];
+        var otra = que === "chip" ? "pasos" : "chip";
+        var abierta = !caja.classList.contains("esta-plegado");
+        if (unidad[otra]) {
+          unidad[otra].classList.add("esta-plegado");
+          unidad[otra === "chip" ? "ojo" : "lapiz"].setAttribute("aria-expanded", "false");
+        }
+        if (abierta) {
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          return;
+        }
+        if (!caja.firstChild) {
+          unidad.llenar[que](caja);
+        }
+        caja.classList.remove("esta-plegado");
+        b.setAttribute("aria-expanded", "true");
+        if (que === "pasos") {
+          encogerCuentas(caja);
+        }
+        Promise.resolve().then(function () {
+          ajustarLasCajas(caja);
+        });
+      }
+      function prepararBotones(datos) {
+        var unidad = { llenar: {} };
+        var iconos = document.createElement("span");
+        iconos.className = "sol-iconos";
+        if (datos.resultados) {
+          unidad.ojo = boton("ojo", OJO, RESULTADO, datos.letra);
+          unidad.chip = hueco(datos.chipEnBloque ? "div" : "span", datos.chipEnBloque ? "sol-resultado" : "sol-chip");
+          unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
+          unidad.llenar.chip = datos.resultados;
+          unidad.ojo.addEventListener("click", function () {
+            abrir(unidad, "chip");
+          });
+          iconos.appendChild(unidad.ojo);
+        }
+        if (datos.pasos) {
+          unidad.lapiz = boton("lapiz", LAPIZ, PASO_A_PASO, datos.letra);
+          unidad.pasos = hueco("div", "sol-pasos");
+          unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
+          unidad.llenar.pasos = datos.pasos;
+          unidad.lapiz.addEventListener("click", function () {
+            abrir(unidad, "pasos");
+          });
+          iconos.appendChild(unidad.lapiz);
+        }
+        unidad.iconos = iconos;
+        unidades.push(unidad);
+        return unidad;
+      }
+      function sitioDeLosBotones(elemento) {
+        var hijos = hijosConContenido(elemento);
+        var ultimo = hijos[hijos.length - 1];
+        var destino = ultimo && ultimo.nodeType === 1 && ultimo.tagName === "P" ? ultimo : elemento;
+        var dentro = hijosConContenido(destino);
+        var final = dentro[dentro.length - 1];
+        if (final && final.nodeType === 1 && final.matches(".math.display, ol, ul, table, figure, div, p, blockquote")) {
+          var fila = document.createElement("div");
+          fila.className = "sol-fila";
+          elemento.appendChild(fila);
+          return fila;
+        }
+        return destino;
+      }
+      function ponerIconos(destino, unidad) {
+        if (!destino.classList.contains("sol-fila")) {
+          destino.appendChild(document.createTextNode(" "));
+        }
+        destino.appendChild(unidad.iconos);
+        if (unidad.chip && unidad.chip.tagName === "SPAN") {
+          destino.appendChild(unidad.chip);
+        }
+      }
+      function letraDelante(letra) {
+        var marca = document.createElement("span");
+        marca.className = "sol-letra";
+        marca.textContent = letra + ")";
+        return marca;
+      }
+      function llenarResultados(lista, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          var dentro = document.createElement("span");
+          dentro.innerHTML = unir(lista());
+          caja.appendChild(dentro);
+        };
+      }
+      function llenarPasos(copia, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          caja.appendChild(copia());
+        };
+      }
+
+      function porEjercicio(ejercicio, numero, solucion, partes, figuras) {
+        var conResultado = tieneResultado(solucion);
+        var unidad = prepararBotones({
+          resultados: conResultado
+            ? function (caja) {
+                if (partes) {
+                  partes.forEach(function (parte) {
+                    var lista = resultadosDeLaParte(parte);
+                    if (!lista.length) {
+                      return;
+                    }
+                    var linea = document.createElement("div");
+                    linea.className = "sol-linea";
+                    linea.appendChild(letraDelante(parte.letra));
+                    var dentro = document.createElement("span");
+                    dentro.innerHTML = unir(lista);
+                    linea.appendChild(dentro);
+                    caja.appendChild(linea);
+                  });
+                } else {
+                  var dentro = document.createElement("span");
+                  dentro.innerHTML = unir(resultadosDe(solucion));
+                  caja.appendChild(dentro);
+                }
+              }
+            : null,
+          chipEnBloque: Boolean(partes),
+          pasos: !conResultado || diceMasQueElResultado(solucion, formulasDe(ejercicio)) || figuras.length
+            ? function (caja) {
+                figuras.forEach(function (figura) {
                   caja.appendChild(figura.cloneNode(true));
                 });
                 var lista = document.createElement("ol");
-                lista.className = "lista-solucion-ib";
+                lista.className = "lista-solucion-ejercicio";
                 lista.setAttribute("start", String(numero));
                 lista.appendChild(solucion.cloneNode(true));
                 caja.appendChild(lista);
               }
-              if (caja.classList.contains("esta-plegado")) {
-                caja.classList.remove("esta-plegado");
-                boton.setAttribute("aria-expanded", "true");
-                panel.rotulo.textContent = OCULTAR;
-                encogerCuentas(caja);
-              } else {
-                plegar(panel);
-              }
-            });
-            if (soloFormula(ejercicio)) {
-              ejercicio.classList.add("solo-formula-ib");
-            }
-            ejercicio.appendChild(boton);
-            ejercicio.appendChild(caja);
-          });
+            : null
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (unidad.chip && unidad.chip.tagName === "DIV") {
+          ejercicio.appendChild(unidad.chip);
+        }
+        if (unidad.pasos) {
+          ejercicio.appendChild(unidad.pasos);
+        }
+      }
+      function datosDeLaParte(parte, letra, chipEnBloque, enunciado) {
+        return {
+          letra: letra,
+          chipEnBloque: chipEnBloque,
+          resultados: parteConResultado(parte)
+            ? llenarResultados(function () {
+                return resultadosDeLaParte(parte);
+              }, chipEnBloque ? letra : null)
+            : null,
+          pasos: parteConPasos(parte, enunciado) || !parteConResultado(parte)
+            ? llenarPasos(function () {
+                var trozo = entradaDe(parte);
+                trozo.appendChild(copiaDe(parte));
+                return trozo;
+              }, chipEnBloque ? letra : null)
+            : null
+        };
+      }
+      function porApartadosEnLista(apartados, partes) {
+        apartados.elementos.forEach(function (li, lugar) {
+          var unidad = prepararBotones(
+            datosDeLaParte(partes[lugar], apartados.letras[lugar], false, formulasDe(li))
+          );
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          if (soloFormula(li)) {
+            li.classList.add("solo-formula-con-solucion");
+          }
+          ponerIconos(sitioDeLosBotones(li), unidad);
+          if (unidad.pasos) {
+            li.appendChild(unidad.pasos);
+          }
+        });
+      }
+      function porApartadosEnFila(ejercicio, partes) {
+        var fila = document.createElement("div");
+        fila.className = "sol-barra";
+        var abiertos = document.createElement("div");
+        abiertos.className = "sol-abiertos";
+        partes.forEach(function (parte) {
+          var unidad = prepararBotones(datosDeLaParte(parte, parte.letra, true));
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          var pareja = document.createElement("span");
+          pareja.className = "sol-apartado";
+          pareja.appendChild(letraDelante(parte.letra));
+          pareja.appendChild(unidad.iconos);
+          fila.appendChild(pareja);
+          if (unidad.chip) {
+            abiertos.appendChild(unidad.chip);
+          }
+          if (unidad.pasos) {
+            abiertos.appendChild(unidad.pasos);
+          }
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ejercicio.appendChild(fila);
+        ejercicio.appendChild(abiertos);
+      }
 
-          bloque.classList.add("repartido-ib");
-          var general = bloque.previousElementSibling;
-          if (general && general.classList.contains("boton-soluciones")) {
-            general.classList.add("repartido-ib");
+      var repartos = [];
+      var sueltos = [];
+      var casadas = [];
+      Array.prototype.forEach.call(
+        contenido.querySelectorAll(".resultado.plegable"),
+        function (bloque) {
+          var soluciones = respuestasDelBloque(bloque);
+          if (!soluciones) {
+            return;
+          }
+          var reparto = { bloque: bloque, soluciones: soluciones, numeros: numerosDeLaLista(soluciones) };
+          var delante = listaDeDelante(bloque);
+          if (delante && numerosDeLaLista(delante).join() === reparto.numeros.join()) {
+            reparto.listas = [delante];
+            casadas.push(delante);
+            repartos.push(reparto);
+          } else {
+            sueltos.push(reparto);
           }
         }
       );
+      sueltos.forEach(function (reparto) {
+        var listas = listasDeSuSeccion(reparto.bloque, casadas);
+        if (listas.length && numerosDeLasListas(listas).join() === reparto.numeros.join()) {
+          reparto.listas = listas;
+          casadas = casadas.concat(listas);
+          repartos.push(reparto);
+        }
+      });
+
+      repartos.forEach(function (reparto) {
+        var bloque = reparto.bloque;
+        var suyos = reparto.numeros;
+        var figuras = {};
+        Array.prototype.forEach.call(bloque.children, function (hijo) {
+          var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
+          if (!imagen) {
+            return;
+          }
+          var nombrado = /ejercicio\s+(\d+)/.exec(hijo.textContent + " " + (imagen.alt || ""));
+          var numero = nombrado ? parseInt(nombrado[1], 10) : suyos[0];
+          if (suyos.indexOf(numero) === -1) {
+            numero = suyos[0];
+          }
+          (figuras[numero] = figuras[numero] || []).push(hijo);
+        });
+
+        reparto.listas.forEach(function (ejercicios) {
+          var primero = suyos.indexOf(numerosDeLaLista(ejercicios)[0]);
+          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
+            var numero = suyos[primero + lugar];
+            var solucion = reparto.soluciones.children[primero + lugar];
+            var suyas = figuras[numero] || [];
+            var apartados = apartadosDelEnunciado(ejercicio);
+            var partes = apartados.forma === "ninguna" ? null : partesDeLaRespuesta(solucion);
+            var casan = Boolean(
+              partes &&
+                partes.map(function (parte) { return parte.letra; }).join() === apartados.letras.join()
+            );
+            if (casan && !suyas.length && apartados.forma === "lista") {
+              porApartadosEnLista(apartados, partes);
+            } else if (casan && !suyas.length) {
+              porApartadosEnFila(ejercicio, partes);
+            } else {
+              porEjercicio(ejercicio, numero, solucion, casan ? partes : null, suyas);
+            }
+          });
+        });
+
+        bloque.classList.add("respuestas-repartidas");
+        var general = bloque.previousElementSibling;
+        if (general && general.classList.contains("boton-soluciones")) {
+          general.classList.add("respuestas-repartidas");
+        } else {
+          general = null;
+        }
+        var seccion = bloque.parentElement;
+        if (
+          seccion.matches("section:not(.ejercicios)") &&
+          Array.prototype.every.call(seccion.children, function (hijo) {
+            return hijo === bloque || hijo === general || hijo.matches("h1, h2, h3, h4, h5, h6");
+          })
+        ) {
+          seccion.classList.add("respuestas-repartidas");
+        }
+      });
 
       var anchoVisto = contenido.clientWidth;
       window.addEventListener("resize", function () {
@@ -9960,11 +10895,8 @@ Enfoques NS</p>
         if (!document.documentElement.classList.contains("modo-clase")) {
           return;
         }
-        paneles.forEach(function (panel) {
-          if (panel.caja.firstChild) {
-            plegar(panel);
-            panel.caja.textContent = "";
-          }
+        unidades.forEach(function (unidad) {
+          plegar(unidad, true);
         });
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
