@@ -3652,6 +3652,13 @@
         linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
     }
 
+    .infografia-ib.tono-pizarra {
+      --tono: #334155;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.18), transparent 32%),
+        linear-gradient(120deg, #1e293b 0%, #334155 66%, #64748b 100%);
+    }
+
     .infografia-ib .cabecera-infografia-ib {
       display: grid;
       grid-template-columns: auto auto minmax(0, 1fr) auto;
@@ -4029,6 +4036,11 @@
     .resumen-ib.tono-ambar {
       --tono-suave: #fdf5ea;
       --tono-raya: #ecd3b0;
+    }
+
+    .resumen-ib.tono-pizarra {
+      --tono-suave: #f1f5f9;
+      --tono-raya: #cbd5e1;
     }
 
     .resumen-ib button {
@@ -20227,12 +20239,45 @@ Enfoques NS</p>
         );
       }
 
+      function estacionDe(estaciones, clave) {
+        const estacion = estaciones.find((una) => una.clave === clave);
+        if (!estacion) {
+          throw new Error("No hay ninguna estación «" + clave + "».");
+        }
+        return estacion;
+      }
+
+      const ESTACIONES_REPASO = [
+        estacionDe(ESTACIONES_REALES, "potencias"),
+        estacionDe(ESTACIONES_REALES, "racionalizar"),
+        estacionDe(ESTACIONES_REALES, "absoluto"),
+        estacionDe(ESTACIONES_EXPONENCIALES, "logaritmos"),
+        estacionDe(ESTACIONES_EXPONENCIALES, "ecuaciones"),
+        estacionDe(ESTACIONES_COMBINATORIA, "termino"),
+        estacionDe(ESTACIONES_SUCESIONES, "aritmeticas"),
+        estacionDe(ESTACIONES_SUCESIONES, "geometricas"),
+        estacionDe(ESTACIONES_DEMOSTRACION, "paso")
+      ];
+
+      function RepasoResumen({ configuracion, alPreparar }) {
+        return (
+          <ResumenIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="pizarra"
+            titulo="El examen de octubre, de un vistazo"
+            estaciones={ESTACIONES_REPASO}
+          />
+        );
+      }
+
       window.ResumenesIB = {
         "resumen-numeros-reales": RealesResumen,
         "resumen-exponenciales": ExponencialesResumen,
         "resumen-combinatoria": CombinatoriaResumen,
         "resumen-sucesiones": SucesionesResumen,
-        "resumen-demostracion": DemostracionResumen
+        "resumen-demostracion": DemostracionResumen,
+        "resumen-repaso": RepasoResumen
       };
     })();
   </script>
