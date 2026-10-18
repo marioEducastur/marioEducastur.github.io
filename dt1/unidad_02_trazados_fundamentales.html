@@ -3851,6 +3851,17 @@
       display: none;
     }
 
+    /* Si el trazado lleva sus pasos en la solución, en el lápiz los enseña
+       él, junto al dibujo: la lista numerada de la copia de la solución no
+       se repite en pantalla. En la ampliación del modo clase sí se ve, en
+       la pantalla de la explicación, porque el trazado va en la siguiente.
+       Al imprimir y sin JavaScript sigue. */
+    @media screen {
+      html:not(.ampliando) .sol-pasos ol.pasos-en-trazado {
+        display: none;
+      }
+    }
+
     @media print {
       .interactivo[data-carga="al-abrir"] {
         display: none;
@@ -7838,21 +7849,30 @@ Bachillerato</p>
                 triángulo.</figcaption>
                 </figure>
                 <ol start="38" type="1">
-                <li>El vértice <span class="math inline">\(C\)</span>
-                cumple dos condiciones: está a <span
-                class="math inline">\(64\)</span> mm de <span
-                class="math inline">\(A\)</span> y a <span
+                <li>Se dibuja el lado <span
+                class="math inline">\(AB\)</span>, de <span
+                class="math inline">\(72\)</span> mm. El vértice <span
+                class="math inline">\(C\)</span> cumple dos condiciones:
+                está a <span class="math inline">\(64\)</span> mm de
+                <span class="math inline">\(A\)</span> y a <span
                 class="math inline">\(56\)</span> mm de <span
-                class="math inline">\(B\)</span>. Se dibuja el lado
-                <span class="math inline">\(AB\)</span>, se traza un
-                arco de <span class="math inline">\(64\)</span> mm con
-                centro en <span class="math inline">\(A\)</span> y otro
-                de <span class="math inline">\(56\)</span> mm con centro
-                en <span class="math inline">\(B\)</span>, y su corte es
-                <span class="math inline">\(C\)</span>. Los arcos se
-                cortan también al otro lado de <span
+                class="math inline">\(B\)</span>.
+                <ol type="1">
+                <li>Con centro en <span class="math inline">\(A\)</span>
+                y radio <span class="math inline">\(64\)</span> mm,
+                traza un arco por encima de <span
+                class="math inline">\(AB\)</span>.</li>
+                <li>Con centro en <span class="math inline">\(B\)</span>
+                y radio <span class="math inline">\(56\)</span> mm,
+                traza otro arco que corte al primero. El corte es <span
+                class="math inline">\(C\)</span>.</li>
+                <li>Une <span class="math inline">\(C\)</span> con <span
+                class="math inline">\(A\)</span> y con <span
+                class="math inline">\(B\)</span>. Los arcos se cortan
+                también al otro lado de <span
                 class="math inline">\(AB\)</span>: esa segunda solución
                 es el mismo triángulo, dado la vuelta.</li>
+                </ol></li>
                 <li>Es la perpendicular a una recta por un punto
                 exterior. Un arco con centro en <span
                 class="math inline">\(C\)</span> corta a <span
@@ -7903,22 +7923,34 @@ Bachillerato</p>
                 class="math inline">\(E\)</span> tiene que pasar por
                 <span class="math inline">\(F\)</span>.</li>
                 <li>Se dibuja el lado <span
-                class="math inline">\(KL\)</span> sobre una recta, que
-                se alarga por el lado de <span
-                class="math inline">\(K\)</span>. Por <span
-                class="math inline">\(K\)</span> se traza la
-                perpendicular, con el método del punto de la recta, y
-                sobre ella se lleva el lado: es el vértice <span
-                class="math inline">\(N\)</span>. El cuarto vértice,
-                <span class="math inline">\(M\)</span>, está a <span
-                class="math inline">\(46\)</span> mm de <span
-                class="math inline">\(N\)</span> y a <span
-                class="math inline">\(46\)</span> mm de <span
-                class="math inline">\(L\)</span>: dos arcos con esa
-                abertura lo dan. <span class="final-con-signo"><span
-                class="final">Las dos diagonales tienen que medir lo
-                mismo, unos <span class="math inline">\(65\)</span>
-                mm</span>.</span></li>
+                class="math inline">\(KL\)</span>, de <span
+                class="math inline">\(46\)</span> mm, sobre una recta.
+                <ol type="1">
+                <li>Alarga la recta por el lado de <span
+                class="math inline">\(K\)</span> y traza por <span
+                class="math inline">\(K\)</span> la perpendicular con el
+                método del punto de la recta: una marca a cada lado de
+                <span class="math inline">\(K\)</span> y, con más
+                abertura, dos arcos que se cortan por encima.</li>
+                <li>Abre el compás de <span
+                class="math inline">\(K\)</span> a <span
+                class="math inline">\(L\)</span> y lleva el lado sobre
+                la perpendicular: es el vértice <span
+                class="math inline">\(N\)</span>.</li>
+                <li>Con la misma abertura, traza un arco con centro en
+                <span class="math inline">\(N\)</span> y otro con centro
+                en <span class="math inline">\(L\)</span>. Se cortan en
+                el cuarto vértice, <span
+                class="math inline">\(M\)</span>.</li>
+                <li>Une <span class="math inline">\(N\)</span> con <span
+                class="math inline">\(M\)</span> y <span
+                class="math inline">\(M\)</span> con <span
+                class="math inline">\(L\)</span>: es el cuadrado <span
+                class="math inline">\(KLMN\)</span>. <span
+                class="final-con-signo"><span class="final">Las dos
+                diagonales tienen que medir lo mismo, unos <span
+                class="math inline">\(65\)</span> mm</span>.</span></li>
+                </ol></li>
                 <li>Se marcan tres puntos del arco, <span
                 class="math inline">\(T\)</span>, <span
                 class="math inline">\(U\)</span> y <span
@@ -8020,14 +8052,17 @@ Bachillerato</p>
                 teorema de Tales en partes proporcionales a <span
                 class="math inline">\(3\)</span>, <span
                 class="math inline">\(4\)</span> y <span
-                class="math inline">\(5\)</span>: sobre una recta
-                auxiliar que sale de <span
-                class="math inline">\(M\)</span> se llevan <span
-                class="math inline">\(3+4+5=12\)</span> segmentos
-                iguales, el último punto se une con <span
-                class="math inline">\(N\)</span> y por el tercero y el
-                séptimo se trazan paralelas a esa recta. Cortan a <span
-                class="math inline">\(MN\)</span> en <span
+                class="math inline">\(5\)</span>.
+                <ol type="1">
+                <li>Traza una semirrecta auxiliar que salga de <span
+                class="math inline">\(M\)</span> y lleva sobre ella, con
+                el compás, <span class="math inline">\(3+4+5=12\)</span>
+                segmentos iguales.</li>
+                <li>Une la última marca con <span
+                class="math inline">\(N\)</span>.</li>
+                <li>Por la tercera marca y por la séptima, traza
+                paralelas a esa recta con escuadra y cartabón. Cortan a
+                <span class="math inline">\(MN\)</span> en <span
                 class="math inline">\(P\)</span> y en <span
                 class="math inline">\(Q\)</span>, y <span
                 class="final-con-signo"><span class="final">los trozos
@@ -8036,23 +8071,40 @@ Bachillerato</p>
                 class="math inline">\(QN\)</span> son los tres lados:
                 <span class="math inline">\(28{,}5\)</span>, <span
                 class="math inline">\(38\)</span> y <span
-                class="math inline">\(47{,}5\)</span> mm</span>.</span>
-                El triángulo se levanta sobre <span
+                class="math inline">\(47{,}5\)</span>
+                mm</span>.</span></li>
+                <li>El triángulo se levanta sobre <span
                 class="math inline">\(PQ\)</span>: con centro en <span
                 class="math inline">\(P\)</span> y radio <span
                 class="math inline">\(PM\)</span>, y con centro en <span
                 class="math inline">\(Q\)</span> y radio <span
-                class="math inline">\(QN\)</span>, dos arcos que se
-                cortan en <span class="math inline">\(R\)</span>. Hay
-                una solución, y <span class="final-con-signo"><span
-                class="final">su ángulo mayor, el de <span
+                class="math inline">\(QN\)</span>, traza dos arcos. Se
+                cortan en <span class="math inline">\(R\)</span>.</li>
+                <li>Une <span class="math inline">\(R\)</span> con <span
+                class="math inline">\(P\)</span> y con <span
+                class="math inline">\(Q\)</span>. Hay una solución, y
+                <span class="final-con-signo"><span class="final">su
+                ángulo mayor, el de <span
                 class="math inline">\(P\)</span>, es
                 recto</span>:</span> como <span
                 class="math inline">\(3^2+4^2=5^2\)</span>, también
                 <span
                 class="math inline">\(28{,}5^2+38^2=47{,}5^2\)</span>.
                 Se comprueba con la escuadra.</li>
+                </ol></li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-38"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="triangulo-tres-lados"
+                data-titulo="El ejercicio 38, con sus datos"
+                data-ejercicio="38" data-pasos-de="solucion"
+                data-datos="A=120,330 B=480,330 b=320 a=280"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 38 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 <div id="trazado-ejercicio-39"
                 class="interactivo bloque-didactico"
@@ -8090,6 +8142,17 @@ Bachillerato</p>
                 <p>En la web, el ejercicio 41 se ve trazado paso a paso,
                 con sus datos, en el lápiz de su solución.</p>
                 </div>
+                <div id="trazado-ejercicio-42"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="cuadrado-con-compas"
+                data-titulo="El ejercicio 42, con sus datos"
+                data-ejercicio="42" data-pasos-de="solucion"
+                data-datos="K=150,330 L=380,330" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 42 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
                 <div id="trazado-ejercicio-43"
                 class="interactivo bloque-didactico"
                 data-componente="trazado"
@@ -8100,6 +8163,18 @@ Bachillerato</p>
                 data-nombres="A=T B=U C=V" data-carga="al-abrir">
                 <p><span class="etiqueta-bloque">Explora</span></p>
                 <p>En la web, el ejercicio 43 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-46"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="triangulo-proporcional"
+                data-titulo="El ejercicio 46, con sus datos"
+                data-ejercicio="46" data-pasos-de="solucion"
+                data-datos="M=72,300 N=528,300 e=18"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 46 se ve trazado paso a paso,
                 con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
@@ -19064,6 +19139,385 @@ Bachillerato</p>
         }
       };
 
+      // ---- Problemas que encadenan trazados (desde el 18 de octubre de
+      // 2026). Sus pasos no son los del método de un trazado de la teoría:
+      // los lleva la solución de su ejercicio, como lista numerada
+      // (`pasos-de="solucion"`, regla 3 de AGENTS.md). ----
+
+      // Que los puntos (y las letras, con su sitio) caigan dentro de la
+      // lámina, a `margen` del borde.
+      function dentroDeLaLamina(puntos, margen) {
+        return puntos.every(function (p) {
+          return p.x > margen && p.x < ANCHO - margen && p.y > margen && p.y < ALTO - margen;
+        });
+      }
+
+      // El compás gira sin dibujar por el camino corto, de un ángulo a otro.
+      function girarCorto(c, r, desde, hasta) {
+        return girar(c, r, desde, desde + giro(desde, hasta));
+      }
+
+      // El triángulo dados sus tres lados: el lado AB, ya dibujado, y dos
+      // arcos, de radio b (el lado AC) con centro en A y de radio a (el lado
+      // BC) con centro en B. Su corte de arriba es C.
+      function trianguloTresLadosGeometria(d) {
+        var cortes = cortesCircunferencias(d.A, d.b, d.B, d.a);
+        return cortes ? { C: cortes[0] } : null;
+      }
+
+      function trianguloTresLadosLetras(d, C) {
+        return {
+          A: letraEnHueco(d.A, [d.B, C], 18),
+          B: letraEnHueco(d.B, [d.A, C], 18),
+          C: letraEnHueco(C, [d.A, d.B], 18)
+        };
+      }
+
+      construcciones["triangulo-tres-lados"] = {
+        datos: function () {
+          return { A: pt(120, 330), B: pt(480, 330), b: 320, a: 280 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = trianguloTresLadosGeometria(d);
+          var letras;
+          if (!g || Math.abs(unitario(d.A, d.B).y) > 0.35) {
+            return false;
+          }
+          // Un triángulo con altura, encima de su lado AB.
+          if (g.C.y > Math.min(d.A.y, d.B.y) - 50) {
+            return false;
+          }
+          letras = trianguloTresLadosLetras(d, g.C);
+          return dentroDeLaLamina(
+            [
+              avanzar(d.A, letras.A, 1),
+              avanzar(d.B, letras.B, 1),
+              avanzar(g.C, letras.C, 1),
+              polar(d.A, d.b, angulo(d.A, g.C) - 0.3),
+              polar(d.B, d.a, angulo(d.B, g.C) + 0.3)
+            ],
+            16
+          );
+        },
+        construir: function (d) {
+          var C = trianguloTresLadosGeometria(d).C;
+          var letras = trianguloTresLadosLetras(d, C);
+          var arcoA = arquito(d.A, d.b, angulo(d.A, C), 0.3, 1);
+          var arcoB = arquito(d.B, d.a, angulo(d.B, C), 0.3, -1);
+          return {
+            base: [
+              seg(d.A, d.B, "dato"),
+              punto(d.A, "A", letras.A, { forma: "hueco" }),
+              punto(d.B, "B", letras.B, { forma: "hueco" })
+            ],
+            pasos: [
+              [abrir(d.A, polar(d.A, d.b, arcoA.a0)), arcoA],
+              [abrir(d.B, polar(d.B, d.a, arcoB.a0)), arcoB, punto(C, "C", letras.C)],
+              [seg(d.A, d.B, "sol"), seg(d.A, C, "sol"), seg(d.B, C, "sol")]
+            ],
+            porque: null
+          };
+        }
+      };
+
+      // El cuadrado dado su lado KL, con regla y compás, como en la figura de
+      // las soluciones: la recta se alarga por el lado de K y por K se traza
+      // la perpendicular con el método del punto de la recta (una marca a
+      // cada lado de K y dos arcos que se cortan en X); el lado, llevado
+      // sobre ella, da N, y con la misma abertura, dos arcos con centro en N
+      // y en L se cortan en M.
+      function cuadradoGeometria(d) {
+        var lado = distancia(d.K, d.L);
+        var u = unitario(d.K, d.L);
+        var n = normalArriba(u);
+        var marca = lado * 0.3;
+        var abertura = marca * 1.6;
+        return {
+          lado: lado,
+          u: u,
+          n: n,
+          marca: marca,
+          abertura: abertura,
+          N: avanzar(d.K, n, lado),
+          M: avanzar(d.L, n, lado),
+          e1: avanzar(d.K, u, -marca),
+          e2: avanzar(d.K, u, marca),
+          X: avanzar(d.K, n, Math.sqrt(abertura * abertura - marca * marca)),
+          inicio: avanzar(d.K, u, -marca - 34),
+          arriba: avanzar(avanzar(d.K, n, lado), n, 30)
+        };
+      }
+
+      // Las de N y M esquivan también los arcos que las marcan.
+      function cuadradoLetras(d, g) {
+        var aN = angulo(d.K, g.N);
+        var aNM = angulo(g.N, g.M);
+        var aLM = angulo(d.L, g.M);
+        return {
+          K: letraEnHueco(d.K, [d.L, g.N, g.inicio], 18),
+          L: letraEnHueco(d.L, [d.K, g.M], 18),
+          M: letraEnHueco(
+            g.M,
+            [
+              d.L,
+              g.N,
+              polar(g.N, g.lado, aNM + 0.15),
+              polar(d.L, g.lado, aLM - 0.15),
+              polar(d.L, g.lado, aLM + 0.15)
+            ],
+            18
+          ),
+          N: letraEnHueco(
+            g.N,
+            [d.K, g.M, g.arriba, polar(d.K, g.lado, aN - 0.12), polar(d.K, g.lado, aN + 0.12)],
+            18
+          )
+        };
+      }
+
+      construcciones["cuadrado-con-compas"] = {
+        datos: function () {
+          return { K: pt(150, 330), L: pt(380, 330) };
+        },
+        asas: function (d) {
+          return { K: d.K, L: d.L };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = cuadradoGeometria(d);
+          var letras;
+          if (g.lado < 150 || g.lado > 270 || Math.abs(g.u.y) > 0.3) {
+            return false;
+          }
+          letras = cuadradoLetras(d, g);
+          // Las letras, dentro, y los arcos y la recta alargada, también.
+          return (
+            dentroDeLaLamina(
+              [
+                g.inicio,
+                g.arriba,
+                g.M,
+                avanzar(d.K, letras.K, 1),
+                avanzar(d.L, letras.L, 1),
+                avanzar(g.M, letras.M, 1),
+                avanzar(g.N, letras.N, 1)
+              ],
+              16
+            ) && cabe(construcciones["cuadrado-con-compas"].construir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: function (d) {
+          var g = cuadradoGeometria(d);
+          var letras = cuadradoLetras(d, g);
+          var K = d.K;
+          var L = d.L;
+          var marca1 = arquito(K, g.marca, angulo(K, g.e1), 0.25, 1);
+          var marca2 = arquito(K, g.marca, angulo(K, g.e2), 0.25, 1);
+          var arco1 = arquito(g.e1, g.abertura, angulo(g.e1, g.X), 0.18, 1);
+          var arco2 = arquito(g.e2, g.abertura, angulo(g.e2, g.X), 0.18, -1);
+          var arcoN = arquito(K, g.lado, angulo(K, g.N), 0.12, -1);
+          var arcoNM = arquito(g.N, g.lado, angulo(g.N, g.M), 0.15, 1);
+          var arcoLM = arquito(L, g.lado, angulo(L, g.M), 0.15, -1);
+          return {
+            base: [
+              seg(K, L, "dato"),
+              punto(K, "K", letras.K, { forma: "hueco" }),
+              punto(L, "L", letras.L, { forma: "hueco" })
+            ],
+            pasos: [
+              deprisa(
+                [
+                  seg(g.inicio, K, "aux"),
+                  abrir(K, polar(K, g.marca, marca1.a0)),
+                  marca1,
+                  girarCorto(K, g.marca, marca1.a1, marca2.a0),
+                  marca2,
+                  abrir(g.e1, polar(g.e1, g.abertura, arco1.a0)),
+                  arco1,
+                  llevar(g.e1, polar(g.e1, g.abertura, arco1.a1), g.e2, polar(g.e2, g.abertura, arco2.a0)),
+                  arco2,
+                  seg(K, g.arriba, "aux")
+                ],
+                0.7
+              ),
+              [
+                abrir(K, L),
+                girarCorto(K, g.lado, angulo(K, L), arcoN.a0),
+                arcoN,
+                punto(g.N, "N", letras.N)
+              ],
+              [
+                llevar(K, polar(K, g.lado, arcoN.a1), g.N, polar(g.N, g.lado, arcoNM.a0)),
+                arcoNM,
+                llevar(g.N, polar(g.N, g.lado, arcoNM.a1), L, polar(L, g.lado, arcoLM.a0)),
+                arcoLM,
+                punto(g.M, "M", letras.M)
+              ],
+              [
+                seg(K, L, "sol"),
+                seg(L, g.M, "sol"),
+                seg(g.M, g.N, "sol"),
+                seg(g.N, K, "sol"),
+                recto(K, L, g.N)
+              ]
+            ],
+            porque: null
+          };
+        }
+      };
+
+      // El triángulo de perímetro MN con los lados proporcionales a 3, 4 y
+      // 5. Con Tales, MN se parte en 3 + 4 + 5 = 12 partes iguales: P y Q
+      // salen de la tercera y la séptima marca de una semirrecta auxiliar
+      // que sale de M, por debajo. Sobre PQ, el triángulo de lados PM y QN:
+      // los dos arcos se cortan en R.
+      var PROPORCIONALES = [3, 4, 5];
+
+      function trianguloProporcionalGeometria(d) {
+        var total = PROPORCIONALES[0] + PROPORCIONALES[1] + PROPORCIONALES[2];
+        var aRayo = angulo(d.M, d.N) + 0.3;
+        var marcas = [];
+        var iP = PROPORCIONALES[0];
+        var iQ = PROPORCIONALES[0] + PROPORCIONALES[1];
+        var hacia;
+        var P;
+        var Q;
+        var cortes;
+        var k;
+        for (k = 0; k <= total; k += 1) {
+          marcas.push(polar(d.M, k * d.e, aRayo));
+        }
+        hacia = unitario(marcas[total], d.N);
+        P = corteRectas(marcas[iP], avanzar(marcas[iP], hacia, 1), d.M, d.N);
+        Q = corteRectas(marcas[iQ], avanzar(marcas[iQ], hacia, 1), d.M, d.N);
+        cortes = P && Q ? cortesCircunferencias(P, distancia(d.M, P), Q, distancia(Q, d.N)) : null;
+        if (!cortes) {
+          return null;
+        }
+        return {
+          total: total,
+          aRayo: aRayo,
+          marcas: marcas,
+          iP: iP,
+          iQ: iQ,
+          P: P,
+          Q: Q,
+          R: cortes[0],
+          fin: polar(d.M, total * d.e + 34, aRayo),
+          abajo: pt(-Math.sin(aRayo), Math.cos(aRayo))
+        };
+      }
+
+      function trianguloProporcionalLetras(d, g) {
+        return {
+          M: letraEnHueco(d.M, [d.N, g.fin], 18),
+          N: letraEnHueco(d.N, [d.M, g.marcas[g.total]], 18),
+          // P, entre PM y PR: por debajo pasan las dos paralelas.
+          P: polar(pt(0, 0), 18, angulo(g.P, d.M) + giro(angulo(g.P, d.M), angulo(g.P, g.R)) / 2),
+          Q: letraEnHueco(g.Q, [d.M, d.N, g.R, g.marcas[g.iQ]], 18),
+          R: letraEnHueco(g.R, [g.P, g.Q], 18)
+        };
+      }
+
+      construcciones["triangulo-proporcional"] = {
+        datos: function () {
+          return { M: pt(72, 300), N: pt(528, 300), e: 18 };
+        },
+        asas: function (d) {
+          return { M: d.M, N: d.N };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g;
+          var letras;
+          var largo = distancia(d.M, d.N);
+          if (largo < 380 || largo > 500 || Math.abs(unitario(d.M, d.N).y) > 0.25) {
+            return false;
+          }
+          // La semirrecta, más corta que MN, para que las paralelas corten bien.
+          if (12 * d.e < 0.35 * largo || 12 * d.e > 0.6 * largo) {
+            return false;
+          }
+          g = trianguloProporcionalGeometria(d);
+          if (!g || g.R.y > Math.min(d.M.y, d.N.y) - 50) {
+            return false;
+          }
+          letras = trianguloProporcionalLetras(d, g);
+          return dentroDeLaLamina(
+            [
+              g.fin,
+              avanzar(g.marcas[g.total], g.abajo, 16),
+              avanzar(d.M, letras.M, 1),
+              avanzar(d.N, letras.N, 1),
+              avanzar(g.P, letras.P, 1),
+              avanzar(g.Q, letras.Q, 1),
+              avanzar(g.R, letras.R, 1)
+            ],
+            16
+          );
+        },
+        construir: function (d) {
+          var g = trianguloProporcionalGeometria(d);
+          var letras = trianguloProporcionalLetras(d, g);
+          var marcas = g.marcas;
+          var rayo = [seg(d.M, g.fin, "aux"), abrir(d.M, polar(d.M, d.e, g.aRayo - 0.35))];
+          var k;
+          var marca;
+          var anterior = null;
+          for (k = 1; k <= g.total; k += 1) {
+            marca = arquito(marcas[k - 1], d.e, g.aRayo, 0.35, 1);
+            if (anterior) {
+              rayo.push(llevar(marcas[k - 2], polar(marcas[k - 2], d.e, anterior.a1), marcas[k - 1], polar(marcas[k - 1], d.e, marca.a0)));
+            }
+            rayo.push(marca);
+            anterior = marca;
+          }
+          [g.iP, g.iQ, g.total].forEach(function (i) {
+            rayo.push(rotulo(avanzar(marcas[i], g.abajo, 15), String(i), { recta: true, cuerpo: 14 }));
+          });
+          var arcoP = arquito(g.P, distancia(d.M, g.P), angulo(g.P, g.R), 0.25, 1);
+          var arcoQ = arquito(g.Q, distancia(g.Q, d.N), angulo(g.Q, g.R), 0.25, -1);
+          return {
+            base: [
+              seg(d.M, d.N, "dato"),
+              punto(d.M, "M", letras.M, { forma: "hueco" }),
+              punto(d.N, "N", letras.N, { forma: "hueco" })
+            ],
+            pasos: [
+              deprisa(rayo, 0.35),
+              [seg(marcas[g.total], d.N, "aux")],
+              [
+                seg(marcas[g.iP], g.P, "aux"),
+                seg(marcas[g.iQ], g.Q, "aux"),
+                punto(g.P, "P", letras.P),
+                punto(g.Q, "Q", letras.Q)
+              ],
+              [
+                abrir(g.P, d.M),
+                girarCorto(g.P, distancia(d.M, g.P), angulo(g.P, d.M), arcoP.a0),
+                arcoP,
+                abrir(g.Q, d.N),
+                girarCorto(g.Q, distancia(g.Q, d.N), angulo(g.Q, d.N), arcoQ.a0),
+                arcoQ,
+                punto(g.R, "R", letras.R)
+              ],
+              [seg(g.P, g.R, "sol"), seg(g.R, g.Q, "sol"), seg(g.P, g.Q, "sol"), recto(g.P, g.Q, g.R)]
+            ],
+            porque: null
+          };
+        }
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -27534,6 +27988,40 @@ Bachillerato</p>
         };
       }
 
+      // Los textos de un trazado que lleva sus pasos en la solución de su
+      // ejercicio (`pasos-de="solucion"`, regla 3 de AGENTS.md): lo que va
+      // antes de la lista numerada, los datos; cada elemento, un paso, y lo
+      // que va después, el porqué. La solución es la copia que lleva el lápiz.
+      function textosDeLaSolucion(solucion) {
+        const lista = solucion
+          ? Array.from(solucion.children).find((hijo) => hijo.tagName === "OL")
+          : null;
+        if (!lista) {
+          return null;
+        }
+        const antes = [];
+        const despues = [];
+        let pasada = false;
+        Array.from(solucion.childNodes).forEach((nodo) => {
+          if (nodo === lista) {
+            pasada = true;
+          } else {
+            (pasada ? despues : antes).push(nodo);
+          }
+        });
+        const parrafo = (nodos) => {
+          const caja = document.createElement("p");
+          nodos.forEach((nodo) => caja.appendChild(nodo.cloneNode(true)));
+          return caja.textContent.trim() ? caja.outerHTML : "";
+        };
+        return {
+          lista: lista,
+          datos: parrafo(antes),
+          pasos: Array.from(lista.children).map((paso) => paso.innerHTML),
+          porque: parrafo(despues)
+        };
+      }
+
       // Un trozo de la fuente, con sus fórmulas pintadas.
       function TextoDeLaFuente({ html, className }) {
         const caja = React.useRef(null);
@@ -27634,7 +28122,7 @@ Bachillerato</p>
         return estado;
       }
 
-      function TrazadoInteractivo({ configuracion, alPreparar }) {
+      function TrazadoInteractivo({ configuracion, alPreparar, anfitrion }) {
         const T = window.TRAZADOS_DT;
         const definicion = T && T.construcciones[configuracion.construccion];
         if (!definicion) {
@@ -27646,17 +28134,31 @@ Bachillerato</p>
         const raiz = React.useRef(null);
         const lamina = React.useRef(null);
         const desfase = React.useRef({ x: 0, y: 0 });
-        // Un trazado de ejercicio lee al momento los textos de su teoría, que
-        // ya está en la página: así sale entero en cuanto se monta, y la
-        // ampliación del modo clase, que lo mide en ese instante, lo ve
-        // entero.
-        const [textos, setTextos] = React.useState(() => {
+        // Los textos salen del método de su teoría (`pasos-de`), de la
+        // solución de su ejercicio, en el lápiz (`pasos-de="solucion"`), o
+        // del método que el trazado lleva justo encima.
+        const leerTextos = (desde) => {
+          if (configuracion["pasos-de"] === "solucion") {
+            const caja = anfitrion && anfitrion.closest(".sol-pasos");
+            return textosDeLaSolucion(
+              caja && caja.querySelector(":scope > ol.lista-solucion-ejercicio > li")
+            );
+          }
           const teoria = configuracion["pasos-de"]
             ? document.getElementById(configuracion["pasos-de"])
             : null;
-          const leidos = teoria
-            ? textosDelMetodo(teoria.closest(".interactivo-host") || teoria)
-            : null;
+          return textosDelMetodo(
+            teoria
+              ? teoria.closest(".interactivo-host") || teoria
+              : desde && desde.closest(".interactivo-host")
+          );
+        };
+        // Un trazado de ejercicio los lee al momento, porque los suyos ya
+        // están en la página: así sale entero en cuanto se monta, y la
+        // ampliación del modo clase, que lo mide en ese instante, lo ve
+        // entero.
+        const [textos, setTextos] = React.useState(() => {
+          const leidos = configuracion["pasos-de"] ? leerTextos(null) : null;
           return leidos ? conLasLetras(leidos, T.leerNombres(configuracion.nombres)) : null;
         });
         // Un trazado de ejercicio trae sus datos en el bloque y toma los
@@ -27696,24 +28198,29 @@ Bachillerato</p>
         const lienzo = T.lienzo(definicion);
 
         React.useEffect(() => {
-          const teoria = configuracion["pasos-de"]
-            ? document.getElementById(configuracion["pasos-de"])
-            : null;
-          const anfitrion = teoria
-            ? teoria.closest(".interactivo-host") || teoria
-            : raiz.current && raiz.current.closest(".interactivo-host");
-          const leidos = textosDelMetodo(anfitrion);
+          const leidos = leerTextos(raiz.current);
           if (!leidos || leidos.pasos.length !== pasos) {
             console.error(
               "El trazado «" +
                 configuracion.construccion +
-                "» necesita justo encima un bloque de método con " +
+                "» necesita " +
+                (configuracion["pasos-de"] === "solucion"
+                  ? "en su solución una lista numerada"
+                  : "justo encima un bloque de método") +
+                " con " +
                 pasos +
                 " pasos."
             );
             return;
           }
-          leidos.metodo.classList.add("metodo-en-trazado");
+          // Lo que el trazado ya enseña junto al dibujo no se repite en
+          // pantalla: el método de la teoría o la lista de la solución.
+          if (leidos.metodo) {
+            leidos.metodo.classList.add("metodo-en-trazado");
+          }
+          if (leidos.lista) {
+            leidos.lista.classList.add("pasos-en-trazado");
+          }
           setTextos((antes) => antes || conLasLetras(leidos, nombres));
           alPreparar();
         }, []);
@@ -28176,6 +28683,7 @@ Bachillerato</p>
               <LimiteDeError alFallar={fallo}>
                 <Componente
                   configuracion={configuracion}
+                  anfitrion={anfitrion}
                   alPreparar={preparado}
                   imagenRespaldo={
                     respaldo.querySelector("img")?.getAttribute("src") || ""
