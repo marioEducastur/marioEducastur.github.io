@@ -3351,12 +3351,352 @@
       }
     }
 
+    /* La solución de cada ejercicio, apartado por apartado (desde el 14 de
+       octubre de 2026; véase el guion «La solución de cada ejercicio,
+       apartado por apartado»). Detrás de cada apartado van dos botones
+       redondos: el ojo, en verde, abre el resultado, y el lápiz, en el azul
+       de los métodos, el paso a paso. El bloque de respuestas sigue en la
+       página, entero y sin tocar: es lo que usan el modo clase y su
+       ampliación, lo que se imprime y lo que ve quien no tiene JavaScript. */
+    .sol-iconos {
+      display: inline-flex;
+      gap: 0.4rem;
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .sol-ico {
+      display: inline-grid;
+      place-items: center;
+      flex: none;
+      width: 2.1rem;
+      height: 2.1rem;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: none;
+      cursor: pointer;
+      transform: none;
+    }
+
+    .sol-ico svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    .sol-ico.ojo {
+      color: var(--verde);
+      border: 1.5px solid rgb(4 120 87 / 0.38);
+    }
+
+    .sol-ico.lapiz {
+      color: var(--acento);
+      border: 1.5px solid rgb(29 78 216 / 0.32);
+    }
+
+    .sol-ico.ojo[aria-expanded="true"] {
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .sol-ico.lapiz[aria-expanded="true"] {
+      background: var(--acento-suave);
+      border-color: var(--acento);
+    }
+
+    .sol-ico:focus-visible {
+      outline: 3px solid rgb(29 78 216 / 0.35);
+      outline-offset: 1px;
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .sol-ico.ojo:hover {
+        background: var(--verde-suave);
+        border-color: var(--verde);
+      }
+
+      .sol-ico.lapiz:hover {
+        background: var(--acento-suave);
+        border-color: var(--acento);
+      }
+    }
+
+    /* El resultado de un apartado, en una pastilla al lado de sus botones. */
+    .sol-chip {
+      display: inline-block;
+      max-width: 100%;
+      margin: 0.15rem 0 0.15rem 0.55rem;
+      padding: 0.12em 0.6em 0.16em;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.35);
+      border-radius: 0.65em;
+      vertical-align: middle;
+      white-space: normal;
+      /* Lo que ni encogido cabe se desliza dentro de la pastilla, sin
+         ensanchar la página. */
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    /* Un resultado no se parte entre dos renglones: el guion encoge el que
+       no cabe, como las cuentas. */
+    .sol-chip .katex-html,
+    .sol-resultado .katex-html {
+      white-space: nowrap;
+    }
+
+    /* Los resultados que van debajo (de una fila de botones o de un
+       ejercicio entero), uno por línea, con su letra. */
+    .sol-resultado {
+      margin: 0.55rem 0 0.2rem;
+      padding: 0.5rem 0.95rem 0.55rem;
+      background: var(--verde-suave);
+      border: 1px solid rgb(4 120 87 / 0.18);
+      border-left: 0.3rem solid var(--verde);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      overflow-x: auto;
+    }
+
+    .sol-linea + .sol-linea {
+      margin-top: 0.3rem;
+    }
+
+    /* El paso a paso: la respuesta del apartado, con el resultado
+       recuadrado. */
+    .sol-pasos {
+      margin: 0.5rem 0 0.6rem;
+      padding: 0.55rem 0.95rem 0.6rem;
+      background: var(--acento-suave);
+      border: 1px solid rgb(29 78 216 / 0.16);
+      border-left: 0.3rem solid var(--acento);
+      border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
+      animation: entrar-detalle 260ms ease-out;
+    }
+
+    .sol-pasos > :first-child,
+    .sol-pasos > .sol-letra + * {
+      margin-top: 0;
+    }
+
+    .sol-pasos > :last-child {
+      margin-bottom: 0;
+    }
+
+    /* Una fórmula en línea del paso a paso que no cabe ni partiendo ni con
+       su caja encogida hasta el tope (una caja `\boxed` no se parte) se
+       desliza de lado, como las centradas. */
+    .sol-pasos .math.inline.desliza {
+      display: inline-block;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      vertical-align: middle;
+    }
+
+    .sol-pasos .math.display {
+      margin: 0.5rem 0;
+      padding: 0.5rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 0.65rem;
+    }
+
+    .sol-letra {
+      margin-right: 0.45em;
+      color: var(--texto-suave);
+      font-weight: 650;
+    }
+
+    /* En este curso, la frase común de una respuesta (su entrada) va delante
+       del paso a paso de cada apartado. */
+    .sol-pasos > .sol-entrada {
+      margin: 0 0 0.35rem;
+    }
+
+    .sol-pasos > .sol-letra {
+      display: block;
+      margin: 0 0 0.25rem;
+    }
+
+    .sol-chip.esta-plegado,
+    .sol-resultado.esta-plegado,
+    .sol-pasos.esta-plegado {
+      display: none;
+    }
+
+    /* Apartados seguidos o dentro de una fórmula: una fila de botones,
+       cada pareja con su letra, debajo del enunciado. */
+    .sol-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.2rem;
+      margin: 0.75rem 0 0;
+    }
+
+    .sol-apartado {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .sol-apartado .sol-iconos,
+    .sol-fila > .sol-iconos {
+      margin-left: 0;
+    }
+
+    /* Los botones de un enunciado o de un apartado que acaba en una fórmula
+       centrada o en una lista, en una fila propia debajo. */
+    .sol-fila {
+      margin: 0.6rem 0 0;
+    }
+
+    /* La copia del ejercicio entero es el elemento de la lista de
+       respuestas, con sus clases: va en una lista propia, sin número,
+       porque el número ya lo lleva el enunciado de encima. */
+    section.ejercicios ol.lista-solucion-ejercicio {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    section.ejercicios ol.lista-solucion-ejercicio > li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .sol-pasos > figure {
+      margin: 0 0 0.7rem;
+    }
+
+    /* Lo que una respuesta lleva recuadrado: una frase (`[…]{.final}` en la
+       fuente) o una fórmula (`\boxed{…}`, que KaTeX pinta con su marco). Es
+       el recuadro de Mate_IB. */
+    #contenido-unidad .final {
+      display: inline-block;
+      max-width: calc(100% - 0.7em);
+      padding: 0.1em 0.42em 0.14em;
+      background: #ffffff;
+      border: 0.11em solid var(--verde);
+      border-radius: 0.42em;
+      white-space: normal;
+    }
+
+    /* La frase es una sola caja: si no cabe en lo que queda del renglón,
+       baja entera, y solo se parte por dentro si no cabe en uno. Como es un
+       bloque en línea, el navegador podría dejar solo en el renglón
+       siguiente el signo que lleva detrás: el filtro los envuelve juntos. */
+    #contenido-unidad .final-con-signo {
+      white-space: nowrap;
+    }
+
+    /* El marco de `\boxed` es una pieza aparte que KaTeX pone encima de la
+       fórmula: con fondo, la taparía. */
+    #contenido-unidad .katex .fbox {
+      border-color: var(--verde) !important;
+      border-width: 0.085em !important;
+      border-radius: 0.3em;
+    }
+
+    /* Un enunciado que es solo una fórmula centrada la llevaba junto a su
+       número porque era lo único del elemento; con los botones detrás deja
+       de serlo, y el guion lo marca para que siga igual. */
+    #contenido-unidad li.solo-formula-con-solucion > .math.display:first-child {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
+    /* Repartidas las respuestas, fuera del modo clase sobran el botón
+       general, el bloque y la sección «Soluciones» que solo los contenía;
+       en el modo clase y al imprimir todo sigue como estaba, y los botones
+       de cada apartado no se ven (como en `mat1`). */
+    @media screen {
+      html:not(.modo-clase) .boton-soluciones.respuestas-repartidas,
+      html:not(.modo-clase) .resultado.plegable.respuestas-repartidas,
+      html:not(.modo-clase) section.respuestas-repartidas {
+        display: none !important;
+      }
+
+      html.modo-clase .sol-iconos,
+      html.modo-clase .sol-fila,
+      html.modo-clase .sol-chip,
+      html.modo-clase .sol-barra,
+      html.modo-clase .sol-abiertos,
+      html.modo-clase .sol-resultado,
+      html.modo-clase .sol-pasos {
+        display: none !important;
+      }
+    }
+
+    @media print {
+      .sol-iconos,
+      .sol-fila,
+      .sol-chip,
+      .sol-barra,
+      .sol-abiertos,
+      .sol-resultado,
+      .sol-pasos {
+        display: none !important;
+      }
+    }
+
+    /* En un teléfono lo abierto va dentro de la tarjeta del ejercicio, que
+       ya es estrecha: menos relleno, para que las cuentas tengan sitio. */
+    @media screen and (max-width: 42rem) {
+      .sol-pasos,
+      .sol-resultado {
+        margin-inline: -0.45rem;
+        padding: 0.65rem 0.55rem 0.7rem 0.6rem;
+      }
+
+      /* El paso a paso de un apartado sale además de la sangría de su lista
+         (la del navegador, 40 px), por debajo de la letra: en un teléfono,
+         esa sangría es la sexta parte del renglón y dejaba sin sitio las
+         cajas y las cuentas. */
+      ol[type="a"] > li > .sol-pasos {
+        margin-left: calc(-40px - 0.45rem);
+      }
+
+      .sol-pasos ol[type="a"],
+      .sol-pasos ul {
+        padding-left: 1.35rem;
+      }
+
+      .sol-pasos .math.display {
+        padding: 0.5rem 0.45rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .sol-pasos {
+        animation: none;
+      }
+    }
+
     /* Curso DT: trazados propios. Piezas del reproductor que dibuja una
        construcción paso a paso con la regla y el compás; solo las tiene este
        curso y no se portan a los demás. Sin el signo del dólar: la plantilla
        es de Pandoc. */
     .componente-interactivo.trazado-dt .titulo-interactivo::before {
       content: "Paso a paso";
+    }
+
+    /* Los trazados de los ejercicios (regla 3 de AGENTS.md) van detrás del
+       bloque de respuestas solo para que el lápiz se los lleve: el original
+       no se ve, ni en pantalla ni al imprimir. Sin JavaScript queda la frase
+       de su respaldo. */
+    .js .interactivo[data-carga="al-abrir"] {
+      display: none;
+    }
+
+    @media print {
+      .interactivo[data-carga="al-abrir"] {
+        display: none;
+      }
     }
 
     /* El bloque «Método» que el trazado reproduce se queda para imprimir la
@@ -3815,26 +4155,36 @@ Bachillerato</p>
                 <h4 class="unnumbered">Comprueba tus respuestas</h4>
                 <div class="resultado plegable bloque-didactico">
                 <ol type="1">
-                <li>Todos están a la misma distancia del centro. Esa
-                distancia es el radio.</li>
-                <li>Por dos puntos distintos pasa una sola recta. Por un
-                punto pasan infinitas.</li>
-                <li>Con el compás: se abre de un extremo a otro del
-                primer segmento y, sin cambiar la abertura, se coloca
-                sobre el segundo. Si las puntas caen en sus extremos,
-                miden lo mismo.</li>
-                <li>La recta perpendicular al segmento que pasa por su
-                punto medio.</li>
-                <li>Un ángulo recto, de <span
-                class="math inline">\(90^\circ\)</span>.</li>
-                <li>Paralelas. Por ese punto pasa una sola
-                paralela.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Todos están a la misma distancia del
+                centro</span>.</span> Esa distancia es el radio.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Por dos puntos distintos pasa una sola
+                recta</span>.</span> <span class="final-con-signo"><span
+                class="final">Por un punto pasan
+                infinitas</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Con el compás</span>:</span> se abre de un
+                extremo a otro del primer segmento y, sin cambiar la
+                abertura, se coloca sobre el segundo. Si las puntas caen
+                en sus extremos, miden lo mismo.</li>
+                <li><span class="final-con-signo"><span class="final">La
+                recta perpendicular al segmento que pasa por su punto
+                medio</span>.</span></li>
+                <li><span class="final-con-signo"><span class="final">Un
+                ángulo recto, de <span
+                class="math inline">\(90^\circ\)</span></span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Paralelas</span>.</span> <span
+                class="final-con-signo"><span class="final">Por ese
+                punto pasa una sola paralela</span>.</span></li>
                 <li>El complementario mide <span
-                class="math inline">\(62^\circ\)</span>, lo que le falta
-                hasta <span class="math inline">\(90^\circ\)</span>. El
+                class="math inline">\(\boxed{62^\circ}\)</span>, lo que
+                le falta hasta <span
+                class="math inline">\(90^\circ\)</span>. El
                 suplementario, <span
-                class="math inline">\(152^\circ\)</span>, lo que le
-                falta hasta <span
+                class="math inline">\(\boxed{152^\circ}\)</span>, lo que
+                le falta hasta <span
                 class="math inline">\(180^\circ\)</span>.</li>
                 </ol>
                 </div>
@@ -4042,18 +4392,21 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol type="1">
                 <li><ol type="a">
-                <li><span class="math inline">\(m\perp t\)</span>.</li>
+                <li><span class="math inline">\(\boxed{m\perp
+                t}\)</span>.</li>
                 <li><span
-                class="math inline">\(\overline{CD}&lt;\overline{EF}\)</span>.</li>
-                <li><span class="math inline">\(a\parallel
-                b\)</span>.</li>
+                class="math inline">\(\boxed{\overline{CD}&lt;\overline{EF}}\)</span>.</li>
+                <li><span class="math inline">\(\boxed{a\parallel
+                b}\)</span>.</li>
                 </ol></li>
                 <li>Las rectas van con minúscula y los puntos con
-                mayúscula: «la recta <span
+                mayúscula: <span class="final-con-signo"><span
+                class="final">«la recta <span
                 class="math inline">\(r\)</span> corta a la recta <span
                 class="math inline">\(s\)</span> en el punto <span
-                class="math inline">\(P\)</span>».</li>
-                <li>Seis: <span
+                class="math inline">\(P\)</span>»</span>.</span></li>
+                <li><span class="final-con-signo"><span
+                class="final">Seis</span>:</span> <span
                 class="math inline">\(\overline{GH}\)</span>, <span
                 class="math inline">\(\overline{GJ}\)</span>, <span
                 class="math inline">\(\overline{GK}\)</span>, <span
@@ -4214,18 +4567,22 @@ Bachillerato</p>
                 trazado: solo sirve para ver que ha salido bien. Una
                 diferencia de un grado es normal; si es mayor, el compás
                 se ha movido entre un paso y otro.</li>
-                <li>No cambia ninguno. El arco del primer paso es más
-                largo, porque los lados están más separados, y el del
-                segundo paso tiene que ser igual de largo o más, para
-                que el tercero lo alcance.</li>
+                <li><span class="final-con-signo"><span class="final">No
+                cambia ninguno</span>.</span> El arco del primer paso es
+                más largo, porque los lados están más separados, y el
+                del segundo paso tiene que ser igual de largo o más,
+                para que el tercero lo alcance.</li>
                 <li><ol type="a">
-                <li>Falso. El compás guarda la medida en su abertura sin
-                leerla, y así no se añade el error de leer la
-                regla.</li>
-                <li>Falso. Se cortan en dos puntos, en uno si son
-                tangentes, o en ninguno.</li>
-                <li>Verdadero. Pero el arco del segundo paso tiene que
-                hacerse con ese mismo radio.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> El compás guarda la
+                medida en su abertura sin leerla, y así no se añade el
+                error de leer la regla.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> Se cortan en dos
+                puntos, en uno si son tangentes, o en ninguno.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Verdadero</span>.</span> Pero el arco del
+                segundo paso tiene que hacerse con ese mismo radio.</li>
                 </ol></li>
                 </ol>
                 </div>
@@ -4396,22 +4753,30 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="7" type="1">
                 <li>Los tres segmentos se llevan uno a continuación de
-                otro desde el origen. El resultado tiene que medir <span
-                class="math inline">\(25+40+32=97\)</span> mm.</li>
+                otro desde el origen. <span
+                class="final-con-signo"><span class="final">El resultado
+                tiene que medir <span
+                class="math inline">\(25+40+32=97\)</span>
+                mm</span>.</span></li>
                 <li>Los dos segmentos se llevan desde el mismo origen y
-                hacia el mismo lado. Lo que sobra mide <span
-                class="math inline">\(68-45=23\)</span> mm.</li>
+                hacia el mismo lado. <span class="final-con-signo"><span
+                class="final">Lo que sobra mide <span
+                class="math inline">\(68-45=23\)</span>
+                mm</span>.</span></li>
                 <li><ol type="a">
                 <li>Se lleva <span class="math inline">\(u\)</span> dos
                 veces seguidas y, a continuación, <span
-                class="math inline">\(v\)</span>. Mide <span
-                class="math inline">\(30+30+18=78\)</span> mm.</li>
+                class="math inline">\(v\)</span>. <span
+                class="final-con-signo"><span class="final">Mide <span
+                class="math inline">\(30+30+18=78\)</span>
+                mm</span>.</span></li>
                 <li>Se lleva <span class="math inline">\(v\)</span> tres
                 veces seguidas, que son <span
                 class="math inline">\(54\)</span> mm, y desde el mismo
                 origen se lleva <span class="math inline">\(u\)</span>.
-                Lo que sobra mide <span
-                class="math inline">\(54-30=24\)</span> mm.</li>
+                <span class="final-con-signo"><span class="final">Lo que
+                sobra mide <span class="math inline">\(54-30=24\)</span>
+                mm</span>.</span></li>
                 </ol></li>
                 <li>El perímetro es la suma de los tres lados. Se toma
                 cada lado con el compás y se llevan los tres, uno a
@@ -4420,6 +4785,29 @@ Bachillerato</p>
                 suman: tiene que dar lo que mide el segmento
                 dibujado.</li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-7"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="suma-de-segmentos"
+                data-titulo="El ejercicio 7, con sus datos"
+                data-ejercicio="7" data-pasos-de="trazado-suma"
+                data-datos="a=100 b=160 c=128" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 7 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-8"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="diferencia-de-segmentos"
+                data-titulo="El ejercicio 8, con sus datos"
+                data-ejercicio="8" data-pasos-de="trazado-diferencia"
+                data-datos="m=272 n=180" data-nombres="m=p n=q"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 8 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -4982,10 +5370,11 @@ Bachillerato</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="11" type="1">
                 <li>Se siguen los tres pasos del método, con un radio de
-                unos <span class="math inline">\(50\)</span> mm. La
-                mediatriz corta al segmento en su punto medio, a <span
+                unos <span class="math inline">\(50\)</span> mm. <span
+                class="final-con-signo"><span class="final">La mediatriz
+                corta al segmento en su punto medio, a <span
                 class="math inline">\(76:2=38\)</span> mm de cada
-                extremo.</li>
+                extremo</span>.</span></li>
                 <li>El arco con centro en <span
                 class="math inline">\(F\)</span> tiene que cortar a la
                 recta en dos puntos: vale un radio de unos <span
@@ -4999,10 +5388,13 @@ Bachillerato</p>
                 sobre ella, uno a cada lado de <span
                 class="math inline">\(G\)</span>.</li>
                 <li>La mediatriz del segmento lo parte en dos mitades de
-                <span class="math inline">\(48\)</span> mm. La mediatriz
+                <span class="math inline">\(48\)</span> mm. <span
+                class="final-con-signo"><span class="final">La mediatriz
                 de cada mitad la parte en dos trozos de <span
-                class="math inline">\(24\)</span> mm. En total son tres
-                mediatrices y cuatro partes iguales.</li>
+                class="math inline">\(24\)</span> mm</span>.</span>
+                <span class="final-con-signo"><span class="final">En
+                total son tres mediatrices y cuatro partes
+                iguales</span>.</span></li>
                 <li>Se sigue el método de la perpendicular en el
                 extremo, con el primer arco centrado en <span
                 class="math inline">\(K\)</span>. Los dos puntos y <span
@@ -5010,38 +5402,46 @@ Bachillerato</p>
                 rectángulo con catetos de <span
                 class="math inline">\(35\)</span> y <span
                 class="math inline">\(84\)</span> mm. Como <span
-                class="math inline">\(35^2+84^2=91^2\)</span>, tienen
-                que quedar a <span class="math inline">\(91\)</span> mm
-                uno de otro. Si sale otra medida, la perpendicular está
-                torcida.</li>
+                class="math inline">\(35^2+84^2=91^2\)</span>, <span
+                class="final-con-signo"><span class="final">tienen que
+                quedar a <span class="math inline">\(91\)</span> mm uno
+                de otro</span>.</span> Si sale otra medida, la
+                perpendicular está torcida.</li>
                 <li><ol type="a">
                 <li><span class="math inline">\(O\)</span> está en la
                 mediatriz de <span class="math inline">\(PQ\)</span>,
                 que ya está dibujada, y en la de <span
-                class="math inline">\(PR\)</span>. Queda
+                class="math inline">\(PR\)</span>. <span
+                class="final-con-signo"><span class="final">Queda
                 <strong>fuera</strong> del triángulo, al otro lado de
                 <span class="math inline">\(PQ\)</span> y a unos <span
-                class="math inline">\(36{,}2\)</span> mm de él; el radio
-                mide unos <span class="math inline">\(53{,}2\)</span>
-                mm. Pasa porque el ángulo en <span
+                class="math inline">\(36{,}2\)</span> mm de
+                él</span>;</span> <span class="final-con-signo"><span
+                class="final">el radio mide unos <span
+                class="math inline">\(53{,}2\)</span> mm</span>.</span>
+                Pasa porque el ángulo en <span
                 class="math inline">\(R\)</span> es obtuso, de unos
                 <span class="math inline">\(133^\circ\)</span>: cuando
                 un triángulo tiene un ángulo obtuso, el centro queda
                 fuera, al otro lado del lado mayor.</li>
-                <li><span class="math inline">\(O\)</span> es el punto
-                medio de la hipotenusa, que mide <span
-                class="math inline">\(73\)</span> mm, y el radio mide
-                <span class="math inline">\(36{,}5\)</span> mm. Pasa en
-                todos los triángulos rectángulos: la hipotenusa es un
-                diámetro de la circunferencia.</li>
+                <li><span class="final-con-signo"><span
+                class="final"><span class="math inline">\(O\)</span> es
+                el punto medio de la hipotenusa</span>,</span> que mide
+                <span class="math inline">\(73\)</span> mm, y <span
+                class="final-con-signo"><span class="final">el radio
+                mide <span class="math inline">\(36{,}5\)</span>
+                mm</span>.</span> Pasa en todos los triángulos
+                rectángulos: la hipotenusa es un diámetro de la
+                circunferencia.</li>
                 </ol></li>
                 <li>La mediatriz de la cuerda <span
                 class="math inline">\(AB\)</span> corta a la
                 circunferencia en dos puntos: son los puntos medios de
-                los dos arcos. El del arco menor queda a <span
+                los dos arcos. <span class="final-con-signo"><span
+                class="final">El del arco menor queda a <span
                 class="math inline">\(25\)</span> mm de la cuerda, y el
-                del mayor, a <span class="math inline">\(49\)</span> mm.
-                Entre los dos hay <span
+                del mayor, a <span class="math inline">\(49\)</span>
+                mm</span>.</span> Entre los dos hay <span
                 class="math inline">\(74\)</span> mm, el diámetro,
                 porque la mediatriz pasa por el centro.</li>
                 <li>Los puntos que están a <span
@@ -5057,9 +5457,85 @@ Bachillerato</p>
                 <span class="math inline">\(30\)</span> mm de <span
                 class="math inline">\(J\)</span>. Como <span
                 class="math inline">\(30&lt;40\)</span>, la mediatriz
-                corta a la circunferencia en dos puntos: hay dos
-                soluciones, una a cada lado del segmento.</li>
+                corta a la circunferencia en dos puntos: <span
+                class="final-con-signo"><span class="final">hay dos
+                soluciones</span>,</span> una a cada lado del
+                segmento.</li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-11"
+                class="interactivo bloque-didactico"
+                data-componente="trazado" data-construccion="mediatriz"
+                data-titulo="El ejercicio 11, con sus datos"
+                data-ejercicio="11" data-pasos-de="trazado-mediatriz"
+                data-datos="A=148,220 B=452,208" data-nombres="A=C B=D"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 11 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-12"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="perpendicular-exterior"
+                data-titulo="El ejercicio 12, con sus datos"
+                data-ejercicio="12" data-pasos-de="trazado-exterior"
+                data-datos="R=50,210 S=550,236 P=330,90"
+                data-nombres="t=s P=F" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 12 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-13"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="perpendicular-en-la-recta"
+                data-titulo="El ejercicio 13, con sus datos"
+                data-ejercicio="13" data-pasos-de="trazado-en-la-recta"
+                data-datos="R=60,300 S=540,190 k=0.45"
+                data-nombres="r=v P=G" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 13 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-15"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="perpendicular-en-el-extremo"
+                data-titulo="El ejercicio 15, con sus datos"
+                data-ejercicio="15"
+                data-pasos-de="trazado-perpendicular-extremo"
+                data-datos="O=170,330 S=560,310" data-nombres="O=K"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 15 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-16a"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="circunferencia-por-tres-puntos"
+                data-titulo="El ejercicio 16 a), con sus datos"
+                data-ejercicio="16" data-apartado="a"
+                data-pasos-de="trazado-tres-puntos"
+                data-datos="A=260,280 B=368,303 C=459,240"
+                data-nombres="A=P B=R C=Q" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 16 a) se ve trazado paso a
+                paso, con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-16b"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="circunferencia-por-tres-puntos"
+                data-titulo="El ejercicio 16 b), con sus datos"
+                data-ejercicio="16" data-apartado="b"
+                data-pasos-de="trazado-tres-puntos"
+                data-datos="A=332,224 B=200,280 C=151,165"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 16 b) se ve trazado paso a
+                paso, con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -5507,11 +5983,13 @@ Bachillerato</p>
                 class="math inline">\(r\)</span>, el cartabón de guía y
                 la escuadra deslizada hasta <span
                 class="math inline">\(P\)</span>. Con el compás, el
-                método del apartado. Las dos rectas tienen que
-                coincidir. Para comprobarlo, mide la distancia entre
-                <span class="math inline">\(r\)</span> y la paralela
-                sobre dos perpendiculares bien separadas: las dos tienen
-                que dar <span class="math inline">\(27\)</span> mm.</li>
+                método del apartado. <span class="final-con-signo"><span
+                class="final">Las dos rectas tienen que
+                coincidir</span>.</span> Para comprobarlo, mide la
+                distancia entre <span class="math inline">\(r\)</span> y
+                la paralela sobre dos perpendiculares bien separadas:
+                las dos tienen que dar <span
+                class="math inline">\(27\)</span> mm.</li>
                 <li>Primero, la perpendicular a <span
                 class="math inline">\(s\)</span> por <span
                 class="math inline">\(Q\)</span>, que es un punto
@@ -5524,22 +6002,25 @@ Bachillerato</p>
                 un punto de la recta. La recta <span
                 class="math inline">\(s\)</span> y la nueva son las dos
                 perpendiculares a <span
-                class="math inline">\(n\)</span>, y dos perpendiculares
-                a una misma recta son paralelas. El segmento <span
-                class="math inline">\(QH\)</span> tiene que medir <span
-                class="math inline">\(34\)</span> mm. Funciona, pero
-                lleva más trazos que la paralela con regla y
-                compás.</li>
+                class="math inline">\(n\)</span>, y <span
+                class="final-con-signo"><span class="final">dos
+                perpendiculares a una misma recta son
+                paralelas</span>.</span> <span
+                class="final-con-signo"><span class="final">El segmento
+                <span class="math inline">\(QH\)</span> tiene que medir
+                <span class="math inline">\(34\)</span>
+                mm</span>.</span> Funciona, pero lleva más trazos que la
+                paralela con regla y compás.</li>
                 <li>Se dibuja un lado de <span
                 class="math inline">\(74\)</span> mm. Por sus dos
                 extremos se trazan las perpendiculares con escuadra y
                 cartabón, y en cada una se llevan <span
                 class="math inline">\(43\)</span> mm con el compás. El
                 cuarto lado une esas dos marcas y tiene que salir
-                paralelo al primero. Las dos diagonales tienen que medir
-                lo mismo, unos <span
-                class="math inline">\(85{,}6\)</span> mm; si no, algún
-                ángulo no es recto.</li>
+                paralelo al primero. <span class="final-con-signo"><span
+                class="final">Las dos diagonales tienen que medir lo
+                mismo, unos <span class="math inline">\(85{,}6\)</span>
+                mm</span>;</span> si no, algún ángulo no es recto.</li>
                 <li>Por el extremo <span
                 class="math inline">\(A\)</span> se traza una recta
                 auxiliar bien abierta y se llevan sobre ella siete
@@ -5548,11 +6029,12 @@ Bachillerato</p>
                 séptimo punto se une con <span
                 class="math inline">\(B\)</span>, y por los otros seis
                 se trazan paralelas a esa recta con escuadra y cartabón.
-                Cada parte mide unos <span
+                <span class="final-con-signo"><span class="final">Cada
+                parte mide unos <span
                 class="math inline">\(11{,}9\)</span> mm, una medida que
-                la regla no da: el error de cada marca se iría sumando a
-                las siguientes. Para comprobarlo, la tercera división
-                tiene que quedar a unos <span
+                la regla no da</span>:</span> el error de cada marca se
+                iría sumando a las siguientes. Para comprobarlo, la
+                tercera división tiene que quedar a unos <span
                 class="math inline">\(35{,}6\)</span> mm de <span
                 class="math inline">\(A\)</span>.</li>
                 <li>Se hace como la división en partes iguales, pero
@@ -5560,27 +6042,48 @@ Bachillerato</p>
                 class="math inline">\(2+3+4=9\)</span> segmentos
                 iguales. El noveno punto se une con <span
                 class="math inline">\(B\)</span>, y las paralelas se
-                trazan solo por el segundo y por el quinto. Las partes
+                trazan solo por el segundo y por el quinto. <span
+                class="final-con-signo"><span class="final">Las partes
                 miden <span class="math inline">\(18\)</span>, <span
                 class="math inline">\(27\)</span> y <span
-                class="math inline">\(36\)</span> mm.</li>
+                class="math inline">\(36\)</span> mm</span>.</span></li>
                 <li><ol type="a">
-                <li>Falso. Son paralelas entre sí.</li>
-                <li>Verdadero. Si <span class="math inline">\(a\)</span>
-                y <span class="math inline">\(c\)</span> se cortaran,
-                por ese punto pasarían dos paralelas a <span
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> Son paralelas entre
+                sí.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Verdadero</span>.</span> Si <span
+                class="math inline">\(a\)</span> y <span
+                class="math inline">\(c\)</span> se cortaran, por ese
+                punto pasarían dos paralelas a <span
                 class="math inline">\(b\)</span>, y por un punto
                 exterior a una recta solo pasa una.</li>
-                <li>Falso. Con mediatrices salen <span
-                class="math inline">\(2\)</span>, <span
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> Con mediatrices salen
+                <span class="math inline">\(2\)</span>, <span
                 class="math inline">\(4\)</span>, <span
                 class="math inline">\(8\)</span>… partes, y el <span
                 class="math inline">\(6\)</span> no está en la lista.
                 Hace falta el teorema de Tales.</li>
-                <li>Falso. Se mide sobre la perpendicular, que es el
-                segmento más corto. Cualquier otro mide más.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Falso</span>.</span> Se mide sobre la
+                perpendicular, que es el segmento más corto. Cualquier
+                otro mide más.</li>
                 </ol></li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-19"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="paralela-con-plantillas"
+                data-titulo="El ejercicio 19, con sus datos"
+                data-ejercicio="19"
+                data-pasos-de="trazado-paralela-plantillas"
+                data-datos="R=40,300 S=560,230 P=340,169"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 19 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -6485,22 +6988,23 @@ Bachillerato</p>
                 83&#39;\)</span>. Como <span
                 class="math inline">\(83&#39;\)</span> son <span
                 class="math inline">\(1^\circ 23&#39;\)</span>, el
-                resultado es <span class="math inline">\(93^\circ
-                23&#39;\)</span>.</li>
+                resultado es <span class="math inline">\(\boxed{93^\circ
+                23&#39;}\)</span>.</li>
                 <li><span class="math inline">\(90^\circ-61^\circ
-                18&#39;=89^\circ 60&#39;-61^\circ 18&#39;=28^\circ
-                42&#39;\)</span>.</li>
+                18&#39;=89^\circ 60&#39;-61^\circ
+                18&#39;=\boxed{28^\circ 42&#39;}\)</span>.</li>
                 <li><span class="math inline">\(180^\circ-116^\circ
-                49&#39;=179^\circ 60&#39;-116^\circ 49&#39;=63^\circ
-                11&#39;\)</span>.</li>
-                <li><span class="math inline">\(26^\circ
-                30&#39;\)</span>, porque medio grado son <span
+                49&#39;=179^\circ 60&#39;-116^\circ
+                49&#39;=\boxed{63^\circ 11&#39;}\)</span>.</li>
+                <li><span class="math inline">\(\boxed{26^\circ
+                30&#39;}\)</span>, porque medio grado son <span
                 class="math inline">\(30&#39;\)</span>.</li>
                 </ol></li>
-                <li>Su alterno interno mide lo mismo, <span
-                class="math inline">\(57^\circ\)</span>. Su conjugado
-                interno es su suplementario: <span
-                class="math inline">\(180^\circ-57^\circ=123^\circ\)</span>.
+                <li><span class="final-con-signo"><span class="final">Su
+                alterno interno mide lo mismo, <span
+                class="math inline">\(57^\circ\)</span></span>.</span>
+                Su conjugado interno es su suplementario: <span
+                class="math inline">\(180^\circ-57^\circ=\boxed{123^\circ}\)</span>.
                 De los ocho ángulos, cuatro miden <span
                 class="math inline">\(57^\circ\)</span> y los otros
                 cuatro, <span
@@ -6520,7 +7024,8 @@ Bachillerato</p>
                 class="math inline">\(CB\)</span> es alterno interno del
                 ángulo <span class="math inline">\(B\)</span>, con <span
                 class="math inline">\(CB\)</span> como secante. Así,
-                <span class="math inline">\(A+B+C=180^\circ\)</span>.
+                <span
+                class="math inline">\(\boxed{A+B+C=180^\circ}\)</span>.
                 Para comprobarlo, mide los tres ángulos con el
                 transportador y súmalos: tiene que salir <span
                 class="math inline">\(180^\circ\)</span>, con uno o dos
@@ -6531,23 +7036,27 @@ Bachillerato</p>
                 class="math inline">\(\beta\)</span> y después <span
                 class="math inline">\(\alpha\)</span> encima, desde el
                 mismo lado. Todos los arcos, con la misma abertura. Con
-                el transportador, la suma tiene que medir <span
+                el transportador, <span class="final-con-signo"><span
+                class="final">la suma tiene que medir <span
                 class="math inline">\(108^\circ\)</span>, y la
                 diferencia, <span
-                class="math inline">\(26^\circ\)</span>.</li>
+                class="math inline">\(26^\circ\)</span></span>.</span></li>
                 <li>La bisectriz lo parte en dos ángulos de <span
                 class="math inline">\(59^\circ\)</span>, y la bisectriz
-                de cada uno de ellos, en cuatro de <span
-                class="math inline">\(29^\circ 30&#39;\)</span>. Son
-                tres bisectrices. Medio grado no se aprecia con el
-                transportador: basta con que los cuatro ángulos midan lo
-                mismo, entre <span
+                de cada uno de ellos, en <span
+                class="final-con-signo"><span class="final">cuatro de
+                <span class="math inline">\(29^\circ
+                30&#39;\)</span></span>.</span> Son tres bisectrices.
+                Medio grado no se aprecia con el transportador: basta
+                con que los cuatro ángulos midan lo mismo, entre <span
                 class="math inline">\(29^\circ\)</span> y <span
                 class="math inline">\(30^\circ\)</span>.</li>
-                <li>Forman un ángulo recto. Los dos ángulos adyacentes
-                suman <span class="math inline">\(180^\circ\)</span>, y
-                cada bisectriz se queda con la mitad de su ángulo. Entre
-                las dos queda la mitad de <span
+                <li><span class="final-con-signo"><span
+                class="final">Forman un ángulo recto</span>.</span> Los
+                dos ángulos adyacentes suman <span
+                class="math inline">\(180^\circ\)</span>, y cada
+                bisectriz se queda con la mitad de su ángulo. Entre las
+                dos queda la mitad de <span
                 class="math inline">\(180^\circ\)</span>, que es <span
                 class="math inline">\(90^\circ\)</span>. Se comprueba
                 con la escuadra.</li>
@@ -6557,7 +7066,7 @@ Bachillerato</p>
                 perpendicular, que forma dos ángulos rectos. Se traza la
                 bisectriz de uno de ellos. Entre esa bisectriz y la
                 semirrecta del otro lado hay <span
-                class="math inline">\(90^\circ+45^\circ=135^\circ\)</span>.
+                class="math inline">\(90^\circ+45^\circ=\boxed{135^\circ}\)</span>.
                 <span class="math inline">\(52^\circ 30&#39;\)</span>:
                 sobre una semirrecta se construyen, hacia el mismo lado,
                 <span class="math inline">\(45^\circ\)</span> (la
@@ -6566,9 +7075,10 @@ Bachillerato</p>
                 equilátero). Entre los dos lados nuevos quedan <span
                 class="math inline">\(15^\circ\)</span>, y la bisectriz
                 de ese ángulo está a <span
-                class="math inline">\(45^\circ+7^\circ 30&#39;=52^\circ
-                30&#39;\)</span> de la semirrecta. Los dos se comprueban
-                con el transportador.</li>
+                class="math inline">\(45^\circ+7^\circ
+                30&#39;=\boxed{52^\circ 30&#39;}\)</span> de la
+                semirrecta. Los dos se comprueban con el
+                transportador.</li>
                 <li>Se divide el recto en tres partes: sus lados nuevos
                 forman <span class="math inline">\(30^\circ\)</span> y
                 <span class="math inline">\(60^\circ\)</span> con el
@@ -6577,14 +7087,16 @@ Bachillerato</p>
                 bisectriz entre el lado de <span
                 class="math inline">\(30^\circ\)</span> y el de <span
                 class="math inline">\(45^\circ\)</span> forma <span
-                class="math inline">\(30^\circ+7^\circ 30&#39;=37^\circ
-                30&#39;\)</span> con el primer lado. Con el
-                transportador sale entre <span
+                class="math inline">\(30^\circ+7^\circ
+                30&#39;=\boxed{37^\circ 30&#39;}\)</span> con el primer
+                lado. Con el transportador sale entre <span
                 class="math inline">\(37^\circ\)</span> y <span
                 class="math inline">\(38^\circ\)</span>.</li>
-                <li>Los arcos con la abertura del primero cortan siempre
-                a <span class="math inline">\(60^\circ\)</span> de cada
-                lado, sea cual sea el ángulo. En el recto, <span
+                <li><span class="final-con-signo"><span
+                class="final">Los arcos con la abertura del primero
+                cortan siempre a <span
+                class="math inline">\(60^\circ\)</span> de cada lado,
+                sea cual sea el ángulo</span>.</span> En el recto, <span
                 class="math inline">\(90^\circ-60^\circ=30^\circ\)</span>
                 es justo un tercio; en el de <span
                 class="math inline">\(84^\circ\)</span>, <span
@@ -6599,20 +7111,34 @@ Bachillerato</p>
                 como en la tabla, sobre una de las dos semirrectas de la
                 recta. Con la otra semirrecta, ese mismo lado forma
                 <span
-                class="math inline">\(180^\circ-15^\circ=165^\circ\)</span>.
+                class="math inline">\(180^\circ-15^\circ=\boxed{165^\circ}\)</span>.
                 Para comprobarlo, el transportador tiene que dar <span
                 class="math inline">\(165^\circ\)</span> por un lado y
                 <span class="math inline">\(15^\circ\)</span> por el
-                otro. Uno de <span
-                class="math inline">\(50^\circ\)</span>, no: sumando y
-                restando <span class="math inline">\(30^\circ\)</span>,
-                <span class="math inline">\(45^\circ\)</span>, <span
+                otro. <span class="final-con-signo"><span
+                class="final">Uno de <span
+                class="math inline">\(50^\circ\)</span>,
+                no</span>:</span> sumando y restando <span
+                class="math inline">\(30^\circ\)</span>, <span
+                class="math inline">\(45^\circ\)</span>, <span
                 class="math inline">\(60^\circ\)</span> y <span
                 class="math inline">\(90^\circ\)</span> solo salen
                 múltiplos de <span
                 class="math inline">\(15^\circ\)</span>, y <span
                 class="math inline">\(50\)</span> no lo es.</li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-28"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="suma-de-angulos"
+                data-titulo="El ejercicio 28, con sus datos"
+                data-ejercicio="28" data-pasos-de="trazado-suma-angulos"
+                data-datos="alfa=0.7156 beta=1.1694"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 28 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -6868,27 +7394,57 @@ Bachillerato</p>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <ol start="35" type="1">
-                <li>Tiene que pasar por el vértice y formar <span
-                class="math inline">\(17^\circ\)</span> con cada lado.
-                Antes de desdoblar se comprueba con <span
-                class="math inline">\(V&#39;\)</span>: la perpendicular
-                desde <span class="math inline">\(V&#39;\)</span> a cada
-                lado mide <span class="math inline">\(d\)</span>.</li>
-                <li>Tiene que pasar por <span
-                class="math inline">\(V\)</span>. Si no pasa, alguna de
-                las tres perpendiculares está torcida: se comprueban con
-                la escuadra.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Tiene que pasar por el vértice y formar
+                <span class="math inline">\(17^\circ\)</span> con cada
+                lado</span>.</span> Antes de desdoblar se comprueba con
+                <span class="math inline">\(V&#39;\)</span>: la
+                perpendicular desde <span
+                class="math inline">\(V&#39;\)</span> a cada lado mide
+                <span class="math inline">\(d\)</span>.</li>
+                <li><span class="final-con-signo"><span
+                class="final">Tiene que pasar por <span
+                class="math inline">\(V\)</span></span>.</span> Si no
+                pasa, alguna de las tres perpendiculares está torcida:
+                se comprueban con la escuadra.</li>
                 <li>Si <span class="math inline">\(d\)</span> es muy
                 pequeña, las paralelas se cortan cerca del vértice de
                 verdad, y <span class="math inline">\(V&#39;\)</span>
                 también puede quedar fuera del papel. Si es muy grande,
                 <span class="math inline">\(V&#39;\)</span> cae cerca
                 del otro borde y no queda sitio para trazar su
-                bisectriz. Conviene una <span
+                bisectriz. <span class="final-con-signo"><span
+                class="final">Conviene una <span
                 class="math inline">\(d\)</span> que deje <span
                 class="math inline">\(V&#39;\)</span> más o menos a un
-                tercio del papel.</li>
+                tercio del papel</span>.</span></li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-35"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="bisectriz-sin-vertice"
+                data-titulo="El ejercicio 35, con sus datos"
+                data-ejercicio="35"
+                data-pasos-de="trazado-bisectriz-sin-vertice"
+                data-datos="R1=24,222.6 R2=540,380.4 S1=24,177.4 S2=540,19.6"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 35 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
+                </div>
+                <div id="trazado-ejercicio-36"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="recta-al-vertice"
+                data-titulo="El ejercicio 36, con sus datos"
+                data-ejercicio="36"
+                data-pasos-de="trazado-recta-al-vertice"
+                data-datos="R1=24,222.5 R2=560,366.2 S1=24,177.5 S2=560,33.8 D=204,200"
+                data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 36 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -7094,9 +7650,11 @@ Bachillerato</p>
                 class="math inline">\(C\)</span> corta a <span
                 class="math inline">\(AB\)</span> en dos puntos, y con
                 centro en ellos se trazan los dos arcos del otro lado.
-                El segmento <span class="math inline">\(CH\)</span>
-                tiene que medir unos <span
-                class="math inline">\(47{,}7\)</span> mm.</li>
+                <span class="final-con-signo"><span class="final">El
+                segmento <span class="math inline">\(CH\)</span> tiene
+                que medir unos <span
+                class="math inline">\(47{,}7\)</span>
+                mm</span>.</span></li>
                 <li>El centro está a la misma distancia de <span
                 class="math inline">\(A\)</span>, de <span
                 class="math inline">\(B\)</span> y de <span
@@ -7108,11 +7666,12 @@ Bachillerato</p>
                 de <span class="math inline">\(C\)</span>, está en la
                 mediatriz de <span class="math inline">\(AC\)</span>. El
                 centro <span class="math inline">\(O\)</span> es el
-                corte de las dos, y el radio, la distancia de <span
+                corte de las dos, y <span class="final-con-signo"><span
+                class="final">el radio, la distancia de <span
                 class="math inline">\(O\)</span> a cualquier vértice:
-                unos <span class="math inline">\(37{,}6\)</span> mm. La
-                mediatriz del tercer lado pasa también por <span
-                class="math inline">\(O\)</span>.</li>
+                unos <span class="math inline">\(37{,}6\)</span>
+                mm</span>.</span> La mediatriz del tercer lado pasa
+                también por <span class="math inline">\(O\)</span>.</li>
                 </ol>
                 <figure>
                 <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iMzMwIiB2aWV3Qm94PSIwIDAgOTYwIDMzMCI+CiAgPHRpdGxlPkZpZ3VyYTogcHJvYmxlbWFzX2x1Z2FyZXM8L3RpdGxlPgogIDxyZWN0IHdpZHRoPSI5NjAiIGhlaWdodD0iMzMwIiBmaWxsPSIjZmZmZmZmIi8+CiAgPGc+CiAgICA8bGluZSB4MT0iMTQiIHkxPSIyNTIiIHgyPSIzMDAiIHkyPSIyNTIiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIyLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjQ0IiB5MT0iMjcyIiB4Mj0iNDQiIHkyPSIxMTgiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1NyAyNTIgTCA1NyAyMzkgTCA0NCAyMzkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjMiIG9wYWNpdHk9IjEiLz4KICAgIDxwYXRoIGQ9Ik0gMTkzLjI0IDkyLjQxIEEgMTU3LjkxIDE1Ny45MSAwIDAgMSAyMDEuOSAxNDUuMTMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSAxNzguNDMgMTM0LjU3IEEgMTU3LjkxIDE1Ny45MSAwIDAgMSAyMjMuNjQgMTA2LjA5IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gMTQ5LjU3IDI2MS40MyBBIDE1Ny45MSAxNTcuOTEgMCAwIDEgMTA0LjM2IDI4OS45MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDEzNC43NiAzMDMuNTkgQSAxNTcuOTEgMTU3LjkxIDAgMCAxIDEyNi4xIDI1MC44NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iMTIyLjQ0IiB5MT0iMjkwLjM3IiB4Mj0iMjA1LjU2IiB5Mj0iMTA1LjYzIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSIxMzkuNyIgeTE9IjI1MiIgeDI9IjQ0IiB5Mj0iMTQ0IiBzdHJva2U9IiM3YzNhZWQiIHN0cm9rZS13aWR0aD0iMS4zIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1kYXNoYXJyYXk9IjYgNSIvPgogICAgPGxpbmUgeDE9Ijg2Ljk5IiB5MT0iMjAyLjMxIiB4Mj0iOTYuNzEiIHkyPSIxOTMuNjkiIHN0cm9rZT0iIzdjM2FlZCIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMSIvPgogICAgPGxpbmUgeDE9IjIxMS44NSIgeTE9IjI0NS41IiB4Mj0iMjExLjg1IiB5Mj0iMjU4LjUiIHN0cm9rZT0iIzdjM2FlZCIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iMSIvPgogICAgPGxpbmUgeDE9IjMzNCIgeTE9IjI2MiIgeDI9IjU5Ny40IiB5Mj0iMjYyIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSIzOTgiIHkxPSIyNjIiIHgyPSI1NzcuNCIgeTI9IjI2MiIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjIuMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDM1NC4wNSAyNzUuNTkgQSA0NiA0NiAwIDAgMSAzNTQuMDUgMjQ4LjQxIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNDQxLjk1IDI0OC40MSBBIDQ2IDQ2IDAgMCAxIDQ0MS45NSAyNzUuNTkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSAzODQuNTIgMTkwLjg4IEEgNzguMiA3OC4yIDAgMCAxIDQwOS42NSAyMDkuMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSAzODYuMzUgMjA5LjE2IEEgNzguMiA3OC4yIDAgMCAxIDQxMS40OCAxOTAuODgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjM5OCIgeTE9IjI2MiIgeDI9IjM5OCIgeTI9IjYyLjYiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSAzODEuODggODMuMzMgQSAxNzkuNCAxNzkuNCAwIDAgMSA0MTQuMTIgODMuMzMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1NzYuNjcgNjYuNDggQSAxNzkuNCAxNzkuNCAwIDAgMSA1NzYuNjcgOTguNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1NjEuMjggODMuMzMgQSAxNzkuNCAxNzkuNCAwIDAgMSA1OTMuNTIgODMuMzMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjM5OCIgeTE9IjI2MiIgeDI9IjM5OCIgeTI9IjgyLjYiIHN0cm9rZT0iIzA0Nzg1NyIgc3Ryb2tlLXdpZHRoPSIzLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjM5OCIgeTE9IjgyLjYiIHgyPSI1NzcuNCIgeTI9IjgyLjYiIHN0cm9rZT0iIzA0Nzg1NyIgc3Ryb2tlLXdpZHRoPSIzLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjU3Ny40IiB5MT0iODIuNiIgeDI9IjU3Ny40IiB5Mj0iMjYyIiBzdHJva2U9IiMwNDc4NTciIHN0cm9rZS13aWR0aD0iMy44IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNDExIDI2MiBMIDQxMSAyNDkgTCAzOTggMjQ5IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIwMzMiIHN0cm9rZS13aWR0aD0iMS4zIiBvcGFjaXR5PSIxIi8+CiAgICA8cGF0aCBkPSJNIDY1Ny41NiAxOTEuNTggQSAxNTAgMTUwIDAgMCAxIDc5MCAxMTIgQSAxNTAgMTUwIDAgMCAxIDkyMi40NCAxOTEuNTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIyLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjY3NS4wOSIgeTE9IjE2NS41OCIgeDI9IjgwMy4wNyIgeTI9IjExMi41NyIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iODAzLjA3IiB5MT0iMTEyLjU3IiB4Mj0iOTEyLjg3IiB5Mj0iMTc1Ljk2IiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNzA2LjU4IDg1LjY4IEEgODUuODkgODUuODkgMCAwIDEgNzMxLjQzIDEwMC43NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDcxNy40IDEwNi41NyBBIDg1Ljg5IDg1Ljg5IDAgMCAxIDcyNC4zMSA3OC4zNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDc2MC43NyAxNzEuNTkgQSA4NS44OSA4NS44OSAwIDAgMSA3NTMuODYgMTk5LjgxIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNzcxLjU4IDE5Mi40NyBBIDg1Ljg5IDg1Ljg5IDAgMCAxIDc0Ni43NCAxNzcuNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNzk1LjM2IiB5MT0iMjc0LjkzIiB4Mj0iNzE0LjI5IiB5Mj0iNzkuMjIiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA4NzguNjQgOTAuOTIgQSA3OC42MSA3OC42MSAwIDAgMSA4ODEuNTMgMTE3LjM2IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gODY5LjUgMTEwLjQxIEEgNzguNjEgNzguNjEgMCAwIDEgODkzLjg0IDk5LjY5IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gODQ2LjQ1IDE3OC4xMyBBIDc4LjYxIDc4LjYxIDAgMCAxIDgyMi4xIDE4OC44NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDgzNy4zMSAxOTcuNjIgQSA3OC42MSA3OC42MSAwIDAgMSA4MzQuNDEgMTcxLjE4IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSI3ODMiIHkxPSIyNzQuMTIiIHgyPSI4ODguMjEiIHkyPSI5MS44OSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8Y2lyY2xlIGN4PSIyNCIgY3k9IjI2IiByPSIxNCIgZmlsbD0iIzZkMjhkOSIvPgogICAgPHRleHQgeD0iMjQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDE8L3RleHQ+CiAgICA8dGV4dCB4PSIyODgiIHk9IjI0NS4xNCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGfPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iNDQiIGN5PSIyNTIiIHI9IjQuNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjEuOSIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iMzAiIHk9IjI3NS4xNCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZC3PC90ZXh0PgogICAgPGNpcmNsZSBjeD0iNDQiIGN5PSIxNDQiIHI9IjQuNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjEuOSIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iMjkiIHk9IjE0OS4xNCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZC4PC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMjg0IiBjeT0iMjUyIiByPSI0LjQiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjkiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjI4OCIgeT0iMjc3LjE0IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7VGltZXMgTmV3IFJvbWFuJnF1b3Q7LCBUaW1lcywgc2VyaWYiIGZvbnQtc2l6ZT0iMjEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCdkLk8L3RleHQ+CiAgICA8Y2lyY2xlIGN4PSIxMzkuNyIgY3k9IjI1MiIgcj0iNSIgZmlsbD0iIzA0Nzg1NyIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iMTU0LjciIHk9IjI3Ni4xNCIgZmlsbD0iIzA0Nzg1NyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGLPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMzQ0IiBjeT0iMjYiIHI9IjE0IiBmaWxsPSIjNmQyOGQ5Ii8+CiAgICA8dGV4dCB4PSIzNDQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDI8L3RleHQ+CiAgICA8dGV4dCB4PSI0ODcuNyIgeT0iMjg2LjEiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCZxdW90OywgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+NDY8L3RleHQ+CiAgICA8Y2lyY2xlIGN4PSIzOTgiIGN5PSIyNjIiIHI9IjQuNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjEuOSIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iMzg1IiB5PSIyODYuMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2QvjwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjU3Ny40IiBjeT0iMjYyIiByPSI0LjQiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjkiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjU5MC40IiB5PSIyODYuMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2QvzwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjU3Ny40IiBjeT0iODIuNiIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8dGV4dCB4PSI1OTIuNCIgeT0iNzYuNzQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RgDwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjM5OCIgY3k9IjgyLjYiIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iMzgzIiB5PSI3Ni43NCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGBPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iNjY0IiBjeT0iMjYiIHI9IjE0IiBmaWxsPSIjNmQyOGQ5Ii8+CiAgICA8dGV4dCB4PSI2NjQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDM8L3RleHQ+CiAgICA8Y2lyY2xlIGN4PSI2NzUuMDkiIGN5PSIxNjUuNTgiIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iNjYyLjA3IiB5PSIxNjEuNzkiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RhzwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjgwMy4wNyIgY3k9IjExMi41NyIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8dGV4dCB4PSI4MDQuNTYiIHk9IjEwMi43OCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGIPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iOTEyLjg3IiBjeT0iMTc1Ljk2IiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjkyNi44IiB5PSIxNzMuMzUiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RiTwvdGV4dD4KICAgIDxjaXJjbGUgY3g9Ijc5MCIgY3k9IjI2MiIgcj0iNSIgZmlsbD0iIzA0Nzg1NyIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iODA2IiB5PSIyODIuMTQiIGZpbGw9IiMwNDc4NTciIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RgjwvdGV4dD4KICA8L2c+Cjwvc3ZnPgo="
@@ -7127,9 +7686,10 @@ Bachillerato</p>
                 class="math inline">\(E\)</span> y de <span
                 class="math inline">\(F\)</span>: es el corte de <span
                 class="math inline">\(r\)</span> con la mediatriz del
-                segmento <span class="math inline">\(EF\)</span>. Queda
-                a unos <span class="math inline">\(31{,}9\)</span> mm de
-                <span class="math inline">\(D\)</span>. Para
+                segmento <span class="math inline">\(EF\)</span>. <span
+                class="final-con-signo"><span class="final">Queda a unos
+                <span class="math inline">\(31{,}9\)</span> mm de <span
+                class="math inline">\(D\)</span></span>.</span> Para
                 comprobarlo, el compás pinchado en <span
                 class="math inline">\(X\)</span> y abierto hasta <span
                 class="math inline">\(E\)</span> tiene que pasar por
@@ -7147,9 +7707,10 @@ Bachillerato</p>
                 class="math inline">\(N\)</span> y a <span
                 class="math inline">\(46\)</span> mm de <span
                 class="math inline">\(L\)</span>: dos arcos con esa
-                abertura lo dan. Las dos diagonales tienen que medir lo
+                abertura lo dan. <span class="final-con-signo"><span
+                class="final">Las dos diagonales tienen que medir lo
                 mismo, unos <span class="math inline">\(65\)</span>
-                mm.</li>
+                mm</span>.</span></li>
                 <li>Se marcan tres puntos del arco, <span
                 class="math inline">\(T\)</span>, <span
                 class="math inline">\(U\)</span> y <span
@@ -7165,9 +7726,10 @@ Bachillerato</p>
                 mediatriz de <span class="math inline">\(TU\)</span>, y
                 lo mismo con <span class="math inline">\(U\)</span> y
                 <span class="math inline">\(V\)</span>. Para
-                comprobarlo, el compás pinchado en <span
+                comprobarlo, <span class="final-con-signo"><span
+                class="final">el compás pinchado en <span
                 class="math inline">\(O\)</span> tiene que repasar el
-                arco entero.</li>
+                arco entero</span>.</span></li>
                 </ol>
                 <figure>
                 <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5NjAiIGhlaWdodD0iMzQwIiB2aWV3Qm94PSIwIDAgOTYwIDM0MCI+CiAgPHRpdGxlPkZpZ3VyYTogcHJvYmxlbWFzX2FuZ3Vsb3M8L3RpdGxlPgogIDxyZWN0IHdpZHRoPSI5NjAiIGhlaWdodD0iMzQwIiBmaWxsPSIjZmZmZmZmIi8+CiAgPGc+CiAgICA8bGluZSB4MT0iMTYiIHkxPSIyNjQiIHgyPSI2MiIgeTI9IjI2NCIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNjIiIHkxPSIyNjQiIHgyPSIyOTkuNiIgeTI9IjI2NCIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjIuMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDMyLjIyIDI2Ny41OSBBIDMwIDMwIDAgMCAxIDQ1Ljk3IDIzOC42NCBBIDMwIDMwIDAgMCAxIDc4LjAzIDIzOC42NCBBIDMwIDMwIDAgMCAxIDkxLjc4IDI2Ny41OSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDU0LjQ5IDIyMS41OSBBIDQ4IDQ4IDAgMCAxIDY4LjQ2IDIzMi43OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDU1LjU0IDIzMi43OCBBIDQ4IDQ4IDAgMCAxIDY5LjUxIDIyMS41OSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNjIiIHkxPSIyNjQiIHgyPSI2MiIgeTI9IjIxMi41MyIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDg1LjA2IDIzNC44MSBBIDMwIDMwIDAgMCAxIDk4Ljk0IDIzNC44MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDkxLjE5IDIyNy4wNiBBIDMwIDMwIDAgMCAxIDkxLjE5IDI0MC45NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDI2NS43NyAyNjcuMzkgQSAzNCAzNCAwIDAgMSAyODcuOTcgMjMyLjA1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gMjc2LjIyIDIzMS43IEEgMzQgMzQgMCAwIDEgMjg4LjI2IDIzOC42NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDI0Mi45NCAyMzguNjUgQSAzNCAzNCAwIDAgMSAyNTQuOTggMjMxLjciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSAyNDkuMzIgMjQxLjUxIEEgMzQgMzQgMCAwIDEgMjQ5LjMyIDIyNy42IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSIxNDguOTciIHkxPSIxNzcuMDMiIHgyPSIxNTguODciIHkyPSIxNjcuMTMiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjE0OC45NyIgeTE9IjE3Ny4wMyIgeDI9IjEzNi44NCIgeTI9IjE3MC4wMyIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNjIiIHkxPSIyNjQiIHgyPSIxNDguOTciIHkyPSIxNzcuMDMiIHN0cm9rZT0iIzA0Nzg1NyIgc3Ryb2tlLXdpZHRoPSIzLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjI5OS42IiB5MT0iMjY0IiB4Mj0iMTQ4Ljk3IiB5Mj0iMTc3LjAzIiBzdHJva2U9IiMwNDc4NTciIHN0cm9rZS13aWR0aD0iMy44IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSIzNTAuMSIgeTE9IjExNSIgeDI9IjYwOS45IiB5Mj0iMjY1IiBzdHJva2U9IiMxNzIwMzMiIHN0cm9rZS13aWR0aD0iMi4zIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSIzNTAuMSIgeTE9IjI2NSIgeDI9IjYwOS45IiB5Mj0iMTE1IiBzdHJva2U9IiMxNzIwMzMiIHN0cm9rZS13aWR0aD0iMi4zIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSI1MDAuMDgiIHkxPSIyODMuMjMiIHgyPSI1NzAuNzgiIHkyPSIxNjAuNzciIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1MjQuMTcgMjE1LjUgTCA1MTcuNjcgMjI2Ljc2IEwgNTI4LjkzIDIzMy4yNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjEuMyIgb3BhY2l0eT0iMSIvPgogICAgPHBhdGggZD0iTSA1NTUuNjYgMTY5LjAzIEEgNTYuNyA1Ni43IDAgMCAxIDU3MS4xOCAxNzcuOTkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1MTUuMTkgMjc0Ljk3IEEgNTYuNyA1Ni43IDAgMCAxIDQ5OS42NyAyNjYuMDEiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjQ0NS4zNiIgeTE9IjEwNC41MyIgeDI9IjYxOS4zOCIgeTI9IjIwNSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iMzQwLjYyIiB5MT0iMTc1IiB4Mj0iNTE0LjY0IiB5Mj0iMjc1LjQ3IiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNTA0LjI3IDIwNy42MyBBIDMwIDMwIDAgMCAwIDUwNi4xNSAxNzUuMyBBIDMwIDMwIDAgMCAwIDQ3Ny41NiAxNjAuMSBBIDMwIDMwIDAgMCAwIDQ1MS44MSAxNzkuNzQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA1MjIuNDYgMTg0Ljg5IEEgMjYgMjYgMCAwIDEgNTMwLjQ0IDE5Ni4xOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDUzMC40NCAxODMuODEgQSAyNiAyNiAwIDAgMSA1MjIuNDYgMTk1LjExIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNDc1LjMzIDE1MS4xMyBBIDMyIDMyIDAgMCAxIDQ4My40MyAxNjIuNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDQ3Ni41NyAxNjIuNCBBIDMyIDMyIDAgMCAxIDQ4NC42NyAxNTEuMTMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjM0Mi42IiB5MT0iMTkwIiB4Mj0iNjE3LjQiIHkyPSIxOTAiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjQ4MCIgeTE9IjEwMC41MyIgeDI9IjQ4MCIgeTI9IjI3OS40NyIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNjYyIiB5MT0iMTkwIiB4Mj0iODg4LjAzIiB5Mj0iMzEwLjE4IiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNjgxLjY1IDE5My43NSBBIDIwIDIwIDAgMCAxIDY3Ni4xIDIwNC4xOSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDY5OS4zIDIwMy4xNCBBIDIwIDIwIDAgMCAxIDY5My43NSAyMTMuNTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA3MTYuOTYgMjEyLjUzIEEgMjAgMjAgMCAwIDEgNzExLjQxIDIyMi45NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDczNC42MiAyMjEuOTIgQSAyMCAyMCAwIDAgMSA3MjkuMDcgMjMyLjM2IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNzUyLjI4IDIzMS4zMSBBIDIwIDIwIDAgMCAxIDc0Ni43MyAyNDEuNzUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA3NjkuOTQgMjQwLjcgQSAyMCAyMCAwIDAgMSA3NjQuMzkgMjUxLjE0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNzg3LjYgMjUwLjA5IEEgMjAgMjAgMCAwIDEgNzgyLjA1IDI2MC41MyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDgwNS4yNiAyNTkuNDggQSAyMCAyMCAwIDAgMSA3OTkuNzEgMjY5LjkxIiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gODIyLjkyIDI2OC44NyBBIDIwIDIwIDAgMCAxIDgxNy4zNyAyNzkuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDg0MC41OCAyNzguMjYgQSAyMCAyMCAwIDAgMSA4MzUuMDMgMjg4LjY5IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gODU4LjIzIDI4Ny42NSBBIDIwIDIwIDAgMCAxIDg1Mi42OCAyOTguMDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPHBhdGggZD0iTSA4NzUuODkgMjk3LjA0IEEgMjAgMjAgMCAwIDEgODcwLjM0IDMwNy40NyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iODczLjkxIiB5MT0iMzAyLjY3IiB4Mj0iOTI5LjkiIHkyPSIxOTAiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjcxNC45OCIgeTE9IjIxOC4xNyIgeDI9IjcyOC45OCIgeTI9IjE5MCIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iNzg1LjYxIiB5MT0iMjU1LjczIiB4Mj0iODE4LjI3IiB5Mj0iMTkwIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSI2NjIiIHkxPSIxOTAiIHgyPSI5MjkuOSIgeTI9IjE5MCIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjIuMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDY2Mi4yMSAxOTUuMzUgQSA2Ni45OCA2Ni45OCAwIDAgMSA2ODMuMDYgMTQxLjI0IEEgNjYuOTggNjYuOTggMCAwIDEgNzM4LjMyIDEyMy42OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8cGF0aCBkPSJNIDkyOS41NCAxOTguOTIgQSAxMTEuNjMgMTExLjYzIDAgMCAwIDg1MC4zOCA4My4wOSBBIDExMS42MyAxMTEuNjMgMCAwIDAgNzIwLjUgMTM2LjE0IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSI3MjguOTgiIHkxPSIxOTAiIHgyPSI4MTguMjciIHkyPSIxOTAiIHN0cm9rZT0iIzA0Nzg1NyIgc3Ryb2tlLXdpZHRoPSIzLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPGxpbmUgeDE9IjcyOC45OCIgeTE9IjE5MCIgeDI9IjcyOC45NyIgeTI9IjEyMy4wMiIgc3Ryb2tlPSIjMDQ3ODU3IiBzdHJva2Utd2lkdGg9IjMuOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8bGluZSB4MT0iODE4LjI3IiB5MT0iMTkwIiB4Mj0iNzI4Ljk3IiB5Mj0iMTIzLjAyIiBzdHJva2U9IiMwNDc4NTciIHN0cm9rZS13aWR0aD0iMy44IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxwYXRoIGQ9Ik0gNzQxLjk4IDE5MCBMIDc0MS45NyAxNzcgTCA3MjguOTcgMTc3IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNzIwMzMiIHN0cm9rZS13aWR0aD0iMS4zIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSIyNCIgY3k9IjI2IiByPSIxNCIgZmlsbD0iIzZkMjhkOSIvPgogICAgPHRleHQgeD0iMjQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDQ8L3RleHQ+CiAgICA8dGV4dCB4PSIxODAuOCIgeT0iMjg4LjEiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCZxdW90OywgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+NjY8L3RleHQ+CiAgICA8dGV4dCB4PSI4OS4yMiIgeT0iMjA5LjM1IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjM0LDI8L3RleHQ+CiAgICA8dGV4dCB4PSIyMzUuMjgiIHk9IjIwNi41NiIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj40OCwzPC90ZXh0PgogICAgPHRleHQgeD0iMTI4LjUyIiB5PSIyNDEuNTUiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCZxdW90OywgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+NDXCsDwvdGV4dD4KICAgIDx0ZXh0IHg9IjIyMC4wNCIgeT0iMjQ5LjI2IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjMwwrA8L3RleHQ+CiAgICA8dGV4dCB4PSIxNTMuOTciIHk9IjIxOC4xMyIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4xMDXCsDwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjYyIiBjeT0iMjY0IiByPSI0LjQiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjkiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjU4IiB5PSIyOTEuMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2QtDwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjI5OS42IiBjeT0iMjY0IiByPSI0LjQiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjkiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjMxMi42IiB5PSIyODguMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2QtTwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjE0OC45NyIgY3k9IjE3Ny4wMyIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8dGV4dCB4PSIxNDguOTciIHk9IjE2Mi4xNyIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZC2PC90ZXh0PgogICAgPGNpcmNsZSBjeD0iMzQ0IiBjeT0iMjYiIHI9IjE0IiBmaWxsPSIjNmQyOGQ5Ii8+CiAgICA8dGV4dCB4PSIzNDQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDU8L3RleHQ+CiAgICA8dGV4dCB4PSI2MDguNzQiIHk9IjI1NC4xNSIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGfPC90ZXh0PgogICAgPHRleHQgeD0iNjA4Ljc0IiB5PSIxNDAuMTMiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RoDwvdGV4dD4KICAgIDx0ZXh0IHg9IjUzNS4xMSIgeT0iMjU5LjY1IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjIxPC90ZXh0PgogICAgPHRleHQgeD0iNDIzLjMiIHk9IjE4Mi4xIiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjQyPC90ZXh0PgogICAgPHRleHQgeD0iNDU2IiB5PSIxNDYuMzYiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCZxdW90OywgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+MjQsMjwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjQ4MCIgY3k9IjE5MCIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8dGV4dCB4PSI0NjUiIHk9IjIyMy4xNCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGCPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iNTkzLjQiIGN5PSIxOTAiIHI9IjUiIGZpbGw9IiMwNDc4NTciIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjM2Ni42IiBjeT0iMTkwIiByPSI1IiBmaWxsPSIjMDQ3ODU3IiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI0ODAiIGN5PSIxMjQuNTMiIHI9IjUiIGZpbGw9IiMwNDc4NTciIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjQ4MCIgY3k9IjI1NS40NyIgcj0iNSIgZmlsbD0iIzA0Nzg1NyIgb3BhY2l0eT0iMSIvPgogICAgPGNpcmNsZSBjeD0iNjY0IiBjeT0iMjYiIHI9IjE0IiBmaWxsPSIjNmQyOGQ5Ii8+CiAgICA8dGV4dCB4PSI2NjQiIHk9IjMxLjEiIGZpbGw9IiNmZmZmZmYiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCBEZW1pIEJvbGQmcXVvdDssICZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+NDY8L3RleHQ+CiAgICA8dGV4dCB4PSI3MDUuOTgiIHk9IjE2MS42MSIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yOCw1PC90ZXh0PgogICAgPHRleHQgeD0iNzczLjYzIiB5PSIyMTIuMSIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4zODwvdGV4dD4KICAgIDx0ZXh0IHg9Ijc4NS42MiIgeT0iMTQ1LjYxIiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjQ3LDU8L3RleHQ+CiAgICA8dGV4dCB4PSI3MDYuNTMiIHk9IjIzOS4xNiIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O0F2ZW5pciBOZXh0JnF1b3Q7LCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4zPC90ZXh0PgogICAgPHRleHQgeD0iNzc3LjE2IiB5PSIyNzYuNzIiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtBdmVuaXIgTmV4dCZxdW90OywgSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+NzwvdGV4dD4KICAgIDx0ZXh0IHg9Ijg2NS40NiIgeT0iMzIzLjY3IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7QXZlbmlyIE5leHQmcXVvdDssIEhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPjEyPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iNjc5LjY2IiBjeT0iMTk5LjM5IiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjY5Ny4zMiIgY3k9IjIwOC43OCIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI3MTQuOTgiIGN5PSIyMTguMTciIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPGNpcmNsZSBjeD0iNzMyLjY0IiBjeT0iMjI3LjU2IiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9Ijc1MC4yOSIgY3k9IjIzNi45NSIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI3NjcuOTUiIGN5PSIyNDYuMzQiIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPGNpcmNsZSBjeD0iNzg1LjYxIiBjeT0iMjU1LjczIiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9IjgwMy4yNyIgY3k9IjI2NS4xMiIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI4MjAuOTMiIGN5PSIyNzQuNSIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI4MzguNTkiIGN5PSIyODMuODkiIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPGNpcmNsZSBjeD0iODU2LjI1IiBjeT0iMjkzLjI4IiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDxjaXJjbGUgY3g9Ijg3My45MSIgY3k9IjMwMi42NyIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8Y2lyY2xlIGN4PSI2NjIiIGN5PSIxOTAiIHI9IjQuNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMTcyMDMzIiBzdHJva2Utd2lkdGg9IjEuOSIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iNjQ4IiB5PSIxODEuMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RgDwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjkyOS45IiBjeT0iMTkwIiByPSI0LjQiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzE3MjAzMyIgc3Ryb2tlLXdpZHRoPSIxLjkiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9Ijk0My45IiB5PSIxODIuMTQiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RgTwvdGV4dD4KICAgIDxjaXJjbGUgY3g9IjcyOC45OCIgY3k9IjE5MCIgcj0iMy4zIiBmaWxsPSIjMTcyMDMzIiBvcGFjaXR5PSIxIi8+CiAgICA8dGV4dCB4PSI3MTUuOTgiIHk9IjE4My4xNCIgZmlsbD0iIzE3MjAzMyIgZm9udC1mYW1pbHk9IiZxdW90O1RpbWVzIE5ldyBSb21hbiZxdW90OywgVGltZXMsIHNlcmlmIiBmb250LXNpemU9IjIxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wnZGDPC90ZXh0PgogICAgPGNpcmNsZSBjeD0iODE4LjI3IiBjeT0iMTkwIiByPSIzLjMiIGZpbGw9IiMxNzIwMzMiIG9wYWNpdHk9IjEiLz4KICAgIDx0ZXh0IHg9IjgzMS4yNyIgeT0iMTgzLjE0IiBmaWxsPSIjMTcyMDMzIiBmb250LWZhbWlseT0iJnF1b3Q7VGltZXMgTmV3IFJvbWFuJnF1b3Q7LCBUaW1lcywgc2VyaWYiIGZvbnQtc2l6ZT0iMjEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCdkYQ8L3RleHQ+CiAgICA8Y2lyY2xlIGN4PSI3MjguOTciIGN5PSIxMjMuMDIiIHI9IjMuMyIgZmlsbD0iIzE3MjAzMyIgb3BhY2l0eT0iMSIvPgogICAgPHRleHQgeD0iNzE0Ljk3IiB5PSIxMTQuMTYiIGZpbGw9IiMxNzIwMzMiIGZvbnQtZmFtaWx5PSImcXVvdDtUaW1lcyBOZXcgUm9tYW4mcXVvdDssIFRpbWVzLCBzZXJpZiIgZm9udC1zaXplPSIyMSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J2RhTwvdGV4dD4KICA8L2c+Cjwvc3ZnPgo="
@@ -7198,11 +7760,12 @@ Bachillerato</p>
                 class="math inline">\(C\)</span>. Hay una solución: la
                 del otro lado de <span class="math inline">\(AB\)</span>
                 es el mismo triángulo, dado la vuelta. <span
+                class="final-con-signo"><span class="final"><span
                 class="math inline">\(AC\)</span> mide unos <span
                 class="math inline">\(34{,}2\)</span> mm, y <span
                 class="math inline">\(BC\)</span>, unos <span
-                class="math inline">\(48{,}3\)</span> mm. Para
-                comprobarlo, el transportador tiene que dar <span
+                class="math inline">\(48{,}3\)</span> mm</span>.</span>
+                Para comprobarlo, el transportador tiene que dar <span
                 class="math inline">\(105^\circ\)</span> en <span
                 class="math inline">\(C\)</span>.</li>
                 <li>Cada condición da un lugar geométrico. Los puntos
@@ -7221,18 +7784,22 @@ Bachillerato</p>
                 la de los ángulos de <span
                 class="math inline">\(60^\circ\)</span> y la de los de
                 <span class="math inline">\(120^\circ\)</span>. Cada
-                paralela corta a las dos bisectrices, así que hay
-                <strong>cuatro</strong> soluciones. Si trazas solo una
-                bisectriz, te dejas dos. Los dos puntos de la bisectriz
-                de los ángulos de <span
+                paralela corta a las dos bisectrices, así que <span
+                class="final-con-signo"><span class="final">hay
+                <strong>cuatro</strong> soluciones</span>.</span> Si
+                trazas solo una bisectriz, te dejas dos. <span
+                class="final-con-signo"><span class="final">Los dos
+                puntos de la bisectriz de los ángulos de <span
                 class="math inline">\(60^\circ\)</span> quedan a <span
                 class="math inline">\(42\)</span> mm de <span
-                class="math inline">\(O\)</span>, el doble de <span
-                class="math inline">\(21\)</span>: el punto, <span
-                class="math inline">\(O\)</span> y el pie de la
+                class="math inline">\(O\)</span></span>,</span> el doble
+                de <span class="math inline">\(21\)</span>: el punto,
+                <span class="math inline">\(O\)</span> y el pie de la
                 perpendicular a <span class="math inline">\(r\)</span>
-                forman medio triángulo equilátero. Los otros dos quedan
-                a unos <span class="math inline">\(24{,}2\)</span> mm.
+                forman medio triángulo equilátero. <span
+                class="final-con-signo"><span class="final">Los otros
+                dos quedan a unos <span
+                class="math inline">\(24{,}2\)</span> mm</span>.</span>
                 Los cuatro salen también con dos paralelas a <span
                 class="math inline">\(r\)</span> y dos a <span
                 class="math inline">\(s\)</span>: son los vértices del
@@ -7254,27 +7821,42 @@ Bachillerato</p>
                 séptimo se trazan paralelas a esa recta. Cortan a <span
                 class="math inline">\(MN\)</span> en <span
                 class="math inline">\(P\)</span> y en <span
-                class="math inline">\(Q\)</span>, y los trozos <span
-                class="math inline">\(MP\)</span>, <span
+                class="math inline">\(Q\)</span>, y <span
+                class="final-con-signo"><span class="final">los trozos
+                <span class="math inline">\(MP\)</span>, <span
                 class="math inline">\(PQ\)</span> y <span
                 class="math inline">\(QN\)</span> son los tres lados:
                 <span class="math inline">\(28{,}5\)</span>, <span
                 class="math inline">\(38\)</span> y <span
-                class="math inline">\(47{,}5\)</span> mm. El triángulo
-                se levanta sobre <span
+                class="math inline">\(47{,}5\)</span> mm</span>.</span>
+                El triángulo se levanta sobre <span
                 class="math inline">\(PQ\)</span>: con centro en <span
                 class="math inline">\(P\)</span> y radio <span
                 class="math inline">\(PM\)</span>, y con centro en <span
                 class="math inline">\(Q\)</span> y radio <span
                 class="math inline">\(QN\)</span>, dos arcos que se
                 cortan en <span class="math inline">\(R\)</span>. Hay
-                una solución, y su ángulo mayor, el de <span
-                class="math inline">\(P\)</span>, es recto: como <span
+                una solución, y <span class="final-con-signo"><span
+                class="final">su ángulo mayor, el de <span
+                class="math inline">\(P\)</span>, es
+                recto</span>:</span> como <span
                 class="math inline">\(3^2+4^2=5^2\)</span>, también
                 <span
                 class="math inline">\(28{,}5^2+38^2=47{,}5^2\)</span>.
                 Se comprueba con la escuadra.</li>
                 </ol>
+                </div>
+                <div id="trazado-ejercicio-41"
+                class="interactivo bloque-didactico"
+                data-componente="trazado"
+                data-construccion="equidistante-en-la-recta"
+                data-titulo="El ejercicio 41, con sus datos"
+                data-ejercicio="41" data-pasos-de="trazado-equidistante"
+                data-datos="R=30,300 S=570,300 A=70,192 B=310,300"
+                data-nombres="A=E B=F" data-carga="al-abrir">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p>En la web, el ejercicio 41 se ve trazado paso a paso,
+                con sus datos, en el lápiz de su solución.</p>
                 </div>
                 </section>
                 </section>
@@ -7934,6 +8516,1321 @@ Bachillerato</p>
             rotulo.textContent = plegado ? textoAbrir : textoCerrar;
           });
         });
+    });
+  </script>
+
+  <script>
+    // La solución de cada ejercicio, apartado por apartado (desde el 15 de
+    // octubre de 2026, traída de `mat1` por orden del profesor: «quiero el
+    // mismo formato exacto que en mate1»; allí desde el 14, cuando eligió
+    // entre siete maquetas la del ojo y el lápiz detrás de cada apartado;
+    // hasta entonces, aquí, un botón «Ver solución» por ejercicio). Detrás
+    // de cada apartado del enunciado van dos botones redondos: el ojo enseña
+    // el resultado del apartado, lo que su respuesta lleva recuadrado (una
+    // fórmula con `\boxed{…}` o una frase con `[…]{.final}`, regla 14), y el
+    // lápiz, su paso a paso: la respuesta de ese apartado, con el resultado
+    // recuadrado. Abrir uno cierra el otro. Sin nada recuadrado no hay ojo, y
+    // si la respuesta no dice más que el resultado no hay lápiz.
+    // Dónde van los botones:
+    //   - apartados en lista (cada letra en su línea): al final de la línea
+    //     del apartado; el resultado, a su lado, y el paso a paso, debajo del
+    //     apartado;
+    //   - apartados seguidos en un párrafo o dentro de una fórmula centrada:
+    //     en una fila debajo del enunciado, cada pareja con su letra; lo que
+    //     se abre va debajo de esa fila, con su letra;
+    //   - sin apartados, o con una respuesta que no se parte en las mismas
+    //     letras que el enunciado o que lleva una figura: los dos botones van
+    //     una vez, al final del enunciado, y abren los resultados de todos
+    //     los apartados o la respuesta entera.
+    // La respuesta de un apartado sale de la del ejercicio: su elemento de
+    // lista, el tramo entre su letra y la siguiente (`b)` y un espacio
+    // irrompible, como se escribe en la fuente) o su fila de una fórmula, que
+    // se vuelve a componer con KaTeX. El bloque de respuestas no se toca:
+    // fuera del modo clase solo se esconde, con su botón, y sigue siendo lo
+    // que usan el modo clase y su ampliación, lo que se imprime y lo que se ve
+    // sin JavaScript. En el modo clase no hay botones (como en `mat1`, su
+    // pendiente 58). Un bloque responde a la lista que tiene justo delante
+    // o, si no la tiene, a todas las de su sección de ejercicios (la síntesis, con
+    // sus actividades competenciales); si sus números no casan con los de los
+    // enunciados, o lleva algo más que su lista, se queda como estaba, tras su
+    // botón. Dentro de lo abierto, la cuenta centrada que no cabe en su caja
+    // se ensancha y se encoge hasta caber, con un tope. Este guion no lleva
+    // ningún signo de dólar: la plantilla es de Pandoc.
+    document.addEventListener("DOMContentLoaded", function () {
+      var contenido = document.getElementById("contenido-unidad");
+      if (!contenido) {
+        return;
+      }
+      var OJO =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"></path>' +
+        '<circle cx="12" cy="12" r="2.8"></circle></svg>';
+      var LAPIZ =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z"></path>' +
+        '<path d="M13.6 6.9l3 3"></path></svg>';
+      var RESULTADO = "Resultado";
+      var PASO_A_PASO = "Paso a paso";
+      var LETRAS = "abcdefgh";
+      // La letra de un apartado seguido: «b)» y un espacio irrompible, sin
+      // una letra o una cifra delante (en «f(x) » no lo es).
+      var MARCA = /(^|[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-h])\)\u00a0/g;
+      // La letra de una fila de una fórmula, `\text{b) }`. Pandoc parte los
+      // renglones largos de la página por sus espacios, también el de dentro
+      // de la llave: puede llegar como `\text{b)`, un salto y `}`.
+      var ETIQUETA = /\\text\{([a-h])\)\s*\}/g;
+      // Palabras que no cuentan como paso a paso si quedan solas alrededor
+      // del resultado («Soluciones: … y …»).
+      var VACIAS = ["soluciones", "solución", "solucion", "resultado", "resultados",
+        "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
+      var unidades = [];
+      var cuenta = 0;
+
+      function numerosDeLaLista(lista) {
+        var primero = parseInt(lista.getAttribute("start") || "1", 10);
+        return Array.prototype.map.call(lista.children, function (elemento, lugar) {
+          return primero + lugar;
+        });
+      }
+      function numerosDeLasListas(listas) {
+        return listas.reduce(function (todos, lista) {
+          return todos.concat(numerosDeLaLista(lista));
+        }, []);
+      }
+      // Una lista de enunciados: la de una sección de ejercicios que no va
+      // dentro de un bloque, de un laboratorio ni de otro elemento de lista.
+      function esDeEnunciados(lista) {
+        return Boolean(
+          lista.closest("section.ejercicios") &&
+            !lista.closest(".bloque-didactico, .interactivo, .interactivo-host") &&
+            !lista.parentElement.closest("li")
+        );
+      }
+      // Lo que un bloque puede llevar para repartirse: su rótulo, una sola
+      // lista de respuestas y, si acaso, figuras. En este curso, además, la
+      // nota que abre un bloque de «Ejercicios de clase» (regla 14 de
+      // AGENTS.md): solo dice de dónde salen los ejercicios, que ya lo dice
+      // la marca de cada uno, y la web no la enseña, como no la enseñaba el
+      // «Ver solución» de cada ejercicio; siguen leyéndola el modo clase, el
+      // cuadernillo y la impresión (`prueba_soluciones.py` vigila que solo
+      // la lleven esos bloques). Con cualquier otra cosa no se reparte.
+      // En DT, además, un bloque puede llevar varias listas separadas por
+      // figuras (las soluciones dibujadas de los problemas, cada una delante
+      // de las suyas), si sus números siguen de una a otra: se reparten como
+      // una sola, con copias de sus elementos, y el bloque no se toca.
+      function respuestasDelBloque(bloque) {
+        var lista = null;
+        var listas = [];
+        var vale = Array.prototype.every.call(bloque.children, function (hijo) {
+          if (hijo.tagName === "OL") {
+            lista = hijo;
+            listas.push(hijo);
+            return true;
+          }
+          if (hijo.matches("figure") || (hijo.matches("p") && hijo.querySelector("img"))) {
+            return true;
+          }
+          if (!lista && hijo.matches("p") && !hijo.querySelector(":scope > .etiqueta-bloque")) {
+            return true;
+          }
+          var rotulo = hijo.matches("p") ? hijo.querySelector(":scope > .etiqueta-bloque") : null;
+          return Boolean(rotulo && hijo.textContent.trim() === rotulo.textContent.trim());
+        });
+        if (!vale || !lista) {
+          return null;
+        }
+        if (listas.length === 1) {
+          return lista;
+        }
+        var siguiente = numerosDeLaLista(listas[0])[0];
+        var junta = document.createElement("ol");
+        junta.setAttribute("start", String(siguiente));
+        var seguidas = listas.every(function (una) {
+          var numeros = numerosDeLaLista(una);
+          if (numeros[0] !== siguiente) {
+            return false;
+          }
+          siguiente = numeros[numeros.length - 1] + 1;
+          Array.prototype.forEach.call(una.children, function (elemento) {
+            junta.appendChild(elemento.cloneNode(true));
+          });
+          return true;
+        });
+        return seguidas ? junta : null;
+      }
+      // La lista que va justo antes del bloque o, si el bloque abre su
+      // sección («Comprueba tus respuestas»), justo antes de esa sección.
+      // Entre las dos solo puede haber el botón del bloque y el título de
+      // las respuestas.
+      function listaDeDelante(bloque) {
+        var nodo = bloque;
+        for (var vuelta = 0; vuelta < 2 && nodo; vuelta++) {
+          var anterior = nodo.previousElementSibling;
+          while (anterior && anterior.matches("button, h3, h4, h5, h6")) {
+            anterior = anterior.previousElementSibling;
+          }
+          if (anterior) {
+            return anterior.tagName === "OL" && esDeEnunciados(anterior) ? anterior : null;
+          }
+          nodo = nodo.parentElement && nodo.parentElement.matches("section")
+            ? nodo.parentElement
+            : null;
+        }
+        return null;
+      }
+      // Las listas de la sección de ejercicios de un bloque que no va tras
+      // su lista: la sección más exterior que lo contiene o, si el bloque va
+      // en una sección «Soluciones» aparte, la de ejercicios que esa sección
+      // tiene justo delante. Solo cuentan las listas de antes del bloque que
+      // no tengan ya el suyo.
+      function listasDeSuSeccion(bloque, casadas) {
+        var ambito = null;
+        for (
+          var madre = bloque.closest("section.ejercicios");
+          madre;
+          madre = madre.parentElement.closest("section.ejercicios")
+        ) {
+          ambito = madre;
+        }
+        if (!ambito) {
+          var suya = bloque.parentElement;
+          var delante = suya && suya.matches("section") ? suya.previousElementSibling : null;
+          ambito = delante && delante.matches("section.ejercicios") ? delante : null;
+        }
+        if (!ambito) {
+          return [];
+        }
+        return Array.prototype.filter.call(ambito.querySelectorAll("ol"), function (lista) {
+          return (
+            esDeEnunciados(lista) &&
+            casadas.indexOf(lista) === -1 &&
+            Boolean(lista.compareDocumentPosition(bloque) & Node.DOCUMENT_POSITION_FOLLOWING)
+          );
+        });
+      }
+      // ¿Va la fórmula centrada del enunciado (o del apartado) junto a su
+      // número o su letra, por ser lo único que lleva? Es la regla de la
+      // plantilla, mirada antes de añadir los botones.
+      function soloFormula(elemento) {
+        var formula = elemento.firstElementChild;
+        return Boolean(
+          formula &&
+            formula === elemento.lastElementChild &&
+            formula.matches(".math.display") &&
+            !elemento.matches(".formula-tras-texto, .formula-abre")
+        );
+      }
+      // Una cuenta centrada que no cabe en su caja (en un teléfono en
+      // vertical, muchas) dejaba fuera de la vista su final, que es donde
+      // está el resultado. Primero se le da todo el ancho de lo abierto:
+      // sale de la sangría de su apartado, por debajo de la letra, que solo
+      // ocupa el primer renglón. Si ni así cabe, se encoge hasta caber, con
+      // un tope (el 60 %): por debajo se leería mal, y la que tampoco cabe se
+      // queda en el tope y se desliza de lado, como antes. Se mide con la
+      // letra entera cada vez, porque el ancho de la caja cambia al girar el
+      // teléfono y el de la cuenta, cuando llegan las letras de KaTeX.
+      var TOPE_DE_ENCOGER = 60;
+      function encogerCuentas(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var borde =
+          caja.getBoundingClientRect().left +
+          parseFloat(estilo.borderLeftWidth) +
+          parseFloat(estilo.paddingLeft);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.display"), function (cuenta) {
+          var dentro = cuenta.querySelector(".katex-display");
+          if (!dentro) {
+            return;
+          }
+          dentro.style.fontSize = "";
+          cuenta.style.marginLeft = "";
+          cuenta.style.width = "";
+          cuenta.style.maxWidth = "";
+          var ancho = cuenta.clientWidth;
+          if (!(ancho > 0) || cuenta.scrollWidth <= ancho + 1) {
+            return;
+          }
+          // La que comparte renglón con su número o su letra (va en línea)
+          // no se mueve: los pisaría.
+          var sangria = Math.floor(cuenta.getBoundingClientRect().left - borde);
+          if (sangria > 0 && window.getComputedStyle(cuenta).display === "block") {
+            cuenta.style.marginLeft = -sangria + "px";
+            cuenta.style.width = "calc(100% + " + sangria + "px)";
+            cuenta.style.maxWidth = "none";
+            ancho = cuenta.clientWidth;
+          }
+          var tanto = 100;
+          for (
+            var vuelta = 0;
+            vuelta < 3 && cuenta.scrollWidth > ancho + 1 && tanto > TOPE_DE_ENCOGER;
+            vuelta++
+          ) {
+            tanto = Math.max(
+              TOPE_DE_ENCOGER,
+              Math.floor((0.99 * tanto * ancho) / cuenta.scrollWidth)
+            );
+            dentro.style.fontSize = tanto + "%";
+          }
+        });
+      }
+      // Una caja recuadrada en línea (una factorización larga, una unión de
+      // intervalos) no se parte, ni un paréntesis grande, ni una fórmula
+      // corta, y en un teléfono pueden no caber en su renglón; un resultado
+      // de la pastilla del ojo tampoco se parte. Como las cuentas, se
+      // encogen hasta caber, con el mismo tope, y la plantilla vuelve a
+      // repartir las fórmulas del paso a paso con ellas ya encogidas (se le
+      // avisa como cuando se abre un plegable). Solo lo que ni así cabe se
+      // desliza de lado: la fórmula del paso a paso (`desliza`), o lo de
+      // dentro de la pastilla.
+      function anchoDentro(elemento) {
+        var estilo = window.getComputedStyle(elemento);
+        return elemento.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+      }
+      function anchoDeRenglon(pieza) {
+        var marco = pieza.closest(".final, .sol-chip");
+        var renglon = (marco || pieza).parentElement.closest("p, li, dd, dt, figcaption, div");
+        var ancho = anchoDentro(renglon);
+        if (marco) {
+          var estilo = window.getComputedStyle(marco);
+          ancho -=
+            marco.offsetWidth -
+            anchoDentro(marco) +
+            parseFloat(estilo.marginLeft) +
+            parseFloat(estilo.marginRight);
+          if (marco.classList.contains("final")) {
+            // Su ancho máximo deja sitio al signo de detrás.
+            ancho -= 0.7 * parseFloat(estilo.fontSize);
+          }
+        }
+        return ancho;
+      }
+      // Lo que no se parte: una fórmula corta, entera (la plantilla no la
+      // parte nunca), o un resultado de la pastilla; de una fórmula larga,
+      // cada trozo entre dos cortes (en un teléfono, la plantilla la deja
+      // partir por todos si hace falta). Las fórmulas centradas son de
+      // `encogerCuentas`, y las de una tabla, de la tabla, que se desliza.
+      function piezasQueNoSeParten(caja) {
+        var piezas = [];
+        Array.prototype.forEach.call(caja.querySelectorAll(".katex-html"), function (html) {
+          if (html.closest(".math.display, .katex-display, td, th")) {
+            return;
+          }
+          var formula = html.closest(".math.inline");
+          if (!formula || formula.classList.contains("formula-corta")) {
+            piezas.push(html);
+          } else {
+            Array.prototype.push.apply(piezas, html.querySelectorAll(":scope > .base"));
+          }
+        });
+        return piezas;
+      }
+      // Lo que la fórmula lleva pegado sin espacio (los dos puntos, el
+      // punto…) va en el mismo renglón que su primer o su último trozo.
+      function pegadoA(pieza) {
+        var formula = pieza.closest(".math.inline");
+        var envoltura = formula && formula.parentElement;
+        if (!envoltura || !envoltura.classList.contains("formula-con-signo")) {
+          return 0;
+        }
+        var bases = formula.querySelectorAll(".katex-html > .base");
+        var entera = pieza.classList.contains("katex-html");
+        var rango = document.createRange();
+        var medida = 0;
+        if (entera || pieza === bases[bases.length - 1]) {
+          rango.setStartAfter(formula);
+          rango.setEnd(envoltura, envoltura.childNodes.length);
+          medida += rango.getBoundingClientRect().width;
+        }
+        if (entera || pieza === bases[0]) {
+          rango.setStart(envoltura, 0);
+          rango.setEndBefore(formula);
+          medida += rango.getBoundingClientRect().width;
+        }
+        return medida;
+      }
+      function encogerLasCajas(caja) {
+        var piezas = piezasQueNoSeParten(caja);
+        piezas.forEach(function (pieza) {
+          pieza.style.fontSize = "";
+        });
+        var encogidas = 0;
+        piezas.forEach(function (pieza) {
+          if (!pieza.getClientRects().length) {
+            return;
+          }
+          var ancho = anchoDeRenglon(pieza);
+          var mide = pieza.getBoundingClientRect().width + pegadoA(pieza);
+          if (ancho > 0 && mide > ancho + 1) {
+            pieza.style.fontSize = Math.max(TOPE_DE_ENCOGER, Math.floor((99 * ancho) / mide)) + "%";
+            encogidas++;
+          }
+        });
+        return encogidas;
+      }
+      function deslizarLasQueNoCaben(caja) {
+        var estilo = window.getComputedStyle(caja);
+        var derecha =
+          caja.getBoundingClientRect().right -
+          parseFloat(estilo.borderRightWidth) -
+          parseFloat(estilo.paddingRight);
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          formula.classList.remove("desliza");
+        });
+        // Uno o dos píxeles de más caben en el relleno de la caja: no se
+        // desliza por eso.
+        Array.prototype.forEach.call(caja.querySelectorAll(".math.inline"), function (formula) {
+          if (formula.getBoundingClientRect().right > derecha + 2) {
+            formula.classList.add("desliza");
+          }
+        });
+      }
+      // Se hace detrás del aviso de la plantilla, que reparte las fórmulas
+      // al cambiar la clase de un plegable: los dos van en la misma cola, y
+      // sin esperar a un temporizador, que en una pestaña en segundo plano
+      // se congela.
+      function ajustarLasCajas(caja) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+          return;
+        }
+        var encogidas = encogerLasCajas(caja);
+        if (!caja.classList.contains("sol-pasos")) {
+          return;
+        }
+        if (encogidas) {
+          caja.classList.add("sol-repartir");
+          caja.classList.remove("sol-repartir");
+        }
+        Promise.resolve().then(function () {
+          deslizarLasQueNoCaben(caja);
+        });
+      }
+      function encogerLasAbiertas() {
+        unidades.forEach(function (unidad) {
+          ["pasos", "chip"].forEach(function (que) {
+            var caja = unidad[que];
+            if (!caja || !caja.firstChild || caja.classList.contains("esta-plegado")) {
+              return;
+            }
+            if (que === "pasos") {
+              encogerCuentas(caja);
+            }
+            ajustarLasCajas(caja);
+          });
+        });
+      }
+
+      // ---- Lo que dice una respuesta ----
+
+      // El TeX de una fórmula: el de su anotación, si KaTeX ya la ha pintado,
+      // o el que dejó Pandoc entre «\(» y «\)» o «\[» y «\]».
+      function texDe(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent : formula.textContent;
+        tex = tex.trim();
+        if (tex.slice(0, 2) === "\\(" || tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\)" || tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      // Lo que encierra cada `\boxed{…}` de un TeX, en orden, y lo que queda
+      // sin ellos.
+      function trocearCajas(tex) {
+        var cajas = [];
+        var resto = "";
+        var desde = 0;
+        var i = tex.indexOf("\\boxed{");
+        while (i !== -1) {
+          resto += tex.slice(desde, i);
+          var j = i + 7;
+          var nivel = 1;
+          while (j < tex.length && nivel > 0) {
+            var signo = tex.charAt(j);
+            if (signo === "\\") {
+              j += 2;
+              continue;
+            }
+            nivel += signo === "{" ? 1 : signo === "}" ? -1 : 0;
+            j++;
+          }
+          cajas.push(tex.slice(i + 7, j - 1));
+          desde = j;
+          i = tex.indexOf("\\boxed{", j);
+        }
+        return { cajas: cajas, resto: resto + tex.slice(desde) };
+      }
+      // Los resultados de un trozo de respuesta, en su orden: lo que encierra
+      // cada caja de sus fórmulas y cada frase recuadrada.
+      function resultadosDe(raiz) {
+        var lista = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType !== 1) {
+              return;
+            }
+            if (hijo.classList.contains("final")) {
+              lista.push({ html: hijo.innerHTML });
+            } else if (hijo.classList.contains("math")) {
+              trocearCajas(texDe(hijo)).cajas.forEach(function (tex) {
+                lista.push({ tex: tex });
+              });
+            } else {
+              recorrer(hijo);
+            }
+          });
+        })(raiz);
+        return lista;
+      }
+      function pintarTex(tex, enBloque) {
+        if (!window.katex) {
+          return tex;
+        }
+        return window.katex.renderToString(tex, { displayMode: Boolean(enBloque), throwOnError: false });
+      }
+      // «A», «A y B», «A, B y C»; si alguno es una frase, separados por
+      // punto y coma.
+      function unir(lista) {
+        var trozos = lista.map(function (resultado) {
+          return resultado.html !== undefined ? resultado.html : pintarTex(resultado.tex);
+        });
+        if (trozos.length < 2) {
+          return trozos.join("");
+        }
+        var frases = lista.some(function (resultado) {
+          return resultado.html !== undefined;
+        });
+        if (frases) {
+          // En DT se recuadran a menudo oraciones enteras de la respuesta:
+          // tras un punto y coma iría minúscula, así que la que empieza con
+          // mayúscula va tras un punto. La fórmula llega ya compuesta por
+          // KaTeX: la que empieza con el nombre de un punto también.
+          return trozos.reduce(function (unidas, trozo) {
+            var primera = trozo.replace(/<[^>]*>/g, "").trim().charAt(0);
+            return unidas + (/[A-ZÁÉÍÓÚÜÑ¿¡]/.test(primera) ? ". " : "; ") + trozo;
+          });
+        }
+        return trozos.slice(0, -1).join(", ") + " y " + trozos[trozos.length - 1];
+      }
+      // ¿Dice el trozo algo más que su resultado? Si alrededor de lo
+      // recuadrado solo quedan signos y palabras como «soluciones» o «y», el
+      // paso a paso repetiría el resultado y no hay lápiz.
+      function quedaAlgo(texto) {
+        var palabras = texto
+          .replace(/\\(qquad|quad|text|displaystyle)\b/g, " ")
+          .split(/[\s.,;:¡!¿?()&{}\[\]]+/)
+          .filter(function (palabra) {
+            return palabra && VACIAS.indexOf(palabra.toLowerCase()) === -1;
+          });
+        return palabras.join("").length >= 3;
+      }
+      // Cuando el paso a paso no dice más que el resultado, no hay lápiz
+      // (desde el 15 de octubre de 2026: «cuando el resultado y el "paso a
+      // paso" sea lo mismo, quita el icono del "paso a paso", no tiene
+      // sentido»). No es un paso lo que la respuesta copia de su enunciado
+      // delante del resultado («\sqrt{16}=» en «\sqrt{16}=\boxed{4\in\mathbb N}»),
+      // ni un rótulo de una palabra con dos puntos («Irracional:»), ni las
+      // palabras de relleno (`VACIAS`).
+      function normalTex(tex) {
+        return tex
+          .replace(/\\[dt]frac/g, "\\frac")
+          .replace(/\\left|\\right|\\[,;!]|&/g, "")
+          .replace(/\{-\}/g, "-")
+          .replace(/\s+/g, "");
+      }
+      function sinLoDelEnunciado(resto, enunciado) {
+        var limpio = normalTex(resto);
+        for (var i = 0; i < enunciado.length; i++) {
+          var copiado = normalTex(enunciado[i]);
+          if (copiado && limpio.indexOf(copiado + "=") === 0) {
+            return limpio.slice(copiado.length + 1);
+          }
+        }
+        return resto;
+      }
+      // Las fórmulas de un enunciado o de un apartado, sin las de sus listas
+      // de dentro: lo que su respuesta puede copiar delante del resultado.
+      function formulasDe(elemento) {
+        return Array.prototype.filter
+          .call(elemento.querySelectorAll(".math"), function (formula) {
+            return formula.parentElement.closest("li") === elemento;
+          })
+          .map(texDe);
+      }
+      function diceMasQueElResultado(raiz, enunciado) {
+        var copia = raiz.cloneNode(true);
+        Array.prototype.forEach.call(copia.querySelectorAll(".final"), function (frase) {
+          frase.parentNode.removeChild(frase);
+        });
+        Array.prototype.forEach.call(copia.querySelectorAll(".math"), function (formula) {
+          formula.parentNode.replaceChild(
+            document.createTextNode(
+              " " + sinLoDelEnunciado(trocearCajas(texDe(formula)).resto, enunciado || []) + " "
+            ),
+            formula
+          );
+        });
+        return quedaAlgo(copia.textContent.replace(/^\s*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+\s*:/, " "));
+      }
+      function tieneResultado(raiz) {
+        return raiz.textContent.indexOf("\\boxed{") !== -1 || Boolean(raiz.querySelector(".final"));
+      }
+
+      // ---- Los apartados de un enunciado y de su respuesta ----
+
+      // Las letras de apartado seguidas de un espacio irrompible que van
+      // fuera de las fórmulas y de las listas de dentro.
+      function marcasDe(contenedor) {
+        var marcas = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType === 3) {
+              MARCA.lastIndex = 0;
+              var hallada;
+              while ((hallada = MARCA.exec(hijo.data))) {
+                marcas.push({ letra: hallada[2], nodo: hijo, indice: hallada.index + hallada[1].length });
+              }
+            } else if (hijo.nodeType === 1 && !hijo.matches(".math, ol, ul, .sol-iconos")) {
+              recorrer(hijo);
+            }
+          });
+        })(contenedor);
+        return marcas;
+      }
+      function etiquetasDe(tex) {
+        var letras = [];
+        var hallada;
+        ETIQUETA.lastIndex = 0;
+        while ((hallada = ETIQUETA.exec(tex))) {
+          letras.push(hallada[1]);
+        }
+        return letras;
+      }
+      // Letras seguidas desde la primera (a, b, c…).
+      function seguidas(letras, desde) {
+        return letras.every(function (letra, lugar) {
+          return letra === LETRAS.charAt(desde + lugar);
+        });
+      }
+      function hijosConContenido(elemento) {
+        return Array.prototype.filter.call(elemento.childNodes, function (nodo) {
+          return nodo.nodeType === 1 || (nodo.nodeType === 3 && nodo.textContent.trim() !== "");
+        });
+      }
+      // Los apartados de un enunciado: en lista, con su elemento; seguidos o
+      // dentro de una fórmula, solo sus letras.
+      function apartadosDelEnunciado(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista) {
+          var primera = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+          return {
+            forma: "lista",
+            letras: Array.prototype.map.call(lista.children, function (li, lugar) {
+              return LETRAS.charAt(primera + lugar);
+            }),
+            elementos: Array.prototype.slice.call(lista.children)
+          };
+        }
+        var letras = marcasDe(ejercicio).map(function (marca) {
+          return marca.letra;
+        });
+        if (letras.length < 2) {
+          letras = [];
+          Array.prototype.forEach.call(ejercicio.querySelectorAll(".math.display"), function (formula) {
+            if (!formula.closest("ol ol")) {
+              letras = letras.concat(etiquetasDe(texDe(formula)));
+            }
+          });
+        }
+        if (letras.length >= 2 && seguidas(letras, 0)) {
+          return { forma: "otra", letras: letras };
+        }
+        return { forma: "ninguna", letras: [] };
+      }
+      // Un trozo de respuesta: unos nodos (un elemento de lista), un tramo
+      // entre dos letras o una fila de una fórmula.
+      function trozosConMarcas(contenedor, primera) {
+        var marcas = marcasDe(contenedor);
+        var letras = marcas.map(function (marca) {
+          return marca.letra;
+        });
+        var desde = primera ? LETRAS.indexOf(primera) + 1 : 0;
+        if (!seguidas(letras, desde) || (!primera && !marcas.length)) {
+          return null;
+        }
+        function corte(marca) {
+          var padre = marca.nodo.parentNode;
+          var r = document.createRange();
+          if (marca.indice === 0 && padre !== contenedor && padre.firstChild === marca.nodo &&
+              padre.classList.contains("formula-con-signo")) {
+            r.setStartBefore(padre);
+          } else {
+            r.setStart(marca.nodo, marca.indice);
+          }
+          return r;
+        }
+        var cortes = marcas.map(corte);
+        function tramo(inicio, fin) {
+          var r = document.createRange();
+          if (inicio) {
+            r.setStart(inicio.startContainer, inicio.startOffset);
+          } else {
+            r.setStart(contenedor, 0);
+          }
+          if (fin) {
+            r.setEnd(fin.startContainer, fin.startOffset);
+          } else {
+            r.setEnd(contenedor, contenedor.childNodes.length);
+          }
+          return r;
+        }
+        var trozos = [];
+        if (primera) {
+          trozos.push({ letra: primera, rango: tramo(null, cortes[0]) });
+        } else if (tramo(null, cortes[0]).toString().replace(/\s/g, "") !== "") {
+          // Algo antes de la primera letra: sería de todos los apartados.
+          return null;
+        }
+        marcas.forEach(function (marca, lugar) {
+          trozos.push({ letra: marca.letra, rango: tramo(cortes[lugar], cortes[lugar + 1]) });
+        });
+        return trozos;
+      }
+      // Los trozos de una fórmula con las letras dentro: en un `aligned`, la
+      // fila de cada letra y las que la siguen sin letra; en una sola fila,
+      // lo que va de una letra a la siguiente.
+      function trozosDeFormula(tex) {
+        var limpio = tex.trim();
+        var alineado = limpio.indexOf("\\begin{aligned}") === 0 && limpio.slice(-13) === "\\end{aligned}"
+          ? [limpio, limpio.slice(15, -13)]
+          : null;
+        var trozos = [];
+        if (alineado) {
+          var filas = alineado[1].split(/\\\\(?:\[[^\]]*\])?/);
+          var mala = filas.some(function (fila) {
+            return etiquetasDe(fila).length > 1;
+          });
+          if (mala) {
+            return null;
+          }
+          filas.forEach(function (fila) {
+            var letras = etiquetasDe(fila);
+            if (letras.length) {
+              trozos.push({ letra: letras[0], filas: [fila.replace(ETIQUETA, "")] });
+            } else if (trozos.length && fila.trim()) {
+              trozos[trozos.length - 1].filas.push(fila);
+            }
+          });
+          return trozos.map(function (trozo) {
+            var hueco = trozo.filas.some(function (fila) {
+              return fila.indexOf("\\frac") !== -1;
+            });
+            return {
+              letra: trozo.letra,
+              tex: "\\begin{aligned}" + trozo.filas.join(hueco ? "\\\\[6pt]" : "\\\\") + "\\end{aligned}"
+            };
+          });
+        }
+        var partes = tex.split(/\\text\{([a-h])\)\s*\}/);
+        if (partes[0].replace(/\\q?quad|\s/g, "") !== "") {
+          return null;
+        }
+        for (var i = 1; i < partes.length; i += 2) {
+          trozos.push({
+            letra: partes[i],
+            tex: partes[i + 1].replace(/\\qquad/g, " ").trim()
+          });
+        }
+        return trozos;
+      }
+      // Los trozos de una respuesta, uno por apartado, o nada si no se parte
+      // en letras seguidas.
+      // En este curso la respuesta abre a menudo con una frase común a todos
+      // sus apartados («Lo común a todos los apartados va en la línea del
+      // número», regla 14) y sigue con su lista a), b), c): esa entrada va
+      // con cada apartado, delante de su paso a paso, y no cuenta para su
+      // resultado.
+      function entradaComun(hijos) {
+        var ultimo = hijos[hijos.length - 1];
+        if (hijos.length < 2 || !(ultimo.nodeType === 1 && ultimo.matches('ol[type="a"]'))) {
+          return null;
+        }
+        var antes = hijos.slice(0, -1);
+        var vale = antes.every(function (nodo) {
+          return nodo.nodeType === 3 || !nodo.matches("ol, ul, figure, table");
+        });
+        return vale ? antes : null;
+      }
+      // Los apartados de una lista a), b), c) de la respuesta: un elemento por
+      // letra, o sus tramos si un elemento lleva más de una.
+      function partesDeLaLista(lista) {
+        var inicio = parseInt(lista.getAttribute("start") || "1", 10) - 1;
+        var partes = [];
+        var vale = Array.prototype.every.call(lista.children, function (li, lugar) {
+          var letra = LETRAS.charAt(inicio + lugar);
+          if (!marcasDe(li).length) {
+            partes.push({ letra: letra, nodos: li });
+            return true;
+          }
+          var trozos = trozosConMarcas(li, letra);
+          if (!trozos) {
+            return false;
+          }
+          partes = partes.concat(trozos);
+          return true;
+        });
+        return vale && seguidas(partes.map(function (parte) { return parte.letra; }), 0) ? partes : null;
+      }
+      function partesDeLaRespuesta(solucion) {
+        var hijos = hijosConContenido(solucion);
+        var entrada = entradaComun(hijos);
+        if (entrada) {
+          var conEntrada = partesDeLaLista(hijos[hijos.length - 1]);
+          (conEntrada || []).forEach(function (parte) {
+            parte.entrada = entrada;
+          });
+          return conEntrada;
+        }
+        if (hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].matches('ol[type="a"]')) {
+          return partesDeLaLista(hijos[0]);
+        }
+        var contenedor = hijos.length === 1 && hijos[0].nodeType === 1 && hijos[0].tagName === "P" ? hijos[0] : solucion;
+        var formulas = Array.prototype.filter.call(hijosConContenido(contenedor), function (nodo) {
+          return nodo.nodeType === 1 && nodo.matches(".math.display");
+        });
+        if (formulas.length === 1 && hijosConContenido(contenedor).length === 1) {
+          var deFormula = trozosDeFormula(texDe(formulas[0]));
+          return deFormula && deFormula.length >= 2 ? deFormula : null;
+        }
+        var conMarcas = trozosConMarcas(contenedor, null);
+        return conMarcas && conMarcas.length >= 2 ? conMarcas : null;
+      }
+      // Lo que enseña el lápiz de un trozo: una copia.
+      function copiaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        if (parte.nodos) {
+          Array.prototype.forEach.call(parte.nodos.childNodes, function (nodo) {
+            trozo.appendChild(nodo.cloneNode(true));
+          });
+        } else if (parte.rango) {
+          trozo.appendChild(parte.rango.cloneContents());
+          // Sin la letra de delante, que ya va en su sitio.
+          var primero = trozo;
+          while (primero && primero.nodeType !== 3) {
+            primero = primero.firstChild;
+          }
+          if (primero) {
+            primero.data = primero.data.replace(/^\s*[a-h]\)\u00a0\s{0,20}/, "");
+          }
+        } else if (parte.tex !== undefined) {
+          var formula = document.createElement("span");
+          formula.className = "math display";
+          formula.innerHTML = pintarTex(parte.tex, true);
+          trozo.appendChild(formula);
+        }
+        return trozo;
+      }
+      // La entrada común de la respuesta, para el lápiz de cada apartado: su
+      // texto en un párrafo propio, delante del paso a paso del apartado.
+      function entradaDe(parte) {
+        var trozo = document.createDocumentFragment();
+        var parrafo = null;
+        (parte.entrada || []).forEach(function (nodo) {
+          if (nodo.nodeType === 1 && nodo.matches("p, div")) {
+            parrafo = null;
+            trozo.appendChild(nodo.cloneNode(true));
+            return;
+          }
+          if (!parrafo) {
+            parrafo = document.createElement("p");
+            parrafo.className = "sol-entrada";
+            trozo.appendChild(parrafo);
+          }
+          parrafo.appendChild(nodo.cloneNode(true));
+        });
+        return trozo;
+      }
+      function resultadosDeLaParte(parte) {
+        if (parte.tex !== undefined) {
+          return trocearCajas(parte.tex).cajas.map(function (tex) {
+            return { tex: tex };
+          });
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return resultadosDe(envoltura);
+      }
+      function parteConResultado(parte) {
+        if (parte.tex !== undefined) {
+          return parte.tex.indexOf("\\boxed{") !== -1;
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return tieneResultado(envoltura);
+      }
+      function parteConPasos(parte, enunciado) {
+        if (parte.entrada && parte.entrada.length) {
+          return true;
+        }
+        if (parte.tex !== undefined) {
+          return quedaAlgo(
+            sinLoDelEnunciado(trocearCajas(parte.tex).resto, enunciado || []).replace(/\\[a-zA-Z]+/g, " x ")
+          );
+        }
+        var envoltura = document.createElement("div");
+        envoltura.appendChild(copiaDe(parte));
+        return diceMasQueElResultado(envoltura, enunciado);
+      }
+
+      // ---- Los botones ----
+
+      function boton(clase, icono, rotulo, letra) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "sol-ico " + clase;
+        b.innerHTML = icono;
+        b.title = rotulo;
+        b.setAttribute("aria-label", rotulo + (letra ? " del apartado " + letra + ")" : ""));
+        b.setAttribute("aria-expanded", "false");
+        return b;
+      }
+      function hueco(etiqueta, clase) {
+        var caja = document.createElement(etiqueta);
+        caja.className = clase + " plegable esta-plegado";
+        caja.id = "solucion-" + ++cuenta;
+        return caja;
+      }
+      function plegar(unidad, vaciar) {
+        [["ojo", "chip"], ["lapiz", "pasos"]].forEach(function (par) {
+          var b = unidad[par[0]];
+          var caja = unidad[par[1]];
+          if (!b || !caja) {
+            return;
+          }
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          if (vaciar) {
+            caja.textContent = "";
+          }
+        });
+      }
+      function abrir(unidad, que) {
+        var b = unidad[que === "chip" ? "ojo" : "lapiz"];
+        var caja = unidad[que];
+        var otra = que === "chip" ? "pasos" : "chip";
+        var abierta = !caja.classList.contains("esta-plegado");
+        if (unidad[otra]) {
+          unidad[otra].classList.add("esta-plegado");
+          unidad[otra === "chip" ? "ojo" : "lapiz"].setAttribute("aria-expanded", "false");
+        }
+        if (abierta) {
+          caja.classList.add("esta-plegado");
+          b.setAttribute("aria-expanded", "false");
+          return;
+        }
+        if (!caja.firstChild) {
+          unidad.llenar[que](caja);
+        }
+        caja.classList.remove("esta-plegado");
+        b.setAttribute("aria-expanded", "true");
+        if (que === "pasos") {
+          encogerCuentas(caja);
+        }
+        Promise.resolve().then(function () {
+          ajustarLasCajas(caja);
+        });
+      }
+      // Los botones de una unidad (un apartado o el ejercicio entero), con lo
+      // que abre cada uno.
+      function prepararBotones(datos) {
+        var unidad = { llenar: {} };
+        var iconos = document.createElement("span");
+        iconos.className = "sol-iconos";
+        if (datos.resultados) {
+          unidad.ojo = boton("ojo", OJO, RESULTADO, datos.letra);
+          unidad.chip = hueco(datos.chipEnBloque ? "div" : "span", datos.chipEnBloque ? "sol-resultado" : "sol-chip");
+          unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
+          unidad.llenar.chip = datos.resultados;
+          unidad.ojo.addEventListener("click", function () {
+            abrir(unidad, "chip");
+          });
+          iconos.appendChild(unidad.ojo);
+        }
+        if (datos.pasos) {
+          unidad.lapiz = boton("lapiz", LAPIZ, PASO_A_PASO, datos.letra);
+          unidad.pasos = hueco("div", "sol-pasos");
+          unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
+          unidad.llenar.pasos = datos.pasos;
+          unidad.lapiz.addEventListener("click", function () {
+            abrir(unidad, "pasos");
+          });
+          iconos.appendChild(unidad.lapiz);
+        }
+        unidad.iconos = iconos;
+        unidades.push(unidad);
+        return unidad;
+      }
+      // Dónde van los botones de un enunciado o de un apartado: al final de
+      // su último renglón de texto (su último párrafo, si es lo último que
+      // lleva, o el propio elemento). Si acaba en una fórmula centrada, en
+      // una lista o en otro bloque, en una fila propia debajo: metidos detrás
+      // de la fórmula, esta dejaría de ser lo último de su párrafo y
+      // recuperaría el margen que la plantilla le quita, y la página se
+      // movería también en el modo clase, donde no se ven.
+      function sitioDeLosBotones(elemento) {
+        var hijos = hijosConContenido(elemento);
+        var ultimo = hijos[hijos.length - 1];
+        var destino = ultimo && ultimo.nodeType === 1 && ultimo.tagName === "P" ? ultimo : elemento;
+        var dentro = hijosConContenido(destino);
+        var final = dentro[dentro.length - 1];
+        if (final && final.nodeType === 1 && final.matches(".math.display, ol, ul, table, figure, div, p, blockquote")) {
+          var fila = document.createElement("div");
+          fila.className = "sol-fila";
+          elemento.appendChild(fila);
+          return fila;
+        }
+        return destino;
+      }
+      function ponerIconos(destino, unidad) {
+        if (!destino.classList.contains("sol-fila")) {
+          destino.appendChild(document.createTextNode(" "));
+        }
+        destino.appendChild(unidad.iconos);
+        if (unidad.chip && unidad.chip.tagName === "SPAN") {
+          destino.appendChild(unidad.chip);
+        }
+      }
+      // Los trazados con los datos de un ejercicio o de uno de sus apartados
+      // (regla 3 de AGENTS.md): bloques interactivos con `carga="al-abrir"`,
+      // escritos justo detrás del bloque de respuestas, que dicen su
+      // ejercicio y, si hace falta, su apartado. Solo los de detrás de su
+      // bloque: los números se repiten de una lista a otra («Antes de
+      // empezar» también tiene un 7). El lápiz se lleva una copia, sin su
+      // id, y solo entonces se monta; los de la página no se montan nunca.
+      // Si los botones van una vez, por ejercicio, su lápiz lleva la
+      // respuesta entera, con todos los trazados del ejercicio.
+      function trazadosDelBloque(bloque) {
+        var suyos = [];
+        var hermano = bloque.nextElementSibling;
+        while (hermano && hermano.matches('.interactivo[data-carga="al-abrir"]')) {
+          suyos.push(hermano);
+          hermano = hermano.nextElementSibling;
+        }
+        return suyos;
+      }
+      function trazadosDe(trazados, numero) {
+        return trazados.filter(function (trazado) {
+          return trazado.getAttribute("data-ejercicio") === String(numero);
+        });
+      }
+      function trazadosDelApartado(trazados, letra) {
+        return (trazados || []).filter(function (trazado) {
+          return trazado.getAttribute("data-apartado") === letra;
+        });
+      }
+      function ponerTrazados(caja, trazados) {
+        (trazados || []).forEach(function (trazado) {
+          var copia = trazado.cloneNode(true);
+          copia.removeAttribute("id");
+          caja.appendChild(copia);
+        });
+        if (trazados && trazados.length && window.montarInteractivosPerezosos) {
+          window.montarInteractivosPerezosos(caja);
+        }
+      }
+      function letraDelante(letra) {
+        var marca = document.createElement("span");
+        marca.className = "sol-letra";
+        marca.textContent = letra + ")";
+        return marca;
+      }
+      function llenarResultados(lista, letra) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          var dentro = document.createElement("span");
+          dentro.innerHTML = unir(lista());
+          caja.appendChild(dentro);
+        };
+      }
+      function llenarPasos(copia, letra, trazados) {
+        return function (caja) {
+          if (letra) {
+            caja.appendChild(letraDelante(letra));
+          }
+          caja.appendChild(copia());
+          ponerTrazados(caja, trazados);
+        };
+      }
+
+      // El ejercicio entero: sus botones al final del enunciado; el ojo abre
+      // los resultados (por apartados, si la respuesta los tiene) y el lápiz,
+      // la respuesta entera, con sus figuras.
+      function porEjercicio(ejercicio, numero, solucion, partes, figuras, trazados) {
+        var conResultado = tieneResultado(solucion);
+        var unidad = prepararBotones({
+          resultados: conResultado
+            ? function (caja) {
+                if (partes) {
+                  partes.forEach(function (parte) {
+                    var lista = resultadosDeLaParte(parte);
+                    if (!lista.length) {
+                      return;
+                    }
+                    var linea = document.createElement("div");
+                    linea.className = "sol-linea";
+                    linea.appendChild(letraDelante(parte.letra));
+                    var dentro = document.createElement("span");
+                    dentro.innerHTML = unir(lista);
+                    linea.appendChild(dentro);
+                    caja.appendChild(linea);
+                  });
+                } else {
+                  var dentro = document.createElement("span");
+                  dentro.innerHTML = unir(resultadosDe(solucion));
+                  caja.appendChild(dentro);
+                }
+              }
+            : null,
+          chipEnBloque: Boolean(partes),
+          pasos: !conResultado || diceMasQueElResultado(solucion, formulasDe(ejercicio)) ||
+            figuras.length || trazados.length
+            ? function (caja) {
+                figuras.forEach(function (figura) {
+                  caja.appendChild(figura.cloneNode(true));
+                });
+                var lista = document.createElement("ol");
+                lista.className = "lista-solucion-ejercicio";
+                lista.setAttribute("start", String(numero));
+                lista.appendChild(solucion.cloneNode(true));
+                caja.appendChild(lista);
+                ponerTrazados(caja, trazados);
+              }
+            : null
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (unidad.chip && unidad.chip.tagName === "DIV") {
+          ejercicio.appendChild(unidad.chip);
+        }
+        if (unidad.pasos) {
+          ejercicio.appendChild(unidad.pasos);
+        }
+      }
+      function datosDeLaParte(parte, letra, chipEnBloque, enunciado, delEjercicio) {
+        var trazados = trazadosDelApartado(delEjercicio, letra);
+        return {
+          letra: letra,
+          chipEnBloque: chipEnBloque,
+          resultados: parteConResultado(parte)
+            ? llenarResultados(function () {
+                return resultadosDeLaParte(parte);
+              }, chipEnBloque ? letra : null)
+            : null,
+          pasos: parteConPasos(parte, enunciado) || !parteConResultado(parte) || trazados.length
+            ? llenarPasos(function () {
+                var trozo = entradaDe(parte);
+                trozo.appendChild(copiaDe(parte));
+                return trozo;
+              }, chipEnBloque ? letra : null, trazados)
+            : null
+        };
+      }
+      // Apartados en lista: los botones, al final de la línea de cada uno.
+      function porApartadosEnLista(apartados, partes, trazados) {
+        apartados.elementos.forEach(function (li, lugar) {
+          var unidad = prepararBotones(
+            datosDeLaParte(partes[lugar], apartados.letras[lugar], false, formulasDe(li), trazados)
+          );
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          if (soloFormula(li)) {
+            li.classList.add("solo-formula-con-solucion");
+          }
+          ponerIconos(sitioDeLosBotones(li), unidad);
+          if (unidad.pasos) {
+            li.appendChild(unidad.pasos);
+          }
+        });
+      }
+      // Apartados seguidos o dentro de una fórmula: una fila de botones, cada
+      // pareja con su letra, debajo del enunciado.
+      function porApartadosEnFila(ejercicio, partes, trazados) {
+        var fila = document.createElement("div");
+        fila.className = "sol-barra";
+        var abiertos = document.createElement("div");
+        abiertos.className = "sol-abiertos";
+        partes.forEach(function (parte) {
+          var unidad = prepararBotones(datosDeLaParte(parte, parte.letra, true, undefined, trazados));
+          if (!unidad.ojo && !unidad.lapiz) {
+            return;
+          }
+          var pareja = document.createElement("span");
+          pareja.className = "sol-apartado";
+          pareja.appendChild(letraDelante(parte.letra));
+          pareja.appendChild(unidad.iconos);
+          fila.appendChild(pareja);
+          if (unidad.chip) {
+            abiertos.appendChild(unidad.chip);
+          }
+          if (unidad.pasos) {
+            abiertos.appendChild(unidad.pasos);
+          }
+        });
+        if (soloFormula(ejercicio)) {
+          ejercicio.classList.add("solo-formula-con-solucion");
+        }
+        ejercicio.appendChild(fila);
+        ejercicio.appendChild(abiertos);
+      }
+
+      // Primero, los bloques que van tras su lista; después, los que
+      // responden a varias, con las listas que hayan quedado libres.
+      var repartos = [];
+      var sueltos = [];
+      var casadas = [];
+      Array.prototype.forEach.call(
+        contenido.querySelectorAll(".resultado.plegable"),
+        function (bloque) {
+          var soluciones = respuestasDelBloque(bloque);
+          if (!soluciones) {
+            return;
+          }
+          var reparto = { bloque: bloque, soluciones: soluciones, numeros: numerosDeLaLista(soluciones) };
+          var delante = listaDeDelante(bloque);
+          if (delante && numerosDeLaLista(delante).join() === reparto.numeros.join()) {
+            reparto.listas = [delante];
+            casadas.push(delante);
+            repartos.push(reparto);
+          } else {
+            sueltos.push(reparto);
+          }
+        }
+      );
+      sueltos.forEach(function (reparto) {
+        var listas = listasDeSuSeccion(reparto.bloque, casadas);
+        if (listas.length && numerosDeLasListas(listas).join() === reparto.numeros.join()) {
+          reparto.listas = listas;
+          casadas = casadas.concat(listas);
+          repartos.push(reparto);
+        }
+      });
+
+      repartos.forEach(function (reparto) {
+        var bloque = reparto.bloque;
+        var suyos = reparto.numeros;
+        var trazados = trazadosDelBloque(bloque);
+        // Una figura del bloque va con la solución del ejercicio que nombra
+        // su pie («Las cuatro rectas del ejercicio 5»). En DT un pie puede
+        // nombrar varios («Las soluciones de los problemas 38, 39 y 40»): va
+        // con todos. Si no nombra ninguno de los suyos, con la del primero de
+        // la lista que la sigue o, si no hay, con la del primero del bloque.
+        var figuras = {};
+        Array.prototype.forEach.call(bloque.children, function (hijo) {
+          var imagen = hijo.matches("figure, p") ? hijo.querySelector("img") : null;
+          if (!imagen) {
+            return;
+          }
+          var texto = hijo.textContent + " " + (imagen.alt || "");
+          var nombrado = /(?:ejercicios?|problemas?)\s+((?:\d+(?:\s*,\s*|\s+y\s+)?)+)/i.exec(texto);
+          var numeros = nombrado
+            ? (nombrado[1].match(/\d+/g) || []).map(function (cifra) {
+                return parseInt(cifra, 10);
+              }).filter(function (numero) {
+                return suyos.indexOf(numero) !== -1;
+              })
+            : [];
+          if (!numeros.length) {
+            var despues = hijo.nextElementSibling;
+            while (despues && despues.tagName !== "OL") {
+              despues = despues.nextElementSibling;
+            }
+            numeros = [despues ? numerosDeLaLista(despues)[0] : suyos[0]];
+          }
+          numeros.forEach(function (numero) {
+            (figuras[numero] = figuras[numero] || []).push(hijo);
+          });
+        });
+
+        reparto.listas.forEach(function (ejercicios) {
+          var primero = suyos.indexOf(numerosDeLaLista(ejercicios)[0]);
+          Array.prototype.forEach.call(ejercicios.children, function (ejercicio, lugar) {
+            var numero = suyos[primero + lugar];
+            var solucion = reparto.soluciones.children[primero + lugar];
+            var suyas = figuras[numero] || [];
+            var apartados = apartadosDelEnunciado(ejercicio);
+            var partes = apartados.forma === "ninguna" ? null : partesDeLaRespuesta(solucion);
+            var casan = Boolean(
+              partes &&
+                partes.map(function (parte) { return parte.letra; }).join() === apartados.letras.join()
+            );
+            var deEste = trazadosDe(trazados, numero);
+            if (casan && !suyas.length && apartados.forma === "lista") {
+              porApartadosEnLista(apartados, partes, deEste);
+            } else if (casan && !suyas.length) {
+              porApartadosEnFila(ejercicio, partes, deEste);
+            } else {
+              porEjercicio(ejercicio, numero, solucion, casan ? partes : null, suyas, deEste);
+            }
+          });
+        });
+
+        bloque.classList.add("respuestas-repartidas");
+        var general = bloque.previousElementSibling;
+        if (general && general.classList.contains("boton-soluciones")) {
+          general.classList.add("respuestas-repartidas");
+        } else {
+          general = null;
+        }
+        // La sección «Soluciones» que solo llevaba su título, el botón y el
+        // bloque se queda sin nada que enseñar.
+        var seccion = bloque.parentElement;
+        if (
+          seccion.matches("section:not(.ejercicios)") &&
+          Array.prototype.every.call(seccion.children, function (hijo) {
+            return hijo === bloque || hijo === general || hijo.matches("h1, h2, h3, h4, h5, h6");
+          })
+        ) {
+          seccion.classList.add("respuestas-repartidas");
+        }
+      });
+
+      // Las cuentas de lo abierto se vuelven a medir cuando cambia el ancho
+      // de la página (al girar el teléfono) y cuando llegan las letras de
+      // KaTeX. Solo si cambia el ancho: en un teléfono, la barra del
+      // navegador que aparece y desaparece al desplazar también avisa de un
+      // cambio de tamaño. Se hace en el momento, sin esperar a un fotograma,
+      // que en una pestaña en segundo plano no llega.
+      var anchoVisto = contenido.clientWidth;
+      window.addEventListener("resize", function () {
+        if (contenido.clientWidth === anchoVisto) {
+          return;
+        }
+        anchoVisto = contenido.clientWidth;
+        encogerLasAbiertas();
+      });
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(encogerLasAbiertas);
+      }
+      window.addEventListener("load", encogerLasAbiertas);
+
+      // En el modo clase no hay botones de ejercicio: se pliega y se vacía
+      // todo lo abierto, para que la ampliación solo encuentre las
+      // soluciones del bloque.
+      new MutationObserver(function () {
+        if (!document.documentElement.classList.contains("modo-clase")) {
+          return;
+        }
+        unidades.forEach(function (unidad) {
+          plegar(unidad, true);
+        });
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     });
   </script>
 
@@ -13923,10 +15820,191 @@ Bachillerato</p>
         return pt(2 * p.x - q.x, 2 * p.y - q.y);
       }
 
+      // Los datos de un trazado de ejercicio (regla 3 de AGENTS.md), como se
+      // escriben en su bloque: «A=150,230 B=450,230 k=0.5». Los que se dan
+      // sustituyen a los de la construcción; dos números son un punto. Lo
+      // usan el reproductor y `scripts/figuras.js`, que comprueba que valgan.
+      function leerDatos(definicion, texto) {
+        var datos = definicion.datos();
+        String(texto || "")
+          .split(/\s+/)
+          .forEach(function (trozo) {
+            var partes = trozo.split("=");
+            var numeros;
+            if (partes.length !== 2 || !partes[0]) {
+              return;
+            }
+            numeros = partes[1].split(",").map(Number);
+            if (numeros.some(function (n) { return !isFinite(n); }) || numeros.length > 2) {
+              return;
+            }
+            datos[partes[0]] = numeros.length === 2 ? pt(numeros[0], numeros[1]) : numeros[0];
+          });
+        return datos;
+      }
+
       function moverDato(d, nombre, p) {
         var nuevo = copia(d);
         nuevo[nombre] = p;
         return nuevo;
+      }
+
+      // Las letras del enunciado en un trazado de ejercicio (regla 3 de
+      // AGENTS.md): «A=C B=D» pone C donde la teoría dice A, y D donde dice B,
+      // en el dibujo y en las fórmulas de los textos. Se cambian todas a la
+      // vez, así que «A=B B=A» también vale. Solo cambia una letra que va
+      // sola: «r′» pasa a ser «v′», pero «mm» no se toca.
+      var UNA_LETRA = /^[A-Za-z]/;
+      var PALABRA = /[A-Za-z]+/g;
+
+      function leerNombres(texto) {
+        var nombres = {};
+        var puestas = {};
+        String(texto || "")
+          .split(/\s+/)
+          .forEach(function (trozo) {
+            var partes = trozo.split("=");
+            if (!trozo) {
+              return;
+            }
+            if (
+              partes.length !== 2 ||
+              partes[0].length !== 1 ||
+              partes[1].length !== 1 ||
+              !UNA_LETRA.test(partes[0]) ||
+              !UNA_LETRA.test(partes[1]) ||
+              nombres[partes[0]] ||
+              puestas[partes[1]]
+            ) {
+              throw new Error("Las letras «" + texto + "» no se entienden: van como «A=C B=D».");
+            }
+            nombres[partes[0]] = partes[1];
+            puestas[partes[1]] = true;
+          });
+        return nombres;
+      }
+
+      function renombrarTexto(texto, nombres) {
+        return String(texto).replace(PALABRA, function (palabra) {
+          return palabra.length === 1 && nombres[palabra] ? nombres[palabra] : palabra;
+        });
+      }
+
+      // Lo que lleva letras en el dibujo: el nombre de un punto y el texto de
+      // un rótulo o de una cota.
+      function campoConLetras(trazo) {
+        if (trazo.tipo === "punto") {
+          return "nombre";
+        }
+        return trazo.tipo === "rotulo" || trazo.tipo === "cota" ? "texto" : null;
+      }
+
+      function renombrar(construccion, nombres) {
+        if (!nombres || !Object.keys(nombres).length) {
+          return construccion;
+        }
+        var cambiar = function (trazos) {
+          return (
+            trazos &&
+            trazos.map(function (trazo) {
+              var campo = campoConLetras(trazo);
+              var nuevo;
+              if (!campo || !trazo[campo]) {
+                return trazo;
+              }
+              nuevo = copia(trazo);
+              nuevo[campo] = renombrarTexto(trazo[campo], nombres);
+              return nuevo;
+            })
+          );
+        };
+        var nueva = copia(construccion);
+        nueva.base = cambiar(construccion.base);
+        nueva.pasos = construccion.pasos.map(cambiar);
+        nueva.porque = cambiar(construccion.porque);
+        return nueva;
+      }
+
+      // Las letras de una fórmula de los textos, una a una: `cambiar` recibe
+      // cada letra suelta y devuelve la que va en su lugar. No se tocan los
+      // nombres de las órdenes (`\overline`) ni lo que va en `\text{…}`.
+      function cambiarEnTex(tex, cambiar) {
+        var salida = "";
+        var i = 0;
+        var orden;
+        var fin;
+        var letra;
+        while (i < tex.length) {
+          orden = /^\\([A-Za-z]+|[^A-Za-z])/.exec(tex.slice(i));
+          if (orden) {
+            salida += orden[0];
+            i += orden[0].length;
+            if (/^(text|textrm|textit|textbf|mathrm|mbox|operatorname)\b/.test(orden[1])) {
+              fin = finDelGrupo(tex, i);
+              salida += tex.slice(i, fin);
+              i = fin;
+            }
+            continue;
+          }
+          letra = tex.charAt(i);
+          salida += UNA_LETRA.test(letra) ? cambiar(letra) : letra;
+          i += 1;
+        }
+        return salida;
+      }
+
+      // Dónde acaba el grupo entre llaves que empieza en `desde` (si no hay
+      // llave, el argumento es el carácter siguiente).
+      function finDelGrupo(tex, desde) {
+        var i = desde;
+        var nivel = 0;
+        while (i < tex.length && /\s/.test(tex.charAt(i))) {
+          i += 1;
+        }
+        if (tex.charAt(i) !== "{") {
+          return Math.min(tex.length, i + 1);
+        }
+        for (; i < tex.length; i += 1) {
+          if (tex.charAt(i) === "{") {
+            nivel += 1;
+          } else if (tex.charAt(i) === "}") {
+            nivel -= 1;
+            if (nivel === 0) {
+              return i + 1;
+            }
+          }
+        }
+        return tex.length;
+      }
+
+      function renombrarTex(tex, nombres) {
+        return cambiarEnTex(String(tex), function (letra) {
+          return nombres[letra] || letra;
+        });
+      }
+
+      // Las letras que usa un trazado, para comprobar que un cambio no pone
+      // una que ya nombra otra cosa: las del dibujo y las de las fórmulas.
+      function letrasDe(construccion) {
+        var vistas = {};
+        todosLosTrazos(construccion).forEach(function (trazo) {
+          var campo = campoConLetras(trazo);
+          (String((campo && trazo[campo]) || "").match(PALABRA) || []).forEach(function (palabra) {
+            if (palabra.length === 1) {
+              vistas[palabra] = true;
+            }
+          });
+        });
+        return Object.keys(vistas).sort();
+      }
+
+      function letrasDelTex(tex) {
+        var vistas = {};
+        cambiarEnTex(String(tex), function (letra) {
+          vistas[letra] = true;
+          return letra;
+        });
+        return Object.keys(vistas).sort();
       }
 
       // El ángulo recto en tres partes iguales: desde cada lado, el arco del
@@ -15656,6 +17734,12 @@ Bachillerato</p>
         lienzo: function (definicion) {
           return definicion.lienzo || [ANCHO, ALTO];
         },
+        leerDatos: leerDatos,
+        leerNombres: leerNombres,
+        renombrar: renombrar,
+        renombrarTex: renombrarTex,
+        letrasDe: letrasDe,
+        letrasDelTex: letrasDelTex,
         todosLosTrazos: todosLosTrazos
       };
     })(typeof window !== "undefined" ? window : this);
@@ -22949,6 +25033,43 @@ Bachillerato</p>
         };
       }
 
+      // Los textos del método con las letras del enunciado de un trazado de
+      // ejercicio. Las fórmulas pueden llegar ya compuestas por KaTeX: de
+      // cada una se toma su TeX, se cambian sus letras y se deja sin
+      // componer, entre sus marcas, para que la componga TextoDeLaFuente
+      // como compone la página las suyas.
+      function conLasLetras(textos, nombres) {
+        if (!Object.keys(nombres).length) {
+          return textos;
+        }
+        const T = window.TRAZADOS_DT;
+        const cambiar = (html) => {
+          const caja = document.createElement("div");
+          caja.innerHTML = html;
+          caja.querySelectorAll(".math").forEach((formula) => {
+            const anotacion = formula.querySelector(
+              'annotation[encoding="application/x-tex"]'
+            );
+            const centrada = formula.classList.contains("display");
+            let tex = anotacion ? anotacion.textContent : formula.textContent.trim();
+            if (!anotacion && /^\\[([]/.test(tex)) {
+              tex = tex.slice(2, -2);
+            }
+            formula.textContent =
+              (centrada ? "\\[" : "\\(") +
+              T.renombrarTex(tex, nombres) +
+              (centrada ? "\\]" : "\\)");
+          });
+          return caja.innerHTML;
+        };
+        return {
+          ...textos,
+          datos: cambiar(textos.datos),
+          pasos: textos.pasos.map(cambiar),
+          porque: cambiar(textos.porque)
+        };
+      }
+
       // Un trozo de la fuente, con sus fórmulas pintadas.
       function TextoDeLaFuente({ html, className }) {
         const caja = React.useRef(null);
@@ -23062,14 +25183,26 @@ Bachillerato</p>
         const lamina = React.useRef(null);
         const desfase = React.useRef({ x: 0, y: 0 });
         const [textos, setTextos] = React.useState(null);
-        const [datos, setDatos] = React.useState(definicion.datos);
+        // Un trazado de ejercicio trae sus datos en el bloque y toma los
+        // textos del método del trazado de la teoría que nombra `pasos-de`.
+        const [datos, setDatos] = React.useState(() =>
+          configuracion.datos
+            ? T.leerDatos(definicion, configuracion.datos)
+            : definicion.datos()
+        );
         const [estado, despachar] = React.useReducer(reducirTrazado, TRAZADO_QUIETO);
         const [despacio, setDespacio] = React.useState(false);
         const [asaCogida, setAsaCogida] = React.useState(null);
+        // Y, con `nombres`, las letras de su enunciado en vez de las de la
+        // teoría, en el dibujo y en los textos.
+        const nombres = React.useMemo(
+          () => T.leerNombres(configuracion.nombres),
+          [T, configuracion.nombres]
+        );
 
         const construccion = React.useMemo(
-          () => definicion.construir(datos),
-          [definicion, datos]
+          () => T.renombrar(definicion.construir(datos), nombres),
+          [T, definicion, datos, nombres]
         );
         const hayPorque = Boolean(textos && textos.porque);
         const etapas = React.useMemo(
@@ -23087,8 +25220,12 @@ Bachillerato</p>
         const lienzo = T.lienzo(definicion);
 
         React.useEffect(() => {
-          const anfitrion =
-            raiz.current && raiz.current.closest(".interactivo-host");
+          const teoria = configuracion["pasos-de"]
+            ? document.getElementById(configuracion["pasos-de"])
+            : null;
+          const anfitrion = teoria
+            ? teoria.closest(".interactivo-host") || teoria
+            : raiz.current && raiz.current.closest(".interactivo-host");
           const leidos = textosDelMetodo(anfitrion);
           if (!leidos || leidos.pasos.length !== pasos) {
             console.error(
@@ -23101,7 +25238,7 @@ Bachillerato</p>
             return;
           }
           leidos.metodo.classList.add("metodo-en-trazado");
-          setTextos(leidos);
+          setTextos(conLasLetras(leidos, nombres));
           alPreparar();
         }, []);
 
@@ -23519,52 +25656,73 @@ Bachillerato</p>
         trazado: TrazadoInteractivo
       };
 
+      // Monta un bloque interactivo sobre su respaldo. Los trazados de los
+      // ejercicios (`carga="al-abrir"`, regla 3 de AGENTS.md) no se montan al
+      // cargar: los monta el lápiz de su solución, sobre su copia, al
+      // abrirse por primera vez.
+      const montar = (respaldo) => {
+        if (respaldo.closest(".interactivo-host")) {
+          return;
+        }
+        const nombre = respaldo.dataset.componente || respaldo.id;
+        const Componente = COMPONENTES[nombre];
+
+        if (!Componente) {
+          return;
+        }
+
+        const configuracion = {};
+        Array.from(respaldo.attributes).forEach((atributo) => {
+          if (
+            atributo.name.startsWith("data-") &&
+            atributo.name !== "data-componente"
+          ) {
+            configuracion[atributo.name.slice(5)] = atributo.value;
+          }
+        });
+
+        const anfitrion = document.createElement("div");
+        const montaje = document.createElement("div");
+        anfitrion.className = "interactivo-host";
+        montaje.className = "interactivo-mount";
+        respaldo.classList.add("interactivo-fallback");
+        respaldo.before(anfitrion);
+        anfitrion.append(respaldo, montaje);
+
+        const preparado = () => anfitrion.classList.add("is-enhanced");
+        const fallo = () => anfitrion.classList.remove("is-enhanced");
+
+        try {
+          ReactDOM.createRoot(montaje).render(
+            <LimiteDeError alFallar={fallo}>
+              <Componente
+                configuracion={configuracion}
+                alPreparar={preparado}
+                imagenRespaldo={
+                  respaldo.querySelector("img")?.getAttribute("src") || ""
+                }
+              />
+            </LimiteDeError>
+          );
+        } catch (error) {
+          console.error("No se pudo montar el bloque interactivo:", error);
+          fallo();
+        }
+      };
+
+      window.montarInteractivosPerezosos = (raiz) => {
+        raiz
+          .querySelectorAll('.interactivo[data-carga="al-abrir"]')
+          .forEach(montar);
+      };
+
+      // Los de los ejercicios, solo las copias que un lápiz se haya llevado
+      // antes de que este guion llegara aquí (Babel tarda en una tableta).
       document
         .querySelectorAll("#contenido-unidad .interactivo")
         .forEach((respaldo) => {
-          const nombre = respaldo.dataset.componente || respaldo.id;
-          const Componente = COMPONENTES[nombre];
-
-          if (!Componente) {
-            return;
-          }
-
-          const configuracion = {};
-          Array.from(respaldo.attributes).forEach((atributo) => {
-            if (
-              atributo.name.startsWith("data-") &&
-              atributo.name !== "data-componente"
-            ) {
-              configuracion[atributo.name.slice(5)] = atributo.value;
-            }
-          });
-
-          const anfitrion = document.createElement("div");
-          const montaje = document.createElement("div");
-          anfitrion.className = "interactivo-host";
-          montaje.className = "interactivo-mount";
-          respaldo.classList.add("interactivo-fallback");
-          respaldo.before(anfitrion);
-          anfitrion.append(respaldo, montaje);
-
-          const preparado = () => anfitrion.classList.add("is-enhanced");
-          const fallo = () => anfitrion.classList.remove("is-enhanced");
-
-          try {
-            ReactDOM.createRoot(montaje).render(
-              <LimiteDeError alFallar={fallo}>
-                <Componente
-                  configuracion={configuracion}
-                  alPreparar={preparado}
-                  imagenRespaldo={
-                    respaldo.querySelector("img")?.getAttribute("src") || ""
-                  }
-                />
-              </LimiteDeError>
-            );
-          } catch (error) {
-            console.error("No se pudo montar el bloque interactivo:", error);
-            fallo();
+          if (respaldo.dataset.carga !== "al-abrir" || respaldo.closest(".sol-pasos")) {
+            montar(respaldo);
           }
         });
     })();
