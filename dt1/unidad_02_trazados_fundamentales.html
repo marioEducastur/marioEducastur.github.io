@@ -2662,8 +2662,12 @@
         --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
       }
 
-      .barra-clase [data-accion="soluciones"] {
-        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+      /* El ojo «Resultados» va en la otra punta de la barra, lejos de la
+         lupa, y separado de ‹ por un hueco de 1 rem (con el de la barra):
+         un dedo que busca la lupa no enseña los resultados. */
+      .barra-clase [data-accion="resultados"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E");
+        margin-right: 0.7rem;
         color: var(--verde);
       }
 
@@ -2905,8 +2909,12 @@
         right: 16px;
       }
 
-      .marco-ampliar [data-ampliar="soluciones"] {
-        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+      /* El ojo grande (todos los resultados de un ejercicio), en el sitio
+         del ✓ (desde el 17 de octubre de 2026, «Ojo y lápiz en grande»), y
+         el lápiz grande (el ejercicio entero resuelto), en la esquina
+         opuesta, para que un dedo que falla no destape lo que no toca. */
+      .marco-ampliar [data-ampliar="resultados"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E");
         right: 18px;
         bottom: 12px;
         width: 56px;
@@ -2914,10 +2922,35 @@
         color: var(--verde);
       }
 
-      .marco-ampliar [data-ampliar="soluciones"][aria-pressed="true"] {
+      .marco-ampliar [data-ampliar="resultados"]::before {
+        width: 30px;
+        height: 30px;
+      }
+
+      .marco-ampliar [data-ampliar="resultados"][aria-pressed="true"] {
         color: #ffffff;
         background: var(--verde);
         border-color: var(--verde);
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z'/%3E%3Cpath d='M13.6 6.9l3 3'/%3E%3C/svg%3E");
+        left: 24px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        color: var(--acento);
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"]::before {
+        width: 27px;
+        height: 27px;
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"][aria-pressed="true"] {
+        color: #ffffff;
+        background: var(--acento);
+        border-color: var(--acento);
       }
     }
 
@@ -3425,6 +3458,52 @@
       }
     }
 
+    /* En el modo clase ancho, el ojo y el lápiz responden en una zona
+       invisible de 44 px de alto, la que pide Apple para el dedo, sin que
+       crezcan el dibujo (2,1 rem) ni el renglón ni el hueco entre los dos.
+       El lápiz toma la mitad del hueco hacia el ojo y 7,2 px hacia el margen
+       (44 px de ancho); el ojo, 5 px hacia el texto, para no robar el final
+       del apartado, y la mitad del hueco hacia el lápiz (unos 42 px), o
+       5,4 px hacia fuera si va solo. Se descuenta el borde de 1,5 px. */
+    @media screen and (min-width: 42.0625rem) {
+      html.modo-clase .sol-ico {
+        position: relative;
+      }
+
+      html.modo-clase .sol-ico::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        height: 44px;
+        transform: translateY(-50%);
+      }
+
+      html.modo-clase .sol-ico.lapiz::after {
+        left: calc(-3.2px - 1.5px);
+        right: calc(-7.2px - 1.5px);
+      }
+
+      html.modo-clase .sol-ico.ojo::after {
+        left: calc(-5px - 1.5px);
+        right: calc(-3.2px - 1.5px);
+      }
+
+      html.modo-clase .sol-ico.ojo:last-child::after {
+        right: calc(-5.4px - 1.5px);
+      }
+    }
+
+    /* Al ampliar, los botones crecen con la letra, entre 44 y 52 px. */
+    html.ampliando .sol-ico {
+      width: clamp(44px, 2.1rem, 52px);
+      height: clamp(44px, 2.1rem, 52px);
+    }
+
+    html.ampliando .sol-ico svg {
+      width: 54.8%;
+      height: 54.8%;
+    }
+
     /* El resultado de un apartado, en una pastilla al lado de sus botones. */
     .sol-chip {
       display: inline-block;
@@ -3465,6 +3544,24 @@
       margin-top: 0.3rem;
     }
 
+    /* Al ampliar, la pastilla y los resultados de debajo no se deslizan por
+       dentro: se parten entre resultados o entre palabras (cada fórmula
+       sigue entera), y su borde se ve desde el fondo del aula. */
+    html.ampliando .sol-chip {
+      overflow: visible;
+      white-space: normal;
+      /* El píxel de borde que gana se le quita al relleno: la pastilla
+         mide lo mismo y cabe al lado de su apartado donde cabía. */
+      padding: calc(0.12em - 1px) calc(0.6em - 1px) calc(0.16em - 1px);
+      border-width: 2px;
+    }
+
+    html.ampliando .sol-resultado {
+      overflow: visible;
+      white-space: normal;
+      border-width: 2px 2px 2px 4px;
+    }
+
     /* El paso a paso: la respuesta del apartado, con el resultado
        recuadrado. */
     .sol-pasos {
@@ -3475,6 +3572,14 @@
       border-left: 0.3rem solid var(--acento);
       border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
       animation: entrar-detalle 260ms ease-out;
+    }
+
+    /* Al ampliar, el paso a paso sale de una vez, en blanco y con su barra
+       azul de 4 px. */
+    html.ampliando .sol-pasos {
+      background: #ffffff;
+      border-left-width: 4px;
+      animation: none;
     }
 
     .sol-pasos > :first-child,
@@ -3610,24 +3715,77 @@
       vertical-align: middle;
     }
 
-    /* Repartidas las respuestas, fuera del modo clase sobran el botón
-       general, el bloque y la sección «Soluciones» que solo los contenía;
-       en el modo clase y al imprimir todo sigue como estaba, y los botones
-       de cada apartado no se ven (como en `mat1`). */
+    /* Repartidas las respuestas, sobran en pantalla el botón general, el
+       bloque y la sección «Soluciones» que solo los contenía: fuera del modo
+       clase y, desde el 17 de octubre de 2026 («Ojo y lápiz en grande»),
+       también en el modo clase y en su ampliación, donde cada apartado
+       lleva su ojo y su lápiz y el marco, el ojo grande y el lápiz grande.
+       Siguen en el documento para imprimir y para quien no tiene
+       JavaScript. En el modo clase ancho el ojo y el lápiz no abren nada en
+       la página: lo que enseñan solo se ve al ampliar. En una ventana
+       estrecha (un teléfono, el iPad partido) abren en su sitio, como fuera
+       del modo clase. */
     @media screen {
-      html:not(.modo-clase) .boton-soluciones.respuestas-repartidas,
-      html:not(.modo-clase) .resultado.plegable.respuestas-repartidas,
-      html:not(.modo-clase) section.respuestas-repartidas {
+      .boton-soluciones.respuestas-repartidas,
+      .resultado.plegable.respuestas-repartidas,
+      section.respuestas-repartidas {
         display: none !important;
       }
 
-      html.modo-clase .sol-iconos,
-      html.modo-clase .sol-fila,
-      html.modo-clase .sol-chip,
-      html.modo-clase .sol-barra,
-      html.modo-clase .sol-abiertos,
-      html.modo-clase .sol-resultado,
-      html.modo-clase .sol-pasos {
+      /* Lo que usa la ampliación: mientras compone, lo abierto no cuenta;
+         un resultado reservado guarda su sitio sin verse; en la pantalla de
+         un apartado su resultado no sale dos veces; y con el lápiz grande
+         («todo resuelto») el ojo de cada apartado no abre nada y se ve
+         apagado, y el lápiz abierto no parece pulsado, porque tocarlo lleva
+         a la pantalla de su apartado. */
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-chip,
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-resultado,
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-pasos {
+        display: none !important;
+      }
+
+      html.ampliando .amp-reservado {
+        visibility: hidden;
+      }
+
+      html.ampliando .sol-pasos.amp-paso {
+        display: block;
+      }
+
+      html.vista-apartado .apartado-en-pantalla .sol-ico.ojo,
+      html.vista-apartado .apartado-en-pantalla .sol-chip,
+      html.vista-apartado .apartado-en-pantalla .sol-resultado {
+        display: none;
+      }
+
+      html.vista-resuelto .sol-ico.ojo {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      html.vista-resuelto .sol-ico.ojo[aria-expanded="true"] {
+        background: #ffffff;
+        border-color: rgb(4 120 87 / 0.38);
+      }
+
+      html.vista-resuelto .sol-ico.lapiz[aria-expanded="true"] {
+        background: #ffffff;
+        border-color: rgb(29 78 216 / 0.32);
+      }
+
+      /* Propio de DT: el lápiz grande no lleva los trazados de los
+         ejercicios; cada uno tiene su pantalla en el recorrido del lápiz de
+         su apartado (`conElTrazadoAparte`). */
+      html.vista-resuelto .sol-pasos > .interactivo-host {
+        display: none !important;
+      }
+    }
+
+    @media screen and (min-width: 42.0625rem) {
+      html.modo-clase:not(.ampliando) .sol-chip,
+      html.modo-clase:not(.ampliando) .sol-resultado,
+      html.modo-clase:not(.ampliando) .sol-pasos,
+      html.modo-clase:not(.ampliando) .sol-abiertos {
         display: none !important;
       }
     }
@@ -8545,12 +8703,17 @@ Bachillerato</p>
     // La respuesta de un apartado sale de la del ejercicio: su elemento de
     // lista, el tramo entre su letra y la siguiente (`b)` y un espacio
     // irrompible, como se escribe en la fuente) o su fila de una fórmula, que
-    // se vuelve a componer con KaTeX. El bloque de respuestas no se toca:
-    // fuera del modo clase solo se esconde, con su botón, y sigue siendo lo
-    // que usan el modo clase y su ampliación, lo que se imprime y lo que se ve
-    // sin JavaScript. En el modo clase no hay botones (como en `mat1`, su
-    // pendiente 58). Un bloque responde a la lista que tiene justo delante
-    // o, si no la tiene, a todas las de su sección de ejercicios (la síntesis, con
+    // se vuelve a componer con KaTeX. El bloque de respuestas no se toca: en
+    // pantalla se esconde, con su botón, también en el modo clase y en su
+    // ampliación, y sigue siendo lo que se imprime y lo que se ve sin
+    // JavaScript. En el modo clase ancho (desde el 17 de octubre de 2026,
+    // «Ojo y lápiz en grande») los botones se ven, pero no abren nada en la
+    // página: avisan al guion del modo clase (`sol-clase`), que amplía el
+    // ejercicio con lo que piden. Dentro de la ampliación manda ese guion:
+    // abre y cierra sin alternar (`sol-poner`) y aquí no se encoge nada. En
+    // una ventana estrecha, en la página, abren en su sitio, como fuera del
+    // modo clase. Un bloque responde a la lista que tiene justo delante o, si
+    // no la tiene, a todas las de su sección de ejercicios (la síntesis, con
     // sus actividades competenciales); si sus números no casan con los de los
     // enunciados, o lleva algo más que su lista, se queda como estaba, tras su
     // botón. Dentro de lo abierto, la cuenta centrada que no cabe en su caja
@@ -8587,6 +8750,23 @@ Bachillerato</p>
         "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
       var unidades = [];
       var cuenta = 0;
+      var htmlRaiz = document.documentElement;
+      // El modo clase ancho: el mismo corte que el teléfono de la plantilla.
+      var CLASE_ANCHA = window.matchMedia ? window.matchMedia("(min-width: 42.0625rem)") : null;
+      // ¿Manda el guion del modo clase? En su página ancha y, en cualquier
+      // ventana, dentro de la ampliación.
+      function mandaLaClase() {
+        return (
+          htmlRaiz.classList.contains("modo-clase") &&
+          (htmlRaiz.classList.contains("ampliando") || !CLASE_ANCHA || CLASE_ANCHA.matches)
+        );
+      }
+      // Lo que se mide para encoger o deslizar no se toca mientras se amplía
+      // (la letra cambia a cada prueba y lo dejaría encogido o deslizándose
+      // en la pantalla grande), ni en una caja que no se ve.
+      function quieta(caja) {
+        return htmlRaiz.classList.contains("ampliando") || !caja.getClientRects().length;
+      }
 
       function numerosDeLaLista(lista) {
         var primero = parseInt(lista.getAttribute("start") || "1", 10);
@@ -8733,6 +8913,9 @@ Bachillerato</p>
       // teléfono y el de la cuenta, cuando llegan las letras de KaTeX.
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
+        if (quieta(caja)) {
+          return;
+        }
         var estilo = window.getComputedStyle(caja);
         var borde =
           caja.getBoundingClientRect().left +
@@ -8869,6 +9052,9 @@ Bachillerato</p>
         return encogidas;
       }
       function deslizarLasQueNoCaben(caja) {
+        if (quieta(caja)) {
+          return;
+        }
         var estilo = window.getComputedStyle(caja);
         var derecha =
           caja.getBoundingClientRect().right -
@@ -8890,7 +9076,7 @@ Bachillerato</p>
       // sin esperar a un temporizador, que en una pestaña en segundo plano
       // se congela.
       function ajustarLasCajas(caja) {
-        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild || quieta(caja)) {
           return;
         }
         var encogidas = encogerLasCajas(caja);
@@ -8906,6 +9092,9 @@ Bachillerato</p>
         });
       }
       function encogerLasAbiertas() {
+        if (htmlRaiz.classList.contains("ampliando")) {
+          return;
+        }
         unidades.forEach(function (unidad) {
           ["pasos", "chip"].forEach(function (que) {
             var caja = unidad[que];
@@ -9442,6 +9631,15 @@ Bachillerato</p>
           ajustarLasCajas(caja);
         });
       }
+      // En el modo clase ancho y dentro de la ampliación, un toque no abre
+      // nada aquí: se lo dice al guion del modo clase, que amplía el
+      // ejercicio (desde la página) o abre y cierra lo suyo (dentro). El
+      // botón suelta el foco, para que el espacio de un mando no lo vuelva a
+      // pulsar.
+      function avisarALaClase(b, que) {
+        b.dispatchEvent(new CustomEvent("sol-clase", { bubbles: true, detail: { que: que, boton: b } }));
+        b.blur();
+      }
       // Los botones de una unidad (un apartado o el ejercicio entero), con lo
       // que abre cada uno.
       function prepararBotones(datos) {
@@ -9454,6 +9652,10 @@ Bachillerato</p>
           unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
           unidad.llenar.chip = datos.resultados;
           unidad.ojo.addEventListener("click", function () {
+            if (mandaLaClase()) {
+              avisarALaClase(unidad.ojo, "ojo");
+              return;
+            }
             abrir(unidad, "chip");
           });
           iconos.appendChild(unidad.ojo);
@@ -9464,6 +9666,10 @@ Bachillerato</p>
           unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
           unidad.llenar.pasos = datos.pasos;
           unidad.lapiz.addEventListener("click", function () {
+            if (mandaLaClase()) {
+              avisarALaClase(unidad.lapiz, "lapiz");
+              return;
+            }
             abrir(unidad, "pasos");
           });
           iconos.appendChild(unidad.lapiz);
@@ -9478,7 +9684,7 @@ Bachillerato</p>
       // una lista o en otro bloque, en una fila propia debajo: metidos detrás
       // de la fórmula, esta dejaría de ser lo último de su párrafo y
       // recuperaría el margen que la plantilla le quita, y la página se
-      // movería también en el modo clase, donde no se ven.
+      // movería. Es el mismo sitio en el modo clase, donde también se ven.
       function sitioDeLosBotones(elemento) {
         var hijos = hijosConContenido(elemento);
         var ultimo = hijos[hijos.length - 1];
@@ -9820,13 +10026,54 @@ Bachillerato</p>
       }
       window.addEventListener("load", encogerLasAbiertas);
 
-      // En el modo clase no hay botones de ejercicio: se pliega y se vacía
-      // todo lo abierto, para que la ampliación solo encuentre las
-      // soluciones del bloque.
-      new MutationObserver(function () {
-        if (!document.documentElement.classList.contains("modo-clase")) {
+      // Lo que pide el guion del modo clase, sin alternar ni encoger nada.
+      // `sol-poner` abre o cierra la caja de un botón (`boton`, `abierto`) y,
+      // si se pide (`vaciar`), la vacía; cerrada con `reservado`, la llena y
+      // la deja en su sitio, sin plegar, para que la ampliación la esconda
+      // guardándole el hueco.
+      function unidadDelBoton(b) {
+        for (var i = 0; i < unidades.length; i++) {
+          if (unidades[i].ojo === b || unidades[i].lapiz === b) {
+            return unidades[i];
+          }
+        }
+        return null;
+      }
+      document.addEventListener("sol-poner", function (evento) {
+        var datos = evento.detail || {};
+        var b = datos.boton || evento.target;
+        var unidad = unidadDelBoton(b);
+        if (!unidad) {
           return;
         }
+        var que = b === unidad.ojo ? "chip" : "pasos";
+        var caja = unidad[que];
+        if (datos.abierto || datos.reservado) {
+          if (!caja.firstChild) {
+            unidad.llenar[que](caja);
+          }
+          caja.classList.remove("esta-plegado");
+        } else {
+          caja.classList.add("esta-plegado");
+          if (datos.vaciar) {
+            caja.textContent = "";
+          }
+        }
+        b.setAttribute("aria-expanded", datos.abierto ? "true" : "false");
+      });
+
+      // Al entrar en el modo clase y al salir de él se pliega y se vacía todo
+      // lo abierto: cada modo empieza limpio. Solo cuando cambia el modo:
+      // poner o quitar la ampliación no lo despierta, porque vaciaría lo que
+      // ella acaba de abrir. Lo abierto en la página de una ventana estrecha
+      // lo pliega la propia ampliación, antes de medir nada.
+      var enClaseAntes = htmlRaiz.classList.contains("modo-clase");
+      new MutationObserver(function () {
+        var enClase = htmlRaiz.classList.contains("modo-clase");
+        if (enClase === enClaseAntes) {
+          return;
+        }
+        enClaseAntes = enClase;
         unidades.forEach(function (unidad) {
           plegar(unidad, true);
         });
@@ -9837,9 +10084,9 @@ Bachillerato</p>
   <script>
     // Modo clase: interruptor del índice o `?clase` en la dirección; `Esc`
     // lo apaga. Al encender o apagar, la vista se queda en el apartado donde
-    // estaba. La barra recorre los apartados y abre las soluciones del
-    // apartado en pantalla; sus teclas no actúan dentro de los campos de los
-    // laboratorios.
+    // estaba. La barra recorre los apartados y su ojo amplía el ejercicio en
+    // pantalla con sus resultados; sus teclas no actúan dentro de los campos
+    // de los laboratorios.
     document.addEventListener("DOMContentLoaded", function () {
       var raiz = document.documentElement;
       var interruptor = document.getElementById("modo-clase");
@@ -9861,11 +10108,13 @@ Bachillerato</p>
       barra.className = "barra-clase";
       barra.setAttribute("role", "toolbar");
       barra.setAttribute("aria-label", "Modo clase");
+      // El ojo «Resultados» va el primero, en la otra punta de la lupa (desde
+      // el 17 de octubre de 2026, en lugar del ✓ de las soluciones).
       barra.innerHTML =
+        '<button type="button" data-accion="resultados" aria-label="Resultados (S)" title="Resultados (S)"></button>' +
         '<button type="button" data-accion="anterior" aria-label="Apartado anterior" title="Anterior (flecha izquierda)"></button>' +
         '<span class="posicion-clase" aria-live="polite"></span>' +
         '<button type="button" data-accion="siguiente" aria-label="Apartado siguiente" title="Siguiente (flecha derecha)"></button>' +
-        '<button type="button" data-accion="soluciones" aria-label="Soluciones" title="Soluciones (S)"></button>' +
         '<button type="button" data-accion="ampliar" aria-label="Ampliar lo que está en pantalla" title="Ampliar (A), o toca lo que quieras ampliar"></button>';
       document.body.appendChild(barra);
       var posicion = barra.querySelector(".posicion-clase");
@@ -9911,9 +10160,12 @@ Bachillerato</p>
         }
         return true;
       }
+      // Una sección que no se ve (la «Soluciones» que solo llevaba el bloque
+      // de respuestas, ya repartidas) tampoco es parada: ‹ se atascaría en
+      // ella.
       function paradas() {
         return secciones.filter(function (seccion) {
-          return !seccion.classList.contains("level2") || contenidoPropio(seccion);
+          return (!seccion.classList.contains("level2") || contenidoPropio(seccion)) && visible(seccion);
         });
       }
       function destino(parada) {
@@ -9945,11 +10197,19 @@ Bachillerato</p>
         if (numero) {
           return numero;
         }
+        // En la página de laboratorios nada lleva número: se dice cuál es
+        // de cuántos («2/8»).
+        if (document.body.classList.contains("pagina-laboratorios")) {
+          var lista = paradas();
+          return lista.indexOf(seccion) + 1 + "/" + lista.length;
+        }
         var titulo = seccion.querySelector("h2, h3, h4");
         return titulo ? titulo.textContent.trim().split(/\s+/)[0] : "";
       }
       function pintar() {
-        if (activo()) {
+        // Mientras se amplía, la página no se ve y sus secciones tampoco: el
+        // número se pone al volver.
+        if (activo() && !raiz.classList.contains("ampliando")) {
           posicion.textContent = etiqueta(actual(paradas()));
         }
       }
@@ -10009,6 +10269,53 @@ Bachillerato</p>
         boton.click();
         if (boton.getAttribute("aria-expanded") === "true") {
           asomar(boton);
+        }
+      }
+      // El ojo de la barra y la `S` (desde el 17 de octubre de 2026, en lugar
+      // de las soluciones del apartado): amplían el ejercicio que se está
+      // viendo, solo en su pantalla, con todos sus resultados a la vista. Es
+      // el primero de la sección en pantalla con ojos cuyo borde de arriba
+      // asoma bajo el índice o, si ninguno, el que más se ve entre el índice
+      // y la barra. Si la sección no tiene ninguno, no salta a otra. Una lista
+      // con su bloque de respuestas sin repartir conserva lo de antes: su
+      // botón «Soluciones».
+      function ejercicioALaVista() {
+        var lista = paradas();
+        if (!lista.length) {
+          return null;
+        }
+        var seccion = actual(lista);
+        var arriba = bordeSuperior();
+        var abajo = visible(barra) ? barra.getBoundingClientRect().top : window.innerHeight;
+        var ejercicios = Array.prototype.filter.call(seccion.querySelectorAll("ol.ampliable > li"), function (li) {
+          return visible(li) && !!li.querySelector(".sol-ico.ojo");
+        });
+        var mejor = null;
+        var mayor = 0;
+        for (var i = 0; i < ejercicios.length; i++) {
+          var caja = ejercicios[i].getBoundingClientRect();
+          if (caja.top >= arriba && caja.top < abajo) {
+            return ejercicios[i];
+          }
+          var seVe = Math.min(caja.bottom, abajo) - Math.max(caja.top, arriba);
+          if (seVe > mayor) {
+            mayor = seVe;
+            mejor = ejercicios[i];
+          }
+        }
+        return mejor;
+      }
+      function resultadosDeLoQueSeVe() {
+        var ejercicio = ejercicioALaVista();
+        if (ejercicio) {
+          var ojos = Array.prototype.filter.call(ejercicio.querySelectorAll(".sol-ico.ojo"), visible);
+          abrirAmpliacion(ejercicio.parentElement, ejercicio, { vista: "ejercicio", abrir: ojos, solo: true });
+          return;
+        }
+        var lista = paradas();
+        var seccion = lista.length ? actual(lista) : null;
+        if (seccion && Array.prototype.some.call(seccion.querySelectorAll("button.boton-soluciones"), visible)) {
+          alternarSoluciones();
         }
       }
 
@@ -10089,6 +10396,12 @@ Bachillerato</p>
         // ese apartado no puede bajar: encima no debe asomar el anterior.
         var propia = ancla ? ancla.elemento.closest("section") : null;
         var dentro = propia && propia.getBoundingClientRect().top <= bordeSuperior() + 4;
+        // Al salir, lo abierto en la página (en una ventana estrecha, el ojo
+        // y el lápiz abren en su sitio) se pliega ya, con el ancla tomada: si
+        // lo plegara después el guion de la solución, la página saltaría.
+        if (!encendido) {
+          taparLoAbierto();
+        }
         raiz.classList.toggle("modo-clase", encendido);
         interruptor.setAttribute("aria-checked", encendido ? "true" : "false");
         if (ancla && visible(ancla.elemento)) {
@@ -10116,8 +10429,8 @@ Bachillerato</p>
           mover(-1);
         } else if (accion === "siguiente") {
           mover(1);
-        } else if (accion === "soluciones") {
-          alternarSoluciones();
+        } else if (accion === "resultados") {
+          resultadosDeLoQueSeVe();
         } else if (accion === "ampliar") {
           ampliarLoQueSeVe();
         }
@@ -10160,10 +10473,14 @@ Bachillerato</p>
             break;
           case "s":
           case "S":
-            alternarSoluciones();
+            resultadosDeLoQueSeVe();
             break;
           case "Escape":
-            poner(false);
+            // Un `Esc` que llega menos de un segundo después de cerrar una
+            // ampliación es la inercia del «cerrar», no la orden de apagar.
+            if (Date.now() - cerradaEn >= 1000) {
+              poner(false);
+            }
             break;
           default:
             return;
@@ -10186,7 +10503,18 @@ Bachillerato</p>
       // una transparencia (24 pt en una de 7,5 pulgadas) es el 4,4 %, y la
       // ventana del navegador es algo más baja que la pantalla.
       var LETRA_OBJETIVO = 0.046;
+      // Parte de esa letra con la que una unidad va entera y no se reparte.
+      // Era el 85 %. Desde que el rótulo de un bloque con nombre lleva su
+      // antetítulo y su nombre, y más grandes en el modo clase, los bloques
+      // que cabían por muy poco pasaron a repartirse; con el 83 % vuelven a
+      // ir enteros, con la letra un paso menor (5 de octubre de 2026).
+      var LETRA_PARA_IR_ENTERA = 0.83;
+      // Y la menor con la que se junta a propósito lo que podría ir en dos
+      // pantallas: la de una tabla entera.
+      var LETRA_MINIMA_JUNTAS = 0.7;
       var ampliacion = null;
+      // Cuándo se cerró la última ampliación, para el freno del `Esc`.
+      var cerradaEn = 0;
 
       function esUnidad(elemento) {
         if (elemento.closest(".interactivo, .ampliacion, .aplicacion")) {
@@ -10210,14 +10538,19 @@ Bachillerato</p>
         '<button type="button" data-ampliar="cerrar" aria-label="Volver a la página" title="Volver (Esc)"></button>' +
         '<button type="button" data-ampliar="anterior" aria-label="Anterior" title="Anterior (flecha izquierda)"></button>' +
         '<button type="button" data-ampliar="siguiente" aria-label="Siguiente" title="Siguiente (flecha derecha)"></button>' +
-        '<button type="button" data-ampliar="soluciones" aria-label="Soluciones" aria-pressed="false" title="Soluciones (S)" hidden></button>' +
+        '<button type="button" data-ampliar="resuelto" aria-label="Todo resuelto" aria-pressed="false" title="Todo resuelto" hidden></button>' +
+        '<button type="button" data-ampliar="resultados" aria-label="Resultados (S)" aria-pressed="false" title="Resultados (S)" hidden></button>' +
         '<div class="cuenta-ampliar" aria-live="polite"></div>';
       document.body.appendChild(marco);
       var miga = marco.querySelector(".miga-ampliar");
       var cuenta = marco.querySelector(".cuenta-ampliar");
       var botonAnterior = marco.querySelector('[data-ampliar="anterior"]');
       var botonSiguiente = marco.querySelector('[data-ampliar="siguiente"]');
-      var botonSoluciones = marco.querySelector('[data-ampliar="soluciones"]');
+      // El ojo grande (desde el 17 de octubre de 2026, en el sitio del ✓):
+      // todos los resultados de un ejercicio. El lápiz grande, en la esquina
+      // opuesta: el ejercicio entero resuelto.
+      var botonResultados = marco.querySelector('[data-ampliar="resultados"]');
+      var botonResuelto = marco.querySelector('[data-ampliar="resuelto"]');
 
       function hijosVisibles(caja) {
         return Array.prototype.filter.call(caja.children, visible);
@@ -10266,6 +10599,62 @@ Bachillerato</p>
         });
         return piezas;
       }
+      // ¿Es la pieza solo una fórmula centrada? ¿Acaba en una?
+      function esFormula(pieza) {
+        var formula = pieza.querySelector(":scope > .math.display");
+        return !!formula && texto(pieza) === texto(formula);
+      }
+      function acabaEnFormula(pieza) {
+        var formulas = pieza.querySelectorAll(":scope > .math.display");
+        var ultima = formulas[formulas.length - 1];
+        return !!ultima && texto(pieza).slice(-texto(ultima).length) === texto(ultima);
+      }
+      // Una frase anuncia lo que sigue si acaba en dos puntos («Dividimos:» y
+      // la fórmula, la lista o la tabla) o si se queda sin terminar ante una
+      // fórmula centrada («Por tanto, suman» y la fórmula).
+      function anuncia(pieza, siguiente) {
+        var final = texto(pieza).slice(-1);
+        if (final === "" || acabaEnFormula(pieza)) {
+          return false;
+        }
+        return (
+          final === ":" ||
+          (pieza.tagName === "P" && esFormula(siguiente) && ".!?…".indexOf(final) === -1)
+        );
+      }
+      // Las piezas de un bloque que se reparte, en tramos que no se separan:
+      // la frase que anuncia va con lo anunciado si juntas conservan casi
+      // toda la letra que lo anunciado tendría solo (la misma proporción con
+      // la que un bloque va entero) y no bajan de la letra de una tabla. Si
+      // juntas pierden más, van como antes, cada una en su pantalla. Hasta el
+      // 5 de octubre de 2026 las piezas se empaquetaban una a una y la frase
+      // se quedaba sola, con su fórmula en la pantalla siguiente (85 partes
+      // en las cinco unidades publicadas, 75 de ellas con la frase como única
+      // pieza: una fórmula que no llega a la letra buscada nunca cabía a su
+      // lado).
+      function tramosDe(unidad, piezas, rotulos, meta) {
+        var a = ampliacion;
+        var juntas = unidad.classList.contains("bloque-didactico");
+        function letraDe(grupo) {
+          mostrar(rotulos.concat(grupo));
+          a.partible = false;
+          return mayorZoom(1, meta) || 1;
+        }
+        var tramos = [];
+        piezas.forEach(function (pieza) {
+          var anterior = tramos[tramos.length - 1];
+          if (juntas && anterior && anuncia(anterior[anterior.length - 1], pieza)) {
+            var letra = letraDe(anterior.concat([pieza]));
+            if (letra >= LETRA_PARA_IR_ENTERA * letraDe([pieza]) && letra >= LETRA_MINIMA_JUNTAS * meta) {
+              anterior.push(pieza);
+              return;
+            }
+          }
+          tramos.push([pieza]);
+        });
+        a.partible = false;
+        return tramos;
+      }
       // Número que pinta cada elemento de una lista numerada: si luego solo
       // se ve una parte, cada uno conserva el suyo.
       function numerosDe(lista, soloVisibles) {
@@ -10291,12 +10680,12 @@ Bachillerato</p>
         Array.prototype.forEach.call(
           contenido.querySelectorAll(
             ".ampliar-oculto, .ampliar-camino, .ampliar-abierto, .ampliar-arriba, .ampliar-abajo, " +
-              ".ampliar-partible, .formula-partible"
+              ".ampliar-partible, .formula-partible, .amp-imprescindible"
           ),
           function (elemento) {
             elemento.classList.remove(
               "ampliar-oculto", "ampliar-camino", "ampliar-abierto", "ampliar-arriba", "ampliar-abajo",
-              "ampliar-partible", "formula-partible"
+              "ampliar-partible", "formula-partible", "amp-imprescindible"
             );
           }
         );
@@ -10304,6 +10693,14 @@ Bachillerato</p>
           li.removeAttribute("value");
         });
         ampliacion.puestos = [];
+        if (ampliacion.estirado) {
+          ampliacion.estirado.style.removeProperty("margin-bottom");
+          ampliacion.estirado = null;
+        }
+        if (ampliacion.subido) {
+          ampliacion.subido.style.removeProperty("margin-top");
+          ampliacion.subido = null;
+        }
         if (ampliacion.tarjeta) {
           ampliacion.tarjeta.style.paddingTop = "";
         }
@@ -10348,9 +10745,14 @@ Bachillerato</p>
         });
         a.primero = quedan[0];
         a.ultimo = quedan[quedan.length - 1];
-        a.primero.classList.add("ampliar-arriba");
+        // En la pantalla de un apartado y en las del lápiz grande repartido no
+        // se centra en vertical: el enunciado empieza siempre a la misma
+        // altura (`fijarArriba`).
+        if (!a.fija) {
+          a.primero.classList.add("ampliar-arriba");
+        }
         a.ultimo.classList.add("ampliar-abajo");
-        a.numeros.forEach(function (par) {
+        a.numeros.concat(a.letras || []).forEach(function (par) {
           if (visible(par[0]) && !par[0].hasAttribute("value")) {
             par[0].setAttribute("value", par[1]);
             a.puestos.push(par[0]);
@@ -10360,10 +10762,34 @@ Bachillerato</p>
       }
       function ponerZoom(zoom) {
         raiz.style.fontSize = Math.round(zoom * 1000) / 10 + "%";
+        fijarArriba();
+      }
+      // En la pantalla de un apartado (y en las del lápiz grande, si van en
+      // varias), el borde de arriba del ejercicio va siempre en el mismo
+      // sitio, bajo el título, aunque su letra crezca o encoja de una
+      // pantalla a otra: el margen de encima, que va en `rem`, se descuenta
+      // del de la tarjeta y, si con la letra grande es mayor que él, lo que
+      // sobra sube lo de arriba, que es hueco.
+      function fijarArriba() {
+        var a = ampliacion;
+        if (!a || !a.fija || !a.tarjeta || !a.primero) {
+          return;
+        }
+        a.tarjeta.style.paddingTop = a.margenArriba + "px";
+        a.primero.style.removeProperty("margin-top");
+        var encima =
+          a.fija.getBoundingClientRect().top + a.tarjeta.scrollTop -
+          (a.tarjeta.getBoundingClientRect().top + a.margenArriba);
+        a.tarjeta.style.paddingTop = Math.max(0, a.margenArriba - encima) + "px";
+        if (encima > a.margenArriba) {
+          a.primero.style.setProperty("margin-top", a.margenArriba - encima + "px");
+          a.subido = a.primero;
+        }
       }
       // Las ecuaciones escritas dentro de una frase no se parten entre dos
       // líneas (van con `nowrap`); se deja partir solo la que, con el tamaño
-      // puesto, no cabe ni en una línea entera de su párrafo.
+      // puesto, no cabe ni en una línea entera de su párrafo. Se mide con el
+      // signo que lleva pegado, que ya no se separa de ella.
       function partirLoImprescindible() {
         var formulas = Array.prototype.filter.call(
           ampliacion.tarjeta.querySelectorAll(".math.inline"),
@@ -10374,25 +10800,38 @@ Bachillerato</p>
         });
         formulas
           .filter(function (formula) {
-            var caja = formula.closest("p, li, dd, dt, figcaption, div");
+            var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
             if (!caja || formula.closest("td, th")) {
+              return false;
+            }
+            // En una pastilla y en los resultados de debajo, un resultado no
+            // se parte: la pastilla se parte entre resultados o entre
+            // palabras, y la mide `cabe()`.
+            if (formula.closest(".sol-chip, .sol-resultado")) {
               return false;
             }
             var estilo = window.getComputedStyle(caja);
             var ancho = caja.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
-            return formula.getBoundingClientRect().width > ancho + 1;
+            var medida = formula.closest(".formula-con-signo") || formula;
+            return medida.getBoundingClientRect().width > ancho + 1;
           })
           .forEach(function (formula) {
             formula.classList.add("formula-partible");
           });
       }
       // ¿Cabe lo que se ve, a lo alto y a lo ancho, con el tamaño puesto?
+      // Con `a.soloAncho`, solo a lo ancho (`letraSiNoCabe`).
       function cabe() {
         var a = ampliacion;
         partirLoImprescindible();
         var estilo = window.getComputedStyle(a.tarjeta);
         var alto = a.tarjeta.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
-        if (a.ultimo.getBoundingClientRect().bottom - a.primero.getBoundingClientRect().top > alto + 0.5) {
+        var arriba = a.primero.getBoundingClientRect().top;
+        // Lo que `fijarArriba` sube por encima de la tarjeta es hueco: no cuenta.
+        if (a.subido === a.primero) {
+          arriba = Math.max(arriba, a.tarjeta.getBoundingClientRect().top + parseFloat(estilo.paddingTop) - a.tarjeta.scrollTop);
+        }
+        if (!a.soloAncho && a.ultimo.getBoundingClientRect().bottom - arriba > alto + 0.5) {
           return false;
         }
         var derecha = a.tarjeta.getBoundingClientRect().right - parseFloat(estilo.paddingRight);
@@ -10405,7 +10844,61 @@ Bachillerato</p>
             return false;
           }
         }
+        // R10: lo que abren el ojo y el lápiz tampoco esconde nada por la
+        // derecha, abierto o con su sitio guardado (en la ampliación la
+        // pastilla no se desliza: se parte entre resultados o palabras).
+        var abiertas = a.tarjeta.querySelectorAll(".sol-chip, .sol-resultado, .sol-pasos");
+        for (var k = 0; k < abiertas.length; k++) {
+          if (visible(abiertas[k]) && seSaleLoAbierto(abiertas[k])) {
+            return false;
+          }
+        }
+        // En las pantallas de una lista con resoluciones una ecuación solo se
+        // parte tras una relación: si un tramo entre dos no cabe en su
+        // renglón, se saldría por la derecha, y no cabe.
+        if (conResoluciones() && formulasQueSeSalen().length) {
+          return false;
+        }
         return true;
+      }
+      // ¿Es lo ampliado una lista de ejercicios con su ojo y su lápiz? En sus
+      // pantallas (la del ejercicio, la de cada apartado y las del lápiz
+      // grande) las ecuaciones solo se parten tras una relación (R13, con
+      // «Partir solo tras un =», que vale en todas desde el 17 de octubre de
+      // 2026) y lo que no cabe a lo ancho baja de la letra de la página.
+      function conResoluciones() {
+        return raiz.classList.contains("amp-resoluciones");
+      }
+      // Las ecuaciones de las frases que pasan del borde de su caja: un tramo
+      // sin partir más ancho que el renglón. Las de un resultado no se
+      // parten nunca: la pastilla la mide `seSaleLoAbierto`.
+      function formulasQueSeSalen() {
+        return Array.prototype.filter.call(ampliacion.tarjeta.querySelectorAll(".math.inline"), function (formula) {
+          var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
+          if (!caja || formula.closest("td, th, .sol-chip, .sol-resultado") || !visible(formula)) {
+            return false;
+          }
+          var estilo = window.getComputedStyle(caja);
+          var borde =
+            caja.getBoundingClientRect().right - parseFloat(estilo.paddingRight) - parseFloat(estilo.borderRightWidth);
+          return Array.prototype.some.call(formula.querySelectorAll(".katex-html > .base"), function (pieza) {
+            return pieza.getBoundingClientRect().right > borde + 1;
+          });
+        });
+      }
+      // ¿Esconde algo por la derecha una pastilla, unos resultados o un paso
+      // a paso? Si algo se desliza por dentro, o si una pieza de una fórmula
+      // o una frase recuadrada pasa de su borde interior.
+      function seSaleLoAbierto(caja) {
+        if (caja.scrollWidth > caja.clientWidth + 1) {
+          return true;
+        }
+        var estilo = window.getComputedStyle(caja);
+        var borde =
+          caja.getBoundingClientRect().right - parseFloat(estilo.paddingRight) - parseFloat(estilo.borderRightWidth);
+        return Array.prototype.some.call(caja.querySelectorAll(".katex-html > .base, .final"), function (pieza) {
+          return pieza.getBoundingClientRect().right > borde + 1;
+        });
       }
       // ¿Se sale algo de verdad de su caja? Una raíz o un paréntesis alto
       // sobresalen un par de píxeles aunque la fórmula quepa, así que una
@@ -10438,11 +10931,13 @@ Bachillerato</p>
           // Ni con el tamaño menor: es imprescindible dejar que las
           // ecuaciones de las frases (las de una tabla, sobre todo) se partan.
           if (a.partible) {
+            partirSoloEnTablas();
             return 0;
           }
           a.partible = true;
           a.tarjeta.classList.add("ampliar-partible");
           if (!cabe()) {
+            partirSoloEnTablas();
             return 0;
           }
         }
@@ -10463,13 +10958,36 @@ Bachillerato</p>
         }
         return Math.max(minimo, Math.floor(abajo * 20) / 20);
       }
+      // Lo ampliado no cabe con el tamaño menor ni partiendo las ecuaciones
+      // de las frases: que no se queden partidas para nada. Fuera de una
+      // tabla, partirlas solo acorta lo ampliado, y lo que sobra a lo alto
+      // se alcanza desplazando la pantalla; la que no cabe ni en una línea
+      // entera se parte por su cuenta. Las de una tabla, en cambio, solo
+      // pueden partirse con la tarjeta partible, y con ellas cambia el ancho
+      // de la tabla, que no se alcanza desplazando: si hay alguna, se queda
+      // como estaba. Hasta el 13 de octubre de 2026 la tarjeta se quedaba
+      // partible siempre: un ejercicio con su respuesta al que le sobraban
+      // 9 px de alto salía con tres ecuaciones partidas tras un signo menos,
+      // con «3(x −» en una línea y el resto en la siguiente, y seguía sin
+      // caber.
+      function partirSoloEnTablas() {
+        var a = ampliacion;
+        var enTabla = a.tarjeta.querySelectorAll("td .math.inline, th .math.inline");
+        if (!Array.prototype.some.call(enTabla, visible)) {
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          partirLoImprescindible();
+        }
+      }
       // Si con el tamaño elegido alguna ecuación tuviera que partirse, se
       // prueba con algo menos de letra (hasta un 15 %) antes de dejarla partir.
+      // En una lista con resoluciones no hace falta: allí ninguna se parte
+      // tras un + o un −, y `cabe()` ya baja la letra hasta que caben.
       function evitarPartir(zoom) {
         var a = ampliacion;
         ponerZoom(zoom || 1);
         cabe();
-        if (!zoom || !a.tarjeta.querySelector(".formula-partible")) {
+        if (!zoom || conResoluciones() || !a.tarjeta.querySelector(".formula-partible")) {
           return zoom;
         }
         for (var menor = zoom - 0.05; menor >= Math.max(1, zoom * 0.85); menor -= 0.05) {
@@ -10480,9 +10998,68 @@ Bachillerato</p>
         }
         return zoom;
       }
+      // La letra de lo que no cabe ni con la de la página. En una lista con
+      // resoluciones, si es a lo ancho (una cuenta centrada de un renglón,
+      // una igualdad de fracciones o una ecuación que solo se parte tras una
+      // relación, en una ventana estrecha o en vertical), desplazar la
+      // pantalla no enseñaría lo que se sale por la derecha, que suele ser el
+      // resultado recuadrado: la letra baja de la de la página hasta que
+      // quepa a lo ancho, con un tope del 60 %; lo que sobre a lo alto se
+      // desplaza (barrido del 17 de octubre de 2026 a 820 × 1100: 13 cuentas
+      // cortadas por la derecha al 100 %). Solo en una ventana ancha, la que
+      // amplía con el ojo y el lápiz (desde 42,0625 rem): en una estrecha
+      // (un teléfono) bajaría casi todo al 60 %, más pequeño que la página,
+      // y aun así no cabría; allí el ojo y el lápiz abren en su sitio y la
+      // fórmula que no cabe se desliza con el dedo, como hasta ahora. Fuera
+      // de esas listas, la de la página, como siempre.
+      var MENOR_LETRA_A_LO_ANCHO = 0.6;
+      var PANTALLA_ANCHA = window.matchMedia ? window.matchMedia("(min-width: 42.0625rem)") : null;
+      function letraSiNoCabe() {
+        var a = ampliacion;
+        if (!conResoluciones() || (PANTALLA_ANCHA && !PANTALLA_ANCHA.matches)) {
+          return 1;
+        }
+        a.soloAncho = true;
+        try {
+          ponerZoom(1);
+          if (cabe()) {
+            return 1;
+          }
+          var abajo = MENOR_LETRA_A_LO_ANCHO;
+          ponerZoom(abajo);
+          if (!cabe()) {
+            return abajo;
+          }
+          var arriba = 1;
+          while (arriba - abajo > 0.02) {
+            var medio = (abajo + arriba) / 2;
+            ponerZoom(medio);
+            if (cabe()) {
+              abajo = medio;
+            } else {
+              arriba = medio;
+            }
+          }
+          return Math.floor(abajo * 100) / 100;
+        } finally {
+          a.soloAncho = false;
+        }
+      }
+      // Con la letra puesta, las ecuaciones que ni así caben en un renglón
+      // entero (solo con la letra más baja) se parten por donde haga falta.
+      function marcarLoImprescindible() {
+        if (!conResoluciones()) {
+          return;
+        }
+        formulasQueSeSalen().forEach(function (formula) {
+          formula.classList.add("amp-imprescindible");
+        });
+      }
       // Reparte la unidad en partes: entera si así ya se acerca a la letra
       // buscada; si no, tantas piezas seguidas por parte como quepan con esa
-      // letra. Una pieza que sola no cabe con ella lleva la mayor que admita.
+      // letra, sin separar la frase que anuncia de lo anunciado cuando la
+      // letra lo permite. Un tramo que solo no cabe con ella lleva la mayor
+      // que admita.
       function componer(unidad) {
         var a = ampliacion;
         a.numeros = [];
@@ -10492,6 +11069,15 @@ Bachillerato</p>
         [unidad].concat(hijosVisibles(unidad)).forEach(function (lista) {
           a.numeros = a.numeros.concat(numerosDe(lista, !lista.closest(".ejercicios, .resultado")));
         });
+        // Los apartados en lista de un ejercicio (`ol[type="a"]`): en la
+        // pantalla de un apartado solo se ve el suyo, y conserva su letra
+        // («f)», no «a)»). Van aparte: con ellos en `a.numeros`, las
+        // respuestas de una lista sin repartir se tomarían también por las
+        // letras.
+        a.letras = [];
+        Array.prototype.forEach.call(unidad.querySelectorAll('li > ol[type="a"]'), function (lista) {
+          a.letras = a.letras.concat(numerosDe(lista, false));
+        });
         var piezas = piezasDe(unidad);
         var rotulos = fijosDe(unidad);
         a.partible = false;
@@ -10500,8 +11086,18 @@ Bachillerato</p>
         // letra que lo demás y, si se reparte, todas sus partes llevan la
         // misma, la de la fila que menos admite.
         var esTabla = unidad.tagName === "TABLE";
-        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? 0.7 : 0.85)) {
-          return [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
+        var unaSola = [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
+        // Entera y sin caber ni con la letra de la página: en una lista con
+        // resoluciones, lo que se sale a lo ancho baja de ella.
+        function enteraSiNoCabe() {
+          if (!entera && conResoluciones()) {
+            mostrar([unidad]);
+            unaSola[0].zoom = letraSiNoCabe();
+          }
+          return unaSola;
+        }
+        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? LETRA_MINIMA_JUNTAS : LETRA_PARA_IR_ENTERA)) {
+          return enteraSiNoCabe();
         }
         var meta = a.objetivo;
         if (esTabla) {
@@ -10511,18 +11107,22 @@ Bachillerato</p>
             meta = Math.min(meta, evitarPartir(mayorZoom(1, a.objetivo)) || 1);
           });
         }
+        var tramos = tramosDe(unidad, piezas, rotulos, meta);
+        if (tramos.length < 2) {
+          return enteraSiNoCabe();
+        }
         var partes = [];
         var i = 0;
-        while (i < piezas.length) {
-          var grupo = [piezas[i]];
+        while (i < tramos.length) {
+          var grupo = tramos[i].slice();
           i++;
-          while (i < piezas.length) {
-            mostrar(rotulos.concat(grupo, [piezas[i]]));
+          while (i < tramos.length) {
+            mostrar(rotulos.concat(grupo, tramos[i]));
             ponerZoom(meta);
             if (!cabe()) {
               break;
             }
-            grupo.push(piezas[i]);
+            grupo = grupo.concat(tramos[i]);
             i++;
           }
           partes.push({ piezas: grupo, visibles: rotulos.concat(grupo), zoom: 1 });
@@ -10530,7 +11130,7 @@ Bachillerato</p>
         partes.forEach(function (parte) {
           mostrar(parte.visibles);
           a.partible = false;
-          parte.zoom = evitarPartir(mayorZoom(1, meta)) || 1;
+          parte.zoom = evitarPartir(mayorZoom(1, meta)) || letraSiNoCabe();
           parte.partible = a.partible;
         });
         return partes;
@@ -10540,6 +11140,9 @@ Bachillerato</p>
       // de segundo nivel conserva su título y queda en una sección aparte,
       // justo detrás de la de sus ejercicios (la síntesis de las unidades 1):
       // si la sección de la lista no lleva bloque, se toma el de esa.
+      // Un bloque repartido entre los apartados de sus ejercicios (los que
+      // llevan su ojo y su lápiz) no se lee: lo enseñan el ojo grande y el
+      // lápiz grande.
       function solucionesDeLaLista(unidad) {
         var seccion = unidad.tagName === "OL" ? unidad.closest("section.ejercicios") : null;
         if (!seccion || unidad.parentElement.closest(".resultado")) {
@@ -10554,6 +11157,9 @@ Bachillerato</p>
         }
         if (!bloque) {
           bloque = solucionesAparte(seccion);
+        }
+        if (bloque && bloque.classList.contains("respuestas-repartidas")) {
+          return null;
         }
         var lista = bloque ? bloque.querySelector(":scope > ol") : null;
         return lista ? numerosDe(lista, false) : null;
@@ -10641,6 +11247,21 @@ Bachillerato</p>
       }
       function rotular() {
         var a = ampliacion;
+        // En la pantalla de un apartado, el ejercicio y su letra («18 f)»);
+        // ‹ y › nunca se apagan, porque antes del primero y tras el último
+        // está la pantalla del ejercicio, y ni el ojo grande ni el lápiz
+        // grande se ofrecen.
+        var parte = a.paginas[a.pagina];
+        if (parte.tipo === "apartado") {
+          cuenta.textContent = rotuloDelApartado(parte);
+          botonAnterior.disabled = false;
+          botonSiguiente.disabled = false;
+          botonResultados.hidden = true;
+          botonResultados.setAttribute("aria-pressed", "false");
+          botonResuelto.hidden = true;
+          botonResuelto.setAttribute("aria-pressed", "false");
+          return;
+        }
         var unidad = a.unidades[a.indice];
         var ambito = unidad.closest("section.level3") || unidad.closest("section.level2");
         var suyas = a.unidades.filter(function (otra) {
@@ -10650,16 +11271,90 @@ Bachillerato</p>
         if (a.paginas.length > 1) {
           lugar += " · parte " + (a.pagina + 1) + " de " + a.paginas.length;
         }
+        // Con el lápiz grande en varias pantallas, las de su ejercicio:
+        // «18 · parte 1 de 4».
+        if (parte.tipo === "resuelto" && a.resuelto && a.resuelto.cuantos > 1) {
+          lugar = rotuloDelApartado(parte) + " · parte " + (a.pagina - a.resuelto.inicio + 1) + " de " + a.resuelto.cuantos;
+        }
         cuenta.textContent = lugar;
         botonAnterior.disabled = a.indice === 0 && a.pagina === 0;
         botonSiguiente.disabled =
           a.indice === a.unidades.length - 1 && a.pagina === a.paginas.length - 1;
-        botonSoluciones.hidden = respuestasDe(a.paginas[a.pagina]).length === 0;
-        botonSoluciones.setAttribute("aria-pressed", a.conSoluciones ? "true" : "false");
+        // El ojo grande, si hay ojos a la vista, pulsado si están todos
+        // abiertos; el lápiz grande, si hay lápices (o, en una lista sin
+        // repartir, respuestas que enseñar), pulsado mientras enseña todo
+        // resuelto.
+        var ojos = botonesALaVista("ojo");
+        botonResultados.hidden = !ojos.length;
+        // Con varios ejercicios en pantalla, cuentan los del elegido, que es
+        // el que el ojo grande abre o tapa.
+        var delElegido = ojos;
+        if (ejerciciosDeLaParte(parte).length > 1) {
+          var elegido = ejercicioElegido(parte);
+          delElegido = ojos.filter(function (ojo) {
+            return !!elegido && elegido.contains(ojo);
+          });
+        }
+        botonResultados.setAttribute(
+          "aria-pressed",
+          parte.tipo !== "resuelto" && delElegido.length && delElegido.every(estaAbierto) ? "true" : "false"
+        );
+        botonResuelto.hidden =
+          parte.tipo !== "resuelto" && !botonesALaVista("lapiz").length && respuestasDe(parte).length === 0;
+        botonResuelto.setAttribute("aria-pressed", parte.tipo === "resuelto" || a.conSoluciones ? "true" : "false");
+      }
+      // Los ojos o los lápices de los apartados que se ven en la pantalla.
+      function botonesALaVista(clase) {
+        return Array.prototype.filter.call(ampliacion.tarjeta.querySelectorAll(".sol-ico." + clase), visible);
+      }
+      function estaAbierto(boton) {
+        return boton.getAttribute("aria-expanded") === "true";
       }
       function pintarParte() {
         var a = ampliacion;
         var parte = a.paginas[a.pagina];
+        marcarApartados(parte);
+        // La pantalla de un apartado lleva la letra que se le midió al entrar
+        // en el recorrido (`verApartado`), sin centrar en vertical y con sus
+        // ecuaciones partidas solo tras una relación.
+        if (parte.tipo === "apartado") {
+          mostrar(parte.visibles);
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          parte.imprescindibles.forEach(function (formula) {
+            formula.classList.add("amp-imprescindible");
+          });
+          a.zoomPuesto = parte.zoom;
+          ponerZoom(parte.zoom);
+          marcarLoImprescindible();
+          // Si ni con la letra de la página cabe, se desplaza; lo último no
+          // puede quedarse a medias bajo la cuenta, en el margen de abajo de
+          // la tarjeta, donde Safari no deja desplazar.
+          if (parte.desplaza) {
+            var hueco = a.tarjeta.getBoundingClientRect().bottom - a.ultimo.getBoundingClientRect().bottom + 1;
+            if (hueco > 0) {
+              a.ultimo.style.setProperty("margin-bottom", Math.ceil(hueco) + "px", "important");
+              a.estirado = a.ultimo;
+            }
+          }
+          a.tarjeta.scrollTop = 0;
+          rotular();
+          return;
+        }
+        // Una pantalla del lápiz grande lleva la letra que se le midió al
+        // encenderlo (`verResuelto`).
+        if (parte.tipo === "resuelto") {
+          mostrar(parte.visibles);
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          a.zoomPuesto = parte.zoom;
+          ponerZoom(parte.zoom);
+          partirLoImprescindible();
+          marcarLoImprescindible();
+          a.tarjeta.scrollTop = 0;
+          rotular();
+          return;
+        }
         var respuestas = a.conSoluciones ? respuestasDe(parte) : [];
         a.numeros = a.numeros.filter(function (par) {
           return !a.soluciones || a.soluciones.indexOf(par) === -1;
@@ -10670,20 +11365,1213 @@ Bachillerato</p>
         mostrar(parte.visibles.concat(respuestas));
         a.partible = !!parte.partible;
         a.tarjeta.classList.toggle("ampliar-partible", a.partible);
-        // Con las respuestas debajo puede hacer falta una letra algo menor.
-        ponerZoom(respuestas.length ? mayorZoom(1, parte.zoom) || 1 : parte.zoom);
+        // Con las respuestas debajo (una lista sin repartir) puede hacer
+        // falta una letra algo menor; con los ojos de los apartados, la de
+        // su sitio guardado, si se guarda (R4).
+        a.zoomPuesto = respuestas.length ? mayorZoom(1, parte.zoom) || 1 : reservarLaParte(parte);
+        ponerZoom(a.zoomPuesto);
         partirLoImprescindible();
+        marcarLoImprescindible();
         a.tarjeta.scrollTop = 0;
         rotular();
+      }
+      // R4 (regla nueva del 17 de octubre de 2026: usa el mismo 0,83 que el
+      // listón de los bloques, aceptado el 5 de octubre, pero es otra cosa).
+      // El sitio de los resultados de una parte se guarda (se llenan sus
+      // pastillas y se esconden sin dejar de ocupar su hueco, `amp-reservado`)
+      // si así la letra conserva al menos el 83 % de la de la parte: abrir y
+      // cerrar ojos no mueve nada. Si cuesta más, se pinta como si no
+      // hubiera ojos y se recoloca una sola vez, con el primero que se abra.
+      // Se reserva siempre si se entra por un ojo (de la página o de la
+      // barra) o si ya hay alguno abierto. Devuelve la letra.
+      function reservarLaParte(parte) {
+        var a = ampliacion;
+        var ojos = botonesALaVista("ojo");
+        if (!ojos.length) {
+          return parte.zoom;
+        }
+        if (parte.reserva === undefined && ojos.some(estaAbierto)) {
+          parte.reserva = true;
+        }
+        if (parte.reserva === false) {
+          return parte.zoom;
+        }
+        // Se llenan sin abrirlas y se guarda el sitio de las tapadas.
+        ojos.forEach(function (ojo) {
+          if (!estaAbierto(ojo)) {
+            ponerCaja(ojo, false, false, true);
+          }
+        });
+        if (parte.letraReservada === undefined) {
+          var letra = evitarPartir(mayorZoom(1, parte.zoom));
+          parte.letraReservada = letra || letraSiNoCabe();
+          parte.partibleReservada = a.partible;
+          // Si con todo reservado no cabe ni con la letra de la página, no
+          // sale a cuenta: se desplazaría.
+          parte.reservaNoCabe = !letra;
+        }
+        if (parte.reserva === undefined) {
+          parte.reserva = !parte.reservaNoCabe && parte.letraReservada >= LETRA_PARA_IR_ENTERA * parte.zoom;
+        }
+        // Si con todo reservado no cabría ni con la letra de la página (una
+        // ventana estrecha o en vertical), no se guarda el sitio de las
+        // tapadas aunque se haya entrado por un ojo: cuenta solo lo abierto y
+        // la letra se mide cada vez, como antes de la reserva.
+        if (parte.reserva && parte.reservaNoCabe) {
+          ojos.forEach(function (ojo) {
+            if (!estaAbierto(ojo)) {
+              ponerCaja(ojo, false);
+            }
+          });
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          return mayorZoom(1, parte.zoom) || letraSiNoCabe();
+        }
+        if (!parte.reserva) {
+          ojos.forEach(function (ojo) {
+            ponerCaja(ojo, false);
+          });
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          return parte.zoom;
+        }
+        a.partible = !!parte.partibleReservada;
+        a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+        return parte.letraReservada;
+      }
+      // El ojo y el lápiz de cada apartado, dentro de la ampliación: los abre
+      // y los cierra el guion de la solución (`sol-poner`), sin alternar y sin
+      // encoger nada. Abrir uno cierra el otro de su apartado. Cerrada con
+      // `reservado`, la caja se llena y guarda su sitio, escondida.
+      function ponerCaja(boton, abierto, vaciar, reservado) {
+        if (abierto) {
+          Array.prototype.forEach.call(boton.parentElement.children, function (otro) {
+            if (otro !== boton && otro.getAttribute("aria-expanded") === "true") {
+              ponerCaja(otro, false);
+            }
+          });
+        }
+        boton.dispatchEvent(
+          new CustomEvent("sol-poner", {
+            bubbles: true,
+            detail: { boton: boton, abierto: abierto, vaciar: !!vaciar, reservado: !abierto && !!reservado }
+          })
+        );
+        var caja = document.getElementById(boton.getAttribute("aria-controls") || "");
+        if (caja) {
+          caja.classList.toggle("amp-reservado", !abierto && !!reservado);
+        }
+      }
+      // Cierra y vacía todo lo que tengan abierto, reservado o lleno el ojo y
+      // el lápiz de los apartados, y repone su `aria-expanded`: al ampliar (en
+      // una ventana estrecha se abren en la página), al pasar de parte y al
+      // cerrar.
+      function taparLoAbierto() {
+        Array.prototype.forEach.call(contenido.querySelectorAll(".sol-ico"), function (boton) {
+          var caja = document.getElementById(boton.getAttribute("aria-controls") || "");
+          if (boton.getAttribute("aria-expanded") === "true" || (caja && caja.firstChild)) {
+            ponerCaja(boton, false, true);
+          }
+        });
+      }
+      // El ejercicio (el elemento de la lista de enunciados) de un botón.
+      function ejercicioDe(boton) {
+        var lista = boton.closest("ol.ampliable");
+        var ejercicio = boton;
+        while (lista && ejercicio.parentElement && ejercicio.parentElement !== lista) {
+          ejercicio = ejercicio.parentElement;
+        }
+        return lista ? ejercicio : null;
+      }
+      // Los ejercicios de una parte de una lista de enunciados.
+      function ejerciciosDeLaParte(parte) {
+        var unidad = ampliacion.unidades[ampliacion.indice];
+        if (unidad.tagName !== "OL" || !parte.piezas) {
+          return [];
+        }
+        var lis = parte.piezas[0] === unidad ? Array.prototype.slice.call(unidad.children) : parte.piezas;
+        return lis.filter(function (li) {
+          return li.tagName === "LI" && li.parentElement === unidad;
+        });
+      }
+      // El ejercicio al que va el ojo grande o el lápiz grande (R3): el del
+      // último botón tocado, si está en la parte; si no, el que se tocó al
+      // ampliar; si no, el primero.
+      function ejercicioElegido(parte) {
+        var a = ampliacion;
+        var ejercicios = ejerciciosDeLaParte(parte);
+        if (a.elegido && ejercicios.indexOf(a.elegido) !== -1) {
+          return a.elegido;
+        }
+        for (var i = 0; i < ejercicios.length; i++) {
+          if (a.toque && ejercicios[i].contains(a.toque)) {
+            return ejercicios[i];
+          }
+        }
+        return ejercicios[0] || null;
+      }
+      // Con lo abierto, la letra de una parte con varios ejercicios puede
+      // quedarse corta: como hacía el ✓ con las respuestas, se reparte en un
+      // ejercicio por pantalla y se queda en el elegido, con el sitio de sus
+      // resultados guardado. El ojo de la barra, el ojo grande y el lápiz
+      // grande lo hacen siempre, porque son de un solo ejercicio (R3). Las
+      // pantallas sueltas se miden con todo tapado, como al componer.
+      // Devuelve si ha repartido.
+      function unEjercicioPorPantalla(elegido, siempre, sinPintar) {
+        var a = ampliacion;
+        var unidad = a.unidades[a.indice];
+        var parte = a.paginas[a.pagina];
+        var entera = parte.piezas[0] === unidad;
+        if (!elegido || (!entera && parte.piezas.length < 2) || (!siempre && a.zoomPuesto >= a.objetivo * 0.85)) {
+          return false;
+        }
+        var ejercicios = ejerciciosDeLaParte(parte);
+        var lugar = ejercicios.indexOf(elegido);
+        if (ejercicios.length < 2 || lugar === -1) {
+          return false;
+        }
+        var sueltos = [];
+        contenido.classList.add("ampliar-componiendo");
+        try {
+          sueltos = ejercicios.map(function (li) {
+            var suelto = { piezas: [li], visibles: [li], zoom: 1, suelto: true };
+            mostrar([li]);
+            a.partible = false;
+            suelto.zoom = evitarPartir(mayorZoom(1, a.objetivo)) || letraSiNoCabe();
+            suelto.partible = a.partible;
+            return suelto;
+          });
+        } finally {
+          contenido.classList.remove("ampliar-componiendo");
+        }
+        sueltos[lugar].reserva = true;
+        Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(sueltos));
+        a.pagina += lugar;
+        if (!sinPintar) {
+          pintarParte();
+        }
+        return true;
+      }
+      // El ojo de un apartado dentro de la pantalla del ejercicio: con el
+      // sitio de los resultados guardado, destapa o tapa el suyo y no se
+      // mueve nada; si la parte se pintó sin guardarlo (costaba demasiada
+      // letra), el primer ojo la recoloca una sola vez: con varios
+      // ejercicios, uno por pantalla, quedándose en el suyo; si no, con el
+      // sitio guardado. Con el lápiz grande encendido no hace nada.
+      function alternarOjo(boton, ejercicio) {
+        var a = ampliacion;
+        var parte = a.paginas[a.pagina];
+        if (parte.tipo) {
+          return;
+        }
+        var abierto = estaAbierto(boton);
+        a.elegido = ejercicio;
+        if (parte.reserva && !parte.reservaNoCabe) {
+          ponerCaja(boton, !abierto, false, abierto);
+          rotular();
+          return;
+        }
+        if (parte.reserva) {
+          ponerCaja(boton, !abierto);
+          pintarParte();
+          return;
+        }
+        ponerCaja(boton, true);
+        parte.reserva = true;
+        if (!unEjercicioPorPantalla(ejercicio, true)) {
+          pintarParte();
+        }
+      }
+      // El ojo grande y la `S` (R3): todos los resultados de un ejercicio, el
+      // elegido; si la pantalla lleva varios, pasa a uno por pantalla. Si
+      // alguno está tapado, los destapa todos; si no, los tapa. Abrirlo
+      // apaga el lápiz grande.
+      function alternarResultados() {
+        var a = ampliacion;
+        if (!a || botonResultados.hidden || a.paginas[a.pagina].tipo === "apartado") {
+          return;
+        }
+        if (a.resuelto) {
+          dejarLoResuelto();
+        }
+        var parte = a.paginas[a.pagina];
+        var elegido = ejercicioElegido(parte);
+        if (elegido) {
+          a.elegido = elegido;
+          unEjercicioPorPantalla(elegido, true, true);
+          parte = a.paginas[a.pagina];
+        }
+        parte.reserva = true;
+        pintarParte();
+        var ojos = botonesALaVista("ojo");
+        var destapar = !ojos.every(estaAbierto);
+        ojos.forEach(function (ojo) {
+          ponerCaja(ojo, destapar, false, !destapar && !parte.reservaNoCabe);
+        });
+        if (parte.reservaNoCabe) {
+          pintarParte();
+        } else {
+          rotular();
+        }
+      }
+
+      // ---- La pantalla de un apartado (desde el 17 de octubre de 2026,
+      // «Ojo y lápiz en grande»). El lápiz de un apartado, en la página o en
+      // la ampliación, abre una pantalla con lo común del enunciado, ese
+      // apartado con su letra y su paso a paso entero, con la mayor letra que
+      // quepa. Son partes más de la ampliación (`tipo: "apartado"`), una por
+      // cada apartado con lápiz del ejercicio, metidas tras la parte del
+      // ejercicio mientras dura el recorrido (`a.recorrido`) y quitadas al
+      // salir de él.
+      var LETRAS_DE_APARTADO = "abcdefghijklmnopqrstuvwxyz";
+      var ROMANOS = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii"];
+      // Si ningún apartado pierde más que esto frente al que menos letra
+      // admite, todos llevan esa letra; si no, cada uno la suya.
+      var TOPE_DE_LA_LETRA_COMUN = 0.15;
+      // El apartado de un lápiz: su elemento de la lista de apartados, su
+      // pareja de botones si van en una fila o, si el ejercicio se trata
+      // entero, el propio ejercicio.
+      function apartadoDelLapiz(lapiz, ejercicio) {
+        var pareja = lapiz.closest(".sol-apartado");
+        if (pareja && ejercicio.contains(pareja)) {
+          return pareja;
+        }
+        var li = lapiz.closest("li");
+        return li && li !== ejercicio && ejercicio.contains(li) ? li : ejercicio;
+      }
+      // Lo que se ve de un ejercicio en la pantalla de un apartado: lo común
+      // del enunciado (en cada nivel, lo que va antes de la lista que lleva
+      // al apartado; los nodos de texto quedan a la vista, porque `mostrar`
+      // solo recorre elementos) y el apartado, sin los demás. En los
+      // apartados en fila, su pareja sin las otras. Tratado entero, el
+      // ejercicio entero.
+      function visiblesDelApartado(ejercicio, apartado) {
+        if (apartado === ejercicio) {
+          return [ejercicio];
+        }
+        var visibles = [apartado];
+        for (var dentro = apartado; dentro !== ejercicio && dentro.parentElement; dentro = dentro.parentElement) {
+          var nivel = dentro.parentElement;
+          if (
+            nivel.tagName === "OL" ||
+            nivel.tagName === "UL" ||
+            (nivel.classList && nivel.classList.contains("sol-barra"))
+          ) {
+            continue;
+          }
+          for (var i = 0; i < nivel.children.length && nivel.children[i] !== dentro; i++) {
+            visibles.push(nivel.children[i]);
+          }
+        }
+        return visibles;
+      }
+      // La marca de un elemento de lista, como se pinta («f)», «ii)»).
+      function marcaDeLaLista(li) {
+        var lista = li.parentElement;
+        var numero = 1;
+        numerosDe(lista, false).forEach(function (par) {
+          if (par[0] === li) {
+            numero = par[1];
+          }
+        });
+        var tipo = lista.getAttribute("type");
+        if (tipo === "a" || tipo === "A") {
+          var letra = LETRAS_DE_APARTADO.charAt(numero - 1) || String(numero);
+          return (tipo === "A" ? letra.toUpperCase() : letra) + ")";
+        }
+        if (tipo === "i") {
+          return (ROMANOS[numero - 1] || String(numero)) + ")";
+        }
+        return numero + ")";
+      }
+      // La cuenta de la pantalla de un apartado: «18 f)» y, si su paso a paso
+      // va en varias pantallas (R6), «18 f) · 1 de 2». En las del lápiz
+      // grande, el número del ejercicio.
+      function rotuloDelApartado(parte) {
+        var rotulo = numeroYLetra(parte);
+        if (parte.tipo === "apartado" && parte.trozos > 1) {
+          rotulo += " · " + (parte.trozo + 1) + " de " + parte.trozos;
+        }
+        return rotulo;
+      }
+      function numeroYLetra(parte) {
+        var numero = "";
+        numerosDe(parte.ejercicio.parentElement, false).forEach(function (par) {
+          if (par[0] === parte.ejercicio) {
+            numero = String(par[1]);
+          }
+        });
+        var marcas = [];
+        for (var nodo = parte.apartado; nodo && nodo !== parte.ejercicio; nodo = nodo.parentElement) {
+          if (nodo.tagName === "LI") {
+            marcas.unshift(marcaDeLaLista(nodo));
+          } else if (nodo.classList.contains("sol-apartado")) {
+            marcas.unshift(texto(nodo.querySelector(".sol-letra")));
+          }
+        }
+        return [numero].concat(marcas).filter(Boolean).join(" ");
+      }
+      // La pantalla de un apartado lleva su paso a paso abierto (y entero:
+      // `amp-paso`), su lápiz pulsado y su ojo y su resultado escondidos
+      // (`apartado-en-pantalla`); `vista-apartado` lo dice en <html>, y el
+      // ejercicio queda arriba, quieto (`a.fija`). Al salir se deshace.
+      function marcarApartado(parte, puesto) {
+        var a = ampliacion;
+        var pasos = document.getElementById(parte.lapiz.getAttribute("aria-controls") || "");
+        parte.apartado.classList.toggle("apartado-en-pantalla", puesto);
+        raiz.classList.toggle("vista-apartado", puesto);
+        a.fija = puesto ? parte.ejercicio : null;
+        if (puesto) {
+          ponerCaja(parte.lapiz, true);
+        } else if (parte.lapiz.getAttribute("aria-expanded") === "true") {
+          ponerCaja(parte.lapiz, false);
+        }
+        if (pasos) {
+          pasos.classList.toggle("amp-paso", puesto);
+        }
+      }
+      // Antes de pintar una parte: solo la pantalla de apartado que se va a
+      // ver queda marcada. En las del lápiz grande, `vista-resuelto` apaga
+      // los ojos y, si van en varias pantallas, el ejercicio queda arriba,
+      // quieto.
+      function marcarApartados(parte) {
+        var a = ampliacion;
+        a.paginas.forEach(function (otra) {
+          if (
+            otra !== parte && otra.tipo === "apartado" && otra.apartado.classList.contains("apartado-en-pantalla") &&
+            (parte.tipo !== "apartado" || otra.apartado !== parte.apartado)
+          ) {
+            marcarApartado(otra, false);
+          }
+        });
+        raiz.classList.toggle("vista-resuelto", parte.tipo === "resuelto");
+        if (parte.tipo === "apartado") {
+          marcarApartado(parte, true);
+        } else {
+          raiz.classList.remove("vista-apartado");
+          a.fija = parte.tipo === "resuelto" && a.resuelto && a.resuelto.cuantos > 1 ? parte.ejercicio : null;
+        }
+      }
+      // La letra de la pantalla de un apartado (con la respuesta del profesor
+      // del 17 de octubre de 2026, «Partir solo tras un =»): la mayor que
+      // quepa, hasta la que busca la ampliación, con las ecuaciones partidas
+      // solo tras una relación; si un tramo entre dos no cabe en su renglón,
+      // se baja la letra, sin el tope del 15 % de `evitarPartir`. Si ni con la
+      // letra de la página cabe, se queda con ella y lo que sobra se alcanza
+      // desplazando, salvo lo que se sale a lo ancho, que baja la letra
+      // (`letraSiNoCabe`); la ecuación que ni con la más baja cabe en un
+      // renglón entero se parte por donde haga falta (`amp-imprescindible`).
+      function letraDelApartado(parte) {
+        var a = ampliacion;
+        a.partible = false;
+        var zoom = mayorZoom(1, a.objetivo);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        parte.imprescindibles = [];
+        parte.desplaza = false;
+        if (!zoom) {
+          zoom = letraSiNoCabe();
+          ponerZoom(zoom);
+          parte.desplaza = !cabe();
+          parte.imprescindibles = formulasQueSeSalen();
+        }
+        return zoom;
+      }
+      // R5: con la letra de cada apartado, la común si ninguno pierde con ella
+      // más de TOPE_DE_LA_LETRA_COMUN; si no, cada uno la suya.
+      function letraComun(letras) {
+        var menor = Math.min.apply(null, letras);
+        var mayor = Math.max.apply(null, letras);
+        if (mayor - menor > TOPE_DE_LA_LETRA_COMUN + 1e-9) {
+          return letras.slice();
+        }
+        return letras.map(function () {
+          return menor;
+        });
+      }
+      // R7: la parte a la que pasa una flecha desde la pantalla de un
+      // apartado: la del apartado siguiente (o anterior) con lápiz del mismo
+      // ejercicio, saltando los que solo tienen ojo; -1 si no queda ninguno,
+      // y entonces se vuelve a la pantalla del ejercicio. Nunca cruza a otro
+      // ejercicio.
+      function siguienteApartado(partes, i, paso) {
+        var actual = partes[i];
+        for (var j = i + paso; j >= 0 && j < partes.length; j += paso) {
+          var otra = partes[j];
+          if (!otra || otra.tipo !== "apartado" || otra.ejercicio !== actual.ejercicio) {
+            return -1;
+          }
+          if (otra.lapiz) {
+            return j;
+          }
+        }
+        return -1;
+      }
+      // El lápiz de un apartado: el recorrido de su ejercicio, con una
+      // pantalla por apartado con lápiz, en su orden, y la del tocado a la
+      // vista. `origen` dice de dónde se entra («pagina» o «ejercicio»): a ese
+      // sitio vuelven la × y el Esc.
+      function verApartado(lapiz, origen) {
+        var a = ampliacion;
+        var ejercicio = a && lapiz ? ejercicioDe(lapiz) : null;
+        if (!ejercicio) {
+          return;
+        }
+        var volverAResuelto = null;
+        if (a.recorrido) {
+          origen = a.recorrido.origen;
+          volverAResuelto = a.recorrido.volverAResuelto;
+          dejarElRecorrido();
+        }
+        // Con el lápiz grande encendido, se apaga mientras dura el recorrido
+        // y se vuelve a encender al volver, en la pantalla de la que se vino.
+        if (a.resuelto) {
+          volverAResuelto = { grupo: a.pagina - a.resuelto.inicio, ejercicio: a.resuelto.ejercicio };
+          dejarLoResuelto();
+        }
+        // La parte del ejercicio: la que se ve, si lo lleva; si no, la que lo
+        // lleve.
+        var unidad = a.unidades[a.indice];
+        var desde = -1;
+        a.paginas.forEach(function (parte, lugar) {
+          var lleva = parte.piezas[0] === unidad || parte.piezas.indexOf(ejercicio) !== -1;
+          if (lleva && (desde === -1 || lugar === a.pagina)) {
+            desde = lugar;
+          }
+        });
+        if (desde === -1) {
+          return;
+        }
+        // Los ojos abiertos de ese ejercicio: al volver siguen como estaban.
+        var abiertos = Array.prototype.slice.call(ejercicio.querySelectorAll('.sol-ico.ojo[aria-expanded="true"]'));
+        mostrar([ejercicio]);
+        var lapices = Array.prototype.filter.call(ejercicio.querySelectorAll(".sol-ico.lapiz"), function (otro) {
+          return otro === lapiz || visible(otro);
+        });
+        var paginas = lapices.map(function (otro) {
+          var apartado = apartadoDelLapiz(otro, ejercicio);
+          var visibles = visiblesDelApartado(ejercicio, apartado);
+          var pasos = document.getElementById(otro.getAttribute("aria-controls") || "");
+          if (pasos && !apartado.contains(pasos)) {
+            visibles.push(pasos);
+          }
+          return {
+            tipo: "apartado",
+            ejercicio: ejercicio,
+            apartado: apartado,
+            lapiz: otro,
+            piezas: [ejercicio],
+            visibles: visibles,
+            zoom: 1,
+            imprescindibles: []
+          };
+        });
+        // La letra de cada uno, con su paso a paso abierto, y la común (R5).
+        // Un paso a paso que no cabe ni con el 70 % de la letra buscada va en
+        // varias pantallas seguidas, si así gana letra (R6).
+        var conPartes = [];
+        paginas.forEach(function (parte) {
+          marcarApartado(parte, true);
+          mostrar(parte.visibles);
+          var conTrazado = conElTrazadoAparte(parte);
+          if (conTrazado) {
+            conPartes = conPartes.concat(conTrazado);
+          } else {
+            parte.zoom = letraDelApartado(parte);
+            conPartes = conPartes.concat(partirElPaso(parte, letraDeUnaParte));
+          }
+          marcarApartado(parte, false);
+        });
+        paginas = conPartes;
+        var letras = letraComun(
+          paginas.map(function (parte) {
+            return parte.zoom;
+          })
+        );
+        paginas.forEach(function (parte, lugar) {
+          parte.zoom = letras[lugar];
+        });
+        a.recorrido = {
+          origen: origen,
+          desde: desde,
+          inicio: desde + 1,
+          cuantos: paginas.length,
+          abiertos: abiertos,
+          volverAResuelto: volverAResuelto
+        };
+        Array.prototype.splice.apply(a.paginas, [desde + 1, 0].concat(paginas));
+        var primera = 0;
+        while (primera < paginas.length - 1 && paginas[primera].lapiz !== lapiz) {
+          primera++;
+        }
+        a.pagina = desde + 1 + (paginas[primera].lapiz === lapiz ? primera : 0);
+        pintarParte();
+      }
+      // Propio de DT (18 de octubre de 2026): el trazado de un ejercicio que
+      // lleva el paso a paso (regla 3 de AGENTS.md) va en su propia pantalla,
+      // detrás de la explicación, cada una con su letra: con él dentro, la
+      // explicación no se ampliaría, porque el trazado no cabe ni con la
+      // letra de la página. Las dos cuentan como las de un paso a paso
+      // repartido («16 a) · 1 de 2»), y la flecha pasa de una a otra. Sin
+      // trazado, nada (null).
+      function conElTrazadoAparte(parte) {
+        var pasos = document.getElementById(parte.lapiz.getAttribute("aria-controls") || "");
+        var trazados = pasos
+          ? Array.prototype.filter.call(pasos.children, function (hijo) {
+              return hijo.matches(".interactivo-host") && !!hijo.querySelector('.interactivo[data-carga="al-abrir"]');
+            })
+          : [];
+        var base = trazados.length ? alrededorDelPaso(parte.visibles, pasos) : null;
+        if (!base) {
+          return null;
+        }
+        // El texto suelto de la explicación, envuelto como en un paso a paso
+        // repartido, para que la pantalla del trazado lo pueda esconder.
+        envolverLasRachas(pasos);
+        var resto = Array.prototype.filter.call(pasos.children, function (hijo) {
+          return trazados.indexOf(hijo) === -1;
+        });
+        return [resto, trazados].map(function (piezas, k) {
+          var trozo = {};
+          Object.keys(parte).forEach(function (clave) {
+            trozo[clave] = parte[clave];
+          });
+          trozo.visibles = base.concat(piezas);
+          trozo.trozo = k;
+          trozo.trozos = 2;
+          mostrar(trozo.visibles);
+          trozo.zoom = letraDelApartado(trozo);
+          trozo.partible = false;
+          return trozo;
+        });
+      }
+      // La mayor letra con la que cabe lo que se ve en la pantalla de un
+      // apartado, con sus ecuaciones partidas solo tras una relación (R13);
+      // 0 si no cabe ni con la de la página.
+      function letraDeUnaParte() {
+        var a = ampliacion;
+        a.partible = false;
+        var zoom = mayorZoom(1, a.objetivo);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        return zoom;
+      }
+      // Sale del recorrido de los apartados: quita sus pantallas, cierra el
+      // paso a paso (y deshace sus trozos, R6), vuelve a la parte del
+      // ejercicio y le devuelve los ojos que tenía abiertos. Con `volver`, si
+      // se entró desde el lápiz grande, lo vuelve a encender, en la pantalla
+      // de la que se vino.
+      function dejarElRecorrido(volver) {
+        var a = ampliacion;
+        var r = a.recorrido;
+        if (!r) {
+          return;
+        }
+        a.paginas.slice(r.inicio, r.inicio + r.cuantos).forEach(function (parte) {
+          marcarApartado(parte, false);
+        });
+        limpiarLosTramos();
+        a.paginas.splice(r.inicio, r.cuantos);
+        a.pagina = r.desde;
+        a.recorrido = null;
+        a.fija = null;
+        raiz.classList.remove("vista-apartado");
+        r.abiertos.forEach(function (ojo) {
+          ponerCaja(ojo, true);
+        });
+        if (volver && r.volverAResuelto) {
+          verResuelto(r.volverAResuelto.ejercicio, true);
+          a.pagina = a.resuelto.inicio + Math.min(r.volverAResuelto.grupo, a.resuelto.cuantos - 1);
+        }
+      }
+      // A la pantalla del ejercicio, como estaba (o compuesta al ampliar, si
+      // se entró desde la página).
+      function volverAlEjercicio() {
+        dejarElRecorrido(true);
+        pintarParte();
+      }
+      // Las flechas, el dedo y el mando en la pantalla de un apartado (R7):
+      // al apartado siguiente o anterior con lápiz, ya resuelto; tras el
+      // último o antes del primero, a la pantalla del ejercicio.
+      function pasarDeApartado(paso) {
+        var a = ampliacion;
+        var otra = siguienteApartado(a.paginas, a.pagina, paso);
+        if (otra === -1) {
+          volverAlEjercicio();
+          return;
+        }
+        a.pagina = otra;
+        pintarParte();
+      }
+      // La × y el Esc (R11): desde la pantalla de un apartado a la que se
+      // entró desde la del ejercicio, a esta; si no, a la página.
+      function cerrarOVolver() {
+        if (ampliacion && ampliacion.recorrido && ampliacion.recorrido.origen === "ejercicio") {
+          volverAlEjercicio();
+          return;
+        }
+        cerrarAmpliacion();
+      }
+
+      // ---- El paso a paso en varias pantallas (R6, desde el 17 de octubre
+      // de 2026, «Ojo y lápiz en grande»). Un paso a paso que no cabe ni con
+      // el 70 % de la letra buscada se corta entre sus bloques y entre los
+      // renglones de una cuenta centrada (un `aligned`), con tres reglas: la
+      // frase que anuncia va con lo que anuncia (al menos con su primer
+      // renglón), el cierre (la frase final, las condiciones, lo recuadrado
+      // detrás de la última cuenta) va con el último renglón, y la figura,
+      // con el primero. Nunca se parte un renglón, una tabla, un sistema, un
+      // cajetín ni una fracción. Cada pantalla lleva tantos tramos seguidos
+      // como quepan con la letra buscada, todas con la letra de la que menos
+      // admite, y repite arriba lo común y la línea del apartado. Solo se
+      // corta si así se ganan 15 puntos de letra (o si entero no cabía ni con
+      // la de la página); si no, va entero, como antes.
+      var GANANCIA_MINIMA_AL_PARTIR = 0.15;
+      // Una pantalla de un solo apartado (la suya o un grupo del lápiz
+      // grande), en pantallas seguidas si hace falta. `medir` da la mayor
+      // letra con la que cabe lo que se ve (0 si no cabe). Devuelve las
+      // partes: la misma, si no se corta.
+      function partirElPaso(parte, medir) {
+        var a = ampliacion;
+        var pasos = parte.lapiz ? document.getElementById(parte.lapiz.getAttribute("aria-controls") || "") : null;
+        if (!pasos) {
+          return [parte];
+        }
+        mostrar(parte.visibles);
+        if (!visible(pasos)) {
+          return [parte];
+        }
+        ponerZoom(0.7 * a.objetivo);
+        if (cabe()) {
+          return [parte];
+        }
+        var base = alrededorDelPaso(parte.visibles, pasos);
+        var tramos = base ? tramosDelPaso(pasos) : [];
+        if (tramos.length < 2) {
+          limpiarLosTramos(pasos);
+          mostrar(parte.visibles);
+          return [parte];
+        }
+        var reparto = repartirElPaso(
+          tramos,
+          parte.desplaza ? 0 : parte.zoom,
+          function (grupo, letra) {
+            mostrar(base.concat(elementosDelGrupo(grupo)));
+            a.partible = false;
+            a.tarjeta.classList.remove("ampliar-partible");
+            ponerZoom(letra || a.objetivo);
+            return cabe();
+          },
+          function (grupo) {
+            mostrar(base.concat(elementosDelGrupo(grupo)));
+            var letra = medir();
+            grupo.partible = a.partible;
+            return letra;
+          }
+        );
+        if (!reparto) {
+          limpiarLosTramos(pasos);
+          mostrar(parte.visibles);
+          return [parte];
+        }
+        return reparto.pantallas.map(function (grupo, k) {
+          var trozo = {};
+          Object.keys(parte).forEach(function (clave) {
+            trozo[clave] = parte[clave];
+          });
+          trozo.visibles = base.concat(elementosDelGrupo(grupo));
+          trozo.zoom = reparto.letra;
+          trozo.partible = !!grupo.partible;
+          trozo.imprescindibles = [];
+          trozo.desplaza = false;
+          trozo.trozo = k;
+          trozo.trozos = reparto.pantallas.length;
+          return trozo;
+        });
+      }
+      // Lo que se ve alrededor del paso a paso: lo común del enunciado y la
+      // línea del apartado (sus hijos, sin el paso a paso). Si el paso a paso
+      // va más adentro, no se sabe cortar.
+      function alrededorDelPaso(visibles, pasos) {
+        var base = [];
+        for (var i = 0; i < visibles.length; i++) {
+          var caja = visibles[i];
+          if (caja === pasos) {
+            continue;
+          }
+          if (!caja.contains(pasos)) {
+            base.push(caja);
+          } else if (pasos.parentElement === caja) {
+            Array.prototype.forEach.call(caja.children, function (hijo) {
+              if (hijo !== pasos) {
+                base.push(hijo);
+              }
+            });
+          } else {
+            return null;
+          }
+        }
+        return base;
+      }
+      // Los tramos de un paso a paso: sus bloques (en uno tratado por
+      // ejercicio, los del elemento de su lista, con las figuras delante),
+      // las rachas de texto suelto de una lista compacta, envueltas para que
+      // se puedan esconder (`tramo-ampliado`), y los renglones de cada cuenta
+      // centrada de un solo `aligned`, unidos según `unirLosAtomos`.
+      function tramosDelPaso(pasos) {
+        limpiarLosTramos(pasos);
+        var lista = pasos.querySelector(":scope > ol.lista-solucion-ejercicio");
+        var caja = lista && lista.children.length === 1 ? lista.children[0] : pasos;
+        var atomos = [];
+        if (caja !== pasos) {
+          envolverLasRachas(pasos);
+          Array.prototype.forEach.call(pasos.children, function (hijo) {
+            if (hijo !== lista) {
+              atomos.push({ pieza: hijo, fija: true });
+            }
+          });
+        }
+        envolverLasRachas(caja);
+        Array.prototype.forEach.call(caja.children, function (pieza) {
+          if (pieza.matches(".sol-letra, figure") || (pieza.matches("p") && pieza.querySelector("img") && !texto(pieza))) {
+            atomos.push({ pieza: pieza, fija: true });
+            return;
+          }
+          // La cuenta puede ir sola o en un párrafo que no lleva más (Pandoc
+          // la mete en uno): sus trozos van junto a ella.
+          var formula = pieza.matches(".math.display")
+            ? pieza
+            : esFormula(pieza) ? pieza.querySelector(":scope > .math.display") : null;
+          var cadena = formula ? filasDeLaCadena(texDeLaCuenta(formula)) : null;
+          if (cadena && cadena.filas.length > 1) {
+            cadena.trozos = {};
+            cadena.filas.forEach(function (fila, k) {
+              atomos.push({ pieza: formula, cadena: cadena, fila: k, cuenta: true });
+            });
+            return;
+          }
+          atomos.push({ pieza: pieza, cuenta: pieza.matches(".math.display") || !!pieza.querySelector(".math.display") });
+        });
+        atomos.forEach(function (atomo, i) {
+          var siguiente = atomos[i + 1];
+          atomo.anuncia = !!siguiente && !atomo.cuenta && !atomo.fija && anunciaLaCuenta(atomo.pieza, siguiente);
+        });
+        return unirLosAtomos(atomos);
+      }
+      // Las rachas de nodos en línea (texto suelto, fórmulas en línea,
+      // frases recuadradas) que van entre bloques, cada una en un
+      // `span.tramo-ampliado`: `mostrar` solo esconde elementos.
+      function envolverLasRachas(caja) {
+        var racha = null;
+        Array.prototype.slice.call(caja.childNodes).forEach(function (nodo) {
+          var enLinea = nodo.nodeType === 3 || (nodo.nodeType === 1 && !esBloqueDelPaso(nodo));
+          if (!enLinea) {
+            racha = null;
+            return;
+          }
+          if (!racha) {
+            if (nodo.nodeType === 3 && !nodo.textContent.trim()) {
+              return;
+            }
+            racha = document.createElement("span");
+            racha.className = "tramo-ampliado";
+            caja.insertBefore(racha, nodo);
+          }
+          racha.appendChild(nodo);
+        });
+      }
+      function esBloqueDelPaso(nodo) {
+        return nodo.matches("p, div, ol, ul, table, figure, blockquote, .math.display, .sol-letra");
+      }
+      // ¿Anuncia la pieza lo que la sigue? Si acaba en dos puntos o si, ante
+      // una cuenta, se queda sin terminar («Por tanto, suman»).
+      function anunciaLaCuenta(pieza, siguiente) {
+        var final = texto(pieza).slice(-1);
+        if (final === "" || acabaEnFormula(pieza)) {
+          return false;
+        }
+        return final === ":" || (!!siguiente.cuenta && pieza.matches("p, .tramo-ampliado") && ".!?…".indexOf(final) === -1);
+      }
+      // Las uniones obligadas de R6 sobre los átomos de un paso a paso (cada
+      // bloque o renglón de una cuenta, con `cuenta` si lleva una fórmula
+      // centrada, `anuncia` si anuncia lo que sigue y `fija` si va siempre en
+      // la primera pantalla, como una figura): lo fijo y lo que anuncia van
+      // con lo siguiente, y el cierre, lo que hay detrás de la última cuenta,
+      // con ella. Devuelve los tramos, listas de átomos seguidos que no se
+      // separan.
+      function unirLosAtomos(atomos) {
+        var ultima = -1;
+        atomos.forEach(function (atomo, i) {
+          if (atomo.cuenta) {
+            ultima = i;
+          }
+        });
+        var tramos = [];
+        var juntar = false;
+        atomos.forEach(function (atomo, i) {
+          if (tramos.length && (juntar || (ultima !== -1 && i > ultima))) {
+            tramos[tramos.length - 1].push(atomo);
+          } else {
+            tramos.push([atomo]);
+          }
+          juntar = !!(atomo.fija || atomo.anuncia);
+        });
+        return tramos;
+      }
+      // El reparto de R6: tramos seguidos mientras quepan juntos con la letra
+      // buscada (`cabeJunto(grupo, letra)`, sin letra: la buscada); todas las
+      // pantallas con la letra de la que menos admite (`letraDe`). Con esa
+      // letra se empaqueta otra vez, por si con ella caben en menos
+      // pantallas. Solo si son dos o más y ganan al menos
+      // GANANCIA_MINIMA_AL_PARTIR a `entera`; si no, nada.
+      function repartirElPaso(tramos, entera, cabeJunto, letraDe) {
+        function empaquetar(letra) {
+          var pantallas = [];
+          var i = 0;
+          while (i < tramos.length) {
+            var grupo = tramos[i].slice();
+            i++;
+            while (i < tramos.length && cabeJunto(grupo.concat(tramos[i]), letra)) {
+              grupo = grupo.concat(tramos[i]);
+              i++;
+            }
+            pantallas.push(grupo);
+          }
+          return pantallas;
+        }
+        var pantallas = empaquetar(null);
+        if (pantallas.length < 2) {
+          return null;
+        }
+        var letra = Math.min.apply(null, pantallas.map(letraDe));
+        if (!letra || letra < entera + GANANCIA_MINIMA_AL_PARTIR - 1e-9) {
+          return null;
+        }
+        if (pantallas.length > 2) {
+          var menos = empaquetar(letra);
+          if (menos.length > 1 && menos.length < pantallas.length) {
+            var suya = Math.min.apply(null, menos.map(letraDe));
+            if (suya >= letra - 1e-9) {
+              pantallas = menos;
+              letra = suya;
+            }
+          }
+        }
+        return { pantallas: pantallas, letra: letra };
+      }
+      // Los renglones de una cuenta centrada que es un solo `aligned`, con lo
+      // que los separa (`\\` y su hueco, `[6pt]`): solo los del primer nivel,
+      // nunca los de una matriz, un sistema o una llave de dentro. Nada si no
+      // es un `aligned` entero.
+      function filasDeLaCadena(tex) {
+        var limpio = (tex || "").trim();
+        var abre = "\\begin{aligned}";
+        var cierra = "\\end{aligned}";
+        if (limpio.indexOf(abre) !== 0 || limpio.slice(-cierra.length) !== cierra) {
+          return null;
+        }
+        var cuerpo = limpio.slice(abre.length, limpio.length - cierra.length);
+        var filas = [];
+        var huecos = [];
+        var desde = 0;
+        var llaves = 0;
+        var entornos = 0;
+        for (var i = 0; i < cuerpo.length; i++) {
+          var signo = cuerpo.charAt(i);
+          if (signo === "{") {
+            llaves++;
+          } else if (signo === "}") {
+            llaves--;
+          } else if (signo === "\\") {
+            var resto = cuerpo.slice(i, i + 7);
+            if (resto === "\\begin{" || resto.slice(0, 5) === "\\end{") {
+              entornos += resto === "\\begin{" ? 1 : -1;
+              var nombre = cuerpo.indexOf("}", i);
+              i = nombre === -1 ? cuerpo.length : nombre;
+            } else if (cuerpo.charAt(i + 1) === "\\" && !llaves && !entornos) {
+              var hueco = /^\s*\[[^\]]*\]/.exec(cuerpo.slice(i + 2));
+              filas.push(cuerpo.slice(desde, i));
+              huecos.push("\\\\" + (hueco ? hueco[0].trim() : ""));
+              desde = i + 2 + (hueco ? hueco[0].length : 0);
+              i = desde - 1;
+            } else {
+              i++;
+            }
+          }
+        }
+        filas.push(cuerpo.slice(desde));
+        if (filas.length > 1 && !filas[filas.length - 1].trim()) {
+          filas.pop();
+          huecos.pop();
+        }
+        if (llaves || entornos) {
+          return null;
+        }
+        return { filas: filas, huecos: huecos };
+      }
+      // Los renglones `desde`…`hasta` de una cuenta, en un solo `aligned`:
+      // con sus huecos y, si alguno lleva una fracción (`\frac` o `\dfrac`),
+      // todos con el de 6 pt (regla 2).
+      function cadenaEntre(cadena, desde, hasta) {
+        var filas = cadena.filas.slice(desde, hasta + 1);
+        var conFraccion = filas.some(function (fila) {
+          return /\\[dt]?frac/.test(fila);
+        });
+        var tex = filas[0];
+        for (var k = 1; k < filas.length; k++) {
+          var hueco = cadena.huecos[desde + k - 1];
+          tex += (conFraccion && hueco.indexOf("[") === -1 ? "\\\\[6pt]" : hueco) + filas[k];
+        }
+        return "\\begin{aligned}" + tex + "\\end{aligned}";
+      }
+      function texDeLaCuenta(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent.trim() : "";
+        if (tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      // La pieza que enseña los renglones `desde`…`hasta` de una cuenta: la
+      // cuenta misma si son todos; si no, una copia con esos renglones,
+      // compuesta con KaTeX junto a la cuenta (que queda escondida) y con el
+      // hueco entre filas del guion de las fórmulas (`ampliar-huecos`).
+      function trozoDeLaCuenta(cuenta, cadena, desde, hasta) {
+        if (desde === 0 && hasta === cadena.filas.length - 1) {
+          return cuenta;
+        }
+        var clave = desde + "-" + hasta;
+        if (!cadena.trozos[clave]) {
+          var trozo = document.createElement("span");
+          trozo.className = "math display tramo-de-cadena";
+          trozo.innerHTML = window.katex
+            ? window.katex.renderToString(cadenaEntre(cadena, desde, hasta), { displayMode: true, throwOnError: false })
+            : "";
+          cuenta.parentNode.insertBefore(trozo, cuenta.nextSibling);
+          trozo.dispatchEvent(new CustomEvent("ampliar-huecos", { bubbles: true }));
+          cadena.trozos[clave] = trozo;
+        }
+        return cadena.trozos[clave];
+      }
+      // Lo que enseña una pantalla de R6: sus bloques y, de cada cuenta
+      // cortada, el trozo con sus renglones.
+      function elementosDelGrupo(grupo) {
+        var elementos = [];
+        var i = 0;
+        while (i < grupo.length) {
+          var atomo = grupo[i];
+          var j = i;
+          if (atomo.cadena) {
+            while (j + 1 < grupo.length && grupo[j + 1].cadena === atomo.cadena) {
+              j++;
+            }
+            elementos.push(trozoDeLaCuenta(atomo.pieza, atomo.cadena, atomo.fila, grupo[j].fila));
+          } else {
+            elementos.push(atomo.pieza);
+          }
+          i = j + 1;
+        }
+        return elementos;
+      }
+      // Deshace los trozos y las rachas envueltas de los pasos a paso.
+      function limpiarLosTramos(dentro) {
+        var caja = dentro || contenido;
+        Array.prototype.forEach.call(caja.querySelectorAll(".tramo-de-cadena"), function (trozo) {
+          trozo.parentNode.removeChild(trozo);
+        });
+        Array.prototype.forEach.call(caja.querySelectorAll(".tramo-ampliado"), function (racha) {
+          while (racha.firstChild) {
+            racha.parentNode.insertBefore(racha.firstChild, racha);
+          }
+          racha.parentNode.removeChild(racha);
+        });
+      }
+
+      // ---- El lápiz grande (R8, desde el 17 de octubre de 2026, «Ojo y
+      // lápiz en grande»), abajo a la izquierda del marco: «todo resuelto» de
+      // un ejercicio, como en casa. Cada apartado con lápiz lleva su paso a
+      // paso debajo (sin el sitio guardado de su resultado, que va recuadrado
+      // en él) y los de solo ojo, su pastilla. Si no cabe con el 83 % de la
+      // letra buscada, va en grupos de apartados seguidos, con lo común fijo
+      // arriba, mientras quepan con esa letra; un apartado que solo no cabe
+      // con el 70 % se reparte como en su pantalla (R6). Sus pantallas
+      // sustituyen a la del ejercicio (`a.resuelto`) y duran lo que él: al
+      // salir de ellas, la parte siguiente llega tapada. Abrirlo apaga el ojo
+      // grande, y al revés.
+      // Los apartados de un ejercicio: en lista, sus elementos; en fila, sus
+      // parejas de botones; tratado entero, el propio ejercicio.
+      function apartadosDelEjercicio(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista && lista.querySelector(":scope > li .sol-ico")) {
+          return Array.prototype.filter.call(lista.children, function (li) {
+            return li.tagName === "LI";
+          });
+        }
+        var parejas = ejercicio.querySelectorAll(":scope > .sol-barra > .sol-apartado");
+        return parejas.length ? Array.prototype.slice.call(parejas) : [ejercicio];
+      }
+      function botonDe(apartado, clase) {
+        return apartado.querySelector(".sol-ico." + clase);
+      }
+      // Lo que se ve de un grupo de apartados: lo común del enunciado, sus
+      // apartados y, en los que van en fila, lo que abren sus botones.
+      function visiblesDelGrupo(ejercicio, apartados) {
+        var visibles = [];
+        function poner(elemento) {
+          if (elemento && visibles.indexOf(elemento) === -1) {
+            visibles.push(elemento);
+          }
+        }
+        apartados.forEach(function (apartado) {
+          visiblesDelApartado(ejercicio, apartado).forEach(poner);
+          ["ojo", "lapiz"].forEach(function (clase) {
+            var boton = botonDe(apartado, clase);
+            var caja = boton ? document.getElementById(boton.getAttribute("aria-controls") || "") : null;
+            if (caja && !apartado.contains(caja)) {
+              poner(caja);
+            }
+          });
+        });
+        return visibles;
+      }
+      // La mayor letra con la que cabe lo que se ve en una pantalla del
+      // lápiz grande, con la regla de todas las pantallas de una lista con
+      // resoluciones para las ecuaciones (R13: solo tras una relación, como
+      // en la pantalla de un apartado; hasta el 17 de octubre de 2026, con
+      // `evitarPartir`, aquí se partían también tras un + o un −); 0 si no
+      // cabe ni con la de la página.
+      function letraDeResuelto() {
+        return letraDeUnaParte();
+      }
+      function verResuelto(ejercicio, sinPintar) {
+        var a = ampliacion;
+        var original = a.paginas[a.pagina];
+        var apartados = apartadosDelEjercicio(ejercicio);
+        var lapices = [];
+        var ojos = [];
+        apartados.forEach(function (apartado) {
+          var lapiz = botonDe(apartado, "lapiz");
+          var ojo = botonDe(apartado, "ojo");
+          if (lapiz) {
+            if (ojo) {
+              ponerCaja(ojo, false);
+            }
+            ponerCaja(lapiz, true);
+            lapices.push(lapiz);
+          } else if (ojo) {
+            ponerCaja(ojo, true);
+            ojos.push(ojo);
+          }
+        });
+        raiz.classList.add("vista-resuelto");
+        var grupos = [apartados];
+        a.fija = null;
+        mostrar([ejercicio]);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        ponerZoom(LETRA_PARA_IR_ENTERA * a.objetivo);
+        if (apartados.length > 1 && !cabe()) {
+          a.fija = ejercicio;
+          grupos = [];
+          var grupo = [apartados[0]];
+          for (var i = 1; i < apartados.length; i++) {
+            mostrar(visiblesDelGrupo(ejercicio, grupo.concat([apartados[i]])));
+            ponerZoom(LETRA_PARA_IR_ENTERA * a.objetivo);
+            if (cabe()) {
+              grupo.push(apartados[i]);
+            } else {
+              grupos.push(grupo);
+              grupo = [apartados[i]];
+            }
+          }
+          grupos.push(grupo);
+        }
+        var paginas = [];
+        grupos.forEach(function (suyos) {
+          var visibles = grupos.length > 1 ? visiblesDelGrupo(ejercicio, suyos) : [ejercicio];
+          mostrar(visibles);
+          var zoom = letraDeResuelto();
+          var parte = {
+            tipo: "resuelto",
+            ejercicio: ejercicio,
+            apartado: ejercicio,
+            piezas: [ejercicio],
+            visibles: visibles,
+            zoom: zoom || 1,
+            desplaza: false,
+            partible: a.partible
+          };
+          // Lo que no cabe ni con la letra de la página: lo que se sale a lo
+          // ancho baja de ella, y lo que sobre a lo alto se desplaza.
+          if (!zoom) {
+            parte.zoom = letraSiNoCabe();
+            ponerZoom(parte.zoom);
+            parte.desplaza = !cabe();
+          }
+          var lapiz = suyos.length === 1 ? botonDe(suyos[0], "lapiz") : null;
+          if (lapiz) {
+            parte.lapiz = lapiz;
+            paginas = paginas.concat(partirElPaso(parte, letraDeResuelto));
+          } else {
+            paginas.push(parte);
+          }
+        });
+        a.resuelto = {
+          ejercicio: ejercicio,
+          inicio: a.pagina,
+          cuantos: paginas.length,
+          original: original,
+          lapices: lapices,
+          ojos: ojos
+        };
+        Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(paginas));
+        if (!sinPintar) {
+          pintarParte();
+        }
+      }
+      // Apaga el lápiz grande: cierra lo que abrió, deshace sus trozos y
+      // devuelve la pantalla del ejercicio, tapada, a su sitio.
+      function dejarLoResuelto() {
+        var a = ampliacion;
+        var r = a.resuelto;
+        if (!r) {
+          return;
+        }
+        r.lapices.forEach(function (lapiz) {
+          ponerCaja(lapiz, false);
+        });
+        r.ojos.forEach(function (ojo) {
+          ponerCaja(ojo, false);
+        });
+        limpiarLosTramos();
+        a.paginas.splice(r.inicio, r.cuantos, r.original);
+        a.pagina = r.inicio;
+        a.resuelto = null;
+        a.fija = null;
+        raiz.classList.remove("vista-resuelto");
       }
       function prepararUnidad(indice, cual, toque) {
         var a = ampliacion;
         a.indice = indice;
         a.conSoluciones = false;
         a.toque = toque || null;
+        // Una lista de ejercicios con su ojo y su lápiz: en todas sus
+        // pantallas, las ecuaciones solo se parten tras una relación (R13).
+        raiz.classList.toggle("amp-resoluciones", !!a.unidades[indice].querySelector(".sol-ico"));
         titular(a.unidades[indice]);
         a.soluciones = solucionesDeLaLista(a.unidades[indice]);
-        a.paginas = componer(a.unidades[indice]);
+        // Mientras se compone, lo que tengan abierto el ojo y el lápiz no
+        // cuenta: las partes salen como con todo tapado (al girar la tableta
+        // se recompone con los ojos abiertos).
+        contenido.classList.add("ampliar-componiendo");
+        try {
+          a.paginas = componer(a.unidades[indice]);
+        } finally {
+          contenido.classList.remove("ampliar-componiendo");
+        }
         if (!a.paginas.length) {
           cerrarAmpliacion();
           return;
@@ -10699,15 +12587,38 @@ Bachillerato</p>
             }
           });
         }
+        // Si se entra por un ojo o un lápiz de la página, la pinta quien
+        // abre, con lo suyo ya abierto: así se mide una sola vez (R4).
+        var entrada = a.entrada;
+        a.entrada = null;
+        if (entrada === "ojo" || entrada === "apartado") {
+          return;
+        }
         pintarParte();
       }
       function letraObjetivo(letra) {
         return Math.min(2.4, Math.max(1.3, (LETRA_OBJETIVO * window.innerHeight) / letra));
       }
-      function abrirAmpliacion(unidad, toque) {
+      // `extra` dice qué se abre al ampliar: `abrir`, los ojos o los lápices
+      // de los apartados que se ven ya abiertos (el ojo o el lápiz tocado en
+      // la página; todos los ojos del ejercicio, con el de la barra), y
+      // `solo`, si el ejercicio va siempre solo en su pantalla. `vista` dice
+      // a qué pantalla se entra: «ejercicio», o «apartado» con el lápiz
+      // tocado (el de `abrir`), que abre directamente la de su apartado.
+      function abrirAmpliacion(unidad, toque, extra) {
         if (!activo() || ampliacion) {
           return;
         }
+        // Lo abierto en la página (en una ventana estrecha, el ojo y el lápiz
+        // abren en su sitio) se pliega y se vacía antes de medir nada. Si el
+        // toque cae dentro de ello, vale por un toque en lo que lo contiene:
+        // al vaciarlo, quedaría fuera del documento y se ampliaría la primera
+        // parte de la lista en vez de la de su ejercicio.
+        var enLoAbierto = toque && toque.closest ? toque.closest(".sol-chip, .sol-resultado, .sol-pasos") : null;
+        if (enLoAbierto && enLoAbierto.parentElement) {
+          toque = enLoAbierto.parentElement;
+        }
+        taparLoAbierto();
         var unidades = Array.prototype.filter.call(contenido.querySelectorAll(".ampliable"), visible);
         var indice = unidades.indexOf(unidad);
         if (indice === -1) {
@@ -10724,48 +12635,122 @@ Bachillerato</p>
           paginas: [],
           pagina: 0,
           margenArriba: 76,
-          partible: false
+          partible: false,
+          zoomPuesto: 1,
+          elegido: null,
+          solo: false,
+          recorrido: null,
+          resuelto: null,
+          fija: null,
+          estirado: null,
+          subido: null,
+          entrada: null,
+          soloAncho: false
         };
+        var abrir = extra && extra.abrir ? Array.prototype.slice.call(extra.abrir) : [];
+        if (abrir.length) {
+          ampliacion.entrada = extra.vista === "apartado" ? "apartado" : "ojo";
+        }
         raiz.classList.add("ampliando");
         prepararUnidad(indice, "primera", toque);
+        if (ampliacion && abrir.length && extra.vista === "apartado") {
+          verApartado(abrir[0], "pagina");
+          return;
+        }
+        if (ampliacion && abrir.length) {
+          abrir.forEach(function (boton) {
+            ponerCaja(boton, true);
+          });
+          ampliacion.elegido = ejercicioDe(abrir[0]);
+          ampliacion.solo = !!extra.solo;
+          pintarParte();
+          unEjercicioPorPantalla(ampliacion.elegido, ampliacion.solo);
+        }
       }
       function cerrarAmpliacion() {
         if (!ampliacion) {
           return;
         }
         var y = ampliacion.y;
+        dejarElRecorrido();
+        dejarLoResuelto();
+        taparLoAbierto();
+        limpiarLosTramos();
         limpiar();
         ampliacion = null;
+        cerradaEn = Date.now();
         raiz.style.fontSize = "";
-        raiz.classList.remove("ampliando");
+        raiz.classList.remove("ampliando", "vista-apartado", "vista-resuelto", "amp-resoluciones");
         window.scrollTo({ top: y, left: 0, behavior: "instant" });
         pintar();
       }
       function pasar(paso) {
         var a = ampliacion;
+        if (a.recorrido) {
+          pasarDeApartado(paso);
+          return;
+        }
         var parte = a.pagina + paso;
-        if (parte >= 0 && parte < a.paginas.length) {
+        var indice = a.indice + paso;
+        var enLaUnidad = parte >= 0 && parte < a.paginas.length;
+        if (!enLaUnidad && !(indice >= 0 && indice < a.unidades.length)) {
+          return;
+        }
+        // El lápiz grande dura lo que su ejercicio: entre sus pantallas se
+        // pasa sin tapar nada, y al salir de ellas se apaga.
+        var r = a.resuelto;
+        if (r && parte >= r.inicio && parte < r.inicio + r.cuantos) {
+          a.pagina = parte;
+          pintarParte();
+          return;
+        }
+        if (r) {
+          dejarLoResuelto();
+          parte = a.pagina + paso;
+          enLaUnidad = parte >= 0 && parte < a.paginas.length;
+        }
+        // La parte nueva llega con todo tapado.
+        taparLoAbierto();
+        if (enLaUnidad) {
           a.pagina = parte;
           a.conSoluciones = false;
           a.toque = null;
           pintarParte();
           return;
         }
-        var indice = a.indice + paso;
-        if (indice >= 0 && indice < a.unidades.length) {
-          prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
-        }
+        prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
       }
-      // Las respuestas salen debajo de sus ejercicios. Si con ellas la letra
-      // se quedara corta, la parte se reparte en un ejercicio con su
-      // respuesta por pantalla.
+      // El lápiz grande (R8): en una lista con ojos y lápices, el ejercicio
+      // elegido (R3) entero resuelto, en una o varias pantallas
+      // (`verResuelto`); pulsado, se apaga y vuelve la pantalla del
+      // ejercicio, tapada. En una lista cuyo bloque de respuestas no se
+      // repartió (hoy ninguna), lo que hacía el ✓: las respuestas salen
+      // debajo de sus ejercicios y, si con ellas la letra se quedara corta,
+      // la parte se reparte en un ejercicio con su respuesta por pantalla.
       function alternarRespuestas() {
         var a = ampliacion;
-        if (botonSoluciones.hidden) {
+        if (botonResuelto.hidden || a.paginas[a.pagina].tipo === "apartado") {
+          return;
+        }
+        if (a.resuelto) {
+          dejarLoResuelto();
+          pintarParte();
+          return;
+        }
+        var parte = a.paginas[a.pagina];
+        var elegido = ejercicioElegido(parte);
+        if (elegido && !elegido.querySelector(".sol-ico.lapiz")) {
+          elegido = ejerciciosDeLaParte(parte).filter(function (li) {
+            return !!li.querySelector(".sol-ico.lapiz");
+          })[0] || null;
+        }
+        if (elegido) {
+          a.elegido = elegido;
+          unEjercicioPorPantalla(elegido, true, true);
+          verResuelto(elegido);
           return;
         }
         a.conSoluciones = !a.conSoluciones;
-        var parte = a.paginas[a.pagina];
         if (a.conSoluciones) {
           mostrar([a.unidades[a.indice]]);
           var ejercicios = piezasDe(a.unidades[a.indice]).filter(function (li) {
@@ -10817,10 +12802,10 @@ Bachillerato</p>
             break;
           case "s":
           case "S":
-            alternarRespuestas();
+            alternarResultados();
             break;
           case "Escape":
-            cerrarAmpliacion();
+            cerrarOVolver();
             break;
           default:
             return;
@@ -10850,13 +12835,54 @@ Bachillerato</p>
         }
         var orden = boton.getAttribute("data-ampliar");
         if (orden === "cerrar") {
-          cerrarAmpliacion();
-        } else if (orden === "soluciones") {
+          cerrarOVolver();
+        } else if (orden === "resultados") {
+          alternarResultados();
+        } else if (orden === "resuelto") {
           alternarRespuestas();
         } else {
           pasar(orden === "siguiente" ? 1 : -1);
         }
         boton.blur();
+      });
+      // El ojo y el lápiz de cada apartado (guion «La solución de cada
+      // ejercicio, apartado por apartado»): en el modo clase ancho no abren
+      // nada en la página y avisan aquí. Desde la página, el ojo amplía su
+      // ejercicio con su resultado al lado, y el lápiz abre la pantalla de su
+      // apartado. Dentro de la ampliación, el ojo abre o cierra lo suyo sin
+      // mover nada, con el sitio de los resultados guardado (R4,
+      // `alternarOjo`); el lápiz lleva a la pantalla de su apartado y,
+      // pulsado (en ella), vuelve a la del ejercicio (R11).
+      contenido.addEventListener("sol-clase", function (evento) {
+        var datos = evento.detail || {};
+        var boton = datos.boton;
+        if (!activo() || !boton) {
+          return;
+        }
+        var ejercicio = ejercicioDe(boton);
+        if (!ejercicio) {
+          return;
+        }
+        if (!ampliacion) {
+          abrirAmpliacion(ejercicio.parentElement, ejercicio, {
+            vista: datos.que === "lapiz" ? "apartado" : "ejercicio",
+            abrir: [boton]
+          });
+          return;
+        }
+        if (datos.que === "lapiz") {
+          var vista = ampliacion.paginas[ampliacion.pagina];
+          if (ampliacion.recorrido && vista.lapiz === boton) {
+            volverAlEjercicio();
+          } else {
+            verApartado(boton, "ejercicio");
+          }
+          return;
+        }
+        if (ampliacion.recorrido) {
+          return;
+        }
+        alternarOjo(boton, ejercicio);
       });
       // Deslizar con un dedo pasa de parte, salvo sobre una fórmula que se
       // desplaza porque no cabe.
@@ -10892,7 +12918,11 @@ Bachillerato</p>
         },
         { passive: true }
       );
-      // Al girar la tableta o cambiar la ventana se recompone lo ampliado.
+      // Al girar la tableta o cambiar la ventana se recompone lo ampliado, y
+      // se queda donde estaba: en la misma parte, con los ojos abiertos, el
+      // lápiz grande (o las respuestas de una lista sin repartir) si estaba
+      // encendido y, si se estaba en la pantalla de un apartado, en ella,
+      // con el mismo origen.
       var recomposicion = false;
       window.addEventListener("resize", function () {
         if (!ampliacion || recomposicion) {
@@ -10902,12 +12932,66 @@ Bachillerato</p>
         window.requestAnimationFrame(function () {
           recomposicion = false;
           if (ampliacion) {
+            var vista = ampliacion.paginas[ampliacion.pagina];
+            // La pantalla del ejercicio de la que se viene (la de debajo de un
+            // recorrido o del lápiz grande): si era de un solo ejercicio
+            // (`unEjercicioPorPantalla`, el ojo grande), vuelve a serlo.
+            var delEjercicio = ampliacion.recorrido
+              ? ampliacion.paginas[ampliacion.recorrido.desde]
+              : ampliacion.resuelto ? ampliacion.resuelto.original : vista;
+            var suelto = delEjercicio && delEjercicio.suelto ? delEjercicio.piezas[0] : null;
+            var enApartado = ampliacion.recorrido
+              ? {
+                  lapiz: vista.lapiz,
+                  trozo: vista.trozo || 0,
+                  origen: ampliacion.recorrido.origen,
+                  resuelto: ampliacion.recorrido.volverAResuelto
+                }
+              : null;
+            dejarElRecorrido();
+            // Con el lápiz grande, se vuelve a encender en la misma pantalla.
+            var enResuelto = ampliacion.resuelto
+              ? { ejercicio: ampliacion.resuelto.ejercicio, grupo: ampliacion.pagina - ampliacion.resuelto.inicio }
+              : null;
+            dejarLoResuelto();
+            var conSoluciones = ampliacion.conSoluciones;
             ampliacion.objetivo = letraObjetivo(ampliacion.letra);
             prepararUnidad(
               ampliacion.indice,
               "primera",
               ampliacion.paginas[ampliacion.pagina].piezas[0]
             );
+            // Lo abierto sigue abierto; si con ello iba un ejercicio por
+            // pantalla, se vuelve a repartir, y siempre si la pantalla era de
+            // un solo ejercicio.
+            var elegido = ampliacion && (suelto || ampliacion.elegido);
+            if (elegido && (suelto || elegido.querySelector('.sol-ico[aria-expanded="true"]'))) {
+              unEjercicioPorPantalla(elegido, !!suelto || ampliacion.solo);
+            }
+            if (ampliacion && conSoluciones) {
+              alternarRespuestas();
+            }
+            if (ampliacion && enResuelto) {
+              ampliacion.elegido = enResuelto.ejercicio;
+              alternarRespuestas();
+              if (ampliacion.resuelto) {
+                ampliacion.pagina =
+                  ampliacion.resuelto.inicio + Math.min(enResuelto.grupo, ampliacion.resuelto.cuantos - 1);
+                pintarParte();
+              }
+            }
+            if (ampliacion && enApartado) {
+              verApartado(enApartado.lapiz, enApartado.origen);
+              var recorrido = ampliacion && ampliacion.recorrido;
+              if (recorrido) {
+                recorrido.volverAResuelto = enApartado.resuelto;
+                var otra = ampliacion.paginas[ampliacion.pagina + enApartado.trozo];
+                if (enApartado.trozo && otra && otra.lapiz === enApartado.lapiz) {
+                  ampliacion.pagina += enApartado.trozo;
+                  pintarParte();
+                }
+              }
+            }
           }
         });
       });
@@ -25182,7 +27266,19 @@ Bachillerato</p>
         const raiz = React.useRef(null);
         const lamina = React.useRef(null);
         const desfase = React.useRef({ x: 0, y: 0 });
-        const [textos, setTextos] = React.useState(null);
+        // Un trazado de ejercicio lee al momento los textos de su teoría, que
+        // ya está en la página: así sale entero en cuanto se monta, y la
+        // ampliación del modo clase, que lo mide en ese instante, lo ve
+        // entero.
+        const [textos, setTextos] = React.useState(() => {
+          const teoria = configuracion["pasos-de"]
+            ? document.getElementById(configuracion["pasos-de"])
+            : null;
+          const leidos = teoria
+            ? textosDelMetodo(teoria.closest(".interactivo-host") || teoria)
+            : null;
+          return leidos ? conLasLetras(leidos, T.leerNombres(configuracion.nombres)) : null;
+        });
         // Un trazado de ejercicio trae sus datos en el bloque y toma los
         // textos del método del trazado de la teoría que nombra `pasos-de`.
         const [datos, setDatos] = React.useState(() =>
@@ -25238,7 +27334,7 @@ Bachillerato</p>
             return;
           }
           leidos.metodo.classList.add("metodo-en-trazado");
-          setTextos(conLasLetras(leidos, nombres));
+          setTextos((antes) => antes || conLasLetras(leidos, nombres));
           alPreparar();
         }, []);
 
@@ -25660,7 +27756,9 @@ Bachillerato</p>
       // ejercicios (`carga="al-abrir"`, regla 3 de AGENTS.md) no se montan al
       // cargar: los monta el lápiz de su solución, sobre su copia, al
       // abrirse por primera vez.
-      const montar = (respaldo) => {
+      // `deInmediato`, para los trazados de los ejercicios: se pintan en el
+      // acto (`flushSync`), porque quien abre el lápiz mide justo después.
+      const montar = (respaldo, deInmediato) => {
         if (respaldo.closest(".interactivo-host")) {
           return;
         }
@@ -25693,17 +27791,23 @@ Bachillerato</p>
         const fallo = () => anfitrion.classList.remove("is-enhanced");
 
         try {
-          ReactDOM.createRoot(montaje).render(
-            <LimiteDeError alFallar={fallo}>
-              <Componente
-                configuracion={configuracion}
-                alPreparar={preparado}
-                imagenRespaldo={
-                  respaldo.querySelector("img")?.getAttribute("src") || ""
-                }
-              />
-            </LimiteDeError>
-          );
+          const pintar = () =>
+            ReactDOM.createRoot(montaje).render(
+              <LimiteDeError alFallar={fallo}>
+                <Componente
+                  configuracion={configuracion}
+                  alPreparar={preparado}
+                  imagenRespaldo={
+                    respaldo.querySelector("img")?.getAttribute("src") || ""
+                  }
+                />
+              </LimiteDeError>
+            );
+          if (deInmediato && ReactDOM.flushSync) {
+            ReactDOM.flushSync(pintar);
+          } else {
+            pintar();
+          }
         } catch (error) {
           console.error("No se pudo montar el bloque interactivo:", error);
           fallo();
@@ -25713,7 +27817,7 @@ Bachillerato</p>
       window.montarInteractivosPerezosos = (raiz) => {
         raiz
           .querySelectorAll('.interactivo[data-carga="al-abrir"]')
-          .forEach(montar);
+          .forEach((respaldo) => montar(respaldo, true));
       };
 
       // Los de los ejercicios, solo las copias que un lápiz se haya llevado
