@@ -3905,6 +3905,13 @@
       font-family: KaTeX_Math, "Times New Roman", Times, serif;
     }
 
+    /* Las cifras y las palabras (cotas, unidades, nombres de escalas), que
+       la biblioteca escribe en letra recta, siguen rectas, como en las
+       figuras del PDF: con la de las fórmulas, «mm» parecería un producto. */
+    .lamina-trazado svg text[font-family^='"Avenir'] {
+      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
     /* Al pasar al paso siguiente, lo recién trazado deja el violeta poco a
        poco y se queda con su grosor de línea auxiliar. */
     .lamina-trazado svg line,
@@ -21951,6 +21958,802 @@ Bachillerato</p>
         }
       };
 
+      // ---- La unidad 3, las escalas (desde el 19 de octubre de 2026) ----
+      //
+      // Una escala gráfica es una recta graduada: a la derecha del 0, las
+      // divisiones, y a la izquierda, la contraescala, una división partida
+      // en diez. Sus datos son números: la escala a:n; lo que vale cada
+      // división (`valor`) en la unidad cuyo exponente de diez en milímetros
+      // es `u` (3, el metro); las divisiones de la derecha (`nu`); los px
+      // que mide en la lámina un milímetro del dibujo (`px`), y el 0 (`O`).
+      // La medida que se toma con ella (`medir`, en esa misma unidad) sale en
+      // el porqué o, con `alFinal`, en el último paso, que es como la piden
+      // los trazados de los ejercicios.
+
+      var UNIDADES_DE_ESCALA = ["mm", "cm", "dm", "m", "dam", "hm", "km"];
+
+      // Un número con coma decimal y sin ceros de más: 2,3; 50; 13,3.
+      function conComa(valor, decimales) {
+        var potencia = Math.pow(10, decimales === undefined ? 1 : decimales);
+        return String(Math.round(valor * potencia) / potencia).replace(".", ",");
+      }
+
+      // Lo que mide en el dibujo, en milímetros, una división de la escala.
+      function divisionEnMilimetros(d) {
+        return (d.valor * Math.pow(10, d.u) * d.a) / d.n;
+      }
+
+      // Las divisiones de la escala en la lámina. decimas[k] está k décimas
+      // a la izquierda del 0, y decimas[10] es el extremo de la
+      // contraescala, L.
+      function escalaGeometria(d) {
+        var largo = divisionEnMilimetros(d) * d.px;
+        var divisiones = [];
+        var decimas = [];
+        var k;
+        for (k = 0; k <= d.nu; k += 1) {
+          divisiones.push(pt(d.O.x + k * largo, d.O.y));
+        }
+        for (k = 0; k <= 10; k += 1) {
+          decimas.push(pt(d.O.x - (k * largo) / 10, d.O.y));
+        }
+        return {
+          O: d.O,
+          L: decimas[10],
+          d: largo,
+          t: largo / 10,
+          divisiones: divisiones,
+          decimas: decimas,
+          fin: divisiones[d.nu],
+          unidad: UNIDADES_DE_ESCALA[d.u] || "",
+          nombre: "E " + d.a + ":" + d.n
+        };
+      }
+
+      // Que los datos de una escala sean números que valen.
+      function escalaConDatos(d) {
+        return (
+          d.a > 0 &&
+          d.n > 0 &&
+          d.valor > 0 &&
+          d.px > 0 &&
+          Math.round(d.u) === d.u &&
+          d.u >= 0 &&
+          d.u < UNIDADES_DE_ESCALA.length &&
+          Math.round(d.nu) === d.nu &&
+          d.nu >= 1 &&
+          d.nu <= 10
+        );
+      }
+
+      // La cifra de la división k: lo que vale, sin la unidad.
+      function cifraDeLaDivision(d, k) {
+        return conComa(k * d.valor, 2);
+      }
+
+      // Una rayita de la escala, hacia arriba: las de las divisiones, más
+      // largas que las de las décimas.
+      function rayitaDeEscala(p, alto, estilo) {
+        return seg(p, pt(p.x, p.y - alto), estilo || "aux", { sinRegla: true, ritmo: 0.3 });
+      }
+
+      // Una cifra de la escala, bajo la recta.
+      function cifraDeEscala(p, texto) {
+        return rotulo(pt(p.x, p.y + 21), texto, { recta: true, cuerpo: 15 });
+      }
+
+      // La unidad, tras la cifra de la última división.
+      function unidadDeEscala(d, g) {
+        var cifra = cifraDeLaDivision(d, d.nu);
+        return rotulo(
+          pt(g.fin.x + 8 * cifra.length + 10 + 7 * g.unidad.length, g.O.y + 21),
+          g.unidad,
+          { recta: true, cuerpo: 15 }
+        );
+      }
+
+      // La escala acabada: la recta, las rayitas de las divisiones y las de
+      // las décimas. Con `nombreEn`, también sus números, su unidad y su
+      // nombre, en ese punto: así va como dato en los trazados que la usan.
+      function escalaAcabada(d, g, estilo, nombreEn) {
+        var trazos = [seg(g.L, g.fin, estilo), rayitaDeEscala(g.L, 13, estilo)];
+        var k;
+        g.divisiones.forEach(function (p) {
+          trazos.push(rayitaDeEscala(p, 13, estilo));
+        });
+        for (k = 1; k < 10; k += 1) {
+          trazos.push(rayitaDeEscala(g.decimas[k], 7, estilo));
+        }
+        if (nombreEn) {
+          trazos.push(con(cifraDeEscala(g.L, cifraDeLaDivision(d, 1)), { fijo: true }));
+          g.divisiones.forEach(function (p, lugar) {
+            trazos.push(con(cifraDeEscala(p, cifraDeLaDivision(d, lugar)), { fijo: true }));
+          });
+          trazos.push(con(unidadDeEscala(d, g), { fijo: true }));
+          trazos.push(rotulo(nombreEn, g.nombre, { recta: true, cuerpo: 17, fijo: true }));
+        }
+        return trazos;
+      }
+
+      // Dónde se toma con el compás la medida `valor` (en la unidad de la
+      // escala): la división de la derecha y la décima de la contraescala.
+      function tomaEnLaEscala(d, g, valor) {
+        var q = valor / d.valor;
+        var enteras = Math.floor(q + 1e-9);
+        var decimas = Math.round((q - enteras) * 10);
+        if (decimas === 10) {
+          enteras += 1;
+          decimas = 0;
+        }
+        return { division: g.divisiones[enteras], decima: g.decimas[decimas], enteras: enteras, decimas: decimas };
+      }
+
+      // La medida tomada en la escala y llevada debajo, a `abajo` px de la
+      // recta (40, si no se da), con su cota.
+      function medidaEnLaEscala(d, g, valor, abajo) {
+        var toma = tomaEnLaEscala(d, g, valor);
+        var y = g.O.y + (abajo || 40);
+        return [
+          abrir(toma.division, toma.decima),
+          llevar(toma.division, toma.decima, pt(toma.division.x, y), pt(toma.decima.x, y)),
+          con(
+            cota(pt(toma.decima.x, y), pt(toma.division.x, y), conComa(valor, 2) + " " + g.unidad, 6, "sol"),
+            { recta: true }
+          )
+        ];
+      }
+
+      // Que la medida se pueda tomar en la escala: hasta la última división
+      // y, en la contraescala, con décimas justas.
+      function medidaQueVale(d, valor) {
+        var q = valor / d.valor;
+        var decimas = Math.round(q * 10);
+        return q > 0 && Math.abs(q * 10 - decimas) < 1e-6 && Math.floor(q + 1e-9) <= d.nu;
+      }
+
+      // El número de una marca de la semirrecta auxiliar de Tales (que sale
+      // con el ángulo a): por fuera y algo más allá de la marca, para que no
+      // pise el arquito del compás que la corta.
+      function rotuloDeMarca(p, a, texto) {
+        var u = pt(Math.cos(a), Math.sin(a));
+        return rotulo(mezclaEn(p, u, 9, normalArriba(u), 15), texto, { recta: true, cuerpo: 13 });
+      }
+
+      // La contraescala, en diez con Tales: una semirrecta desde su extremo
+      // L hasta R, la décima marca, con las marcas iguales del compás; la
+      // última, unida con el 0, y por las otras nueve, paralelas. Las marcas
+      // no llevan número, salvo la décima.
+      function contraescalaConTales(g, R) {
+        var e = distancia(g.L, R) / 10;
+        var aR = angulo(g.L, R);
+        var marcas = [];
+        var arcos = [];
+        var paralelas = [];
+        var cortes = [];
+        var k;
+        var corte;
+        for (k = 0; k <= 10; k += 1) {
+          marcas.push(polar(g.L, k * e, aR));
+        }
+        var hacia = unitario(marcas[10], g.O);
+        for (k = 1; k <= 10; k += 1) {
+          arcos.push(arquito(marcas[k - 1], e, aR, Math.min(0.35, 9 / e), 1));
+        }
+        for (k = 9; k >= 1; k -= 1) {
+          corte = corteRectas(marcas[k], avanzar(marcas[k], hacia, 1), g.L, g.O);
+          cortes.push(corte);
+          paralelas.push(seg(marcas[k], avanzar(corte, hacia, 7), "aux"));
+        }
+        return {
+          e: e,
+          aR: aR,
+          marcas: marcas,
+          hacia: hacia,
+          cortes: cortes,
+          trazos: deprisa(
+            [seg(g.L, polar(g.L, 10 * e + 16, aR), "aux")].concat(arcosConCompas(null, arcos).trazos, [
+              rotuloDeMarca(marcas[10], aR, "10")
+            ]),
+            0.35
+          ).concat([seg(marcas[10], g.O, "aux")], deprisa(paralelas, 0.6))
+        };
+      }
+
+      // Que la semirrecta auxiliar de la contraescala valga: abierta entre
+      // unos 23 y 66 grados por encima de la escala, con marcas de 9 a 17 px
+      // y la recta de la última al 0 bien levantada, para que las paralelas
+      // corten la escala sin ir tumbadas.
+      function rayoDeLaContraescalaVale(g, R) {
+        var e = distancia(g.L, R) / 10;
+        var aR = angulo(g.L, R);
+        var union = angulo(R, g.O);
+        return e >= 9 && e <= 17 && aR <= -0.4 && aR >= -1.15 && union >= 0.5 && union <= Math.PI - 0.5;
+      }
+
+      // La escala gráfica cuya división da milímetros enteros: se marca la
+      // primera con la regla, se lleva con el compás a la derecha y una vez a
+      // la izquierda, y esa, la contraescala, se parte en diez con Tales.
+      construcciones["escala-grafica"] = {
+        lienzo: [600, 240],
+        datos: function () {
+          return {
+            a: 1,
+            n: 20,
+            u: 3,
+            valor: 1,
+            nu: 3,
+            px: 2.4,
+            O: pt(170, 140),
+            R: pt(155, 64),
+            medir: 2.3,
+            alFinal: 0
+          };
+        },
+        asas: function (d) {
+          return { R: d.R };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g;
+          if (!escalaConDatos(d) || d.nu < 2 || !medidaQueVale(d, d.medir)) {
+            return false;
+          }
+          g = escalaGeometria(d);
+          return (
+            g.d >= 60 &&
+            g.d <= 170 &&
+            rayoDeLaContraescalaVale(g, d.R) &&
+            cabe(construcciones["escala-grafica"].construir(d), 6, [600, 240])
+          );
+        },
+        construir: function (d) {
+          var g = escalaGeometria(d);
+          var U = g.divisiones;
+          var s = 15 / g.d;
+          var tales = contraescalaConTales(g, d.R);
+          var marcas = [];
+          var k;
+          var paso2;
+          var paso5;
+          for (k = 2; k <= d.nu; k += 1) {
+            marcas.push(arco(U[k - 1], g.d, -s, s));
+          }
+          paso2 = [abrir(g.O, U[1])].concat(arcosConCompas({ c: g.O, t: U[1] }, marcas).trazos);
+          for (k = 2; k <= d.nu; k += 1) {
+            paso2.push(rayitaDeEscala(U[k], 13), cifraDeEscala(U[k], cifraDeLaDivision(d, k)));
+          }
+          paso5 = escalaAcabada(d, g, "sol", null).concat([
+            cifraDeEscala(g.L, cifraDeLaDivision(d, 1)),
+            unidadDeEscala(d, g)
+          ]);
+          if (d.alFinal) {
+            paso5 = paso5.concat(medidaEnLaEscala(d, g, d.medir));
+          }
+          return {
+            base: [
+              rotulo(pt((g.O.x + g.fin.x) / 2 + 40, g.O.y - 74), g.nombre, { recta: true, cuerpo: 18, fijo: true })
+            ],
+            pasos: [
+              [
+                seg(pt(g.L.x - 16, g.O.y), pt(g.fin.x + 16, g.O.y), "aux"),
+                rayitaDeEscala(g.O, 13),
+                cifraDeEscala(g.O, "0"),
+                rayitaDeEscala(U[1], 13),
+                cifraDeEscala(U[1], cifraDeLaDivision(d, 1)),
+                con(cota(g.O, U[1], conComa(divisionEnMilimetros(d)) + " mm", -32), { recta: true })
+              ],
+              paso2,
+              arcosConCompas({ c: U[d.nu - 1], t: polar(U[d.nu - 1], g.d, s) }, [
+                arco(g.O, g.d, Math.PI - s, Math.PI + s)
+              ]).trazos.concat([rayitaDeEscala(g.L, 13)]),
+              tales.trazos,
+              paso5
+            ],
+            porque: d.alFinal ? null : aprisa(medidaEnLaEscala(d, g, d.medir))
+          };
+        }
+      };
+
+      // La escala gráfica de una escala cualquiera, cuya división no da
+      // milímetros enteros: se busca cuántas divisiones (`k`) los dan, se
+      // marca ese segmento con la regla y se parte en k con Tales. R1 es la
+      // última marca de esa semirrecta y R, la de la contraescala.
+      function escalaConTalesGeometria(d) {
+        var g = escalaGeometria(d);
+        var e1 = distancia(d.O, d.R1) / d.k;
+        var a1 = angulo(d.O, d.R1);
+        var marcas = [];
+        var j;
+        for (j = 0; j <= d.k; j += 1) {
+          marcas.push(polar(d.O, j * e1, a1));
+        }
+        g.e1 = e1;
+        g.a1 = a1;
+        g.marcas1 = marcas;
+        g.hacia1 = unitario(marcas[d.k], g.divisiones[d.k]);
+        g.segmento = d.k * divisionEnMilimetros(d);
+        return g;
+      }
+
+      // La medida de `medir` sale solo con `alFinal`, en el último paso, más
+      // abajo que la cota del segmento.
+      construcciones["escala-con-tales"] = {
+        lienzo: [600, 300],
+        datos: function () {
+          return {
+            a: 1,
+            n: 75,
+            u: 3,
+            valor: 1,
+            k: 3,
+            nu: 3,
+            px: 9,
+            O: pt(170, 180),
+            R1: pt(386, 45),
+            R: pt(155, 104),
+            medir: 1.5,
+            alFinal: 0
+          };
+        },
+        asas: function (d) {
+          return { R1: d.R1, R: d.R };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g;
+          var union;
+          if (!escalaConDatos(d) || d.k !== d.nu || d.k < 2 || d.k > 6 || !medidaQueVale(d, d.medir)) {
+            return false;
+          }
+          g = escalaConTalesGeometria(d);
+          union = angulo(d.R1, g.divisiones[d.k]);
+          return (
+            g.d >= 60 &&
+            g.d <= 170 &&
+            Math.abs(g.segmento - Math.round(g.segmento)) < 1e-6 &&
+            g.e1 >= 40 &&
+            g.a1 <= -0.3 &&
+            g.a1 >= -1.1 &&
+            union >= 0.45 &&
+            union <= Math.PI - 0.45 &&
+            rayoDeLaContraescalaVale(g, d.R) &&
+            cabe(construcciones["escala-con-tales"].construir(d), 6, [600, 300])
+          );
+        },
+        construir: function (d) {
+          var g = escalaConTalesGeometria(d);
+          var U = g.divisiones;
+          var M = g.marcas1;
+          var s = 15 / g.d;
+          var arcos = [];
+          var rotulos = [];
+          var paralelas = [];
+          var porque = [];
+          var j;
+          for (j = 1; j <= d.k; j += 1) {
+            arcos.push(arquito(M[j - 1], g.e1, g.a1, Math.min(0.3, 12 / g.e1), 1));
+            rotulos.push(rotuloDeMarca(M[j], g.a1, String(j)));
+          }
+          for (j = d.k - 1; j >= 1; j -= 1) {
+            paralelas.push(seg(M[j], avanzar(U[j], g.hacia1, 8), "aux"));
+          }
+          for (j = 1; j < d.k; j += 1) {
+            paralelas.push(rayitaDeEscala(U[j], 13), cifraDeEscala(U[j], cifraDeLaDivision(d, j)));
+          }
+          for (j = 0; j < d.k; j += 1) {
+            porque.push(igual(M[j], M[j + 1]), igual(U[j], U[j + 1], 2));
+          }
+          return {
+            base: [
+              rotulo(pt(g.fin.x - 20, g.O.y - 150), g.nombre, { recta: true, cuerpo: 18, fijo: true })
+            ],
+            pasos: [
+              [
+                seg(pt(g.L.x - 16, g.O.y), pt(g.fin.x + 16, g.O.y), "aux"),
+                rayitaDeEscala(g.O, 13),
+                cifraDeEscala(g.O, "0"),
+                rayitaDeEscala(U[d.k], 13),
+                cifraDeEscala(U[d.k], cifraDeLaDivision(d, d.k)),
+                con(
+                  cota(pt(g.O.x, g.O.y + 30), pt(U[d.k].x, g.O.y + 30), conComa(g.segmento) + " mm", 8),
+                  { recta: true }
+                )
+              ],
+              deprisa(
+                [seg(d.O, polar(d.O, d.k * g.e1 + 18, g.a1), "aux")].concat(
+                  arcosConCompas(null, arcos).trazos,
+                  rotulos
+                ),
+                0.5
+              ).concat([seg(M[d.k], U[d.k], "aux")], paralelas),
+              [abrir(g.O, U[1])].concat(
+                arcosConCompas({ c: g.O, t: U[1] }, [arco(g.O, g.d, Math.PI - s, Math.PI + s)]).trazos,
+                [rayitaDeEscala(g.L, 13)]
+              ),
+              contraescalaConTales(g, d.R).trazos,
+              escalaAcabada(d, g, "sol", null).concat(
+                [cifraDeEscala(g.L, cifraDeLaDivision(d, 1)), unidadDeEscala(d, g)],
+                d.alFinal ? medidaEnLaEscala(d, g, d.medir, 78) : []
+              )
+            ],
+            porque: aprisa(porque)
+          };
+        }
+      };
+
+      // El triángulo universal de escalas: la base AB, de 100 mm, partida en
+      // centímetros; el lado AC, también de 100 mm, que forma con ella el
+      // ángulo `fi` (en grados: 90, el de la escuadra; 60, el equilátero),
+      // con sus centímetros contados desde C y alargado hasta el 12; las
+      // rectas de C a cada centímetro de la base, y las paralelas a la base
+      // por cada marca de AC: la paralela k es la escala k:10. La medida del
+      // porqué está en la paralela `fila`, de AC a la recta del centímetro
+      // `cm`.
+      var ESCALAS_DEL_TRIANGULO = [
+        "", "1:10", "1:5", "3:10", "2:5", "1:2", "3:5", "7:10", "4:5", "9:10", "1:1", "11:10", "6:5"
+      ];
+
+      function trianguloDeEscalasGeometria(d) {
+        var lado = 100 * d.px;
+        var A = d.A;
+        var B = pt(A.x + lado, A.y);
+        var C = polar(A, lado, (-d.fi * Math.PI) / 180);
+        var base = [];
+        var P = [];
+        var Q = [];
+        var j;
+        for (j = 0; j <= 10; j += 1) {
+          base.push(entre(A, B, j / 10));
+        }
+        for (j = 0; j <= 12; j += 1) {
+          P.push(entre(C, A, j / 10));
+          Q.push(entre(C, B, j / 10));
+        }
+        // Hacia fuera de AC: la normal que se aleja de B.
+        var fuera = normalLejos(unitario(C, A), pt(B.x - A.x, B.y - A.y));
+        return { A: A, B: B, C: C, base: base, P: P, Q: Q, fuera: fuera, lado: lado };
+      }
+
+      // La cifra de un centímetro de la base, por encima, del lado en que no
+      // pasa la recta que va a C.
+      function cifraDeLaBase(g, j) {
+        var p = g.base[j];
+        var lado = g.C.x > p.x + 0.5 ? -1 : 1;
+        return rotulo(pt(p.x + lado * 9, p.y - 11), String(j), { recta: true, cuerpo: 13 });
+      }
+
+      function rayitaCruzada(p, u, largo) {
+        var n = pt(-u.y, u.x);
+        return seg(avanzar(p, n, -largo), avanzar(p, n, largo), "aux", { sinRegla: true, ritmo: 0.25 });
+      }
+
+      construcciones["triangulo-de-escalas"] = {
+        datos: function () {
+          return { A: pt(100, 310), px: 2.7, fi: 90, fila: 7, cm: 4, alFinal: 0 };
+        },
+        asas: function (d) {
+          return { C: trianguloDeEscalasGeometria(d).C };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.fi = (-angulo(d.A, p) * 180) / Math.PI;
+          return nuevo;
+        },
+        valido: function (d) {
+          return (
+            d.fi >= 58 &&
+            d.fi <= 95 &&
+            d.px > 0 &&
+            d.fila >= 1 &&
+            d.fila <= 12 &&
+            d.fila !== 10 &&
+            d.cm >= 1 &&
+            d.cm <= 10 &&
+            Math.round(d.fila) === d.fila &&
+            Math.round(d.cm) === d.cm &&
+            cabe(construcciones["triangulo-de-escalas"].construir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: function (d) {
+          var g = trianguloDeEscalasGeometria(d);
+          var uBase = unitario(g.A, g.B);
+          var uLado = unitario(g.C, g.A);
+          var paso1 = [];
+          var paso2 = [seg(g.C, g.P[12], "aux")];
+          var paso3 = [];
+          var paso4 = [];
+          var j;
+          // El 10 de la base es B, y el del lado, A: no llevan cifra.
+          for (j = 0; j <= 10; j += 1) {
+            paso1.push(rayitaCruzada(g.base[j], uBase, 5));
+            if (j < 10) {
+              paso1.push(cifraDeLaBase(g, j));
+            }
+          }
+          for (j = 1; j <= 12; j += 1) {
+            if (j !== 10) {
+              paso2.push(
+                rayitaCruzada(g.P[j], uLado, 5),
+                rotulo(avanzar(g.P[j], g.fuera, 15), String(j), { recta: true, cuerpo: 13 })
+              );
+            }
+          }
+          paso2.push(punto(g.C, "C", avanzar(pt(0, 0), unitario(g.A, g.C), 18)));
+          for (j = 1; j <= 10; j += 1) {
+            paso3.push(seg(g.C, entre(g.C, g.base[j], 1.2), "aux"));
+          }
+          for (j = 1; j <= 12; j += 1) {
+            if (j !== 10) {
+              paso4.push(seg(g.P[j], g.Q[j], "aux"));
+            }
+          }
+          for (j = 1; j <= 12; j += 1) {
+            paso4.push(
+              rotulo(
+                pt(g.Q[j].x + 8 + 3.6 * ESCALAS_DEL_TRIANGULO[j].length, g.Q[j].y - 8),
+                ESCALAS_DEL_TRIANGULO[j],
+                { recta: true, cuerpo: 13 }
+              )
+            );
+          }
+          var X = entre(g.C, g.base[d.cm], d.fila / 10);
+          var medida = [
+            seg(g.A, g.base[d.cm], "guia", { sinRegla: true }),
+            seg(g.P[d.fila], X, "sol"),
+            punto(g.P[d.fila], "", null, { estilo: "sol" }),
+            punto(X, "", null, { estilo: "sol" })
+          ];
+          if (d.alFinal) {
+            paso4 = paso4.concat(medida);
+          }
+          return {
+            base: [
+              seg(g.A, g.B, "dato"),
+              punto(g.A, "A", mezcla(uBase, -4, g.fuera, 17), { forma: "hueco" }),
+              punto(g.B, "", null, { forma: "hueco" })
+            ],
+            pasos: [deprisa(paso1, 0.5), deprisa(paso2, 0.5), deprisa(paso3, 0.45), deprisa(paso4, 0.45)],
+            porque: d.alFinal ? null : aprisa(medida)
+          };
+        }
+      };
+
+      // La escala de transversales sobre una escala gráfica ya hecha: las
+      // perpendiculares de altura h, las diez paralelas, las décimas de la
+      // contraescala llevadas a la paralela de arriba y las transversales,
+      // que unen cada décima de abajo con la siguiente de arriba. La medida
+      // del porqué (`medir`, con dos decimales) se lee en una paralela.
+      function lecturaTransversal(d, g, valor) {
+        var q = valor / d.valor;
+        var enteras = Math.floor(q + 1e-9);
+        var resto = Math.round((q - enteras) * 100);
+        var decimas = Math.floor(resto / 10);
+        var nivel = resto - 10 * decimas;
+        var y = g.O.y - (nivel * d.h) / 10;
+        return {
+          enteras: enteras,
+          decimas: decimas,
+          nivel: nivel,
+          division: pt(g.divisiones[enteras].x, y),
+          transversal: pt(g.O.x - decimas * g.t - (nivel * g.t) / 10, y)
+        };
+      }
+
+      construcciones["escala-transversal"] = {
+        lienzo: [600, 390],
+        datos: function () {
+          return {
+            a: 1,
+            n: 20,
+            u: 3,
+            valor: 1,
+            nu: 3,
+            px: 2.4,
+            O: pt(170, 300),
+            h: 120,
+            medir: 1.46,
+            alFinal: 0
+          };
+        },
+        asas: function (d) {
+          var g = escalaGeometria(d);
+          return { H: pt(g.fin.x, d.O.y - d.h) };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.h = d.O.y - p.y;
+          return nuevo;
+        },
+        valido: function (d) {
+          var q = d.medir / d.valor;
+          if (!escalaConDatos(d) || d.h < 70 || d.h > 175) {
+            return false;
+          }
+          var g = escalaGeometria(d);
+          return (
+            g.d >= 60 &&
+            g.d <= 170 &&
+            q > 0 &&
+            Math.abs(q * 100 - Math.round(q * 100)) < 1e-6 &&
+            Math.floor(q + 1e-9) <= d.nu &&
+            cabe(construcciones["escala-transversal"].construir(d), 6, [600, 390])
+          );
+        },
+        construir: function (d) {
+          var g = escalaGeometria(d);
+          var arriba = function (p) {
+            return pt(p.x, p.y - d.h);
+          };
+          var verticales = [g.L].concat(g.divisiones);
+          var paso1 = verticales.map(function (p) {
+            return seg(p, arriba(p), "aux");
+          });
+          var paso2 = [];
+          var paso3;
+          var paso4 = [];
+          var arcos = [];
+          var j;
+          var y;
+          for (j = 1; j <= 10; j += 1) {
+            y = g.O.y - (j * d.h) / 10;
+            paso2.push(
+              rayitaCruzada(pt(g.L.x, y), pt(0, 1), 4),
+              rotulo(pt(g.L.x - 14, y), String(j), { recta: true, cuerpo: 12 }),
+              seg(pt(g.L.x, y), pt(g.fin.x, y), "aux")
+            );
+          }
+          for (j = 1; j <= 10; j += 1) {
+            arcos.push(arquito(arriba(g.decimas[j - 1]), g.t, Math.PI, Math.min(0.4, 5 / g.t), 1));
+          }
+          paso3 = arcosConCompas(null, arcos).trazos;
+          for (j = 0; j < 10; j += 1) {
+            paso4.push(seg(g.decimas[j], arriba(g.decimas[j + 1]), "aux"));
+          }
+          var lectura = lecturaTransversal(d, g, d.medir);
+          var yAbajo = g.O.y + 40;
+          var medida = [
+            seg(lectura.transversal, lectura.division, "sol"),
+            punto(lectura.transversal, "", null, { estilo: "sol" }),
+            punto(lectura.division, "", null, { estilo: "sol" }),
+            abrir(lectura.division, lectura.transversal),
+            llevar(
+              lectura.division,
+              lectura.transversal,
+              pt(lectura.division.x, yAbajo),
+              pt(lectura.transversal.x, yAbajo)
+            ),
+            con(
+              cota(
+                pt(lectura.transversal.x, yAbajo),
+                pt(lectura.division.x, yAbajo),
+                conComa(d.medir, 2) + " " + g.unidad,
+                6,
+                "sol"
+              ),
+              { recta: true }
+            )
+          ];
+          if (d.alFinal) {
+            paso4 = paso4.concat(medida);
+          }
+          return {
+            base: escalaAcabada(d, g, "dato", pt(g.fin.x - 34, g.O.y - d.h - 22)),
+            pasos: [
+              deprisa(paso1, 0.5),
+              deprisa(paso2, 0.4),
+              deprisa(paso3, 0.4),
+              deprisa(paso4, 0.5)
+            ],
+            porque: d.alFinal ? null : aprisa(medida)
+          };
+        }
+      };
+
+      // Un triángulo dibujado a escala con su escala gráfica: cada lado se
+      // toma con el compás en la escala, que va abajo como dato, y se lleva
+      // al dibujo. Los lados (`ab`, `ac` y `bc`) van en la unidad de la
+      // escala; `fi` es la dirección de AB.
+      function trianguloAEscalaGeometria(d) {
+        var g = escalaGeometria(d);
+        var B = polar(d.A, d.ab * (g.d / d.valor), d.fi);
+        var cortes = cortesCircunferencias(d.A, d.ac * (g.d / d.valor), B, d.bc * (g.d / d.valor));
+        g.B = B;
+        g.C = cortes ? cortes[0] : null;
+        return g;
+      }
+
+      construcciones["triangulo-a-escala"] = {
+        datos: function () {
+          return {
+            a: 1,
+            n: 20,
+            u: 3,
+            valor: 1,
+            nu: 3,
+            px: 2.4,
+            O: pt(170, 350),
+            A: pt(130, 280),
+            fi: 0,
+            ab: 2.6,
+            ac: 2.1,
+            bc: 1.8
+          };
+        },
+        asas: function (d) {
+          return { A: d.A, B: trianguloAEscalaGeometria(d).B };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            nuevo.fi = angulo(d.A, p);
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g;
+          if (!escalaConDatos(d) || Math.abs(d.fi) > 0.35) {
+            return false;
+          }
+          if (![d.ab, d.ac, d.bc].every(function (lado) {
+            return medidaQueVale(d, lado);
+          })) {
+            return false;
+          }
+          g = trianguloAEscalaGeometria(d);
+          return (
+            Boolean(g.C) &&
+            g.C.y < Math.min(d.A.y, g.B.y) - 60 &&
+            Math.max(d.A.y, g.B.y) < g.O.y - 40 &&
+            cabe(construcciones["triangulo-a-escala"].construir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: function (d) {
+          var g = trianguloAEscalaGeometria(d);
+          var A = d.A;
+          var B = g.B;
+          var C = g.C;
+          var u = unitario(A, B);
+          var radio = function (lado) {
+            return lado * (g.d / d.valor);
+          };
+          var tomar = function (lado, centro, hacia, marca) {
+            var toma = tomaEnLaEscala(d, g, lado);
+            var r = radio(lado);
+            var a = angulo(centro, hacia);
+            var medio = marca ? 15 / r : 0.22;
+            return [
+              abrir(toma.division, toma.decima),
+              llevar(toma.division, toma.decima, centro, polar(centro, r, a - medio)),
+              arco(centro, r, a - medio, a + medio)
+            ];
+          };
+          var letras = {
+            A: letraEnHueco(A, [B, C], 18),
+            B: letraEnHueco(B, [A, C], 18),
+            C: letraEnHueco(C, [A, B], 18)
+          };
+          return {
+            base: escalaAcabada(d, g, "dato", pt(g.fin.x - 34, g.O.y - 32)),
+            pasos: [
+              [seg(avanzar(A, u, -30), avanzar(B, u, 30), "aux"), punto(A, "A", letras.A)].concat(
+                tomar(d.ab, A, B, true),
+                [punto(B, "B", letras.B)]
+              ),
+              tomar(d.ac, A, C, false),
+              tomar(d.bc, B, C, false).concat([punto(C, "C", letras.C)]),
+              [seg(A, B, "sol"), seg(A, C, "sol"), seg(B, C, "sol")]
+            ],
+            porque: null
+          };
+        }
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -23062,6 +23865,125 @@ Bachillerato</p>
             punto(P, "P", pt(-13, -14)),
             punto(Q, "Q", pt(13, -14)),
             punto(R, "R", pt(-14, -16))
+          ]);
+        }
+      };
+
+      // ---- Las figuras de la unidad 3, las escalas ----
+
+      // Una misma placa, de 24 por 16 mm y con un agujero de 8 mm de
+      // diámetro, dibujada a 1:2, a 1:1 y a 2:1: el dibujo cambia de tamaño,
+      // pero sus cotas son las mismas, las de la pieza.
+      figuras.clases_de_escalas = {
+        lienzo: [960, 300],
+        trazos: function () {
+          var k = 5;
+          var placa = function (x, escala, nombre) {
+            var suelo = 222;
+            var ancho = 24 * escala * k;
+            var alto = 16 * escala * k;
+            var r = 4 * escala * k;
+            var P = pt(x, suelo);
+            var Q = pt(x + ancho, suelo);
+            var R = pt(x + ancho, suelo - alto);
+            var S = pt(x, suelo - alto);
+            var centro = pt(x + ancho / 2, suelo - alto / 2);
+            var codo = pt(R.x + 12, S.y - 16);
+            return [
+              poligono([P, Q, R, S], "dato"),
+              arco(centro, r, 0, TAU, "dato"),
+              seg(pt(centro.x - r - 7, centro.y), pt(centro.x + r + 7, centro.y), "aux"),
+              seg(pt(centro.x, centro.y - r - 7), pt(centro.x, centro.y + r + 7), "aux"),
+              con(cota(P, Q, "24", 22), { recta: true }),
+              con(cota(S, P, "16", 22), { recta: true }),
+              seg(polar(centro, r, -Math.PI / 4), codo, "aux"),
+              seg(codo, pt(codo.x + 30, codo.y), "aux"),
+              rotulo(pt(codo.x + 16, codo.y - 12), "ø8", { recta: true, cuerpo: 17, fijo: true }),
+              rotulo(pt(x + ancho / 2, 284), nombre, { recta: true, cuerpo: 18, fijo: true })
+            ];
+          };
+          return placa(80, 0.5, "E 1:2").concat(placa(272, 1, "E 1:1"), placa(540, 2, "E 2:1"));
+        }
+      };
+
+      // Las soluciones de los problemas de escalas: la escala 1:50 sacada de
+      // la puerta, con la pared medida en ella; la escala 1:60 sacada con
+      // Tales de los 50 mm de una pared de 3 m, con 2,4 m tomados en ella, y
+      // la planta del aula a 1:50 dentro de su recuadro de 180 por 120 mm.
+      figuras.problemas_escalas = {
+        lienzo: [960, 340],
+        trazos: function () {
+          // 25: la escala 1:50, con la pared de 86 mm encima.
+          var d1 = { a: 1, n: 50, u: 3, valor: 1, nu: 4, px: 2.6, O: pt(84, 182) };
+          var g1 = escalaGeometria(d1);
+          var toma = tomaEnLaEscala(d1, g1, 4.3);
+          var lista = [numero(pt(24, 26), "25")].concat(
+            [
+              seg(pt(toma.decima.x, 104), pt(toma.division.x, 104), "dato"),
+              seg(pt(toma.decima.x, 97), pt(toma.decima.x, 111), "dato"),
+              seg(pt(toma.division.x, 97), pt(toma.division.x, 111), "dato"),
+              medida(pt((toma.decima.x + toma.division.x) / 2, 87), "86 mm")
+            ],
+            escalaAcabada(d1, g1, "sol", pt(g1.fin.x - 30, g1.O.y - 34)),
+            medidaEnLaEscala(d1, g1, 4.3)
+          );
+
+          // 26: los 50 mm de 3 m, en tres con Tales, y la escala 1:60.
+          var d2 = {
+            a: 1,
+            n: 60,
+            u: 3,
+            valor: 1,
+            k: 3,
+            nu: 3,
+            px: 3.6,
+            O: pt(392, 196),
+            R1: pt(392 + 156 * Math.cos(0.56), 196 - 156 * Math.sin(0.56))
+          };
+          var g2 = escalaConTalesGeometria(d2);
+          var j;
+          lista = lista.concat(
+            [numero(pt(344, 26), "26"), seg(d2.O, polar(d2.O, 3 * g2.e1 + 16, g2.a1), "aux")]
+          );
+          for (j = 1; j <= 3; j += 1) {
+            lista.push(arquito(g2.marcas1[j - 1], g2.e1, g2.a1, 0.2, 1));
+          }
+          lista.push(seg(g2.marcas1[3], g2.divisiones[3], "aux"));
+          for (j = 1; j <= 2; j += 1) {
+            lista.push(seg(g2.marcas1[j], avanzar(g2.divisiones[j], g2.hacia1, 8), "aux"));
+          }
+          lista = lista.concat(
+            escalaAcabada(d2, g2, "sol", pt(g2.fin.x + 4, g2.O.y - 92)),
+            [
+              con(
+                cota(pt(g2.O.x, g2.O.y + 30), pt(g2.divisiones[3].x, g2.O.y + 30), "50 mm", 8),
+                { recta: true }
+              )
+            ],
+            medidaEnLaEscala(d2, g2, 2.4, 78)
+          );
+
+          // 27: el aula de 8,4 por 5,6 m, a 1:50, en el recuadro.
+          var k = 1.4;
+          var marco = [pt(682, 64), pt(682 + 180 * k, 64), pt(682 + 180 * k, 64 + 120 * k), pt(682, 64 + 120 * k)];
+          var x0 = 682 + 6 * k;
+          var y0 = 64 + 4 * k;
+          var aula = [pt(x0, y0), pt(x0 + 168 * k, y0), pt(x0 + 168 * k, y0 + 112 * k), pt(x0, y0 + 112 * k)];
+          lista = lista.concat([numero(pt(664, 26), "27")]);
+          for (j = 0; j < 4; j += 1) {
+            lista.push(seg(marco[j], marco[(j + 1) % 4], "guia", { sinRegla: true }));
+          }
+          for (j = 0; j < 4; j += 1) {
+            lista.push(seg(aula[j], aula[(j + 1) % 4], "sol"));
+          }
+          return lista.concat([
+            // Las cifras de las cotas, aparte: en la cota vertical, la que
+            // pone la cota pisaría su línea.
+            cota(aula[3], aula[2], "", 26),
+            medida(pt(x0 + 84 * k, y0 + 112 * k + 44), "8,40"),
+            cota(aula[0], aula[3], "", 26),
+            medida(pt(x0 - 52, y0 + 56 * k), "5,60"),
+            rotulo(pt(682 + 90 * k, 318), "E 1:50", { recta: true, cuerpo: 18, fijo: true })
           ]);
         }
       };
