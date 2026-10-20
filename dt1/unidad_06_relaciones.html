@@ -26112,6 +26112,627 @@ Bachillerato</p>
         construir: rectificacionCircConstruir
       };
 
+      // ---- La unidad 9, las curvas técnicas: óvalo, ovoide, voluta y
+      // espiral (desde el 20 de octubre de 2026) ----
+
+      // Un arco de c entre los puntos p y q, por el lado corto o, con
+      // `largo`, por el largo.
+      function arcoEntre(c, p, q, estilo, largo) {
+        var a0 = angulo(c, p);
+        var v = giro(a0, angulo(c, q));
+        if (largo) {
+          v = v > 0 ? v - TAU : v + TAU;
+        }
+        return arco(c, distancia(c, p), a0, a0 + v, estilo);
+      }
+
+      // El punto de tangencia de dos arcos cuyos centros son c (el del arco
+      // pequeño) y g (el del grande): en la recta gc, más allá de c, a la
+      // distancia r de c.
+      function tangenciaDeArcos(g, c, r) {
+        return avanzar(c, unitario(g, c), r);
+      }
+
+      // La recta de dos centros prolongada más allá del pequeño, hasta el
+      // punto de tangencia y un poco más.
+      function rectaDeCentros(g, t) {
+        return seg(g, avanzar(t, unitario(g, t), 14), "aux");
+      }
+
+      // El segmento pa en n partes iguales con el teorema de Tales: la
+      // semirrecta auxiliar con sus n marcas, la recta de la última a `a` y
+      // las paralelas por las marcas de `cuales`, que dan los puntos.
+      function partesPorTales(p, a, n, cuales, lado) {
+        var e = Math.min(40, (distancia(p, a) * 0.75) / n);
+        var aux = angulo(p, a) - (lado < 0 ? -1 : 1) * 0.5;
+        var u = polar(pt(0, 0), 1, aux);
+        var marca = function (i) {
+          return avanzar(p, u, i * e);
+        };
+        var arcos = [];
+        var j;
+        for (j = 1; j <= n; j += 1) {
+          arcos.push(arquito(marca(j - 1), e, aux, Math.min(0.35, 9 / e), 1));
+        }
+        var puntos = cuales.map(function (k) {
+          return entre(p, a, k / n);
+        });
+        return {
+          puntos: puntos,
+          trazos: [seg(p, avanzar(marca(n), u, 14), "aux")].concat(
+            arcosConCompas(null, arcos).trazos,
+            [seg(marca(n), avanzar(a, unitario(marca(n), a), 10), "aux")],
+            cuales.map(function (k, i) {
+              return seg(marca(k), avanzar(puntos[i], unitario(marca(k), puntos[i]), 12), "aux");
+            })
+          )
+        };
+      }
+
+      // Una curva dibujada con la plantilla de curvas: los puntos, unidos
+      // con trazos cortos.
+      function curvaPor(puntos, estilo) {
+        return puntos.slice(1).map(function (p, i) {
+          return seg(puntos[i], p, estilo || "sol");
+        });
+      }
+
+      // ---- Óvalos ----
+
+      // El óvalo dado el eje mayor AB: AB en tres partes (O₁ y O₂), las
+      // circunferencias de centros O₁ y O₂ y radio AB/3, que se cortan en O₃
+      // y O₄; los arcos grandes, con centros O₃ y O₄ y radio 2AB/3.
+      function ovaloMayorGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.ab * e, A.y);
+        var r = (d.ab * e) / 3;
+        var O1 = pt(A.x + r, A.y);
+        var O2 = pt(A.x + 2 * r, A.y);
+        var h = (r * Math.sqrt(3)) / 2;
+        var O3 = pt(A.x + 1.5 * r, A.y - h);
+        var O4 = pt(A.x + 1.5 * r, A.y + h);
+        return {
+          A: A, B: B, r: r, O1: O1, O2: O2, O3: O3, O4: O4,
+          // Las tangencias: las de arriba, en las rectas de O₄; las de abajo,
+          // en las de O₃.
+          T: [
+            tangenciaDeArcos(O4, O1, r), tangenciaDeArcos(O4, O2, r),
+            tangenciaDeArcos(O3, O1, r), tangenciaDeArcos(O3, O2, r)
+          ]
+        };
+      }
+
+      function ovaloMayorConstruir(d) {
+        var g = ovaloMayorGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var lado = 1;
+        var tales = partesPorTales(g.A, g.B, 3, [1, 2], lado);
+        var circulos = [{ c: g.O1, r: g.r }, { c: g.O2, r: g.r }];
+        var letras = letrasLibres([g.O1, g.O2, g.O3, g.O4],
+          [[g.A, g.B], [g.O4, g.T[0]], [g.O4, g.T[1]], [g.O3, g.T[2]], [g.O3, g.T[3]]], circulos, 17);
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            punto(g.A, "A", pt(-16, 4), { forma: "hueco" }),
+            punto(g.B, "B", pt(16, 4), { forma: "hueco" })
+          ].concat(cifras ? [rotulo(pt((g.A.x + g.B.x) / 2, g.A.y + 2 * g.r * 0.58 + 26), "AB = " + conComa(d.ab), { recta: true, cuerpo: 15 })] : []),
+          pasos: [
+            tales.trazos.concat([punto(g.O1, "O₁", letras[0]), punto(g.O2, "O₂", letras[1])]),
+            [
+              abrir(g.O1, g.A),
+              arco(g.O1, g.r, 0, TAU),
+              llevar(g.O1, g.A, g.O2, g.B),
+              arco(g.O2, g.r, 0, TAU),
+              punto(g.O3, "O₃", letras[2]),
+              punto(g.O4, "O₄", letras[3])
+            ],
+            [
+              rectaDeCentros(g.O4, g.T[0]), rectaDeCentros(g.O4, g.T[1]),
+              rectaDeCentros(g.O3, g.T[2]), rectaDeCentros(g.O3, g.T[3]),
+              punto(g.T[0], "", null), punto(g.T[1], "", null),
+              punto(g.T[2], "", null), punto(g.T[3], "", null)
+            ],
+            [
+              arcoEntre(g.O4, g.T[0], g.T[1], "sol"),
+              arcoEntre(g.O3, g.T[2], g.T[3], "sol"),
+              arcoEntre(g.O1, g.T[0], g.T[2], "sol"),
+              arcoEntre(g.O2, g.T[1], g.T[3], "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["ovalo-eje-mayor"] = {
+        datos: function () {
+          return { A: pt(130, 200), ab: 90, escala: 3.8 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return cabe(ovaloMayorConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: ovaloMayorConstruir
+      };
+
+      // El óvalo dado el eje menor CD: la circunferencia de diámetro CD y su
+      // diámetro perpendicular, cuyos extremos O₁ y O₂ son los centros de
+      // los arcos pequeños; C y D, los de los grandes, de radio CD.
+      function ovaloMenorGeometria(d) {
+        var e = d.escala;
+        var r = (d.cd * e) / 2;
+        var O = d.O;
+        var C = pt(O.x, O.y - r);
+        var D = pt(O.x, O.y + r);
+        var O1 = pt(O.x + r, O.y);
+        var O2 = pt(O.x - r, O.y);
+        var rp = 2 * r - r * Math.SQRT2;
+        return {
+          r: r, O: O, C: C, D: D, O1: O1, O2: O2, rp: rp,
+          T: [
+            tangenciaDeArcos(C, O1, rp), tangenciaDeArcos(C, O2, rp),
+            tangenciaDeArcos(D, O1, rp), tangenciaDeArcos(D, O2, rp)
+          ]
+        };
+      }
+
+      function ovaloMenorConstruir(d) {
+        var g = ovaloMenorGeometria(d);
+        var med = mediatrizHasta(g.C, g.D, [g.r, -g.r], 0.56);
+        return {
+          base: [
+            seg(g.C, g.D, "dato"),
+            punto(g.C, "C", pt(14, -8), { forma: "hueco" }),
+            punto(g.D, "D", pt(14, 14), { forma: "hueco" })
+          ],
+          pasos: [
+            med.trazos.concat([
+              punto(g.O, "O", pt(-12, -12)),
+              abrir(g.O, g.C),
+              arco(g.O, g.r, -Math.PI / 2, 1.5 * Math.PI),
+              punto(g.O1, "O₁", pt(4, -16)),
+              punto(g.O2, "O₂", pt(-6, -16))
+            ]),
+            [
+              rectaDeCentros(g.C, g.T[0]), rectaDeCentros(g.C, g.T[1]),
+              rectaDeCentros(g.D, g.T[2]), rectaDeCentros(g.D, g.T[3])
+            ],
+            [
+              abrir(g.C, g.T[0]),
+              arcoEntre(g.C, g.T[0], g.T[1], "sol"),
+              llevar(g.C, g.T[1], g.D, g.T[3]),
+              arcoEntre(g.D, g.T[2], g.T[3], "sol"),
+              punto(g.T[0], "", null), punto(g.T[1], "", null),
+              punto(g.T[2], "", null), punto(g.T[3], "", null)
+            ],
+            [
+              arcoEntre(g.O1, g.T[0], g.T[2], "sol"),
+              arcoEntre(g.O2, g.T[1], g.T[3], "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["ovalo-eje-menor"] = {
+        datos: function () {
+          return { O: pt(300, 200), cd: 60, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return cabe(ovaloMenorConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: ovaloMenorConstruir
+      };
+
+      // El óvalo dados los dos ejes, AB y CD: la diferencia de los semiejes,
+      // llevada desde C sobre AC, da F; la mediatriz de AF corta a los ejes
+      // en O₁ y O₂, y sus simétricos son O₃ y O₄.
+      function ovaloEjesGeometria(d) {
+        var e = d.escala;
+        var a = d.a * e;
+        var b = d.b * e;
+        var O = d.O;
+        var A = pt(O.x - a, O.y);
+        var B = pt(O.x + a, O.y);
+        var C = pt(O.x, O.y - b);
+        var D = pt(O.x, O.y + b);
+        var E = pt(O.x, O.y - a);
+        var F = avanzar(C, unitario(C, A), a - b);
+        var M = entre(A, F, 0.5);
+        var n = pt(-(F.y - A.y), F.x - A.x);
+        var O1 = corteRectas(M, avanzar(M, unitario(pt(0, 0), n), 10), A, B);
+        var O2 = corteRectas(M, avanzar(M, unitario(pt(0, 0), n), 10), C, D);
+        var O3 = pt(2 * O.x - O1.x, O1.y);
+        var O4 = pt(O2.x, 2 * O.y - O2.y);
+        var r = distancia(O1, A);
+        return {
+          a: a, b: b, O: O, A: A, B: B, C: C, D: D, E: E, F: F, M: M,
+          O1: O1, O2: O2, O3: O3, O4: O4, r: r,
+          T: [
+            tangenciaDeArcos(O2, O1, r), tangenciaDeArcos(O2, O3, r),
+            tangenciaDeArcos(O4, O1, r), tangenciaDeArcos(O4, O3, r)
+          ]
+        };
+      }
+
+      function ovaloEjesConstruir(d) {
+        var g = ovaloEjesGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var alto = sobre(g.O2, g.M, normalArriba(unitario(g.A, g.F)));
+        var med = mediatrizHasta(g.A, g.F, [alto, -Math.abs(alto) * 0.2], 0.62);
+        var aE = angulo(g.O, g.A);
+        var aF = angulo(g.C, g.F);
+        var letras = letrasLibres([g.E, g.F, g.O1, g.O2, g.O3, g.O4],
+          [[g.A, g.B], [g.E, g.D], [g.A, g.C], [g.O2, g.T[0]], [g.O2, g.T[1]], [g.O4, g.T[2]], [g.O4, g.T[3]]],
+          [{ c: g.O, r: g.a }], 17);
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            seg(g.C, g.D, "dato"),
+            punto(g.A, "A", pt(-16, 4), { forma: "hueco" }),
+            punto(g.B, "B", pt(16, 4), { forma: "hueco" }),
+            punto(g.C, "C", pt(12, -10), { forma: "hueco" }),
+            punto(g.D, "D", pt(12, 14), { forma: "hueco" })
+          ].concat(cifras ? [
+            // Los semiejes, con su letra, fuera del óvalo: junto a B y a D.
+            rotulo(pt(g.B.x + 40, g.O.y + 22), "a = " + conComa(d.a), { recta: true, cuerpo: 14 }),
+            rotulo(pt(g.D.x + 64, g.D.y + 12), "b = " + conComa(d.b), { recta: true, cuerpo: 14 })
+          ] : []),
+          pasos: [
+            [
+              seg(g.A, g.C, "aux"),
+              seg(g.C, avanzar(g.E, pt(0, -1), 12), "aux"),
+              abrir(g.O, g.A),
+              arco(g.O, g.a, aE, 1.5 * Math.PI),
+              punto(g.E, "E", letras[0])
+            ],
+            [
+              abrir(g.C, g.E),
+              arco(g.C, g.a - g.b, 1.5 * Math.PI, aF - 0.12),
+              punto(g.F, "F", letras[1])
+            ],
+            med.trazos.concat([
+              seg(g.C, avanzar(g.O2, pt(0, 1), 14), "aux"),
+              punto(g.O1, "O₁", letras[2]),
+              punto(g.O2, "O₂", letras[3]),
+              punto(g.O3, "O₃", letras[4]),
+              punto(g.O4, "O₄", letras[5])
+            ]),
+            [
+              rectaDeCentros(g.O2, g.T[0]), rectaDeCentros(g.O2, g.T[1]),
+              rectaDeCentros(g.O4, g.T[2]), rectaDeCentros(g.O4, g.T[3]),
+              punto(g.T[0], "", null), punto(g.T[1], "", null),
+              punto(g.T[2], "", null), punto(g.T[3], "", null)
+            ],
+            [
+              arcoEntre(g.O2, g.T[0], g.T[1], "sol"),
+              arcoEntre(g.O4, g.T[2], g.T[3], "sol"),
+              arcoEntre(g.O1, g.T[0], g.T[2], "sol"),
+              arcoEntre(g.O3, g.T[1], g.T[3], "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["ovalo-dos-ejes"] = {
+        datos: function () {
+          return { O: pt(300, 210), a: 55, b: 33, escala: 3 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g;
+          if (d.a <= d.b * 1.08) {
+            return false;
+          }
+          g = ovaloEjesGeometria(d);
+          return g.O1.x > g.A.x + 8 && cabe(ovaloEjesConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: ovaloEjesConstruir
+      };
+
+      // ---- Ovoides ----
+
+      // El ovoide dado el eje menor AB: la circunferencia de diámetro AB y su
+      // punto de abajo, E; las rectas AE y BE, prolongadas; los arcos de
+      // centros A y B y radio AB, y el pequeño, de centro E.
+      function ovoideMenorGeometria(d) {
+        var e = d.escala;
+        var r = (d.ab * e) / 2;
+        var O = d.O;
+        var A = pt(O.x - r, O.y);
+        var B = pt(O.x + r, O.y);
+        var E = pt(O.x, O.y + r);
+        var rp = 2 * r - r * Math.SQRT2;
+        return {
+          r: r, O: O, A: A, B: B, E: E, rp: rp,
+          T1: tangenciaDeArcos(B, E, rp),
+          T2: tangenciaDeArcos(A, E, rp),
+          D: pt(O.x, O.y + r + rp)
+        };
+      }
+
+      function ovoideMenorConstruir(d) {
+        var g = ovoideMenorGeometria(d);
+        var med = mediatrizHasta(g.A, g.B, [g.r + 14, -g.r - g.rp - 14], 0.56);
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            punto(g.A, "A", pt(-16, -6), { forma: "hueco" }),
+            punto(g.B, "B", pt(16, -6), { forma: "hueco" })
+          ],
+          pasos: [
+            med.trazos.concat([
+              punto(g.O, "O", pt(12, -12)),
+              abrir(g.O, g.A),
+              arco(g.O, g.r, Math.PI, 0, "aux"),
+              punto(g.E, "E", pt(16, -4))
+            ]),
+            [rectaDeCentros(g.B, g.T1), rectaDeCentros(g.A, g.T2)],
+            [
+              abrir(g.A, g.B),
+              arcoEntre(g.A, g.B, g.T2, "sol"),
+              llevar(g.A, g.T2, g.B, g.A),
+              arcoEntre(g.B, g.A, g.T1, "sol"),
+              punto(g.T1, "", null),
+              punto(g.T2, "", null)
+            ],
+            [
+              arcoEntre(g.E, g.T1, g.T2, "sol"),
+              arco(g.O, g.r, Math.PI, TAU, "sol"),
+              punto(g.D, "D", pt(14, 12))
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["ovoide-eje-menor"] = {
+        datos: function () {
+          return { O: pt(300, 150), ab: 50, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return cabe(ovoideMenorConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: ovoideMenorConstruir
+      };
+
+      // El ovoide dado el eje mayor AB: AB en seis partes; con centro en la
+      // división 2, O₁, la circunferencia de radio dos partes; en la
+      // perpendicular por O₁, a cuatro partes a cada lado, O₂ y O₃, centros
+      // de los arcos laterales de radio seis partes, y en la división 5, O₄,
+      // el del arco pequeño, de radio una parte.
+      function ovoideMayorGeometria(d) {
+        var e = d.escala;
+        var u = (d.ab * e) / 6;
+        var A = d.A;
+        var B = pt(A.x + 6 * u, A.y);
+        var O1 = pt(A.x + 2 * u, A.y);
+        var O2 = pt(O1.x, A.y - 4 * u);
+        var O3 = pt(O1.x, A.y + 4 * u);
+        var O4 = pt(A.x + 5 * u, A.y);
+        return {
+          u: u, A: A, B: B, O1: O1, O2: O2, O3: O3, O4: O4,
+          T: [
+            tangenciaDeArcos(O3, O1, 2 * u), tangenciaDeArcos(O2, O1, 2 * u),
+            tangenciaDeArcos(O3, O4, u), tangenciaDeArcos(O2, O4, u)
+          ]
+        };
+      }
+
+      function ovoideMayorConstruir(d) {
+        var g = ovoideMayorGeometria(d);
+        var tales = partesPorTales(g.A, g.B, 6, [2, 5], 1);
+        var u = g.u;
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            punto(g.A, "A", pt(-16, 4), { forma: "hueco" }),
+            punto(g.B, "B", pt(16, 4), { forma: "hueco" })
+          ],
+          pasos: [
+            tales.trazos.concat([
+              punto(g.O1, "O₁", pt(-14, 16)),
+              punto(g.O4, "O₄", pt(4, 16))
+            ]),
+            anguloDado(g.O1, 0, 90, 1, 4 * u + 14, "", 18).trazos.concat([
+              seg(g.O1, avanzar(g.O3, pt(0, 1), 14), "aux"),
+              // Cuatro partes: de O₁ a B.
+              abrir(g.O1, g.B),
+              girarCorto(g.O1, 4 * u, 0, -Math.PI / 2 - 0.15),
+              arco(g.O1, 4 * u, -Math.PI / 2 - 0.15, -Math.PI / 2 + 0.15),
+              girarCorto(g.O1, 4 * u, -Math.PI / 2 + 0.15, Math.PI / 2 - 0.15),
+              arco(g.O1, 4 * u, Math.PI / 2 - 0.15, Math.PI / 2 + 0.15),
+              punto(g.O2, "O₂", pt(16, -18)),
+              punto(g.O3, "O₃", pt(16, 17))
+            ]),
+            [
+              rectaDeCentros(g.O3, g.T[0]), rectaDeCentros(g.O2, g.T[1]),
+              rectaDeCentros(g.O3, g.T[2]), rectaDeCentros(g.O2, g.T[3]),
+              punto(g.T[0], "", null), punto(g.T[1], "", null),
+              punto(g.T[2], "", null), punto(g.T[3], "", null)
+            ],
+            [
+              arcoEntre(g.O1, g.T[0], g.T[1], "sol", true),
+              arcoEntre(g.O3, g.T[0], g.T[2], "sol"),
+              arcoEntre(g.O2, g.T[1], g.T[3], "sol"),
+              arcoEntre(g.O4, g.T[2], g.T[3], "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["ovoide-eje-mayor"] = {
+        datos: function () {
+          return { A: pt(170, 200), ab: 72, escala: 3.5 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return cabe(ovoideMayorConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: ovoideMayorConstruir
+      };
+
+      // ---- Voluta y espiral ----
+
+      // La voluta de cuatro centros: los vértices de un cuadrado de lado l,
+      // P₁, P₂, P₃ y P₄, en sentido contrario a las agujas del reloj; cada
+      // arco, de un cuarto de vuelta, con centro en el vértice siguiente y
+      // radio una vez el lado más que el anterior.
+      function volutaGeometria(d) {
+        var l = d.l * d.escala;
+        var P1 = d.P;
+        var P = [P1, pt(P1.x + l, P1.y), pt(P1.x + l, P1.y - l), pt(P1.x, P1.y - l)];
+        var arcos = [];
+        var k;
+        var a0 = -Math.PI / 2;
+        for (k = 0; k < 4 * d.vueltas; k += 1) {
+          arcos.push({ c: P[k % 4], r: (k + 1) * l, a0: a0, a1: a0 - Math.PI / 2 });
+          a0 -= Math.PI / 2;
+        }
+        return { l: l, P: P, arcos: arcos };
+      }
+
+      function volutaConstruir(d) {
+        var g = volutaGeometria(d);
+        var P = g.P;
+        var rayos = P.map(function (p, i) {
+          var q = P[(i + 1) % 4];
+          var lejos = (4 * d.vueltas + 1) * g.l + 10;
+          return seg(q, avanzar(q, unitario(p, q), -lejos), "aux");
+        });
+        var tramo = function (desde, hasta) {
+          return g.arcos.slice(desde, hasta).map(function (a) {
+            return arco(a.c, a.r, a.a0, a.a1, "sol");
+          });
+        };
+        return {
+          base: poligonoDe(P, "dato").concat(P.map(function (p, i) {
+            return punto(p, String(i + 1), polar(pt(0, 0), 15, angulo(entre(P[0], P[2], 0.5), p)));
+          })),
+          pasos: [
+            deprisa(rayos, 0.5),
+            tramo(0, 4),
+            tramo(4, 4 * d.vueltas)
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["voluta"] = {
+        datos: function () {
+          return { P: pt(280, 215), l: 6, escala: 3, vueltas: 2 };
+        },
+        asas: function (d) {
+          return { P: d.P };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.vueltas >= 2 && cabe(volutaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: volutaConstruir
+      };
+
+      // La espiral de Arquímedes de paso p: la circunferencia de radio p,
+      // dividida en doce partes; el paso, en otras doce, y cada división,
+      // llevada con el compás a su radio. Los doce puntos se unen con la
+      // plantilla de curvas.
+      function espiralGeometria(d) {
+        var p = d.paso * d.escala;
+        var a0 = 0;
+        var puntos = [];
+        var k;
+        for (k = 1; k <= 12; k += 1) {
+          puntos.push(polar(d.O, (p * k) / 12, a0 - (k * TAU) / 12));
+        }
+        var curva = [];
+        for (k = 0; k <= 240; k += 1) {
+          curva.push(polar(d.O, (p * k) / 240, a0 - (k * TAU) / 240));
+        }
+        return { p: p, puntos: puntos, curva: curva };
+      }
+
+      function espiralConstruir(d) {
+        var g = espiralGeometria(d);
+        var O = d.O;
+        var radios = [];
+        var k;
+        for (k = 0; k < 12; k += 1) {
+          radios.push(seg(O, polar(O, g.p + 10, -(k * TAU) / 12), "aux"));
+        }
+        var marcas = [];
+        for (k = 1; k <= 12; k += 1) {
+          marcas.push(seg(polar(O, (g.p * k) / 12, 0.04), polar(O, (g.p * k) / 12, -0.04), "aux", { sinRegla: true }));
+        }
+        var arcos = g.puntos.map(function (q, i) {
+          var r = (g.p * (i + 1)) / 12;
+          return arco(O, r, 0, -((i + 1) * TAU) / 12);
+        });
+        return {
+          base: [
+            punto(O, "O", pt(-12, 14), { forma: "hueco" }),
+            seg(O, polar(O, g.p, 0), "dato"),
+            punto(polar(O, g.p, 0), "P", pt(10, 14), { forma: "hueco" })
+          ],
+          pasos: [
+            [arco(O, g.p, 0, TAU, "aux")].concat(deprisa(radios, 0.4)),
+            deprisa(marcas, 0.4),
+            deprisa(arcos.concat(g.puntos.map(function (q, i) {
+              // El 12 es P, que ya tiene su letra debajo: el número, encima.
+              return punto(q, String(i + 1), i === 11 ? pt(12, -14) : polar(pt(0, 0), 12, angulo(O, q) + 0.5));
+            })), 0.5),
+            curvaPor(g.curva, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["espiral-de-arquimedes"] = {
+        datos: function () {
+          return { O: pt(300, 200), paso: 40, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.paso * d.escala > 80 && cabe(espiralConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: espiralConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -28521,6 +29142,263 @@ Bachillerato</p>
             arcoMm(b3, e3, 0, 0, 30, 0, 360, "dato"),
             arcoMm(b3, e3, 60, 0, 12, 0, 360, "dato"),
             arcoMm(b3, e3, -60, 0, 12, 0, 360, "dato")
+          );
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 9, las curvas técnicas ----
+
+      // La hélice cilíndrica: a la izquierda, el alzado del cilindro con la
+      // hélice (vista delante y a trazos detrás) y, debajo, la planta, con la
+      // circunferencia de la base en ocho partes; a la derecha, el desarrollo
+      // del cilindro, donde la hélice es la diagonal de un rectángulo de base
+      // 2πR y altura el paso.
+      figuras.helice = {
+        lienzo: [960, 410],
+        trazos: function () {
+          var lista = [];
+          var R = 50;
+          var p = 200;
+          var xc = 190;
+          var base = 250;
+          var arriba = base - p;
+          var yP = 320;
+          var k;
+          var enPlanta = function (t) {
+            var a = Math.PI + t * TAU;
+            return pt(xc + R * Math.cos(a), yP - R * Math.sin(a));
+          };
+          var enAlzado = function (t) {
+            return pt(xc + R * Math.cos(Math.PI + t * TAU), base - t * p);
+          };
+          var delante = function (t) {
+            return Math.sin(Math.PI + t * TAU) < -1e-9;
+          };
+          lista.push(
+            seg(pt(xc - R, base), pt(xc + R, base), "dato"),
+            seg(pt(xc - R, arriba), pt(xc + R, arriba), "dato"),
+            seg(pt(xc - R, base), pt(xc - R, arriba), "dato"),
+            seg(pt(xc + R, base), pt(xc + R, arriba), "dato"),
+            arco(pt(xc, yP), R, 0, TAU, "dato")
+          );
+          for (k = 0; k < 8; k += 1) {
+            var q = enPlanta(k / 8);
+            var h = enAlzado(k / 8);
+            lista.push(
+              seg(q, pt(q.x, h.y), "guia", { sinRegla: true }),
+              seg(pt(xc - R - 10, h.y), pt(xc - R, h.y), "aux"),
+              punto(q, "", null),
+              punto(h, "", null)
+            );
+          }
+          lista.push(seg(pt(xc - R - 10, arriba), pt(xc - R, arriba), "aux"));
+          // La parte de delante, entera; la de detrás, a trazos de 7 px
+          // con huecos de 5, medidos a lo largo de la curva.
+          var paso = 1 / 160;
+          var andado = 0;
+          for (k = 0; k < 160; k += 1) {
+            var t0 = k * paso;
+            var t1 = t0 + paso;
+            if (delante((t0 + t1) / 2)) {
+              lista.push(seg(enAlzado(t0), enAlzado(t1), "sol"));
+            } else {
+              var a = enAlzado(t0);
+              var b = enAlzado(t1);
+              if (andado % 12 < 7) {
+                lista.push(seg(a, b, "aux"));
+              }
+              andado += Math.hypot(b.x - a.x, b.y - a.y);
+            }
+          }
+          lista.push(
+            rotulo(pt(xc - R - 24, (base + arriba) / 2), "p", null),
+            pieDeFigura(xc, 396, "La hélice: alzado y planta")
+          );
+          // El desarrollo: 2πR = 2π·50 ≈ 314 px.
+          var x0 = 450;
+          var largo = TAU * R;
+          lista.push(
+            seg(pt(x0, base), pt(x0 + largo, base), "dato"),
+            seg(pt(x0, arriba), pt(x0 + largo, arriba), "dato"),
+            seg(pt(x0, base), pt(x0, arriba), "dato"),
+            seg(pt(x0 + largo, base), pt(x0 + largo, arriba), "dato")
+          );
+          for (k = 1; k < 8; k += 1) {
+            lista.push(
+              seg(pt(x0 + (k * largo) / 8, base), pt(x0 + (k * largo) / 8, arriba), "aux"),
+              punto(pt(x0 + (k * largo) / 8, base - (k * p) / 8), "", null)
+            );
+          }
+          lista.push(
+            seg(pt(x0, base), pt(x0 + largo, arriba), "sol"),
+            rotulo(pt(x0 + largo / 2, base + 20), "2πR", { recta: true, cuerpo: 15 }),
+            rotulo(pt(x0 + largo + 18, (base + arriba) / 2), "p", null),
+            pieDeFigura(x0 + largo / 2, 396, "El cilindro desarrollado: la hélice es la diagonal")
+          );
+          return lista;
+        }
+      };
+
+      // Las soluciones de los problemas: el arco carpanel de 90 por 30, el
+      // ovoide de 40 mm de ancho y la voluta de dos vueltas.
+      figuras.problemas_curvas = {
+        lienzo: [960, 320],
+        trazos: function () {
+          var lista = [];
+          var e = 2.8;
+          // El arco carpanel, medio óvalo de semiejes 45 y 30.
+          var b = pt(165, 205);
+          var O1 = 21.51;
+          var O2 = 32.27;
+          var r = 23.49;
+          var Rg = 62.27;
+          var u = [O1 / Math.hypot(O1, O2), O2 / Math.hypot(O1, O2)];
+          var T = [-O1 - r * u[0], r * u[1]];
+          var gT = Math.atan2(T[1], -T[0] - O1) / GRADO;
+          var gG = Math.atan2(T[1] + O2, -T[0]) / GRADO;
+          lista.push(numero(pt(24, 26), "21"));
+          lista.push(
+            seg(puntoMm(b, e, -55, 0), puntoMm(b, e, 55, 0), "aux"),
+            seg(puntoMm(b, e, 0, -O2 - 4), puntoMm(b, e, 0, 36), "aux"),
+            arcoMm(b, e, -O1, 0, r, 180 - gT, 180, "sol"),
+            arcoMm(b, e, O1, 0, r, 0, gT, "sol"),
+            arcoMm(b, e, 0, -O2, Rg, gG, 180 - gG, "sol"),
+            punto(puntoMm(b, e, -O1, 0), "", null),
+            punto(puntoMm(b, e, O1, 0), "", null),
+            punto(puntoMm(b, e, 0, -O2), "", null),
+            seg(puntoMm(b, e, 0, -O2), puntoMm(b, e, T[0], T[1]), "aux"),
+            seg(puntoMm(b, e, 0, -O2), puntoMm(b, e, -T[0], T[1]), "aux"),
+            medida(pt(b.x - 98, b.y + 16), "90"),
+            medida(pt(b.x + 14, b.y - 52), "30")
+          );
+          // Los dos ovoides de 40 mm de ancho: a la izquierda, el del eje
+          // menor, de 51,7 mm de largo; a la derecha, el del eje mayor, de 60.
+          var c = pt(420, 110);
+          var e2 = 2.2;
+          var rr = 20;
+          var rp = 40 - 20 * Math.SQRT2;
+          lista.push(numero(pt(344, 26), "22"));
+          lista.push(
+            arcoMm(c, e2, 0, 0, rr, 0, 180, "sol"),
+            arcoMm(c, e2, -rr, 0, 2 * rr, -45, 0, "sol"),
+            arcoMm(c, e2, rr, 0, 2 * rr, 180, 225, "sol"),
+            arcoMm(c, e2, 0, -rr, rp, 225, 315, "sol"),
+            seg(puntoMm(c, e2, -rr - 6, 0), puntoMm(c, e2, rr + 6, 0), "aux"),
+            seg(puntoMm(c, e2, 0, rr + 6), puntoMm(c, e2, 0, -rr - rp - 6), "aux"),
+            punto(puntoMm(c, e2, -rr, 0), "", null),
+            punto(puntoMm(c, e2, rr, 0), "", null),
+            punto(puntoMm(c, e2, 0, -rr), "", null),
+            medida(pt(c.x - 24, c.y - 14), "40"),
+            medida(pt(c.x + 66, c.y + 36), "51,7")
+          );
+          // El del eje mayor: AB = 60 en seis partes de 10; el círculo de
+          // radio 20 con centro en la división 2, los arcos de radio 60 con
+          // centros a 40 de ella y el pequeño, de radio 10, en la división 5.
+          var m = pt(560, 110);
+          var gl = Math.atan2(0.6, 0.8) / GRADO;
+          lista.push(
+            arcoMm(m, e2, 0, 0, 20, 0, 180, "sol"),
+            arcoMm(m, e2, -40, 0, 60, -gl, 0, "sol"),
+            arcoMm(m, e2, 40, 0, 60, 180, 180 + gl, "sol"),
+            arcoMm(m, e2, 0, -30, 10, 180 + gl, 360 - gl, "sol"),
+            seg(puntoMm(m, e2, -26, 0), puntoMm(m, e2, 26, 0), "aux"),
+            seg(puntoMm(m, e2, 0, 26), puntoMm(m, e2, 0, -46), "aux"),
+            punto(puntoMm(m, e2, 0, 0), "", null),
+            punto(puntoMm(m, e2, 0, -30), "", null),
+            medida(pt(m.x + 62, m.y + 36), "60")
+          );
+          // La voluta de dos vueltas sobre un cuadrado de 5 mm.
+          var v = pt(800, 175);
+          var l = 5 * 1.7;
+          var P = [v, pt(v.x + l, v.y), pt(v.x + l, v.y - l), pt(v.x, v.y - l)];
+          var a0 = -Math.PI / 2;
+          var k;
+          lista.push(numero(pt(664, 26), "23"));
+          lista = lista.concat(poligonoDe(P, "dato"));
+          for (k = 0; k < 8; k += 1) {
+            lista.push(arco(P[k % 4], (k + 1) * l, a0, a0 - Math.PI / 2, "sol"));
+            a0 -= Math.PI / 2;
+          }
+          lista.push(
+            seg(P[3], polar(P[3], 8 * l, -Math.PI / 4), "aux"),
+            medida(polar(P[3], 5.2 * l, -Math.PI / 4 - 0.32), "40")
+          );
+          return lista;
+        }
+      };
+
+      // Las dos actividades del libro: los dos medios óvalos de su figura
+      // 13, con arcos de 20 y 15 mm, y el arco carpanel de 120 por 50 de su
+      // figura 14, con su grueso de 5 mm.
+      figuras.curvas_del_libro = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var e = 1.9;
+          var b = pt(200, 205);
+          // En milímetros, con el eje de abajo en y = 0: los arcos de 20 en
+          // (±50, 0), los de 15 en (±35, 20), el grande de abajo con el
+          // centro en (0; 26,67) y el de arriba en (0; −36,25).
+          var ci = 80 / 3;
+          var cs = -36.25;
+          var Ri = ci + 50;
+          var Rs = 45 - cs;
+          var gi = Math.atan2(-ci, 50) / GRADO;
+          var gs = Math.atan2(20 - cs, 35) / GRADO;
+          lista.push(numero(pt(24, 26), "24"));
+          lista.push(
+            seg(puntoMm(b, e, -78, 0), puntoMm(b, e, 78, 0), "guia", { sinRegla: true }),
+            seg(puntoMm(b, e, -78, 20), puntoMm(b, e, 78, 20), "guia", { sinRegla: true }),
+            seg(puntoMm(b, e, 0, -56), puntoMm(b, e, 0, 50), "guia", { sinRegla: true }),
+            arcoMm(b, e, 0, ci, Ri, 180 - gi, 360 + gi, "sol"),
+            arcoMm(b, e, 0, cs, Rs, gs, 180 - gs, "sol"),
+            arcoMm(b, e, 50, 0, 20, gi, 90, "sol"),
+            arcoMm(b, e, -50, 0, 20, 90, 180 - gi, "sol"),
+            arcoMm(b, e, 35, 20, 15, 0, gs, "sol"),
+            arcoMm(b, e, -35, 20, 15, 180 - gs, 180, "sol"),
+            seg(puntoMm(b, e, 0, ci), puntoMm(b, e, 50 + 20 * Math.cos(gi * GRADO), 20 * Math.sin(gi * GRADO)), "aux"),
+            seg(puntoMm(b, e, 0, cs), puntoMm(b, e, 35 + 15 * Math.cos(gs * GRADO), 20 + 15 * Math.sin(gs * GRADO)), "aux"),
+            punto(puntoMm(b, e, 50, 0), "", null),
+            punto(puntoMm(b, e, -50, 0), "", null),
+            punto(puntoMm(b, e, 35, 20), "", null),
+            punto(puntoMm(b, e, -35, 20), "", null),
+            punto(puntoMm(b, e, 0, ci), "", null),
+            punto(puntoMm(b, e, 0, cs), "", null),
+            medida(pt(b.x - 50, b.y + 16), "100")
+          );
+          // El arco carpanel de 120 por 50 y, 5 mm por dentro, el de 110
+          // por 45, con los mismos centros.
+          var c = pt(710, 275);
+          var e2 = 2;
+          var O1 = 15.68;
+          var O2 = 18.81;
+          var r = 44.32;
+          var Rg = 68.81;
+          var u = [O1 / Math.hypot(O1, O2), O2 / Math.hypot(O1, O2)];
+          var T = [-O1 - r * u[0], r * u[1]];
+          var gT = Math.atan2(T[1], -T[0] - O1) / GRADO;
+          var gG = Math.atan2(T[1] + O2, -T[0]) / GRADO;
+          lista.push(numero(pt(504, 26), "25"));
+          lista.push(
+            seg(puntoMm(c, e2, -66, 0), puntoMm(c, e2, 66, 0), "aux"),
+            seg(puntoMm(c, e2, 0, -O2 - 4), puntoMm(c, e2, 0, 56), "aux")
+          );
+          [0, 5].forEach(function (menos) {
+            lista.push(
+              arcoMm(c, e2, -O1, 0, r - menos, 180 - gT, 180, "sol"),
+              arcoMm(c, e2, O1, 0, r - menos, 0, gT, "sol"),
+              arcoMm(c, e2, 0, -O2, Rg - menos, gG, 180 - gG, "sol")
+            );
+          });
+          lista.push(
+            punto(puntoMm(c, e2, -O1, 0), "", null),
+            punto(puntoMm(c, e2, O1, 0), "", null),
+            punto(puntoMm(c, e2, 0, -O2), "", null),
+            seg(puntoMm(c, e2, 0, -O2), puntoMm(c, e2, T[0], T[1]), "aux"),
+            seg(puntoMm(c, e2, 0, -O2), puntoMm(c, e2, -T[0], T[1]), "aux"),
+            medida(pt(c.x - 80, c.y + 16), "120"),
+            medida(pt(c.x + 14, c.y - 62), "50")
           );
           return lista;
         }
