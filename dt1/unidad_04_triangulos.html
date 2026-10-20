@@ -28031,6 +28031,285 @@ Bachillerato</p>
         construir: parabolaHacesConstruir
       };
 
+      // ---- La unidad 11, los sistemas de representación (desde el 20 de
+      // octubre de 2026) ----
+
+      // Una arista oculta del cubo, a trazos verdes de 8 px con huecos de 6.
+      function aristaOculta(p, q) {
+        var largo = distancia(p, q);
+        var u = unitario(p, q);
+        var lista = [];
+        var t = 0;
+        while (t < largo) {
+          lista.push(seg(avanzar(p, u, t), avanzar(p, u, Math.min(t + 8, largo)), "sol"));
+          t += 14;
+        }
+        return lista;
+      }
+
+      // El cubo isométrico de arista l (en mm, con la escala): el vértice A,
+      // abajo y delante; los ejes, el vertical y dos a 30° de la horizontal;
+      // con `reducida`, la arista se lleva multiplicada por √(2/3). El
+      // octavo vértice, C, queda justo detrás de E y no se dibuja.
+      function cuboIsometricoGeometria(d) {
+        var k = d.reducida ? Math.sqrt(2 / 3) : 1;
+        var l = d.l * d.escala * k;
+        var A = d.A;
+        var ux = polar(pt(0, 0), 1, Math.PI + Math.PI / 6);
+        var uy = polar(pt(0, 0), 1, -Math.PI / 6);
+        var uz = pt(0, -1);
+        var mas = function (p, u, f) {
+          return avanzar(p, u, l * (f === undefined ? 1 : f));
+        };
+        var B = mas(A, uy);
+        var D = mas(A, ux);
+        var E = mas(A, uz);
+        var C = mas(B, ux);
+        var F = mas(B, uz);
+        var H = mas(D, uz);
+        var G = mas(C, uz);
+        return { k: k, l: l, A: A, B: B, C: C, D: D, E: E, F: F, G: G, H: H, ux: ux, uy: uy, uz: uz };
+      }
+
+      function cuboIsometricoConstruir(d) {
+        var g = cuboIsometricoGeometria(d);
+        var largo = g.l + 40;
+        // Las letras, lejos de los ejes, de las aristas y del arco del compás.
+        var obstaculos = [
+          [g.A, avanzar(g.A, g.ux, largo)], [g.A, avanzar(g.A, g.uy, largo)], [g.A, avanzar(g.A, g.uz, largo)],
+          [g.B, g.F], [g.D, g.H], [g.E, g.F], [g.E, g.H], [g.F, g.G], [g.H, g.G]
+        ];
+        var letras = letrasLibres([g.B, g.D, g.E, g.F, g.H, g.G], obstaculos, [{ c: g.A, r: g.l }], 18);
+        var ejeX = anguloDado(g.A, Math.PI, 30, -1, largo, "30°", 34);
+        var ejeY = anguloDado(g.A, 0, 30, 1, largo, "30°", 34);
+        var cifras = Boolean(d.cifras);
+        return {
+          base: [
+            seg(pt(g.A.x - largo, g.A.y), pt(g.A.x + largo, g.A.y), "guia", { sinRegla: true }),
+            punto(g.A, "A", pt(0, 22), { forma: "hueco" })
+          ],
+          pasos: [
+            [seg(g.A, avanzar(g.A, g.uz, largo), "aux")].concat(ejeX.trazos, ejeY.trazos, [
+              rotulo(avanzar(g.A, g.uz, largo + 12), "Z"),
+              rotulo(avanzar(g.A, g.ux, largo + 14), "X"),
+              rotulo(avanzar(g.A, g.uy, largo + 14), "Y")
+            ]),
+            arcosConCompas(null, [
+              arco(g.A, g.l, -Math.PI / 6 - 0.12, -Math.PI / 6 + 0.12),
+              arco(g.A, g.l, -Math.PI / 2 - 0.12, -Math.PI / 2 + 0.12),
+              arco(g.A, g.l, Math.PI + Math.PI / 6 - 0.12, Math.PI + Math.PI / 6 + 0.12)
+            ]).trazos.concat([
+              punto(g.B, "B", letras[0]),
+              punto(g.E, "E", letras[2]),
+              punto(g.D, "D", letras[1])
+            ], cifras ? [rotulo(avanzar(entre(g.A, g.B, 0.5), pt(0.5, 0.866), 16), conComa(d.l * g.k), { recta: true, cuerpo: 14 })] : []),
+            [
+              seg(g.B, avanzar(g.F, g.uz, 10), "aux"),
+              seg(g.D, avanzar(g.H, g.uz, 10), "aux"),
+              seg(g.E, avanzar(g.F, g.uy, 10), "aux"),
+              seg(g.E, avanzar(g.H, g.ux, 10), "aux"),
+              seg(g.F, avanzar(g.G, g.ux, 10), "aux"),
+              seg(g.H, avanzar(g.G, g.uy, 10), "aux"),
+              punto(g.F, "F", letras[3]),
+              punto(g.H, "H", letras[4]),
+              punto(g.G, "G", letras[5])
+            ],
+            [
+              seg(g.A, g.B, "sol"), seg(g.A, g.D, "sol"), seg(g.A, g.E, "sol"),
+              seg(g.B, g.F, "sol"), seg(g.D, g.H, "sol"),
+              seg(g.E, g.F, "sol"), seg(g.E, g.H, "sol"),
+              seg(g.F, g.G, "sol"), seg(g.H, g.G, "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["cubo-isometrico"] = {
+        datos: function () {
+          return { A: pt(300, 330), l: 40, escala: 3, reducida: 0 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.l > 0 && cabe(cuboIsometricoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: cuboIsometricoConstruir
+      };
+
+      // El cubo en perspectiva caballera: la cara ABFE, paralela al cuadro,
+      // en verdadera magnitud; las aristas de profundidad, a `angulo` grados
+      // de la horizontal y multiplicadas por el coeficiente c.
+      function cuboCaballeraGeometria(d) {
+        var l = d.l * d.escala;
+        var p = l * d.c;
+        var A = d.A;
+        var w = polar(pt(0, 0), 1, -d.angulo * GRADO);
+        var B = pt(A.x + l, A.y);
+        var E = pt(A.x, A.y - l);
+        var F = pt(A.x + l, A.y - l);
+        return {
+          l: l, p: p, w: w, A: A, B: B, E: E, F: F,
+          D: avanzar(A, w, p), C: avanzar(B, w, p), H: avanzar(E, w, p), G: avanzar(F, w, p)
+        };
+      }
+
+      function cuboCaballeraConstruir(d) {
+        var g = cuboCaballeraGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var eje = anguloDado(g.A, 0, d.angulo, 1, g.p + 40, conComa(d.angulo) + "°", 30);
+        var letraD = letrasLibres([g.D], [[g.A, avanzar(g.A, g.w, g.p + 40)], [g.D, g.C], [g.D, g.H]], [{ c: g.A, r: g.p }], 17)[0];
+        // La cifra de la profundidad, al otro lado de AD que la del ángulo.
+        var normalAD = polar(pt(0, 0), 1, -d.angulo * GRADO - Math.PI / 2);
+        var ladoCifra = sobre(eje.letra, g.A, normalAD) > 0 ? pt(-normalAD.x, -normalAD.y) : normalAD;
+        return {
+          base: [
+            seg(pt(g.A.x - 30, g.A.y), pt(g.B.x + 60, g.A.y), "guia", { sinRegla: true }),
+            punto(g.A, "A", pt(-14, 14), { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(g.A, g.B, "aux"), seg(g.B, g.F, "aux"), seg(g.F, g.E, "aux"), seg(g.E, g.A, "aux"),
+              recto(g.A, g.B, g.E),
+              punto(g.B, "B", pt(10, 16)),
+              punto(g.F, "F", pt(12, 14)),
+              punto(g.E, "E", pt(-14, -6))
+            ].concat(cifras ? [rotulo(pt((g.A.x + g.B.x) / 2, g.A.y + 18), conComa(d.l), { recta: true, cuerpo: 14 })] : []),
+            eje.trazos.concat([
+              abrir(g.A, polar(g.A, g.p, -d.angulo * GRADO - 0.15)),
+              arco(g.A, g.p, -d.angulo * GRADO - 0.15, -d.angulo * GRADO + 0.15),
+              punto(g.D, "D", letraD)
+            ], cifras ? [rotulo(avanzar(entre(g.A, g.D, 0.5), ladoCifra, 14), conComa(Math.round(d.l * d.c * 10) / 10), { recta: true, cuerpo: 14 })] : []),
+            [
+              seg(g.B, avanzar(g.C, g.w, 10), "aux"),
+              seg(g.F, avanzar(g.G, g.w, 10), "aux"),
+              seg(g.E, avanzar(g.H, g.w, 10), "aux"),
+              seg(g.C, g.G, "aux"), seg(g.G, g.H, "aux"),
+              punto(g.C, "C", pt(14, 8)),
+              punto(g.G, "G", pt(12, -8)),
+              punto(g.H, "H", pt(-6, -16))
+            ],
+            [
+              seg(g.A, g.B, "sol"), seg(g.B, g.F, "sol"), seg(g.F, g.E, "sol"), seg(g.E, g.A, "sol"),
+              seg(g.B, g.C, "sol"), seg(g.C, g.G, "sol"), seg(g.F, g.G, "sol"),
+              seg(g.E, g.H, "sol"), seg(g.H, g.G, "sol")
+            ].concat(aristaOculta(g.A, g.D), aristaOculta(g.D, g.C), aristaOculta(g.D, g.H))
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["cubo-caballera"] = {
+        datos: function () {
+          return { A: pt(200, 320), l: 40, escala: 4, angulo: 45, c: 0.5 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.c > 0.2 && d.c <= 1 && d.angulo > 10 && d.angulo < 80 && cabe(cuboCaballeraConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: cuboCaballeraConstruir
+      };
+
+      // El cubo en perspectiva cónica frontal: la cara delantera ABFE, en el
+      // cuadro y en verdadera magnitud, sobre la línea de tierra; el punto
+      // principal P, en la línea de horizonte, y el punto de distancia D, a
+      // la distancia d de P. La profundidad se mide con D: la recta que une
+      // D con el punto M de la línea de tierra, a l de A del otro lado, corta
+      // a AP en el vértice de atrás A′.
+      function cuboConicoGeometria(d) {
+        var e = d.escala;
+        var l = d.l * e;
+        var A = d.A;
+        var P = d.P;
+        var Dd = pt(P.x + d.d * e, P.y);
+        var B = pt(A.x + l, A.y);
+        var E = pt(A.x, A.y - l);
+        var F = pt(A.x + l, A.y - l);
+        var M = pt(A.x - l, A.y);
+        var A2 = corteRectas(M, Dd, A, P);
+        var hacia = function (q) {
+          // El punto de la recta qP a la misma profundidad que A′.
+          var t = distancia(A, A2) / distancia(A, P);
+          return entre(q, P, t);
+        };
+        return {
+          l: l, A: A, B: B, E: E, F: F, P: P, D: Dd, M: M, A2: A2,
+          B2: hacia(B), E2: hacia(E), F2: hacia(F)
+        };
+      }
+
+      function cuboConicoConstruir(d) {
+        var g = cuboConicoGeometria(d);
+        var lt = g.A.y;
+        var fuga = function (q, hasta) {
+          return seg(q, avanzar(hasta || g.P, unitario(q, hasta || g.P), hasta ? 10 : 0), "guia", { sinRegla: true });
+        };
+        return {
+          base: [
+            seg(pt(12, lt), pt(ANCHO - 12, lt), "dato"),
+            rotulo(pt(ANCHO - 30, lt + 16), "LT", { recta: true, cuerpo: 14 }),
+            seg(pt(12, g.P.y), pt(ANCHO - 12, g.P.y), "dato"),
+            rotulo(pt(ANCHO - 30, g.P.y + 18), "LH", { recta: true, cuerpo: 14 }),
+            punto(g.P, "P", pt(0, -16), { forma: "hueco" }),
+            punto(g.D, "D", pt(0, -16), { forma: "hueco" }),
+            punto(g.A, "A", pt(-6, 18), { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(g.A, g.B, "aux"), seg(g.B, g.F, "aux"), seg(g.F, g.E, "aux"), seg(g.E, g.A, "aux"),
+              recto(g.A, g.B, g.E),
+              punto(g.B, "B", pt(8, 18)),
+              punto(g.F, "F", pt(14, 8)),
+              punto(g.E, "E", pt(-14, -6))
+            ],
+            [fuga(g.A), fuga(g.B), fuga(g.E), fuga(g.F)],
+            [
+              abrir(g.A, g.B),
+              arco(g.A, g.l, Math.PI - 0.12, Math.PI + 0.12),
+              punto(g.M, "M", pt(-6, 18)),
+              seg(g.M, g.D, "aux"),
+              punto(g.A2, "A′", pt(-16, -10))
+            ],
+            [
+              punto(g.B2, "B′", pt(14, 8)),
+              punto(g.E2, "E′", pt(-16, -4)),
+              punto(g.F2, "F′", pt(14, 8)),
+              seg(g.A, g.B, "sol"), seg(g.B, g.F, "sol"), seg(g.F, g.E, "sol"), seg(g.E, g.A, "sol"),
+              seg(g.B, g.B2, "sol"), seg(g.F, g.F2, "sol"), seg(g.E, g.E2, "sol"),
+              seg(g.B2, g.F2, "sol"), seg(g.E2, g.F2, "sol")
+            ].concat(aristaOculta(g.A, g.A2), aristaOculta(g.A2, g.B2), aristaOculta(g.A2, g.E2))
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["cubo-conica-frontal"] = {
+        datos: function () {
+          return { A: pt(150, 340), P: pt(380, 160), d: 55, l: 30, escala: 3.5 };
+        },
+        asas: function (d) {
+          return { A: d.A, P: d.P };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = cuboConicoGeometria(d);
+          return d.P.y < d.A.y - g.l - 30 && g.M.x > 16 && g.D.x < ANCHO - 16 && g.P.x > g.B.x + 20 &&
+            cabe(cuboConicoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: cuboConicoConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -30867,6 +31146,124 @@ Bachillerato</p>
             punto(N, "N", pt(-14, -8)),
             pieDeFigura(A.x + 100, 300, "Parábola: PF = PN")
           ]);
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 11, los sistemas de representación ----
+
+      // Los tres tipos de proyección, con un plano de proyección visto en
+      // perspectiva (un paralelogramo) y tres puntos A, B y C que se
+      // proyectan en A′, B′ y C′: con rayos paralelos y perpendiculares al
+      // plano; paralelos y oblicuos, y desde un punto V.
+      figuras.proyecciones = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          // El plano: un paralelogramo de 220 por 80, inclinado.
+          var plano = function (x0) {
+            var p = [pt(x0, 280), pt(x0 + 210, 280), pt(x0 + 260, 220), pt(x0 + 50, 220)];
+            lista = lista.concat(poligonoDe(p, "dato"));
+            lista.push(rotulo(pt(x0 + 22, 268), "π"));
+            return p;
+          };
+          // Un punto del plano: x a lo ancho y t de delante (0) a atrás (1).
+          var en = function (x0, x, t) {
+            return pt(x0 + x + 50 * t, 280 - 60 * t);
+          };
+          var puntos = [
+            { n: "A", x: 50, t: 0.35, h: 150 },
+            { n: "B", x: 110, t: 0.7, h: 190 },
+            { n: "C", x: 165, t: 0.4, h: 120 }
+          ];
+          // 1. Ortogonal: rayos verticales.
+          plano(20);
+          puntos.forEach(function (q) {
+            var Q = en(20, q.x, q.t);
+            var arriba = pt(Q.x, Q.y - q.h);
+            lista.push(seg(arriba, Q, "aux"), punto(arriba, q.n, pt(-10, -10)), punto(Q, q.n + "′", pt(12, 6), { estilo: "sol" }));
+          });
+          lista.push(pieDeFigura(150, 318, "Cilíndrica ortogonal"));
+          // 2. Oblicua: rayos paralelos e inclinados.
+          plano(345);
+          var w = unitario(pt(0, 0), pt(-0.45, 1));
+          puntos.forEach(function (q) {
+            var Q = en(345, q.x, q.t);
+            var arriba = avanzar(Q, w, -q.h * 1.05);
+            lista.push(seg(arriba, Q, "aux"), punto(arriba, q.n, pt(-10, -10)), punto(Q, q.n + "′", pt(12, 6), { estilo: "sol" }));
+          });
+          lista.push(pieDeFigura(475, 318, "Cilíndrica oblicua"));
+          // 3. Central: rayos desde V.
+          plano(670);
+          var V = pt(805, 26);
+          lista.push(punto(V, "V", pt(14, 4)));
+          puntos.forEach(function (q) {
+            var Q = en(670, q.x, q.t);
+            var arriba = entre(V, Q, 1 - q.h / 260);
+            lista.push(seg(V, Q, "aux"), punto(arriba, q.n, q.n === "B" ? pt(-28, 2) : pt(-12, -6)), punto(Q, q.n + "′", pt(12, 6), { estilo: "sol" }));
+          });
+          lista.push(pieDeFigura(800, 318, "Central o cónica"));
+          return lista;
+        }
+      };
+
+      // Un cubo de 4 cm en el sistema diédrico (alzado, planta y perfil) y
+      // en el de planos acotados (su proyección, con la cota de cada
+      // vértice), y unas curvas de nivel.
+      figuras.cubo_diedrico_acotado = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var l = 80;
+          // Diédrico: alzado arriba a la izquierda, perfil a su derecha y
+          // planta debajo del alzado.
+          var cuadro = function (x, y, nombre) {
+            lista = lista.concat(poligonoDe([pt(x, y), pt(x + l, y), pt(x + l, y + l), pt(x, y + l)], "sol"));
+            lista.push(rotulo(pt(x + l / 2, y + l / 2 + 5), nombre, { recta: true, cuerpo: 14 }));
+          };
+          cuadro(40, 40, "alzado");
+          cuadro(160, 40, "perfil");
+          cuadro(40, 160, "planta");
+          lista.push(
+            seg(pt(40 + l / 2, 120), pt(40 + l / 2, 160), "guia", { sinRegla: true }),
+            seg(pt(120, 40 + l / 2), pt(160, 40 + l / 2), "guia", { sinRegla: true }),
+            pieDeFigura(140, 300, "Diédrico: tres vistas")
+          );
+          // Planos acotados: la cara de abajo, a cota 3, y la de arriba, a 7.
+          var x0 = 400;
+          var y0 = 80;
+          var c = 140;
+          lista = lista.concat(poligonoDe([pt(x0, y0), pt(x0 + c, y0), pt(x0 + c, y0 + c), pt(x0, y0 + c)], "sol"));
+          [["A(3)", "E(7)", pt(-30, -16)], ["B(3)", "F(7)", pt(30, -16)], ["C(3)", "G(7)", pt(30, 20)], ["D(3)", "H(7)", pt(-30, 20)]]
+            .forEach(function (v, i) {
+              var P = [pt(x0, y0), pt(x0 + c, y0), pt(x0 + c, y0 + c), pt(x0, y0 + c)][i];
+              lista.push(
+                punto(P, "", null),
+                rotulo(pt(P.x + v[2].x, P.y + v[2].y), v[0] + " " + v[1], { recta: true, cuerpo: 13 })
+              );
+            });
+          lista.push(
+            rotulo(pt(x0 + c / 2, y0 + c + 22), "4 cm", { recta: true, cuerpo: 14 }),
+            pieDeFigura(x0 + c / 2, 300, "Planos acotados: un cubo")
+          );
+          // Curvas de nivel de una colina, cada 10 m.
+          var O = pt(800, 150);
+          // Cada curva, con un hueco a la derecha para su cota.
+          [[120, 82, 0], [92, 60, 10], [62, 40, 20], [30, 20, 30]].forEach(function (n, i) {
+            var en = function (t) {
+              var r = 1 + 0.08 * Math.sin(3 * t + i) + 0.05 * Math.cos(2 * t);
+              return pt(O.x - 12 * i + n[0] * r * Math.cos(t), O.y + n[1] * r * Math.sin(t));
+            };
+            var hueco = 11 / n[1];
+            var puntos = [];
+            var k;
+            for (k = 0; k <= 72; k += 1) {
+              puntos.push(en(hueco + ((TAU - 2 * hueco) * k) / 72));
+            }
+            lista = lista.concat(curvaPor(puntos, "sol"));
+            lista.push(rotulo(pt(en(0).x, en(0).y + 5), String(n[2]), { recta: true, cuerpo: 13 }));
+          });
+          lista.push(pieDeFigura(800, 300, "Curvas de nivel"));
           return lista;
         }
       };
