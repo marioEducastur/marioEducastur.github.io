@@ -28289,6 +28289,715 @@ Bachillerato</p>
         construir: perfilConstruir
       };
 
+      // ---- La unidad 13, el sistema de planos acotados (desde el 20 de
+      // octubre de 2026) ----
+
+      // La cota de un punto acotado: entre paréntesis y con coma decimal.
+      function cotaAcotada(c) {
+        return "(" + conComa(c).replace("-", "−") + ")";
+      }
+
+      // Un punto acotado: su letra y, a su derecha, su cota entre
+      // paréntesis, en letra recta, como «A′(3)». La pareja va centrada en
+      // p + hacia; si hacia apunta a un lado, se aparta lo que haga falta
+      // para no tapar el punto. Sin letra, la cota sola.
+      function puntoAcotado(p, nombre, c, hacia, mas) {
+        var h = hacia || pt(16, -16);
+        var cifra = cotaAcotada(c);
+        var letras = nombre.replace(/[′″]/g, "");
+        var anchoN = letras.length * 11 + (nombre.length - letras.length) * 5;
+        var finas = cifra.replace(/[0-9−]/g, "");
+        var anchoC = (cifra.length - finas.length) * 8.4 + finas.length * 4.4;
+        var medio = (anchoN + anchoC) / 2;
+        var s = h.x < -2 ? -1 : h.x > 2 ? 1 : 0;
+        var centro = pt(p.x + h.x + s * Math.max(0, medio - 8), p.y + h.y);
+        var izquierda = centro.x - medio;
+        return [
+          punto(p, nombre, pt(izquierda + anchoN / 2 - p.x, centro.y - p.y), mas),
+          rotulo(pt(izquierda + anchoN + anchoC / 2, centro.y + 1), cifra, { recta: true, cuerpo: 14 })
+        ];
+      }
+
+      // La línea de máxima pendiente de un plano, de p a q: dos rayas
+      // paralelas muy juntas.
+      function lineaDeMaximaPendiente(p, q, estilo) {
+        var n = normalArriba(unitario(p, q));
+        var s = estilo === "sol" ? 4.5 : 3;
+        return [
+          seg(avanzar(p, n, s), avanzar(q, n, s), estilo || "dato", { sinRegla: true }),
+          seg(avanzar(p, n, -s), avanzar(q, n, -s), estilo || "dato")
+        ];
+      }
+
+      // Una marca de graduación: la rayita en p, perpendicular a la
+      // dirección u, y su cota c, en letra recta, del lado `lado` de la
+      // normal de arriba de u.
+      function marcaDeCota(p, u, c, lado, lejos, corrido) {
+        var n = normalArriba(u);
+        var s = lado < 0 ? -1 : 1;
+        return [
+          seg(avanzar(p, n, -6), avanzar(p, n, 6), "dato", { sinRegla: true }),
+          rotulo(avanzar(avanzar(p, n, s * (lejos || 17)), u, corrido || 0), conComa(c), { recta: true, cuerpo: 14 })
+        ];
+      }
+
+      // Los segmentos de un dibujo, para apartar de ellos las letras.
+      function segmentosDe(trazos) {
+        return trazos.filter(function (t) {
+          return t && t.tipo === "seg";
+        }).map(function (t) {
+          return [t.a, t.b];
+        });
+      }
+
+      // La recta r, dada por A′ y B′ con sus cotas a < b, se gradúa
+      // abatiéndola sobre el plano de comparación, alrededor de r′: (A) y
+      // (B) quedan en las perpendiculares a r′ por A′ y B′, a la distancia
+      // de sus cotas, con la escala del dibujo (`escala` píxeles por
+      // unidad). La recta abatida corta a r′ en la traza T y forma con ella
+      // el ángulo α de la recta con el plano; sus puntos de cota entera,
+      // llevados a r′ con perpendiculares, son los de la graduación, y la
+      // distancia entre dos seguidos es el intervalo i.
+      function rectaAcotadaGeometria(d) {
+        var e = d.escala;
+        var u = unitario(d.A, d.B);
+        var n = normalArriba(u);
+        if (n.y > 0) {
+          n = pt(-n.x, -n.y);
+        }
+        var i = distancia(d.A, d.B) / (d.b - d.a);
+        var enR = function (c) {
+          return avanzar(d.A, u, (c - d.a) * i);
+        };
+        var abatido = function (c) {
+          return avanzar(enR(c), n, c * e);
+        };
+        var enteras = [];
+        var c;
+        for (c = 1; c <= Math.floor(d.b + 1e-9); c += 1) {
+          if (Math.abs(c - d.a) > 0.01 && Math.abs(c - d.b) > 0.01) {
+            enteras.push({ c: c, p: enR(c), q: abatido(c) });
+          }
+        }
+        return {
+          u: u, n: n, i: i, T: enR(0), At: abatido(d.a), Bt: abatido(d.b), enteras: enteras,
+          enR: enR, alfa: Math.atan2(e, i) / GRADO
+        };
+      }
+
+      function rectaAcotadaConstruir(d) {
+        var g = rectaAcotadaGeometria(d);
+        var r = tramoEnLaLamina(d.A, g.u, 16);
+        var w = unitario(g.T, g.Bt);
+        var abajo = pt(-g.n.x, -g.n.y);
+        var cifras = Boolean(d.cifras);
+        var abatida = [avanzar(g.T, w, -16), avanzar(g.Bt, w, 26)];
+        var paralela = function (q) {
+          return seg(avanzar(q, g.u, -26), avanzar(q, g.u, 26), "aux", { sinRegla: true });
+        };
+        // Lo que estorba a las letras de (A), (B) y T.
+        var estorbos = [
+          r, abatida, [d.A, g.At], [d.B, g.Bt],
+          [avanzar(d.A, abajo, 22), avanzar(d.A, abajo, 22)], [avanzar(d.B, abajo, 22), avanzar(d.B, abajo, 22)]
+        ].concat(g.enteras.map(function (k) {
+          return [avanzar(k.q, g.u, -26), avanzar(k.q, g.u, 26)];
+        }), g.enteras.map(function (k) {
+          return [k.q, avanzar(k.p, abajo, 22)];
+        }));
+        // La letra (r), junto a la recta abatida, del lado de fuera.
+        var nw = normalArriba(w);
+        if (nw.x * g.n.x + nw.y * g.n.y < 0) {
+          nw = pt(-nw.x, -nw.y);
+        }
+        var sitioR = avanzar(entre(g.At, g.Bt, 0.5), nw, 18);
+        var huecos = letrasLibres([g.At, g.Bt], estorbos.concat([[sitioR, sitioR]]), [], 24);
+        // El intervalo, entre los dos puntos de cota entera seguidos más
+        // alejados de A′ y de B′.
+        var par = null;
+        var holgura = -1;
+        g.enteras.slice(1).forEach(function (k, j) {
+          var m = entre(g.enteras[j].p, k.p, 0.5);
+          var h = Math.min(distancia(m, d.A), distancia(m, d.B));
+          if (k.c - g.enteras[j].c === 1 && h > holgura) {
+            holgura = h;
+            par = [g.enteras[j].p, k.p];
+          }
+        });
+        var medio = enMedio(g.T, angulo(g.T, d.B), angulo(g.T, g.Bt), 58);
+        return {
+          base: [
+            seg(r[0], r[1], "dato"),
+            rotulo(avanzar(r[1], abajo, 16), "r′")
+          ].concat(
+            puntoAcotado(d.A, "A′", d.a, pt(0, 24), { forma: "hueco" }),
+            puntoAcotado(d.B, "B′", d.b, pt(0, 24), { forma: "hueco" })
+          ),
+          pasos: [
+            [
+              seg(d.A, g.At, "aux"), seg(d.B, g.Bt, "aux"),
+              recto(d.A, d.B, g.At), recto(d.B, d.A, g.Bt),
+              punto(g.At, "(A)", huecos[0]), punto(g.Bt, "(B)", huecos[1])
+            ].concat(cifras ? [
+              rotulo(avanzar(entre(d.A, g.At, 0.5), g.u, -16), conComa(d.a), { recta: true, cuerpo: 14 }),
+              rotulo(avanzar(entre(d.B, g.Bt, 0.5), g.u, 16), conComa(d.b), { recta: true, cuerpo: 14 })
+            ] : []),
+            [
+              seg(abatida[0], abatida[1], "aux"),
+              rotulo(sitioR, "(r)")
+            ].concat(
+              puntoAcotado(g.T, "T", 0, pt(-14, 22), { estilo: "sol" }),
+              [marcaAngulo(g.T, d.B, g.Bt, 40), rotulo(medio, "α")]
+            ),
+            deprisa([].concat.apply([], g.enteras.map(function (k) {
+              // La cifra, encima de r′ y a un lado de la perpendicular, para
+              // que no la pisen ni la cota del intervalo ni las letras de
+              // A′ y B′, que van debajo.
+              return [paralela(k.q), seg(k.q, k.p, "aux")].concat(marcaDeCota(k.p, g.u, k.c, 1, 14, 9));
+            })), 0.7),
+            par ? [cota(par[0], par[1], "i", 44)] : []
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["graduar-recta-acotada"] = {
+        datos: function () {
+          return { A: pt(210, 330), B: pt(448, 297), a: 1.5, b: 4.5, escala: 40 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          if (!(d.a >= 0.5 && d.b - d.a >= 1 && d.b <= 9)) {
+            return false;
+          }
+          var g = rectaAcotadaGeometria(d);
+          var dentro = function (p) {
+            return p.x > 20 && p.x < ANCHO - 20 && p.y > 20 && p.y < ALTO - 20;
+          };
+          return g.i >= 34 && g.enteras.length >= 2 && dentro(g.T) && dentro(g.Bt) && Math.abs(g.u.x) > 0.6 &&
+            cabe(rectaAcotadaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: rectaAcotadaConstruir
+      };
+
+      // El plano que pasan por tres puntos acotados A, B y C, de cotas
+      // enteras a < b < c. A′C′, el lado que une el más bajo con el más
+      // alto, se gradúa con Tales en c − a partes; la marca de cota b, M,
+      // unida con B′, da la horizontal de cota b. Las demás horizontales son
+      // sus paralelas por las otras marcas, y la línea de máxima pendiente,
+      // perpendicular a ellas, se dibuja fuera del triángulo, del lado en
+      // que cabe, graduada con sus cortes.
+      function planoAcotadoGeometria(d) {
+        var n = Math.round(d.c - d.a);
+        var M = entre(d.A, d.C, (d.b - d.a) / n);
+        var w = unitario(d.B, M);
+        var m = pt(-w.y, w.x);
+        var sobreW = function (p) {
+          return p.x * w.x + p.y * w.y;
+        };
+        var valores = [d.A, d.B, d.C].map(sobreW);
+        var marcas = [];
+        var k;
+        for (k = 0; k <= n; k += 1) {
+          marcas.push({ c: d.a + k, p: entre(d.A, d.C, k / n) });
+        }
+        var corteEn = function (s) {
+          return function (p) {
+            return avanzar(p, w, s - sobreW(p));
+          };
+        };
+        var dentro = function (p) {
+          return p.x > 24 && p.x < ANCHO - 24 && p.y > 24 && p.y < ALTO - 24;
+        };
+        // Mejor fuera del triángulo, del lado de B′, que es el contrario al
+        // de la semirrecta de Tales; si no cabe, entre B′ y M.
+        var bW = sobreW(d.B);
+        var opciones = [Math.min.apply(null, valores) - 54, bW + 0.4 * (sobreW(M) - bW)].filter(function (s) {
+          var corte = corteEn(s);
+          return marcas.every(function (mk) {
+            return dentro(corte(mk.p));
+          });
+        });
+        if (!opciones.length) {
+          return null;
+        }
+        var s = opciones[0];
+        // El sentido de las horizontales, hacia la línea de máxima pendiente.
+        var hacia = -1;
+        return { n: n, M: M, w: w, m: m, s: s, hacia: hacia, marcas: marcas, corte: corteEn(s) };
+      }
+
+      function planoAcotadoConstruir(d) {
+        var g = planoAcotadoGeometria(d);
+        // La semirrecta de Tales, del lado de A′C′ contrario a B′.
+        var u = unitario(d.A, d.C);
+        var ladoB = (d.B.x - d.A.x) * u.y - (d.B.y - d.A.y) * u.x;
+        var prueba = polar(pt(0, 0), 1, angulo(d.A, d.C) - 0.5);
+        var ladoPrueba = prueba.x * u.y - prueba.y * u.x;
+        var lado = ladoB * ladoPrueba > 0 ? -1 : 1;
+        var tales = partesPorTales(d.A, d.C, g.n, g.marcas.slice(1, -1).map(function (mk, k) {
+          return k + 1;
+        }), lado);
+        // Una horizontal: la recta paralela a B′M por p, de punta a punta de
+        // los puntos que lleva (p, su corte con la l.m.p. y los de `mas`),
+        // con 16 px de más del lado de A′C′ y 4 del de la l.m.p., donde van
+        // sus cifras.
+        var tramoH = function (p, mas) {
+          var lista = [p, g.corte(p)].concat(mas || []);
+          var k = lista.map(function (q) {
+            return (q.x - p.x) * g.w.x + (q.y - p.y) * g.w.y;
+          });
+          var k0 = Math.min.apply(null, k) - 4;
+          var k1 = Math.max.apply(null, k) + 16;
+          return [avanzar(p, g.w, k0), avanzar(p, g.w, k1)];
+        };
+        var horizontal = function (p, mas) {
+          var t = tramoH(p, mas);
+          return seg(t[0], t[1], "aux");
+        };
+        var j = Math.round(d.b - d.a);
+        var otras = g.marcas.filter(function (mk, k) {
+          return k !== j;
+        });
+        var lmp = [avanzar(g.corte(d.A), unitario(g.corte(d.A), g.corte(d.C)), -20),
+          avanzar(g.corte(d.C), unitario(g.corte(d.A), g.corte(d.C)), 20)];
+        var sentidoM = unitario(lmp[0], lmp[1]);
+        // Las cifras de la l.m.p., del lado de B′, junto a cada horizontal,
+        // un poco hacia la cota más baja para no pisarla.
+        var cifraL = function (mk) {
+          return rotulo(avanzar(avanzar(g.corte(mk.p), g.w, -14), sentidoM, -10), conComa(mk.c), { recta: true, cuerpo: 14 });
+        };
+        var dibujo = [
+          [d.A, d.C], tramoH(d.B, [g.M]), lmp
+        ].concat(otras.map(function (mk) {
+          return tramoH(mk.p);
+        }), segmentosDe(tales.trazos));
+        var huecos = letrasLibres([d.A, d.B, d.C, g.M], dibujo, [], 22);
+        // Las cifras de las marcas de A′C′, cada una en su hueco, lejos de
+        // A′C′, de las horizontales, de las líneas de Tales y de las letras.
+        var conCifra = g.marcas.slice(1, -1).filter(function (mk, k) {
+          return k + 1 !== j;
+        });
+        var huecosCifras = letrasLibres(conCifra.map(function (mk) {
+          return mk.p;
+        }), dibujo.concat(huecos.map(function (h, i) {
+          var q = avanzar([d.A, d.B, d.C, g.M][i], h, 1);
+          return [q, q];
+        })), [], 15);
+        return {
+          base: [].concat(
+            puntoAcotado(d.A, "A′", d.a, huecos[0], { forma: "hueco" }),
+            puntoAcotado(d.B, "B′", d.b, huecos[1], { forma: "hueco" }),
+            puntoAcotado(d.C, "C′", d.c, huecos[2], { forma: "hueco" })
+          ),
+          pasos: [
+            [seg(d.A, d.C, "aux")].concat(tales.trazos, conCifra.map(function (mk, k) {
+              return rotulo(avanzar(mk.p, huecosCifras[k], 1), conComa(mk.c), { recta: true, cuerpo: 13 });
+            })),
+            [horizontal(d.B, [g.M]), punto(g.M, "M", huecos[3])],
+            deprisa(otras.map(function (mk) {
+              return horizontal(mk.p);
+            }), 0.6),
+            lineaDeMaximaPendiente(lmp[0], lmp[1], "sol").concat(g.marcas.map(cifraL))
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["plano-acotado-por-tres-puntos"] = {
+        datos: function () {
+          return { A: pt(130, 320), a: 1, B: pt(420, 240), b: 3, C: pt(240, 70), c: 6 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, C: d.C };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          if (!(d.a < d.b && d.b < d.c && d.c - d.a <= 8 && Math.abs(d.c - d.a - Math.round(d.c - d.a)) < 1e-6)) {
+            return false;
+          }
+          if (distancia(d.A, d.C) < 120 || Math.abs((d.B.x - d.A.x) * (d.C.y - d.A.y) - (d.B.y - d.A.y) * (d.C.x - d.A.x)) < 6000) {
+            return false;
+          }
+          var g = planoAcotadoGeometria(d);
+          return Boolean(g) && distancia(d.B, g.M) > 40 && cabe(planoAcotadoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: planoAcotadoConstruir
+      };
+
+      // Un plano dado por su línea de máxima pendiente: el punto P0, de cota
+      // c0, la dirección en que sube (t, en grados de pantalla), el
+      // intervalo i (en píxeles) y cuántas unidades se gradúan, n. Su
+      // horizontal de cota k es la perpendicular a la l.m.p. por su punto
+      // de cota k.
+      function planoPorLmp(P0, c0, t, i, n) {
+        var u = polar(pt(0, 0), 1, t * GRADO);
+        return {
+          P0: P0, c0: c0, u: u, i: i, n: n, h: pt(-u.y, u.x),
+          punto: function (c) {
+            return avanzar(P0, u, (c - c0) * i);
+          }
+        };
+      }
+
+      // La intersección de dos planos P y Q dados por sus l.m.p.: las
+      // horizontales de la misma cota se cortan en puntos de la recta
+      // intersección. Con dos cotas, k1 y k2, la recta queda determinada.
+      function interseccionAcotadaGeometria(d) {
+        var P = planoPorLmp(d.P0, d.p0, d.tP, d.iP, d.nP);
+        var Q = planoPorLmp(d.Q0, d.q0, d.tQ, d.iQ, d.nQ);
+        var k1 = Math.max(d.p0, d.q0);
+        var k2 = Math.min(d.p0 + d.nP, d.q0 + d.nQ);
+        var corte = function (k) {
+          var a = P.punto(k);
+          var b = Q.punto(k);
+          return corteRectas(a, avanzar(a, P.h, 1), b, avanzar(b, Q.h, 1));
+        };
+        var cortes = [];
+        var k;
+        for (k = k1; k <= k2; k += 1) {
+          cortes.push({ c: k, I: corte(k) });
+        }
+        return { P: P, Q: Q, k1: k1, k2: k2, cortes: cortes };
+      }
+
+      // La l.m.p. de un plano con su graduación, del lado contrario a donde
+      // van sus horizontales (hacia el punto `hacia`).
+      function lmpGraduada(pl, nombre, hacia) {
+        var a = pl.punto(pl.c0);
+        var b = pl.punto(pl.c0 + pl.n);
+        var n = normalArriba(pl.u);
+        var lado = n.x * (hacia.x - a.x) + n.y * (hacia.y - a.y) > 0 ? -1 : 1;
+        var lista = lineaDeMaximaPendiente(avanzar(a, pl.u, -18), avanzar(b, pl.u, 18), "dato");
+        var k;
+        for (k = 0; k <= pl.n; k += 1) {
+          lista = lista.concat(marcaDeCota(pl.punto(pl.c0 + k), pl.u, pl.c0 + k, lado, 18));
+        }
+        lista.push(rotulo(avanzar(avanzar(a, pl.u, -30), n, lado * 16), nombre));
+        return lista;
+      }
+
+      function interseccionAcotadaConstruir(d) {
+        var g = interseccionAcotadaGeometria(d);
+        var primero = g.cortes[0];
+        var ultimo = g.cortes[g.cortes.length - 1];
+        var horizontales = function (k, I, estilo) {
+          var a = g.P.punto(k);
+          var b = g.Q.punto(k);
+          return [
+            seg(a, avanzar(I, unitario(a, I), 16), estilo || "aux"),
+            seg(b, avanzar(I, unitario(b, I), 16), estilo || "aux")
+          ];
+        };
+        var v = unitario(primero.I, ultimo.I);
+        var nI = normalArriba(v);
+        var medio = entre(primero.I, ultimo.I, 0.5);
+        var ladoI = nI.x * (g.P.P0.x - medio.x) + nI.y * (g.P.P0.y - medio.y) > 0 ? -1 : 1;
+        var cifra = function (c) {
+          return pt(nI.x * ladoI * 26, nI.y * ladoI * 26);
+        };
+        return {
+          base: lmpGraduada(g.P, "P", primero.I).concat(lmpGraduada(g.Q, "Q", primero.I)),
+          pasos: [
+            horizontales(primero.c, primero.I).concat(puntoAcotado(primero.I, "", primero.c, cifra(primero.c))),
+            horizontales(ultimo.c, ultimo.I).concat(puntoAcotado(ultimo.I, "", ultimo.c, cifra(ultimo.c))),
+            [seg(avanzar(primero.I, v, -36), avanzar(ultimo.I, v, 36), "sol"),
+              rotulo(avanzar(avanzar(ultimo.I, v, 30), nI, -ladoI * 16), "i")].concat(
+              deprisa([].concat.apply([], g.cortes.slice(1, -1).map(function (k) {
+                return horizontales(k.c, k.I, "aux").concat(puntoAcotado(k.I, "", k.c, cifra(k.c)));
+              })), 0.6))
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["interseccion-de-planos-acotados"] = {
+        datos: function () {
+          return {
+            P0: pt(208, 348), p0: 10, tP: -18, iP: 50, nP: 6,
+            Q0: pt(186, 268), q0: 11, tQ: -78, iQ: 44, nQ: 4
+          };
+        },
+        asas: function (d) {
+          return { P0: d.P0, Q0: d.Q0 };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = interseccionAcotadaGeometria(d);
+          var u = g.P.u;
+          var w = g.Q.u;
+          var dentro = function (p) {
+            return p && p.x > 24 && p.x < ANCHO - 24 && p.y > 24 && p.y < ALTO - 24;
+          };
+          return g.k2 - g.k1 >= 2 && Math.abs(u.x * w.y - u.y * w.x) > 0.3 && g.cortes.every(function (k) {
+            return dentro(k.I);
+          }) && distancia(g.cortes[0].I, g.cortes[g.cortes.length - 1].I) > 80 &&
+            cabe(interseccionAcotadaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: interseccionAcotadaConstruir
+      };
+
+      // La cubierta de una planta rectangular ABCD (A, abajo a la
+      // izquierda; B, a su derecha; C y D, arriba), con los aleros a cota 0
+      // y los faldones con sus intervalos: iF el de delante (AB), iT el de
+      // detrás (DC) e iS los de los lados. La horizontal de cota k de cada
+      // faldón es la paralela a su alero a k·i; dos faldones vecinos se
+      // cortan en la limatesa que va de su esquina al corte de esas
+      // horizontales. Los faldones largos se cortan en la cumbrera, de cota
+      // H = fondo / (iF + iT).
+      function cubiertaGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.ancho * e, A.y);
+        var C = pt(B.x, A.y - d.fondo * e);
+        var D = pt(A.x, C.y);
+        var H = d.fondo / (d.iF + d.iT);
+        var yR = A.y - H * d.iF * e;
+        var E = pt(A.x + H * d.iS * e, yR);
+        var F = pt(B.x - H * d.iS * e, yR);
+        var k = d.k;
+        var interior = {
+          abajo: A.y - k * d.iF * e,
+          arriba: C.y + k * d.iT * e,
+          izquierda: A.x + k * d.iS * e,
+          derecha: B.x - k * d.iS * e
+        };
+        return { A: A, B: B, C: C, D: D, E: E, F: F, H: H, interior: interior };
+      }
+
+      function cubiertaConstruir(d) {
+        var g = cubiertaGeometria(d);
+        var t = g.interior;
+        var k = cotaAcotada(d.k);
+        var cifra = { recta: true, cuerpo: 14 };
+        var esquina = [pt(t.izquierda, t.abajo), pt(t.derecha, t.abajo), pt(t.derecha, t.arriba), pt(t.izquierda, t.arriba)];
+        var intervalo = function (i) {
+          return "i = " + conComa(i, 2);
+        };
+        return {
+          base: poligonoDe([g.A, g.B, g.C, g.D], "dato").concat([
+            punto(g.A, "A", pt(-14, 14)), punto(g.B, "B", pt(14, 14)),
+            punto(g.C, "C", pt(14, -14)), punto(g.D, "D", pt(12, -16)),
+            rotulo(pt((g.A.x + g.B.x) / 2, g.A.y + 20), intervalo(d.iF), cifra),
+            rotulo(pt((g.A.x + g.B.x) / 2, g.C.y - 18), intervalo(d.iT), cifra),
+            rotulo(pt(g.A.x - 40, (g.A.y + g.D.y) / 2), intervalo(d.iS), cifra),
+            rotulo(pt(g.B.x + 40, (g.A.y + g.D.y) / 2), intervalo(d.iS), cifra)
+          ]),
+          pasos: [
+            [
+              seg(pt(g.A.x, t.abajo), pt(g.B.x, t.abajo), "aux"),
+              seg(pt(g.A.x, t.arriba), pt(g.B.x, t.arriba), "aux"),
+              seg(pt(t.izquierda, g.A.y), pt(t.izquierda, g.D.y), "aux"),
+              seg(pt(t.derecha, g.A.y), pt(t.derecha, g.D.y), "aux"),
+              rotulo(pt(g.A.x - 20, t.abajo), k, cifra),
+              rotulo(pt(g.A.x - 20, t.arriba), k, cifra),
+              rotulo(pt(t.izquierda, g.A.y + 16), k, cifra),
+              rotulo(pt(t.derecha, g.A.y + 16), k, cifra)
+            ],
+            esquina.map(function (p) {
+              return punto(p, "", null);
+            }).concat([
+              seg(g.A, g.E, "sol"), seg(g.D, g.E, "sol"),
+              seg(g.B, g.F, "sol"), seg(g.C, g.F, "sol")
+            ]),
+            [seg(g.E, g.F, "sol")].concat(
+              puntoAcotado(g.E, "E", g.H, pt(0, 24), { estilo: "sol" }),
+              puntoAcotado(g.F, "F", g.H, pt(0, 24), { estilo: "sol" })
+            )
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["cubierta-rectangular"] = {
+        datos: function () {
+          return { A: pt(150, 300), ancho: 12, fondo: 8, escala: 25, iF: 2, iT: 2, iS: 2, k: 1 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = cubiertaGeometria(d);
+          var t = g.interior;
+          return d.iF > 0 && d.iT > 0 && d.iS > 0 && d.k > 0 && g.F.x - g.E.x > 20 &&
+            t.abajo - t.arriba > 16 && t.derecha - t.izquierda > 16 &&
+            cabe(cubiertaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: cubiertaConstruir
+      };
+
+      // Una curva de nivel: una curva cerrada alrededor de c, de radio
+      // medio r, algo alargada y abollada, con 96 puntos.
+      function curvaDeNivel(c, r) {
+        var puntos = [];
+        var j;
+        var a;
+        var k;
+        for (j = 0; j < 96; j += 1) {
+          a = (j / 96) * TAU;
+          k = r * (1 + 0.14 * Math.cos(2 * a - 0.5) + 0.06 * Math.sin(3 * a + 0.8));
+          puntos.push(pt(c.x + k * Math.cos(a) * 1.35, c.y + k * Math.sin(a) * 0.85));
+        }
+        return puntos;
+      }
+
+      // El sitio de la cifra de una curva de nivel: junto a su punto j,
+      // apartado `lejos` px por la normal, hacia fuera de la curva.
+      function cifraDeCurva(puntos, j, lejos) {
+        var q = puntos[j];
+        var u = unitario(puntos[j], puntos[(j + 1) % puntos.length]);
+        var n = pt(-u.y, u.x);
+        var c = centroDe(puntos);
+        if (n.x * (q.x - c.x) + n.y * (q.y - c.y) < 0) {
+          n = pt(-n.x, -n.y);
+        }
+        return avanzar(q, n, lejos);
+      }
+
+      // Las curvas de nivel de una colina: n curvas, de la de cota c0 (la
+      // de fuera) hacia arriba, cada eq; los centros se corren un poco
+      // hacia arriba a la derecha, así que la ladera de ese lado es más
+      // empinada.
+      function colina(d) {
+        var curvas = [];
+        var j;
+        for (j = 0; j < d.n; j += 1) {
+          curvas.push({
+            c: d.c0 + j * d.eq,
+            puntos: curvaDeNivel(pt(d.C.x + j * 9, d.C.y - j * 4), d.R * (d.n - j + 0.35) / (d.n + 0.35))
+          });
+        }
+        return curvas;
+      }
+
+      // Los cortes de la recta horizontal de altura y, entre xA y xB, con
+      // las curvas de nivel, de izquierda a derecha.
+      function cortesConCurvas(curvas, y, xA, xB) {
+        var cortes = [];
+        curvas.forEach(function (cv) {
+          cv.puntos.forEach(function (p, j) {
+            var q = cv.puntos[(j + 1) % cv.puntos.length];
+            if ((p.y - y) * (q.y - y) < 0 || (p.y === y && q.y !== y)) {
+              var x = p.y === y ? p.x : p.x + ((y - p.y) * (q.x - p.x)) / (q.y - p.y);
+              if (x > xA && x < xB) {
+                cortes.push({ x: x, c: cv.c });
+              }
+            }
+          });
+        });
+        return cortes.sort(function (m, n) {
+          return m.x - n.x;
+        });
+      }
+
+      // El perfil por la recta AB, horizontal: debajo, la línea de base
+      // (cota c0 − eq) y las de cada cota, separadas eq a la escala de
+      // alturas (hs píxeles por unidad). De cada corte de AB con una curva
+      // se baja la perpendicular hasta la línea de su cota. Los extremos A y
+      // B, fuera de la curva más baja, y las cimas, entre dos cortes
+      // seguidos de la misma cota, se ponen a estima, a media
+      // equidistancia.
+      function perfilTopograficoGeometria(d) {
+        var curvas = colina(d);
+        var cortes = cortesConCurvas(curvas, d.y, d.xA, d.xB);
+        var base = d.c0 - d.eq;
+        var alto = function (c) {
+          return d.base - (c - base) * d.hs;
+        };
+        var puntos = [{ x: d.xA, c: d.c0 - d.eq / 2, estima: true }];
+        cortes.forEach(function (k, j) {
+          if (j > 0 && cortes[j - 1].c === k.c) {
+            puntos.push({ x: (cortes[j - 1].x + k.x) / 2, c: k.c + d.eq * 0.3, estima: true });
+          }
+          puntos.push({ x: k.x, c: k.c });
+        });
+        puntos.push({ x: d.xB, c: d.c0 - d.eq / 2, estima: true });
+        return {
+          curvas: curvas, cortes: cortes, alto: alto, base: base,
+          perfil: puntos.map(function (k) {
+            return pt(k.x, alto(k.c));
+          })
+        };
+      }
+
+      function perfilTopograficoConstruir(d) {
+        var g = perfilTopograficoGeometria(d);
+        var cifra = { recta: true, cuerpo: 13 };
+        var A = pt(d.xA, d.y);
+        var B = pt(d.xB, d.y);
+        var cotas = g.curvas.map(function (cv) {
+          return cv.c;
+        });
+        return {
+          base: [].concat.apply([], g.curvas.map(function (cv) {
+            // La cifra de cada curva, arriba a la izquierda, lejos de AB y de
+            // las cifras de los cortes, por fuera de la curva y apartada
+            // según su normal.
+            return [curva(cv.puntos.concat([cv.puntos[0]]), "dato"), rotulo(cifraDeCurva(cv.puntos, 56, 11), String(cv.c), cifra)];
+          })).concat([
+            seg(A, B, "dato"),
+            punto(A, "A", pt(-14, -10)),
+            punto(B, "B", pt(14, -10))
+          ]),
+          pasos: [
+            g.cortes.map(function (k) {
+              return punto(pt(k.x, d.y), "", null);
+            }).concat(g.cortes.map(function (k, j) {
+              // La cifra, debajo de AB y apartada de la perpendicular del
+              // paso 3 hacia fuera de la colina.
+              var fuera = k.x < d.C.x ? -1 : 1;
+              return rotulo(pt(k.x + fuera * 11, d.y + (j % 2 ? 26 : 14)), String(k.c), { recta: true, cuerpo: 12 });
+            })),
+            [seg(pt(d.xA, d.base), pt(d.xB, d.base), "dato"), rotulo(pt(d.xA - 28, d.base), String(g.base), cifra)].concat(
+              cotas.map(function (c) {
+                return seg(pt(d.xA, g.alto(c)), pt(d.xB, g.alto(c)), "guia", { sinRegla: true });
+              }), cotas.map(function (c) {
+                return rotulo(pt(d.xA - 28, g.alto(c)), String(c), cifra);
+              })),
+            deprisa([].concat.apply([], g.cortes.map(function (k) {
+              return [seg(pt(k.x, d.y), pt(k.x, g.alto(k.c)), "aux"), punto(pt(k.x, g.alto(k.c)), "", null)];
+            })), 0.6),
+            [curva(g.perfil, "sol"), rotulo(pt(d.xA + 6, g.perfil[0].y - 24), "A"), rotulo(pt(d.xB - 6, g.perfil[g.perfil.length - 1].y - 24), "B")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["perfil-topografico"] = {
+        datos: function () {
+          return { C: pt(290, 120), R: 92, n: 4, c0: 100, eq: 10, y: 118, xA: 90, xB: 520, base: 384, hs: 2.4 };
+        },
+        asas: function (d) {
+          return { C: d.C };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = perfilTopograficoGeometria(d);
+          var arriba = g.alto(d.c0 + (d.n - 0.5) * d.eq);
+          var abajoPlanta = Math.max.apply(null, g.curvas[0].puntos.map(function (p) {
+            return p.y;
+          }));
+          // A y B, fuera de la curva más baja: el primer corte y el último
+          // son de ella.
+          return g.cortes.length >= 4 && g.cortes[0].c === d.c0 && g.cortes[g.cortes.length - 1].c === d.c0 &&
+            arriba > abajoPlanta + 20 && cabe(perfilTopograficoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: perfilTopograficoConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -31397,6 +32106,235 @@ Bachillerato</p>
             lista.push(seg(pt(x - 55, y - 35), pt(x + 55, y - 35), "sol"), seg(pt(x - 55, y + 45), pt(x + 55, y + 45), "sol"),
               rotulo(pt(x + 62, y - 37), "α₂"), rotulo(pt(x + 62, y + 50), "α₁"));
           });
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 13, los planos acotados ----
+
+      // Un punto del espacio (x a lo ancho, y hacia el fondo, z hacia
+      // arriba, en píxeles) dibujado en perspectiva desde o: el fondo se
+      // reduce y sube a 40°.
+      function enPerspectiva(o, x, y, z) {
+        return pt(o.x + x + y * 0.54, o.y - z - y * 0.45);
+      }
+
+      // El plano de comparación en perspectiva: un paralelogramo de `ancho`
+      // por `fondo`, con su letra π, a la derecha o, con `izquierda`, a la
+      // izquierda de su borde de delante.
+      function planoDeComparacion(o, ancho, fondo, izquierda) {
+        var esquinas = [
+          enPerspectiva(o, 0, 0, 0), enPerspectiva(o, ancho, 0, 0),
+          enPerspectiva(o, ancho, fondo, 0), enPerspectiva(o, 0, fondo, 0)
+        ];
+        return poligonoDe(esquinas, "dato").concat([rotulo(pt(izquierda ? o.x + 28 : o.x + ancho - 20, o.y - 14), "π")]);
+      }
+
+      // Una curva cerrada a trazos: dos tramos de los 96 de la curva sí y
+      // uno no.
+      function curvaATrazos(puntos, estilo) {
+        var lista = [];
+        puntos.forEach(function (p, j) {
+          if (j % 3 !== 2) {
+            lista.push(seg(p, puntos[(j + 1) % puntos.length], estilo || "dato", { sinRegla: true }));
+          }
+        });
+        return lista;
+      }
+
+      // El punto en el sistema: a la izquierda, en perspectiva, A encima
+      // del plano de comparación, B en él y C debajo, con sus proyecciones;
+      // a la derecha, lo que se dibuja: las proyecciones con sus cotas.
+      figuras.sistema_acotado = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var o = pt(50, 270);
+          var e = 25;
+          var lista = planoDeComparacion(o, 360, 200);
+          var puntos = [
+            { n: "A", x: 110, y: 110, c: 4, letra: pt(-14, -8), cota: pt(-6, 22) },
+            { n: "B", x: 230, y: 60, c: 0, letra: pt(0, -20), cota: pt(0, -20) },
+            { n: "C", x: 300, y: 150, c: -3, letra: pt(16, 8), cota: pt(-18, 16) }
+          ];
+          puntos.forEach(function (q) {
+            var P1 = enPerspectiva(o, q.x, q.y, 0);
+            var P = enPerspectiva(o, q.x, q.y, q.c * e);
+            if (q.c > 0) {
+              lista.push(seg(P, P1, "aux"), punto(P, q.n, q.letra));
+            } else if (q.c < 0) {
+              lista = lista.concat(aristaOculta(P1, P));
+              lista.push(punto(P, q.n, q.letra, { forma: "hueco" }));
+            }
+            lista = lista.concat(puntoAcotado(P1, q.n + "′", q.c, q.cota, { estilo: "sol" }));
+          });
+          lista.push(pieDeFigura(270, 316, "En el espacio"));
+          // La representación: solo la planta, con las cotas.
+          puntos.forEach(function (q) {
+            var P = pt(600 + q.x * 0.9, 270 - q.y * 0.9);
+            lista = lista.concat(puntoAcotado(P, q.n + "′", q.c, pt(0, 22), { estilo: "sol" }));
+          });
+          lista.push(pieDeFigura(770, 316, "En el dibujo"));
+          return lista;
+        }
+      };
+
+      // La recta y el plano: a la izquierda, una recta r que sube desde su
+      // traza T, con sus puntos de cota 1, 2 y 3 y sus proyecciones en r′,
+      // el ángulo α y el intervalo i; a la derecha, un plano α que sube
+      // desde su horizontal de cota 0, con sus horizontales de cota 1, 2 y
+      // 3, sus proyecciones y la línea de máxima pendiente.
+      figuras.recta_y_plano_acotados = {
+        lienzo: [960, 350],
+        trazos: function () {
+          var e = 30;
+          var o = pt(30, 300);
+          var lista = planoDeComparacion(o, 380, 200);
+          var T = enPerspectiva(o, 30, 40, 0);
+          var en = function (k) {
+            return { x: 30 + k * 85, y: 40 + k * 30 };
+          };
+          var P = function (k) {
+            var q = en(k);
+            return enPerspectiva(o, q.x, q.y, k * e);
+          };
+          var P1 = function (k) {
+            var q = en(k);
+            return enPerspectiva(o, q.x, q.y, 0);
+          };
+          lista.push(
+            seg(T, avanzar(P1(3.4), unitario(T, P1(3.4)), 0), "dato"),
+            seg(T, P(3.4), "sol"),
+            rotulo(avanzar(P1(3.4), unitario(T, P1(3.4)), 16), "r′"),
+            rotulo(avanzar(P(3.4), unitario(T, P(3.4)), 14), "r")
+          );
+          lista = lista.concat(puntoAcotado(T, "T", 0, pt(-16, -18), { estilo: "sol" }));
+          [1, 2, 3].forEach(function (k) {
+            lista.push(seg(P(k), P1(k), "aux"), punto(P(k), "", null, { estilo: "sol" }));
+            lista = lista.concat(puntoAcotado(P1(k), "", k, pt(-20, -10)));
+          });
+          lista.push(
+            marcaAngulo(T, P1(1), P(1), 46),
+            rotulo(enMedio(T, angulo(T, P1(1)), angulo(T, P(1)), 62), "α"),
+            cota(P1(1), P1(2), "i", 40),
+            pieDeFigura(220, 336, "La recta: pendiente e intervalo")
+          );
+          // El plano.
+          var o2 = pt(480, 300);
+          lista = lista.concat(planoDeComparacion(o2, 340, 200, true));
+          var y0 = 24;
+          var p = 0.62;
+          var Q = function (x, y) {
+            return enPerspectiva(o2, x, y, (y - y0) * p);
+          };
+          var Q1 = function (x, y) {
+            return enPerspectiva(o2, x, y, 0);
+          };
+          var ys = [1, 2, 3].map(function (k) {
+            return y0 + (k * e) / p;
+          });
+          var yF = y0 + (3.6 * e) / p;
+          lista = lista.concat(poligonoDe([Q(50, y0), Q(290, y0), Q(290, yF), Q(50, yF)], "dato"));
+          lista.push(rotulo(avanzar(Q(290, yF), pt(1, 0), 18), "β"));
+          ys.forEach(function (y, j) {
+            lista.push(
+              seg(Q(50, y), Q(290, y), "aux"),
+              seg(Q1(50, y), Q1(290, y), "aux", { sinRegla: true }),
+              seg(Q(50, y), Q1(50, y), "aux", { sinRegla: true }),
+              rotulo(avanzar(Q1(290, y), pt(1, 0), 24), cotaAcotada(j + 1), { recta: true, cuerpo: 14 })
+            );
+          });
+          lista.push(rotulo(avanzar(Q1(290, y0), pt(1, 0), 24), cotaAcotada(0), { recta: true, cuerpo: 14 }));
+          lista.push(seg(Q(200, y0), Q(200, yF), "sol"));
+          lista = lista.concat(lineaDeMaximaPendiente(Q1(200, y0), Q1(200, yF), "dato"));
+          lista.push(
+            rotulo(avanzar(Q1(200, (y0 + ys[0]) / 2), pt(1, 0), 34), "l.m.p.", { recta: true, cuerpo: 14 }),
+            pieDeFigura(690, 336, "El plano: horizontales y línea de máxima pendiente")
+          );
+          return lista;
+        }
+      };
+
+      // Las curvas de nivel: a la izquierda, un monte, con las cotas que
+      // crecen hacia dentro y una curva intercalar a trazos donde las
+      // curvas se separan; a la derecha, una hondonada, con las cotas que
+      // crecen hacia fuera.
+      figuras.curvas_de_nivel = {
+        lienzo: [960, 320],
+        trazos: function () {
+          var lista = [];
+          var cifra = { recta: true, cuerpo: 14 };
+          var dibujar = function (c, radios, cotas, intercalar) {
+            radios.forEach(function (r, j) {
+              var centro = pt(c.x + j * 10, c.y - j * 4);
+              var puntos = curvaDeNivel(centro, r);
+              // La cifra, abajo a la izquierda, donde las curvas se separan
+              // más, por fuera de su curva.
+              lista.push(curva(puntos.concat([puntos[0]]), "dato"), rotulo(cifraDeCurva(puntos, 40, 11), String(cotas[j]), cifra));
+            });
+            if (intercalar) {
+              var puntos = curvaDeNivel(pt(c.x + intercalar.j * 10, c.y - intercalar.j * 4), intercalar.r);
+              var bajo = puntos.reduce(function (m, p) {
+                return p.y > m.y ? p : m;
+              });
+              lista = lista.concat(curvaATrazos(puntos, "dato"));
+              lista.push(rotulo(pt(bajo.x, bajo.y + 12), String(intercalar.c), cifra));
+            }
+          };
+          dibujar(pt(230, 150), [108, 62, 42, 22], [100, 110, 120, 130], { j: 0.5, r: 85, c: 105 });
+          lista.push(pieDeFigura(240, 306, "Monte: la cota crece hacia dentro"));
+          dibujar(pt(700, 150), [100, 72, 46, 22], [130, 120, 110, 100], null);
+          lista.push(pieDeFigura(720, 306, "Hondonada: la cota crece hacia fuera"));
+          return lista;
+        }
+      };
+
+      // Las cubiertas: a la izquierda, la planta de un tejado en L con
+      // todos los faldones de la misma pendiente: limatesas desde las
+      // esquinas, la limahoya desde el rincón y las dos cumbreras. A la
+      // derecha, dos planos que se cortan, vistos por sus l.m.p.: en la
+      // arista las cotas crecen hacia la intersección; en la gotera,
+      // decrecen.
+      figuras.cubiertas = {
+        lienzo: [960, 340],
+        trazos: function () {
+          var lista = [];
+          var e = 16;
+          var o = pt(60, 290);
+          var P = function (x, y) {
+            return pt(o.x + x * e, o.y - y * e);
+          };
+          var texto = { recta: true, cuerpo: 14 };
+          lista = lista.concat(poligonoDe([P(0, 0), P(16, 0), P(16, 6), P(6, 6), P(6, 12), P(0, 12)], "dato"));
+          var K = P(3, 3);
+          var R1 = P(13, 3);
+          var R2 = P(3, 9);
+          lista.push(
+            seg(K, R1, "sol"), seg(K, R2, "sol"),
+            seg(P(0, 0), K, "sol"), seg(P(16, 0), R1, "sol"), seg(P(16, 6), R1, "sol"),
+            seg(P(6, 12), R2, "sol"), seg(P(0, 12), R2, "sol"),
+            seg(P(6, 6), K, "guia"),
+            rotulo(pt((K.x + R1.x) / 2, K.y + 14), "cumbrera", texto),
+            rotulo(pt(P(1.9, 1).x + 36, P(1.9, 1).y - 2), "limatesa", texto),
+            rotulo(pt(P(4.5, 4.5).x + 38, P(4.5, 4.5).y + 6), "limahoya", texto),
+            pieDeFigura(220, 326, "Un tejado en L")
+          );
+          // La arista y la gotera, en planta.
+          var par = function (cx, cotas, nombre) {
+            var arriba = 90;
+            var abajo = 230;
+            lista.push(seg(pt(cx, arriba), pt(cx, abajo), "sol"));
+            [-1, 1].forEach(function (s) {
+              cotas.forEach(function (c, j) {
+                var x = cx + s * (20 + j * 32);
+                lista.push(seg(pt(x, arriba + 10), pt(x, abajo - 10), "aux", { sinRegla: true }));
+                lista.push(rotulo(pt(x + s * 8, 172), String(c), texto));
+              });
+              lista = lista.concat(lineaDeMaximaPendiente(pt(cx + s * 8, 160), pt(cx + s * 100, 160), "dato"));
+            });
+            lista.push(pieDeFigura(cx, 326, nombre));
+          };
+          par(600, [3, 2, 1], "Arista");
+          par(840, [1, 2, 3], "Gotera");
           return lista;
         }
       };
