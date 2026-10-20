@@ -29365,6 +29365,322 @@ Bachillerato</p>
         construir: piezaIsometricaConstruir
       };
 
+      // ---- La unidad 15, la perspectiva caballera (desde el 20 de octubre
+      // de 2026) ----
+
+      // Los ejes de la caballera: el plano del cuadro es el XOZ, así que X
+      // va horizontal hacia la izquierda y Z vertical hacia arriba; el eje Y
+      // forma el ángulo φ (en grados) con el X, contado desde el X, y sus
+      // medidas se multiplican por el coeficiente μ.
+      function ejesCaballera(fi) {
+        var X = pt(-1, 0);
+        // φ desde el eje X, girando hacia arriba: el Y queda arriba a la
+        // derecha si φ > 90°.
+        var Y = polar(pt(0, 0), 1, Math.PI + fi * GRADO);
+        return { X: X, Y: pt(Y.x, Y.y), Z: pt(0, -1) };
+      }
+
+      // El punto de coordenadas (x, y, z), dibujado en caballera desde o,
+      // con e píxeles por unidad: x y z en verdadera magnitud, y reducida.
+      function enCaballera(o, e, ejes, mu, x, y, z) {
+        return pt(o.x + e * (x * ejes.X.x + y * mu * ejes.Y.x), o.y + e * (x * ejes.X.y + y * mu * ejes.Y.y - z));
+      }
+
+      // Un punto P(x, y, z) en caballera: N en el eje X, a la distancia x;
+      // M en el Z, a la z, y L en el Y, a y·μ, que se halla con el
+      // triángulo de reducción: la perpendicular al eje Y por O y, sobre
+      // ella, OL₀ = y; la paralela por L₀ a la recta 1₀1, que forma con el
+      // eje Y el ángulo α de la dirección de proyección con el cuadro, da L. Las
+      // proyecciones salen con paralelas a los ejes, como en axonométrico.
+      function puntoCaballeraGeometria(d) {
+        var ejes = ejesCaballera(d.fi);
+        var e = d.escala;
+        var en = function (x, y, z) {
+          return enCaballera(d.O, e, ejes, d.mu, x, y, z);
+        };
+        // La perpendicular al eje Y por O, del lado de abajo.
+        var n = pt(-ejes.Y.y, ejes.Y.x);
+        if (n.y < 0) {
+          n = pt(-n.x, -n.y);
+        }
+        var uno = avanzar(d.O, ejes.Y, e * d.mu * 2);
+        var unoCero = avanzar(d.O, n, e * 2);
+        return {
+          ejes: ejes, n: n, uno: uno, unoCero: unoCero,
+          N: en(d.x, 0, 0), L: en(0, d.y, 0), M: en(0, 0, d.z), L0: avanzar(d.O, n, e * d.y),
+          P1: en(d.x, d.y, 0), P2: en(d.x, 0, d.z), P3: en(0, d.y, d.z), P: en(d.x, d.y, d.z)
+        };
+      }
+
+      function puntoCaballeraConstruir(d) {
+        var g = puntoCaballeraGeometria(d);
+        var e = d.escala;
+        var O = d.O;
+        var largoX = d.x * e + 40;
+        var largoY = Math.max(d.y, 2) * e * d.mu + 50;
+        // El eje Z, por encima de la cara de arriba del paralelepípedo, para
+        // que su letra no la pise la paralela P‴P.
+        var largoZ = d.z * e + d.y * d.mu * e * Math.abs(g.ejes.Y.y) + 34;
+        return {
+          base: [
+            seg(O, avanzar(O, g.ejes.X, largoX), "dato"),
+            seg(O, avanzar(O, g.ejes.Y, largoY), "dato"),
+            seg(O, avanzar(O, g.ejes.Z, largoZ), "dato"),
+            rotulo(avanzar(O, g.ejes.X, largoX + 14), "X"),
+            rotulo(avanzar(O, g.ejes.Y, largoY + 14), "Y"),
+            rotulo(avanzar(O, g.ejes.Z, largoZ + 14), "Z"),
+            punto(O, "O", pt(-6, 18))
+          ],
+          pasos: [
+            [
+              seg(O, avanzar(O, g.n, Math.max(d.y, 2) * e + 20), "aux"),
+              recto(O, avanzar(O, g.n, 10), avanzar(O, g.ejes.Y, 10)),
+              seg(g.unoCero, g.uno, "aux"),
+              punto(g.unoCero, "1₀", pt(-14, 12)), punto(g.uno, "1", pt(-12, -10))
+            ],
+            [
+              punto(g.L0, "L₀", pt(-14, 12)),
+              seg(g.L0, avanzar(g.L, unitario(g.L0, g.L), 10), "aux"),
+              punto(g.L, "L", pt(-14, -8)),
+              punto(g.N, "N", pt(0, 18)), punto(g.M, "M", pt(-14, 14))
+            ],
+            [
+              seg(g.N, g.P1, "aux"), seg(g.L, g.P1, "aux"),
+              seg(g.N, g.P2, "aux"), seg(g.M, g.P2, "aux"),
+              seg(g.L, g.P3, "aux"), seg(g.M, g.P3, "aux"),
+              punto(g.P1, "P′", pt(0, 18), { estilo: "sol" }),
+              punto(g.P2, "P″", pt(-16, -8), { estilo: "sol" }),
+              punto(g.P3, "P‴", pt(18, -6), { estilo: "sol" })
+            ],
+            [
+              seg(g.P1, g.P, "aux"), seg(g.P2, g.P, "aux"), seg(g.P3, g.P, "aux"),
+              punto(g.P, "P", pt(14, -12), { estilo: "sol" })
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["punto-caballera"] = {
+        datos: function () {
+          return { O: pt(330, 230), x: 5, y: 4, z: 4, escala: 30, fi: 135, mu: 0.5 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.x > 0 && d.y > 0 && d.z > 0 && d.mu > 0.2 && d.mu < 1.01 && cabe(puntoCaballeraConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: puntoCaballeraConstruir
+      };
+
+      // La circunferencia de centro O y radio R en un plano paralelo al XOY
+      // (`cara` 0) o al YOZ (`cara` 1): el diámetro paralelo al eje que está
+      // en el cuadro, CD, en verdadera magnitud, 2R, y el paralelo al eje
+      // Y, AB, reducido, 2μR. El romboide circunscrito y sus diagonales; en
+      // cada mitad de lado paralela a CD, de A (o de B) al vértice V, el
+      // punto a AV/√2 = R/√2 de A, que se lleva con el compás desde el
+      // triángulo rectángulo isósceles de hipotenusa AV; las paralelas a AB
+      // por esos cuatro puntos cortan a las diagonales en cuatro puntos de
+      // la elipse. La elipse pasa por esos cuatro y por A, B, C y D.
+      function circunferenciaCaballeraGeometria(d) {
+        var ejes = ejesCaballera(d.fi);
+        var e = d.escala;
+        var u = d.cara === 1 ? ejes.Z : ejes.X;
+        var v = ejes.Y;
+        var R = d.R * e;
+        var r = d.R * e * d.mu;
+        var O = d.O;
+        var mas = function (a, b) {
+          return pt(O.x + a * R * u.x + b * r * v.x, O.y + a * R * u.y + b * r * v.y);
+        };
+        var k = Math.SQRT1_2;
+        return {
+          u: u, v: v, R: R, r: r,
+          C: mas(1, 0), D: mas(-1, 0), A: mas(0, 1), B: mas(0, -1),
+          vertices: [mas(1, 1), mas(-1, 1), mas(-1, -1), mas(1, -1)],
+          ocho: [mas(k, k), mas(-k, k), mas(-k, -k), mas(k, -k)],
+          // En los lados paralelos a CD, los puntos a AV/√2 de A y de B.
+          enLados: [mas(k, 1), mas(-k, 1), mas(-k, -1), mas(k, -1)],
+          mas: mas
+        };
+      }
+
+      function circunferenciaCaballeraConstruir(d) {
+        var g = circunferenciaCaballeraGeometria(d);
+        var O = d.O;
+        // La elipse, con muchos puntos, para la plantilla de curvas.
+        var elipse = [];
+        var j;
+        for (j = 0; j <= 96; j += 1) {
+          var t = (j / 96) * TAU;
+          elipse.push(g.mas(Math.cos(t), Math.sin(t)));
+        }
+        // El triángulo rectángulo isósceles sobre la mitad de lado de A al
+        // vértice V = mas(1, 1): su vértice T, y el arco de centro A y radio
+        // AT, que da en el lado el punto a AV/√2.
+        var A = g.A;
+        var V = g.vertices[0];
+        var mitad = distancia(A, V);
+        var w = unitario(A, V);
+        var nn = normalArriba(w);
+        var hacia = nn.x * (O.x - A.x) + nn.y * (O.y - A.y) > 0 ? -1 : 1;
+        var T = avanzar(entre(A, V, 0.5), pt(nn.x * hacia, nn.y * hacia), mitad / 2);
+        var a0 = angulo(A, T);
+        var a1 = angulo(A, V);
+        var nombres = [["C", g.C], ["D", g.D], ["A", g.A], ["B", g.B]];
+        // Las letras, en los huecos que dejan los diámetros, el romboide,
+        // sus diagonales y la elipse.
+        var diametros = [[avanzar(g.D, g.u, -16), avanzar(g.C, g.u, 16)], [avanzar(g.B, g.v, -16), avanzar(g.A, g.v, 16)]];
+        var estorbos = diametros.concat(g.vertices.map(function (p, j) {
+          return [p, g.vertices[(j + 1) % 4]];
+        }), [[g.vertices[0], g.vertices[2]], [g.vertices[1], g.vertices[3]]], elipse.slice(1).map(function (p, j) {
+          return [elipse[j], p];
+        }));
+        var huecos = letrasLibres([O].concat(nombres.map(function (q) {
+          return q[1];
+        })), estorbos, [], 18);
+        return {
+          base: [punto(O, "O", huecos[0], { forma: "hueco" })],
+          pasos: [
+            diametros.map(function (t) {
+              return seg(t[0], t[1], "aux");
+            }).concat(nombres.map(function (q, j) {
+              return punto(q[1], q[0], huecos[j + 1]);
+            })),
+            poligonoDe(g.vertices, "aux").concat([
+              seg(g.vertices[0], g.vertices[2], "aux", { sinRegla: true }),
+              seg(g.vertices[1], g.vertices[3], "aux", { sinRegla: true })
+            ]),
+            [
+              seg(A, T, "aux"), seg(T, V, "aux"), recto(T, A, V),
+              abrir(A, T),
+              arco(A, distancia(A, T), a0, a0 + giro(a0, a1), "aux"),
+              punto(g.enLados[0], "", null)
+            ].concat(deprisa(g.enLados.slice(1).map(function (p) {
+              return punto(p, "", null);
+            }).concat(g.enLados.map(function (p, i) {
+              return seg(p, g.ocho[i], "aux");
+            }), g.ocho.map(function (p) {
+              return punto(p, "", null, { estilo: "sol" });
+            })), 0.6)),
+            [curva(elipse, "sol")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["circunferencia-caballera"] = {
+        datos: function () {
+          return { O: pt(300, 200), R: 4, escala: 34, fi: 135, mu: 0.6, cara: 0 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.R > 0 && d.mu > 0.2 && d.mu < 1.01 && cabe(circunferenciaCaballeraConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: circunferenciaCaballeraConstruir
+      };
+
+      // Un bloque con un agujero cilíndrico que lo atraviesa de delante
+      // atrás: la cara delantera, en el cuadro, en verdadera magnitud, con
+      // su circunferencia, trazada con el compás; las aristas de
+      // profundidad, paralelas al eje Y y reducidas, y de la cara de atrás,
+      // las aristas que se ven y el trozo de la circunferencia de atrás que
+      // se ve por el agujero. a, el ancho (eje X); c, el alto (Z); b, el
+      // fondo (Y); r, el radio del agujero, centrado en la cara.
+      function bloqueCaballeraGeometria(d) {
+        var ejes = ejesCaballera(d.fi);
+        var e = d.escala;
+        var v = pt(ejes.Y.x * d.b * d.mu * e, ejes.Y.y * d.b * d.mu * e);
+        // La cara de delante: de A (abajo a la izquierda) en el sentido de
+        // las agujas del reloj; el eje X va a la izquierda, así que el
+        // bloque se dibuja desde su esquina de abajo a la derecha, O.
+        var O = d.O;
+        var A = pt(O.x - d.a * e, O.y);
+        var B = pt(O.x - d.a * e, O.y - d.c * e);
+        var C = pt(O.x, O.y - d.c * e);
+        var D = O;
+        var centro = pt(O.x - (d.a * e) / 2, O.y - (d.c * e) / 2);
+        var r = d.r * e;
+        var atras = function (p) {
+          return pt(p.x + v.x, p.y + v.y);
+        };
+        var centro2 = atras(centro);
+        var cortes = cortesCircunferencias(centro, r, centro2, r);
+        return { v: v, A: A, B: B, C: C, D: D, centro: centro, centro2: centro2, r: r, cortes: cortes, atras: atras };
+      }
+
+      function bloqueCaballeraConstruir(d) {
+        var g = bloqueCaballeraGeometria(d);
+        var A2 = g.atras(g.A);
+        var B2 = g.atras(g.B);
+        var C2 = g.atras(g.C);
+        var D2 = g.atras(g.D);
+        // Se ven la cara de delante, la de arriba y la del lado hacia el que
+        // va el eje Y (aquí la derecha, si el Y va arriba a la derecha).
+        var derecha = g.v.x > 0;
+        var vistas = derecha
+          ? [[g.B, B2], [g.C, C2], [g.D, D2], [B2, C2], [C2, D2]]
+          : [[g.B, B2], [g.C, C2], [g.A, A2], [B2, C2], [B2, A2]];
+        // El trozo de la circunferencia de atrás que se ve por el agujero:
+        // el que queda dentro de la de delante, del lado de su centro.
+        var trozo = [];
+        if (g.cortes) {
+          var a0 = angulo(g.centro2, g.cortes[0]);
+          var a1 = angulo(g.centro2, g.cortes[1]);
+          var medio = angulo(g.centro2, g.centro);
+          var d1 = giro(a0, a1);
+          var dm = giro(a0, medio);
+          // Si el centro de delante no queda en el arco corto, va el largo.
+          if (!(dm * d1 > 0 && Math.abs(dm) < Math.abs(d1))) {
+            d1 = d1 > 0 ? d1 - TAU : d1 + TAU;
+          }
+          trozo = [arco(g.centro2, g.r, a0, a0 + d1, "sol")];
+        }
+        return {
+          base: [],
+          pasos: [
+            poligonoDe([g.A, g.B, g.C, g.D], "sol").concat([
+              punto(g.centro, "", null),
+              abrir(g.centro, pt(g.centro.x + g.r, g.centro.y)),
+              arco(g.centro, g.r, 0, TAU, "sol")
+            ]),
+            vistas.slice(0, 3).map(function (s) {
+              return seg(s[0], s[1], "sol");
+            }),
+            vistas.slice(3).map(function (s) {
+              return seg(s[0], s[1], "sol");
+            }).concat([seg(g.centro, g.centro2, "aux"), punto(g.centro2, "", null)], trozo)
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["bloque-caballera"] = {
+        datos: function () {
+          return { O: pt(380, 330), a: 8, b: 6, c: 6, r: 2, escala: 30, fi: 135, mu: 0.5 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = bloqueCaballeraGeometria(d);
+          return d.r > 0 && 2 * d.r < Math.min(d.a, d.c) - 0.5 && g.cortes && cabe(bloqueCaballeraConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: bloqueCaballeraConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -32859,6 +33175,111 @@ Bachillerato</p>
             lista.push(seg(avanzar(k.C, unitario(g.agudos[0], g.agudos[1]), -a * 0.62), avanzar(k.C, unitario(g.agudos[0], g.agudos[1]), a * 0.62), "guia", { sinRegla: true }));
           });
           lista.push(pieDeFigura(480, 326, "El eje mayor de cada óvalo es perpendicular al eje que falta en su cara"));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 15, la perspectiva caballera ----
+
+      // Un cubo de arista s en caballera, con la cara de delante de esquina
+      // de abajo a la derecha en o, el eje Y a φ grados del X y el
+      // coeficiente μ: las aristas que se ven. No se ve el vértice de atrás
+      // que queda detrás de la cara de delante, ni las tres aristas que
+      // llegan a él.
+      function cuboCaballera(o, s, fi, mu, estilo) {
+        var ejes = ejesCaballera(fi);
+        var v = pt(ejes.Y.x * s * mu, ejes.Y.y * s * mu);
+        var F = [pt(o.x - s, o.y), pt(o.x - s, o.y - s), pt(o.x, o.y - s), o];
+        var centro = pt(o.x - s / 2, o.y - s / 2);
+        var atras = F.map(function (p) {
+          return pt(p.x + v.x, p.y + v.y);
+        });
+        var oculto = 0;
+        F.forEach(function (p, i) {
+          if ((p.x - centro.x) * v.x + (p.y - centro.y) * v.y < (F[oculto].x - centro.x) * v.x + (F[oculto].y - centro.y) * v.y) {
+            oculto = i;
+          }
+        });
+        var lista = poligonoDe(F, estilo || "dato");
+        F.forEach(function (p, i) {
+          if (i !== oculto) {
+            lista.push(seg(p, atras[i], estilo || "dato"));
+          }
+          var j = (i + 1) % 4;
+          if (i !== oculto && j !== oculto) {
+            lista.push(seg(atras[i], atras[j], estilo || "dato"));
+          }
+        });
+        return lista;
+      }
+
+      // El cubo según el ángulo φ entre los ejes X e Y: con el Y arriba a
+      // la derecha se ven la cara de arriba y la de la derecha; arriba a la
+      // izquierda, la de arriba y la de la izquierda, y así.
+      figuras.caballera_fi = {
+        lienzo: [960, 300],
+        trazos: function () {
+          var lista = [];
+          [[135, 150], [45, 380], [225, 610], [315, 840]].forEach(function (k) {
+            var fi = k[0];
+            var cx = k[1];
+            var o = pt(cx + 50, fi === 135 || fi === 45 ? 220 : 170);
+            lista = lista.concat(cuboCaballera(o, 100, fi, 0.5));
+            lista.push(pieDeFigura(cx, 286, "φ = " + fi + "°"));
+          });
+          return lista;
+        }
+      };
+
+      // El cubo según el coeficiente de reducción μ, con φ = 135°: cuanto
+      // mayor, más profundo y más deformado parece.
+      figuras.caballera_mu = {
+        lienzo: [960, 300],
+        trazos: function () {
+          var lista = [];
+          [[0.5, 170], [0.7, 480], [1, 790]].forEach(function (k) {
+            var o = pt(k[1] + 40, 240);
+            lista = lista.concat(cuboCaballera(o, 110, 135, k[0]));
+            lista.push(pieDeFigura(k[1] + 20, 286, "μ = " + conComa(k[0])));
+          });
+          return lista;
+        }
+      };
+
+      // Las circunferencias inscritas en las tres caras vistas de un cubo en
+      // caballera (φ = 135°, μ = 0,6): la de delante, en verdadera forma;
+      // las de arriba y del lado, elipses inscritas en sus romboides.
+      figuras.circunferencias_caballera = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var s = 180;
+          var mu = 0.6;
+          var o = pt(560, 300);
+          lista = lista.concat(cuboCaballera(o, s, 135, mu));
+          var ejes = ejesCaballera(135);
+          var v = pt(ejes.Y.x * s * mu, ejes.Y.y * s * mu);
+          var elipse = function (c, u, w) {
+            var puntos = [];
+            var j;
+            for (j = 0; j <= 96; j += 1) {
+              var t = (j / 96) * TAU;
+              puntos.push(pt(c.x + Math.cos(t) * u.x + Math.sin(t) * w.x, c.y + Math.cos(t) * u.y + Math.sin(t) * w.y));
+            }
+            return curva(puntos, "sol");
+          };
+          var r = s / 2;
+          var mitadV = pt(v.x / 2, v.y / 2);
+          // La de delante.
+          var c0 = pt(o.x - r, o.y - r);
+          lista.push(arco(c0, r, 0, TAU, "sol"), punto(c0, "", null));
+          // La de arriba.
+          var c1 = pt(o.x - r + mitadV.x, o.y - s + mitadV.y);
+          lista.push(elipse(c1, pt(r, 0), mitadV), punto(c1, "", null));
+          // La del lado.
+          var c2 = pt(o.x + mitadV.x, o.y - r + mitadV.y);
+          lista.push(elipse(c2, pt(0, r), mitadV), punto(c2, "", null));
+          lista.push(pieDeFigura(480, 318, "En la cara de delante, una circunferencia; en las otras, elipses"));
           return lista;
         }
       };
