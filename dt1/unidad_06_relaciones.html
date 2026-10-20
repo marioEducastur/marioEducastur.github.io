@@ -27685,6 +27685,610 @@ Bachillerato</p>
         construir: cuboConicoConstruir
       };
 
+      // ---- La unidad 12, el sistema diédrico (desde el 20 de octubre de
+      // 2026) ----
+
+      // Un punto del espacio por sus tres números, como en el libro: x, su
+      // distancia al plano de perfil que pasa por el origen O (a la
+      // izquierda de O si es positiva); c, su cota, y a, su alejamiento, en
+      // centímetros. Sus proyecciones, con la línea de tierra horizontal por
+      // O y `e` píxeles por centímetro: la vertical, A″, a la altura de la
+      // cota, y la horizontal, A′, por debajo de la línea de tierra a la
+      // distancia del alejamiento.
+      function diedrico(d, x, c, a) {
+        var e = d.escala;
+        var X = d.O.x - x * e;
+        return { x: X, v: pt(X, d.O.y - c * e), h: pt(X, d.O.y + a * e) };
+      }
+
+      // La línea de tierra, de borde a borde, con sus dos trazos por debajo
+      // en los extremos.
+      function lineaDeTierra(y) {
+        return [
+          seg(pt(14, y), pt(ANCHO - 14, y), "dato"),
+          seg(pt(18, y + 6), pt(44, y + 6), "dato"),
+          seg(pt(ANCHO - 44, y + 6), pt(ANCHO - 18, y + 6), "dato")
+        ];
+      }
+
+      // La línea de referencia de una vertical por x, entre las alturas y0 e
+      // y1, con 12 px de más.
+      function referencia(x, y0, y1) {
+        return seg(pt(x, Math.min(y0, y1) - 12), pt(x, Math.max(y0, y1) + 12), "aux");
+      }
+
+      // El punto: la línea de referencia, sus dos proyecciones y, en el
+      // plano de perfil por O, su tercera proyección.
+      function puntoDiedricoConstruir(d) {
+        var p = diedrico(d, d.x, d.c, d.a);
+        var e = d.escala;
+        var O = d.O;
+        var K = pt(O.x, O.y + d.a * e);
+        var L = pt(O.x + d.a * e, O.y);
+        var A1 = pt(L.x, p.v.y);
+        var cifras = Boolean(d.cifras);
+        return {
+          base: lineaDeTierra(O.y).concat([
+            punto(O, "O", pt(-12, 16)),
+            seg(pt(O.x, 16), pt(O.x, ALTO - 16), "guia", { sinRegla: true }),
+            rotulo(pt(O.x + 16, 30), "α₂"),
+            rotulo(pt(O.x + 16, ALTO - 24), "α₁")
+          ]),
+          pasos: [
+            [referencia(p.x, p.v.y, p.h.y)].concat(cifras ? [
+              rotulo(pt((p.x + O.x) / 2, O.y - 10), conComa(d.x), { recta: true, cuerpo: 14 })
+            ] : []),
+            [punto(p.v, "A″", pt(-16, -8))].concat(cifras ? [
+              rotulo(pt(p.x - 16, (p.v.y + O.y) / 2 + 4), conComa(d.c), { recta: true, cuerpo: 14 })
+            ] : []),
+            [punto(p.h, "A′", pt(-16, 10))].concat(cifras ? [
+              rotulo(pt(p.x - 16, (p.h.y + O.y) / 2 + 4), conComa(d.a), { recta: true, cuerpo: 14 })
+            ] : []),
+            [
+              seg(p.h, K, "aux"),
+              abrir(O, K),
+              arco(O, d.a * e, Math.PI / 2, 0),
+              seg(L, pt(L.x, A1.y - 12), "aux"),
+              seg(p.v, A1, "aux"),
+              punto(A1, "A₁", pt(14, -10), { estilo: "sol" })
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["punto-diedrico"] = {
+        datos: function () {
+          return { O: pt(400, 190), x: 4, c: 3, a: 4, escala: 34 };
+        },
+        asas: function (d) {
+          var p = diedrico(d, d.x, d.c, d.a);
+          return { Av: p.v, Ah: p.h };
+        },
+        mover: function (d, nombre, q) {
+          var nuevo = copia(d);
+          var x = Math.round(((d.O.x - q.x) / d.escala) * 2) / 2;
+          if (nombre === "Av") {
+            nuevo.x = x;
+            nuevo.c = Math.round(((d.O.y - q.y) / d.escala) * 2) / 2;
+          } else {
+            nuevo.x = x;
+            nuevo.a = Math.round(((q.y - d.O.y) / d.escala) * 2) / 2;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          return d.x >= 1 && d.c > 0 && d.a > 0 && cabe(puntoDiedricoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: puntoDiedricoConstruir
+      };
+
+      // La recta r por dos puntos A y B: sus proyecciones r′ y r″, y sus
+      // trazas. La horizontal, H, tiene cota 0: H″ es el corte de r″ con la
+      // línea de tierra, y H′, su referencia en r′. La vertical, V, tiene
+      // alejamiento 0: V′ es el corte de r′ con la línea de tierra, y V″, su
+      // referencia en r″.
+      function rectaDiedricoGeometria(d) {
+        var A = diedrico(d, d.Ax, d.Ac, d.Aa);
+        var B = diedrico(d, d.Bx, d.Bc, d.Ba);
+        var lt = d.O.y;
+        var H2 = corteRectas(A.v, B.v, pt(0, lt), pt(1, lt));
+        var V1 = corteRectas(A.h, B.h, pt(0, lt), pt(1, lt));
+        var H1 = H2 && corteRectas(A.h, B.h, H2, pt(H2.x, lt + 1));
+        var V2 = V1 && corteRectas(A.v, B.v, V1, pt(V1.x, lt + 1));
+        return { A: A, B: B, H2: H2, H1: H1, V1: V1, V2: V2 };
+      }
+
+      function rectaDiedricoConstruir(d) {
+        var g = rectaDiedricoGeometria(d);
+        var lt = d.O.y;
+        var largo = function (p, q, mas) {
+          var u = unitario(p, q);
+          return seg(avanzar(p, u, -mas), avanzar(q, u, mas), "dato");
+        };
+        // Las partes de r′ y r″ entre las trazas, en el primer diedro, se
+        // ven; las de fuera, a trazos.
+        var vista = function (p, q, a, b) {
+          var u = unitario(p, q);
+          return [seg(p, q, "sol")].concat(aristaOculta(avanzar(p, u, -60), p), aristaOculta(q, avanzar(q, u, 60)));
+        };
+        // Las letras de las trazas, en el hueco más despejado: lejos de las
+        // proyecciones de la recta, de su referencia, de la línea de tierra
+        // y de las letras de A y B.
+        var u2 = unitario(g.V2, g.H2);
+        var u1 = unitario(g.V1, g.H1);
+        var lineaLT = [pt(14, lt), pt(ANCHO - 14, lt)];
+        var letraDe = function (p, hacia) {
+          var q = pt(p.x + hacia.x, p.y + hacia.y);
+          return [q, q];
+        };
+        var letraV = letrasLibres([g.V2], [
+          [avanzar(g.V2, u2, -60), avanzar(g.H2, u2, 60)], [pt(g.V1.x, lt + 12), pt(g.V1.x, g.V2.y - 12)], lineaLT,
+          letraDe(g.A.v, pt(-6, -16)), letraDe(g.B.v, pt(-6, -16)), letraDe(g.H2, pt(10, -12))
+        ], [], 18)[0];
+        var letraH = letrasLibres([g.H1], [
+          [avanzar(g.V1, u1, -60), avanzar(g.H1, u1, 60)], [pt(g.H2.x, lt - 12), pt(g.H2.x, g.H1.y + 12)], lineaLT,
+          letraDe(g.A.h, pt(-6, 18)), letraDe(g.B.h, pt(-6, 18)), letraDe(g.V1, pt(-12, 16))
+        ], [], 18)[0];
+        return {
+          base: lineaDeTierra(lt).concat([
+            largo(g.A.v, g.B.v, 30),
+            largo(g.A.h, g.B.h, 30),
+            punto(g.A.v, "A″", pt(-6, -16)),
+            punto(g.B.v, "B″", pt(-6, -16)),
+            punto(g.A.h, "A′", pt(-6, 18)),
+            punto(g.B.h, "B′", pt(-6, 18)),
+            seg(pt(g.A.x, g.A.v.y), pt(g.A.x, g.A.h.y), "guia", { sinRegla: true }),
+            seg(pt(g.B.x, g.B.v.y), pt(g.B.x, g.B.h.y), "guia", { sinRegla: true }),
+            rotulo(avanzar(entre(g.A.v, g.B.v, 0.5), normalArriba(unitario(g.A.v, g.B.v)), 14), "r″"),
+            rotulo(avanzar(entre(g.A.h, g.B.h, 0.5), normalArriba(unitario(g.A.h, g.B.h)), -16), "r′")
+          ]),
+          pasos: [
+            [seg(g.B.v, avanzar(g.H2, unitario(g.B.v, g.H2), 12), "aux"), punto(g.H2, "H″", pt(10, -12))],
+            [referencia(g.H2.x, lt, g.H1.y), punto(g.H1, "H′", letraH, { estilo: "sol" })],
+            [seg(g.A.h, avanzar(g.V1, unitario(g.A.h, g.V1), 12), "aux"), punto(g.V1, "V′", pt(-12, 16))],
+            [referencia(g.V1.x, lt, g.V2.y), punto(g.V2, "V″", letraV, { estilo: "sol" })],
+            vista(g.V2, g.H2).concat(vista(g.V1, g.H1))
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["trazas-de-una-recta"] = {
+        datos: function () {
+          return { O: pt(400, 200), escala: 30, Ax: 6, Ac: 3, Aa: 1.5, Bx: 2, Bc: 1.5, Ba: 3 };
+        },
+        asas: function (d) {
+          var g = rectaDiedricoGeometria(d);
+          return { Av: g.A.v, Ah: g.A.h, Bv: g.B.v, Bh: g.B.h };
+        },
+        mover: function (d, nombre, q) {
+          var nuevo = copia(d);
+          var cual = nombre.charAt(0);
+          var x = Math.round(((d.O.x - q.x) / d.escala) * 2) / 2;
+          nuevo[cual + "x"] = x;
+          if (nombre.charAt(1) === "v") {
+            nuevo[cual + "c"] = Math.round(((d.O.y - q.y) / d.escala) * 2) / 2;
+          } else {
+            nuevo[cual + "a"] = Math.round(((q.y - d.O.y) / d.escala) * 2) / 2;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = rectaDiedricoGeometria(d);
+          if (!g.H2 || !g.V1 || !g.H1 || !g.V2) {
+            return false;
+          }
+          // Las dos trazas, separadas y dentro; A y B, en el primer diedro, y
+          // la cota y el alejamiento cambian en sentidos contrarios: así la
+          // parte vista de la recta es la que va de una traza a la otra.
+          return d.Ac > 0 && d.Aa > 0 && d.Bc > 0 && d.Ba > 0 && Math.abs(d.Ax - d.Bx) >= 2 &&
+            (d.Ac - d.Bc) * (d.Aa - d.Ba) < 0 &&
+            Math.abs(g.H2.x - g.V1.x) > 60 && g.H2.x > 40 && g.H2.x < ANCHO - 40 && g.V1.x > 40 && g.V1.x < ANCHO - 40 &&
+            cabe(rectaDiedricoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: rectaDiedricoConstruir
+      };
+
+      // Un plano α por sus trazas, que se cortan en N, en la línea de
+      // tierra: α₁, la horizontal, baja hacia la derecha con el ángulo
+      // `t1` (en grados, con la línea de tierra) y α₂, la vertical, sube con
+      // el ángulo `t2`. Las dos van hacia la izquierda de N.
+      function planoDiedrico(d) {
+        var N = pt(d.O.x - d.n * d.escala, d.O.y);
+        var u1 = polar(pt(0, 0), 1, Math.PI - d.t1 * GRADO);
+        var u2 = polar(pt(0, 0), 1, Math.PI + d.t2 * GRADO);
+        return { N: N, u1: u1, u2: u2 };
+      }
+
+      function trazasDelPlano(d, pl) {
+        // Cada traza, de N al borde de la lámina.
+        var fin1 = tramoEnLaLamina(pl.N, pl.u1, 10)[1];
+        var fin2 = tramoEnLaLamina(pl.N, pl.u2, 10)[1];
+        return [
+          seg(pl.N, fin1, "dato"),
+          seg(pl.N, fin2, "dato"),
+          rotulo(avanzar(pl.N, pl.u1, 70), "α₁", null),
+          rotulo(avanzar(pl.N, pl.u2, 70), "α₂", null),
+          punto(pl.N, "N", pt(14, 4))
+        ];
+      }
+
+      // El punto del plano α del que se conoce A′: la horizontal h del
+      // plano que pasa por él. h′, paralela a α₁, corta a la línea de tierra
+      // en V′; su referencia en α₂ es V″; h″ es la paralela a la línea de
+      // tierra por V″, y A″, la referencia de A′ en h″.
+      function puntoEnPlanoGeometria(d) {
+        var pl = planoDiedrico(d);
+        var lt = d.O.y;
+        var Ah = pt(d.O.x - d.x * d.escala, lt + d.a * d.escala);
+        var V1 = corteRectas(Ah, avanzar(Ah, pl.u1, 1), pt(0, lt), pt(1, lt));
+        var V2 = corteRectas(pl.N, avanzar(pl.N, pl.u2, 1), V1, pt(V1.x, lt - 1));
+        var Av = pt(Ah.x, V2.y);
+        return { pl: pl, Ah: Ah, V1: V1, V2: V2, Av: Av };
+      }
+
+      // Las rectas que traza puntoEnPlanoTrazos: h′, la referencia de V′, h″
+      // y la referencia de A′. Sirven para apartar de ellas las letras.
+      function puntoEnPlanoRectas(d, g) {
+        var lt = d.O.y;
+        var u = unitario(g.Ah, g.V1);
+        return [
+          [avanzar(g.Ah, u, -30), avanzar(g.V1, u, 12)],
+          [pt(g.V1.x, lt + 12), pt(g.V1.x, g.V2.y - 12)],
+          [pt(g.V2.x + 12, g.V2.y), pt(g.Ah.x - 30, g.V2.y)],
+          [pt(g.Ah.x, Math.min(g.Ah.y, g.Av.y) - 12), pt(g.Ah.x, Math.max(g.Ah.y, g.Av.y) + 12)]
+        ];
+      }
+
+      // Con `letras`, V′ y V″ llevan su letra en el hueco más despejado,
+      // lejos de las rectas del trazado, de las trazas del plano y de lo que
+      // se dé en `estorbos` (segmentos).
+      function puntoEnPlanoTrazos(d, g, letras, nombre, estorbos) {
+        var lt = d.O.y;
+        var u = unitario(g.Ah, g.V1);
+        var huecos = letras ? letrasLibres([g.V1, g.V2], (estorbos || []).concat(puntoEnPlanoRectas(d, g), [
+          [pt(14, lt), pt(ANCHO - 14, lt)],
+          [g.pl.N, avanzar(g.pl.N, g.pl.u1, 600)],
+          [g.pl.N, avanzar(g.pl.N, g.pl.u2, 600)],
+          [avanzar(g.pl.N, g.pl.u1, 70), avanzar(g.pl.N, g.pl.u1, 70)],
+          [avanzar(g.pl.N, g.pl.u2, 70), avanzar(g.pl.N, g.pl.u2, 70)]
+        ]), [], 18) : [null, null];
+        return [
+          seg(avanzar(g.Ah, u, -30), avanzar(g.V1, u, 12), "aux"),
+          punto(g.V1, letras ? "V′" : "", huecos[0]),
+          referencia(g.V1.x, lt, g.V2.y),
+          punto(g.V2, letras ? "V″" : "", huecos[1]),
+          seg(pt(g.V2.x + 12, g.V2.y), pt(g.Ah.x - 30, g.V2.y), "aux"),
+          referencia(g.Ah.x, g.Ah.y, g.Av.y),
+          punto(g.Av, nombre + "″", pt(14, -10), { estilo: "sol" })
+        ];
+      }
+
+      function puntoEnPlanoConstruir(d) {
+        var g = puntoEnPlanoGeometria(d);
+        var lt = d.O.y;
+        var u = unitario(g.Ah, g.V1);
+        var marca = function (p, h) {
+          var q = pt(p.x + h.x, p.y + h.y);
+          return [q, q];
+        };
+        var huecos = letrasLibres([g.V1, g.V2], puntoEnPlanoRectas(d, g).concat([
+          [pt(14, lt), pt(ANCHO - 14, lt)],
+          [g.pl.N, avanzar(g.pl.N, g.pl.u1, 600)],
+          [g.pl.N, avanzar(g.pl.N, g.pl.u2, 600)],
+          marca(g.pl.N, pt(14, 4)), marca(g.Ah, pt(-14, 14)), marca(g.Av, pt(14, -10)),
+          marca(avanzar(entre(g.Ah, g.V1, 0.5), normalArriba(u), 14), pt(0, 0)),
+          marca(pt(g.Ah.x - 36, g.V2.y - 10), pt(0, 0)),
+          marca(avanzar(g.pl.N, g.pl.u1, 70), pt(0, 0)), marca(avanzar(g.pl.N, g.pl.u2, 70), pt(0, 0))
+        ]), [], 18);
+        return {
+          base: lineaDeTierra(lt).concat(trazasDelPlano(d, g.pl), [punto(g.Ah, "A′", pt(-14, 14), { forma: "hueco" })]),
+          pasos: [
+            [seg(avanzar(g.Ah, u, -30), avanzar(g.V1, u, 12), "aux"), rotulo(avanzar(entre(g.Ah, g.V1, 0.5), normalArriba(u), 14), "h′"), punto(g.V1, "V′", huecos[0])],
+            [referencia(g.V1.x, lt, g.V2.y), punto(g.V2, "V″", huecos[1])],
+            [seg(pt(g.V2.x + 12, g.V2.y), pt(g.Ah.x - 30, g.V2.y), "aux"), rotulo(pt(g.Ah.x - 36, g.V2.y - 10), "h″")],
+            [referencia(g.Ah.x, g.Ah.y, g.Av.y), punto(g.Av, "A″", pt(14, -10), { estilo: "sol" })]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["punto-en-un-plano"] = {
+        datos: function () {
+          return { O: pt(560, 190), escala: 30, n: 1, t1: 40, t2: 50, x: 9, a: 3 };
+        },
+        asas: function (d) {
+          var g = puntoEnPlanoGeometria(d);
+          return { Ah: g.Ah };
+        },
+        mover: function (d, nombre, q) {
+          var nuevo = copia(d);
+          nuevo.x = Math.round(((d.O.x - q.x) / d.escala) * 2) / 2;
+          nuevo.a = Math.round(((q.y - d.O.y) / d.escala) * 2) / 2;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = puntoEnPlanoGeometria(d);
+          return d.a > 0 && g.V1 && g.V2 && g.V2.y < d.O.y - 10 && g.V1.x > 30 && g.V1.x < g.pl.N.x - 30 &&
+            cabe(puntoEnPlanoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: puntoEnPlanoConstruir
+      };
+
+      // La figura plana: un triángulo del plano α del que se conoce la
+      // proyección horizontal A′B′C′. Cada vértice, con su horizontal.
+      function figuraPlanaConstruir(d) {
+        var vertices = [["A", d.Ax, d.Aa], ["B", d.Bx, d.Ba], ["C", d.Cx, d.Ca]].map(function (v) {
+          var g = puntoEnPlanoGeometria({ O: d.O, escala: d.escala, n: d.n, t1: d.t1, t2: d.t2, x: v[1], a: v[2] });
+          g.nombre = v[0];
+          return g;
+        });
+        var pl = vertices[0].pl;
+        var lt = d.O.y;
+        var hs = vertices.map(function (g) {
+          return g.Ah;
+        });
+        var vs = vertices.map(function (g) {
+          return g.Av;
+        });
+        // Lo que estorba a las letras de la horizontal de A: el triángulo,
+        // las letras de sus vértices y las rectas de B y de C.
+        var estorbos = poligonoDe(hs).map(function (t) {
+          return [t.a, t.b];
+        }).concat(vertices.map(function (g) {
+          var q = avanzar(g.Ah, polar(pt(0, 0), 18, angulo(centroDe(hs), g.Ah)), 1);
+          return [q, q];
+        }), vertices.map(function (g) {
+          var q = pt(g.Av.x + 14, g.Av.y - 10);
+          return [q, q];
+        }), puntoEnPlanoRectas(d, vertices[1]), puntoEnPlanoRectas(d, vertices[2]));
+        return {
+          base: lineaDeTierra(lt).concat(trazasDelPlano(d, pl), poligonoDe(hs, "dato"), vertices.map(function (g, i) {
+            return punto(g.Ah, g.nombre + "′", polar(pt(0, 0), 18, angulo(centroDe(hs), g.Ah)), { forma: "hueco" });
+          })),
+          pasos: [
+            puntoEnPlanoTrazos(d, vertices[0], d.letras !== 0, "A", estorbos),
+            deprisa(puntoEnPlanoTrazos(d, vertices[1], false, "B").concat(puntoEnPlanoTrazos(d, vertices[2], false, "C")), 0.6),
+            poligonoDe(vs, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["figura-plana"] = {
+        datos: function () {
+          return { O: pt(560, 190), escala: 30, n: 1, t1: 40, t2: 30, Ax: 11, Aa: 2, Bx: 7, Ba: 1.5, Cx: 9.5, Ca: 4.5 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var ok = [["Ax", "Aa"], ["Bx", "Ba"], ["Cx", "Ca"]].every(function (k) {
+            var g = puntoEnPlanoGeometria({ O: d.O, escala: d.escala, n: d.n, t1: d.t1, t2: d.t2, x: d[k[0]], a: d[k[1]] });
+            return g.V1 && g.V2 && g.V2.y <= d.O.y + 1 && g.V1.x > 20;
+          });
+          return ok && cabe(figuraPlanaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: figuraPlanaConstruir
+      };
+
+      // El plano que pasa por tres puntos A, B y C: las rectas r = AB y
+      // s = AC, sus trazas, y las trazas del plano, α₁ por las horizontales
+      // y α₂ por las verticales, que se cortan en N, en la línea de tierra.
+      function planoTresPuntosGeometria(d) {
+        var r = rectaDiedricoGeometria({ O: d.O, escala: d.escala, Ax: d.Ax, Ac: d.Ac, Aa: d.Aa, Bx: d.Bx, Bc: d.Bc, Ba: d.Ba });
+        var s = rectaDiedricoGeometria({ O: d.O, escala: d.escala, Ax: d.Ax, Ac: d.Ac, Aa: d.Aa, Bx: d.Cx, Bc: d.Cc, Ba: d.Ca });
+        var C = diedrico(d, d.Cx, d.Cc, d.Ca);
+        var lt = d.O.y;
+        var N1 = r.H1 && s.H1 ? corteRectas(r.H1, s.H1, pt(0, lt), pt(1, lt)) : null;
+        var N2 = r.V2 && s.V2 ? corteRectas(r.V2, s.V2, pt(0, lt), pt(1, lt)) : null;
+        return { r: r, s: s, C: C, N: N1, N2: N2 };
+      }
+
+      function trazasDeRecta(g, letras, nombre, hacia) {
+        var lt = g.H2.y;
+        return [
+          seg(g.B.v, avanzar(g.H2, unitario(g.B.v, g.H2), 10), "aux"),
+          referencia(g.H2.x, lt, g.H1.y),
+          seg(g.B.h, avanzar(g.H1, unitario(g.B.h, g.H1), 10), "aux"),
+          seg(g.A.h, avanzar(g.V1, unitario(g.A.h, g.V1), 10), "aux"),
+          referencia(g.V1.x, lt, g.V2.y),
+          seg(g.A.v, avanzar(g.V2, unitario(g.A.v, g.V2), 10), "aux"),
+          punto(g.H1, "H" + nombre + "′", hacia ? hacia[0] : pt(14, 10)),
+          punto(g.V2, "V" + nombre + "″", hacia ? hacia[1] : pt(-16, -10)),
+          punto(g.H2, "", null),
+          punto(g.V1, "", null)
+        ];
+      }
+
+      function planoTresPuntosConstruir(d) {
+        var g = planoTresPuntosGeometria(d);
+        var lt = d.O.y;
+        var A = g.r.A;
+        var B = g.r.B;
+        var C = g.C;
+        var traza = function (N, P, Q) {
+          var lejos = distancia(N, P) > distancia(N, Q) ? P : Q;
+          return seg(N, avanzar(lejos, unitario(N, lejos), 30), "sol");
+        };
+        // Las letras de las cuatro trazas, cada una en su hueco: lejos de
+        // las proyecciones de r y de s, de las referencias, de la línea de
+        // tierra, de las trazas del plano y de las letras de A, B y C.
+        var marca = function (p, h) {
+          var q = pt(p.x + h.x, p.y + h.y);
+          return [q, q];
+        };
+        var rectaPor = function (p, q) {
+          var u = unitario(p, q);
+          return [avanzar(p, u, -400), avanzar(p, u, 400)];
+        };
+        var estorbos = [
+          [pt(14, lt), pt(ANCHO - 14, lt)],
+          rectaPor(A.v, B.v), rectaPor(A.h, B.h), rectaPor(A.v, C.v), rectaPor(A.h, C.h),
+          [A.v, A.h], [B.v, B.h], [C.v, C.h],
+          [pt(g.r.H2.x, lt), g.r.H1], [pt(g.r.V1.x, lt), g.r.V2], [pt(g.s.H2.x, lt), g.s.H1], [pt(g.s.V1.x, lt), g.s.V2],
+          [g.N, avanzar(g.N, unitario(g.N, g.r.H1), 600)], [g.N, avanzar(g.N, unitario(g.N, g.r.V2), 600)],
+          marca(A.v, pt(-6, -16)), marca(A.h, pt(-6, 18)), marca(B.v, pt(-6, -16)), marca(B.h, pt(-6, 18)),
+          marca(C.v, pt(-6, -16)), marca(C.h, pt(-6, 18)), marca(g.N, pt(12, 16))
+        ];
+        var huecos = letrasLibres([g.r.H1, g.r.V2, g.s.H1, g.s.V2], estorbos, [], 18);
+        return {
+          base: lineaDeTierra(lt).concat([
+            punto(A.v, "A″", pt(-6, -16), { forma: "hueco" }), punto(A.h, "A′", pt(-6, 18), { forma: "hueco" }),
+            punto(B.v, "B″", pt(-6, -16), { forma: "hueco" }), punto(B.h, "B′", pt(-6, 18), { forma: "hueco" }),
+            punto(C.v, "C″", pt(-6, -16), { forma: "hueco" }), punto(C.h, "C′", pt(-6, 18), { forma: "hueco" }),
+            seg(A.v, A.h, "guia", { sinRegla: true }),
+            seg(B.v, B.h, "guia", { sinRegla: true }),
+            seg(C.v, C.h, "guia", { sinRegla: true })
+          ]),
+          pasos: [
+            [
+              seg(A.v, B.v, "aux"), seg(A.h, B.h, "aux"),
+              seg(A.v, C.v, "aux"), seg(A.h, C.h, "aux"),
+              rotulo(avanzar(entre(A.v, B.v, 0.5), normalArriba(unitario(B.v, A.v)), 14), "r″"),
+              rotulo(avanzar(entre(A.h, B.h, 0.5), normalArriba(unitario(B.h, A.h)), -14), "r′"),
+              rotulo(avanzar(entre(A.v, C.v, 0.5), normalArriba(unitario(A.v, C.v)), 14), "s″"),
+              rotulo(avanzar(entre(A.h, C.h, 0.5), normalArriba(unitario(A.h, C.h)), -14), "s′")
+            ],
+            trazasDeRecta(g.r, true, "r", [huecos[0], huecos[1]]),
+            trazasDeRecta(g.s, true, "s", [huecos[2], huecos[3]]),
+            [
+              traza(g.N, g.r.H1, g.s.H1),
+              traza(g.N, g.r.V2, g.s.V2),
+              punto(g.N, "N", pt(12, 16)),
+              rotulo(avanzar(g.N, unitario(g.N, g.r.H1), 40), "α₁"),
+              rotulo(avanzar(g.N, unitario(g.N, g.r.V2), 40), "α₂")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["plano-por-tres-puntos"] = {
+        datos: function () {
+          return { O: pt(500, 200), escala: 30, Ax: 6, Ac: 3, Aa: 1, Bx: 4, Bc: 1, Ba: 2, Cx: 7, Cc: 2, Ca: 2.5 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = planoTresPuntosGeometria(d);
+          var bien = function (t) {
+            return t.H1 && t.V2 && t.H2 && t.V1;
+          };
+          return bien(g.r) && bien(g.s) && g.N && g.N2 && Math.abs(g.N.x - g.N2.x) < 1 &&
+            cabe(planoTresPuntosConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: planoTresPuntosConstruir
+      };
+
+      // Las trazas de una recta de perfil, dada por dos puntos P y Q de la
+      // misma x: su tercera proyección sobre el plano de perfil por O.
+      function perfilGeometria(d) {
+        var e = d.escala;
+        var O = d.O;
+        var P = diedrico(d, d.x, d.Pc, d.Pa);
+        var Q = diedrico(d, d.x, d.Qc, d.Qa);
+        var P1 = pt(O.x + d.Pa * e, P.v.y);
+        var Q1 = pt(O.x + d.Qa * e, Q.v.y);
+        var H1 = corteRectas(P1, Q1, pt(0, O.y), pt(1, O.y));
+        var V1 = corteRectas(P1, Q1, pt(O.x, 0), pt(O.x, 1));
+        var aH = H1 ? (H1.x - O.x) / e : 0;
+        var cV = V1 ? (O.y - V1.y) / e : 0;
+        return {
+          P: P, Q: Q, P1: P1, Q1: Q1, H1: H1, V1: V1, aH: aH, cV: cV,
+          Hh: pt(P.x, O.y + aH * e), Vv: pt(P.x, O.y - cV * e)
+        };
+      }
+
+      function terceraProyeccion(O, h, v, uno, e, a) {
+        var K = pt(O.x, h.y);
+        var L = pt(O.x + a * e, O.y);
+        return [
+          seg(h, K, "aux"),
+          abrir(O, K),
+          arco(O, a * e, Math.PI / 2, 0),
+          seg(L, pt(L.x, uno.y - 10), "aux"),
+          seg(v, pt(uno.x + 10, uno.y), "aux")
+        ];
+      }
+
+      function perfilConstruir(d) {
+        var g = perfilGeometria(d);
+        var O = d.O;
+        var e = d.escala;
+        var u = unitario(g.P1, g.Q1);
+        var lejos = [g.H1, g.V1].sort(function (m, n) {
+          return sobre(m, g.P1, u) - sobre(n, g.P1, u);
+        });
+        // La letra r₁, en medio del tramo más largo entre dos puntos
+        // seguidos de la recta, donde no pisa ninguna otra.
+        var enLaRecta = [g.H1, g.V1, g.P1, g.Q1].sort(function (m, n) {
+          return sobre(m, g.P1, u) - sobre(n, g.P1, u);
+        });
+        var hueco = [enLaRecta[0], enLaRecta[1]];
+        enLaRecta.slice(1).forEach(function (q, i) {
+          if (distancia(enLaRecta[i], q) > distancia(hueco[0], hueco[1])) {
+            hueco = [enLaRecta[i], q];
+          }
+        });
+        return {
+          base: lineaDeTierra(O.y).concat([
+            punto(O, "O", pt(-12, 16)),
+            seg(pt(O.x, 16), pt(O.x, ALTO - 16), "guia", { sinRegla: true }),
+            seg(pt(g.P.x, 16), pt(g.P.x, ALTO - 16), "dato"),
+            rotulo(pt(g.P.x - 14, 30), "r″"),
+            rotulo(pt(g.P.x - 14, ALTO - 24), "r′"),
+            punto(g.P.v, "P″", pt(-16, -6), { forma: "hueco" }), punto(g.P.h, "P′", pt(-16, 6), { forma: "hueco" }),
+            punto(g.Q.v, "Q″", pt(-16, -6), { forma: "hueco" }), punto(g.Q.h, "Q′", pt(-16, 6), { forma: "hueco" })
+          ]),
+          pasos: [
+            terceraProyeccion(O, g.P.h, g.P.v, g.P1, e, d.Pa).concat([punto(g.P1, "P₁", pt(14, -10))]),
+            deprisa(terceraProyeccion(O, g.Q.h, g.Q.v, g.Q1, e, d.Qa).concat([punto(g.Q1, "Q₁", pt(14, -10))]), 0.6),
+            [
+              seg(avanzar(lejos[0], u, -14), avanzar(lejos[1], u, 14), "aux"),
+              rotulo(avanzar(entre(hueco[0], hueco[1], 0.5), normalArriba(u), 14), "r₁"),
+              punto(g.H1, "H₁", pt(10, 16)),
+              punto(g.V1, "V₁", pt(-14, -10))
+            ],
+            [
+              seg(g.V1, g.Vv, "aux"),
+              punto(g.Vv, "V″", pt(16, -12), { estilo: "sol" }),
+              abrir(O, g.H1),
+              arco(O, g.aH * e, 0, Math.PI / 2),
+              seg(pt(O.x, g.Hh.y), g.Hh, "aux"),
+              punto(g.Hh, "H′", pt(-16, 6), { estilo: "sol" })
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["trazas-recta-de-perfil"] = {
+        datos: function () {
+          return { O: pt(330, 190), escala: 30, x: 5, Pc: 3, Pa: 1, Qc: 1, Qa: 3 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          var g = perfilGeometria(d);
+          return g.H1 && g.V1 && g.aH > 0.5 && g.cV > 0.5 && Math.abs(d.Pa - d.Qa) >= 1 &&
+            cabe(perfilConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: perfilConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -30639,6 +31243,160 @@ Bachillerato</p>
             lista.push(rotulo(pt(en(0).x, en(0).y + 5), String(n[2]), { recta: true, cuerpo: 13 }));
           });
           lista.push(pieDeFigura(800, 300, "Curvas de nivel"));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 12, el sistema diédrico ----
+
+      // Los planos de proyección: a la izquierda, en perspectiva, el
+      // vertical y el horizontal con un punto A y sus proyecciones; a la
+      // derecha, vistos de perfil, con los cuatro diedros y los bisectores.
+      figuras.diedros = {
+        lienzo: [960, 340],
+        trazos: function () {
+          var lista = [];
+          // La perspectiva: el horizontal, un paralelogramo; el vertical,
+          // un rectángulo que sale de su lado de atrás.
+          var L = pt(100, 170);
+          var T = pt(440, 170);
+          var fondo = pt(-70, 70);
+          var abajo = pt(0, 130);
+          var mas = function (p, v, k) {
+            return pt(p.x + v.x * k, p.y + v.y * k);
+          };
+          lista = lista.concat(poligonoDe([mas(L, fondo, 0.0), mas(T, fondo, 0.0), mas(T, fondo, 0.9), mas(L, fondo, 0.9)], "dato"));
+          lista.push(
+            seg(L, T, "dato"),
+            seg(mas(L, abajo, -1), L, "dato"),
+            seg(mas(T, abajo, -1), T, "dato"),
+            seg(mas(L, abajo, -1), mas(T, abajo, -1), "dato"),
+            rotulo(pt(T.x - 30, 70), "PV", { recta: true, cuerpo: 14 }),
+            rotulo(pt(L.x + 40, 215), "PH", { recta: true, cuerpo: 14 }),
+            rotulo(pt(T.x + 18, 184), "LT", { recta: true, cuerpo: 14 })
+          );
+          // El punto A, delante del vertical y encima del horizontal.
+          var base = pt(270, 170);
+          var Ah = mas(base, fondo, 0.55);
+          var A = pt(Ah.x, Ah.y - 110);
+          var Av = pt(base.x, base.y - 110);
+          lista.push(
+            seg(A, Ah, "aux"), seg(A, Av, "aux"), seg(Ah, base, "aux"), seg(Av, base, "aux"),
+            punto(A, "A", pt(-14, -8)),
+            punto(Ah, "A′", pt(14, 10), { estilo: "sol" }),
+            punto(Av, "A″", pt(14, -8), { estilo: "sol" }),
+            pieDeFigura(250, 324, "Los dos planos de proyección")
+          );
+          // De perfil: el vertical y el horizontal se cortan en LT.
+          var O = pt(730, 175);
+          var r = 130;
+          lista.push(
+            seg(pt(O.x, O.y - r), pt(O.x, O.y + r), "dato"),
+            seg(pt(O.x - r - 40, O.y), pt(O.x + r + 40, O.y), "dato"),
+            seg(polar(O, r, -Math.PI / 4), polar(O, r, (3 * Math.PI) / 4), "guia", { sinRegla: true }),
+            seg(polar(O, r, (-3 * Math.PI) / 4), polar(O, r, Math.PI / 4), "guia", { sinRegla: true }),
+            punto(O, "", null),
+            rotulo(pt(O.x - 26, O.y - 12), "LT", { recta: true, cuerpo: 13 }),
+            rotulo(polar(O, 110, -22 * GRADO), "1.er diedro", { recta: true, cuerpo: 14 }),
+            rotulo(polar(O, 110, -158 * GRADO), "2.º diedro", { recta: true, cuerpo: 14 }),
+            rotulo(polar(O, 110, 158 * GRADO), "3.er diedro", { recta: true, cuerpo: 14 }),
+            rotulo(polar(O, 110, 22 * GRADO), "4.º diedro", { recta: true, cuerpo: 14 }),
+            rotulo(pt(O.x + 150, O.y - r + 4), "1.er bisector", { recta: true, cuerpo: 13 }),
+            rotulo(pt(O.x - 150, O.y - r + 4), "2.º bisector", { recta: true, cuerpo: 13 }),
+            rotulo(pt(O.x - 18, O.y - r + 6), "PV", { recta: true, cuerpo: 13 }),
+            rotulo(pt(O.x + r + 30, O.y - 8), "PH", { recta: true, cuerpo: 13 }),
+            pieDeFigura(O.x, 324, "Los cuatro diedros, de perfil")
+          );
+          return lista;
+        }
+      };
+
+      // Las rectas particulares, cada una con su línea de tierra: la
+      // horizontal, la frontal, la de punta (perpendicular al vertical), la
+      // vertical (perpendicular al horizontal), la paralela a la línea de
+      // tierra y la de perfil.
+      figuras.rectas_particulares = {
+        lienzo: [960, 400],
+        trazos: function () {
+          var lista = [];
+          var caja = function (x, y, nombre, dibujar) {
+            lista.push(
+              seg(pt(x - 70, y), pt(x + 70, y), "dato"),
+              seg(pt(x - 68, y + 5), pt(x - 54, y + 5), "dato"),
+              seg(pt(x + 54, y + 5), pt(x + 68, y + 5), "dato"),
+              pieDeFigura(x, y + 92, nombre)
+            );
+            dibujar(x, y);
+          };
+          caja(120, 90, "Horizontal", function (x, y) {
+            lista.push(seg(pt(x - 55, y - 40), pt(x + 55, y - 40), "sol"), seg(pt(x - 55, y + 20), pt(x + 45, y + 65), "sol"),
+              rotulo(pt(x + 62, y - 42), "h″"), rotulo(pt(x + 54, y + 72), "h′"));
+          });
+          caja(360, 90, "Frontal", function (x, y) {
+            lista.push(seg(pt(x - 55, y + 45), pt(x + 55, y + 45), "sol"), seg(pt(x - 50, y - 15), pt(x + 45, y - 65), "sol"),
+              rotulo(pt(x + 62, y + 50), "f′"), rotulo(pt(x + 54, y - 68), "f″"));
+          });
+          caja(600, 90, "De punta", function (x, y) {
+            lista.push(punto(pt(x, y - 40), "d″", pt(14, -6), { estilo: "sol" }), seg(pt(x, y + 5), pt(x, y + 70), "sol"),
+              rotulo(pt(x + 14, y + 60), "d′"));
+          });
+          caja(840, 90, "Vertical", function (x, y) {
+            lista.push(punto(pt(x, y + 45), "v′", pt(14, 8), { estilo: "sol" }), seg(pt(x, y - 5), pt(x, y - 70), "sol"),
+              rotulo(pt(x + 14, y - 58), "v″"));
+          });
+          caja(240, 280, "Paralela a la línea de tierra", function (x, y) {
+            lista.push(seg(pt(x - 55, y - 35), pt(x + 55, y - 35), "sol"), seg(pt(x - 55, y + 40), pt(x + 55, y + 40), "sol"),
+              rotulo(pt(x + 62, y - 37), "r″"), rotulo(pt(x + 62, y + 45), "r′"));
+          });
+          caja(720, 280, "De perfil", function (x, y) {
+            lista.push(seg(pt(x, y - 65), pt(x, y + 65), "sol"),
+              punto(pt(x, y - 40), "A″", pt(-16, -4)), punto(pt(x, y + 22), "A′", pt(-16, 6)),
+              punto(pt(x, y - 15), "B″", pt(16, -4)), punto(pt(x, y + 44), "B′", pt(16, 6)),
+              rotulo(pt(x + 14, y - 58), "r″"), rotulo(pt(x - 16, y + 64), "r′"));
+          });
+          return lista;
+        }
+      };
+
+      // Los planos particulares, por sus trazas: el proyectante horizontal
+      // (α₂ perpendicular a la línea de tierra), el proyectante vertical
+      // (α₁ perpendicular), el horizontal (solo α₂, paralela), el frontal
+      // (solo α₁, paralela), el de perfil (las dos, en una perpendicular) y
+      // el paralelo a la línea de tierra (las dos, paralelas).
+      figuras.planos_particulares = {
+        lienzo: [960, 400],
+        trazos: function () {
+          var lista = [];
+          var caja = function (x, y, nombre, dibujar) {
+            lista.push(
+              seg(pt(x - 70, y), pt(x + 70, y), "dato"),
+              seg(pt(x - 68, y + 5), pt(x - 54, y + 5), "dato"),
+              seg(pt(x + 54, y + 5), pt(x + 68, y + 5), "dato"),
+              pieDeFigura(x, y + 92, nombre)
+            );
+            dibujar(x, y);
+          };
+          caja(120, 90, "Proyectante horizontal", function (x, y) {
+            lista.push(seg(pt(x + 20, y), pt(x + 20, y - 70), "sol"), seg(pt(x + 20, y), pt(x - 45, y + 65), "sol"),
+              rotulo(pt(x + 34, y - 58), "α₂"), rotulo(pt(x - 50, y + 50), "α₁"));
+          });
+          caja(360, 90, "Proyectante vertical", function (x, y) {
+            lista.push(seg(pt(x + 20, y), pt(x + 20, y + 70), "sol"), seg(pt(x + 20, y), pt(x - 45, y - 65), "sol"),
+              rotulo(pt(x + 34, y + 62), "α₁"), rotulo(pt(x - 50, y - 48), "α₂"));
+          });
+          caja(600, 90, "Horizontal", function (x, y) {
+            lista.push(seg(pt(x - 55, y - 40), pt(x + 55, y - 40), "sol"), rotulo(pt(x + 62, y - 42), "α₂"));
+          });
+          caja(840, 90, "Frontal", function (x, y) {
+            lista.push(seg(pt(x - 55, y + 40), pt(x + 55, y + 40), "sol"), rotulo(pt(x + 62, y + 45), "α₁"));
+          });
+          caja(240, 280, "De perfil", function (x, y) {
+            lista.push(seg(pt(x, y - 65), pt(x, y + 65), "sol"), rotulo(pt(x + 14, y - 56), "α₂"), rotulo(pt(x + 14, y + 62), "α₁"));
+          });
+          caja(720, 280, "Paralelo a la línea de tierra", function (x, y) {
+            lista.push(seg(pt(x - 55, y - 35), pt(x + 55, y - 35), "sol"), seg(pt(x - 55, y + 45), pt(x + 55, y + 45), "sol"),
+              rotulo(pt(x + 62, y - 37), "α₂"), rotulo(pt(x + 62, y + 50), "α₁"));
+          });
           return lista;
         }
       };
