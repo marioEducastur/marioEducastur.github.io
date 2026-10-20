@@ -23499,6 +23499,978 @@ Bachillerato</p>
         construir: octogonoLadoConstruir
       };
 
+      // ---- La unidad 6, las relaciones geométricas: proporcionalidad,
+      // semejanza, igualdad, equivalencia y simetría (desde el 20 de octubre
+      // de 2026) ----
+
+      // Los puntos de una figura dada como datos: d.A, d.B… hasta los que
+      // haya, en orden.
+      function verticesDe(d, nombres) {
+        return nombres.filter(function (k) {
+          return d[k];
+        }).map(function (k) {
+          return d[k];
+        });
+      }
+
+      function centroDe(puntos) {
+        var x = 0;
+        var y = 0;
+        puntos.forEach(function (p) {
+          x += p.x;
+          y += p.y;
+        });
+        return pt(x / puntos.length, y / puntos.length);
+      }
+
+      // Los lados de un polígono, como pares de puntos, para las letras.
+      function ladosDe(puntos) {
+        return puntos.map(function (p, i) {
+          return [p, puntos[(i + 1) % puntos.length]];
+        });
+      }
+
+      // El área de un polígono, en px², con signo según el sentido.
+      function areaDe(puntos) {
+        var s = 0;
+        puntos.forEach(function (p, i) {
+          var q = puntos[(i + 1) % puntos.length];
+          s += p.x * q.y - q.x * p.y;
+        });
+        return s / 2;
+      }
+
+      // Si el polígono es convexo: todos sus giros, del mismo lado.
+      function esConvexo(puntos) {
+        var signo = 0;
+        return puntos.every(function (p, i) {
+          var q = puntos[(i + 1) % puntos.length];
+          var r = puntos[(i + 2) % puntos.length];
+          var z = (q.x - p.x) * (r.y - q.y) - (q.y - p.y) * (r.x - q.x);
+          if (Math.abs(z) < 1e-6) {
+            return false;
+          }
+          if (!signo) {
+            signo = z > 0 ? 1 : -1;
+          }
+          return z * signo > 0;
+        });
+      }
+
+      // Lo que separa de los demás al punto de una lista que más cerca tiene
+      // a otro: para no dar por buena una figura con vértices pegados.
+      function separacionMinima(puntos) {
+        var m = Infinity;
+        puntos.forEach(function (p, i) {
+          puntos.forEach(function (q, j) {
+            if (j > i) {
+              m = Math.min(m, distancia(p, q));
+            }
+          });
+        });
+        return m;
+      }
+
+      // ---- Proporcionalidad ----
+
+      // El cuarto proporcional a a, b y c (a/b = c/x): sobre la semirrecta r,
+      // desde O, a y b seguidos (A y B); sobre s, que forma `abre` grados con
+      // r, c (C); la paralela a AC por B corta a s en D, y CD es x. Con
+      // `tercera`, c es igual a b: el tercero proporcional (a/b = b/x).
+      function cuartaGeometria(d) {
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var hacia = (d.fi || 0) - d.abre * GRADO;
+        var v = polar(pt(0, 0), 1, hacia);
+        var c = d.tercera ? d.b : d.c;
+        var x = (d.b * c) / d.a;
+        var O = d.O;
+        return {
+          u: u, v: v, hacia: hacia, c: c, x: x, O: O,
+          A: avanzar(O, u, d.a * d.escala),
+          B: avanzar(O, u, (d.a + d.b) * d.escala),
+          C: avanzar(O, v, c * d.escala),
+          D: avanzar(O, v, (c + x) * d.escala)
+        };
+      }
+
+      function cuartaConstruir(d) {
+        var g = cuartaGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var e = d.escala;
+        var finR = avanzar(g.B, g.u, 34);
+        var finS = avanzar(g.D, g.v, 34);
+        var texto = function (valor, letra) {
+          return cifras ? conComa(valor) : letra;
+        };
+        var letras = letrasLibres([g.A, g.B, g.C, g.D],
+          [[g.O, finR], [g.O, finS], [g.A, g.C], [g.B, g.D]], [], 18);
+        var arcosR = arcosConCompas(null, [
+          arquito(g.O, d.a * e, d.fi || 0, Math.min(0.3, 12 / (d.a * e)), 1),
+          arquito(g.A, d.b * e, d.fi || 0, Math.min(0.3, 12 / (d.b * e)), 1)
+        ]);
+        var arcosS = arcosConCompas(arcosR.despues, [
+          arquito(g.O, g.c * e, g.hacia, Math.min(0.3, 12 / (g.c * e)), 1)
+        ]);
+        return {
+          base: [
+            seg(g.O, finR, "aux"),
+            seg(g.O, finS, "aux"),
+            rotulo(avanzar(finR, normalArriba(g.u), 12), "r"),
+            rotulo(avanzar(finS, normalArriba(g.v), -12), "s"),
+            punto(g.O, "O", mezcla(g.u, -14, normalArriba(g.u), -12), { forma: "hueco" })
+          ],
+          pasos: [
+            arcosR.trazos.concat([
+              seg(g.O, g.A, "dato"),
+              seg(g.A, g.B, "dato"),
+              punto(g.A, "A", letras[0]),
+              punto(g.B, "B", letras[1]),
+              medidaDelLado(g.O, g.A, texto(d.a, "a"), -1, 16),
+              medidaDelLado(g.A, g.B, texto(d.b, "b"), -1, 16)
+            ]),
+            arcosS.trazos.concat([
+              seg(g.O, g.C, "dato"),
+              punto(g.C, "C", letras[2]),
+              medidaDelLado(g.O, g.C, texto(g.c, d.tercera ? "b" : "c"), 1, 16),
+              seg(avanzar(g.A, unitario(g.C, g.A), 14), avanzar(g.C, unitario(g.A, g.C), 14), "aux")
+            ]),
+            [
+              seg(avanzar(g.B, unitario(g.D, g.B), 14), avanzar(g.D, unitario(g.B, g.D), 14), "aux"),
+              punto(g.D, "D", letras[3]),
+              seg(g.C, g.D, "sol"),
+              medidaDelLado(g.C, g.D, texto(Math.round(g.x * 10) / 10, "x"), 1, 16)
+            ]
+          ],
+          porque: aprisa([
+            marcaAngulo(g.A, g.O, g.C, 22, 1),
+            marcaAngulo(g.B, g.O, g.D, 22, 1)
+          ])
+        };
+      }
+
+      construcciones["cuarta-proporcional"] = {
+        datos: function () {
+          return { O: pt(60, 340), fi: 0, abre: 32, a: 30, b: 40, c: 36, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O, A: cuartaGeometria(d).A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "O") {
+            nuevo.O = p;
+          } else {
+            nuevo.fi = angulo(d.O, p);
+            nuevo.a = distancia(d.O, p) / d.escala;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = cuartaGeometria(d);
+          return (
+            d.a * d.escala > 50 && Math.abs(g.u.y) < 0.3 && d.abre >= 15 && d.abre <= 70 &&
+            cabe(cuartaConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: cuartaConstruir
+      };
+
+      // El medio proporcional a a y b (a/x = x/b), con la semicircunferencia.
+      // Por la altura: a y b seguidos, AP y PB; la semicircunferencia de
+      // diámetro AB, y la perpendicular en P, que la corta en M: PM es x.
+      // Con `cateto`, b va sobre a, AP dentro de AB, y x es la cuerda AM.
+      function mediaGeometria(d) {
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var n = normalArriba(u);
+        var e = d.escala;
+        var A = d.A;
+        var B = avanzar(A, u, (d.cateto ? d.a : d.a + d.b) * e);
+        var P = avanzar(A, u, (d.cateto ? d.b : d.a) * e);
+        var O = entre(A, B, 0.5);
+        var R = distancia(A, B) / 2;
+        var dOP = distancia(O, P);
+        var M = avanzar(P, n, Math.sqrt(Math.max(0, R * R - dOP * dOP)));
+        return { u: u, n: n, A: A, B: B, P: P, O: O, R: R, M: M, x: Math.sqrt(d.a * d.b) };
+      }
+
+      function mediaConstruir(d) {
+        var g = mediaGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var texto = function (valor, letra) {
+          return cifras ? conComa(valor) : letra;
+        };
+        var med = mediatrizHasta(g.A, g.B, [g.R * 0.4, -24]);
+        var aB = angulo(g.O, g.B);
+        var alto = distancia(g.P, g.M);
+        var x = seg(d.cateto ? g.A : g.P, g.M, "sol");
+        var letraM = letrasLibres([g.M], [[g.P, avanzar(g.M, g.n, 26)], [g.A, g.M], [g.M, g.B]],
+          [{ c: g.O, r: g.R }], 18)[0];
+        // O y P pueden quedar cerca: cada letra, del lado contrario al otro.
+        var s = sobre(g.O, g.P, g.u) >= 0 ? 1 : -1;
+        var base = [
+          seg(g.A, g.B, "dato"),
+          punto(g.A, "A", mezcla(g.u, -16, g.n, -12), { forma: "hueco" }),
+          punto(g.B, "B", mezcla(g.u, 16, g.n, -12), { forma: "hueco" }),
+          punto(g.P, "P", mezcla(g.u, -s * 12, g.n, -16), { forma: "hueco" })
+        ];
+        if (d.cateto) {
+          base.push(medidaDelLado(g.A, g.B, texto(d.a, "a"), -1, 34, 0.8));
+          base.push(medidaDelLado(g.A, g.P, texto(d.b, "b"), -1, 15));
+        } else {
+          base.push(medidaDelLado(g.A, g.P, texto(d.a, "a"), -1, 15));
+          base.push(medidaDelLado(g.P, g.B, texto(d.b, "b"), -1, 15));
+        }
+        return {
+          base: base,
+          pasos: [
+            med.trazos.concat([punto(g.O, "O", mezcla(g.u, s * 13, g.n, d.cateto ? 14 : -16))]),
+            [
+              abrir(g.O, polar(g.O, g.R, aB)),
+              arco(g.O, g.R, aB, aB - Math.PI)
+            ],
+            anguloDado(g.P, d.fi || 0, 90, 1, alto + 22, "", 24).trazos.concat([
+              punto(g.M, "M", letraM),
+              x,
+              d.cateto
+                ? medidaDelLado(g.A, g.M, texto(Math.round(g.x * 10) / 10, "x"), 1, 15)
+                : medidaDelLado(g.P, g.M, texto(Math.round(g.x * 10) / 10, "x"), s > 0 ? 1 : -1, 15)
+            ])
+          ],
+          porque: aprisa([
+            seg(g.A, g.M, "guia", { sinRegla: true }),
+            seg(g.M, g.B, "guia", { sinRegla: true }),
+            recto(g.M, g.A, g.B)
+          ])
+        };
+      }
+
+      construcciones["media-proporcional"] = {
+        datos: function () {
+          return { A: pt(130, 285), fi: 0, a: 64, b: 25, escala: 3.6 };
+        },
+        asas: function (d) {
+          return { A: d.A, P: mediaGeometria(d).P };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          var largo;
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            largo = distancia(d.A, p) / d.escala;
+            nuevo.fi = angulo(d.A, p);
+            if (d.cateto) {
+              nuevo.b = largo;
+            } else {
+              nuevo.a = largo;
+            }
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = mediaGeometria(d);
+          if (Math.abs(g.u.y) > 0.25 || d.a * d.escala < 40 || d.b * d.escala < 40) {
+            return false;
+          }
+          if (d.cateto && (d.b >= d.a * 0.85 || d.b <= d.a * 0.15)) {
+            return false;
+          }
+          return cabe(mediaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: mediaConstruir
+      };
+
+      // ---- Semejanza e igualdad ----
+
+      // La figura semejante a ABCD… con centro P y razón k, por radiación:
+      // las rectas de P a cada vértice; en la de A, el punto A' con
+      // PA' = k·PA (con k = 1/2, la mediatriz de PA); por A', la paralela a
+      // AB hasta la recta de B, que da B', y así hasta cerrar.
+      var VERTICES = ["A", "B", "C", "D", "E", "F"];
+
+      function semejanteGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        var W = V.map(function (p) {
+          return entre(d.P, p, d.k);
+        });
+        return { V: V, W: W };
+      }
+
+      // El punto de la recta pa a la distancia k·pa de p, con el teorema de
+      // Tales: k = m/n (n hasta 8); una semirrecta auxiliar por p, del lado
+      // `lado` de pa, con marcas iguales; la de n, unida con a, y la
+      // paralela por la de m. Con k negativa, las marcas de m van al otro
+      // lado de p, y el punto también.
+      function puntoPorTales(p, a, k, lado) {
+        var n = 1;
+        var m;
+        var j;
+        while (n < 8 && Math.abs(k * n - Math.round(k * n)) > 0.02) {
+          n += 1;
+        }
+        m = Math.round(k * n);
+        var pos = Math.max(n, m > 0 ? m : 0);
+        var neg = m < 0 ? -m : 0;
+        var e = Math.min(40, (distancia(p, a) * 0.75) / Math.max(pos, neg));
+        var aux = angulo(p, a) - (lado < 0 ? -1 : 1) * 0.5;
+        var u = polar(pt(0, 0), 1, aux);
+        var marca = function (i) {
+          return avanzar(p, u, i * e);
+        };
+        var arcos = [];
+        var medio = Math.min(0.35, 9 / e);
+        for (j = 1; j <= pos; j += 1) {
+          arcos.push(arquito(marca(j - 1), e, aux, medio, 1));
+        }
+        for (j = 1; j <= neg; j += 1) {
+          arcos.push(arquito(marca(1 - j), e, aux + Math.PI, medio, 1));
+        }
+        var Q = entre(p, a, k);
+        var w = unitario(marca(m), Q);
+        return {
+          punto: Q,
+          trazos: [
+            seg(neg ? avanzar(marca(-neg), u, -14) : p, avanzar(marca(pos), u, 14), "aux")
+          ].concat(
+            arcosConCompas(null, arcos).trazos,
+            [
+              seg(marca(n), avanzar(a, unitario(marca(n), a), 10), "aux"),
+              seg(marca(m), avanzar(Q, w, 12), "aux")
+            ]
+          )
+        };
+      }
+
+      // El lado de la recta pq (1 o -1, el de la normal de arriba) donde no
+      // está el punto c: para llevar allí una semirrecta auxiliar.
+      function ladoLibre(p, q, c) {
+        return sobre(c, p, normalArriba(unitario(p, q))) > 0 ? -1 : 1;
+      }
+
+      function semejanteConstruir(d) {
+        var g = semejanteGeometria(d);
+        var P = d.P;
+        var lejos = Math.max(1, d.k);
+        var rayos = g.V.map(function (p) {
+          var fin = entre(P, p, lejos);
+          return [P, avanzar(fin, unitario(P, p), 16)];
+        });
+        var mitad = entre(P, g.V[0], 0.5);
+        var normal = pt(-unitario(P, g.V[0]).y, unitario(P, g.V[0]).x);
+        var obstaculos = rayos.concat(ladosDe(g.V), ladosDe(g.W),
+          Math.abs(d.k - 0.5) < 1e-9 ? [[avanzar(mitad, normal, -120), avanzar(mitad, normal, 120)]] : []);
+        var letrasV = letrasFueraLibres(centroDe(g.V), g.V, obstaculos, [], 18);
+        var letrasW = letrasFueraLibres(centroDe(g.W), g.W, obstaculos, [], 18);
+        var nombres = g.V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var primero = Math.abs(d.k - 0.5) < 1e-9
+          ? mediatrizHasta(P, g.V[0], [], 0.56).trazos
+          : puntoPorTales(P, g.V[0], d.k, ladoLibre(P, g.V[0], centroDe(g.V))).trazos;
+        var paralelas = [];
+        var puntos = [];
+        g.W.forEach(function (p, i) {
+          var q;
+          if (i === 0) {
+            return;
+          }
+          q = g.W[i - 1];
+          paralelas.push(seg(q, avanzar(p, unitario(q, p), 12), "aux"));
+          puntos.push(punto(p, nombres[i] + "′", letrasW[i]));
+        });
+        return {
+          base: poligonoDe(g.V, "dato").concat(
+            g.V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [punto(P, "P", letraEnHueco(P, rayos.map(function (r) { return r[1]; }), 18), { forma: "hueco" })]
+          ),
+          pasos: [
+            deprisa(rayos.map(function (r) {
+              return seg(r[0], r[1], "aux");
+            }), 0.5),
+            primero.concat([punto(g.W[0], nombres[0] + "′", letrasW[0])]),
+            deprisa(paralelas.concat(puntos), 0.5),
+            poligonoDe(g.W)
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["figura-semejante"] = {
+        datos: function () {
+          return {
+            P: pt(60, 260), k: 0.5,
+            A: pt(330, 300), B: pt(480, 290), C: pt(520, 170), D: pt(420, 80), E: pt(300, 150)
+          };
+        },
+        asas: function (d) {
+          var asas = { P: d.P };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = semejanteGeometria(d);
+          var todos = g.V.concat(g.W);
+          return (
+            esConvexo(g.V) && separacionMinima(g.V) > 50 && separacionMinima(g.W.concat([d.P])) > 24 &&
+            g.V.every(function (p) {
+              return distancia(d.P, p) > 80;
+            }) &&
+            todos.every(function (p) {
+              return distancia(d.P, p) > 20;
+            }) &&
+            cabe(semejanteConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: semejanteConstruir
+      };
+
+      // La figura igual a ABCDE por triangulación desde B: A'B' igual a AB,
+      // girado `gira` grados; cada vértice que falta, con dos arcos, desde B'
+      // (con su distancia a B, la de una diagonal) y desde el anterior (con
+      // la de un lado): E' desde A', D' desde E' y C' desde D'.
+      function igualGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        var giroR = (d.gira || 0) * GRADO;
+        var mover = function (p) {
+          var r = distancia(V[0], p);
+          var a = angulo(V[0], p) - giroR;
+          return polar(d.A2, r, a);
+        };
+        return { V: V, W: V.map(mover) };
+      }
+
+      function igualConstruir(d) {
+        var g = igualGeometria(d);
+        var V = g.V;
+        var W = g.W;
+        var n = V.length;
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var diagonales = [];
+        var k;
+        for (k = 3; k < n; k += 1) {
+          diagonales.push([V[1], V[k]]);
+        }
+        var obstaculos = ladosDe(V).concat(ladosDe(W), diagonales);
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, [], 18);
+        var letrasW = letrasFueraLibres(centroDe(W), W, obstaculos, [], 18);
+        // Cada vértice nuevo: el índice, desde qué vértice ya hecho se lleva
+        // el lado y la diagonal desde B'.
+        var orden = [];
+        for (k = n - 1; k >= 2; k -= 1) {
+          orden.push({ i: k, desde: (k + 1) % n });
+        }
+        var dosArcos = function (paso) {
+          var p = W[paso.i];
+          var c1 = W[1];
+          var c2 = W[paso.desde];
+          var r1 = distancia(c1, p);
+          var r2 = distancia(c2, p);
+          var arcos = arcosConCompas(null, [
+            arquito(c1, r1, angulo(c1, p), Math.min(0.25, 14 / r1), 1),
+            arquito(c2, r2, angulo(c2, p), Math.min(0.25, 14 / r2), 1)
+          ]);
+          return arcos.trazos.concat([punto(p, nombres[paso.i] + "′", letrasW[paso.i])]);
+        };
+        var aB = angulo(W[0], W[1]);
+        var rAB = distancia(W[0], W[1]);
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            diagonales.map(function (s) {
+              return seg(s[0], s[1], "guia", { sinRegla: true });
+            }),
+            [punto(d.A2, "A′", letrasW[0], { forma: "hueco" })]
+          ),
+          pasos: [
+            [
+              abrir(W[0], polar(W[0], rAB, aB - 0.14)),
+              arco(W[0], rAB, aB - 0.14, aB + 0.14),
+              seg(W[0], W[1], "sol"),
+              punto(W[1], "B′", letrasW[1])
+            ]
+          ].concat(orden.map(dosArcos), [poligonoDe(W)]),
+          porque: null
+        };
+      }
+
+      construcciones["figura-igual"] = {
+        datos: function () {
+          return {
+            A: pt(70, 320), B: pt(200, 330), C: pt(240, 210), D: pt(150, 120), E: pt(60, 200),
+            A2: pt(330, 320), gira: 0
+          };
+        },
+        asas: function (d) {
+          var asas = { A2: d.A2 };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = igualGeometria(d);
+          var todos = g.V.concat(g.W);
+          return (
+            esConvexo(g.V) && separacionMinima(g.V) > 60 && separacionMinima(todos) > 30 &&
+            cabe(igualConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: igualConstruir
+      };
+
+      // ---- Equivalencia ----
+
+      // El triángulo equivalente al cuadrilátero ABCD: la diagonal BD deja
+      // aparte a A; la paralela a BD por A corta a la prolongación de CB en
+      // G, y el triángulo GCD tiene la misma área.
+      function unLadoMenosGeometria(d) {
+        var w = unitario(d.B, d.D);
+        var G = corteRectas(d.C, d.B, d.A, avanzar(d.A, w, 10));
+        return { G: G };
+      }
+
+      function unLadoMenosConstruir(d) {
+        var g = unLadoMenosGeometria(d);
+        var V = [d.A, d.B, d.C, d.D];
+        var todos = V.concat([g.G]);
+        var obstaculos = ladosDe(V).concat([[d.B, d.D], [d.C, g.G], [d.A, g.G], [g.G, d.D]]);
+        var letras = letrasFueraLibres(centroDe(todos), todos, obstaculos, [], 18);
+        var w = unitario(d.A, g.G);
+        return {
+          base: poligonoDe(V, "dato").concat(
+            ["A", "B", "C", "D"].map(function (k, i) {
+              return punto(V[i], k, letras[i]);
+            })
+          ),
+          pasos: [
+            [seg(d.B, d.D, "aux")],
+            [
+              seg(d.B, avanzar(g.G, unitario(d.B, g.G), 16), "aux"),
+              seg(avanzar(d.A, w, -16), avanzar(g.G, w, 16), "aux"),
+              punto(g.G, "G", letras[4])
+            ],
+            poligonoDe([g.G, d.C, d.D])
+          ],
+          porque: aprisa([relleno([d.A, d.B, d.D]), relleno([g.G, d.B, d.D])])
+        };
+      }
+
+      construcciones["un-lado-menos"] = {
+        datos: function () {
+          return { A: pt(130, 150), B: pt(250, 260), C: pt(470, 300), D: pt(400, 90) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, C: d.C, D: d.D };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var V = [d.A, d.B, d.C, d.D];
+          var g = unLadoMenosGeometria(d);
+          return (
+            esConvexo(V) && separacionMinima(V) > 80 && g.G && distancia(g.G, d.B) > 30 &&
+            sobre(g.G, d.B, unitario(d.C, d.B)) > 0 &&
+            cabe(unLadoMenosConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: unLadoMenosConstruir
+      };
+
+      // El cuadrado equivalente al rectángulo ABCD (AB = b, BC = h): con el
+      // compás, BE = BC en la prolongación de AB; la semicircunferencia de
+      // diámetro AE corta a la recta BC en M, y BM es el lado: el medio
+      // proporcional entre b y h. El cuadrado BMNQ, sobre BM y BA.
+      function cuadraturaGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.b * e, A.y);
+        var C = pt(B.x, B.y - d.h * e);
+        var D = pt(A.x, C.y);
+        var E = pt(B.x + d.h * e, B.y);
+        var O = entre(A, E, 0.5);
+        var R = distancia(A, E) / 2;
+        var l = Math.sqrt(d.b * d.h) * e;
+        var M = pt(B.x, B.y - l);
+        var Q = pt(B.x + l, B.y);
+        var N = pt(Q.x, M.y);
+        return { A: A, B: B, C: C, D: D, E: E, O: O, R: R, l: l, M: M, Q: Q, N: N };
+      }
+
+      function cuadraturaConstruir(d) {
+        var g = cuadraturaGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var texto = function (valor, letra) {
+          return cifras ? conComa(valor) : letra;
+        };
+        var med = mediatrizHasta(g.A, g.E, [g.R * 0.35, -22]);
+        var arcosN = arcosConCompas(null, [
+          arquito(g.M, g.l, 0, 0.16, -1),
+          arquito(g.Q, g.l, -Math.PI / 2, 0.16, 1)
+        ]);
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            seg(g.B, g.C, "dato"),
+            seg(g.C, g.D, "dato"),
+            seg(g.D, g.A, "dato"),
+            punto(g.A, "A", pt(-14, 16), { forma: "hueco" }),
+            punto(g.B, "B", pt(10, 18)),
+            punto(g.C, "C", pt(14, 4)),
+            punto(g.D, "D", pt(-14, -8)),
+            medidaDelLado(g.A, g.B, texto(d.b, "b"), -1, 32, 0.3),
+            medidaDelLado(g.D, g.A, texto(d.h, "h"), -1, 16)
+          ],
+          pasos: [
+            [
+              seg(g.B, avanzar(g.E, pt(1, 0), 16), "aux"),
+              abrir(g.B, g.C),
+              arco(g.B, d.h * d.escala, -Math.PI / 2, 0.06),
+              punto(g.E, "E", pt(6, 18))
+            ],
+            med.trazos.concat([
+              punto(g.O, "O", pt(10, 18)),
+              abrir(g.O, polar(g.O, g.R, 0)),
+              arco(g.O, g.R, 0, -Math.PI)
+            ]),
+            [
+              seg(g.C, avanzar(g.M, pt(0, -1), 16), "aux"),
+              punto(g.M, "M", pt(14, -10)),
+              medidaDelLado(g.B, g.M, texto(Math.round(Math.sqrt(d.b * d.h) * 10) / 10, "l"), 1, 15, 0.8)
+            ],
+            [
+              abrir(g.B, polar(g.B, g.l, -Math.PI / 2)),
+              arco(g.B, g.l, -Math.PI / 2, 0.06),
+              punto(g.Q, "Q", pt(10, 18))
+            ].concat(arcosN.trazos, [
+              punto(g.N, "N", pt(14, -10)),
+              seg(g.B, g.M, "sol"),
+              seg(g.M, g.N, "sol"),
+              seg(g.N, g.Q, "sol"),
+              seg(g.Q, g.B, "sol")
+            ])
+          ],
+          porque: aprisa([
+            seg(g.A, g.M, "guia", { sinRegla: true }),
+            seg(g.M, g.E, "guia", { sinRegla: true }),
+            recto(g.M, g.A, g.E)
+          ])
+        };
+      }
+
+      construcciones["cuadratura-del-rectangulo"] = {
+        datos: function () {
+          return { A: pt(90, 290), b: 64, h: 25, escala: 3.4 };
+        },
+        asas: function (d) {
+          return { A: d.A, C: cuadraturaGeometria(d).C };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            nuevo.b = (p.x - d.A.x) / d.escala;
+            nuevo.h = (d.A.y - p.y) / d.escala;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          return (
+            d.h * d.escala > 50 && d.b > d.h * 1.4 &&
+            cabe(cuadraturaConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: cuadraturaConstruir
+      };
+
+      // ---- Simetría ----
+
+      // La figura simétrica de ABC… respecto del eje que pasa por E1 y E2:
+      // por cada vértice, la perpendicular al eje; con el compás, desde el
+      // pie, la misma distancia al otro lado.
+      function simetricaAxialGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        var pies = V.map(function (p) {
+          return pie(d.E1, d.E2, p);
+        });
+        var W = V.map(function (p, i) {
+          return pt(2 * pies[i].x - p.x, 2 * pies[i].y - p.y);
+        });
+        return { V: V, W: W, pies: pies };
+      }
+
+      function simetricaAxialConstruir(d) {
+        var g = simetricaAxialGeometria(d);
+        var V = g.V;
+        var W = g.W;
+        var u = unitario(d.E1, d.E2);
+        var tramo = tramoEnLaLamina(d.E1, u, 10);
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var perpendiculares = V.map(function (p, i) {
+          return [avanzar(p, unitario(p, W[i]), -10), avanzar(W[i], unitario(p, W[i]), 14)];
+        });
+        var obstaculos = ladosDe(V).concat(ladosDe(W), perpendiculares, [tramo]);
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, [], 18);
+        var letrasW = letrasFueraLibres(centroDe(W), W, obstaculos, [], 18);
+        // Los lados homólogos se cortan en el eje: el del lado que corta al
+        // eje más cerca de la figura.
+        var mejor = null;
+        ladosDe(V).forEach(function (s, i) {
+          var t = ladosDe(W)[i];
+          var corte = corteRectas(s[0], s[1], t[0], t[1]);
+          var cerca;
+          if (!corte || !isFinite(corte.x)) {
+            return;
+          }
+          cerca = Math.min(distancia(corte, s[0]), distancia(corte, s[1]));
+          if (corte.x > 20 && corte.x < ANCHO - 20 && corte.y > 20 && corte.y < ALTO - 20 &&
+              (!mejor || cerca < mejor.cerca)) {
+            mejor = { s: s, t: t, corte: corte, cerca: cerca };
+          }
+        });
+        var cerca = function (s, corte) {
+          return distancia(s[0], corte) < distancia(s[1], corte) ? s[0] : s[1];
+        };
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [
+              seg(tramo[0], tramo[1], "guia"),
+              rotulo(avanzar(tramo[0], normalArriba(u), 12), "e")
+            ]
+          ),
+          pasos: [
+            deprisa(perpendiculares.map(function (s) {
+              return seg(s[0], s[1], "aux");
+            }).concat([recto(g.pies[0], V[0], d.E2)]), 0.5),
+            deprisa(arcosConCompas(null, W.map(function (p, i) {
+              var r = distancia(g.pies[i], p);
+              return arquito(g.pies[i], r, angulo(g.pies[i], p), Math.min(0.3, 12 / r), 1);
+            })).trazos.concat(W.map(function (p, i) {
+              return punto(p, nombres[i] + "′", letrasW[i]);
+            })), 0.5),
+            poligonoDe(W)
+          ],
+          porque: mejor
+            ? aprisa([
+                seg(cerca(mejor.s, mejor.corte), mejor.corte, "guia", { sinRegla: true }),
+                seg(cerca(mejor.t, mejor.corte), mejor.corte, "guia", { sinRegla: true }),
+                punto(mejor.corte, "")
+              ])
+            : null
+        };
+      }
+
+      construcciones["simetrica-axial"] = {
+        datos: function () {
+          return {
+            E1: pt(300, 30), E2: pt(300, 370),
+            A: pt(110, 300), B: pt(250, 320), C: pt(220, 150), D: pt(130, 90)
+          };
+        },
+        asas: function (d) {
+          var asas = { E1: d.E1, E2: d.E2 };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = simetricaAxialGeometria(d);
+          var u = unitario(d.E1, d.E2);
+          var n = pt(-u.y, u.x);
+          var lado = g.V.map(function (p) {
+            return sobre(p, d.E1, n);
+          });
+          return (
+            distancia(d.E1, d.E2) > 120 &&
+            (lado.every(function (s) { return s > 24; }) || lado.every(function (s) { return s < -24; })) &&
+            esConvexo(g.V) && separacionMinima(g.V) > 50 &&
+            cabe(simetricaAxialConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: simetricaAxialConstruir
+      };
+
+      // La figura simétrica de ABC… respecto del centro O: cada vértice,
+      // unido con O y llevado al otro lado a la misma distancia.
+      function simetricaCentralGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        return {
+          V: V,
+          W: V.map(function (p) {
+            return pt(2 * d.O.x - p.x, 2 * d.O.y - p.y);
+          })
+        };
+      }
+
+      function simetricaCentralConstruir(d) {
+        var g = simetricaCentralGeometria(d);
+        var V = g.V;
+        var W = g.W;
+        var O = d.O;
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var rectas = V.map(function (p, i) {
+          return [avanzar(p, unitario(p, W[i]), -10), avanzar(W[i], unitario(p, W[i]), 14)];
+        });
+        var obstaculos = ladosDe(V).concat(ladosDe(W), rectas);
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, [], 18);
+        var letrasW = letrasFueraLibres(centroDe(W), W, obstaculos, [], 18);
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [punto(O, "O", letraEnHueco(O, V.concat(W), 18), { forma: "hueco" })]
+          ),
+          pasos: [
+            deprisa(rectas.map(function (s) {
+              return seg(s[0], s[1], "aux");
+            }), 0.5),
+            deprisa(arcosConCompas(null, W.map(function (p) {
+              var r = distancia(O, p);
+              return arquito(O, r, angulo(O, p), Math.min(0.3, 12 / r), 1);
+            })).trazos.concat(W.map(function (p, i) {
+              return punto(p, nombres[i] + "′", letrasW[i]);
+            })), 0.5),
+            poligonoDe(W)
+          ],
+          porque: aprisa([
+            igual(O, V[0], 1), igual(O, W[0], 1),
+            igual(O, V[1], 2), igual(O, W[1], 2)
+          ])
+        };
+      }
+
+      construcciones["simetrica-central"] = {
+        datos: function () {
+          return {
+            O: pt(300, 200),
+            A: pt(80, 320), B: pt(220, 330), C: pt(230, 200), D: pt(110, 110)
+          };
+        },
+        asas: function (d) {
+          var asas = { O: d.O };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = simetricaCentralGeometria(d);
+          return (
+            esConvexo(g.V) && separacionMinima(g.V) > 50 &&
+            g.V.every(function (p) {
+              return distancia(p, d.O) > 50;
+            }) &&
+            separacionMinima(g.V.concat(g.W)) > 30 &&
+            cabe(simetricaCentralConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: simetricaCentralConstruir
+      };
+
+      // El camino más corto de A a B tocando la recta r (por R1 y R2), con A
+      // y B del mismo lado: A', el simétrico de A respecto de r; la recta A'B
+      // corta a r en P, y APB es el camino.
+      function caminoGeometria(d) {
+        var F = pie(d.R1, d.R2, d.A);
+        var A2 = pt(2 * F.x - d.A.x, 2 * F.y - d.A.y);
+        var P = corteRectas(d.R1, d.R2, A2, d.B);
+        return { F: F, A2: A2, P: P };
+      }
+
+      function caminoConstruir(d) {
+        var g = caminoGeometria(d);
+        var u = unitario(d.R1, d.R2);
+        var tramo = tramoEnLaLamina(d.R1, u, 10);
+        var r = distancia(g.F, d.A);
+        var aA2 = angulo(g.F, g.A2);
+        var obstaculos = [[d.A, g.A2], [g.A2, d.B], [d.A, g.P], tramo];
+        var letras = letrasLibres([d.A, d.B, g.A2, g.P], obstaculos, [], 18);
+        var izquierda = sobre(d.A, g.P, u) < 0 ? -1 : 1;
+        return {
+          base: [
+            seg(tramo[0], tramo[1], "dato"),
+            rotulo(avanzar(tramo[0], normalArriba(u), 12), "r"),
+            punto(d.A, "A", letras[0], { forma: "hueco" }),
+            punto(d.B, "B", letras[1], { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(avanzar(d.A, unitario(d.A, g.A2), -10), avanzar(g.A2, unitario(d.A, g.A2), 14), "aux"),
+              recto(g.F, d.A, d.R2),
+              abrir(g.F, polar(g.F, r, aA2 - 0.16)),
+              arco(g.F, r, aA2 - 0.16, aA2 + 0.16),
+              punto(g.A2, "A′", letras[2])
+            ],
+            [
+              seg(g.A2, d.B, "aux"),
+              punto(g.P, "P", letras[3])
+            ],
+            [seg(d.A, g.P, "sol"), seg(g.P, d.B, "sol")]
+          ],
+          porque: aprisa([
+            igual(d.A, g.P),
+            igual(g.A2, g.P),
+            marcaAngulo(g.P, avanzar(g.P, u, izquierda * 30), d.A, 26, 1),
+            marcaAngulo(g.P, avanzar(g.P, u, -izquierda * 30), d.B, 26, 1)
+          ])
+        };
+      }
+
+      construcciones["camino-minimo"] = {
+        datos: function () {
+          return { R1: pt(40, 240), R2: pt(560, 240), A: pt(150, 140), B: pt(450, 80) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = caminoGeometria(d);
+          var u = unitario(d.R1, d.R2);
+          var n = normalArriba(u);
+          var sA = sobre(d.A, d.R1, n);
+          var sB = sobre(d.B, d.R1, n);
+          return (
+            g.P && sA > 40 && sB > 40 && distancia(d.A, d.B) > 100 &&
+            Math.abs(sobre(d.A, d.R1, u) - sobre(d.B, d.R1, u)) > 80 &&
+            cabe(caminoConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: caminoConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -25346,6 +26318,158 @@ Bachillerato</p>
             seg(pt(O3.x, O3.y - ap), pt(O3.x, O3.y + ap), "aux"),
             medida(pt(O3.x + 16, O3.y - ap / 2), "60"));
           lista = lista.concat(poligonoDe(V));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 6, las relaciones geométricas ----
+
+      // La semejanza de triángulos: a la izquierda, dos triángulos en
+      // posición de Tales, con el lado B'C' paralelo a BC; a la derecha, un
+      // triángulo y el de razón 2, partido en cuatro iguales al primero.
+      figuras.semejanza_de_triangulos = {
+        lienzo: [960, 300],
+        trazos: function () {
+          var A = pt(60, 240);
+          var B = pt(420, 240);
+          var C = pt(300, 40);
+          var t = 0.55;
+          var B2 = entre(A, B, t);
+          var C2 = entre(A, C, t);
+          var a = pt(530, 240);
+          var b = pt(640, 240);
+          var c = pt(605, 170);
+          var A3 = pt(690, 240);
+          var B3 = pt(910, 240);
+          var C3 = pt(840, 100);
+          var lista = poligonoDe([A, B, C], "dato").concat(
+            [
+              seg(B2, C2, "sol"),
+              marcaAngulo(B, A, C, 26, 1),
+              marcaAngulo(B2, A, C2, 26, 1),
+              marcaAngulo(C, A, B, 26, 2),
+              marcaAngulo(C2, A, B2, 26, 2),
+              punto(A, "A", pt(-14, 14)),
+              punto(B, "B", pt(14, 14)),
+              punto(C, "C", pt(0, -16)),
+              punto(B2, "B′", pt(4, 20)),
+              punto(C2, "C′", pt(-16, -8)),
+              pieDeFigura(240, 286, "B′C′ paralela a BC: ABC y AB′C′ son semejantes")
+            ],
+            poligonoDe([a, b, c], "dato"),
+            poligonoDe([A3, B3, C3], "dato"),
+            [
+              seg(entre(A3, B3, 0.5), entre(B3, C3, 0.5), "aux"),
+              seg(entre(B3, C3, 0.5), entre(C3, A3, 0.5), "aux"),
+              seg(entre(C3, A3, 0.5), entre(A3, B3, 0.5), "aux"),
+              relleno([A3, entre(A3, B3, 0.5), entre(C3, A3, 0.5)]),
+              relleno([a, b, c]),
+              pieDeFigura(720, 286, "Razón 2: el área es 4 veces mayor")
+            ]
+          );
+          return lista;
+        }
+      };
+
+      // Triángulos equivalentes: con la misma base AB y el vértice en la
+      // paralela r, los tres tienen la misma área; a la derecha, el
+      // rectángulo de la misma base y la mitad de altura que un triángulo.
+      figuras.triangulos_equivalentes = {
+        lienzo: [960, 290],
+        trazos: function () {
+          var A = pt(70, 230);
+          var B = pt(250, 230);
+          var r = 80;
+          var C1 = pt(40, r);
+          var C2 = pt(190, r);
+          var C3 = pt(380, r);
+          var T = [pt(540, 230), pt(700, 230), pt(595, 80)];
+          var R = [pt(740, 230), pt(900, 230), pt(900, 155), pt(740, 155)];
+          var lista = [
+            seg(pt(20, r), pt(470, r), "aux"),
+            rotulo(pt(470, r - 14), "r"),
+            relleno([A, B, C2]),
+            seg(A, C1, "aux"), seg(B, C1, "aux"),
+            seg(A, C2, "dato"), seg(B, C2, "dato"),
+            seg(A, C3, "aux"), seg(B, C3, "aux"),
+            seg(A, B, "dato"),
+            punto(A, "A", pt(-6, 18)),
+            punto(B, "B", pt(6, 18)),
+            punto(C1, "", null), punto(C2, "", null), punto(C3, "", null),
+            cota(pt(430, 230), pt(430, r), "h", -16),
+            pieDeFigura(240, 272, "La misma base y la misma altura: la misma área")
+          ];
+          return lista.concat(
+            poligonoDe(T, "dato"),
+            [relleno(T), seg(T[2], pt(595, 230), "aux"), recto(pt(595, 230), T[1], T[2])],
+            poligonoDe(R, "dato"),
+            [
+              relleno(R),
+              medida(pt(620, 250), "b"),
+              medida(pt(820, 250), "b"),
+              medida(pt(582, 160), "h"),
+              medida(pt(926, 192), "h/2"),
+              pieDeFigura(720, 272, "Igual base y la mitad de altura: la misma área")
+            ]
+          );
+        }
+      };
+
+      // Las soluciones de los problemas: el cuadrado equivalente al rombo de
+      // diagonales 72 y 40; el triángulo partido en dos partes equivalentes
+      // por una paralela a la base, y el triángulo de área doble.
+      figuras.problemas_relaciones = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var e = 2.4;
+          var lista = [];
+          // 27: el rombo y el cuadrado de 37,9 mm de lado.
+          var O1 = pt(140, 130);
+          var rombo = [pt(O1.x - 36 * e, O1.y), pt(O1.x, O1.y + 20 * e), pt(O1.x + 36 * e, O1.y), pt(O1.x, O1.y - 20 * e)];
+          var l = Math.sqrt(1440) * e;
+          var Q = [pt(210, 300), pt(210 + l, 300), pt(210 + l, 300 - l), pt(210, 300 - l)];
+          lista.push(numero(pt(24, 26), "27"));
+          lista = lista.concat(poligonoDe(rombo, "dato"), [
+            seg(rombo[0], rombo[2], "aux"),
+            seg(rombo[1], rombo[3], "aux"),
+            medida(pt(O1.x - 44, O1.y - 12), "72"),
+            medida(pt(O1.x + 16, O1.y + 26), "40")
+          ], poligonoDe(Q), [medida(pt(210 + l / 2, 318), "37,9")]);
+          // 28: el triángulo de base 70 y altura 50, con la paralela.
+          var A = pt(370, 290);
+          var B = pt(370 + 70 * e, 290);
+          var C = pt(370 + 35 * e, 290 - 50 * e);
+          var k = 1 / Math.SQRT2;
+          var M = entre(C, A, k);
+          var N = entre(C, B, k);
+          lista.push(numero(pt(344, 26), "28"));
+          lista = lista.concat(poligonoDe([A, B, C], "dato"), [
+            relleno([C, M, N]),
+            seg(M, N, "sol"),
+            punto(A, "A", pt(-14, 12)),
+            punto(B, "B", pt(14, 12)),
+            punto(C, "C", pt(0, -16)),
+            punto(M, "M", pt(-16, 0)),
+            punto(N, "N", pt(16, 0)),
+            medida(pt(entre(A, B, 0.5).x, 308), "70"),
+            seg(C, pt(C.x, M.y), "guia", { sinRegla: true }),
+            medida(pt(C.x + 22, entre(C, pt(C.x, M.y), 0.5).y), "35,4")
+          ]);
+          // 29: el triángulo 30, 40, 50 y el de área doble.
+          var R0 = pt(700, 290);
+          var s = Math.SQRT2;
+          var P1 = pt(R0.x + 40 * e, R0.y);
+          var P2 = pt(R0.x, R0.y - 30 * e);
+          var Q1 = pt(R0.x + 40 * e * s, R0.y);
+          var Q2 = pt(R0.x, R0.y - 30 * e * s);
+          lista.push(numero(pt(664, 26), "29"));
+          lista = lista.concat(poligonoDe([R0, Q1, Q2]), poligonoDe([R0, P1, P2], "dato"), [
+            relleno([R0, P1, P2]),
+            recto(R0, Q1, Q2),
+            medida(pt(entre(R0, P1, 0.5).x, 308), "40"),
+            medida(pt(R0.x - 18, entre(R0, P2, 0.5).y), "30"),
+            medida(pt(entre(Q2, Q1, 0.5).x + 18, entre(Q2, Q1, 0.5).y - 10), "70,7")
+          ]);
           return lista;
         }
       };
