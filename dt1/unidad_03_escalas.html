@@ -23916,6 +23916,745 @@ Bachillerato</p>
         construir: caminoConstruir
       };
 
+      // ---- La unidad 7, las transformaciones: traslación, giro y homotecia
+      // (desde el 20 de octubre de 2026) ----
+
+      // El punto p girado alrededor de c un ángulo de `grados`, en el
+      // sentido `s` (1, el contrario a las agujas del reloj, como se ve en
+      // la lámina; -1, el de las agujas).
+      function girado(c, p, grados, s) {
+        return polar(c, distancia(c, p), angulo(c, p) - (s < 0 ? -1 : 1) * grados * GRADO);
+      }
+
+      // ---- Traslación ----
+
+      // La figura trasladada de ABC… por el vector VW: por cada vértice, la
+      // paralela al vector; con el compás abierto VW, la medida llevada
+      // desde cada vértice en su sentido.
+      function traslacionGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        var dx = d.W.x - d.V.x;
+        var dy = d.W.y - d.V.y;
+        return {
+          V: V,
+          T: V.map(function (p) {
+            return pt(p.x + dx, p.y + dy);
+          }),
+          u: unitario(d.V, d.W),
+          largo: distancia(d.V, d.W)
+        };
+      }
+
+      function traslacionConstruir(d) {
+        var g = traslacionGeometria(d);
+        var V = g.V;
+        var T = g.T;
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var rectas = V.map(function (p, i) {
+          return [avanzar(p, g.u, -12), avanzar(T[i], g.u, 16)];
+        });
+        var obstaculos = ladosDe(V).concat(ladosDe(T), rectas, [[d.V, d.W]]);
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, [], 18);
+        var letrasT = letrasFueraLibres(centroDe(T), T, obstaculos, [], 18);
+        var aV = angulo(d.V, d.W);
+        var arcos = arcosConCompas(null, T.map(function (p, i) {
+          return arquito(V[i], g.largo, aV, Math.min(0.25, 12 / g.largo), 1);
+        }));
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [
+              seg(d.V, d.W, "dato"),
+              punto(d.V, "V", letrasLibres([d.V], obstaculos, [], 18)[0], { forma: "hueco" }),
+              punto(d.W, "V′", letrasLibres([d.W], obstaculos, [], 18)[0], { forma: "hueco" })
+            ]
+          ),
+          pasos: [
+            deprisa(rectas.map(function (s) {
+              return seg(s[0], s[1], "aux");
+            }), 0.5),
+            [abrir(d.V, d.W)].concat(
+              deprisa(arcos.trazos.concat(T.map(function (p, i) {
+                return punto(p, nombres[i] + "′", letrasT[i]);
+              })), 0.5)
+            ),
+            poligonoDe(T)
+          ],
+          porque: aprisa([
+            igual(d.V, d.W, 1),
+            igual(V[0], T[0], 1),
+            igual(V[1], T[1], 1),
+            igual(V[0], V[1], 2),
+            igual(T[0], T[1], 2)
+          ])
+        };
+      }
+
+      construcciones["traslacion"] = {
+        datos: function () {
+          return {
+            V: pt(60, 90), W: pt(250, 40),
+            A: pt(70, 330), B: pt(210, 350), C: pt(230, 240), D: pt(110, 200)
+          };
+        },
+        asas: function (d) {
+          var asas = { V: d.V, W: d.W };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = traslacionGeometria(d);
+          return (
+            g.largo > 70 && esConvexo(g.V) && separacionMinima(g.V) > 50 &&
+            separacionMinima(g.V.concat(g.T)) > 30 &&
+            cabe(traslacionConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: traslacionConstruir
+      };
+
+      // ---- Giro ----
+
+      // La figura girada alrededor de O un ángulo `ang` en el sentido `s`:
+      // los radios de O a cada vértice; en O, el ángulo sobre cada radio, y
+      // con centro en O, el arco de cada vértice hasta el lado nuevo.
+      function giroGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        return {
+          V: V,
+          G: V.map(function (p) {
+            return girado(d.O, p, d.ang, d.s);
+          })
+        };
+      }
+
+      function giroConstruir(d) {
+        var g = giroGeometria(d);
+        var V = g.V;
+        var G = g.G;
+        var O = d.O;
+        var cifras = Boolean(d.cifras);
+        var s = d.s < 0 ? -1 : 1;
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var radios = V.map(function (p) {
+          return [O, p];
+        });
+        var nuevos = G.map(function (p) {
+          return [O, avanzar(p, unitario(O, p), 14)];
+        });
+        var obstaculos = ladosDe(V).concat(ladosDe(G), radios, nuevos);
+        var arcos = V.map(function (p) {
+          return { c: O, r: distancia(O, p) };
+        });
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, arcos, 18);
+        var letrasG = letrasFueraLibres(centroDe(G), G, obstaculos, arcos, 18);
+        var primero = anguloDado(O, angulo(O, V[0]), d.ang, s, distancia(O, V[0]) + 14,
+          cifras ? enGrados(d.ang) : "α", 30);
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [punto(O, "O", letraEnHueco(O, V.concat(G), 18), { forma: "hueco" })]
+          ),
+          pasos: [
+            deprisa(radios.map(function (r) {
+              return seg(r[0], r[1], "aux");
+            }), 0.5),
+            primero.trazos.concat(deprisa(nuevos.slice(1).map(function (r) {
+              return seg(r[0], r[1], "aux");
+            }), 0.5)),
+            deprisa(V.map(function (p, i) {
+              var a0 = angulo(O, p);
+              return arco(O, distancia(O, p), a0, a0 + giro(a0, angulo(O, G[i])));
+            }).concat(G.map(function (p, i) {
+              return punto(p, nombres[i] + "′", letrasG[i]);
+            })), 0.5),
+            poligonoDe(G)
+          ],
+          porque: aprisa([
+            igual(O, V[0], 1), igual(O, G[0], 1),
+            igual(O, V[1], 2), igual(O, G[1], 2)
+          ])
+        };
+      }
+
+      construcciones["giro"] = {
+        datos: function () {
+          return {
+            O: pt(300, 330), ang: 75, s: 1,
+            A: pt(400, 300), B: pt(520, 280), C: pt(470, 180)
+          };
+        },
+        asas: function (d) {
+          var asas = { O: d.O };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = giroGeometria(d);
+          return (
+            d.ang >= 20 && d.ang <= 160 && esConvexo(g.V) && separacionMinima(g.V) > 50 &&
+            g.V.every(function (p) {
+              return distancia(p, d.O) > 60;
+            }) &&
+            separacionMinima(g.V.concat(g.G)) > 26 &&
+            cabe(giroConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: giroConstruir
+      };
+
+      // El giro de una recta r alrededor de O: la perpendicular desde O, con
+      // su pie H; H girado el ángulo dado, que da H′, y por H′ la
+      // perpendicular a OH′, que es r′. La recta r es la perpendicular a OH
+      // por H.
+      function giroRectaGeometria(d) {
+        var H2 = girado(d.O, d.H, d.ang, d.s);
+        var w = pt(-(d.H.y - d.O.y), d.H.x - d.O.x);
+        var w2 = pt(-(H2.y - d.O.y), H2.x - d.O.x);
+        var P = corteRectas(d.H, avanzar(d.H, unitario(pt(0, 0), w), 10), H2, avanzar(H2, unitario(pt(0, 0), w2), 10));
+        return { H2: H2, u: unitario(pt(0, 0), w), u2: unitario(pt(0, 0), w2), P: P };
+      }
+
+      function giroRectaConstruir(d) {
+        var g = giroRectaGeometria(d);
+        var O = d.O;
+        var cifras = Boolean(d.cifras);
+        var s = d.s < 0 ? -1 : 1;
+        var r = tramoEnLaLamina(d.H, g.u, 8);
+        var r2 = tramoEnLaLamina(g.H2, g.u2, 8);
+        var radio = distancia(O, d.H);
+        var aH = angulo(O, d.H);
+        var aH2 = angulo(O, g.H2);
+        var perp = perpendicularDesde(O, r[0], r[1], 16);
+        var ang = anguloDado(O, aH, d.ang, s, radio + 18, cifras ? enGrados(d.ang) : "α", 30);
+        var hayP = g.P && g.P.x > 20 && g.P.x < ANCHO - 20 && g.P.y > 20 && g.P.y < ALTO - 20;
+        // H, lejos de los arcos de la perpendicular; H′, hacia fuera del
+        // radio, que es perpendicular a r′ y tangente al arco del giro.
+        var letras = [
+          letrasLibres([d.H], [r, r2, [O, d.H], [d.H, perp.N], [O, g.H2]],
+            [{ c: O, r: radio }, { c: O, r: perp.radio }], 20)[0],
+          polar(pt(0, 0), 19, angulo(O, g.H2))
+        ];
+        return {
+          base: [
+            seg(r[0], r[1], "dato"),
+            rotulo(avanzar(r[0], normalArriba(g.u), 12), "r"),
+            punto(O, "O", letraEnHueco(O, [d.H, g.H2, avanzar(O, unitario(d.H, O), 1)], 18), { forma: "hueco" })
+          ],
+          pasos: [
+            perp.trazos.concat([
+              seg(O, avanzar(d.H, unitario(O, d.H), 16), "aux"),
+              recto(d.H, O, avanzar(d.H, g.u, 10)),
+              punto(d.H, "H", letras[0])
+            ]),
+            ang.trazos.concat([
+              abrir(O, d.H),
+              arco(O, radio, aH, aH + giro(aH, aH2)),
+              punto(g.H2, "H′", letras[1])
+            ]),
+            [
+              seg(r2[0], r2[1], "sol"),
+              recto(g.H2, O, avanzar(g.H2, g.u2, 10)),
+              rotulo(avanzar(r2[0], normalArriba(g.u2), 12), "r′")
+            ]
+          ],
+          porque: hayP
+            ? aprisa([
+                punto(g.P, ""),
+                marcaAngulo(g.P, avanzar(g.P, unitario(g.P, d.H), 10), avanzar(g.P, unitario(g.H2, g.P), 10), 30, 1),
+                marcaAngulo(O, d.H, g.H2, 22, 1)
+              ])
+            : null
+        };
+      }
+
+      construcciones["giro-de-una-recta"] = {
+        datos: function () {
+          return { O: pt(250, 120), H: pt(250, 280), ang: 60, s: 1 };
+        },
+        asas: function (d) {
+          return { O: d.O, H: d.H };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return (
+            distancia(d.O, d.H) > 70 && d.ang >= 20 && d.ang <= 150 &&
+            cabe(giroRectaConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: giroRectaConstruir
+      };
+
+      // El centro del giro que lleva AB a A′B′: la mediatriz de AA′ y la de
+      // BB′ se cortan en él, y el ángulo AOA′ es el del giro. Los datos son
+      // AB, el centro y el ángulo, que dan A′B′; el centro no se dibuja
+      // hasta hallarlo.
+      function centroGiroGeometria(d) {
+        return { A2: girado(d.O, d.A, d.ang, d.s), B2: girado(d.O, d.B, d.ang, d.s) };
+      }
+
+      function centroGiroConstruir(d) {
+        var g = centroGiroGeometria(d);
+        var O = d.O;
+        var cifras = Boolean(d.cifras);
+        var alturaDe = function (p, q) {
+          return sobre(O, entre(p, q, 0.5), normalArriba(unitario(p, q)));
+        };
+        var m1 = mediatrizHasta(d.A, g.A2, [alturaDe(d.A, g.A2)]);
+        var m2 = mediatrizHasta(d.B, g.B2, [alturaDe(d.B, g.B2)]);
+        var obstaculos = [[d.A, d.B], [g.A2, g.B2], [d.A, g.A2], [d.B, g.B2], [O, d.A], [O, g.A2]];
+        var letras = letrasLibres([d.A, d.B, g.A2, g.B2, O], obstaculos, [], 18);
+        var ang = marcaAngulo(O, d.A, g.A2, 26, 1);
+        return {
+          base: [
+            seg(d.A, d.B, "dato"),
+            seg(g.A2, g.B2, "dato"),
+            punto(d.A, "A", letras[0], { forma: "hueco" }),
+            punto(d.B, "B", letras[1], { forma: "hueco" }),
+            punto(g.A2, "A′", letras[2], { forma: "hueco" }),
+            punto(g.B2, "B′", letras[3], { forma: "hueco" })
+          ],
+          pasos: [
+            [seg(d.A, g.A2, "aux")].concat(m1.trazos),
+            [seg(d.B, g.B2, "aux")].concat(m2.trazos, [punto(O, "O", letras[4], { estilo: "sol" })]),
+            [
+              seg(O, d.A, "sol"),
+              seg(O, g.A2, "sol"),
+              ang,
+              rotulo(polar(O, 46, angulo(O, d.A) + giro(angulo(O, d.A), angulo(O, g.A2)) / 2),
+                cifras ? enGrados(d.ang) : "α", cifras ? { recta: true, cuerpo: 15 } : null)
+            ]
+          ],
+          porque: aprisa([
+            seg(O, d.B, "guia", { sinRegla: true }),
+            seg(O, g.B2, "guia", { sinRegla: true }),
+            igual(O, d.A, 1), igual(O, g.A2, 1),
+            igual(O, d.B, 2), igual(O, g.B2, 2)
+          ])
+        };
+      }
+
+      construcciones["centro-de-giro"] = {
+        datos: function () {
+          return { O: pt(270, 300), A: pt(330, 230), B: pt(470, 250), ang: 70, s: 1 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = centroGiroGeometria(d);
+          var c = Math.abs(Math.sin(angulo(d.A, g.A2) - angulo(d.B, g.B2)));
+          return (
+            d.ang >= 30 && d.ang <= 150 && distancia(d.A, d.B) > 80 && c > 0.25 &&
+            distancia(d.O, d.A) > 50 && distancia(d.O, d.B) > 50 &&
+            separacionMinima([d.A, d.B, g.A2, g.B2, d.O]) > 40 &&
+            cabe(centroGiroConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: centroGiroConstruir
+      };
+
+      // ---- Homotecia ----
+
+      // La figura homotética de ABC… con centro O y razón k (negativa, al
+      // otro lado de O): las rectas de O a cada vértice, prolongadas; A′
+      // en la de A, con OA′ = |k|·OA; por A′, la paralela a AB hasta la
+      // recta de B, y así hasta cerrar.
+      function homoteciaGeometria(d) {
+        var V = verticesDe(d, VERTICES);
+        return {
+          V: V,
+          W: V.map(function (p) {
+            return entre(d.O, p, d.k);
+          })
+        };
+      }
+
+      function homoteciaConstruir(d) {
+        var g = homoteciaGeometria(d);
+        var O = d.O;
+        var V = g.V;
+        var W = g.W;
+        var nombres = V.map(function (p, i) {
+          return VERTICES[i];
+        });
+        var rectas = V.map(function (p, i) {
+          var u = unitario(O, p);
+          var lejos = Math.max(distancia(O, p), d.k > 0 ? distancia(O, W[i]) : 0) + 16;
+          var cerca = d.k < 0 ? -(distancia(O, W[i]) + 16) : 0;
+          return [avanzar(O, u, cerca), avanzar(O, u, lejos)];
+        });
+        var tales = puntoPorTales(O, V[0], d.k, ladoLibre(O, V[0], centroDe(V)));
+        var obstaculos = rectas.concat(ladosDe(V), ladosDe(W),
+          tales.trazos.filter(function (e) {
+            return e.tipo === "seg";
+          }).map(function (e) {
+            return [e.a, e.b];
+          }),
+          W.slice(1).map(function (p, i) {
+            return [W[i], avanzar(p, unitario(W[i], p), 12)];
+          }));
+        var letrasV = letrasFueraLibres(centroDe(V), V, obstaculos, [], 18);
+        var letrasW = letrasFueraLibres(centroDe(W), W, obstaculos, [], 18);
+        var paralelas = [];
+        var puntos = [];
+        W.forEach(function (p, i) {
+          var q;
+          if (i === 0) {
+            return;
+          }
+          q = W[i - 1];
+          paralelas.push(seg(q, avanzar(p, unitario(q, p), 12), "aux"));
+          puntos.push(punto(p, nombres[i] + "′", letrasW[i]));
+        });
+        return {
+          base: poligonoDe(V, "dato").concat(
+            V.map(function (p, i) {
+              return punto(p, nombres[i], letrasV[i]);
+            }),
+            [punto(O, "O", letraEnHueco(O, V.concat(W), 18), { forma: "hueco" })]
+          ),
+          pasos: [
+            deprisa(rectas.map(function (r) {
+              return seg(r[0], r[1], "aux");
+            }), 0.5),
+            tales.trazos.concat([
+              punto(W[0], nombres[0] + "′", letrasW[0])
+            ]),
+            deprisa(paralelas.concat(puntos), 0.5),
+            poligonoDe(W)
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["homotecia"] = {
+        datos: function () {
+          return {
+            O: pt(250, 210), k: -0.5,
+            A: pt(330, 260), B: pt(460, 300), C: pt(510, 190), D: pt(400, 120)
+          };
+        },
+        asas: function (d) {
+          var asas = { O: d.O };
+          verticesDe(d, VERTICES).forEach(function (p, i) {
+            asas[VERTICES[i]] = p;
+          });
+          return asas;
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = homoteciaGeometria(d);
+          return (
+            Math.abs(d.k) > 0.2 && Math.abs(d.k - 1) > 0.1 && esConvexo(g.V) &&
+            separacionMinima(g.V) > 50 && separacionMinima(g.W.concat([d.O])) > 20 &&
+            g.V.every(function (p) {
+              return distancia(d.O, p) > 50;
+            }) &&
+            cabe(homoteciaConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: homoteciaConstruir
+      };
+
+      // ---- Problemas con giros y traslaciones ----
+
+      // El triángulo equilátero con un vértice en cada una de tres
+      // paralelas, r, s y t, con A dado en r: la recta t girada 60°
+      // alrededor de A (con su perpendicular desde A, el pie H girado a H′
+      // y la perpendicular por H′) corta a s en C; B, en t, a la distancia
+      // AC de A.
+      function equilateroParalelasGeometria(d) {
+        var A = d.A;
+        var H = pt(A.x, d.T.y);
+        var H2 = girado(A, H, 60, d.s);
+        var w = pt(-(H2.y - A.y), H2.x - A.x);
+        var C = corteRectas(H2, avanzar(H2, unitario(pt(0, 0), w), 10), pt(0, d.S.y), pt(10, d.S.y));
+        var B = C ? girado(A, C, 60, -(d.s < 0 ? -1 : 1)) : null;
+        return { A: A, H: H, H2: H2, w: unitario(pt(0, 0), w), C: C, B: B };
+      }
+
+      function equilateroParalelasConstruir(d) {
+        var g = equilateroParalelasGeometria(d);
+        var A = g.A;
+        var s = d.s < 0 ? -1 : 1;
+        var horizontal = function (y) {
+          return [pt(14, y), pt(ANCHO - 14, y)];
+        };
+        var r = horizontal(A.y);
+        var rs = horizontal(d.S.y);
+        var rt = horizontal(d.T.y);
+        var t2 = tramoEnLaLamina(g.H2, g.w, 8);
+        var radio = distancia(A, g.H);
+        var aH = angulo(A, g.H);
+        var aH2 = angulo(A, g.H2);
+        var lado = distancia(A, g.C);
+        var letras = letrasLibres([A, g.H, g.H2, g.C, g.B],
+          [r, rs, rt, t2, [A, g.H], [A, g.H2], [A, g.B], [A, g.C], [g.B, g.C]],
+          [{ c: A, r: radio }, { c: g.C, r: lado }], 18);
+        return {
+          base: [
+            seg(r[0], r[1], "dato"),
+            seg(rs[0], rs[1], "dato"),
+            seg(rt[0], rt[1], "dato"),
+            rotulo(pt(26, A.y - 12), "r"),
+            rotulo(pt(26, d.S.y - 12), "s"),
+            rotulo(pt(26, d.T.y - 12), "t"),
+            punto(A, "A", letras[0], { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(A, avanzar(g.H, pt(0, 1), 14), "aux"),
+              recto(g.H, A, pt(g.H.x + 10, g.H.y)),
+              punto(g.H, "H", letras[1])
+            ],
+            anguloDado(A, aH, 60, s, radio + 16, "60°", 34).trazos.concat([
+              abrir(A, g.H),
+              arco(A, radio, aH, aH + giro(aH, aH2)),
+              punto(g.H2, "H′", polar(pt(0, 0), 19, angulo(A, g.H2)))
+            ]),
+            [
+              seg(t2[0], t2[1], "aux"),
+              recto(g.H2, A, avanzar(g.H2, g.w, 10)),
+              rotulo(avanzar(avanzar(t2[0].y < t2[1].y ? t2[0] : t2[1], unitario(t2[0].y < t2[1].y ? t2[0] : t2[1], g.H2), 16),
+                normalArriba(g.w), 12), "t′"),
+              punto(g.C, "C", letras[3])
+            ],
+            [
+              abrir(g.C, A),
+              arco(g.C, lado, angulo(g.C, A), angulo(g.C, A) + giro(angulo(g.C, A), angulo(g.C, g.B)) * 1.08),
+              punto(g.B, "B", letras[4])
+            ],
+            poligonoDe([A, g.B, g.C])
+          ],
+          porque: aprisa([igual(A, g.B), igual(g.B, g.C), igual(g.C, A)])
+        };
+      }
+
+      construcciones["equilatero-en-paralelas"] = {
+        datos: function () {
+          return { A: pt(250, 70), S: pt(80, 260), T: pt(80, 330), s: 1 };
+        },
+        asas: function (d) {
+          return { A: d.A, S: d.S, T: d.T };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = equilateroParalelasGeometria(d);
+          return (
+            g.C && g.B && d.S.y - d.A.y > 50 && d.T.y - d.S.y > 30 &&
+            cabe(equilateroParalelasConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: equilateroParalelasConstruir
+      };
+
+      // El triángulo equilátero con un vértice en cada una de tres
+      // circunferencias concéntricas, con A dado en la mayor: el centro O,
+      // girado 60° alrededor de A, da O₁; la circunferencia pequeña, llevada
+      // a O₁, corta a la mediana en B, y B girado 60° hacia atrás cae en la
+      // pequeña: es C.
+      function equilateroConcentricasGeometria(d) {
+        var e = d.escala;
+        var O = d.O;
+        var A = polar(O, d.r3 * e, d.aA * GRADO);
+        var O1 = girado(A, O, 60, d.s);
+        var cortes = cortesCircunferencias(O, d.r2 * e, O1, d.r1 * e);
+        var B = null;
+        var C = null;
+        if (cortes) {
+          // De los dos cortes, el más cercano a A, como en la figura de
+          // Alarcón; el otro da un triángulo mayor.
+          B = cortes[0];
+          if (distancia(A, cortes[1]) < distancia(A, cortes[0])) {
+            B = cortes[1];
+          }
+          C = girado(A, B, 60, -(d.s < 0 ? -1 : 1));
+        }
+        return { O: O, A: A, O1: O1, B: B, C: C };
+      }
+
+      function equilateroConcentricasConstruir(d) {
+        var g = equilateroConcentricasGeometria(d);
+        var e = d.escala;
+        var O = g.O;
+        var A = g.A;
+        var s = d.s < 0 ? -1 : 1;
+        var R = distancia(A, O);
+        var aO = angulo(A, O);
+        var aO1 = angulo(A, g.O1);
+        var lado = distancia(A, g.B);
+        var aB = angulo(A, g.B);
+        var aC = angulo(A, g.C);
+        var circulos = [{ c: O, r: d.r1 * e }, { c: O, r: d.r2 * e }, { c: O, r: d.r3 * e }, { c: g.O1, r: d.r1 * e }];
+        var letras = letrasLibres([g.O1, g.B, g.C],
+          [[A, O], [A, g.O1], [A, g.B], [g.B, g.C], [g.C, A]], circulos, 18);
+        return {
+          base: [
+            arco(O, d.r1 * e, 0, TAU, "dato"),
+            arco(O, d.r2 * e, 0, TAU, "dato"),
+            arco(O, d.r3 * e, 0, TAU, "dato"),
+            punto(O, "O", pt(-14, 16), { forma: "hueco" }),
+            punto(A, "A", letrasLibres([A], [[A, O]], circulos, 18)[0], { forma: "hueco" })
+          ],
+          pasos: [
+            [seg(A, O, "aux")].concat(
+              anguloDado(A, aO, 60, s, R + 14, "60°", 30).trazos,
+              [
+                abrir(A, O),
+                arco(A, R, aO, aO + giro(aO, aO1)),
+                punto(g.O1, "O₁", letras[0])
+              ]
+            ),
+            [
+              abrir(g.O1, polar(g.O1, d.r1 * e, 0)),
+              arco(g.O1, d.r1 * e, 0, TAU),
+              punto(g.B, "B", letras[1])
+            ],
+            [
+              abrir(A, g.B),
+              arco(A, lado, aB, aB + giro(aB, aC) * 1.06),
+              punto(g.C, "C", letras[2])
+            ],
+            poligonoDe([A, g.B, g.C])
+          ],
+          porque: aprisa([igual(A, g.B), igual(g.B, g.C), igual(g.C, A)])
+        };
+      }
+
+      construcciones["equilatero-en-concentricas"] = {
+        datos: function () {
+          return { O: pt(250, 210), r1: 9, r2: 28, r3: 35, escala: 5, aA: -80, s: 1 };
+        },
+        asas: function (d) {
+          return { O: d.O, A: equilateroConcentricasGeometria(d).A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "O") {
+            nuevo.O = p;
+          } else {
+            nuevo.aA = angulo(d.O, p) / GRADO;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = equilateroConcentricasGeometria(d);
+          return Boolean(g.B) && cabe(equilateroConcentricasConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: equilateroConcentricasConstruir
+      };
+
+      // El cuadrilátero dados sus cuatro lados y el ángulo α que forman AB
+      // y DC: en A, el ángulo α con AB y, sobre su lado, CD (D′); C, a la
+      // distancia DA de D′ y BC de B; D, trasladando A el vector D′C.
+      function cuadrilateroTraslacionGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.ab * e, A.y);
+        var D2 = polar(A, d.cd * e, -d.alfa * GRADO);
+        var cortes = cortesCircunferencias(D2, d.da * e, B, d.bc * e);
+        var C = null;
+        if (cortes) {
+          C = cortes[0].y < cortes[1].y ? cortes[0] : cortes[1];
+        }
+        var D = C ? pt(A.x + C.x - D2.x, A.y + C.y - D2.y) : null;
+        return { A: A, B: B, D2: D2, C: C, D: D };
+      }
+
+      function cuadrilateroTraslacionConstruir(d) {
+        var g = cuadrilateroTraslacionGeometria(d);
+        var e = d.escala;
+        var cifras = Boolean(d.cifras);
+        var texto = function (valor, letra) {
+          return cifras ? conComa(valor) : letra;
+        };
+        var ang = anguloDado(g.A, 0, d.alfa, 1, d.cd * e + 24, cifras ? enGrados(d.alfa) : "α", 32);
+        var aD2 = angulo(g.A, g.D2);
+        var aC1 = angulo(g.D2, g.C);
+        var aC2 = angulo(g.B, g.C);
+        var u = unitario(g.D2, g.A);
+        var letras = letrasLibres([g.A, g.B, g.D2, g.C, g.D],
+          [[g.A, g.B], [g.A, g.D2], [g.D2, g.C], [g.B, g.C], [g.C, g.D], [g.D, g.A]],
+          [{ c: g.D2, r: d.da * e }, { c: g.B, r: d.bc * e },
+            { c: g.A, r: d.cd * e }, { c: g.C, r: d.cd * e }], 20);
+        return {
+          base: [
+            seg(g.A, g.B, "dato"),
+            punto(g.A, "A", letras[0], { forma: "hueco" }),
+            punto(g.B, "B", letras[1], { forma: "hueco" }),
+            medidaDelLado(g.A, g.B, texto(d.ab, "AB"), -1, 16)
+          ],
+          pasos: [
+            ang.trazos.concat([
+              abrir(g.A, polar(g.A, d.cd * e, aD2 + 0.14)),
+              arco(g.A, d.cd * e, aD2 + 0.14, aD2 - 0.14),
+              punto(g.D2, "D′", letras[2])
+            ]),
+            arcosConCompas(null, [
+              arquito(g.D2, d.da * e, aC1, 0.16, 1),
+              arquito(g.B, d.bc * e, aC2, 0.16, -1)
+            ]).trazos.concat([punto(g.C, "C", letras[3]), seg(g.D2, g.C, "aux")]),
+            [
+              seg(avanzar(g.C, u, -12), avanzar(g.D, u, 16), "aux"),
+              abrir(g.C, polar(g.C, d.cd * e, angulo(g.C, g.D) - 0.14)),
+              arco(g.C, d.cd * e, angulo(g.C, g.D) - 0.14, angulo(g.C, g.D) + 0.14),
+              punto(g.D, "D", letras[4])
+            ],
+            poligonoDe([g.A, g.B, g.C, g.D])
+          ],
+          porque: aprisa([
+            igual(g.A, g.D2, 1), igual(g.D, g.C, 1),
+            igual(g.D2, g.C, 2), igual(g.A, g.D, 2)
+          ])
+        };
+      }
+
+      construcciones["cuadrilatero-por-traslacion"] = {
+        datos: function () {
+          return { A: pt(130, 330), ab: 52, bc: 52, cd: 24, da: 26, alfa: 40, escala: 5 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = cuadrilateroTraslacionGeometria(d);
+          return Boolean(g.C) && esConvexo([g.A, g.B, g.C, g.D]) &&
+            cabe(cuadrilateroTraslacionConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: cuadrilateroTraslacionConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -25914,6 +26653,207 @@ Bachillerato</p>
             medida(pt(entre(R0, P1, 0.5).x, 308), "40"),
             medida(pt(R0.x - 18, entre(R0, P2, 0.5).y), "30"),
             medida(pt(entre(Q2, Q1, 0.5).x + 18, entre(Q2, Q1, 0.5).y - 10), "70,7")
+          ]);
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 7, las transformaciones ----
+
+      // La punta de flecha de un vector de a a b: dos trazos cortos en b.
+      function puntaDeFlecha(a, b, estilo) {
+        var u = unitario(b, a);
+        var n = pt(-u.y, u.x);
+        return [
+          seg(b, pt(b.x + 11 * u.x + 5 * n.x, b.y + 11 * u.y + 5 * n.y), estilo || "dato"),
+          seg(b, pt(b.x + 11 * u.x - 5 * n.x, b.y + 11 * u.y - 5 * n.y), estilo || "dato")
+        ];
+      }
+
+      // Las tres transformaciones: una traslación, un giro y dos homotecias,
+      // directa e inversa, cada una con la figura dada y su transformada.
+      figuras.transformaciones = {
+        lienzo: [960, 290],
+        trazos: function () {
+          var lista = [];
+          var tri = function (P, estilo) {
+            return poligonoDe(P, estilo);
+          };
+          // Traslación.
+          var T = [pt(30, 220), pt(110, 230), pt(70, 160)];
+          var v = pt(90, -60);
+          var T2 = T.map(function (p) {
+            return pt(p.x + v.x, p.y + v.y);
+          });
+          lista = lista.concat(tri(T, "dato"), tri(T2), [
+            seg(pt(40, 70), pt(130, 10), "dato")
+          ], puntaDeFlecha(pt(40, 70), pt(130, 10)), T.map(function (p, i) {
+            return seg(p, T2[i], "aux");
+          }), [rotulo(pt(78, 52), "v"), pieDeFigura(110, 270, "Traslación de vector v")]);
+          // Giro de 90° alrededor de O.
+          var O = pt(330, 210);
+          var G = [pt(380, 200), pt(450, 215), pt(420, 150)];
+          var G2 = G.map(function (p) {
+            return polar(O, distancia(O, p), angulo(O, p) - Math.PI / 2);
+          });
+          lista = lista.concat(tri(G, "dato"), tri(G2), G.map(function (p, i) {
+            var a0 = angulo(O, p);
+            return arco(O, distancia(O, p), a0, a0 - Math.PI / 2, "aux");
+          }), [
+            punto(O, "O", pt(-12, 14), { forma: "hueco" }),
+            seg(O, G[0], "aux"),
+            seg(O, G2[0], "aux"),
+            marcaAngulo(O, G[0], G2[0], 20, 1),
+            pieDeFigura(350, 270, "Giro de 90° de centro O")
+          ]);
+          // Homotecia directa de razón 2.
+          var C1 = pt(520, 230);
+          var H = [pt(560, 220), pt(600, 225), pt(585, 190)];
+          var H2 = H.map(function (p) {
+            return entre(C1, p, 2);
+          });
+          lista = lista.concat(H2.map(function (p) {
+            return seg(C1, p, "aux");
+          }), tri(H, "dato"), tri(H2), [
+            punto(C1, "O", pt(-12, 14), { forma: "hueco" }),
+            pieDeFigura(590, 270, "Homotecia directa, k = 2")
+          ]);
+          // Homotecia inversa de razón −1/2.
+          var C2 = pt(800, 160);
+          var I = [pt(850, 200), pt(930, 220), pt(900, 120)];
+          var I2 = I.map(function (p) {
+            return entre(C2, p, -0.5);
+          });
+          lista = lista.concat(I.map(function (p, i) {
+            return seg(I2[i], p, "aux");
+          }), tri(I, "dato"), tri(I2), [
+            punto(C2, "O", pt(4, -14), { forma: "hueco" }),
+            pieDeFigura(840, 270, "Homotecia inversa, k = −1/2")
+          ]);
+          return lista;
+        }
+      };
+
+      // Dos circunferencias son homotéticas de dos maneras: los radios
+      // paralelos del mismo sentido dan el centro de la homotecia directa,
+      // y los de sentido contrario, el de la inversa. Las tangentes
+      // exteriores pasan por el primero.
+      figuras.homotecia_de_circunferencias = {
+        lienzo: [960, 270],
+        trazos: function () {
+          var O1 = pt(430, 140);
+          var O2 = pt(660, 140);
+          var r1 = 40;
+          var r2 = 80;
+          var d = distancia(O1, O2);
+          var Cd = pt(O1.x - (d * r1) / (r2 - r1), O1.y);
+          var Ci = pt(O1.x + (d * r1) / (r1 + r2), O1.y);
+          var a = -Math.PI / 4;
+          var M1 = polar(O1, r1, a);
+          var M2 = polar(O2, r2, a);
+          var N2 = polar(O2, r2, a + Math.PI);
+          // Las tangentes exteriores, desde Cd.
+          var t = Math.asin(r1 / distancia(Cd, O1));
+          var T1 = polar(Cd, Math.sqrt(distancia(Cd, O2) * distancia(Cd, O2) - r2 * r2) + 30, -t);
+          var T2 = polar(Cd, Math.sqrt(distancia(Cd, O2) * distancia(Cd, O2) - r2 * r2) + 30, t);
+          return [
+            arco(O1, r1, 0, TAU, "dato"),
+            arco(O2, r2, 0, TAU, "dato"),
+            seg(pt(Cd.x - 14, O1.y), pt(O2.x + r2 + 20, O1.y), "aux"),
+            seg(Cd, T1, "guia", { sinRegla: true }),
+            seg(Cd, T2, "guia", { sinRegla: true }),
+            seg(O1, M1, "sol"),
+            seg(O2, M2, "sol"),
+            seg(O2, N2, "sol"),
+            seg(Cd, M2, "aux"),
+            seg(M1, N2, "aux"),
+            punto(O1, "O₁", pt(-6, 18)),
+            punto(O2, "O₂", pt(8, 18)),
+            punto(M1, "", null),
+            punto(M2, "", null),
+            punto(N2, "", null),
+            punto(Cd, "D", pt(-4, 18), { estilo: "sol" }),
+            punto(Ci, "I", pt(4, 18), { estilo: "sol" }),
+            pieDeFigura(560, 258, "D, centro de la homotecia directa; I, centro de la inversa")
+          ];
+        }
+      };
+
+      // Las soluciones de los problemas: el puente sobre el río, el cuadrado
+      // inscrito en un triángulo y el segmento entre dos circunferencias.
+      figuras.problemas_transformaciones = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var e = 1.7;
+          var lista = [];
+          // El puente: orillas y = 160 e y = 160 - 20e; A abajo, B arriba.
+          var y1 = 190;
+          var y2 = y1 - 20 * e;
+          var A = pt(40, y1 + 25 * e);
+          var B = pt(40 + 80 * e, y2 - 25 * e);
+          var B2 = pt(B.x, B.y + 20 * e);
+          var P = pt(40 + 40 * e, y1);
+          var Q = pt(P.x, y2);
+          lista.push(numero(pt(24, 26), "17"));
+          lista = lista.concat([
+            seg(pt(20, y1), pt(300, y1), "dato"),
+            seg(pt(20, y2), pt(300, y2), "dato"),
+            seg(B, B2, "aux"),
+            seg(A, B2, "aux"),
+            seg(A, P, "sol"),
+            seg(P, Q, "sol"),
+            seg(Q, B, "sol"),
+            punto(A, "A", pt(-14, 6), { forma: "hueco" }),
+            punto(B, "B", pt(14, -6), { forma: "hueco" }),
+            punto(B2, "B′", pt(16, 12)),
+            punto(P, "P", pt(-8, 18)),
+            punto(Q, "Q", pt(-8, -12))
+          ]);
+          // El cuadrado inscrito en el triángulo de base 60 y altura 40.
+          var e2 = 3.6;
+          var V = pt(360, 300);
+          var W = pt(360 + 60 * e2, 300);
+          var C = pt(360 + 25 * e2, 300 - 40 * e2);
+          var lado = 24 * e2;
+          var s0 = 14 * e2;
+          // Un cuadrado pequeño con la base en AB y un vértice en AC.
+          var xL = V.x + (s0 * 25) / 40;
+          var q = [pt(xL, 300), pt(xL + s0, 300), pt(xL + s0, 300 - s0), pt(xL, 300 - s0)];
+          var k = lado / s0;
+          var Q2 = q.map(function (p) {
+            return entre(V, p, k);
+          });
+          // El cuadrado grande, apoyado en la base, con sus vértices de
+          // arriba en los lados.
+          lista.push(numero(pt(344, 26), "18"));
+          lista = lista.concat(poligonoDe([V, W, C], "dato"), poligonoDe(q, "aux"), [
+            seg(V, avanzar(Q2[2], unitario(V, Q2[2]), 12), "aux")
+          ], poligonoDe(Q2), [
+            punto(V, "A", pt(-14, 8)),
+            punto(W, "B", pt(14, 8)),
+            punto(C, "C", pt(0, -16)),
+            medida(pt(Q2[0].x + lado / 2, 318), "24")
+          ]);
+          // El segmento de 50 mm entre dos circunferencias.
+          var e3 = 2.2;
+          var O1 = pt(680, 180);
+          var O2 = pt(680 + 60 * e3, 180);
+          var O3 = pt(680 + 50 * e3, 180);
+          var P1 = pt(680 - 3.75 * e3, 180 - 14.52 * e3);
+          var P2 = pt(P1.x + 50 * e3, P1.y);
+          lista.push(numero(pt(664, 26), "19"));
+          lista = lista.concat([
+            arco(O1, 15 * e3, 0, TAU, "dato"),
+            arco(O2, 20 * e3, 0, TAU, "dato"),
+            arco(O3, 15 * e3, 0, TAU, "guia", { sinRegla: true }),
+            seg(pt(O1.x - 40, 180), pt(O2.x + 60, 180), "aux"),
+            seg(P1, P2, "sol"),
+            punto(O1, "O₁", pt(-6, 18), { forma: "hueco" }),
+            punto(O2, "O₂", pt(12, 26), { forma: "hueco" }),
+            punto(O3, "", null),
+            punto(P1, "P", pt(-12, -10)),
+            punto(P2, "Q", pt(4, -18)),
+            medida(pt(entre(P1, P2, 0.5).x, P1.y - 14), "50")
           ]);
           return lista;
         }
