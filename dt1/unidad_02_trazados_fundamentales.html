@@ -29054,6 +29054,679 @@ Bachillerato</p>
         construir: espiralConstruir
       };
 
+      // ---- La unidad 10, las curvas cónicas (desde el 20 de octubre de
+      // 2026) ----
+
+      // ---- La elipse ----
+
+      // La elipse de centro O y semiejes a y b (en milímetros, con la
+      // escala): los vértices A y B, en el eje mayor, horizontal; C y D, en
+      // el menor; los focos F, a la derecha, y F′, y el punto de ángulo t de
+      // la circunferencia principal llevado a la curva.
+      function elipseGeometria(d) {
+        var e = d.escala;
+        var a = d.a * e;
+        var b = d.b * e;
+        var c = Math.sqrt(Math.max(a * a - b * b, 0));
+        var O = d.O;
+        return {
+          e: e, a: a, b: b, c: c, O: O,
+          en: function (t) {
+            return pt(O.x + a * Math.cos(t), O.y - b * Math.sin(t));
+          },
+          A: pt(O.x - a, O.y), B: pt(O.x + a, O.y),
+          C: pt(O.x, O.y - b), D: pt(O.x, O.y + b),
+          F: pt(O.x + c, O.y), F2: pt(O.x - c, O.y)
+        };
+      }
+
+      // La curva, con la plantilla de curvas, del ángulo t0 al t1 (toda, si
+      // no se dan).
+      function elipseCurva(g, estilo, t0, t1) {
+        var puntos = [];
+        var desde = t0 === undefined ? 0 : t0;
+        var hasta = t1 === undefined ? TAU : t1;
+        var k;
+        for (k = 0; k <= 120; k += 1) {
+          puntos.push(g.en(desde + ((hasta - desde) * k) / 120));
+        }
+        return curvaPor(puntos, estilo || "sol");
+      }
+
+      // Los ejes, con sus cuatro vértices.
+      function elipseBase(g) {
+        return [
+          seg(avanzar(g.A, pt(-1, 0), 14), avanzar(g.B, pt(1, 0), 14), "dato"),
+          seg(avanzar(g.C, pt(0, -1), 14), avanzar(g.D, pt(0, 1), 14), "dato"),
+          punto(g.A, "A", pt(-16, -10), { forma: "hueco" }),
+          punto(g.B, "B", pt(16, -10), { forma: "hueco" }),
+          punto(g.C, "C", pt(14, -12), { forma: "hueco" }),
+          punto(g.D, "D", pt(14, 16), { forma: "hueco" }),
+          punto(g.O, "O", pt(-14, 18))
+        ];
+      }
+
+      // Los focos: con centro en C y radio a, dos arquitos en el eje mayor.
+      function elipseFocos(g) {
+        var a1 = angulo(g.C, g.F);
+        var a2 = angulo(g.C, g.F2);
+        return arcosConCompas(null, [
+          arco(g.C, g.a, a1 - 0.1, a1 + 0.1),
+          arco(g.C, g.a, a2 - 0.1, a2 + 0.1)
+        ]).trazos.concat([
+          punto(g.F, "F", pt(10, 18)),
+          punto(g.F2, "F′", pt(-10, 18))
+        ]);
+      }
+
+      function elipseVale(d, construir) {
+        return d.a >= d.b * 1.2 && d.b > 0 && cabe(construir(d), 6, [ANCHO, ALTO]);
+      }
+
+      // Por puntos, con la definición: N en el eje mayor, entre los focos;
+      // los arcos de radio AN con centro en un foco y de radio NB con centro
+      // en el otro se cortan en puntos de la curva, cuatro por cada N.
+      function elipsePuntosDeN(g, f) {
+        var N = pt(g.O.x + f * g.c, g.O.y);
+        var r1 = distancia(g.A, N);
+        var r2 = distancia(N, g.B);
+        var uno = cortesCircunferencias(g.F2, r1, g.F, r2);
+        var otro = cortesCircunferencias(g.F2, r2, g.F, r1);
+        return { N: N, r1: r1, r2: r2, M: [uno[0], uno[1], otro[0], otro[1]] };
+      }
+
+      function elipsePuntosArcos(g, p) {
+        var arquitos = function (r, centros) {
+          return centros.map(function (q) {
+            return arquito(q.c, r, angulo(q.c, q.m), 0.09, 1);
+          });
+        };
+        var conAN = arcosConCompas({ c: g.A, t: p.N }, arquitos(p.r1, [
+          { c: g.F2, m: p.M[0] }, { c: g.F2, m: p.M[1] }, { c: g.F, m: p.M[2] }, { c: g.F, m: p.M[3] }
+        ]));
+        var conNB = arcosConCompas({ c: p.N, t: g.B }, arquitos(p.r2, [
+          { c: g.F, m: p.M[0] }, { c: g.F, m: p.M[1] }, { c: g.F2, m: p.M[2] }, { c: g.F2, m: p.M[3] }
+        ]));
+        return [abrir(g.A, p.N)].concat(conAN.trazos, [abrir(p.N, g.B)], conNB.trazos);
+      }
+
+      function elipsePuntosConstruir(d) {
+        var g = elipseGeometria(d);
+        var primero = elipsePuntosDeN(g, 0.5);
+        var otros = [0.25, 0.8].map(function (f) {
+          return elipsePuntosDeN(g, f);
+        });
+        var M = primero.M[0];
+        return {
+          base: elipseBase(g),
+          pasos: [
+            elipseFocos(g),
+            [punto(primero.N, "N", pt(6, 18))].concat(
+              elipsePuntosArcos(g, primero),
+              [punto(M, "M", polar(pt(0, 0), 18, angulo(g.O, M)))],
+              primero.M.slice(1).map(function (q) {
+                return punto(q, "", null);
+              })
+            ),
+            deprisa(otros.reduce(function (lista, p) {
+              return lista.concat([punto(p.N, "", null)], elipsePuntosArcos(g, p), p.M.map(function (q) {
+                return punto(q, "", null);
+              }));
+            }, []), 0.5),
+            elipseCurva(g, "sol")
+          ],
+          porque: aprisa([seg(M, g.F, "guia"), seg(M, g.F2, "guia")])
+        };
+      }
+
+      construcciones["elipse-por-puntos"] = {
+        datos: function () {
+          return { O: pt(300, 200), a: 55, b: 33, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return elipseVale(d, elipsePuntosConstruir);
+        },
+        construir: elipsePuntosConstruir
+      };
+
+      // Por haces proyectivos: en el rectángulo OBEC, OB y BE en n partes
+      // iguales, numeradas desde B; el rayo de C a la división k de BE y el
+      // de D a la división k de OB se cortan en un punto de la curva.
+      function elipseHacesConstruir(d) {
+        var g = elipseGeometria(d);
+        var n = d.n || 5;
+        var E = pt(g.B.x, g.C.y);
+        var marcas = [];
+        var rayos = [];
+        var puntos = [];
+        var k;
+        for (k = 1; k < n; k += 1) {
+          var P = entre(g.B, g.O, k / n);
+          var Q = entre(g.B, E, k / n);
+          var M = corteRectas(g.C, Q, g.D, P);
+          marcas.push(
+            seg(pt(P.x, P.y - 5), pt(P.x, P.y + 5), "aux", { sinRegla: true }),
+            rotulo(pt(P.x, P.y + 17), String(k), { recta: true, cuerpo: 13 }),
+            seg(pt(Q.x - 5, Q.y), pt(Q.x + 5, Q.y), "aux", { sinRegla: true }),
+            rotulo(pt(Q.x - 14, Q.y + 4), String(k), { recta: true, cuerpo: 13 })
+          );
+          rayos.push(
+            seg(g.C, avanzar(Q, unitario(g.C, Q), 8), "aux"),
+            seg(g.D, avanzar(M, unitario(g.D, M), 10), "aux"),
+            punto(M, "", null)
+          );
+          puntos.push(M);
+        }
+        return {
+          base: elipseBase(g),
+          pasos: [
+            [seg(g.B, E, "aux"), seg(E, g.C, "aux"), punto(E, "E", pt(14, -12))],
+            deprisa(marcas, 0.5),
+            deprisa(rayos, 0.5),
+            elipseCurva(g, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["elipse-por-haces"] = {
+        datos: function () {
+          return { O: pt(250, 210), a: 55, b: 40, escala: 3.6, n: 5 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.n >= 3 && d.n <= 8 && elipseVale(d, elipseHacesConstruir);
+        },
+        construir: elipseHacesConstruir
+      };
+
+      // Con las dos circunferencias, de radios a y b: un radio cualquiera
+      // las corta en R₁ y R₂; la paralela al eje menor por R₁ y la paralela
+      // al eje mayor por R₂ se cortan en R, de la curva.
+      function elipseCircunferenciasPunto(g, t) {
+        var R1 = polar(g.O, g.a, -t);
+        var R2 = polar(g.O, g.b, -t);
+        return { R1: R1, R2: R2, R: pt(R1.x, R2.y) };
+      }
+
+      function elipseCircunferenciasTrazos(g, t, letras) {
+        var p = elipseCircunferenciasPunto(g, t);
+        var lejos = polar(g.O, g.a + 12, -t);
+        var trazos = [
+          seg(g.O, lejos, "aux"),
+          seg(p.R1, avanzar(p.R, unitario(p.R1, p.R), 10), "aux"),
+          seg(p.R2, avanzar(p.R, unitario(p.R2, p.R), 10), "aux"),
+          punto(p.R1, letras ? "R₁" : "", letras ? polar(pt(0, 0), 18, -t) : null),
+          punto(p.R2, letras ? "R₂" : "", letras ? polar(pt(0, 0), 18, -t + Math.PI * 0.62) : null),
+          punto(p.R, letras ? "R" : "", letras ? pt(14, 14) : null)
+        ];
+        return trazos;
+      }
+
+      function elipseCircunferenciasConstruir(d) {
+        var g = elipseGeometria(d);
+        // Doce radios, cada 30°, a partir del rotulado.
+        var t0 = (d.t || 50) * GRADO;
+        var otros = [];
+        var k;
+        for (k = 1; k < 12; k += 1) {
+          otros = otros.concat(elipseCircunferenciasTrazos(g, t0 + k * 30 * GRADO, false));
+        }
+        return {
+          base: elipseBase(g),
+          pasos: [
+            [
+              abrir(g.O, g.B),
+              arco(g.O, g.a, 0, TAU, "aux"),
+              abrir(g.O, g.C),
+              arco(g.O, g.b, -Math.PI / 2, 1.5 * Math.PI, "aux")
+            ],
+            elipseCircunferenciasTrazos(g, t0, true),
+            deprisa(otros, 0.4),
+            elipseCurva(g, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["elipse-por-circunferencias"] = {
+        datos: function () {
+          return { O: pt(300, 200), a: 45, b: 27, escala: 4, t: 50 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return elipseVale(d, elipseCircunferenciasConstruir);
+        },
+        construir: elipseCircunferenciasConstruir
+      };
+
+      // Por envolventes: L en la circunferencia principal; la perpendicular
+      // a FL por L es tangente a la curva. Con muchas, la curva se ve sola.
+      function elipseEnvolventeTrazos(g, t, letras) {
+        var L = polar(g.O, g.a, -t);
+        var w = normalArriba(unitario(g.F, L));
+        var largo = g.a * 0.6;
+        // La tangente, a lo más `largo` a cada lado de L y dentro de la
+        // lámina.
+        var tramo = tramoEnLaLamina(L, w, 10);
+        var hasta0 = Math.min(largo, distancia(L, tramo[0]));
+        var hasta1 = Math.min(largo, distancia(L, tramo[1]));
+        return [
+          seg(g.F, L, "guia", { sinRegla: true }),
+          seg(avanzar(L, w, -hasta0), avanzar(L, w, hasta1), "aux"),
+          punto(L, letras ? "L" : "", letras ? polar(pt(0, 0), 18, -t) : null)
+        ].concat(letras ? [recto(L, g.F, avanzar(L, w, 10)), rotulo(avanzar(avanzar(L, w, hasta1 - 10), unitario(g.F, L), 14), "t")] : []);
+      }
+
+      function elipseEnvolventesConstruir(d) {
+        var g = elipseGeometria(d);
+        // Doce tangentes, cada 30° de la circunferencia principal.
+        var t0 = (d.t || 70) * GRADO;
+        var otros = [];
+        var k;
+        for (k = 1; k < 12; k += 1) {
+          otros = otros.concat(elipseEnvolventeTrazos(g, t0 + k * 30 * GRADO, false));
+        }
+        return {
+          base: elipseBase(g),
+          pasos: [
+            elipseFocos(g).concat([abrir(g.O, g.B), arco(g.O, g.a, 0, TAU, "aux")]),
+            elipseEnvolventeTrazos(g, t0, true),
+            deprisa(otros, 0.4),
+            elipseCurva(g, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["elipse-por-envolventes"] = {
+        datos: function () {
+          return { O: pt(300, 200), a: 40, b: 24, escala: 4, t: 75 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return elipseVale(d, elipseEnvolventesConstruir);
+        },
+        construir: elipseEnvolventesConstruir
+      };
+
+      // La tangente y la normal en un punto T de la elipse: la tangente es
+      // la bisectriz del ángulo que forma TF con la prolongación de F′T, y
+      // la normal, su perpendicular en T.
+      function tangenteElipseConstruir(d) {
+        var g = elipseGeometria(d);
+        var T = g.en((d.t || 60) * GRADO);
+        var fuera = avanzar(T, unitario(g.F2, T), 70);
+        var bis = bisectrizDibujada(T, g.F, fuera, 34, 0);
+        var w = bis.w;
+        var n = normalArriba(w);
+        var tangente = tramoEnLaLamina(T, w, 10);
+        var largoN = 70;
+        // La letra de T, fuera de la curva, entre la tangente y la normal.
+        var fueraN = sobre(g.O, T, n) > 0 ? pt(-n.x, -n.y) : n;
+        var haciaF = sobre(g.F, T, w) > 0 ? w : pt(-w.x, -w.y);
+        var letraT = polar(pt(0, 0), 25, angulo(pt(0, 0), pt(fueraN.x + haciaF.x, fueraN.y + haciaF.y)));
+        return {
+          base: elipseBase(g).concat(elipseCurva(g, "dato"), [punto(T, "T", letraT, { forma: "hueco" })]),
+          pasos: [
+            elipseFocos(g),
+            [seg(T, g.F, "aux"), seg(g.F2, fuera, "aux")],
+            bis.trazos.concat([seg(tangente[0], tangente[1], "sol"), rotulo(avanzar(tangente[1], w, -16), "t")]),
+            [
+              seg(avanzar(T, n, -largoN), avanzar(T, n, largoN), "sol"),
+              recto(T, avanzar(T, w, 10), avanzar(T, n, 10)),
+              rotulo(avanzar(T, n, sobre(g.O, T, n) > 0 ? largoN + 12 : -largoN - 12), "n")
+            ]
+          ],
+          porque: aprisa([marcaAngulo(T, g.F, avanzar(T, w, 10), 26, 2), marcaAngulo(T, fuera, avanzar(T, w, 10), 26, 2)])
+        };
+      }
+
+      construcciones["tangente-a-la-elipse"] = {
+        datos: function () {
+          return { O: pt(300, 210), a: 55, b: 33, escala: 4, t: 60 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return elipseVale(d, tangenteElipseConstruir);
+        },
+        construir: tangenteElipseConstruir
+      };
+
+      // ---- La hipérbola ----
+
+      // La hipérbola de centro O, semieje real a y semidistancia focal c (en
+      // milímetros): los vértices A y B, los focos F, a la derecha, y F′, y
+      // el punto de parámetro s de la rama de la derecha (lado 1) o de la
+      // izquierda (lado -1).
+      function hiperbolaGeometria(d) {
+        var e = d.escala;
+        var a = d.a * e;
+        var c = d.c * e;
+        var b = Math.sqrt(Math.max(c * c - a * a, 0));
+        var O = d.O;
+        return {
+          e: e, a: a, b: b, c: c, O: O,
+          en: function (s, lado) {
+            return pt(O.x + lado * a * Math.cosh(s), O.y - b * Math.sinh(s));
+          },
+          A: pt(O.x - a, O.y), B: pt(O.x + a, O.y),
+          F: pt(O.x + c, O.y), F2: pt(O.x - c, O.y)
+        };
+      }
+
+      // Las dos ramas, hasta 14 px del borde de arriba y del de abajo.
+      function hiperbolaRamas(g, estilo) {
+        var alto = Math.min(g.O.y, ALTO - g.O.y) - 14;
+        var sMax = Math.log(alto / g.b + Math.sqrt(1 + (alto * alto) / (g.b * g.b)));
+        var lista = [];
+        [1, -1].forEach(function (lado) {
+          var puntos = [];
+          var k;
+          for (k = 0; k <= 80; k += 1) {
+            puntos.push(g.en(-sMax + (2 * sMax * k) / 80, lado));
+          }
+          lista = lista.concat(curvaPor(puntos, estilo || "sol"));
+        });
+        return lista;
+      }
+
+      // Por puntos, con la definición: N en el eje, más allá de F; los arcos
+      // de radio AN con centro en F′ y de radio BN con centro en F se cortan
+      // en dos puntos de la rama de F, y al revés, en dos de la otra.
+      function hiperbolaPuntosDeN(g, f) {
+        var N = pt(g.O.x + f * g.c, g.O.y);
+        var r1 = distancia(g.A, N);
+        var r2 = distancia(g.B, N);
+        var der = cortesCircunferencias(g.F2, r1, g.F, r2);
+        var izq = cortesCircunferencias(g.F2, r2, g.F, r1);
+        return { N: N, r1: r1, r2: r2, M: [der[0], der[1], izq[0], izq[1]] };
+      }
+
+      function hiperbolaPuntosArcos(g, p) {
+        var arquitos = function (r, centros) {
+          return centros.map(function (q) {
+            return arquito(q.c, r, angulo(q.c, q.m), Math.min(0.12, 14 / r), 1);
+          });
+        };
+        var conAN = arcosConCompas({ c: g.A, t: p.N }, arquitos(p.r1, [
+          { c: g.F2, m: p.M[0] }, { c: g.F2, m: p.M[1] }, { c: g.F, m: p.M[2] }, { c: g.F, m: p.M[3] }
+        ]));
+        var conBN = arcosConCompas({ c: g.B, t: p.N }, arquitos(p.r2, [
+          { c: g.F, m: p.M[0] }, { c: g.F, m: p.M[1] }, { c: g.F2, m: p.M[2] }, { c: g.F2, m: p.M[3] }
+        ]));
+        return [abrir(g.A, p.N)].concat(conAN.trazos, [abrir(g.B, p.N)], conBN.trazos);
+      }
+
+      function hiperbolaPuntosConstruir(d) {
+        var g = hiperbolaGeometria(d);
+        var R = pt(g.B.x, g.O.y - g.b);
+        var S = pt(g.B.x, g.O.y + g.b);
+        var aR = angulo(g.O, R);
+        var asintota = function (P) {
+          var t = tramoEnLaLamina(g.O, unitario(g.O, P), 10);
+          return seg(t[0], t[1], "guia", { sinRegla: true });
+        };
+        var primero = hiperbolaPuntosDeN(g, d.n1 || 1.8);
+        var otros = [d.n2 || 1.25, d.n3 || 2.4].map(function (f) {
+          return hiperbolaPuntosDeN(g, f);
+        });
+        var M = primero.M[0];
+        return {
+          base: [
+            seg(pt(12, g.O.y), pt(ANCHO - 12, g.O.y), "dato"),
+            punto(g.O, "O", pt(0, 24)),
+            punto(g.A, "A", pt(12, 18), { forma: "hueco" }),
+            punto(g.B, "B", pt(-12, 18), { forma: "hueco" }),
+            punto(g.F, "F", pt(10, 18), { forma: "hueco" }),
+            punto(g.F2, "F′", pt(-10, 18), { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(pt(g.B.x, g.O.y - g.b - 16), pt(g.B.x, g.O.y + g.b + 16), "aux"),
+              recto(g.B, g.F, R),
+              abrir(g.O, g.F),
+              arco(g.O, g.c, aR - 0.12, aR + 0.12),
+              arco(g.O, g.c, -aR - 0.12, -aR + 0.12),
+              punto(R, "R", pt(-14, -10)),
+              punto(S, "S", pt(-14, 16)),
+              asintota(R),
+              asintota(S)
+            ],
+            [punto(primero.N, "N", pt(6, 18))].concat(
+              hiperbolaPuntosArcos(g, primero),
+              [punto(M, "M", pt(16, 4))],
+              primero.M.slice(1).map(function (q) {
+                return punto(q, "", null);
+              })
+            ),
+            deprisa(otros.reduce(function (lista, p) {
+              return lista.concat([punto(p.N, "", null)], hiperbolaPuntosArcos(g, p), p.M.map(function (q) {
+                return punto(q, "", null);
+              }));
+            }, []), 0.5),
+            hiperbolaRamas(g, "sol")
+          ],
+          porque: aprisa([seg(M, g.F, "guia"), seg(M, g.F2, "guia")])
+        };
+      }
+
+      construcciones["hiperbola-por-puntos"] = {
+        datos: function () {
+          return { O: pt(300, 200), a: 15, c: 25, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = hiperbolaGeometria(d);
+          var p = hiperbolaPuntosDeN(g, d.n3 || 2.4);
+          return d.c > d.a * 1.15 && p.N.x < ANCHO - 16 && p.M[0].y > 12 &&
+            cabe(hiperbolaPuntosConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: hiperbolaPuntosConstruir
+      };
+
+      // ---- La parábola ----
+
+      // La parábola de directriz vertical por A y foco F, a la distancia p a
+      // su derecha (en milímetros): el eje, horizontal; el vértice V, en
+      // medio de AF; el punto de altura y (en píxeles) por encima del eje.
+      function parabolaGeometria(d) {
+        var p = d.p * d.escala;
+        var A = d.A;
+        var F = pt(A.x + p, A.y);
+        var V = pt(A.x + p / 2, A.y);
+        return {
+          p: p, A: A, F: F, V: V,
+          en: function (y) {
+            return pt(V.x + (y * y) / (2 * p), A.y - y);
+          }
+        };
+      }
+
+      function parabolaCurva(g, estilo, yMax) {
+        var alto = yMax || Math.min(g.A.y, ALTO - g.A.y) - 14;
+        var puntos = [];
+        var k;
+        for (k = 0; k <= 100; k += 1) {
+          puntos.push(g.en(-alto + (2 * alto * k) / 100));
+        }
+        return curvaPor(puntos, estilo || "sol");
+      }
+
+      // Por puntos: por un punto N del eje, la perpendicular; con centro en
+      // F y radio AN, la distancia de N a la directriz, la corta en dos
+      // puntos de la curva.
+      function parabolaPuntosTrazos(g, x, letras) {
+        var N = pt(g.A.x + x, g.A.y);
+        var y = Math.sqrt(Math.max(2 * g.p * x - g.p * g.p, 0));
+        var P = pt(N.x, N.y - y);
+        var Q = pt(N.x, N.y + y);
+        var arcos = arcosConCompas({ c: g.A, t: N }, [
+          arquito(g.F, x, angulo(g.F, P), Math.min(0.12, 12 / x), 1),
+          arquito(g.F, x, angulo(g.F, Q), Math.min(0.12, 12 / x), 1)
+        ]);
+        return [
+          seg(pt(N.x, P.y - 14), pt(N.x, Q.y + 14), "aux"),
+          punto(N, letras ? "N" : "", letras ? pt(10, 18) : null),
+          abrir(g.A, N)
+        ].concat(arcos.trazos, [
+          punto(P, letras ? "P" : "", letras ? pt(14, -10) : null),
+          punto(Q, letras ? "P′" : "", letras ? pt(14, 16) : null)
+        ]);
+      }
+
+      function parabolaPuntosConstruir(d) {
+        var g = parabolaGeometria(d);
+        var med = mediatrizHasta(g.A, g.F, [g.p * 1.1, -g.p * 1.1], 0.7);
+        var otros = [1.4, 3, 4].reduce(function (lista, f) {
+          return lista.concat(parabolaPuntosTrazos(g, f * g.p, false));
+        }, []);
+        return {
+          base: [
+            seg(pt(g.A.x, 12), pt(g.A.x, ALTO - 12), "dato"),
+            rotulo(pt(g.A.x - 14, ALTO - 30), "d"),
+            seg(pt(g.A.x - 30, g.A.y), pt(ANCHO - 12, g.A.y), "dato"),
+            punto(g.A, "A", pt(-14, 18), { forma: "hueco" }),
+            punto(g.F, "F", pt(10, 18), { forma: "hueco" })
+          ],
+          pasos: [
+            med.trazos.concat([punto(g.V, "V", pt(-12, 18))]),
+            parabolaPuntosTrazos(g, (d.x || 2.3) * g.p, true),
+            deprisa(otros, 0.5),
+            parabolaCurva(g, "sol")
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["parabola-por-puntos"] = {
+        datos: function () {
+          return { A: pt(110, 200), p: 16, escala: 4, x: 2.3 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = parabolaGeometria(d);
+          return g.F.x + 4 * g.p < ANCHO - 20 && cabe(parabolaPuntosConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: parabolaPuntosConstruir
+      };
+
+      // Por haces, dados el eje, el vértice V y un punto P: la tangente en
+      // V y la paralela al eje por P se cortan en N; NP y VN, en n partes
+      // iguales, numeradas desde N y desde V; el rayo de V a la división k
+      // de NP y la paralela al eje por la división k de VN se cortan en un
+      // punto de la curva.
+      function parabolaHacesConstruir(d) {
+        var V = d.V;
+        var P = d.P;
+        var n = d.n || 5;
+        var N = pt(V.x, P.y);
+        var Q = pt(P.x, V.y);
+        var P2 = pt(P.x, 2 * V.y - P.y);
+        var k2 = (P.x - V.x) / Math.pow(V.y - P.y, 2);
+        var en = function (y) {
+          return pt(V.x + k2 * y * y, V.y - y);
+        };
+        var marcas = [];
+        var rayos = [];
+        var k;
+        for (k = 1; k < n; k += 1) {
+          var X = entre(N, P, k / n);
+          var Y = entre(V, N, k / n);
+          var M = en((V.y - P.y) * (k / n));
+          marcas.push(
+            seg(pt(X.x, X.y - 5), pt(X.x, X.y + 5), "aux", { sinRegla: true }),
+            rotulo(pt(X.x, X.y - 14), String(k), { recta: true, cuerpo: 13 }),
+            seg(pt(Y.x - 5, Y.y), pt(Y.x + 5, Y.y), "aux", { sinRegla: true }),
+            rotulo(pt(Y.x - 15, Y.y + 4), String(k), { recta: true, cuerpo: 13 })
+          );
+          rayos.push(
+            seg(V, avanzar(X, unitario(V, X), 8), "aux"),
+            seg(Y, avanzar(M, pt(1, 0), 10), "aux"),
+            punto(M, "", null)
+          );
+        }
+        var puntos = [];
+        var alto = V.y - P.y;
+        for (k = 0; k <= 100; k += 1) {
+          puntos.push(en(-alto + (2 * alto * k) / 100));
+        }
+        return {
+          base: [
+            seg(pt(V.x - 60, V.y), pt(ANCHO - 12, V.y), "dato"),
+            rotulo(pt(ANCHO - 26, V.y - 12), "e"),
+            punto(V, "V", pt(-14, 16), { forma: "hueco" }),
+            punto(P, "P", pt(14, -10), { forma: "hueco" })
+          ],
+          pasos: [
+            [
+              seg(pt(V.x, V.y + 14), pt(V.x, N.y - 14), "aux"),
+              recto(V, Q, N),
+              seg(N, avanzar(P, pt(1, 0), 12), "aux"),
+              seg(P, Q, "aux"),
+              punto(N, "N", pt(-14, -10))
+            ],
+            deprisa(marcas, 0.5),
+            deprisa(rayos, 0.5),
+            curvaPor(puntos, "sol").concat([seg(P2, pt(P2.x, V.y), "aux"), punto(P2, "P′", pt(14, 16))])
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["parabola-por-haces"] = {
+        datos: function () {
+          return { V: pt(140, 200), P: pt(470, 60), n: 5 };
+        },
+        asas: function (d) {
+          return { V: d.V, P: d.P };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          return d.P.x - d.V.x > 140 && d.V.y - d.P.y > 80 && 2 * d.V.y - d.P.y < ALTO - 20 &&
+            cabe(parabolaHacesConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: parabolaHacesConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -31721,6 +32394,175 @@ Bachillerato</p>
             medida(pt(c.x - 80, c.y + 16), "120"),
             medida(pt(c.x + 14, c.y - 62), "50")
           );
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 10, las cónicas ----
+
+      // Las secciones de una superficie cónica, de perfil: el plano que corta
+      // es la recta verde. Perpendicular al eje, una circunferencia; oblicuo y
+      // cortando a todas las generatrices, una elipse; paralelo a una
+      // generatriz, una parábola, y paralelo al eje, una hipérbola, que corta
+      // a las dos hojas.
+      figuras.secciones_conicas = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var mitad = 24 * GRADO;
+          var alto = 230;
+          var cono = function (x, doble) {
+            var V = pt(x, doble ? 155 : 50);
+            var abajo = doble ? 125 : alto;
+            var dx = Math.tan(mitad) * abajo;
+            lista.push(
+              seg(V, pt(x - dx, V.y + abajo), "dato"),
+              seg(V, pt(x + dx, V.y + abajo), "dato"),
+              seg(pt(x, V.y - (doble ? 125 : 20)), pt(x, V.y + abajo + 12), "guia", { sinRegla: true }),
+              punto(V, "", null)
+            );
+            if (doble) {
+              lista.push(
+                seg(V, pt(x - dx, V.y - abajo), "dato"),
+                seg(V, pt(x + dx, V.y - abajo), "dato")
+              );
+            }
+            return V;
+          };
+          // El corte de la recta por q con dirección w con los dos lados del
+          // cono de vértice V que bajan.
+          var cortes = function (V, q, w, abajo) {
+            var dx = Math.tan(mitad) * abajo;
+            var izq = corteRectas(V, pt(V.x - dx, V.y + abajo), q, avanzar(q, w, 1));
+            var der = corteRectas(V, pt(V.x + dx, V.y + abajo), q, avanzar(q, w, 1));
+            return [izq, der];
+          };
+          var V1 = cono(120, false);
+          var c1 = cortes(V1, pt(120, 190), pt(1, 0), alto);
+          lista.push(
+            seg(avanzar(c1[0], pt(-1, 0), 22), avanzar(c1[1], pt(1, 0), 22), "sol"),
+            pieDeFigura(120, 318, "Circunferencia")
+          );
+          var V2 = cono(360, false);
+          var w2 = polar(pt(0, 0), 1, -16 * GRADO);
+          var c2 = cortes(V2, pt(360, 180), w2, alto);
+          lista.push(
+            seg(avanzar(c2[0], w2, -22), avanzar(c2[1], w2, 22), "sol"),
+            pieDeFigura(360, 318, "Elipse")
+          );
+          var V3 = cono(600, false);
+          // Paralela a la generatriz de la derecha, que baja con ángulo
+          // 90° − 24° respecto de la horizontal.
+          var w3 = polar(pt(0, 0), 1, (90 - 24) * GRADO);
+          var q3 = pt(560, 160);
+          var c3 = corteRectas(V3, pt(V3.x - Math.tan(mitad) * alto, V3.y + alto), q3, avanzar(q3, w3, 1));
+          lista.push(
+            seg(avanzar(c3, w3, -26), avanzar(c3, w3, (V3.y + alto - c3.y) / w3.y + 6), "sol"),
+            pieDeFigura(600, 318, "Parábola")
+          );
+          var V4 = cono(840, true);
+          lista.push(
+            seg(pt(868, 34), pt(868, 290), "sol"),
+            pieDeFigura(840, 318, "Hipérbola")
+          );
+          return lista;
+        }
+      };
+
+      // Los elementos de las tres cónicas: la elipse, con sus ejes, sus
+      // focos y los radios vectores de un punto M, que suman 2a; la
+      // hipérbola, con sus asíntotas, y los de M, que se diferencian en 2a,
+      // y la parábola, con la directriz d, el foco F y un punto P que está a
+      // la misma distancia de los dos.
+      figuras.elementos_conicas = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          // La elipse: a = 120, b = 72, c = 96 (en píxeles).
+          var O = pt(160, 160);
+          var a = 120;
+          var b = 72;
+          var c = 96;
+          var puntos = [];
+          var k;
+          for (k = 0; k <= 120; k += 1) {
+            puntos.push(pt(O.x + a * Math.cos((k * TAU) / 120), O.y - b * Math.sin((k * TAU) / 120)));
+          }
+          var M = pt(O.x + a * Math.cos(1.1), O.y - b * Math.sin(1.1));
+          var F = pt(O.x + c, O.y);
+          var F2 = pt(O.x - c, O.y);
+          lista = lista.concat(curvaPor(puntos, "sol"), [
+            seg(pt(O.x - a - 12, O.y), pt(O.x + a + 12, O.y), "dato"),
+            seg(pt(O.x, O.y - b - 12), pt(O.x, O.y + b + 12), "dato"),
+            seg(M, F, "aux"),
+            seg(M, F2, "aux"),
+            punto(M, "M", pt(4, -16)),
+            punto(F, "F", pt(0, 18)),
+            punto(F2, "F′", pt(0, 18)),
+            punto(pt(O.x - a, O.y), "A", pt(-14, -10)),
+            punto(pt(O.x + a, O.y), "B", pt(14, -10)),
+            rotulo(avanzar(entre(M, F2, 0.5), normalArriba(unitario(F2, M)), 12), "r′"),
+            rotulo(avanzar(entre(M, F, 0.5), normalArriba(unitario(M, F)), 12), "r"),
+            pieDeFigura(O.x, 300, "Elipse: r + r′ = 2a")
+          ]);
+          // La hipérbola: a = 40, c = 64, b = 50 (en píxeles).
+          var H = pt(480, 160);
+          var ah = 40;
+          var ch = 64;
+          var bh = Math.sqrt(ch * ch - ah * ah);
+          [1, -1].forEach(function (lado) {
+            var rama = [];
+            for (k = 0; k <= 60; k += 1) {
+              var s = -1.55 + (3.1 * k) / 60;
+              rama.push(pt(H.x + lado * ah * Math.cosh(s), H.y - bh * Math.sinh(s)));
+            }
+            lista = lista.concat(curvaPor(rama, "sol"));
+          });
+          var alto = 120;
+          var Mh = pt(H.x + ah * Math.cosh(0.9), H.y - bh * Math.sinh(0.9));
+          var Fh = pt(H.x + ch, H.y);
+          var Fh2 = pt(H.x - ch, H.y);
+          lista.push(
+            seg(pt(H.x - 140, H.y), pt(H.x + 140, H.y), "dato"),
+            seg(pt(H.x - (alto * ah) / bh, H.y + alto), pt(H.x + (alto * ah) / bh, H.y - alto), "guia", { sinRegla: true }),
+            seg(pt(H.x - (alto * ah) / bh, H.y - alto), pt(H.x + (alto * ah) / bh, H.y + alto), "guia", { sinRegla: true }),
+            seg(Mh, Fh, "aux"),
+            seg(Mh, Fh2, "aux"),
+            punto(Mh, "M", pt(14, -6)),
+            rotulo(avanzar(entre(Mh, Fh2, 0.5), normalArriba(unitario(Fh2, Mh)), 12), "r′"),
+            rotulo(avanzar(entre(Mh, Fh, 0.5), pt(1, 0), 12), "r"),
+            punto(Fh, "F", pt(8, 18)),
+            punto(Fh2, "F′", pt(-8, 18)),
+            punto(pt(H.x - ah, H.y), "A", pt(12, 18)),
+            punto(pt(H.x + ah, H.y), "B", pt(-10, -12)),
+            pieDeFigura(H.x, 300, "Hipérbola: r′ − r = 2a")
+          );
+          // La parábola: directriz vertical, p = 50 (en píxeles).
+          var A = pt(720, 160);
+          var p = 50;
+          var Fp = pt(A.x + p, A.y);
+          var Vp = pt(A.x + p / 2, A.y);
+          var parabola = [];
+          for (k = 0; k <= 80; k += 1) {
+            var y = -125 + (250 * k) / 80;
+            parabola.push(pt(Vp.x + (y * y) / (2 * p), A.y - y));
+          }
+          var yP = 80;
+          var P = pt(Vp.x + (yP * yP) / (2 * p), A.y - yP);
+          var N = pt(A.x, P.y);
+          lista = lista.concat(curvaPor(parabola, "sol"), [
+            seg(pt(A.x, 30), pt(A.x, 290), "dato"),
+            rotulo(pt(A.x - 12, 44), "d"),
+            seg(pt(A.x, A.y), pt(A.x + 220, A.y), "dato"),
+            seg(P, Fp, "aux"),
+            seg(P, N, "aux"),
+            recto(N, P, A),
+            punto(Fp, "F", pt(6, 18)),
+            punto(Vp, "V", pt(-8, 18)),
+            punto(P, "P", pt(8, -14)),
+            punto(N, "N", pt(-14, -8)),
+            pieDeFigura(A.x + 100, 300, "Parábola: PF = PN")
+          ]);
           return lista;
         }
       };
