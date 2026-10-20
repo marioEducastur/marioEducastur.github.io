@@ -2856,6 +2856,340 @@
     }
 
     @media screen {
+      .lienzo-adorno {
+        position: relative;
+        flex: none;
+        transform-origin: 0 0;
+      }
+
+      .lienzo-adorno > svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .rotulo-adorno {
+        position: absolute;
+        line-height: 1;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+      }
+
+      .rotulo-adorno.de-texto {
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+
+      .rotulo-adorno.fundido {
+        -webkit-mask-image: linear-gradient(90deg, #000000 35%, transparent 98%);
+        mask-image: linear-gradient(90deg, #000000 35%, transparent 98%);
+      }
+
+      .portada-unidad[data-portada]::after {
+        display: none;
+      }
+
+      .adorno-portada {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        overflow: hidden;
+        color: #ffffff;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .adorno-portada .lienzo-adorno {
+        transform-origin: 100% 50%;
+      }
+
+      .adorno-portada.sin-rotulos .rotulo-adorno,
+      .adorno-portada.sin-sitio,
+      html:not(.js) .adorno-portada {
+        display: none;
+      }
+
+      .portada-unidad[data-tono="violeta"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+      }
+
+      .portada-unidad[data-tono="turquesa"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #0b4a45 0%, #0f766e 66%, #2aa79b 100%);
+      }
+
+      .portada-unidad[data-tono="granate"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #6b1626 0%, #b4233a 66%, #d95a6c 100%);
+      }
+
+      .portada-unidad[data-tono="ambar"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
+      }
+
+      .portada-unidad[data-tono="rosa"] {
+        background:
+          radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+          linear-gradient(120deg, #9d174d 0%, #d02670 66%, #ec4899 100%);
+      }
+
+      @media (min-width: 64.0625rem) {
+        .portada-unidad.titulo-largo[data-portada] h1,
+        .portada-unidad.titulo-largo[data-portada] .subtitulo-unidad {
+          max-width: 56%;
+        }
+      }
+
+      @media (max-width: 64rem) {
+        .adorno-portada {
+          position: relative;
+          top: auto;
+          right: auto;
+          bottom: auto;
+          left: auto;
+          z-index: auto;
+          display: block;
+          width: min(100%, 26rem);
+          height: 9.14rem;
+          margin: 1rem 0 -0.4rem auto;
+          overflow: visible;
+          border-radius: 0;
+        }
+
+        @supports (aspect-ratio: 1) {
+          .adorno-portada {
+            height: auto;
+            aspect-ratio: 640 / 225;
+          }
+        }
+
+        .adorno-portada .lienzo-adorno {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform-origin: 0 0;
+        }
+      }
+
+      :where(html:not(.modo-clase)) #contenido-unidad > section.level2 > h2[data-emblema] {
+        position: relative;
+        padding-right: calc(var(--relleno-tarjeta) + 4.3rem);
+      }
+
+      .emblema-apartado {
+        position: absolute;
+        top: 50%;
+        right: calc(var(--relleno-tarjeta) - 0.4rem);
+        width: 3.3rem;
+        height: 3.3rem;
+        margin-top: -1.65rem;
+        color: var(--apartado, var(--acento));
+        line-height: 0;
+        text-indent: 0;
+        pointer-events: none;
+      }
+
+      .emblema-apartado svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .friso-apartado {
+        position: relative;
+        margin: -1.65rem calc(-1 * var(--relleno-tarjeta)) 1.65rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        color: var(--apartado, var(--acento));
+        background: #ffffff;
+        background:
+          linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--apartado, var(--acento)) 5%, #ffffff),
+            #ffffff 85%);
+        border-bottom: 1px solid var(--borde);
+      }
+
+      .friso-apartado::-webkit-scrollbar {
+        display: none;
+      }
+
+      .friso-apartado::before {
+        display: block;
+        width: 100%;
+        min-width: 41rem;
+        max-width: 62.75rem;
+        height: 6.75rem;
+        margin: 0 auto;
+        content: "";
+      }
+
+      @supports (aspect-ratio: 1) {
+        .friso-apartado::before {
+          height: auto;
+          aspect-ratio: 1004 / 108;
+        }
+      }
+
+      .friso-apartado .lienzo-adorno {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .friso-apartado.sin-dibujo,
+      html:not(.js) .friso-apartado {
+        display: none;
+      }
+
+      .curiosidad {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: 1.1rem;
+        align-items: center;
+        margin: 1.5rem 0;
+        padding: 0.6rem 1.9rem 0.6rem 0.6rem;
+        background: #ffffff;
+        border: 1.5px solid var(--borde);
+        border-color: color-mix(in srgb, var(--apartado, var(--acento)) 30%, #ffffff);
+        border-radius: 3rem;
+        box-shadow: 0 6px 18px rgb(22 59 114 / 0.06);
+      }
+
+      .curiosidad > p {
+        grid-column: 2;
+        margin: 0;
+        color: var(--texto-suave);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .curiosidad > p + p {
+        margin-top: 0.4rem;
+      }
+
+      .curiosidad strong {
+        color: var(--texto);
+      }
+
+      .rotulo-curiosidad {
+        display: block;
+        margin-bottom: 0.1rem;
+        color: var(--apartado, var(--acento));
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .dibujo-curiosidad {
+        display: grid;
+        grid-row: 1 / span 6;
+        grid-column: 1;
+        place-items: center;
+        width: 4.4rem;
+        height: 4.4rem;
+        color: var(--apartado, var(--acento));
+        background: var(--apartado-suave, var(--acento-suave));
+        border-radius: 50%;
+      }
+
+      .dibujo-curiosidad svg {
+        width: 3.1rem;
+        height: 3.1rem;
+      }
+
+      .dibujo-curiosidad .formula-dibujo {
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .dibujo-curiosidad .letras-dibujo {
+        font-family: "Geeza Pro", "Noto Naskh Arabic", "Times New Roman", serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      @media (max-width: 42rem) {
+        :where(html:not(.modo-clase)) #contenido-unidad > section.level2 > h2[data-emblema] {
+          padding-right: calc(var(--relleno-tarjeta) + 3rem);
+        }
+
+        .emblema-apartado {
+          width: 2.5rem;
+          height: 2.5rem;
+          margin-top: -1.25rem;
+        }
+
+        .friso-apartado {
+          margin-top: -1.2rem;
+          margin-bottom: 1.2rem;
+        }
+
+        .friso-apartado::before {
+          min-width: 46.5rem;
+        }
+
+        .curiosidad {
+          column-gap: 0.8rem;
+          align-items: start;
+          padding: 0.7rem 1rem 0.75rem 0.7rem;
+          border-radius: 1.5rem;
+        }
+
+        .dibujo-curiosidad {
+          width: 3.2rem;
+          height: 3.2rem;
+        }
+
+        .dibujo-curiosidad svg {
+          width: 2.3rem;
+          height: 2.3rem;
+        }
+
+        .dibujo-curiosidad .formula-dibujo {
+          font-size: 0.8rem;
+        }
+
+        .dibujo-curiosidad .letras-dibujo {
+          font-size: 1.05rem;
+        }
+      }
+
+      html.modo-clase .emblema-apartado,
+      html.modo-clase .friso-apartado,
+      html.modo-clase .curiosidad {
+        display: none;
+      }
+    }
+
+    @media print {
+      .adorno-portada,
+      .emblema-apartado,
+      .friso-apartado,
+      .curiosidad {
+        display: none !important;
+      }
+    }
+
+    @media screen {
       #TOC > ul > li.con-subapartados {
         position: relative;
       }
@@ -4955,13 +5289,14 @@
   </header>
 
   <div id="root">
-    <header class="portada-unidad">
+    <header class="portada-unidad titulo-largo" data-portada="repaso-examen" data-tono="rosa">
       <p class="etiqueta-asignatura">Matemáticas IB · Análisis y Enfoques NS</p>
       <h1 id="titulo-unidad">
         Unidad 5: Repaso para el examen de octubre
       </h1>
             <p class="subtitulo-unidad">Matemáticas IB — Análisis y
 Enfoques NS</p>
+                  <div class="adorno-portada" data-portada="repaso-examen" aria-hidden="true"></div>
           </header>
 
     <div class="disposicion-unidad">
@@ -5023,10 +5358,13 @@ Enfoques NS</p>
         tabindex="-1"
         aria-labelledby="titulo-unidad">
                 <section id="el-examen-del-martes" class="level2"
-                data-number="0">
-                <h2 data-number="0"><span
+                data-number="0" data-emblema="cumbre"
+                data-friso="cumbre">
+                <h2 data-number="0" data-emblema="cumbre"
+                data-friso="cumbre"><span
                 class="header-section-number">0</span> El examen del
                 martes</h2>
+                <div class="friso-apartado" data-friso="cumbre" aria-hidden="true"></div>
                 <p>Este tema no trae nada nuevo: junta en un solo sitio,
                 para repasar en tres días, lo que entra en el examen del
                 martes 20 de octubre y todos los ejercicios que se
@@ -5132,8 +5470,8 @@ Enfoques NS</p>
                 </ol>
                 </section>
                 <section id="potencias-y-radicales" class="level2"
-                data-number="1">
-                <h2 data-number="1"><span
+                data-number="1" data-emblema="potencia-y-raiz">
+                <h2 data-number="1" data-emblema="potencia-y-raiz"><span
                 class="header-section-number">1</span> Potencias y
                 radicales</h2>
                 <p>Para el examen tienes que saber:</p>
@@ -6189,8 +6527,8 @@ Enfoques NS</p>
                 </section>
                 </section>
                 <section id="intervalos-y-valor-absoluto" class="level2"
-                data-number="2">
-                <h2 data-number="2"><span
+                data-number="2" data-emblema="valor-absoluto">
+                <h2 data-number="2" data-emblema="valor-absoluto"><span
                 class="header-section-number">2</span> Intervalos y
                 valor absoluto</h2>
                 <p>Para el examen tienes que saber:</p>
@@ -6972,8 +7310,8 @@ Enfoques NS</p>
                 </section>
                 </section>
                 <section id="logaritmos-y-ecuaciones" class="level2"
-                data-number="3">
-                <h2 data-number="3"><span
+                data-number="3" data-emblema="logaritmo">
+                <h2 data-number="3" data-emblema="logaritmo"><span
                 class="header-section-number">3</span> Logaritmos y
                 ecuaciones</h2>
                 <p>Para el examen tienes que saber:</p>
@@ -8712,8 +9050,8 @@ Enfoques NS</p>
                 </section>
                 </section>
                 <section id="binomio-de-newton" class="level2"
-                data-number="4">
-                <h2 data-number="4"><span
+                data-number="4" data-emblema="pascal">
+                <h2 data-number="4" data-emblema="pascal"><span
                 class="header-section-number">4</span> Binomio de
                 Newton</h2>
                 <p>Para el examen tienes que saber:</p>
@@ -9616,8 +9954,8 @@ Enfoques NS</p>
                 </section>
                 </section>
                 <section id="sucesiones-y-progresiones" class="level2"
-                data-number="5">
-                <h2 data-number="5"><span
+                data-number="5" data-emblema="sucesion">
+                <h2 data-number="5" data-emblema="sucesion"><span
                 class="header-section-number">5</span> Sucesiones y
                 progresiones</h2>
                 <p>Para el examen tienes que saber:</p>
@@ -11535,8 +11873,9 @@ Enfoques NS</p>
                 </section>
                 </section>
                 </section>
-                <section id="inducción" class="level2" data-number="6">
-                <h2 data-number="6"><span
+                <section id="inducción" class="level2" data-number="6"
+                data-emblema="domino">
+                <h2 data-number="6" data-emblema="domino"><span
                 class="header-section-number">6</span> Inducción</h2>
                 <p>Para el examen tienes que saber:</p>
                 <ul>
@@ -16192,6 +16531,2401 @@ Enfoques NS</p>
         poner(true);
       }
     });
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function r(n) {
+        return Math.round(n * 100) / 100;
+      }
+      function trazo(f, desde, hasta, paso) {
+        var d = "";
+        for (var v = desde; v <= hasta + 1e-9; v += paso) {
+          var p = f(v);
+          d += (d ? "L" : "M") + r(p[0]) + " " + r(p[1]);
+        }
+        return d;
+      }
+      function svg(ancho, alto, dentro, grosor) {
+        return '<svg viewBox="0 0 ' + ancho + " " + alto + '" aria-hidden="true" focusable="false" fill="none" ' +
+          'stroke="currentColor" stroke-width="' + (grosor || 1.8) + '" stroke-linecap="round" stroke-linejoin="round">' +
+          dentro + "</svg>";
+      }
+
+      var FUNDIDO =
+        '<defs><linearGradient id="adorno-fundido" x1="0" x2="1" y1="0" y2="0">' +
+        '<stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.11" stop-color="#fff" stop-opacity="1"/>' +
+        '<stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>' +
+        '<mask id="adorno-mascara"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido)"/></mask>';
+
+      var PORTADAS = {
+        "onda-seno": function () {
+          var CX = 150, Y = 116, R = 64, X0 = 250, U = 330 / (2 * Math.PI);
+          var A = Math.PI / 3;
+          var px = CX + R * Math.cos(A), py = Y - R * Math.sin(A);
+          var onda = trazo(function (t) { return [X0 + t * U, Y - R * Math.sin(t)]; }, 0, 2 * Math.PI, Math.PI / 60);
+          var tx = X0 + A * U;
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<line x1="' + (CX - R - 22) + '" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.75" stroke-width="1.4"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.75" stroke-width="1.4"/>' +
+            '<line x1="' + CX + '" y1="' + (Y - R - 16) + '" x2="' + CX + '" y2="' + (Y + R + 16) + '" stroke-opacity="0.35" stroke-width="1.1"/>' +
+            '<circle cx="' + CX + '" cy="' + Y + '" r="' + R + '" stroke-opacity="0.16" stroke-width="7"/>' +
+            '<circle cx="' + CX + '" cy="' + Y + '" r="' + R + '" stroke-width="2"/>' +
+            '<path d="M' + CX + " " + Y + "L" + (CX + R) + " " + Y + "A" + R + " " + R + " 0 0 0 " + r(px) + " " + r(py) +
+              'Z" fill="#fff" fill-opacity="0.13" stroke="none"/>' +
+            '<line x1="' + CX + '" y1="' + Y + '" x2="' + r(px) + '" y2="' + r(py) + '" stroke-width="2.2"/>' +
+            '<line x1="' + r(px) + '" y1="' + Y + '" x2="' + r(px) + '" y2="' + r(py) + '" stroke-width="3.4" stroke-opacity="0.85"/>' +
+            '<line x1="' + r(px) + '" y1="' + r(py) + '" x2="' + r(tx) + '" y2="' + r(py) +
+              '" stroke-opacity="0.6" stroke-width="1.3" stroke-dasharray="3 6"/>' +
+            '<path d="' + onda + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + onda + '" stroke-width="2.5"/>' +
+            '<line x1="' + r(tx) + '" y1="' + Y + '" x2="' + r(tx) + '" y2="' + r(py) + '" stroke-width="3.4" stroke-opacity="0.85"/>' +
+            [[px, py], [tx, py]].map(function (q) {
+              return '<circle cx="' + r(q[0]) + '" cy="' + r(q[1]) + '" r="10" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + r(q[0]) + '" cy="' + r(q[1]) + '" r="4.6" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: X0 + Math.PI * U, y: Y + 24, tex: "\\pi", cuerpo: 17, opacidad: 0.92 },
+              { x: X0 + 2 * Math.PI * U - 4, y: Y + 24, tex: "2\\pi", cuerpo: 17, opacidad: 0.92 },
+              { x: X0 + 1.5 * Math.PI * U, y: Y + R + 30, tex: "y=\\operatorname{sen}x", cuerpo: 18, opacidad: 0.97 },
+              { x: CX + 50, y: Y - 12, tex: "60^\\circ", cuerpo: 13, opacidad: 0.85 },
+              { x: r(tx) + 30, y: r(py) + 32, tex: "\\frac{\\sqrt3}{2}", cuerpo: 14, opacidad: 0.9 },
+              {
+                x: 468, y: 22, cuerpo: 13.5, opacidad: 0.5, fundido: true,
+                tex: "\\operatorname{sen}^2\\alpha+\\cos^2\\alpha=1"
+              }
+            ]
+          };
+        },
+
+        "recta-real": function () {
+          var U = 96, X0 = 150, Y = 152;
+          var x = function (v) { return r(X0 + v * U); };
+          var marcas = "";
+          for (var k = -13; k <= 44; k++) {
+            if (k % 10 === 0) {
+              continue;
+            }
+            var alto = k % 5 === 0 ? 5 : 3;
+            marcas += '<line x1="' + x(k / 10) + '" y1="' + (Y - alto) + '" x2="' + x(k / 10) + '" y2="' + (Y + alto) +
+              '" stroke-opacity="' + (k % 5 === 0 ? 0.42 : 0.26) + '" stroke-width="1"/>';
+          }
+          for (k = -1; k <= 4; k++) {
+            marcas += '<line x1="' + x(k) + '" y1="' + (Y - 9) + '" x2="' + x(k) + '" y2="' + (Y + 9) +
+              '" stroke-opacity="0.9" stroke-width="1.7"/>';
+          }
+          var raiz = Math.SQRT2;
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<rect x="' + x(0) + '" y="' + (Y - U) + '" width="' + U + '" height="' + U +
+              '" fill="#fff" fill-opacity="0.07" stroke-opacity="0.5" stroke-width="1.3"/>' +
+            '<path d="M' + x(0) + " " + Y + "L" + x(1) + " " + (Y - U) + '" stroke-opacity="0.98" stroke-width="2.2"/>' +
+            '<path d="M' + x(1) + " " + (Y - U) + "A" + r(raiz * U) + " " + r(raiz * U) + " 0 0 1 " + x(raiz) + " " + Y +
+              '" stroke-opacity="0.85" stroke-width="1.6" stroke-dasharray="1.5 5.5"/>' +
+            '<line x1="6" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.9"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.9"/>' +
+            marcas +
+            '<circle cx="' + x(raiz) + '" cy="' + Y + '" r="11" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+            '<circle cx="' + x(raiz) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(Math.E) + '" cy="' + Y + '" r="3.6" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(Math.PI) + '" cy="' + Y + '" r="3.6" fill="#fff" stroke="none"/>' +
+            '<circle cx="' + x(0) + '" cy="' + Y + '" r="2.6" fill="#fff" stroke="none"/>' +
+            "</g>";
+          var rotulos = [-1, 0, 1, 2, 3, 4].map(function (n) {
+            return { x: x(n), y: Y + 27, tex: String(n).replace("-", "{-}"), cuerpo: 15, opacidad: 0.82 };
+          });
+          rotulos.push(
+            { x: x(raiz) + 1, y: Y + 30, tex: "\\sqrt{2}", cuerpo: 19 },
+            { x: x(Math.E), y: Y - 24, tex: "e", cuerpo: 19, opacidad: 0.95 },
+            { x: x(Math.PI) + 2, y: Y - 24, tex: "\\pi", cuerpo: 19, opacidad: 0.95 },
+            { x: x(0) - 13, y: Y - U / 2, tex: "1", cuerpo: 14, opacidad: 0.7 },
+            { x: x(0.5), y: Y - U - 13, tex: "1", cuerpo: 14, opacidad: 0.7 },
+            { x: x(0.5) - 15, y: Y - U / 2 - 15, tex: "\\sqrt{2}", cuerpo: 15, opacidad: 0.92, giro: -45 },
+            {
+              x: 468, y: 31, cuerpo: 13.5, opacidad: 0.5, fundido: true,
+              tex: "\\sqrt{2}=1{,}414\\,213\\,562\\,373\\,095\\,048\\,801\\,688\\,724\\,209\\,698\\,078\\ldots"
+            }
+          );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "polinomio": function () {
+          var U = 62, X0 = 335, Y = 128, S = 1.05;
+          var p = function (v) { return (v * v - 16) * (v * v - 4); };
+          var x = function (v) { return r(X0 + v * U); };
+          var punto = function (v) { return [X0 + v * U, Y - p(v) * S]; };
+          var lobulo = function (a, b) {
+            return trazo(punto, a, b, 0.04) + "L" + x(b) + " " + Y + "L" + x(a) + " " + Y + "Z";
+          };
+          var rejilla = "";
+          for (var k = -5; k <= 4; k++) {
+            rejilla += "M" + x(k) + " 8V217";
+          }
+          for (k = -2; k <= 5; k++) {
+            if (k !== 0) {
+              rejilla += "M24 " + r(Y - k * 20 * S) + "H616";
+            }
+          }
+          var curva = trazo(punto, -4.8, 4.8, 0.04);
+          var dibujo = FUNDIDO +
+            '<linearGradient id="adorno-lobulo-d" gradientUnits="userSpaceOnUse" x1="' + x(4) + '" x2="' + x(4.8) + '" y1="0" y2="0">' +
+            '<stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+            '<linearGradient id="adorno-lobulo-i" gradientUnits="userSpaceOnUse" x1="' + x(-4) + '" x2="' + x(-4.8) + '" y1="0" y2="0">' +
+            '<stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+            "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<path d="' + lobulo(-2, 2) + '" fill="#fff" fill-opacity="0.13" stroke="none"/>' +
+            '<path d="' + lobulo(4, 4.8) + '" fill="url(#adorno-lobulo-d)" stroke="none"/>' +
+            '<path d="' + lobulo(-4.8, -4) + '" fill="url(#adorno-lobulo-i)" stroke="none"/>' +
+            '<line x1="' + x(0) + '" y1="12" x2="' + x(0) + '" y2="' + (Y + 42) + '" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            [-4, -2, 2, 4].map(function (n) {
+              return '<circle cx="' + x(n) + '" cy="' + Y + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(n) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(-4) - 19, y: Y + 22, tex: "{-}4", cuerpo: 17, opacidad: 0.95 },
+              { x: x(-2) + 20, y: Y + 22, tex: "{-}2", cuerpo: 17, opacidad: 0.95 },
+              { x: x(2) - 15, y: Y + 22, tex: "2", cuerpo: 17, opacidad: 0.95 },
+              { x: x(4) + 15, y: Y + 22, tex: "4", cuerpo: 17, opacidad: 0.95 },
+              { x: X0, y: Y + 71, tex: "p(x)=(x+4)(x+2)(x-2)(x-4)", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
+        },
+
+        "polinomio-cubico": function () {
+          var U = 62, X0 = 325, Y = 140, S = 3.3;
+          var p = function (v) { return v * v * v - 13 * v + 12; };
+          var x = function (v) { return r(X0 + v * U); };
+          var punto = function (v) { return [X0 + v * U, Y - p(v) * S]; };
+          var lobulo = function (a, b) {
+            return trazo(punto, a, b, 0.04) + "L" + x(b) + " " + Y + "L" + x(a) + " " + Y + "Z";
+          };
+          var rejilla = "";
+          for (var k = -5; k <= 4; k++) {
+            rejilla += "M" + x(k) + " 8V217";
+          }
+          for (k = -2; k <= 6; k++) {
+            if (k !== 0) {
+              rejilla += "M24 " + r(Y - k * 6 * S) + "H616";
+            }
+          }
+          var curva = trazo(punto, -4.6, 4.4, 0.04);
+          var dibujo = FUNDIDO +
+            '<linearGradient id="adorno-lobulo-d" gradientUnits="userSpaceOnUse" x1="' + x(3) + '" x2="' + x(4.4) + '" y1="0" y2="0">' +
+            '<stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+            "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<path d="' + lobulo(-4, 1) + '" fill="#fff" fill-opacity="0.13" stroke="none"/>' +
+            '<path d="' + lobulo(3, 4.4) + '" fill="url(#adorno-lobulo-d)" stroke="none"/>' +
+            '<line x1="' + x(0) + '" y1="12" x2="' + x(0) + '" y2="' + (Y + 40) + '" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            [-4, 1, 3].map(function (n) {
+              return '<circle cx="' + x(n) + '" cy="' + Y + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(n) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(-4) + 22, y: Y + 22, tex: "{-}4", cuerpo: 17, opacidad: 0.95 },
+              { x: x(1) - 15, y: Y + 22, tex: "1", cuerpo: 17, opacidad: 0.95 },
+              { x: x(3) + 15, y: Y + 22, tex: "3", cuerpo: 17, opacidad: 0.95 },
+              { x: X0 + 8, y: Y + 62, tex: "P(x)=x^3-13x+12", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
+        },
+
+        "interseccion": function () {
+          var U = 46, X0 = 298, Y = 158;
+          var FA = 50, FB = 84, FC = 118;
+          var x = function (v) { return r(X0 + v * U); };
+          var marcas = "";
+          for (var k = -5; k <= 6; k++) {
+            marcas += "M" + x(k) + " " + (Y - 8) + "v16";
+          }
+          var extremo = function (v, y, entra, grosor) {
+            return entra
+              ? '<circle cx="' + x(v) + '" cy="' + y + '" r="6.4" fill="#fff" fill-opacity="0.94" stroke="none"/>'
+              : '<circle cx="' + x(v) + '" cy="' + y + '" r="5.6"' + (grosor ? "" : ' stroke-opacity="0.92"') +
+                ' stroke-width="' + (grosor || 2.2) + '"/>';
+          };
+          var raya = function (a, b, y, entraA, entraB) {
+            return 'x1="' + r(x(a) + (entraA ? 5.9 : 6.7)) + '" y1="' + y + '" x2="' + r(x(b) - (entraB ? 5.9 : 6.7)) + '" y2="' + y + '"';
+          };
+          var vertical = function (v, filas) {
+            var d = "M" + x(v) + " 32";
+            filas.forEach(function (y) {
+              d += "V" + r(y - 8.7) + "M" + x(v) + " " + r(y + 8.7);
+            });
+            return d + "V" + Y;
+          };
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<rect x="' + x(-1) + '" y="32" width="' + r(4 * U) + '" height="' + (Y - 32) + '" fill="#fff" fill-opacity="0.09" stroke="none"/>' +
+            '<path d="' + vertical(-1, [FB, FC]) + vertical(3, [FA, FC]) + '" stroke-opacity="0.55" stroke-width="1.4" stroke-dasharray="1.5 5.5"/>' +
+            '<line x1="6" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.9"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.9"/>' +
+            '<path d="' + marcas + '" stroke-opacity="0.9" stroke-width="1.7"/>' +
+            "<line " + raya(-4, 3, FA, true, false) + ' stroke-opacity="0.75" stroke-width="4" stroke-linecap="butt"/>' +
+            extremo(-4, FA, true) + extremo(3, FA, false) +
+            "<line " + raya(-1, 5, FB, false, true) + ' stroke-opacity="0.75" stroke-width="4" stroke-linecap="butt"/>' +
+            extremo(-1, FB, false) + extremo(5, FB, true) +
+            "<line " + raya(-1, 3, FC, false, false) + ' stroke-opacity="0.16" stroke-width="13" stroke-linecap="butt"/>' +
+            "<line " + raya(-1, 3, FC, false, false) + ' stroke-width="5.4" stroke-linecap="butt"/>' +
+            extremo(-1, FC, false, 2.5) + extremo(3, FC, false, 2.5) +
+            "</g>";
+          var rotulos = [];
+          for (k = -5; k <= 6; k++) {
+            rotulos.push({ x: x(k), y: Y + 27, tex: String(k).replace("-", "{-}"), cuerpo: 15, opacidad: 0.82 });
+          }
+          rotulos.push(
+            { x: 89, y: FA, tex: "A", cuerpo: 19, opacidad: 0.95 },
+            { x: 227, y: FB, tex: "B", cuerpo: 19, opacidad: 0.95 },
+            { x: 200, y: FC, tex: "A\\cap B", cuerpo: 19 }
+          );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "corte-exponencial": function () {
+          var X0 = 420, Y = 140, U = 84, V = 25;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (v) { return r(Y - v * V); };
+          var punto = function (v) { return [X0 + v * U, Y - Math.exp(v) * V]; };
+          var corte = function (v) {
+            for (var i = 0; i < 40; i++) {
+              v -= (Math.exp(v) - v - 3) / (Math.exp(v) - 1);
+            }
+            return v;
+          };
+          var a = corte(-3), b = corte(1.5);
+          var rejilla = "";
+          for (var k = -4; k <= 2; k++) {
+            if (k !== 0) {
+              rejilla += "M" + x(k) + " 8V190";
+            }
+          }
+          for (k = -1; k <= 5; k++) {
+            if (k !== 0) {
+              rejilla += "M24 " + y(k) + "H616";
+            }
+          }
+          var curva = trazo(punto, -4.85, 1.75, 0.05);
+          var entre = trazo(punto, a, b, (b - a) / 80) + "Z";
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<path d="' + entre + '" fill="#fff" fill-opacity="0.13" stroke="none"/>' +
+            '<line x1="' + X0 + '" y1="8" x2="' + X0 + '" y2="190" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<line x1="' + x(-4.86) + '" y1="' + y(-1.86) + '" x2="' + x(2.37) + '" y2="' + y(5.37) +
+              '" stroke-opacity="0.8" stroke-width="1.9"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            '<path d="M' + x(b) + " " + r(Y - Math.exp(b) * V + 13) + "V" + Y +
+              '" stroke-opacity="0.6" stroke-width="1.3" stroke-dasharray="3 4.5"/>' +
+            '<circle cx="' + x(b) + '" cy="' + Y + '" r="3" fill="#fff" stroke="none"/>' +
+            [a, b].map(function (v) {
+              var cy = r(Y - Math.exp(v) * V);
+              return '<circle cx="' + x(v) + '" cy="' + cy + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(v) + '" cy="' + cy + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(a) + 22, y: Y + 22, tex: "x\\approx-2{,}95", cuerpo: 16, opacidad: 0.95 },
+              { x: x(b), y: Y + 22, tex: "x\\approx1{,}51", cuerpo: 16, opacidad: 0.95 },
+              { x: 335, y: Y + 61, tex: "e^{x}=x+3", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
+        },
+
+        "triangulo-de-pascal": function () {
+          var X0 = 286, DX = 40, Y0 = 27, DY = 33;
+          var filas = [[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]];
+          var x = function (n, k) { return X0 + DX * (2 * k - n); };
+          var y = function (n) { return Y0 + DY * n; };
+          var tramo = function (n, k, lado, hasta) {
+            var x1 = x(n, k), y1 = y(n);
+            return "M" + r(x1 + 0.26 * lado * DX) + " " + r(y1 + 0.26 * DY) +
+              "L" + r(x1 + hasta * lado * DX) + " " + r(y1 + hasta * DY);
+          };
+          var tramos = "", velos = "";
+          for (var n = 0; n < 4; n++) {
+            for (var k = 0; k <= n; k++) {
+              if (!(n === 3 && k === 1)) {
+                tramos += tramo(n, k, -1, 0.7205);
+              }
+              if (!(n === 3 && k === 2)) {
+                tramos += tramo(n, k, 1, 0.7205);
+              }
+            }
+          }
+          for (n = 0; n <= 4; n++) {
+            velos += "M" + (x(n, n) + 20) + " " + y(n) + "H522";
+          }
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + tramos + '" stroke-opacity="0.34" stroke-width="1.2"/>' +
+            '<path d="' + velos + '" stroke-opacity="0.3" stroke-width="1.3" stroke-dasharray="1.5 5.5"/>' +
+            '<path d="' + tramo(3, 1, 1, 0.6625) + tramo(3, 2, -1, 0.6625) + '" stroke-width="2.3"/>' +
+            '<circle cx="' + x(4, 2) + '" cy="' + y(4) + '" r="15.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+            "</g>";
+          var rotulos = [];
+          filas.forEach(function (fila, n) {
+            fila.forEach(function (valor, k) {
+              var realce = n === 4 ? k === 2 : n === 3 && (k === 1 || k === 2);
+              var rotulo = { x: x(n, k), y: y(n), tex: String(valor), cuerpo: 19 };
+              if (!realce) {
+                rotulo.opacidad = 0.9;
+              }
+              rotulos.push(rotulo);
+            });
+            rotulos.push({ x: 552, y: y(n), tex: "n=" + n, cuerpo: 15, opacidad: n === 4 ? 0.98 : 0.7 });
+          });
+          rotulos.push({ x: 320, y: 200, tex: "(a+b)^4=a^4+4a^3b+6a^2b^2+4ab^3+b^4", cuerpo: 17, opacidad: 0.97 });
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "serie-geometrica": function () {
+          var Y = 140, X0 = 70, U = 21.5;
+          var x = function (v) { return r(X0 + v * U); };
+          var sumas = [0], salto = 12;
+          for (var k = 0; k < 7; k++) {
+            sumas.push(sumas[k] + salto);
+            salto /= 2;
+          }
+          var saltos = "M" + X0 + " " + Y, velos = "", rotulos = [];
+          var cifras = [{ tex: "12", cuerpo: 19 }, { tex: "6", cuerpo: 17 }, { tex: "3", cuerpo: 15.5 }, { tex: "1{,}5", cuerpo: 14 }];
+          for (k = 0; k < 7; k++) {
+            var a = x(sumas[k]), b = x(sumas[k + 1]), radio = (b - a) / 2;
+            var arco = "A" + r(radio) + " " + r(0.8 * radio) + " 0 0 1 " + b + " " + Y;
+            saltos += arco;
+            if (k < 5) {
+              velos += '<path d="M' + a + " " + Y + arco + 'Z" fill="#fff" fill-opacity="0.1" stroke="none"/>';
+            }
+            if (k < 4) {
+              rotulos.push({
+                x: r(a + radio), y: r(Y - 0.8 * radio - 7 - 0.34 * cifras[k].cuerpo),
+                tex: cifras[k].tex, cuerpo: cifras[k].cuerpo, opacidad: 0.95
+              });
+            }
+          }
+          var puntos = [3.8, 3.4, 3, 2.5, 2].map(function (grueso, j) {
+            return '<circle cx="' + x(sumas[j + 1]) + '" cy="' + Y + '" r="' + grueso + '" fill="#fff" stroke="none"/>';
+          }).join("");
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' + velos +
+            '<path d="M' + x(24) + ' 20V126" stroke-opacity="0.6" stroke-width="1.3" stroke-dasharray="3 4.5"/>' +
+            '<line x1="6" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.9"/>' +
+            '<path d="M614 ' + (Y - 6) + "L624 " + Y + "L614 " + (Y + 6) + '" stroke-opacity="0.9"/>' +
+            '<path d="M' + X0 + " " + (Y - 8) + 'v16" stroke-opacity="0.9" stroke-width="1.7"/>' +
+            '<path d="' + saltos + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + saltos + '" stroke-width="2.4"/>' +
+            puntos +
+            '<circle cx="' + x(24) + '" cy="' + Y + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+            '<circle cx="' + x(24) + '" cy="' + Y + '" r="5" fill="#fff" stroke="none"/>' +
+            "</g>";
+          [0, 1, 2, 3].forEach(function (j) {
+            rotulos.push({ x: x(sumas[j]), y: 162.7, tex: String(sumas[j]), cuerpo: 15, opacidad: 0.82 });
+          });
+          rotulos.push(
+            { x: x(24), y: 162, tex: "24", cuerpo: 17, opacidad: 0.98 },
+            { x: 326, y: 201, tex: "12+6+3+1{,}5+\\cdots=24", cuerpo: 17, opacidad: 0.97 }
+          );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "domino": function () {
+          var Y = 152, ALTO = 88, ANCHO = 17, CAIDAS = 6;
+          var X = [], giro = [];
+          for (var i = 0; i < 9; i++) {
+            X.push(118 + 58 * i);
+            giro.push(0);
+          }
+          var holgura = function (i, a, b) {
+            var ex = X[i] + ALTO * Math.sin(a), ey = Y - ALTO * Math.cos(a);
+            var cx = X[i + 1] - ANCHO * Math.cos(b), cy = Y - ANCHO * Math.sin(b);
+            return (ex - cx) * Math.cos(b) + (ey - cy) * Math.sin(b);
+          };
+          for (i = CAIDAS - 1; i >= 0; i--) {
+            var desde = 0, hasta = Math.PI / 2;
+            for (var vuelta = 0; vuelta < 50; vuelta++) {
+              var medio = (desde + hasta) / 2;
+              if ((holgura(i, desde, giro[i + 1]) < 0) === (holgura(i, medio, giro[i + 1]) < 0)) {
+                desde = medio;
+              } else {
+                hasta = medio;
+              }
+            }
+            giro[i] = desde;
+          }
+          var arcos = "", fichas = "";
+          for (i = 0; i < 4; i++) {
+            var fin = giro[i] - Math.PI / 36;
+            arcos += '<path d="M' + X[i] + " " + (Y - ALTO) + "A" + ALTO + " " + ALTO + " 0 0 1 " +
+              r(X[i] + ALTO * Math.sin(fin)) + " " + r(Y - ALTO * Math.cos(fin)) +
+              '" stroke-opacity="0.42" stroke-width="1.4" stroke-dasharray="1.5 5.5"/>';
+          }
+          for (i = 0; i < 9; i++) {
+            fichas += '<g transform="translate(' + X[i] + " " + Y + ")" +
+              (giro[i] ? " rotate(" + r((giro[i] * 180) / Math.PI) + ")" : "") + '">' +
+              '<rect x="' + -ANCHO + '" y="' + -ALTO + '" width="' + ANCHO + '" height="' + ALTO +
+              '" rx="3" fill="#fff" fill-opacity="0.16" stroke-opacity="0.96" stroke-width="1.7"/></g>';
+          }
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' + arcos +
+            '<line x1="6" y1="' + Y + '" x2="622" y2="' + Y + '" stroke-opacity="0.9"/>' +
+            fichas + "</g>";
+          var centro = function (k) { return X[k] - ANCHO / 2; };
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: centro(0), y: 173, tex: "1", cuerpo: 15, opacidad: 0.82 },
+              { x: centro(1), y: 173, tex: "2", cuerpo: 15, opacidad: 0.82 },
+              { x: centro(2), y: 173, tex: "3", cuerpo: 15, opacidad: 0.82 },
+              { x: 308.5, y: 173, tex: "\\cdots", cuerpo: 15, opacidad: 0.7 },
+              { x: 544.5, y: 173, tex: "\\cdots", cuerpo: 15, opacidad: 0.7 },
+              { x: centro(5), y: 172, tex: "k", cuerpo: 17, opacidad: 0.98 },
+              { x: centro(6), y: 172, tex: "k+1", cuerpo: 17, opacidad: 0.98 },
+              { x: 338, y: 201, tex: "P(k)\\Rightarrow P(k+1)", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
+        },
+
+        "repaso-examen": function () {
+          var temas = [
+            ["Potencias", 96, 28, 188], ["Valor absoluto", 96, 80, 209], ["Logaritmos", 96, 132, 194],
+            ["Binomio", 368, 28, 449], ["Sucesiones", 368, 80, 466], ["Inducción", 368, 132, 457]
+          ];
+          var dibujo = FUNDIDO + "</defs>" + '<g mask="url(#adorno-mascara)" stroke="#fff">';
+          temas.forEach(function (t) {
+            dibujo += '<rect x="' + t[1] + '" y="' + t[2] + '" width="26" height="26" rx="6" fill="#fff" fill-opacity="0.08" ' +
+              'stroke-opacity="0.9" stroke-width="1.8"/>' +
+              '<path d="M' + (t[1] + 6) + " " + (t[2] + 13.5) + 'l5.5 6l9.5-12.5" stroke-width="3.2"/>';
+          });
+          dibujo += "</g>";
+          var rotulos = temas.map(function (t) {
+            return { x: t[3], y: t[2] + 13, texto: t[0], cuerpo: 20, opacidad: 0.96 };
+          });
+          rotulos.push({ x: 320, y: 201, texto: "6 temas · 96 ejercicios de clase", cuerpo: 17, opacidad: 0.97 });
+          return { dibujo: dibujo, rotulos: rotulos };
+        }
+      };
+
+      var EMBLEMAS = {
+        "lista":
+          '<path d="M8 12.5l3.2 3.2 6-6.4M8 24.5l3.2 3.2 6-6.4M8 36.5l3.2 3.2 6-6.4"/>' +
+          '<path d="M24 13h16M24 25h16M24 37h11"/>',
+        "recta":
+          '<path d="M2 32h44M42 28l4 4-4 4"/><path d="M8 28.5v7M24 28.5v7" stroke-width="1.9"/>' +
+          '<path d="M8 32V16h16v16" stroke-width="1.6" opacity="0.7"/><path d="M8 32L24 16" stroke-width="2.1"/>' +
+          '<path d="M24 16A22.63 22.63 0 0 1 30.63 32" stroke-width="1.6" stroke-dasharray="0.6 3.4"/>' +
+          '<circle cx="30.63" cy="32" r="3.4" fill="currentColor" stroke="none"/>',
+        "potencia":
+          '<path d="M6.5 17.5l5.5-4.5v23.5"/><ellipse cx="24" cy="24.8" rx="6.8" ry="11.7"/>' +
+          '<path d="M35.8 19v-8.6M35.8 13.6c1.3-3.9 7.2-4 7.2.7V19" stroke-width="2"/>',
+        "raiz":
+          '<path d="M4 26.5h5.5l5.5 13 8.5-30H45" stroke-width="2.4"/>' +
+          '<path d="M28 22.5l10.5 14M38.5 22.5L28 36.5" stroke-width="2.1"/>',
+        "logaritmo": function () {
+          return '<path d="M9 5v39M4 30h41" stroke-width="1.7" opacity="0.7"/>' +
+            '<path d="' + trazo(function (v) { return [9 + 5.6 * v, 30 - 7.2 * Math.log(v)]; }, 0.16, 6.3, 0.07) + '"/>' +
+            '<circle cx="14.6" cy="30" r="2.9" fill="currentColor" stroke="none"/>';
+        },
+        "triangulo":
+          '<path d="M7 40H41V11Z" stroke-width="2.3"/><path d="M35 40v-6h6" stroke-width="1.6"/>' +
+          '<path d="M17.5 40A10.5 10.5 0 0 0 15.4 33.6" stroke-width="1.9"/>',
+        "goniometrica":
+          '<path d="M4 26h40M24 46V6" stroke-width="1.5" opacity="0.65"/>' +
+          '<circle cx="24" cy="26" r="15" stroke-width="2.2"/>' +
+          '<path d="M24 26L34.6 15.4" stroke-width="2.2"/><path d="M34.6 15.4V26" stroke-width="2.6"/>' +
+          '<circle cx="34.6" cy="15.4" r="2.6" fill="currentColor" stroke="none"/>',
+        "suma-angulos":
+          '<path d="M6 40H44M6 40L43 26.5M6 40L32 9" stroke-width="2.1"/>' +
+          '<path d="M22 40A16 16 0 0 0 21 34.5" stroke-width="1.8"/>' +
+          '<path d="M30 31.3A25.5 25.5 0 0 1 22.4 20.5" stroke-width="1.8"/>',
+        "onda": function () {
+          return '<path d="M3 24h42" stroke-width="1.4" opacity="0.65"/>' +
+            '<path d="' + trazo(function (v) { return [4 + v * 40 / (4 * Math.PI), 24 - 13 * Math.sin(v)]; }, 0, 4 * Math.PI, Math.PI / 24) + '" stroke-width="2.2"/>' +
+            '<path d="M3 30.5h42" stroke-width="1.5" stroke-dasharray="1.6 3"/>' +
+            [3.665, 5.76, 9.948, 12.043].map(function (v) {
+              return '<circle cx="' + r(4 + v * 40 / (4 * Math.PI)) + '" cy="30.5" r="2.4" fill="currentColor" stroke="none"/>';
+            }).join("");
+        },
+        "triangulo-oblicuo":
+          '<path d="M5 40H43L29 9Z" stroke-width="2.3"/>' +
+          '<path d="M13.5 40A8.5 8.5 0 0 0 12.7 36.3" stroke-width="1.8"/>' +
+          '<path d="M36 40A7 7 0 0 1 40.1 33.6" stroke-width="1.8"/>' +
+          '<path d="M26.3 15A6.5 6.5 0 0 0 31.7 15" stroke-width="1.8"/>',
+        "cumbre":
+          '<path d="M3 41l13.5-22 7 10.5 5-7.5L45 41z"/><path d="M16.5 19V7.5l9 3.3-9 3.4"/>',
+        "polinomio": function () {
+          return '<path d="M3 26h42" stroke-width="1.7" opacity="0.7"/>' +
+            '<path d="' + trazo(function (v) { return [v, 26 - 0.0142 * (v - 11) * (v - 24) * (v - 37)]; }, 8.3, 39.7, 0.4) + '"/>' +
+            '<circle cx="11" cy="26" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="24" cy="26" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="37" cy="26" r="2.6" fill="currentColor" stroke="none"/>';
+        },
+        "fraccion":
+          '<path d="M8 24.5h32" stroke-width="2.4"/>' +
+          '<path d="M19.5 19.5V5h5.4a4.3 4.3 0 0 1 0 8.6h-5.4" stroke-width="2.2"/>' +
+          '<ellipse cx="24" cy="36.2" rx="5.7" ry="6.7" stroke-width="2.2"/><path d="M27.2 40.6l4.3 4.4" stroke-width="2.2"/>',
+        "balanza":
+          '<path d="M17 42h14M24 42V9.5M8.5 13.5h31"/><circle cx="24" cy="8" r="2.2" fill="currentColor" stroke="none"/>' +
+          '<path d="M8.5 13.5L3.5 27M8.5 13.5l5 13.5M39.5 13.5l-5 13.5M39.5 13.5l5 13.5" stroke-width="1.6"/>' +
+          '<path d="M2 27h13a6.5 5.5 0 0 1-13 0zM33 27h13a6.5 5.5 0 0 1-13 0z" fill="currentColor" fill-opacity="0.18"/>',
+        "rectas":
+          '<path d="M5 36L43 16M12 6l22 36"/><circle cx="24.17" cy="25.91" r="6.6" stroke-width="1.5" opacity="0.55"/>' +
+          '<circle cx="24.17" cy="25.91" r="3.3" fill="currentColor" stroke="none"/>',
+        "intervalo":
+          '<path d="M2 25h44M41.5 20.5L46 25l-4.5 4.5" stroke-width="2"/><path d="M21 25h17" stroke-width="7.5"/>' +
+          '<circle cx="16" cy="25" r="5" fill="#ffffff" stroke-width="2.4"/>',
+        "aproximacion":
+          '<path d="M7 19.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0M7 31.5c4.5-5.5 9.5-5.5 17 0s12.5 5.5 17 0" stroke-width="2.6"/>',
+        "palillos":
+          '<path d="M7.5 18h9M19.5 18h9M31.5 18h9M7.5 30h9M19.5 30h9M31.5 30h9" stroke-width="2.4"/>' +
+          '<path d="M6 19.5v9M18 19.5v9M30 19.5v9M42 19.5v9" stroke-width="2.4"/>',
+        "producto":
+          '<path d="M27.5 7H41v20.5H27.5zM7 27.5h20.5V41H7z" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+          '<path d="M7 7h34v34H7z"/><path d="M27.5 7v34M7 27.5h34" stroke-width="1.7"/>',
+        "division":
+          '<path d="M27 7v14h17" stroke-width="2.5"/>' +
+          '<path d="M4 13h17M4 25h11M10 37h11M32 13h9M32 30h7" stroke-width="2.1"/>',
+        "factores":
+          '<path d="M12.5 8c-7 9.5-7 22.5 0 32M21 8c7 9.5 7 22.5 0 32M27 8c-7 9.5-7 22.5 0 32M35.5 8c7 9.5 7 22.5 0 32" stroke-width="2.4"/>' +
+          '<circle cx="16.75" cy="24" r="2.3" fill="currentColor" stroke="none"/>' +
+          '<circle cx="31.25" cy="24" r="2.3" fill="currentColor" stroke="none"/>',
+
+        "conjuntos":
+          '<circle cx="24" cy="24" r="20" stroke-width="2"/>' +
+          '<circle cx="20.6" cy="27.4" r="12.6" fill="currentColor" fill-opacity="0.1" stroke-width="2"/>' +
+          '<circle cx="17.9" cy="30.1" r="6.2" fill="currentColor" fill-opacity="0.14" stroke-width="2"/>' +
+          '<circle cx="16.6" cy="31.4" r="2.2" fill="currentColor" stroke="none"/>',
+        "valor-absoluto":
+          '<path d="M9 7.5v33M39 7.5v33" stroke-width="2.6"/>' +
+          '<path d="M16 24h16" stroke-width="2.1"/>' +
+          '<path d="M20 19.5L15.5 24l4.5 4.5M28 19.5l4.5 4.5-4.5 4.5" stroke-width="2.1"/>',
+        "potencia-y-raiz":
+          '<path d="M3 28.5h5.5l5.5 11.5 8.5-30.5H45" stroke-width="2.4"/>' +
+          '<rect x="25.5" y="21" width="10.5" height="13.5" rx="2" stroke-width="2.1"/>' +
+          '<rect x="38.5" y="14" width="5" height="5" rx="1" fill="currentColor" stroke="none"/>',
+
+        "numero-e": function () {
+          return '<path d="M3 32h43M16 46V3" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="M5 43L45 3" stroke-width="1.5" stroke-dasharray="1.6 3.2" opacity="0.7"/>' +
+            '<path d="' + trazo(function (v) { return [16 + 8 * v, 32 - 8 * Math.exp(v)]; }, -1.75, 1.3, 0.1) + '"/>' +
+            '<path d="' + trazo(function (v) { return [16 + 8 * Math.exp(v), 32 - 8 * v]; }, -1.75, 1.3, 0.1) + '" opacity="0.7"/>' +
+            '<circle cx="16" cy="24" r="2.7" fill="currentColor" stroke="none"/>' +
+            '<circle cx="24" cy="32" r="2.7" fill="currentColor" stroke="none"/>';
+        },
+        "decaimiento": function () {
+          var punto = function (t) { return [8 + t, 41 - 32 * Math.pow(2, -t / 11)]; };
+          return '<path d="M8 4V41H45" stroke-width="1.6" opacity="0.7"/>' +
+            '<path d="M8 25H19V41M8 33H30V41" stroke-width="1.4" stroke-dasharray="1.6 3" opacity="0.7"/>' +
+            '<path d="' + trazo(punto, 0, 37, 0.5) + '"/>' +
+            '<circle cx="8" cy="9" r="2.7" fill="currentColor" stroke="none"/>' +
+            '<circle cx="19" cy="25" r="2.7" fill="currentColor" stroke="none"/>' +
+            '<circle cx="30" cy="33" r="2.7" fill="currentColor" stroke="none"/>';
+        },
+
+        "arbol":
+          '<path d="M7 24L21 13M7 24L21 35"/>' +
+          '<path d="M21 13L40 5M21 13L40 13M21 13L40 21M21 35L40 27M21 35L40 35M21 35L40 43" stroke-width="1.8"/>' +
+          '<circle cx="7" cy="24" r="3.4" fill="currentColor" stroke="none"/>' +
+          '<circle cx="21" cy="13" r="2.8" fill="currentColor" stroke="none"/><circle cx="21" cy="35" r="2.8" fill="currentColor" stroke="none"/>' +
+          [5, 13, 21, 27, 35, 43].map(function (y) {
+            return '<circle cx="40" cy="' + y + '" r="2.2" fill="currentColor" stroke="none"/>';
+          }).join(""),
+        "permutacion":
+          '<path d="M10 11L38 37M24 11L10 37M38 11L24 37" stroke-width="2.1"/>' +
+          '<circle cx="10" cy="9" r="3.6" fill="currentColor" stroke="none"/><circle cx="24" cy="9" r="3.6" fill="currentColor" stroke="none"/>' +
+          '<circle cx="38" cy="9" r="3.6" fill="currentColor" stroke="none"/>' +
+          '<circle cx="10" cy="39" r="3.6" fill="#ffffff" stroke-width="2"/><circle cx="24" cy="39" r="3.6" fill="#ffffff" stroke-width="2"/>' +
+          '<circle cx="38" cy="39" r="3.6" fill="#ffffff" stroke-width="2"/>',
+        "pascal": function () {
+          var d = '<path d="M19.25 32.5L24 41M28.75 32.5L24 41" stroke-width="1.9"/>';
+          for (var n = 0; n <= 4; n++) {
+            for (var k = 0; k <= n; k++) {
+              var cx = 24 + 4.75 * (2 * k - n), cy = 7 + 8.5 * n;
+              var grande = n === 4 && k === 2;
+              d += '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + (grande ? 3.8 : 2.4) + '" fill="currentColor" stroke="none"/>';
+            }
+          }
+          return d;
+        },
+
+        "sucesion":
+          '<path d="M7.5 25A5 7.5 0 0 1 17.5 25M20.5 25A5 7.5 0 0 1 30.5 25" stroke-width="2.1"/>' +
+          '<circle cx="5.5" cy="29" r="3.5" fill="currentColor" stroke="none"/>' +
+          '<circle cx="18.5" cy="29" r="3.5" fill="currentColor" stroke="none"/>' +
+          '<circle cx="31.5" cy="29" r="3.5" fill="currentColor" stroke="none"/>' +
+          '<path d="M38.6 29h.01M42.1 29h.01M45.6 29h.01" stroke-width="3"/>',
+        "escalera":
+          '<path d="M6 6H42V42H6Z" stroke-width="1.6" opacity="0.55"/>' +
+          '<path d="M6 42V34.29H13.2V29.14H20.4V24H27.6V18.86H34.8V13.71H42V42Z" fill="currentColor" fill-opacity="0.18"/>' +
+          '<path d="M13.2 42V29.14M20.4 42V24M27.6 42V18.86M34.8 42V13.71" stroke-width="1.3" opacity="0.6"/>',
+        "geometrica":
+          '<path d="M3 43H45" stroke-width="1.7" opacity="0.7"/>' +
+          '<path d="M6 43V38.5H13V43M16.5 43V34H23.5V43M27 43V25H34V43M37.5 43V7H44.5V43" fill="currentColor" fill-opacity="0.18"/>',
+        "monedas": function () {
+          var d = "", rx = 6.2, ry = 2.3, grueso = 4.3, base = 42;
+          [[9, 2], [24, 4], [39, 7]].forEach(function (m) {
+            var cx = m[0], tope = r(base - m[1] * grueso);
+            d += '<path d="M' + r(cx - rx) + " " + tope + "V" + base + "A" + rx + " " + ry + " 0 0 0 " + r(cx + rx) + " " + base +
+              "V" + tope + '" fill="currentColor" fill-opacity="0.1" stroke-width="1.9"/>';
+            for (var k = 1; k < m[1]; k++) {
+              var y = r(base - k * grueso);
+              d += '<path d="M' + r(cx - rx) + " " + y + "A" + rx + " " + ry + " 0 0 0 " + r(cx + rx) + " " + y + '" stroke-width="1.3"/>';
+            }
+            d += '<ellipse cx="' + cx + '" cy="' + tope + '" rx="' + rx + '" ry="' + ry + '" fill="currentColor" fill-opacity="0.22" stroke-width="1.9"/>';
+          });
+          return d;
+        },
+        "ficha":
+          '<path d="M35 31V13L27 5H7V43H35V39.4" stroke-width="2.1"/><path d="M27 5V13H35" stroke-width="1.6"/>' +
+          '<path d="M12 18h10M12 25h15M12 32h9" stroke-width="1.9" opacity="0.7"/>' +
+          '<path d="M28 42L29.74 36.66L41.05 25.35L44.65 28.95L33.34 40.26Z" fill="currentColor" fill-opacity="0.14" stroke-width="1.8"/>' +
+          '<path d="M29.74 36.66L33.34 40.26" stroke-width="1.4"/>',
+
+        "implicacion":
+          '<path d="M6 19h31M6 29h31" stroke-width="2.6"/><path d="M29.5 11.5L42 24 29.5 36.5" stroke-width="2.6"/>',
+
+        "domino":
+          '<path d="M3 36h42" stroke-width="1.9" opacity="0.7"/>' +
+          '<g fill="currentColor" fill-opacity="0.16" stroke-width="2">' +
+          '<rect x="-5" y="-22" width="5" height="22" rx="1.2" transform="translate(8 36) rotate(32.98)"/>' +
+          '<rect x="-5" y="-22" width="5" height="22" rx="1.2" transform="translate(19.5 36) rotate(17.18)"/>' +
+          '<rect x="26" y="14" width="5" height="22" rx="1.2"/><rect x="37.5" y="14" width="5" height="22" rx="1.2"/></g>',
+
+        "contraejemplo":
+          '<circle cx="14" cy="14" r="5" fill="currentColor" stroke="none"/>' +
+          '<circle cx="34" cy="14" r="5" fill="currentColor" stroke="none"/>' +
+          '<circle cx="14" cy="34" r="5" fill="currentColor" stroke="none"/>' +
+          '<circle cx="34" cy="34" r="9" stroke-width="2"/>' +
+          '<path d="M29.8 29.8l8.4 8.4M38.2 29.8l-8.4 8.4" stroke-width="2.6"/>'
+      };
+      function emblema(nombre) {
+        var dentro = EMBLEMAS[nombre];
+        if (typeof dentro === "function") {
+          dentro = dentro();
+        }
+        return dentro ? svg(48, 48, dentro, 2.3) : "";
+      }
+
+      var FRISOS = {
+        "transportador": function () {
+          var cx = 502, cy = 102, R = 82;
+          var p = function (g, radio) {
+            return [r(cx + radio * Math.cos((g * Math.PI) / 180)), r(cy - radio * Math.sin((g * Math.PI) / 180))];
+          };
+          var d = '<path d="M' + (cx - R - 14) + " " + cy + "H" + (cx + R + 14) + '" stroke-width="1.6"/>' +
+            '<path d="M' + (cx - R) + " " + cy + "A" + R + " " + R + ' 0 0 1 ' + (cx + R) + " " + cy + '" stroke-width="1.9"/>' +
+            '<path d="M' + (cx - 54) + " " + cy + "A54 54 0 0 1 " + (cx + 54) + " " + cy + '" stroke-width="1.1" opacity="0.5"/>';
+          for (var g = 0; g <= 180; g += 10) {
+            var a = p(g, R), b = p(g, R - (g % 30 === 0 ? 11 : 6));
+            d += '<path d="M' + a[0] + " " + a[1] + "L" + b[0] + " " + b[1] + '" stroke-width="' + (g % 30 === 0 ? 1.7 : 1.1) + '"/>';
+          }
+          var tabla = [
+            { g: 0, rad: "0" }, { g: 30, rad: "\\tfrac{\\pi}{6}" }, { g: 45, rad: "\\tfrac{\\pi}{4}" },
+            { g: 60, rad: "\\tfrac{\\pi}{3}" }, { g: 90, rad: "\\tfrac{\\pi}{2}" }, { g: 180, rad: "\\pi" }
+          ];
+          var rotulos = [];
+          tabla.forEach(function (t) {
+            var fuera = p(t.g, R + 12), dentro = p(t.g, 40);
+            if (t.g === 45) {
+              d += '<path d="M' + cx + " " + cy + "L" + p(45, R - 2)[0] + " " + p(45, R - 2)[1] + '" stroke-width="1.6"/>';
+            }
+            rotulos.push({ x: fuera[0], y: fuera[1] - (t.g === 0 || t.g === 180 ? -10 : 0), tex: t.g + "^\\circ", cuerpo: 12.5 });
+            rotulos.push({ x: dentro[0], y: dentro[1] + (t.g === 0 || t.g === 180 ? -8 : 0), tex: t.rad, cuerpo: 12.5, opacidad: 0.9 });
+          });
+          d += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="currentColor" stroke="none"/>';
+          rotulos.push(
+            { x: 220, y: 46, tex: "180^\\circ=\\pi\\text{ rad}", cuerpo: 18 },
+            { x: 220, y: 74, texto: "media vuelta", cuerpo: 11.5 },
+            { x: 790, y: 46, tex: "1\\text{ rad}\\approx57{,}3^\\circ", cuerpo: 18 },
+            { x: 790, y: 74, texto: "un arco tan largo como el radio", cuerpo: 11.5 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 502 };
+        },
+
+        "cuadrantes": function () {
+          var centros = [196, 400, 604, 808], R = 30, cy = 52;
+          var angulos = [40, 140, 220, 320];
+          var signos = [
+            "\\operatorname{sen}+\\quad\\cos+", "\\operatorname{sen}+\\quad\\cos-",
+            "\\operatorname{sen}-\\quad\\cos-", "\\operatorname{sen}-\\quad\\cos+"
+          ];
+          var nombres = ["1.er cuadrante", "2.º cuadrante", "3.er cuadrante", "4.º cuadrante"];
+          var d = "", rotulos = [];
+          centros.forEach(function (cx, i) {
+            var a = (angulos[i] * Math.PI) / 180;
+            var px = r(cx + R * Math.cos(a)), py = r(cy - R * Math.sin(a));
+            var x0 = cx + (Math.cos(a) > 0 ? 0 : -R), y0 = cy + (Math.sin(a) > 0 ? -R : 0);
+            d += '<rect x="' + r(x0) + '" y="' + r(y0) + '" width="' + R + '" height="' + R + '" fill="currentColor" fill-opacity="0.1" stroke="none"/>' +
+              '<path d="M' + (cx - R - 9) + " " + cy + "h" + (2 * R + 18) + "M" + cx + " " + (cy + R + 9) + "v" + (-2 * R - 18) + '" stroke-width="1.1" opacity="0.6"/>' +
+              '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" stroke-width="1.7"/>' +
+              '<path d="M' + cx + " " + cy + "L" + px + " " + py + '" stroke-width="1.7"/>' +
+              '<path d="M' + cx + " " + cy + "H" + px + '" stroke-width="3"/><path d="M' + px + " " + cy + "V" + py + '" stroke-width="3" opacity="0.65"/>' +
+              '<circle cx="' + px + '" cy="' + py + '" r="3.6" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: cx, y: 98, tex: signos[i], cuerpo: 13 });
+            rotulos.push({ x: cx + 58, y: 14, texto: nombres[i], cuerpo: 11 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 500 };
+        },
+
+        "suma-angulos": function () {
+          var cx = 330, cy = 96, R = 84;
+          var p = function (g, radio) {
+            return [r(cx + radio * Math.cos((g * Math.PI) / 180)), r(cy - radio * Math.sin((g * Math.PI) / 180))];
+          };
+          var arco = function (desde, hasta, radio) {
+            var a = p(desde, radio), b = p(hasta, radio);
+            return "M" + a[0] + " " + a[1] + "A" + radio + " " + radio + " 0 0 0 " + b[0] + " " + b[1];
+          };
+          var d = '<path d="M' + (cx - 20) + " " + cy + "H" + (cx + R + 20) + '" stroke-width="1.6"/>' +
+            '<path d="' + arco(0, 90, R) + '" stroke-width="1.1" opacity="0.5"/>' +
+            '<path d="M' + cx + " " + cy + "L" + p(30, R)[0] + " " + p(30, R)[1] + '" stroke-width="1.8"/>' +
+            '<path d="M' + cx + " " + cy + "L" + p(75, R)[0] + " " + p(75, R)[1] + '" stroke-width="2.2"/>' +
+            '<path d="' + arco(0, 30, 34) + '" stroke-width="1.8"/>' +
+            '<path d="' + arco(30, 75, 50) + '" stroke-width="1.8"/>' +
+            '<path d="' + arco(0, 75, 66) + '" stroke-width="1.2" stroke-dasharray="1 4"/>' +
+            '<circle cx="' + p(75, R)[0] + '" cy="' + p(75, R)[1] + '" r="3.6" fill="currentColor" stroke="none"/>';
+          var rotulos = [
+            { x: p(15, 46)[0], y: p(15, 46)[1] + 3, tex: "30^\\circ", cuerpo: 12 },
+            { x: p(52, 62)[0], y: p(52, 62)[1], tex: "45^\\circ", cuerpo: 12 },
+            { x: 600, y: 36, tex: "\\operatorname{tg}75^\\circ=\\operatorname{tg}(45^\\circ+30^\\circ)=2+\\sqrt3", cuerpo: 16 },
+            { x: 600, y: 76, tex: "\\operatorname{sen}(30^\\circ+60^\\circ)=1\\neq\\operatorname{sen}30^\\circ+\\operatorname{sen}60^\\circ", cuerpo: 14, opacidad: 0.9 },
+            { x: 600, y: 98, texto: "el seno de una suma no es la suma de los senos", cuerpo: 11 }
+          ];
+          return { dibujo: d, rotulos: rotulos, foco: 520 };
+        },
+
+        "soluciones": function () {
+          var X0 = 120, U = 800 / 720, Y = 50, A = 34;
+          var x = function (g) { return r(X0 + g * U); };
+          var onda = trazo(function (g) { return [X0 + g * U, Y - A * Math.sin((g * Math.PI) / 180)]; }, 0, 720, 4);
+          var yk = r(Y + A * Math.SQRT2 / 2);
+          var d = '<path d="M' + (X0 - 14) + " " + Y + "H" + (X0 + 820) + "M" + (X0 + 812) + " " + (Y - 5) + 'l8 5-8 5" stroke-width="1.4"/>' +
+            '<path d="M' + x(360) + " " + (Y - 42) + "V" + (Y + 42) + '" stroke-width="1" opacity="0.45" stroke-dasharray="2 4"/>' +
+            '<path d="' + onda + '" stroke-width="2.2"/>' +
+            '<path d="M' + (X0 - 14) + " " + yk + "H" + (X0 + 820) + '" stroke-width="1.4" stroke-dasharray="5 5"/>';
+          var rotulos = [
+            { x: 56, y: yk + 4, tex: "-\\tfrac{\\sqrt2}{2}", cuerpo: 13 },
+            { x: x(180), y: 16, texto: "primera vuelta", cuerpo: 11 },
+            { x: x(540), y: 16, texto: "segunda vuelta", cuerpo: 11 }
+          ];
+          [225, 315, 585, 675].forEach(function (g) {
+            d += '<circle cx="' + x(g) + '" cy="' + yk + '" r="4.4" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: x(g), y: yk + 22, tex: g + "^\\circ", cuerpo: 12.5 });
+          });
+          rotulos.push({ x: x(90) + 30, y: 98, tex: "\\operatorname{sen}x=-\\tfrac{\\sqrt2}{2}", cuerpo: 15 });
+          return { dibujo: d, rotulos: rotulos, foco: 420 };
+        },
+
+        "doble-observacion": function () {
+          var suelo = 96, torre = 800, h = 72;
+          var a = torre - h, b = torre - h * Math.sqrt(3);
+          var d = '<path d="M40 ' + suelo + "H960" + '" stroke-width="1.5"/>' +
+            '<path d="M' + (torre - 7) + " " + suelo + "V" + (suelo - h + 8) + "l7 -9 7 9V" + suelo + '" fill="currentColor" fill-opacity="0.12" stroke-width="1.7"/>' +
+            '<path d="M' + r(a) + " " + suelo + "L" + torre + " " + (suelo - h) + '" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+            '<path d="M' + r(b) + " " + suelo + "L" + torre + " " + (suelo - h) + '" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+            '<path d="M' + r(a + 26) + " " + suelo + "A26 26 0 0 0 " + r(a + 26 * Math.cos(Math.PI / 4)) + " " + r(suelo - 26 * Math.sin(Math.PI / 4)) + '" stroke-width="1.6"/>' +
+            '<path d="M' + r(b + 34) + " " + suelo + "A34 34 0 0 0 " + r(b + 34 * Math.cos(Math.PI / 6)) + " " + r(suelo - 34 * Math.sin(Math.PI / 6)) + '" stroke-width="1.6"/>' +
+            '<circle cx="' + r(a) + '" cy="' + suelo + '" r="3.4" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(b) + '" cy="' + suelo + '" r="3.4" fill="currentColor" stroke="none"/>' +
+            '<path d="M' + r(b) + " " + (suelo + 8) + "H" + r(a) + '" stroke-width="1.1"/>' +
+            '<path d="M' + (torre + 18) + " " + suelo + "V" + (suelo - h) + '" stroke-width="1.1"/>';
+          var cadena = "", arriba = true;
+          for (var k = 0; k <= 9; k++) {
+            var px = 70 + k * 46, py = arriba ? 30 : 74;
+            cadena += (k === 0 ? "M" : "L") + px + " " + py;
+            arriba = !arriba;
+          }
+          d += '<path d="' + cadena + '" stroke-width="1.4" opacity="0.8"/>' +
+            '<path d="M70 30H484M93 74H461" stroke-width="1.4" opacity="0.8"/>';
+          for (k = 0; k <= 9; k++) {
+            d += '<circle cx="' + (70 + k * 46) + '" cy="' + (k % 2 ? 74 : 30) + '" r="2.6" fill="currentColor" stroke="none"/>';
+          }
+          var rotulos = [
+            { x: r(a + 40), y: suelo - 10, tex: "45^\\circ", cuerpo: 11.5 },
+            { x: r(b + 50), y: suelo - 6, tex: "30^\\circ", cuerpo: 11.5 },
+            { x: r((a + b) / 2), y: suelo + 2, tex: "50\\text{ m}", cuerpo: 11.5 },
+            { x: torre + 30, y: suelo - h / 2, tex: "h", cuerpo: 13 },
+            { x: 277, y: 104, texto: "triángulos encadenados para medir distancias", cuerpo: 11 }
+          ];
+          return { dibujo: d, rotulos: rotulos, foco: 680 };
+        },
+
+        "decimales": function () {
+          var Y = 84, X0 = 170, U = 340;
+          var x = function (v) { return r(X0 + v * U); };
+          var numeros = [
+            { valor: 5 / 11, tex: "\\tfrac{5}{11}=0{,}\\overline{45}", nota: "periódico", rx: 300 },
+            { valor: 7 / 8, tex: "\\tfrac{7}{8}=0{,}875", nota: "exacto", rx: 478 },
+            { valor: Math.SQRT2, tex: "\\sqrt{2}=1{,}41421356\\ldots", nota: "ni exacto ni periódico: irracional", rx: 690 }
+          ];
+          var d = '<path d="M' + x(-0.22) + " " + Y + "H" + x(2.2) + "M" + (x(2.2) - 8) + " " + (Y - 5) + "l8 5-8 5" + '" stroke-width="1.6"/>';
+          for (var k = -2; k <= 21; k++) {
+            var entero = k % 10 === 0;
+            d += '<path d="M' + x(k / 10) + " " + (Y - (entero ? 7 : 3.5)) + "v" + (entero ? 14 : 7) +
+              '" stroke-width="' + (entero ? 1.8 : 1.1) + '" opacity="' + (entero ? 1 : 0.5) + '"/>';
+          }
+          var rotulos = [0, 1, 2].map(function (n) {
+            return { x: x(n), y: Y + 18, tex: String(n), cuerpo: 13.5 };
+          });
+          numeros.forEach(function (n) {
+            d += '<path d="M' + x(n.valor) + " " + (Y - 6) + "L" + n.rx + ' 52" stroke-width="1.1" opacity="0.6" stroke-dasharray="1 4"/>' +
+              '<circle cx="' + x(n.valor) + '" cy="' + Y + '" r="4.6" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: n.rx, y: 22, tex: n.tex, cuerpo: 17 });
+            rotulos.push({ x: n.rx, y: 43, texto: n.nota, cuerpo: 11.5 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 500 };
+        },
+
+        "potencias-de-diez": function () {
+          var Y = 66;
+          var x = function (e) { return r(92 + (e + 10) * 39); };
+          var hitos = [
+            { e: -10, nombre: "un átomo", dibujo: "atomo" },
+            { e: -6, nombre: "una bacteria", dibujo: "bacteria" },
+            { e: 0, nombre: "tú", dibujo: "persona" },
+            { e: 7, nombre: "la Tierra", dibujo: "tierra" },
+            { e: 9, nombre: "el Sol", dibujo: "sol" },
+            { e: 11, nombre: "de la Tierra al Sol", dibujo: "distancia" }
+          ];
+          var dibujos = {
+            atomo: function (cx, cy) {
+              return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="12" ry="4.6" transform="rotate(-32 ' + cx + " " + cy + ')" stroke-width="1.4"/>' +
+                '<ellipse cx="' + cx + '" cy="' + cy + '" rx="12" ry="4.6" transform="rotate(32 ' + cx + " " + cy + ')" stroke-width="1.4"/>' +
+                '<circle cx="' + cx + '" cy="' + cy + '" r="2.4" fill="currentColor" stroke="none"/>';
+            },
+            bacteria: function (cx, cy) {
+              return '<rect x="' + (cx - 11) + '" y="' + (cy - 5.5) + '" width="19" height="11" rx="5.5" stroke-width="1.5" transform="rotate(-18 ' + cx + " " + cy + ')"/>' +
+                '<path d="M' + (cx + 8.5) + " " + (cy - 2.8) + 'c4-3 3 3 6 0s2-4 5-2" stroke-width="1.3"/>' +
+                '<path d="M' + (cx - 5) + " " + (cy + 0.5) + "h2M" + cx + " " + (cy - 1) + 'h2" stroke-width="1.3"/>';
+            },
+            persona: function (cx, cy) {
+              return '<circle cx="' + cx + '" cy="' + (cy - 9) + '" r="3.4" stroke-width="1.6"/>' +
+                '<path d="M' + cx + " " + (cy - 5.5) + "v9.5M" + (cx - 6) + " " + (cy - 1.5) + "h12M" + cx + " " + (cy + 4) + "l-4.5 8M" + cx + " " + (cy + 4) + 'l4.5 8" stroke-width="1.6"/>';
+            },
+            tierra: function (cx, cy) {
+              return '<circle cx="' + cx + '" cy="' + cy + '" r="11" stroke-width="1.6"/>' +
+                '<path d="M' + (cx - 11) + " " + cy + "h22M" + cx + " " + (cy - 11) + "c-6.5 6-6.5 16 0 22M" + cx + " " + (cy - 11) + 'c6.5 6 6.5 16 0 22" stroke-width="1.2"/>';
+            },
+            sol: function (cx, cy) {
+              var rayos = "";
+              for (var k = 0; k < 8; k++) {
+                var a = (k * Math.PI) / 4;
+                rayos += "M" + r(cx + 9.5 * Math.cos(a)) + " " + r(cy + 9.5 * Math.sin(a)) + "L" + r(cx + 13.5 * Math.cos(a)) + " " + r(cy + 13.5 * Math.sin(a));
+              }
+              return '<circle cx="' + cx + '" cy="' + cy + '" r="6.2" fill="currentColor" fill-opacity="0.25" stroke-width="1.6"/>' +
+                '<path d="' + rayos + '" stroke-width="1.5"/>';
+            },
+            distancia: function (cx, cy) {
+              return '<circle cx="' + (cx - 15) + '" cy="' + cy + '" r="2.6" fill="currentColor" stroke="none"/>' +
+                '<path d="M' + (cx - 10) + " " + cy + 'h17" stroke-width="1.3" stroke-dasharray="0.5 3.6"/>' +
+                '<circle cx="' + (cx + 14) + '" cy="' + cy + '" r="5.6" fill="currentColor" fill-opacity="0.25" stroke-width="1.5"/>';
+            }
+          };
+          var d = '<path d="M56 ' + Y + "h896M944 " + (Y - 5) + 'l8 5-8 5" stroke-width="1.6"/>';
+          var rotulos = [];
+          for (var e = -10; e <= 11; e++) {
+            var hito = hitos.filter(function (h) { return h.e === e; })[0];
+            d += '<path d="M' + x(e) + " " + (Y - (hito ? 8 : 4)) + "v" + (hito ? 16 : 8) + '" stroke-width="' + (hito ? 1.9 : 1.2) + '" opacity="' + (hito ? 1 : 0.5) + '"/>';
+            if (hito) {
+              d += dibujos[hito.dibujo](x(e), 34);
+              rotulos.push({ x: x(e), y: 12, texto: hito.nombre, cuerpo: 11.5 });
+              rotulos.push({ x: x(e), y: Y + 24, tex: "10^{" + e + "}\\,\\text{m}", cuerpo: 14 });
+            }
+          }
+          return { dibujo: d, rotulos: rotulos, foco: x(0) };
+        },
+
+        "raices": function () {
+          var u = 17.5, base = 74, px = 64;
+          var lados = ["1", "\\sqrt2", "\\sqrt3", "2", "\\sqrt5", "\\sqrt6", "\\sqrt7", "\\sqrt8", "3"];
+          var d = "";
+          var rotulos = [];
+          for (var n = 1; n <= 9; n++) {
+            var lado = Math.sqrt(n) * u;
+            var entero = Math.round(Math.sqrt(n)) * Math.round(Math.sqrt(n)) === n;
+            d += '<rect x="' + r(px) + '" y="' + r(base - lado) + '" width="' + r(lado) + '" height="' + r(lado) + '" rx="1.5" fill="currentColor" fill-opacity="' +
+              (entero ? 0.2 : 0.08) + '" stroke-width="' + (entero ? 1.9 : 1.5) + '"/>';
+            rotulos.push({ x: r(px + lado / 2), y: r(base - lado / 2), tex: String(n), cuerpo: n === 1 ? 11 : 13.5, opacidad: 0.9 });
+            rotulos.push({ x: r(px + lado / 2), y: base + 17, tex: lados[n - 1], cuerpo: 13.5 });
+            px += lado + 24;
+          }
+          var cx = 800, cy = 60, k = 10.6, angulo = 0;
+          var p = function (m, a) { return [r(cx + Math.sqrt(m) * k * Math.cos(a)), r(cy - Math.sqrt(m) * k * Math.sin(a))]; };
+          var primero = p(1, 0);
+          var radios = "M" + cx + " " + cy + "L" + primero[0] + " " + primero[1];
+          var borde = "M" + primero[0] + " " + primero[1];
+          for (n = 1; n <= 16; n++) {
+            angulo += Math.atan(1 / Math.sqrt(n));
+            var q = p(n + 1, angulo);
+            radios += "M" + cx + " " + cy + "L" + q[0] + " " + q[1];
+            borde += "L" + q[0] + " " + q[1];
+          }
+          d += '<path d="' + radios + '" stroke-width="1" opacity="0.55"/><path d="' + borde + '"/>';
+          rotulos.push(
+            { x: 906, y: 50, texto: "espiral de Teodoro", cuerpo: 11.5 },
+            { x: 906, y: 70, tex: "\\sqrt2,\\ \\sqrt3,\\ \\ldots,\\ \\sqrt{17}", cuerpo: 13 },
+            { x: 36, y: 46, texto: "área", cuerpo: 11.5, giro: -90 },
+            { x: 36, y: base + 17, texto: "lado", cuerpo: 11.5 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 330 };
+        },
+
+        "escala-logaritmica": function () {
+          var x = function (e) { return r(170 + (e + 2) * 150); };
+          var d = '<path d="M' + (x(-2) - 34) + " 40H" + (x(3) + 34) + "M" + (x(-2) - 34) + " 76H" + (x(3) + 34) + '" stroke-width="1.5"/>';
+          var rotulos = [
+            { x: 70, y: 22, tex: "x", cuerpo: 16 },
+            { x: 70, y: 94, tex: "\\log x", cuerpo: 15 }
+          ];
+          var nombres = ["0{,}01", "0{,}1", "1", "10", "100", "1000"];
+          for (var e = -2; e <= 3; e++) {
+            d += '<path d="M' + x(e) + ' 31V85" stroke-width="1.9"/>';
+            rotulos.push({ x: x(e), y: 19, tex: nombres[e + 2], cuerpo: 15 });
+            rotulos.push({ x: x(e), y: 97, tex: String(e).replace("-", "{-}"), cuerpo: 15 });
+            if (e < 3) {
+              for (var m = 2; m <= 9; m++) {
+                var px = r(x(e) + 150 * Math.log(m) / Math.LN10);
+                d += '<path d="M' + px + " 40v" + (m === 5 ? 9 : 6) + '" stroke-width="1.1" opacity="0.6"/>';
+              }
+              d += '<path d="M' + (x(e) + 16) + " 60q59-13 118 0M" + (x(e) + 127) + ' 55.5l7 4.5-8 2.5" stroke-width="1.2" opacity="0.75"/>';
+              rotulos.push({ x: x(e) + 75, y: 64, tex: "\\times 10", cuerpo: 11.5, opacidad: 0.85 });
+            }
+          }
+          return { dibujo: d, rotulos: rotulos, foco: x(0.5) };
+        },
+
+        "ruffini": function () {
+          var col = [278, 344, 398, 452, 506];
+          var fila = [27, 55, 88];
+          var d = '<path d="M312 12V100M250 71H544" stroke-width="1.7"/>' +
+            '<rect x="484" y="74" width="46" height="28" rx="14" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          var celdas = [
+            [null, "1", "{-}2", "0", "3"],
+            ["3", null, "3", "3", "9"],
+            [null, "1", "1", "3", "12"]
+          ];
+          var rotulos = [];
+          celdas.forEach(function (linea, i) {
+            linea.forEach(function (valor, j) {
+              if (valor !== null) {
+                rotulos.push({ x: col[j], y: fila[i], tex: valor, cuerpo: 16.5 });
+              }
+            });
+          });
+          d += '<path d="M572 56h34M599 50.5l7 5.5-7 5.5" stroke-width="1.6"/>';
+          rotulos.push(
+            { x: 128, y: 56, tex: "(x^3-2x^2+3):(x-3)", cuerpo: 17 },
+            { x: 790, y: 56, tex: "x^3-2x^2+3=(x-3)(x^2+x+3)+12", cuerpo: 16 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 400 };
+        },
+
+        "simplificar": function () {
+          var d = '<rect x="640" y="31" width="104" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 190, y: 54, tex: "\\dfrac{x^3-8x^2+16x}{x^2-4x}", cuerpo: 17 },
+              { x: 310, y: 54, tex: "=", cuerpo: 19 },
+              { x: 455, y: 54, tex: "\\dfrac{\\cancel{x}\\,\\cancel{(x-4)}\\,(x-4)}{\\cancel{x}\\,\\cancel{(x-4)}}", cuerpo: 17 },
+              { x: 600, y: 54, tex: "=", cuerpo: 19 },
+              { x: 692, y: 54, tex: "x-4", cuerpo: 20 },
+              { x: 858, y: 54, tex: "(x\\neq0,\\ x\\neq4)", cuerpo: 15, opacidad: 0.85 }
+            ],
+            foco: 470
+          };
+        },
+
+        "resolver": function () {
+          var cx = 132;
+          var d = '<path d="M' + (cx - 16) + " 94h32M" + cx + " 94V22M" + (cx - 46) + ' 28h92" stroke-width="2"/>' +
+            '<circle cx="' + cx + '" cy="20" r="2.6" fill="currentColor" stroke="none"/>' +
+            '<path d="M' + (cx - 46) + " 28l-12 30M" + (cx - 46) + " 28l12 30M" + (cx + 46) + " 28l-12 30M" + (cx + 46) + ' 28l12 30" stroke-width="1.3"/>' +
+            '<path d="M' + (cx - 61) + " 58h30a15 11 0 0 1-30 0zM" + (cx + 31) + ' 58h30a15 11 0 0 1-30 0z" fill="currentColor" fill-opacity="0.16" stroke-width="1.7"/>' +
+            '<rect x="778" y="33" width="130" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 362, y: 56, tex: "x^2-9=0", cuerpo: 22 },
+              { x: 487, y: 56, tex: "\\iff", cuerpo: 20 },
+              { x: 610, y: 56, tex: "x^2=9", cuerpo: 22 },
+              { x: 718, y: 56, tex: "\\iff", cuerpo: 20 },
+              { x: 843, y: 56, tex: "x=\\pm3", cuerpo: 22 }
+            ],
+            foco: 600
+          };
+        },
+
+        "sistema": function () {
+          var U = 16.5, X0 = 124, Y0 = 88;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (v) { return r(Y0 - v * U); };
+          var rejilla = "";
+          for (var k = -2; k <= 5; k++) {
+            rejilla += "M" + x(k) + " 7V104";
+          }
+          for (k = 0; k <= 4; k++) {
+            rejilla += "M" + x(-2.6) + " " + y(k) + "H" + x(5.6);
+          }
+          var d = '<path d="' + rejilla + '" stroke-width="1" opacity="0.14"/>' +
+            '<path d="M' + x(-2.6) + " " + y(0) + "H" + x(5.6) + "M" + x(0) + ' 104V7" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="M' + x(-2.4) + " " + y(12.8 / 3) + "L" + x(5.3) + " " + y(-2.6 / 3) + '" stroke-width="2.2"/>' +
+            '<path d="M' + x(-1.85) + " " + y(-0.85) + "L" + x(3.75) + " " + y(4.75) + '" stroke-width="2.2" opacity="0.6"/>' +
+            '<circle cx="' + x(1) + '" cy="' + y(2) + '" r="8.5" stroke-width="1.3" opacity="0.5"/>' +
+            '<circle cx="' + x(1) + '" cy="' + y(2) + '" r="4.2" fill="currentColor" stroke="none"/>' +
+            '<path d="M592 56h62M646 50l8 6-8 6" stroke-width="1.7"/>' +
+            '<rect x="698" y="33" width="190" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: x(1) + 38, y: y(2) + 1, tex: "(1,\\,2)", cuerpo: 14 },
+              { x: 468, y: 56, tex: "\\left\\{\\begin{aligned}2x+3y&=8\\\\x-y&=-1\\end{aligned}\\right.", cuerpo: 18 },
+              { x: 793, y: 56, tex: "x=1,\\ \\ y=2", cuerpo: 20 }
+            ],
+            foco: 500
+          };
+        },
+
+        "inecuacion": function () {
+          var U = 40, X0 = 560, Y = 56;
+          var x = function (v) { return r(X0 + v * U); };
+          var marcas = "";
+          for (var k = -5; k <= 4; k++) {
+            marcas += "M" + x(k) + " " + (Y - 6) + "v12";
+          }
+          var d = '<path d="M' + x(-5.6) + " " + Y + "H" + x(4.75) + '" stroke-width="1.5" opacity="0.55"/>' +
+            '<path d="' + marcas + '" stroke-width="1.3" opacity="0.55"/>' +
+            '<path d="M' + x(-2) + " " + Y + "H" + x(4.55) + '" stroke-width="6.5"/>' +
+            '<path d="M' + x(4.45) + " " + (Y - 7) + 'l9 7-9 7" stroke-width="2.2"/>' +
+            '<circle cx="' + x(-2) + '" cy="' + Y + '" r="6.6" fill="currentColor" stroke="none"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 178, y: Y, tex: "3(x-1)\\leq 5x+1", cuerpo: 19 },
+              { x: x(-2), y: Y + 26, tex: "{-}2", cuerpo: 14 },
+              { x: x(0), y: Y + 26, tex: "0", cuerpo: 14, opacidad: 0.7 },
+              { x: 884, y: Y, tex: "[-2,+\\infty)", cuerpo: 19 }
+            ],
+            foco: 520
+          };
+        },
+
+        "intervalos": function () {
+          var Y = 68, A = 190, B = 414, C = 640, FIN = 944;
+          var d = '<path d="M56 ' + Y + "H" + (FIN + 6) + '" stroke-width="1.5" opacity="0.5"/>' +
+            '<path d="M' + A + " " + Y + "H" + (B - 6) + "M" + (C + 6) + " " + Y + "H" + (FIN - 14) + '" stroke-width="6.5"/>' +
+            '<path d="M' + (FIN - 20) + " " + (Y - 9) + 'l12 9-12 9" stroke-width="2.6"/>' +
+            '<circle cx="' + A + '" cy="' + Y + '" r="7" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + B + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<circle cx="' + C + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<circle cx="497" cy="23" r="5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="497" cy="43" r="4.4" fill="#ffffff" stroke-width="2"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: A, y: Y + 25, tex: "a", cuerpo: 16 },
+              { x: B, y: Y + 25, tex: "b", cuerpo: 16 },
+              { x: C, y: Y + 25, tex: "c", cuerpo: 16 },
+              { x: 248, y: 28, tex: "[a,\\,b)", cuerpo: 21 },
+              { x: 350, y: 29, tex: "a\\leq x<b", cuerpo: 15.5, opacidad: 0.9 },
+              { x: 740, y: 28, tex: "(c,\\,+\\infty)", cuerpo: 21 },
+              { x: 846, y: 29, tex: "x>c", cuerpo: 15.5, opacidad: 0.9 },
+              { x: 540, y: 23, texto: "incluido", cuerpo: 11.5 },
+              { x: 542, y: 43, texto: "excluido", cuerpo: 11.5 }
+            ],
+            foco: 372
+          };
+        },
+
+        "redondeo": function () {
+          var Y = 55, X0 = 302, X1 = 702;
+          var P = r(X0 + 0.62 * (X1 - X0));
+          var punta = function (cx, cy, ex, ey) {
+            var a = Math.atan2(ey - cy, ex - cx);
+            return "M" + r(ex - 9 * Math.cos(a - 0.45)) + " " + r(ey - 9 * Math.sin(a - 0.45)) + "L" + ex + " " + ey +
+              "L" + r(ex - 9 * Math.cos(a + 0.45)) + " " + r(ey - 9 * Math.sin(a + 0.45));
+          };
+          var d = '<path d="M64 ' + Y + 'H224" stroke-width="1.5" opacity="0.6"/>';
+          for (var k = 0; k <= 10; k++) {
+            d += '<path d="M' + (64 + 16 * k) + " " + (Y - (k % 10 === 0 ? 6 : 3)) + "v" + (k % 10 === 0 ? 12 : 6) +
+              '" stroke-width="1.1" opacity="0.6"/>';
+          }
+          d += '<circle cx="200" cy="' + Y + '" r="12" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+            '<path d="M191.5 ' + (Y + 8.5) + 'l-8 9" stroke-width="2.6"/>' +
+            '<path d="M210 ' + (Y - 7) + "L" + (X0 - 8) + " " + (Y - 10) + "M210 " + (Y + 7) + "L" + (X0 - 8) + " " + (Y + 10) +
+            '" stroke-width="1.1" opacity="0.5" stroke-dasharray="1 4"/>' +
+            '<path d="M' + X0 + " " + Y + "H" + X1 + '" stroke-width="1.8"/>';
+          for (k = 0; k <= 10; k++) {
+            var alto = k % 10 === 0 ? 9 : k === 5 ? 6.5 : 4;
+            d += '<path d="M' + r(X0 + (X1 - X0) * k / 10) + " " + (Y - alto) + "v" + 2 * alto + '" stroke-width="' +
+              (k % 10 === 0 ? 2.1 : 1.2) + '" opacity="' + (k % 5 === 0 ? 1 : 0.55) + '"/>';
+          }
+          var cI = [r((P + X0) / 2), Y - 46], fI = [X0 + 6, Y - 15];
+          var cD = [r((P + X1) / 2), Y - 46], fD = [X1 - 6, Y - 15];
+          d += '<path d="M' + r(P - 8) + " " + (Y - 11) + "Q" + cI[0] + " " + cI[1] + " " + fI[0] + " " + fI[1] +
+            '" stroke-width="1.6" stroke-dasharray="1 5.5"/>' +
+            '<path d="' + punta(cI[0], cI[1], fI[0], fI[1]) + '" stroke-width="1.6"/>' +
+            '<path d="M' + r(P + 8) + " " + (Y - 11) + "Q" + cD[0] + " " + cD[1] + " " + fD[0] + " " + fD[1] + '" stroke-width="2.3"/>' +
+            '<path d="' + punta(cD[0], cD[1], fD[0], fD[1]) + '" stroke-width="2.3"/>' +
+            '<circle cx="' + P + '" cy="' + Y + '" r="9.5" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + P + '" cy="' + Y + '" r="5" fill="currentColor" stroke="none"/>' +
+            '<rect x="846" y="56" width="92" height="34" rx="17" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 64, y: Y + 20, tex: "5{,}3", cuerpo: 12, opacidad: 0.8 },
+              { x: 224, y: Y + 20, tex: "5{,}4", cuerpo: 12, opacidad: 0.8 },
+              { x: P, y: Y + 25, tex: "5{,}3862", cuerpo: 17 },
+              { x: X0, y: Y + 25, tex: "5{,}38", cuerpo: 17 },
+              { x: X1, y: Y + 25, tex: "5{,}39", cuerpo: 17 },
+              { x: X0, y: Y + 44, texto: "por defecto", cuerpo: 10.5, opacidad: 0.8 },
+              { x: X1, y: Y + 44, texto: "por exceso", cuerpo: 10.5, opacidad: 0.8 },
+              { x: cI[0] - 22, y: 14, texto: "truncar", cuerpo: 12 },
+              { x: cD[0] + 4, y: 14, texto: "redondear", cuerpo: 12 },
+              { x: 800, y: 35, texto: "truncado", cuerpo: 11.5, opacidad: 0.85 },
+              { x: 892, y: 35, tex: "5{,}38", cuerpo: 16 },
+              { x: 794, y: 73, texto: "redondeado", cuerpo: 11.5 },
+              { x: 892, y: 73, tex: "5{,}39", cuerpo: 16 }
+            ],
+            foco: 502
+          };
+        },
+
+        "tres-preguntas": function () {
+          var d = '<rect x="452" y="27" width="178" height="54" rx="27" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<path d="M442 54h-26M423 48.5l-7 5.5 7 5.5M640 54h26M659 48.5l7 5.5-7 5.5" stroke-width="1.6"/>';
+          var tarjetas = [
+            { x: 92, ancho: 154, nombre: "potencia", tex: "b=a^{n}", pregunta: "¿cuánto da?" },
+            { x: 254, ancho: 154, nombre: "raíz", tex: "a=\\sqrt[n]{b}", pregunta: "¿qué base?" },
+            { x: 674, ancho: 238, nombre: "logaritmo", tex: "n=\\log_{a}b", pregunta: "¿qué exponente?", realce: true }
+          ];
+          var rotulos = [{ x: 541, y: 54, tex: "a^{n}=b", cuerpo: 25 }];
+          tarjetas.forEach(function (t) {
+            d += '<rect x="' + t.x + '" y="13" width="' + t.ancho + '" height="82" rx="13" fill="currentColor" fill-opacity="' +
+              (t.realce ? 0.13 : 0.035) + '" stroke-width="' + (t.realce ? 2.1 : 1.3) + '"' + (t.realce ? "" : ' opacity="0.85"') + "/>";
+            rotulos.push({ x: t.x + t.ancho / 2, y: 28, texto: t.nombre, cuerpo: 12 });
+            rotulos.push({ x: t.x + t.ancho / 2, y: 54, tex: t.tex, cuerpo: t.realce ? 21 : 18 });
+            rotulos.push({ x: t.x + t.ancho / 2, y: 81, texto: t.pregunta, cuerpo: 11, opacidad: 0.8 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 694 };
+        },
+
+        "torneo": function () {
+          var X = [44, 90, 136, 182, 228];
+          var ys = [[]];
+          for (var i = 0; i < 16; i++) {
+            ys[0].push(9 + 5.4 * i);
+          }
+          for (var ronda = 1; ronda <= 4; ronda++) {
+            ys.push([]);
+            for (var k = 0; k < ys[ronda - 1].length / 2; k++) {
+              ys[ronda].push((ys[ronda - 1][2 * k] + ys[ronda - 1][2 * k + 1]) / 2);
+            }
+          }
+          var lineas = "", puntos = "";
+          for (ronda = 0; ronda < 4; ronda++) {
+            var xm = X[ronda] + 28;
+            for (k = 0; k < ys[ronda].length; k += 2) {
+              lineas += "M" + X[ronda] + " " + r(ys[ronda][k]) + "H" + xm + "V" + r(ys[ronda][k + 1]) + "H" + X[ronda] +
+                "M" + xm + " " + r(ys[ronda + 1][k / 2]) + "H" + X[ronda + 1];
+            }
+          }
+          ys[0].forEach(function (y) {
+            puntos += '<circle cx="' + X[0] + '" cy="' + r(y) + '" r="2" fill="currentColor" stroke="none"/>';
+          });
+          var cima = r(ys[4][0]);
+          var d = '<path d="' + lineas + '" stroke-width="1.25"/>' + puntos +
+            '<circle cx="' + X[4] + '" cy="' + cima + '" r="10" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + X[4] + '" cy="' + cima + '" r="5" fill="currentColor" stroke="none"/>' +
+            '<rect x="396" y="46" width="136" height="44" rx="22" fill="currentColor" fill-opacity="0.12" stroke-width="1.7"/>' +
+            '<path d="M566 14V96" stroke-width="1" opacity="0.3" stroke-dasharray="2 5"/>';
+          var rotulos = [
+            { x: 310, y: 41, tex: "2^{4}=16", cuerpo: 19 },
+            { x: 310, y: 68, texto: "16 jugadores, 4 rondas", cuerpo: 10.5, opacidad: 0.9 },
+            { x: 464, y: 13, texto: "Wimbledon", cuerpo: 10.5, opacidad: 0.85 },
+            { x: 464, y: 30, texto: "128 jugadores, 7 rondas", cuerpo: 10.5, opacidad: 0.9 },
+            { x: 464, y: 68, tex: "\\log_{2}128=7", cuerpo: 18 },
+            { x: 772, y: 31, texto: "el número de rondas es un logaritmo", cuerpo: 11.5, opacidad: 0.9 },
+            { x: 772, y: 66, tex: "\\text{rondas}=\\log_{2}(\\text{jugadores})", cuerpo: 17 }
+          ];
+          ["octavos", "cuartos", "semifinal", "final"].forEach(function (nombre, j) {
+            rotulos.push({ x: X[j] + 16, y: 101, texto: nombre, cuerpo: 9.5, opacidad: 0.85 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 286 };
+        },
+
+        "palillos": function () {
+          var lado = 27, hueco = 3.5, base = 64, x0 = 64;
+          var d = "";
+          var rotulos = [];
+          [1, 2, 3, 4].forEach(function (n) {
+            var arriba = base - lado;
+            for (var k = 0; k <= n; k++) {
+              d += '<path d="M' + r(x0 + k * lado) + " " + r(arriba + hueco) + "V" + r(base - hueco) + '" stroke-width="2.7"/>';
+            }
+            for (k = 0; k < n; k++) {
+              d += '<path d="M' + r(x0 + k * lado + hueco) + " " + arriba + "H" + r(x0 + (k + 1) * lado - hueco) +
+                "M" + r(x0 + k * lado + hueco) + " " + base + "H" + r(x0 + (k + 1) * lado - hueco) + '" stroke-width="2.7"/>';
+            }
+            rotulos.push({ x: r(x0 + (n * lado) / 2), y: base + 24, tex: String(3 * n + 1), cuerpo: 16 });
+            x0 += n * lado + 48;
+          });
+          d += '<circle cx="' + r(x0 - 14) + '" cy="50.5" r="2" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(x0 - 2) + '" cy="50.5" r="2" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(x0 + 10) + '" cy="50.5" r="2" fill="currentColor" stroke="none"/>' +
+            '<path d="M' + r(x0 + 46) + " 50.5h40M" + r(x0 + 78) + " 44.5l8 6-8 6" + '" stroke-width="1.6"/>' +
+            '<rect x="' + r(x0 + 112) + '" y="27" width="168" height="47" rx="23.5" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          rotulos.push(
+            { x: r(x0 + 196), y: 50.5, tex: "P(n)=3n+1", cuerpo: 19 },
+            { x: r(x0 + 372), y: 50.5, tex: "P(20)=61", cuerpo: 15.5, opacidad: 0.85 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 285 };
+        },
+
+        "distributiva": function () {
+          var y = 56, arriba = y - 13, abajo = y + 14;
+          var primero = [352, 398], segundo = [468, 520, 572];
+          var d = "";
+          segundo.forEach(function (x) {
+            var a = primero[0], b = primero[1];
+            d += '<path d="M' + a + " " + arriba + "Q" + r((a + x) / 2) + " " + r(arriba - 0.36 * (x - a)) + " " + x + " " + arriba + '" stroke-width="1.6"/>' +
+              '<path d="M' + b + " " + abajo + "Q" + r((b + x) / 2) + " " + r(abajo + 0.36 * (x - b)) + " " + x + " " + abajo +
+              '" stroke-width="1.6" stroke-dasharray="1 5" opacity="0.9"/>';
+          });
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 170, y: y, texto: "cada término, por cada término", cuerpo: 12.5 },
+              { x: 330, y: y, tex: "(", cuerpo: 19 },
+              { x: primero[0], y: y, tex: "2x", cuerpo: 18 },
+              { x: primero[1], y: y, tex: "{-}\\,3", cuerpo: 18 },
+              { x: 421, y: y, tex: ")", cuerpo: 19 },
+              { x: 441, y: y, tex: "(", cuerpo: 19 },
+              { x: segundo[0], y: y, tex: "x^2", cuerpo: 18 },
+              { x: segundo[1], y: y, tex: "{+}\\,4x", cuerpo: 18 },
+              { x: segundo[2], y: y, tex: "{-}\\,5", cuerpo: 18 },
+              { x: 596, y: y, tex: ")", cuerpo: 19 },
+              { x: 630, y: y, tex: "=", cuerpo: 19 },
+              { x: 786, y: y, tex: "2x^3+5x^2-22x+15", cuerpo: 18 }
+            ],
+            foco: 470
+          };
+        },
+
+        "ruffini-con-hueco": function () {
+          var col = [296, 356, 408, 460, 512, 564];
+          var fila = [27, 55, 88];
+          var d = '<path d="M326 12V100M270 71H598" stroke-width="1.7"/>' +
+            '<rect x="541" y="74" width="46" height="28" rx="14" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          var celdas = [
+            [null, "3", "{-}5", "0", "2", "{-}4"],
+            ["2", null, "6", "2", "4", "12"],
+            [null, "3", "1", "2", "6", "8"]
+          ];
+          var rotulos = [];
+          celdas.forEach(function (linea, i) {
+            linea.forEach(function (valor, j) {
+              if (valor !== null) {
+                rotulos.push({ x: col[j], y: fila[i], tex: valor, cuerpo: 16.5 });
+              }
+            });
+          });
+          d += '<path d="M622 56h34M649 50.5l7 5.5-7 5.5" stroke-width="1.6"/>';
+          rotulos.push(
+            { x: 136, y: 56, tex: "(3x^4-5x^3+2x-4):(x-2)", cuerpo: 14.5 },
+            { x: 772, y: 46, tex: "3x^3+x^2+2x+6", cuerpo: 17 },
+            { x: 772, y: 74, texto: "cociente", cuerpo: 12 },
+            { x: 934, y: 46, tex: "8", cuerpo: 19 },
+            { x: 934, y: 74, texto: "resto", cuerpo: 12 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 440 };
+        },
+
+        "candidatas": function () {
+          var candidatas = [-12, -6, -4, -3, -2, -1, 1, 2, 3, 4, 6, 12];
+          var raices = [-4, 1, 3];
+          var d = "";
+          var rotulos = [
+            { x: 124, y: 40, tex: "P(x)=x^3-13x+12", cuerpo: 16.5 },
+            { x: 124, y: 70, texto: "se prueban los divisores de 12", cuerpo: 12 }
+          ];
+          candidatas.forEach(function (n, j) {
+            var cx = 300 + 41 * j;
+            var esRaiz = raices.indexOf(n) !== -1;
+            d += '<circle cx="' + cx + '" cy="44" r="18" fill="currentColor" fill-opacity="' + (esRaiz ? 0.2 : 0.04) +
+              '" stroke-width="' + (esRaiz ? 2.1 : 1.3) + '"' + (esRaiz ? "" : ' opacity="0.6"') + "/>";
+            rotulos.push({ x: cx, y: 44, tex: n < 0 ? "{-}" + -n : String(n), cuerpo: 14, opacidad: esRaiz ? 1 : 0.7 });
+            if (esRaiz) {
+              d += '<path d="M' + cx + " 64v9" + '" stroke-width="1.5"/>';
+              rotulos.push({ x: cx, y: 88, tex: "P(" + n + ")=0", cuerpo: 13.5 });
+            }
+          });
+          rotulos.push({ x: 930, y: 44, texto: "raíces:", cuerpo: 12 }, { x: 930, y: 66, tex: "1,\\ 3,\\ {-}4", cuerpo: 15 });
+          return { dibujo: d, rotulos: rotulos, foco: 526 };
+        },
+
+        "factores": function () {
+          var d = '<path d="M286 52h44M322 46l8 6-8 6M596 52h44M632 46l8 6-8 6" stroke-width="1.6"/>' +
+            '<rect x="664" y="29" width="250" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 164, y: 52, tex: "x^3+3x^2-10x-24", cuerpo: 17 },
+              { x: 308, y: 30, texto: "Ruffini", cuerpo: 11.5 },
+              { x: 462, y: 52, tex: "(x-3)(x^2+6x+8)", cuerpo: 17 },
+              { x: 618, y: 30, texto: "grado 2", cuerpo: 11.5 },
+              { x: 789, y: 52, tex: "(x-3)(x+2)(x+4)", cuerpo: 17.5 },
+              { x: 789, y: 93, texto: "raíces: 3, −2 y −4", cuerpo: 12 }
+            ],
+            foco: 670
+          };
+        },
+
+        "tachar": function () {
+          var d = '<rect x="652" y="29" width="112" height="50" rx="25" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 208, y: 54, tex: "\\dfrac{x^2-6x-16}{x^2-64}", cuerpo: 17 },
+              { x: 318, y: 54, tex: "=", cuerpo: 19 },
+              { x: 468, y: 54, tex: "\\dfrac{\\cancel{(x-8)}\\,(x+2)}{(x+8)\\,\\cancel{(x-8)}}", cuerpo: 17 },
+              { x: 616, y: 54, tex: "=", cuerpo: 19 },
+              { x: 708, y: 54, tex: "\\dfrac{x+2}{x+8}", cuerpo: 18 },
+              { x: 880, y: 54, texto: "factores, nunca sumandos", cuerpo: 12 }
+            ],
+            foco: 560
+          };
+        },
+
+        "cumbre": function (seccion) {
+          var apartados = [];
+          var hermanas = seccion && seccion.parentElement ? seccion.parentElement.children : [];
+          for (var i = 0; i < hermanas.length; i++) {
+            var otra = hermanas[i];
+            if (otra !== seccion && otra.matches("section.level2[data-emblema]") && otra.getAttribute("data-number") !== "0") {
+              apartados.push(otra);
+            }
+          }
+          var camino = function (t) {
+            return [72 + 770 * t, 80 - 44 * Math.pow(t, 1.3) + 3.5 * Math.sin(t * 9)];
+          };
+          var d = '<path d="' + trazo(camino, 0, 1, 0.01) + '" stroke-width="1.7" stroke-dasharray="1 6" opacity="0.8"/>';
+          var cima = camino(1);
+          d += '<path d="M' + r(cima[0] - 2) + " 107L" + r(cima[0] + 44) + " " + r(cima[1] - 2) + "l24 34 15-20 50 67z" +
+            '" fill="currentColor" fill-opacity="0.1" stroke-width="1.8"/>' +
+            '<path d="M' + r(cima[0] + 44) + " " + r(cima[1] - 2) + "V" + r(cima[1] - 21) + 'l14 5-14 5" stroke-width="1.8"/>';
+          var rotulos = [];
+          apartados.forEach(function (apartado, j) {
+            var t = apartados.length === 1 ? 0.45 : 0.05 + (0.83 * j) / (apartados.length - 1);
+            var p = camino(t);
+            var color = window.getComputedStyle(apartado).getPropertyValue("--apartado").trim() || "currentColor";
+            var dentro = EMBLEMAS[apartado.getAttribute("data-emblema")];
+            if (typeof dentro === "function") {
+              dentro = dentro();
+            }
+            d += '<g color="' + color + '" stroke="' + color + '">' +
+              '<circle cx="' + r(p[0]) + '" cy="' + r(p[1]) + '" r="18" fill="#ffffff" stroke-width="1.6"/>' +
+              (dentro
+                ? '<svg x="' + r(p[0] - 12.5) + '" y="' + r(p[1] - 12.5) + '" width="25" height="25" viewBox="0 0 48 48" stroke-width="2.7">' + dentro + "</svg>"
+                : "") +
+              "</g>";
+            rotulos.push({ x: r(p[0] + 27), y: r(p[1] - 14), texto: apartado.getAttribute("data-number") || "", cuerpo: 12.5, color: color });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 620 };
+        },
+
+        "conjuntos-numericos": function () {
+          var Y = 54;
+          var conjuntos = [
+            { letra: "\\mathbb R", x0: 276, x1: 728, h: 47, dentro: "\\pi,\\ e,\\ \\sqrt2", sitio: 685, grosor: 1.6 },
+            { letra: "\\mathbb Q", x0: 306, x1: 642, h: 37, dentro: "\\dfrac13", sitio: 614, grosor: 1.7, relleno: 0.06 },
+            { letra: "\\mathbb Z", x0: 336, x1: 586, h: 27, dentro: "{-}1,{-}2,\\ldots", sitio: 538, grosor: 1.8, relleno: 0.06 },
+            { letra: "\\mathbb N", x0: 366, x1: 490, h: 17, dentro: "0,1,2,3,\\ldots", sitio: 442, grosor: 2, relleno: 0.06 }
+          ];
+          var d = "";
+          var rotulos = [];
+          conjuntos.forEach(function (c) {
+            d += '<rect x="' + c.x0 + '" y="' + (Y - c.h) + '" width="' + (c.x1 - c.x0) + '" height="' + 2 * c.h + '" rx="' + c.h + '"' +
+              (c.relleno ? ' fill="currentColor" fill-opacity="' + c.relleno + '"' : "") + ' stroke-width="' + c.grosor + '"/>';
+            rotulos.push({ x: c.x0 + 15, y: Y, tex: c.letra, cuerpo: 16 });
+            rotulos.push({ x: c.sitio, y: Y, tex: c.dentro, cuerpo: c.letra === "\\mathbb Q" ? 14 : 13.5, opacidad: 0.9 });
+          });
+          rotulos.push(
+            { x: 150, y: 42, tex: "\\mathbb N\\subset\\mathbb Z\\subset\\mathbb Q\\subset\\mathbb R", cuerpo: 17 },
+            { x: 150, y: 70, texto: "cada uno, dentro del siguiente", cuerpo: 11.5 },
+            { x: 860, y: 42, tex: "\\mathbb Z^+=\\{1,2,3,\\ldots\\}", cuerpo: 16 },
+            { x: 860, y: 70, texto: "los naturales sin el 0", cuerpo: 11.5 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 502 };
+        },
+
+        "union-e-interseccion": function () {
+          var IZ = 344, MB = 474, MA = 584, DE = 694;
+          var FA = 15, FB = 38, FI = 62, FU = 86;
+          var punto = function (cx, cy, entra) {
+            return entra
+              ? '<circle cx="' + cx + '" cy="' + cy + '" r="5.6" fill="currentColor" stroke="none"/>'
+              : '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#ffffff" stroke-width="2.2"/>';
+          };
+          var tramo = function (a, b, y, entraA, entraB, ancho) {
+            return '<path d="M' + a + " " + y + "H" + b + '" stroke-width="' + ancho + '"/>' + punto(a, y, entraA) + punto(b, y, entraB);
+          };
+          var d =
+            '<rect x="' + MB + '" y="4" width="' + (MA - MB) + '" height="71" fill="currentColor" fill-opacity="0.1" stroke="none"/>' +
+            '<path d="M' + MB + " 4V75M" + MA + ' 4V75" stroke-width="1.2" opacity="0.55" stroke-dasharray="1.5 4.5"/>' +
+            '<g opacity="0.6">' + tramo(IZ, MA, FA, true, false, 4) + tramo(MB, DE, FB, false, true, 4) + "</g>" +
+            tramo(MB, MA, FI, false, false, 6) +
+            tramo(IZ, DE, FU, true, true, 6) +
+            '<path d="M250 12V92" stroke-width="1.1" opacity="0.3" stroke-dasharray="2 5"/>' +
+            '<g opacity="0.75">' + tramo(78, 126, 36, true, false, 4) + tramo(166, 222, 36, true, true, 4) + "</g>";
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 300, y: FA, tex: "A", cuerpo: 16, opacidad: 0.8 },
+              { x: 300, y: FB, tex: "B", cuerpo: 16, opacidad: 0.8 },
+              { x: 300, y: FI, tex: "A\\cap B", cuerpo: 16 },
+              { x: 300, y: FU, tex: "A\\cup B", cuerpo: 16 },
+              { x: 818, y: FI, texto: "en los dos a la vez", cuerpo: 11.5 },
+              { x: 818, y: FU, texto: "en alguno de los dos", cuerpo: 11.5 },
+              { x: 150, y: 64, tex: "\\emptyset", cuerpo: 18 },
+              { x: 150, y: 87, texto: "nada en común", cuerpo: 11 }
+            ],
+            foco: 497
+          };
+        },
+
+        "distancia": function () {
+          var Y = 60, A = 502, R = 136;
+          var izq = A - R, der = A + R;
+          var d =
+            '<path d="M280 ' + Y + "H" + (izq - 7) + "M" + (der + 7) + " " + Y + 'H724" stroke-width="5" opacity="0.32"/>' +
+            '<path d="M287 ' + (Y - 8) + "l-10 8 10 8M717 " + (Y - 8) + 'l10 8-10 8" stroke-width="2.2" opacity="0.45"/>' +
+            '<path d="M' + (izq + 6) + " " + Y + "H" + (der - 6) + '" stroke-width="6.5"/>' +
+            '<path d="M' + A + " " + (Y - 12) + "v24" + '" stroke-width="2.2"/>' +
+            '<circle cx="' + izq + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<circle cx="' + der + '" cy="' + Y + '" r="6.2" fill="#ffffff" stroke-width="2.4"/>' +
+            '<path d="M' + (A - 5) + " 33H" + (izq + 3) + "M" + (A + 5) + " 33H" + (der - 3) + '" stroke-width="1.5"/>' +
+            '<path d="M' + (izq + 10) + " 28.5l-7 4.5 7 4.5M" + (der - 10) + ' 28.5l7 4.5-7 4.5" stroke-width="1.5"/>' +
+            '<circle cx="' + A + '" cy="33" r="2.4" fill="currentColor" stroke="none"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: (A + izq) / 2, y: 20, tex: "r", cuerpo: 16 },
+              { x: (A + der) / 2, y: 20, tex: "r", cuerpo: 16 },
+              { x: izq, y: 86, tex: "a-r", cuerpo: 15 },
+              { x: A, y: 86, tex: "a", cuerpo: 15 },
+              { x: der, y: 86, tex: "a+r", cuerpo: 15 },
+              { x: 136, y: 40, tex: "|x-a|<r", cuerpo: 19 },
+              { x: 136, y: 68, texto: "cerca: un intervalo", cuerpo: 11.5 },
+              { x: 868, y: 40, tex: "|x-a|>r", cuerpo: 19, opacidad: 0.85 },
+              { x: 868, y: 68, texto: "lejos: dos semirrectas", cuerpo: 11.5, opacidad: 0.85 }
+            ],
+            foco: 502
+          };
+        },
+
+        "potencias-y-radicales": function () {
+          var fichas = [
+            { x: 277, nombre: "exponente 0", tex: "a^0=1", de: "\\dfrac{a^n}{a^n}=a^{n-n}=a^0" },
+            { x: 431, nombre: "negativo", tex: "a^{-n}=\\frac{1}{a^n}", de: "a^{-n}\\cdot a^n=a^0=1" },
+            { x: 585, nombre: "fraccionario", tex: "a^{1/n}=\\sqrt[n]{a}", de: "\\left(a^{1/n}\\right)^n=a" }
+          ];
+          var d = '<rect x="778" y="22" width="180" height="44" rx="22" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          var rotulos = [];
+          fichas.forEach(function (f) {
+            d += '<rect x="' + f.x + '" y="6" width="142" height="96" rx="14" fill="currentColor" fill-opacity="0.05" stroke-width="1.4"/>';
+            rotulos.push({ x: f.x + 71, y: 20, texto: f.nombre, cuerpo: 11.5 });
+            rotulos.push({ x: f.x + 71, y: 46, tex: f.tex, cuerpo: 19 });
+            rotulos.push({ x: f.x + 71, y: 78, tex: f.de, cuerpo: 13, opacidad: 0.85 });
+          });
+          rotulos.push(
+            { x: 150, y: 42, tex: "a^m\\cdot a^n=a^{m+n}", cuerpo: 17 },
+            { x: 150, y: 70, texto: "para que siga valiendo", cuerpo: 11.5 },
+            { x: 868, y: 44, tex: "a^{m/n}=\\sqrt[n]{a^m}", cuerpo: 19 },
+            { x: 868, y: 86, texto: "el denominador es el índice", cuerpo: 11.5 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 502 };
+        },
+
+        "interes-continuo": function () {
+          var X0 = 250, D = 36, BASE = 92, S = 97;
+          var x = function (u) { return r(X0 + u * D); };
+          var potencia = function (u) {
+            var n = Math.pow(10, u);
+            return Math.exp(n * Math.log1p(1 / n));
+          };
+          var punto = function (u) { return [X0 + u * D, BASE - (potencia(u) - 2) * S]; };
+          var techo = r(BASE - (Math.E - 2) * S);
+          var d = '<path d="M' + x(-0.3) + " 104H" + x(6.8) + "M" + (x(6.8) - 7) + " 99.5l7 4.5-7 4.5" +
+              '" stroke-width="1.2" opacity="0.45"/>' +
+            '<path d="M' + x(-0.4) + " " + techo + "H" + x(6.7) + '" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.8"/>' +
+            '<path d="' + trazo(punto, 0, 6.6, 0.05) + '" stroke-width="2.2"/>';
+          [0, 2, 6].forEach(function (u) {
+            var p = punto(u);
+            d += '<circle cx="' + r(p[0]) + '" cy="' + r(p[1]) + '" r="8.5" fill="currentColor" fill-opacity="0.16" stroke="none"/>' +
+              '<circle cx="' + r(p[0]) + '" cy="' + r(p[1]) + '" r="4.2" fill="currentColor" stroke="none"/>';
+          });
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 105, y: 46, tex: "\\left(1+\\dfrac{1}{n}\\right)^{n}", cuerpo: 19 },
+              { x: 105, y: 86, texto: "crece, pero cada vez menos", cuerpo: 11.5, opacidad: 0.9 },
+              { x: x(0) - 20, y: 44, tex: "n=1", cuerpo: 13.5 },
+              { x: x(0) - 20, y: 64, tex: "2", cuerpo: 15 },
+              { x: x(2), y: 44, tex: "n=100", cuerpo: 13.5 },
+              { x: x(2), y: 64, tex: "2{,}7048", cuerpo: 15 },
+              { x: x(6), y: 44, tex: "n=1\\,000\\,000", cuerpo: 13 },
+              { x: x(6), y: 64, tex: "2{,}71828", cuerpo: 15 },
+              { x: 588, y: techo, tex: "e=2{,}718\\,281\\,828\\ldots", cuerpo: 15 },
+              { x: 596, y: 46, texto: "un techo, el interés continuo", cuerpo: 11 },
+              { x: 850, y: 52, tex: "C(t)=C_0\\,e^{rt}", cuerpo: 18 }
+            ],
+            foco: 443
+          };
+        },
+
+        "logaritmos-con-letras": function () {
+          var R = [140, 22];
+          var hojas = [[100, 66, "3", "a"], [140, 66, "5", "b"], [180, 66, "5", "b"]];
+          var d = '<circle cx="' + R[0] + '" cy="' + R[1] + '" r="16" fill="currentColor" fill-opacity="0.06" stroke-width="1.6"/>' +
+            '<path d="M208 46h30M231 40.5l7 5.5-7 5.5" stroke-width="1.6"/>' +
+            '<rect x="256" y="24" width="294" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          var rotulos = [{ x: R[0], y: R[1], tex: "75", cuerpo: 16 }];
+          hojas.forEach(function (h) {
+            var dx = h[0] - R[0], dy = h[1] - R[1], l = Math.sqrt(dx * dx + dy * dy);
+            d += '<path d="M' + r(R[0] + 16 * dx / l) + " " + r(R[1] + 16 * dy / l) + "L" + r(h[0] - 14 * dx / l) + " " + r(h[1] - 14 * dy / l) +
+                '" stroke-width="1.4" opacity="0.7"/>' +
+              '<circle cx="' + h[0] + '" cy="' + h[1] + '" r="14" fill="currentColor" fill-opacity="0.16" stroke-width="1.9"/>';
+            rotulos.push({ x: h[0], y: h[1], tex: h[2], cuerpo: 16 });
+            rotulos.push({ x: h[0], y: 98, tex: h[3], cuerpo: 15, opacidad: 0.9 });
+          });
+          rotulos.push(
+            { x: 403, y: 47, tex: "\\ln75=\\ln\\left(3\\cdot5^{2}\\right)=a+2b", cuerpo: 18 },
+            { x: 403, y: 92, tex: "\\ln3=a,\\quad\\ln5=b", cuerpo: 14.5, opacidad: 0.85 },
+            { x: 780, y: 50, tex: "\\log_{3}5=\\dfrac{\\ln5}{\\ln3}=\\dfrac{b}{a}", cuerpo: 17 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 318 };
+        },
+
+        "ecuacion-exponencial": function () {
+          var Y = 50;
+          var d = '<rect x="600" y="' + (Y - 27) + '" width="160" height="54" rx="27" fill="currentColor" fill-opacity="0.12" stroke-width="1.7"/>' +
+            '<path d="M789 ' + (Y + 9) + "L841 " + (Y - 9) + '" stroke-width="1.6" opacity="0.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 130, y: Y, tex: "3e^{2x-1}=12", cuerpo: 17 },
+              { x: 210, y: Y, tex: "\\iff", cuerpo: 17 },
+              { x: 290, y: Y, tex: "e^{2x-1}=4", cuerpo: 17 },
+              { x: 370, y: Y, tex: "\\iff", cuerpo: 17 },
+              { x: 470, y: Y, tex: "2x-1=\\ln4", cuerpo: 17 },
+              { x: 568, y: Y, tex: "\\iff", cuerpo: 17 },
+              { x: 680, y: Y, tex: "x=\\dfrac12+\\ln2", cuerpo: 18 },
+              { x: 680, y: 94, texto: "exacta", cuerpo: 11.5 },
+              { x: 815, y: Y, tex: "1{,}19", cuerpo: 17, opacidad: 0.5 },
+              { x: 815, y: 94, texto: "redondeado, ya no vale", cuerpo: 11.5, opacidad: 0.85 }
+            ],
+            foco: 645
+          };
+        },
+
+        "semivida-y-duplicacion": function () {
+          var O = [200, 90], T = 80, A = 78;
+          var baja = function (t) { return [O[0] + t * T, O[1] - A * Math.pow(2, -t)]; };
+          var P = [706, 90], T2 = 66, A2 = 19;
+          var sube = function (t) { return [P[0] + t * T2, P[1] - A2 * Math.pow(2, t)]; };
+          var punto = function (q) {
+            return '<circle cx="' + r(q[0]) + '" cy="' + r(q[1]) + '" r="4" fill="currentColor" stroke="none"/>';
+          };
+          var guias = "", puntos = punto(baja(0));
+          var rotulos = [
+            { x: 96, y: 48, tex: "N(t)=A\\,e^{kt}", cuerpo: 18 },
+            { x: O[0] - 14, y: O[1] - A, tex: "A", cuerpo: 15 }
+          ];
+          for (var t = 1; t <= 3; t++) {
+            var q = baja(t);
+            guias += "M" + O[0] + " " + r(q[1]) + "H" + r(q[0]) + "V" + O[1];
+            puntos += punto(q);
+            rotulos.push({ x: r(q[0] + 18), y: r(q[1] - 18), tex: "\\dfrac{A}{" + Math.pow(2, t) + "}", cuerpo: 14 });
+            rotulos.push({ x: r(q[0]), y: 101, tex: (t > 1 ? t : "") + "T", cuerpo: 13.5 });
+          }
+          var d = '<path d="M' + (O[0] - 6) + " " + O[1] + "H" + r(baja(3.6)[0]) + "M" + O[0] + " " + (O[1] + 6) + 'V4" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="' + guias + '" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>' +
+            '<path d="' + trazo(baja, 0, 3.5, 0.05) + '" stroke-width="2.3"/>' + puntos +
+            '<rect x="497" y="16" width="126" height="60" rx="30" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          var guias2 = "", puntos2 = punto(sube(0));
+          for (t = 1; t <= 2; t++) {
+            q = sube(t);
+            guias2 += "M" + P[0] + " " + r(q[1]) + "H" + r(q[0]) + "V" + P[1];
+            puntos2 += punto(q);
+            rotulos.push({ x: r(q[0]), y: 101, tex: (t > 1 ? t : "") + "T", cuerpo: 13.5, opacidad: 0.65 });
+          }
+          d += '<g opacity="0.65">' +
+            '<path d="M' + (P[0] - 6) + " " + P[1] + "H" + r(sube(2.4)[0]) + "M" + P[0] + " " + (P[1] + 6) + 'V4" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="' + guias2 + '" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>' +
+            '<path d="' + trazo(sube, 0, 2.2, 0.05) + '" stroke-width="2.3"/>' + puntos2 + "</g>";
+          rotulos.push(
+            { x: P[0] - 14, y: r(sube(0)[1]), tex: "A", cuerpo: 14, opacidad: 0.65 },
+            { x: r(sube(1)[0] + 19), y: r(sube(1)[1] + 8), tex: "2A", cuerpo: 14, opacidad: 0.65 },
+            { x: r(sube(2)[0] + 21), y: r(sube(2)[1] + 10), tex: "4A", cuerpo: 14, opacidad: 0.65 },
+            { x: 560, y: 46, tex: "T=\\dfrac{\\ln2}{|k|}", cuerpo: 16 },
+            { x: 560, y: 86, texto: "semivida, si decrece", cuerpo: 11.5 },
+            { x: 560, y: 100, texto: "tiempo de duplicación, si crece", cuerpo: 11, opacidad: 0.75 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 417 };
+        },
+
+        "principio-de-multiplicacion": function () {
+          var S = 9, G2 = 4, G1 = 12, X0 = 332;
+          var Y = [13, 40, 67, 93];
+          var media = function (lista) {
+            return lista.reduce(function (a, b) { return a + b; }, 0) / lista.length;
+          };
+          var primeros = [];
+          for (var i = 0; i < 3; i++) {
+            var segundos = [];
+            for (var j = 0; j < 4; j++) {
+              var hojas = [];
+              for (var k = 0; k < 2; k++) {
+                hojas.push(X0 + i * (3 * (2 * S + G2) + S + S + G1) + j * (2 * S + G2) + k * S);
+              }
+              segundos.push({ x: media(hojas), hojas: hojas });
+            }
+            primeros.push({ x: media(segundos.map(function (s) { return s.x; })), segundos: segundos });
+          }
+          var raiz = media(primeros.map(function (p) { return p.x; }));
+          var ramas1 = "", ramas2 = "", ramas3 = "", puntos = "";
+          primeros.forEach(function (p) {
+            ramas1 += "M" + r(raiz) + " " + Y[0] + "L" + r(p.x) + " " + Y[1];
+            puntos += '<circle cx="' + r(p.x) + '" cy="' + Y[1] + '" r="3.4" fill="currentColor" stroke="none"/>';
+            p.segundos.forEach(function (s) {
+              ramas2 += "M" + r(p.x) + " " + Y[1] + "L" + r(s.x) + " " + Y[2];
+              puntos += '<circle cx="' + r(s.x) + '" cy="' + Y[2] + '" r="2.6" fill="currentColor" stroke="none"/>';
+              s.hojas.forEach(function (h) {
+                ramas3 += "M" + r(s.x) + " " + Y[2] + "L" + r(h) + " " + Y[3];
+                puntos += '<circle cx="' + r(h) + '" cy="' + Y[3] + '" r="2.1" fill="currentColor" stroke="none"/>';
+              });
+            });
+          });
+          var p1 = primeros[1], s1 = p1.segundos[1], h1 = s1.hojas[0];
+          var camino = "M" + r(raiz) + " " + Y[0] + "L" + r(p1.x) + " " + Y[1] + "L" + r(s1.x) + " " + Y[2] + "L" + r(h1) + " " + Y[3];
+          var izquierda = [primeros[0].x, primeros[0].segundos[0].x, primeros[0].segundos[0].hojas[0]];
+          var velos = "";
+          [0, 1, 2].forEach(function (nivel) {
+            velos += "M288 " + Y[nivel + 1] + "H" + r(izquierda[nivel] - 9);
+          });
+          var d = '<path d="' + velos + '" stroke-width="1.2" stroke-dasharray="1.5 5" opacity="0.5"/>' +
+            '<path d="' + ramas3 + '" stroke-width="1.1" opacity="0.7"/>' +
+            '<path d="' + ramas2 + '" stroke-width="1.5" opacity="0.85"/>' +
+            '<path d="' + ramas1 + '" stroke-width="2"/>' +
+            '<path d="' + camino + '" stroke-width="2.6"/>' + puntos +
+            '<circle cx="' + r(raiz) + '" cy="' + Y[0] + '" r="4.4" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(h1) + '" cy="' + Y[3] + '" r="7.5" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + r(h1) + '" cy="' + Y[3] + '" r="3.4" fill="currentColor" stroke="none"/>' +
+            '<rect x="640" y="23" width="150" height="44" rx="22" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 248, y: Y[1], texto: "3 primeros", cuerpo: 12 },
+              { x: 248, y: Y[2], texto: "4 segundos", cuerpo: 12 },
+              { x: 248, y: Y[3], texto: "2 postres", cuerpo: 12 },
+              { x: 715, y: 45, tex: "3\\cdot4\\cdot2=24", cuerpo: 21 },
+              { x: 715, y: 88, texto: "cada camino es un menú", cuerpo: 12, opacidad: 0.9 }
+            ],
+            foco: 561
+          };
+        },
+
+        "ordenar-y-elegir": function () {
+          var PX = 330, EX = 680, CY = 51;
+          var d = '<path d="M279 84V58H313V42H347V68H381V84Z" fill="currentColor" fill-opacity="0.12" stroke-width="1.7"/>' +
+            '<path d="M313 58V84M347 68V84" stroke-width="1.2" opacity="0.6"/>' +
+            '<path d="M584 24q8 0 8 9v12q0 6 7 6q-7 0-7 6v12q0 9-8 9" stroke-width="1.5"/>' +
+            '<path d="M608 ' + CY + "h28M629 " + (CY - 5.5) + "l7 5.5-7 5.5" + '" stroke-width="1.6"/>' +
+            '<circle cx="' + EX + '" cy="' + CY + '" r="29" fill="currentColor" fill-opacity="0.1" stroke-width="1.7"/>';
+          var rotulos = [
+            { x: 160, y: 54, texto: "¿importa el orden?", cuerpo: 13 },
+            { x: PX, y: 11, texto: "ordenar", cuerpo: 12.5 },
+            { x: PX - 34, y: 45, tex: "B", cuerpo: 17 },
+            { x: PX, y: 30, tex: "A", cuerpo: 17 },
+            { x: PX + 34, y: 55, tex: "C", cuerpo: 17 },
+            { x: PX - 34, y: 72, texto: "2", cuerpo: 11, opacidad: 0.6 },
+            { x: PX, y: 64, texto: "1", cuerpo: 11, opacidad: 0.6 },
+            { x: PX + 34, y: 77, texto: "3", cuerpo: 11, opacidad: 0.6 },
+            { x: PX, y: 98, tex: "{}^{n}P_{r}", cuerpo: 16 },
+            { x: 503, y: 11, tex: "3!=6", cuerpo: 13.5 },
+            { x: 503, y: 92, texto: "seis podios, un solo equipo", cuerpo: 11, opacidad: 0.9 },
+            { x: EX, y: 11, texto: "elegir", cuerpo: 12.5 },
+            { x: EX, y: CY - 11, tex: "A", cuerpo: 16 },
+            { x: EX - 12, y: CY + 10, tex: "B", cuerpo: 16 },
+            { x: EX + 12, y: CY + 10, tex: "C", cuerpo: 16 },
+            { x: EX, y: 98, tex: "{}^{n}C_{r}", cuerpo: 16 },
+            { x: 862, y: 54, tex: "{}^{n}P_{r}=r!\\cdot{}^{n}C_{r}", cuerpo: 17 }
+          ];
+          ["ABC", "ACB", "BAC", "BCA", "CAB", "CBA"].forEach(function (orden, j) {
+            rotulos.push({ x: 450 + 53 * (j % 3), y: j < 3 ? 38 : 64, tex: orden, cuerpo: 15, opacidad: j === 0 ? 1 : 0.8 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 494 };
+        },
+
+        "binomio": function () {
+          var X = function (k) { return 290 + 52 * k; };
+          var Y = function (e) { return r(50 - 3.9 * e); };
+          var cadena = "", puntos = "";
+          var rotulos = [{ x: 236, y: 50, tex: "x^{0}", cuerpo: 14, opacidad: 0.85 }];
+          for (var k = 0; k <= 6; k++) {
+            var e = 6 - 3 * k;
+            cadena += (k ? "L" : "M") + X(k) + " " + Y(e);
+            if (k === 2) {
+              continue;
+            }
+            puntos += '<circle cx="' + X(k) + '" cy="' + Y(e) + '" r="4" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: X(k) + 19, y: Y(e) - 13, tex: "x^{" + e + "}", cuerpo: 14 });
+          }
+          var d = '<path d="M256 50H428" stroke-width="1.3" stroke-dasharray="5 5" opacity="0.7"/>' +
+            '<path d="' + cadena + '" stroke-width="1.6" opacity="0.65"/>' + puntos +
+            '<circle cx="' + X(2) + '" cy="50" r="10.5" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<circle cx="' + X(2) + '" cy="50" r="5.2" fill="currentColor" stroke="none"/>' +
+            '<rect x="' + (X(2) - 26) + '" y="64" width="52" height="25" rx="12.5" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>';
+          rotulos.push(
+            { x: X(2), y: 76.5, tex: "135", cuerpo: 16 },
+            { x: X(2), y: 100, texto: "término independiente", cuerpo: 11 },
+            { x: 160, y: 30, tex: "\\left(x-\\frac{3}{x^{2}}\\right)^{6}", cuerpo: 17 },
+            { x: 690, y: 36, tex: "{}^{6}C_{r}\\,(-3)^{r}\\,x^{6-3r}", cuerpo: 15 },
+            { x: 690, y: 60, texto: "término general", cuerpo: 11, opacidad: 0.9 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 518 };
+        },
+
+        "terminos": function () {
+          var punta = function (cx, cy, ex, ey) {
+            var a = Math.atan2(ey - cy, ex - cx);
+            return "M" + r(ex - 7 * Math.cos(a - 0.45)) + " " + r(ey - 7 * Math.sin(a - 0.45)) + "L" + ex + " " + ey +
+              "L" + r(ex - 7 * Math.cos(a + 0.45)) + " " + r(ey - 7 * Math.sin(a + 0.45));
+          };
+          var lugares = [
+            { x: 222, n: "1", u: "2" }, { x: 272, n: "2", u: "5" }, { x: 322, n: "3", u: "10" },
+            { x: 372, n: "4", u: "17" }, { x: 464, n: "20", u: "401", realce: true }
+          ];
+          var d = '<rect x="436" y="64" width="56" height="30" rx="15" fill="currentColor" fill-opacity="0.12" stroke-width="1.5"/>' +
+            '<path d="M512 14V94" stroke-width="1" opacity="0.3" stroke-dasharray="2 5"/>';
+          var rotulos = [
+            { x: 112, y: 28, texto: "término general", cuerpo: 11.5, opacidad: 0.85 },
+            { x: 112, y: 56, tex: "u_n=n^2+1", cuerpo: 19 },
+            { x: 180, y: 24, tex: "n", cuerpo: 14, opacidad: 0.7 },
+            { x: 180, y: 79, tex: "u_n", cuerpo: 15, opacidad: 0.7 },
+            { x: 418, y: 24, tex: "\\cdots", cuerpo: 14, opacidad: 0.7 },
+            { x: 414, y: 79, tex: "\\cdots", cuerpo: 15, opacidad: 0.7 }
+          ];
+          lugares.forEach(function (l) {
+            d += '<path d="M' + l.x + " 35V61" + punta(l.x, 35, l.x, 61) + '" stroke-width="' + (l.realce ? 2 : 1.4) + '"' +
+              (l.realce ? "" : ' opacity="0.6"') + "/>";
+            rotulos.push({ x: l.x, y: 24, tex: l.n, cuerpo: 14, opacidad: l.realce ? 1 : 0.75 });
+            rotulos.push({ x: l.x, y: 79, tex: l.u, cuerpo: 17 });
+          });
+          var X = [692, 770, 848, 926], Y = 62, valores = ["5", "7", "11", "19"];
+          rotulos.push(
+            { x: 594, y: 28, texto: "ley de recurrencia", cuerpo: 11.5, opacidad: 0.85 },
+            { x: 594, y: 54, tex: "u_1=5", cuerpo: 16 },
+            { x: 594, y: 80, tex: "u_{n+1}=2u_n-3", cuerpo: 16 }
+          );
+          X.forEach(function (cx, i) {
+            d += '<circle cx="' + cx + '" cy="' + Y + '" r="4.6" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: cx, y: Y + 22, tex: valores[i], cuerpo: 17 });
+            if (i < X.length - 1) {
+              var a = cx + 7, b = X[i + 1] - 7, c = (cx + X[i + 1]) / 2;
+              d += '<path d="M' + a + " " + (Y - 6) + "Q" + c + " " + (Y - 46) + " " + b + " " + (Y - 6) +
+                punta(c, Y - 46, b, Y - 6) + '" stroke-width="1.8"/>';
+            }
+          });
+          [956, 966, 976].forEach(function (cx) {
+            d += '<circle cx="' + cx + '" cy="' + Y + '" r="1.9" fill="currentColor" stroke="none" opacity="0.7"/>';
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 278 };
+        },
+
+        "progresion-aritmetica": function () {
+          var Y = 58;
+          var x = function (v) { return r(40 + (v - 5) * 17.5); };
+          var d = '<path d="M' + x(4.4) + " " + Y + "H" + x(21.6) + "M" + (x(21.6) - 8) + " " + (Y - 5) + "l8 5-8 5" +
+            '" stroke-width="1.5" opacity="0.55"/>';
+          var marcas = "";
+          for (var v = 5; v <= 21; v++) {
+            marcas += "M" + x(v) + " " + (Y - 3.5) + "v7";
+          }
+          d += '<path d="' + marcas + '" stroke-width="1.1" opacity="0.45"/>';
+          var terminos = [7, 11, 15, 19], rotulos = [];
+          terminos.forEach(function (t, i) {
+            if (i < terminos.length - 1) {
+              var a = x(t), b = x(terminos[i + 1]);
+              var arco = "M" + a + " " + Y + "A" + r((b - a) / 2) + " 27 0 0 1 " + b + " " + Y;
+              d += '<path d="' + arco + 'Z" fill="currentColor" fill-opacity="0.1" stroke="none"/>' +
+                '<path d="' + arco + '" stroke-width="1.9"/>';
+              rotulos.push({ x: r((a + b) / 2), y: Y - 38, tex: "d", cuerpo: 15 });
+            }
+            d += '<circle cx="' + x(t) + '" cy="' + Y + '" r="4.6" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: x(t), y: Y + 19, tex: String(t), cuerpo: 16 });
+            rotulos.push({ x: x(t), y: Y + 37, tex: "u_" + (i + 1), cuerpo: 12.5, opacidad: 0.7 });
+          });
+          rotulos.push(
+            { x: 428, y: 28, tex: "u_n=u_1+(n-1)d", cuerpo: 17 },
+            { x: 428, y: 58, tex: "u_4=7+3\\cdot4=19", cuerpo: 15 },
+            { x: 428, y: 87, tex: "n\\ \\text{términos},\\ n-1\\ \\text{saltos}", cuerpo: 13, opacidad: 0.85 }
+          );
+          var X0 = 604, alto = [6, 10, 14, 18, 22], escalera = "M" + X0 + " 96", rayas = "";
+          alto.forEach(function (h, i) {
+            escalera += "V" + (96 - 3 * h) + "H" + (X0 + 22 * (i + 1));
+            if (i > 0) {
+              rayas += "M" + (X0 + 22 * i) + " 12V96";
+            }
+          });
+          d += '<rect x="' + X0 + '" y="12" width="110" height="84" stroke-width="1.3" opacity="0.6" stroke-dasharray="3 4"/>' +
+            '<path d="' + escalera + 'V96Z" fill="currentColor" fill-opacity="0.16" stroke-width="1.8"/>' +
+            '<path d="' + rayas + '" stroke-width="1.1" opacity="0.35"/>' +
+            '<path d="M' + (X0 + 122) + " 12h5v84h-5" + '" stroke-width="1.4"/>';
+          rotulos.push(
+            { x: X0 + 142, y: 54, tex: "u_1+u_n", cuerpo: 14, giro: -90 },
+            { x: 850, y: 40, tex: "S_n=\\dfrac{n}{2}\\,(u_1+u_n)", cuerpo: 17 },
+            { x: 850, y: 82, texto: "dos escaleras, un rectángulo", cuerpo: 11 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 292 };
+        },
+
+        "progresion-geometrica": function () {
+          var base = 98, E = 1.3;
+          var d = '<path d="M84 ' + base + 'H444" stroke-width="1.5" opacity="0.55"/>';
+          var rotulos = [
+            { x: 112, y: 30, tex: "r=3", cuerpo: 17 },
+            { x: 120, y: 56, tex: "u_8=2\\cdot3^7=4374", cuerpo: 14, opacidad: 0.9 },
+            { x: 434, y: 88, tex: "\\cdots", cuerpo: 15, opacidad: 0.7 },
+            { x: 556, y: 54, tex: "u_n=u_1\\,r^{n-1}", cuerpo: 19 }
+          ];
+          [2, 6, 18, 54].forEach(function (v, i) {
+            var x0 = 110 + 80 * i, alto = r(v * E);
+            d += '<rect x="' + x0 + '" y="' + r(base - alto) + '" width="40" height="' + alto +
+              '" rx="2" fill="currentColor" fill-opacity="0.14" stroke-width="1.8"/>';
+            rotulos.push({ x: x0 + 20, y: r(base - alto - 13), tex: String(v), cuerpo: 16 });
+          });
+          var Y = 50, X = [676, 760, 844, 928], valores = [48, -24, 12, -6];
+          d += '<path d="M640 ' + Y + 'H938" stroke-width="1.5" opacity="0.55"/>';
+          valores.forEach(function (v, i) {
+            var fin = r(Y - v * 0.75);
+            d += '<path d="M' + X[i] + " " + Y + "V" + fin + '" stroke-width="2.2"/>' +
+              '<circle cx="' + X[i] + '" cy="' + fin + '" r="4.4" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: X[i] + 22, y: v < 0 ? fin + 6 : fin, tex: String(v).replace("-", "{-}"), cuerpo: 15 });
+          });
+          rotulos.push(
+            { x: 718, y: 94, tex: "r=-\\tfrac12", cuerpo: 16 },
+            { x: 872, y: 94, texto: "los signos se alternan", cuerpo: 11 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 240 };
+        },
+
+        "interes-compuesto": function () {
+          var X0 = 70, P = 40, Y0 = 89, E = 0.065;
+          var x = function (t) { return r(X0 + t * P); };
+          var y = function (v) { return r(Y0 - (v - 2000) * E); };
+          var compuesto = function (t) { return 2000 * Math.pow(1.06, t); };
+          var curva = trazo(function (s) { return [X0 + s * P, Y0 - (compuesto(s) - 2000) * E]; }, 0, 8, 0.25);
+          var marcas = "";
+          for (var t = 0; t <= 8; t++) {
+            marcas += "M" + x(t) + " " + (Y0 - 3) + "v6";
+          }
+          var d = '<path d="' + curva + "L" + x(8) + " " + y(2960) + 'Z" fill="currentColor" fill-opacity="0.18" stroke="none"/>' +
+            '<path d="M' + (X0 - 14) + " " + Y0 + "H" + (x(8) + 16) + '" stroke-width="1.5" opacity="0.55"/>' +
+            '<path d="' + marcas + '" stroke-width="1.1" opacity="0.5"/>' +
+            '<path d="M' + x(0) + " " + Y0 + "L" + x(8) + " " + y(2960) + '" stroke-width="1.5" opacity="0.7" stroke-dasharray="4 4"/>' +
+            '<path d="' + curva + '" stroke-width="2.3"/>' +
+            '<path d="M' + (x(8) + 6) + " " + (y(2960) + 4) + "L" + (x(8) + 46) + ' 50" stroke-width="1.1" opacity="0.6"/>';
+          for (t = 1; t <= 8; t++) {
+            d += '<circle cx="' + x(t) + '" cy="' + y(2000 + 120 * t) + '" r="3" fill="#ffffff" stroke-width="1.5"/>';
+          }
+          for (t = 1; t <= 8; t++) {
+            d += '<circle cx="' + x(t) + '" cy="' + y(compuesto(t)) + '" r="3.4" fill="currentColor" stroke="none"/>';
+          }
+          d += '<circle cx="' + x(0) + '" cy="' + Y0 + '" r="4" fill="currentColor" stroke="none"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 160, y: 16, texto: "2000 euros al 6 % durante 8 años", cuerpo: 11.5, opacidad: 0.85 },
+              { x: x(0), y: Y0 + 10, tex: "0", cuerpo: 12, opacidad: 0.7 },
+              { x: x(8), y: Y0 + 10, tex: "8", cuerpo: 12, opacidad: 0.7 },
+              { x: 462, y: 11, tex: "3187{,}70", cuerpo: 15 },
+              { x: 462, y: 28, texto: "interés compuesto", cuerpo: 11.5 },
+              { x: 462, y: 54, tex: "2960", cuerpo: 15, opacidad: 0.85 },
+              { x: 462, y: 71, texto: "interés simple", cuerpo: 11.5, opacidad: 0.85 },
+              { x: 770, y: 40, tex: "VF=VA\\cdot\\left(1+\\frac{r}{100k}\\right)^{kn}", cuerpo: 18 },
+              { x: 770, y: 84, texto: "los intereses también producen intereses", cuerpo: 11.5, opacidad: 0.85 }
+            ],
+            foco: 285
+          };
+        },
+
+        "cadena-de-implicaciones": function () {
+          var arriba = 24, alto = 60, medio = arriba + alto / 2;
+          var piezas = [
+            { x: 60, ancho: 124, tex: "\\dfrac1n-\\dfrac{1}{n+2}", nombre: "miembro izquierdo" },
+            { x: 220, ancho: 130, tex: "\\dfrac{(n+2)-n}{n(n+2)}" },
+            { x: 386, ancho: 106, tex: "\\dfrac{2}{n(n+2)}", nombre: "miembro derecho", realce: true }
+          ];
+          var d = "", rotulos = [];
+          piezas.forEach(function (p, i) {
+            var c = p.x + p.ancho / 2;
+            d += '<rect x="' + p.x + '" y="' + arriba + '" width="' + p.ancho + '" height="' + alto + '" rx="14" fill="currentColor" fill-opacity="' +
+              (p.realce ? 0.13 : 0.05) + '" stroke-width="' + (p.realce ? 2.1 : 1.4) + '"/>';
+            rotulos.push({ x: c, y: medio, tex: p.tex, cuerpo: 17 });
+            if (p.nombre) {
+              rotulos.push({ x: c, y: 12, texto: p.nombre, cuerpo: 11.5 });
+            }
+            if (i > 0) {
+              var antes = piezas[i - 1];
+              rotulos.push({ x: (antes.x + antes.ancho + p.x) / 2, y: medio, tex: "=", cuerpo: 19 });
+            }
+          });
+          var a = piezas[0].x + piezas[0].ancho / 2, b = piezas[2].x + piezas[2].ancho / 2, cm = (a + b) / 2;
+          var bajo = arriba + alto, pie = bajo + 10;
+          d += '<path d="M' + a + " " + (bajo + 3) + "V" + pie + "H" + (cm - 74) + "M" + (cm + 74) + " " + pie + "H" + b +
+            "V" + (bajo + 4) + "M" + (b - 5) + " " + (bajo + 9) + "L" + b + " " + (bajo + 4) + "L" + (b + 5) + " " + (bajo + 9) +
+            '" stroke-width="1.4" opacity="0.75"/>';
+          rotulos.push({ x: cm, y: pie + 0.5, texto: "de un miembro al otro", cuerpo: 11.5 });
+          d += '<path d="M562 12V98" stroke-width="1" opacity="0.3" stroke-dasharray="2 5"/>' +
+            '<rect x="636" y="' + arriba + '" width="296" height="' + alto +
+            '" rx="14" fill="currentColor" fill-opacity="0.035" stroke-width="1.3" opacity="0.85"/>';
+          rotulos.push(
+            { x: 784, y: 12, texto: "también puede ser numérica", cuerpo: 11.5 },
+            { x: 784, y: medio, tex: "\\log_4 80-\\log_4 5=\\log_4 16=2", cuerpo: 17 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 276 };
+        },
+
+        "induccion": function () {
+          var arriba = 22, alto = 60, medio = arriba + alto / 2, bajo = arriba + alto;
+          var partes = [
+            { x: 122, ancho: 128, nombre: "caso base", realce: true },
+            { x: 276, ancho: 115, nombre: "hipótesis" },
+            { x: 417, ancho: 326, nombre: "paso inductivo", realce: true },
+            { x: 769, ancho: 120, nombre: "conclusión" }
+          ];
+          var d = "", rotulos = [];
+          partes.forEach(function (p, i) {
+            d += '<rect x="' + p.x + '" y="' + arriba + '" width="' + p.ancho + '" height="' + alto + '" rx="13" fill="currentColor" fill-opacity="' +
+              (p.realce ? 0.12 : 0.035) + '" stroke-width="' + (p.realce ? 2 : 1.3) + '"' + (p.realce ? "" : ' opacity="0.85"') + "/>";
+            rotulos.push({ x: p.x + p.ancho / 2, y: 12, texto: p.nombre, cuerpo: 11.5 });
+            if (i > 0) {
+              var x0 = partes[i - 1].x + partes[i - 1].ancho + 5, x1 = p.x - 5;
+              d += '<path d="M' + x0 + " " + medio + "H" + x1 + "M" + (x1 - 6) + " " + (medio - 5) + "l6 5-6 5" + '" stroke-width="1.6"/>';
+            }
+          });
+          var centro = function (k) { return partes[k].x + partes[k].ancho / 2; };
+          var em = 1.21 * 15, izquierda = centro(2) - 8.1 * em;
+          var segundo = izquierda + 7.542 * em, dosk = segundo + 1.566 * em;
+          rotulos.push(
+            { x: centro(0), y: medio, tex: "1+1=2\\cdot1", cuerpo: 16 },
+            { x: centro(1), y: medio, tex: "k+k=2k", cuerpo: 16 },
+            { x: r(izquierda + 6.681 * em), y: medio - 12, tex: "(k+1)+(k+1)=(k+k)+2", cuerpo: 15 },
+            { x: r(segundo + 4.327 * em), y: medio + 13, tex: "=2k+2=2(k+1)", cuerpo: 15 },
+            { x: centro(3), y: medio - 9, tex: "n+n=2n", cuerpo: 16 },
+            { x: centro(3) - 29, y: medio + 14, texto: "para todo", cuerpo: 11, opacidad: 0.85 },
+            { x: centro(3) + 31, y: medio + 14, tex: "n\\in\\mathbb Z^+", cuerpo: 13, opacidad: 0.85 }
+          );
+          var h = centro(1), x2 = r(dosk);
+          d += '<path d="M' + h + " " + (bajo + 2) + "C" + h + " " + (bajo + 20) + " " + x2 + " " + (bajo + 20) + " " + x2 + " " + (bajo - 5) +
+            '" stroke-width="1.4" stroke-dasharray="3 3.5"/>' +
+            '<path d="M' + r(x2 - 5) + " " + (bajo + 0.5) + "L" + x2 + " " + (bajo - 5) + "L" + r(x2 + 5) + " " + (bajo + 0.5) + '" stroke-width="1.6"/>';
+          rotulos.push({ x: r(x2 + 80), y: bajo + 15, texto: "ahí se usa la hipótesis", cuerpo: 11 });
+          return { dibujo: d, rotulos: rotulos, foco: 510 };
+        },
+
+        "contradiccion": function () {
+          var arriba = 24, alto = 60, medio = arriba + alto / 2, bajo = arriba + alto;
+          var pasos = [
+            { x: 30, ancho: 112, tex: "\\log_2 7=\\dfrac pq", cuerpo: 16 },
+            { x: 175, ancho: 95, tex: "2^{p/q}=7", cuerpo: 16 },
+            { x: 304, ancho: 96, tex: "2^p=7^q", cuerpo: 17, realce: true }
+          ];
+          var d = "", rotulos = [];
+          pasos.forEach(function (p, i) {
+            d += '<rect x="' + p.x + '" y="' + arriba + '" width="' + p.ancho + '" height="' + alto + '" rx="14" fill="currentColor" fill-opacity="' +
+              (p.realce ? 0.12 : 0.05) + '" stroke-width="' + (p.realce ? 2 : 1.4) + '"/>';
+            rotulos.push({ x: p.x + p.ancho / 2, y: p.realce ? medio - 7 : medio, tex: p.tex, cuerpo: p.cuerpo });
+            if (i > 0) {
+              var x0 = pasos[i - 1].x + pasos[i - 1].ancho + 6, x1 = p.x - 6;
+              d += '<path d="M' + x0 + " " + (medio - 4) + "H" + (x1 - 4) + "M" + x0 + " " + (medio + 4) + "H" + (x1 - 4) +
+                "M" + (x1 - 8) + " " + (medio - 8) + "L" + x1 + " " + medio + "L" + (x1 - 8) + " " + (medio + 8) + '" stroke-width="1.6"/>';
+            }
+          });
+          var ultimo = pasos[2], cu = ultimo.x + ultimo.ancho / 2, c0 = pasos[0].x + pasos[0].ancho / 2;
+          rotulos.push(
+            { x: cu - 22, y: medio + 15, texto: "par", cuerpo: 11 },
+            { x: cu + 22, y: medio + 15, texto: "impar", cuerpo: 11 },
+            { x: c0, y: 12, texto: "se supone lo contrario", cuerpo: 11.5 }
+          );
+          var xa = 440, pie = bajo + 11, cm = (c0 + xa) / 2;
+          d += '<path d="M' + (ultimo.x + ultimo.ancho + 6) + " " + medio + "H" + (xa - 20) + '" stroke-width="1.6"/>' +
+            '<circle cx="' + xa + '" cy="' + medio + '" r="15" fill="currentColor" fill-opacity="0.1" stroke-width="2"/>' +
+            '<path d="M' + (xa - 6.5) + " " + (medio - 6.5) + "l13 13M" + (xa + 6.5) + " " + (medio - 6.5) + 'l-13 13" stroke-width="2.6"/>' +
+            '<path d="M' + xa + " " + (medio + 19) + "V" + pie + "H" + (cm + 78) + "M" + (cm - 78) + " " + pie + "H" + c0 +
+            "V" + (bajo + 4) + "M" + (c0 - 5) + " " + (bajo + 9) + "L" + c0 + " " + (bajo + 4) + "L" + (c0 + 5) + " " + (bajo + 9) +
+            '" stroke-width="1.4" opacity="0.75"/>';
+          rotulos.push(
+            { x: xa, y: 12, texto: "contradicción", cuerpo: 11.5 },
+            { x: cm, y: pie + 0.5, texto: "la suposición es falsa", cuerpo: 11.5 }
+          );
+
+          var valores = [11, 13, 17, 23, 31, 41, 53, 67, 83, 101];
+          var y = 44, xf = 950;
+          d += '<path d="M548 12V98" stroke-width="1" opacity="0.3" stroke-dasharray="2 5"/>' +
+            '<path d="M615 ' + y + 'H885" stroke-width="1" opacity="0.4"/>';
+          valores.forEach(function (v, i) {
+            var x = 615 + 30 * i;
+            d += '<circle cx="' + x + '" cy="' + y + '" r="4" fill="currentColor" stroke="none"/>';
+            rotulos.push({ x: x, y: y + 21, tex: String(v), cuerpo: 13 });
+          });
+          d += '<path d="M897 ' + y + "H" + (xf - 20) + '" stroke-width="1" opacity="0.4" stroke-dasharray="2 4"/>' +
+            '<circle cx="' + xf + '" cy="' + y + '" r="13" fill="currentColor" fill-opacity="0.1" stroke-width="2"/>' +
+            '<path d="M' + (xf - 5.5) + " " + (y - 5.5) + "l11 11M" + (xf + 5.5) + " " + (y - 5.5) + 'l-11 11" stroke-width="2.4"/>';
+          rotulos.push(
+            { x: 750, y: 15, tex: "n^2-n+11", cuerpo: 15 },
+            { x: 750, y: 92, texto: "diez casos que funcionan no demuestran nada", cuerpo: 11 },
+            { x: xf, y: 15, texto: "contraejemplo", cuerpo: 11.5 },
+            { x: xf, y: y + 26, tex: "121=11^2", cuerpo: 14 },
+            { x: xf, y: 92, texto: "no es primo", cuerpo: 11 }
+          );
+          return { dibujo: d, rotulos: rotulos, foco: 251 };
+        }
+      };
+
+      var DIBUJOS = {
+        "cuerda": svg(48, 48,
+          '<circle cx="24" cy="24" r="17" stroke-width="1.8"/>' +
+          '<path d="M24 24L36 12M36 12V36" stroke-width="2"/><path d="M36 24H24" stroke-width="1.3" opacity="0.6"/>' +
+          '<path d="M24 24L36 36" stroke-width="1.3" opacity="0.6"/>', 2.2),
+        "cordic": svg(48, 48,
+          '<path d="M24 41A17 17 0 1 1 41 24" stroke-width="1.6" opacity="0.6"/>' +
+          '<path d="M24 24L41 24M24 24L36 12M24 24L31.2 8.6M24 24L28 7.5" stroke-width="1.6"/>' +
+          '<circle cx="28" cy="7.5" r="2.6" fill="currentColor" stroke="none"/>', 2.2),
+        "prostaferesis": svg(48, 48,
+          '<path d="M6 17l10 10M16 17L6 27" stroke-width="2.6"/><path d="M20 22h9M26 18.5l3.5 3.5-3.5 3.5" stroke-width="1.8"/>' +
+          '<path d="M33 22h11M38.5 16.5v11" stroke-width="2.6"/>', 2.2),
+        "diapason": svg(48, 48,
+          '<path d="M10 6v16a5 5 0 0 0 10 0V6M15 27v15" stroke-width="2.2"/>' +
+          '<path d="M25 22c2-6 4-6 6 0s4 6 6 0 4-6 6 0" stroke-width="1.8"/>', 2.2),
+        "triangulacion": svg(48, 48,
+          '<path d="M5 34L13 12L22 34L31 12L40 34M13 12H31M5 34H40" stroke-width="1.8"/>' +
+          '<circle cx="13" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="31" cy="12" r="2.2" fill="currentColor" stroke="none"/>', 2.2),
+        "diagonal": svg(48, 48,
+          '<rect x="11" y="11" width="26" height="26" rx="1" fill="currentColor" fill-opacity="0.12" stroke-width="1.8"/>' +
+          '<path d="M11 37L37 11" stroke-width="2.6"/>', 2.2),
+        "gugol": '<span class="formula-dibujo" data-tex="10^{100}"></span>',
+        "al-yabr": '<span class="letras-dibujo" lang="ar" dir="rtl">الجبر</span>',
+        "igual": svg(48, 48, '<path d="M7 20h34M7 28h34" stroke-width="2.8"/>', 2.2),
+        "indice": svg(48, 48,
+          '<path d="M8 8v32h33" stroke-width="1.7" opacity="0.65"/>' +
+          '<path d="M11 13l6 6 4-3.5 6 9 4-3 7 12" stroke-width="2.5"/><path d="M38.5 26.5v7h-7" stroke-width="2.1"/>', 2.2),
+        "radical": svg(48, 48, '<path d="M6 27.5h6l6 12 8.5-31H43" stroke-width="3"/>', 2.2),
+        "regla-de-calculo": svg(48, 48,
+          '<rect x="3" y="12" width="42" height="8" rx="1.5" stroke-width="1.6"/>' +
+          '<rect x="10" y="20" width="35" height="8" rx="1.5" fill="currentColor" fill-opacity="0.16" stroke-width="1.6"/>' +
+          '<rect x="3" y="28" width="42" height="8" rx="1.5" stroke-width="1.6"/>' +
+          '<path d="M8 12v3.5M17 12v3.5M23 12v3.5M27.5 12v3.5M31 12v3.5M34 12v3.5M36.5 12v3.5M38.7 12v3.5M40.6 12v3.5' +
+          'M15 28v-3.5M24 28v-3.5M30 28v-3.5M34.5 28v-3.5M38 28v-3.5M41 28v-3.5" stroke-width="1.2"/>' +
+          '<path d="M27.5 8.5v31" stroke-width="1.5" opacity="0.7"/>', 2),
+        "cero": svg(48, 48, '<ellipse cx="24" cy="24" rx="9.5" ry="14" stroke-width="3.2"/>', 2.2),
+        "recta-numerica": svg(48, 48,
+          '<path d="M5 30h38M39.5 26.5L43 30l-3.5 3.5M8.5 26.5L5 30l3.5 3.5" stroke-width="2"/>' +
+          '<path d="M14 26.5v7M34 26.5v7" stroke-width="1.7"/><path d="M24 25v10" stroke-width="2.4"/>' +
+          '<path d="M24 19.5c-2.5-7-8-7-10 0M14 19.5l-3-3.2M14 19.5l4-1.6" stroke-width="1.8"/>', 2.2),
+        "arena": '<span class="formula-dibujo" data-tex="10^{63}"></span>',
+        "equis": '<span class="formula-dibujo" data-tex="x,\\,y,\\,z"></span>',
+        "tres-de-cuatro": svg(48, 48,
+          '<rect x="8" y="8" width="14" height="14" rx="2" fill="currentColor" fill-opacity="0.16"/>' +
+          '<rect x="26" y="8" width="14" height="14" rx="2" fill="currentColor" fill-opacity="0.16"/>' +
+          '<rect x="8" y="26" width="14" height="14" rx="2" fill="currentColor" fill-opacity="0.16"/>' +
+          '<rect x="26" y="26" width="14" height="14" rx="2" stroke-dasharray="3 3" opacity="0.6"/>' +
+          '<path d="M29.5 29.5l7 7M36.5 29.5l-7 7" stroke-width="2"/>', 1.8),
+        "medalla": svg(48, 48,
+          '<path d="M14 4h6l6 12.5h-6z" fill="currentColor" fill-opacity="0.2" stroke-width="1.6"/>' +
+          '<path d="M34 4h-6l-6 12.5h6z" fill="currentColor" fill-opacity="0.2" stroke-width="1.6"/>' +
+          '<circle cx="24" cy="29.5" r="13" fill="currentColor" fill-opacity="0.12" stroke-width="2.2"/>' +
+          '<path d="M20.5 22.5v14M17 32h14" stroke-width="1.8"/>', 2),
+        "codigo-qr": svg(48, 48,
+          '<rect x="7" y="7" width="12" height="12" rx="1.5"/><rect x="10.5" y="10.5" width="5" height="5" fill="currentColor" stroke="none"/>' +
+          '<rect x="29" y="7" width="12" height="12" rx="1.5"/><rect x="32.5" y="10.5" width="5" height="5" fill="currentColor" stroke="none"/>' +
+          '<rect x="7" y="29" width="12" height="12" rx="1.5"/><rect x="10.5" y="32.5" width="5" height="5" fill="currentColor" stroke="none"/>' +
+          '<path d="M24 8v3M24 15.5v3M8 24h3M15.5 24h3M24 24h3M31 24h3M38 24h2.5M24 30v3M24 37.5v2.5M30 29.5h2.5" stroke-width="2.8"/>' +
+          '<path d="M33 31.5l3.5 3-3 3.5 4.5 3.5" stroke-width="1.4" opacity="0.75"/>', 2),
+        "diferencia-de-cuadrados": svg(48, 48,
+          '<path d="M9 9H39V27H27V39H9Z" fill="currentColor" fill-opacity="0.14" stroke-width="2.2"/>' +
+          '<path d="M27 27H39V39H27Z" stroke-dasharray="3 3" stroke-width="1.6" opacity="0.6"/>', 2),
+        "papiro": svg(48, 48,
+          '<path d="M11 13h26M11 35h26" stroke-width="1.8"/>' +
+          '<path d="M11 13c-3 0-4 2.5-4 11s1 11 4 11c3 0 4-2.5 4-11s-1-11-4-11z" fill="currentColor" fill-opacity="0.12" stroke-width="1.8"/>' +
+          '<path d="M37 13c3 0 4 2.5 4 11s-1 11-4 11" stroke-width="1.8"/>' +
+          '<path d="M19.5 18.5c3.5-3.2 10.5-3.2 14 0c-3.5 3.2-10.5 3.2-14 0z" stroke-width="1.9"/>' +
+          '<path d="M22.5 25v5.5M26.5 25v5.5M30.5 25v5.5" stroke-width="2.2"/>', 2),
+        "zahlen": svg(48, 48, '<path d="M12 10H37L18 38M31 10L12 38H37" stroke-width="2.4"/>', 2.2),
+        "infinito": svg(48, 48,
+          '<path d="' + trazo(function (t) {
+            var q = 1 + Math.sin(t) * Math.sin(t);
+            return [24 + (19 * Math.cos(t)) / q, 24 + (28 * Math.sin(t) * Math.cos(t)) / q];
+          }, 0, 2 * Math.PI, Math.PI / 48) + 'Z" stroke-width="2.6"/>', 2.2),
+        "barras": svg(48, 48,
+          '<path d="M13 8.5v31M35 8.5v31" stroke-width="2.6"/>' +
+          '<path d="M19.5 18.5l9 11M28.5 18.5l-9 11" stroke-width="2.3"/>', 2.2),
+
+        "interes-compuesto": svg(48, 48, [[10, 2], [24, 4], [38, 6]].map(function (m) {
+          var c = m[0], n = m[1], base = 43, arriba = base - 5 * n, dentro = "";
+          dentro += '<path d="M' + (c - 6) + " " + arriba + "V" + base + "M" + (c + 6) + " " + arriba + "V" + base + '"/>';
+          for (var j = 0; j < n; j++) {
+            dentro += '<path d="M' + (c - 6) + " " + (base - 5 * j) + "A6 2.4 0 0 0 " + (c + 6) + " " + (base - 5 * j) + '"/>';
+          }
+          return dentro + '<ellipse cx="' + c + '" cy="' + arriba + '" rx="6" ry="2.4" fill="currentColor" fill-opacity="0.22"/>';
+        }).join(""), 1.6),
+        "tablas": svg(48, 48,
+          '<path d="M24 13c-5-3-11-3.5-18-2.5v26c7-1 13-.5 18 2.5c5-3 11-3.5 18-2.5v-26c-7-1-13-.5-18 2.5z" fill="currentColor" fill-opacity="0.1" stroke-width="1.8"/>' +
+          '<path d="M24 13v26" stroke-width="1.5"/>' +
+          '<path d="M9.5 16.5h4M15.5 16.5h5M9.5 21.5h4M15.5 21.5h5M9.5 26.5h4M15.5 26.5h5M9.5 31.5h4M15.5 31.5h5' +
+          'M27.5 16.5h5M34.5 16.5h4M27.5 21.5h5M34.5 21.5h4M27.5 26.5h5M34.5 26.5h4M27.5 31.5h5M34.5 31.5h4" stroke-width="1.5" opacity="0.8"/>', 2),
+        "termometro": svg(48, 48,
+          '<path d="M20.5 32.6V9.5a3.5 3.5 0 0 1 7 0v23.1a7.5 7.5 0 1 1-7 0z" stroke-width="1.9"/>' +
+          '<circle cx="24" cy="39.2" r="4.4" fill="currentColor" stroke="none"/>' +
+          '<path d="M24 35V17" stroke-width="2.8"/>' +
+          '<path d="M30.5 12h4M30.5 18h3M30.5 24h4M30.5 30h3" stroke-width="1.4" opacity="0.7"/>', 2),
+
+        "factorial": '<span class="formula-dibujo" data-tex="n!"></span>',
+        "baraja": svg(48, 48,
+          '<rect x="14" y="8" width="20" height="28" rx="3" fill="#ffffff" transform="rotate(-20 24 44)" stroke-width="1.7" opacity="0.75"/>' +
+          '<rect x="14" y="8" width="20" height="28" rx="3" fill="#ffffff" stroke-width="1.7"/>' +
+          '<g transform="rotate(20 24 44)"><rect x="14" y="8" width="20" height="28" rx="3" fill="#ffffff" stroke-width="1.9"/>' +
+          '<path d="M24 26.5c-4.4-3-6.4-5.1-6.4-7.5 0-1.8 1.4-3.1 3.1-3.1 1.4 0 2.6.8 3.3 2 .7-1.2 1.9-2 3.3-2 1.7 0 3.1 1.3 3.1 3.1 0 2.4-2 4.5-6.4 7.5z" fill="currentColor" stroke="none"/></g>', 2),
+        "yang-hui": svg(48, 48,
+          '<path d="M24 5.4V12.6M18.5 15.9V23.1M29.5 15.9V23.1M13 26.4V33.6M22.55 26.4V33.6M25.45 26.4V33.6M35 26.4V33.6' +
+          'M7.5 36.9V44.1M15.6 36.9V44.1M18.5 36.9V44.1M21.4 36.9V44.1M26.6 36.9V44.1M29.5 36.9V44.1M32.4 36.9V44.1M40.5 36.9V44.1" stroke-width="1.5"/>', 2),
+
+        "girasol": (function () {
+          var d = "";
+          var p = function (a, radio) { return r(24 + radio * Math.cos(a)) + " " + r(24 + radio * Math.sin(a)); };
+          for (var k = 0; k < 13; k++) {
+            var a = (2 * Math.PI * k) / 13;
+            d += '<path d="M' + p(a - 0.2, 17.4) + "Q" + p(a - 0.13, 21.6) + " " + p(a, 23.4) + "Q" + p(a + 0.13, 21.6) + " " + p(a + 0.2, 17.4) +
+              '" fill="currentColor" fill-opacity="0.16" stroke-width="1.2"/>';
+          }
+          for (k = 1; k <= 58; k++) {
+            var radio = 2.1 * Math.sqrt(k), giro = k * 2.39996;
+            d += '<circle cx="' + r(24 + radio * Math.cos(giro)) + '" cy="' + r(24 + radio * Math.sin(giro)) +
+              '" r="' + r(0.8 + 0.06 * Math.sqrt(k)) + '" fill="currentColor" stroke="none"/>';
+          }
+          return svg(48, 48, d, 2);
+        })(),
+        "aquiles": svg(48, 48,
+          '<path d="M2 31.5H46" stroke-width="1.4" opacity="0.45"/>' +
+          '<path d="M3.5 31A3.6 6.5 0 0 1 10.7 31A1.8 3.3 0 0 1 14.3 31A0.9 1.65 0 0 1 16.1 31" stroke-width="1.8"/>' +
+          '<circle cx="3.5" cy="31" r="2.2" fill="currentColor" stroke="none"/>' +
+          '<path d="M18.5 29a11 12 0 0 1 22 0z" fill="currentColor" fill-opacity="0.18" stroke-width="2.1"/>' +
+          '<path d="M23.5 29l2.8-5.2h6.4l2.8 5.2M26.3 23.8l-1.9-4.3M32.7 23.8l1.9-4.3" stroke-width="1.4" opacity="0.75"/>' +
+          '<path d="M40 27l2.3-2.2M22.5 29v2.5M36.5 29v2.5M18.6 27.6l-2.2 1.5" stroke-width="2"/>' +
+          '<circle cx="44" cy="23" r="2.6" stroke-width="1.8"/>', 2),
+        "regla-del-72": '<span class="formula-dibujo" data-tex="72"></span>',
+
+        "lapida": svg(48, 48,
+          '<path d="M7 14h34M7 23h34M7 32h17" stroke-width="2" opacity="0.55"/>' +
+          '<rect x="29" y="26.5" width="10" height="11.5" rx="0.8" fill="currentColor" stroke="none"/>', 2.2),
+        "libro-abierto": svg(48, 48,
+          '<path d="M24 14c-5-3.6-11.5-4.6-18-3.6v25c6.5-1 13 0 18 3.6c5-3.6 11.5-4.6 18-3.6v-25c-6.5-1-13 0-18 3.6z" ' +
+          'fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/><path d="M24 14v25" stroke-width="1.6"/>' +
+          '<path d="M10.5 17.5c3.6-.4 6.9.3 9.5 1.7M10.5 23.5c3.6-.4 6.9.3 9.5 1.7M10.5 29.5c3.6-.4 6.9.3 9.5 1.7' +
+          'M28 19.2c2.6-1.4 5.9-2.1 9.5-1.7M28 25.2c2.6-1.4 5.9-2.1 9.5-1.7M28 31.2c2.6-1.4 5.9-2.1 9.5-1.7" stroke-width="1.3" opacity="0.6"/>', 2),
+        "potencias-quintas": '<span class="formula-dibujo" data-tex="144^{5}"></span>',
+        "": svg(48, 48, '<path d="M24 8v8M24 32v8M8 24h8M32 24h8M13 13l5 5M30 30l5 5M35 13l-5 5M18 30l-5 5" stroke-width="2.2"/>', 2.2)
+      };
+
+      function componer(tex) {
+        if (!window.katex) {
+          return null;
+        }
+        try {
+          return window.katex.renderToString(tex, { throwOnError: false });
+        } catch (error) {
+          return null;
+        }
+      }
+      function lienzo(ancho, alto, pieza) {
+        var caja = document.createElement("div");
+        caja.className = "lienzo-adorno";
+        caja.style.width = ancho + "px";
+        caja.style.height = alto + "px";
+        caja.innerHTML = svg(ancho, alto, pieza.dibujo);
+        (pieza.rotulos || []).forEach(function (rotulo) {
+          var texto = rotulo.tex ? componer(rotulo.tex) : null;
+          if (rotulo.tex && texto === null) {
+            return;
+          }
+          var e = document.createElement("span");
+          e.className = "rotulo-adorno" + (rotulo.fundido ? " fundido" : "") + (rotulo.tex ? "" : " de-texto");
+          e.style.left = rotulo.x + "px";
+          e.style.top = rotulo.y + "px";
+          e.style.fontSize = rotulo.cuerpo + "px";
+          if (rotulo.opacidad) {
+            e.style.opacity = rotulo.opacidad;
+          }
+          if (rotulo.color) {
+            e.style.color = rotulo.color;
+          }
+          if (rotulo.giro) {
+            e.style.transform = "translate(-50%, -50%) rotate(" + rotulo.giro + "deg)";
+          }
+          if (texto !== null) {
+            e.innerHTML = texto;
+          } else {
+            e.textContent = rotulo.texto;
+          }
+          caja.appendChild(e);
+        });
+        return caja;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var contenido = document.getElementById("contenido-unidad");
+        var ajustes = [];
+
+        var marco = document.querySelector(".adorno-portada[data-portada]");
+        var pieza = marco ? PORTADAS[marco.getAttribute("data-portada")] : null;
+        if (marco && !pieza) {
+          marco.classList.add("sin-sitio");
+        }
+        if (pieza) {
+          var tela = lienzo(640, 225, pieza());
+          marco.appendChild(tela);
+          var portada = marco.parentElement;
+          var titulo = portada.querySelector("h1");
+          ajustes.push(function () {
+            var escala;
+            if (window.getComputedStyle(marco).position === "absolute") {
+              var caja = portada.getBoundingClientRect();
+              if (!caja.width) {
+                return;
+              }
+              var libre = caja.width;
+              if (titulo) {
+                var rango = document.createRange();
+                rango.selectNodeContents(titulo);
+                libre = caja.right - rango.getBoundingClientRect().right - 28;
+              }
+              escala = Math.min(1, caja.height / 225, libre / 640);
+              marco.classList.toggle("sin-sitio", escala < 0.3);
+            } else {
+              if (!marco.clientWidth) {
+                return;
+              }
+              escala = marco.clientWidth / 640;
+              marco.classList.remove("sin-sitio");
+            }
+            marco.classList.toggle("sin-rotulos", escala < 0.55);
+            tela.style.transform = "scale(" + r(escala) + ")";
+          });
+        }
+
+        if (contenido) {
+          contenido.querySelectorAll(":scope > section.level2[data-emblema] > h2").forEach(function (h2) {
+            var dibujo = emblema(h2.parentElement.getAttribute("data-emblema"));
+            if (!dibujo) {
+              return;
+            }
+            var e = document.createElement("span");
+            e.className = "emblema-apartado";
+            e.setAttribute("aria-hidden", "true");
+            e.innerHTML = dibujo;
+            h2.appendChild(e);
+            h2.classList.add("con-emblema");
+          });
+
+          contenido.querySelectorAll(".friso-apartado[data-friso]").forEach(function (hueco) {
+            var crear = FRISOS[hueco.getAttribute("data-friso")];
+            if (!crear) {
+              hueco.classList.add("sin-dibujo");
+              return;
+            }
+            var friso = crear(hueco.closest("section.level2"));
+            var tela = lienzo(1004, 108, friso);
+            hueco.appendChild(tela);
+            var centrado = false;
+            ajustes.push(function () {
+              var ancho = hueco.clientWidth;
+              if (!ancho) {
+                return;
+              }
+              var calzo = window.getComputedStyle(hueco, "::before");
+              var dibujo = Math.min(parseFloat(calzo.maxWidth) || 1004, Math.max(parseFloat(calzo.minWidth) || 0, ancho));
+              var escala = dibujo / 1004;
+              tela.style.transform = "scale(" + r(escala) + ")";
+              tela.style.left = Math.max(0, r((ancho - dibujo) / 2)) + "px";
+              if (dibujo > ancho + 1 && !centrado) {
+                hueco.scrollLeft = Math.max(0, (friso.foco || 502) * escala - ancho / 2);
+                centrado = true;
+              }
+            });
+          });
+
+          contenido.querySelectorAll(".curiosidad").forEach(function (capsula) {
+            var nombre = capsula.getAttribute("data-dibujo") || "";
+            var e = document.createElement("span");
+            e.className = "dibujo-curiosidad";
+            e.setAttribute("aria-hidden", "true");
+            e.innerHTML = DIBUJOS[nombre] || DIBUJOS[""];
+            var formula = e.querySelector(".formula-dibujo");
+            if (formula) {
+              var compuesta = componer(formula.getAttribute("data-tex"));
+              if (compuesta === null) {
+                e.innerHTML = DIBUJOS[""];
+              } else {
+                formula.innerHTML = compuesta;
+              }
+            }
+            capsula.insertBefore(e, capsula.firstChild);
+          });
+        }
+
+        function ajustar() {
+          ajustes.forEach(function (ajuste) {
+            ajuste();
+          });
+        }
+        if (ajustes.length) {
+          ajustar();
+          window.addEventListener("resize", ajustar);
+          new MutationObserver(ajustar).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(ajustar);
+          }
+        }
+      });
+    })();
   </script>
 
   <script type="text/babel" data-presets="env,react">
