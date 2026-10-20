@@ -2585,8 +2585,9 @@
         --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
       }
 
-      .barra-clase [data-accion="soluciones"] {
-        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+      .barra-clase [data-accion="resultados"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E");
+        margin-right: 0.7rem;
         color: var(--verde);
       }
 
@@ -2742,6 +2743,21 @@
         white-space: normal;
       }
 
+      html.ampliando.amp-resoluciones #contenido-unidad .math.inline .corte-formula.tras-operacion,
+      html.ampliando.amp-resoluciones #contenido-unidad .math.inline.formula-corta .corte-formula {
+        white-space: nowrap;
+      }
+
+      html.ampliando.amp-resoluciones #contenido-unidad .math.inline:not(.formula-corta) .corte-formula.tras-relacion,
+      html.ampliando.amp-resoluciones #contenido-unidad .math.inline.amp-imprescindible .corte-formula {
+        white-space: normal;
+      }
+
+      html.ampliando.amp-resoluciones #contenido-unidad .sol-chip .math.inline .corte-formula.tras-relacion,
+      html.ampliando.amp-resoluciones #contenido-unidad .sol-resultado .math.inline .corte-formula.tras-relacion {
+        white-space: nowrap;
+      }
+
       .marco-ampliar button {
         position: fixed;
         z-index: 90;
@@ -2810,8 +2826,8 @@
         right: 16px;
       }
 
-      .marco-ampliar [data-ampliar="soluciones"] {
-        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+      .marco-ampliar [data-ampliar="resultados"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E");
         right: 18px;
         bottom: 12px;
         width: 56px;
@@ -2819,10 +2835,35 @@
         color: var(--verde);
       }
 
-      .marco-ampliar [data-ampliar="soluciones"][aria-pressed="true"] {
+      .marco-ampliar [data-ampliar="resultados"]::before {
+        width: 30px;
+        height: 30px;
+      }
+
+      .marco-ampliar [data-ampliar="resultados"][aria-pressed="true"] {
         color: #ffffff;
         background: var(--verde);
         border-color: var(--verde);
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"] {
+        --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20l1.1-4.6L15.6 4.9a2.1 2.1 0 0 1 3 3L8.1 18.4 4 20Z'/%3E%3Cpath d='M13.6 6.9l3 3'/%3E%3C/svg%3E");
+        left: 24px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+        color: var(--acento);
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"]::before {
+        width: 27px;
+        height: 27px;
+      }
+
+      .marco-ampliar [data-ampliar="resuelto"][aria-pressed="true"] {
+        color: #ffffff;
+        background: var(--acento);
+        border-color: var(--acento);
       }
     }
 
@@ -4558,6 +4599,44 @@
       }
     }
 
+    @media screen and (min-width: 42.0625rem) {
+      html.modo-clase .sol-ico {
+        position: relative;
+      }
+
+      html.modo-clase .sol-ico::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        height: 44px;
+        transform: translateY(-50%);
+      }
+
+      html.modo-clase .sol-ico.lapiz::after {
+        left: calc(-3.2px - 1.5px);
+        right: calc(-7.2px - 1.5px);
+      }
+
+      html.modo-clase .sol-ico.ojo::after {
+        left: calc(-5px - 1.5px);
+        right: calc(-3.2px - 1.5px);
+      }
+
+      html.modo-clase .sol-ico.ojo:last-child::after {
+        right: calc(-5.4px - 1.5px);
+      }
+    }
+
+    html.ampliando .sol-ico {
+      width: clamp(44px, 2.1rem, 52px);
+      height: clamp(44px, 2.1rem, 52px);
+    }
+
+    html.ampliando .sol-ico svg {
+      width: 54.8%;
+      height: 54.8%;
+    }
+
     .sol-chip {
       display: inline-block;
       max-width: 100%;
@@ -4591,6 +4670,19 @@
       margin-top: 0.3rem;
     }
 
+    html.ampliando .sol-chip {
+      overflow: visible;
+      white-space: normal;
+      padding: calc(0.12em - 1px) calc(0.6em - 1px) calc(0.16em - 1px);
+      border-width: 2px;
+    }
+
+    html.ampliando .sol-resultado {
+      overflow: visible;
+      white-space: normal;
+      border-width: 2px 2px 2px 4px;
+    }
+
     .sol-pasos {
       margin: 0.5rem 0 0.6rem;
       padding: 0.55rem 0.95rem 0.6rem;
@@ -4599,6 +4691,12 @@
       border-left: 0.3rem solid var(--acento);
       border-radius: 0.3rem 0.7rem 0.7rem 0.3rem;
       animation: entrar-detalle 260ms ease-out;
+    }
+
+    html.ampliando .sol-pasos {
+      background: #ffffff;
+      border-left-width: 4px;
+      animation: none;
     }
 
     .sol-pasos > :first-child,
@@ -4707,19 +4805,53 @@
     }
 
     @media screen {
-      html:not(.modo-clase) .boton-soluciones.respuestas-repartidas,
-      html:not(.modo-clase) .resultado.plegable.respuestas-repartidas,
-      html:not(.modo-clase) section.respuestas-repartidas {
+      .boton-soluciones.respuestas-repartidas,
+      .resultado.plegable.respuestas-repartidas,
+      section.respuestas-repartidas {
         display: none !important;
       }
 
-      html.modo-clase .sol-iconos,
-      html.modo-clase .sol-fila,
-      html.modo-clase .sol-chip,
-      html.modo-clase .sol-barra,
-      html.modo-clase .sol-abiertos,
-      html.modo-clase .sol-resultado,
-      html.modo-clase .sol-pasos {
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-chip,
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-resultado,
+      html.ampliando #contenido-unidad.ampliar-componiendo .sol-pasos {
+        display: none !important;
+      }
+
+      html.ampliando .amp-reservado {
+        visibility: hidden;
+      }
+
+      html.ampliando .sol-pasos.amp-paso {
+        display: block;
+      }
+
+      html.vista-apartado .apartado-en-pantalla .sol-ico.ojo,
+      html.vista-apartado .apartado-en-pantalla .sol-chip,
+      html.vista-apartado .apartado-en-pantalla .sol-resultado {
+        display: none;
+      }
+
+      html.vista-resuelto .sol-ico.ojo {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      html.vista-resuelto .sol-ico.ojo[aria-expanded="true"] {
+        background: #ffffff;
+        border-color: rgb(4 120 87 / 0.38);
+      }
+
+      html.vista-resuelto .sol-ico.lapiz[aria-expanded="true"] {
+        background: #ffffff;
+        border-color: rgb(29 78 216 / 0.32);
+      }
+    }
+
+    @media screen and (min-width: 42.0625rem) {
+      html.modo-clase:not(.ampliando) .sol-chip,
+      html.modo-clase:not(.ampliando) .sol-resultado,
+      html.modo-clase:not(.ampliando) .sol-pasos,
+      html.modo-clase:not(.ampliando) .sol-abiertos {
         display: none !important;
       }
     }
@@ -10710,6 +10842,9 @@ Bachillerato</p>
         vieja.replaceWith(html);
       }
       contenido.querySelectorAll(".katex-display").forEach(sumarHuecosDeFila);
+      contenido.addEventListener("ampliar-huecos", function (evento) {
+        evento.target.querySelectorAll(".katex-display").forEach(sumarHuecosDeFila);
+      });
     });
   </script>
 
@@ -10802,6 +10937,17 @@ Bachillerato</p>
         "son", "es", "y", "o", "e", "la", "las", "el", "los", "por", "ejemplo"];
       var unidades = [];
       var cuenta = 0;
+      var htmlRaiz = document.documentElement;
+      var CLASE_ANCHA = window.matchMedia ? window.matchMedia("(min-width: 42.0625rem)") : null;
+      function mandaLaClase() {
+        return (
+          htmlRaiz.classList.contains("modo-clase") &&
+          (htmlRaiz.classList.contains("ampliando") || !CLASE_ANCHA || CLASE_ANCHA.matches)
+        );
+      }
+      function quieta(caja) {
+        return htmlRaiz.classList.contains("ampliando") || !caja.getClientRects().length;
+      }
 
       function numerosDeLaLista(lista) {
         var primero = parseInt(lista.getAttribute("start") || "1", 10);
@@ -10889,6 +11035,9 @@ Bachillerato</p>
       }
       var TOPE_DE_ENCOGER = 60;
       function encogerCuentas(caja) {
+        if (quieta(caja)) {
+          return;
+        }
         var estilo = window.getComputedStyle(caja);
         var borde =
           caja.getBoundingClientRect().left +
@@ -11006,6 +11155,9 @@ Bachillerato</p>
         return encogidas;
       }
       function deslizarLasQueNoCaben(caja) {
+        if (quieta(caja)) {
+          return;
+        }
         var estilo = window.getComputedStyle(caja);
         var derecha =
           caja.getBoundingClientRect().right -
@@ -11021,7 +11173,7 @@ Bachillerato</p>
         });
       }
       function ajustarLasCajas(caja) {
-        if (caja.classList.contains("esta-plegado") || !caja.firstChild) {
+        if (caja.classList.contains("esta-plegado") || !caja.firstChild || quieta(caja)) {
           return;
         }
         var encogidas = encogerLasCajas(caja);
@@ -11037,6 +11189,9 @@ Bachillerato</p>
         });
       }
       function encogerLasAbiertas() {
+        if (htmlRaiz.classList.contains("ampliando")) {
+          return;
+        }
         unidades.forEach(function (unidad) {
           ["pasos", "chip"].forEach(function (que) {
             var caja = unidad[que];
@@ -11477,6 +11632,10 @@ Bachillerato</p>
           ajustarLasCajas(caja);
         });
       }
+      function avisarALaClase(b, que) {
+        b.dispatchEvent(new CustomEvent("sol-clase", { bubbles: true, detail: { que: que, boton: b } }));
+        b.blur();
+      }
       function prepararBotones(datos) {
         var unidad = { llenar: {} };
         var iconos = document.createElement("span");
@@ -11487,6 +11646,10 @@ Bachillerato</p>
           unidad.ojo.setAttribute("aria-controls", unidad.chip.id);
           unidad.llenar.chip = datos.resultados;
           unidad.ojo.addEventListener("click", function () {
+            if (mandaLaClase()) {
+              avisarALaClase(unidad.ojo, "ojo");
+              return;
+            }
             abrir(unidad, "chip");
           });
           iconos.appendChild(unidad.ojo);
@@ -11497,6 +11660,10 @@ Bachillerato</p>
           unidad.lapiz.setAttribute("aria-controls", unidad.pasos.id);
           unidad.llenar.pasos = datos.pasos;
           unidad.lapiz.addEventListener("click", function () {
+            if (mandaLaClase()) {
+              avisarALaClase(unidad.lapiz, "lapiz");
+              return;
+            }
             abrir(unidad, "pasos");
           });
           iconos.appendChild(unidad.lapiz);
@@ -11766,10 +11933,44 @@ Bachillerato</p>
       }
       window.addEventListener("load", encogerLasAbiertas);
 
-      new MutationObserver(function () {
-        if (!document.documentElement.classList.contains("modo-clase")) {
+      function unidadDelBoton(b) {
+        for (var i = 0; i < unidades.length; i++) {
+          if (unidades[i].ojo === b || unidades[i].lapiz === b) {
+            return unidades[i];
+          }
+        }
+        return null;
+      }
+      document.addEventListener("sol-poner", function (evento) {
+        var datos = evento.detail || {};
+        var b = datos.boton || evento.target;
+        var unidad = unidadDelBoton(b);
+        if (!unidad) {
           return;
         }
+        var que = b === unidad.ojo ? "chip" : "pasos";
+        var caja = unidad[que];
+        if (datos.abierto || datos.reservado) {
+          if (!caja.firstChild) {
+            unidad.llenar[que](caja);
+          }
+          caja.classList.remove("esta-plegado");
+        } else {
+          caja.classList.add("esta-plegado");
+          if (datos.vaciar) {
+            caja.textContent = "";
+          }
+        }
+        b.setAttribute("aria-expanded", datos.abierto ? "true" : "false");
+      });
+
+      var enClaseAntes = htmlRaiz.classList.contains("modo-clase");
+      new MutationObserver(function () {
+        var enClase = htmlRaiz.classList.contains("modo-clase");
+        if (enClase === enClaseAntes) {
+          return;
+        }
+        enClaseAntes = enClase;
         unidades.forEach(function (unidad) {
           plegar(unidad, true);
         });
@@ -11800,10 +12001,10 @@ Bachillerato</p>
       barra.setAttribute("role", "toolbar");
       barra.setAttribute("aria-label", "Modo clase");
       barra.innerHTML =
+        '<button type="button" data-accion="resultados" aria-label="Resultados (S)" title="Resultados (S)"></button>' +
         '<button type="button" data-accion="anterior" aria-label="Apartado anterior" title="Anterior (flecha izquierda)"></button>' +
         '<span class="posicion-clase" aria-live="polite"></span>' +
         '<button type="button" data-accion="siguiente" aria-label="Apartado siguiente" title="Siguiente (flecha derecha)"></button>' +
-        '<button type="button" data-accion="soluciones" aria-label="Soluciones" title="Soluciones (S)"></button>' +
         '<button type="button" data-accion="ampliar" aria-label="Ampliar lo que está en pantalla" title="Ampliar (A), o toca lo que quieras ampliar"></button>';
       document.body.appendChild(barra);
       var posicion = barra.querySelector(".posicion-clase");
@@ -11845,7 +12046,7 @@ Bachillerato</p>
       }
       function paradas() {
         return secciones.filter(function (seccion) {
-          return !seccion.classList.contains("level2") || contenidoPropio(seccion);
+          return (!seccion.classList.contains("level2") || contenidoPropio(seccion)) && visible(seccion);
         });
       }
       function destino(parada) {
@@ -11885,7 +12086,7 @@ Bachillerato</p>
         return titulo ? titulo.textContent.trim().split(/\s+/)[0] : "";
       }
       function pintar() {
-        if (activo()) {
+        if (activo() && !raiz.classList.contains("ampliando")) {
           posicion.textContent = etiqueta(actual(paradas()));
         }
       }
@@ -11940,6 +12141,45 @@ Bachillerato</p>
         boton.click();
         if (boton.getAttribute("aria-expanded") === "true") {
           asomar(boton);
+        }
+      }
+      function ejercicioALaVista() {
+        var lista = paradas();
+        if (!lista.length) {
+          return null;
+        }
+        var seccion = actual(lista);
+        var arriba = bordeSuperior();
+        var abajo = visible(barra) ? barra.getBoundingClientRect().top : window.innerHeight;
+        var ejercicios = Array.prototype.filter.call(seccion.querySelectorAll("ol.ampliable > li"), function (li) {
+          return visible(li) && !!li.querySelector(".sol-ico.ojo");
+        });
+        var mejor = null;
+        var mayor = 0;
+        for (var i = 0; i < ejercicios.length; i++) {
+          var caja = ejercicios[i].getBoundingClientRect();
+          if (caja.top >= arriba && caja.top < abajo) {
+            return ejercicios[i];
+          }
+          var seVe = Math.min(caja.bottom, abajo) - Math.max(caja.top, arriba);
+          if (seVe > mayor) {
+            mayor = seVe;
+            mejor = ejercicios[i];
+          }
+        }
+        return mejor;
+      }
+      function resultadosDeLoQueSeVe() {
+        var ejercicio = ejercicioALaVista();
+        if (ejercicio) {
+          var ojos = Array.prototype.filter.call(ejercicio.querySelectorAll(".sol-ico.ojo"), visible);
+          abrirAmpliacion(ejercicio.parentElement, ejercicio, { vista: "ejercicio", abrir: ojos, solo: true });
+          return;
+        }
+        var lista = paradas();
+        var seccion = lista.length ? actual(lista) : null;
+        if (seccion && Array.prototype.some.call(seccion.querySelectorAll("button.boton-soluciones"), visible)) {
+          alternarSoluciones();
         }
       }
 
@@ -12006,6 +12246,9 @@ Bachillerato</p>
         var ancla = anclar();
         var propia = ancla ? ancla.elemento.closest("section") : null;
         var dentro = propia && propia.getBoundingClientRect().top <= bordeSuperior() + 4;
+        if (!encendido) {
+          taparLoAbierto();
+        }
         raiz.classList.toggle("modo-clase", encendido);
         interruptor.setAttribute("aria-checked", encendido ? "true" : "false");
         if (ancla && visible(ancla.elemento)) {
@@ -12033,8 +12276,8 @@ Bachillerato</p>
           mover(-1);
         } else if (accion === "siguiente") {
           mover(1);
-        } else if (accion === "soluciones") {
-          alternarSoluciones();
+        } else if (accion === "resultados") {
+          resultadosDeLoQueSeVe();
         } else if (accion === "ampliar") {
           ampliarLoQueSeVe();
         }
@@ -12077,10 +12320,12 @@ Bachillerato</p>
             break;
           case "s":
           case "S":
-            alternarSoluciones();
+            resultadosDeLoQueSeVe();
             break;
           case "Escape":
-            poner(false);
+            if (Date.now() - cerradaEn >= 1000) {
+              poner(false);
+            }
             break;
           default:
             return;
@@ -12095,6 +12340,7 @@ Bachillerato</p>
       var LETRA_PARA_IR_ENTERA = 0.83;
       var LETRA_MINIMA_JUNTAS = 0.7;
       var ampliacion = null;
+      var cerradaEn = 0;
 
       function esUnidad(elemento) {
         if (elemento.closest(".interactivo, .ampliacion, .aplicacion")) {
@@ -12118,14 +12364,16 @@ Bachillerato</p>
         '<button type="button" data-ampliar="cerrar" aria-label="Volver a la página" title="Volver (Esc)"></button>' +
         '<button type="button" data-ampliar="anterior" aria-label="Anterior" title="Anterior (flecha izquierda)"></button>' +
         '<button type="button" data-ampliar="siguiente" aria-label="Siguiente" title="Siguiente (flecha derecha)"></button>' +
-        '<button type="button" data-ampliar="soluciones" aria-label="Soluciones" aria-pressed="false" title="Soluciones (S)" hidden></button>' +
+        '<button type="button" data-ampliar="resuelto" aria-label="Todo resuelto" aria-pressed="false" title="Todo resuelto" hidden></button>' +
+        '<button type="button" data-ampliar="resultados" aria-label="Resultados (S)" aria-pressed="false" title="Resultados (S)" hidden></button>' +
         '<div class="cuenta-ampliar" aria-live="polite"></div>';
       document.body.appendChild(marco);
       var miga = marco.querySelector(".miga-ampliar");
       var cuenta = marco.querySelector(".cuenta-ampliar");
       var botonAnterior = marco.querySelector('[data-ampliar="anterior"]');
       var botonSiguiente = marco.querySelector('[data-ampliar="siguiente"]');
-      var botonSoluciones = marco.querySelector('[data-ampliar="soluciones"]');
+      var botonResultados = marco.querySelector('[data-ampliar="resultados"]');
+      var botonResuelto = marco.querySelector('[data-ampliar="resuelto"]');
 
       function hijosVisibles(caja) {
         return Array.prototype.filter.call(caja.children, visible);
@@ -12235,12 +12483,12 @@ Bachillerato</p>
         Array.prototype.forEach.call(
           contenido.querySelectorAll(
             ".ampliar-oculto, .ampliar-camino, .ampliar-abierto, .ampliar-arriba, .ampliar-abajo, " +
-              ".ampliar-partible, .formula-partible"
+              ".ampliar-partible, .formula-partible, .amp-imprescindible"
           ),
           function (elemento) {
             elemento.classList.remove(
               "ampliar-oculto", "ampliar-camino", "ampliar-abierto", "ampliar-arriba", "ampliar-abajo",
-              "ampliar-partible", "formula-partible"
+              "ampliar-partible", "formula-partible", "amp-imprescindible"
             );
           }
         );
@@ -12248,6 +12496,14 @@ Bachillerato</p>
           li.removeAttribute("value");
         });
         ampliacion.puestos = [];
+        if (ampliacion.estirado) {
+          ampliacion.estirado.style.removeProperty("margin-bottom");
+          ampliacion.estirado = null;
+        }
+        if (ampliacion.subido) {
+          ampliacion.subido.style.removeProperty("margin-top");
+          ampliacion.subido = null;
+        }
         if (ampliacion.tarjeta) {
           ampliacion.tarjeta.style.paddingTop = "";
         }
@@ -12289,9 +12545,11 @@ Bachillerato</p>
         });
         a.primero = quedan[0];
         a.ultimo = quedan[quedan.length - 1];
-        a.primero.classList.add("ampliar-arriba");
+        if (!a.fija) {
+          a.primero.classList.add("ampliar-arriba");
+        }
         a.ultimo.classList.add("ampliar-abajo");
-        a.numeros.forEach(function (par) {
+        a.numeros.concat(a.letras || []).forEach(function (par) {
           if (visible(par[0]) && !par[0].hasAttribute("value")) {
             par[0].setAttribute("value", par[1]);
             a.puestos.push(par[0]);
@@ -12301,6 +12559,23 @@ Bachillerato</p>
       }
       function ponerZoom(zoom) {
         raiz.style.fontSize = Math.round(zoom * 1000) / 10 + "%";
+        fijarArriba();
+      }
+      function fijarArriba() {
+        var a = ampliacion;
+        if (!a || !a.fija || !a.tarjeta || !a.primero) {
+          return;
+        }
+        a.tarjeta.style.paddingTop = a.margenArriba + "px";
+        a.primero.style.removeProperty("margin-top");
+        var encima =
+          a.fija.getBoundingClientRect().top + a.tarjeta.scrollTop -
+          (a.tarjeta.getBoundingClientRect().top + a.margenArriba);
+        a.tarjeta.style.paddingTop = Math.max(0, a.margenArriba - encima) + "px";
+        if (encima > a.margenArriba) {
+          a.primero.style.setProperty("margin-top", a.margenArriba - encima + "px");
+          a.subido = a.primero;
+        }
       }
       function partirLoImprescindible() {
         var formulas = Array.prototype.filter.call(
@@ -12314,6 +12589,9 @@ Bachillerato</p>
           .filter(function (formula) {
             var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
             if (!caja || formula.closest("td, th")) {
+              return false;
+            }
+            if (formula.closest(".sol-chip, .sol-resultado")) {
               return false;
             }
             var estilo = window.getComputedStyle(caja);
@@ -12330,7 +12608,11 @@ Bachillerato</p>
         partirLoImprescindible();
         var estilo = window.getComputedStyle(a.tarjeta);
         var alto = a.tarjeta.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
-        if (a.ultimo.getBoundingClientRect().bottom - a.primero.getBoundingClientRect().top > alto + 0.5) {
+        var arriba = a.primero.getBoundingClientRect().top;
+        if (a.subido === a.primero) {
+          arriba = Math.max(arriba, a.tarjeta.getBoundingClientRect().top + parseFloat(estilo.paddingTop) - a.tarjeta.scrollTop);
+        }
+        if (!a.soloAncho && a.ultimo.getBoundingClientRect().bottom - arriba > alto + 0.5) {
           return false;
         }
         var derecha = a.tarjeta.getBoundingClientRect().right - parseFloat(estilo.paddingRight);
@@ -12343,7 +12625,44 @@ Bachillerato</p>
             return false;
           }
         }
+        var abiertas = a.tarjeta.querySelectorAll(".sol-chip, .sol-resultado, .sol-pasos");
+        for (var k = 0; k < abiertas.length; k++) {
+          if (visible(abiertas[k]) && seSaleLoAbierto(abiertas[k])) {
+            return false;
+          }
+        }
+        if (conResoluciones() && formulasQueSeSalen().length) {
+          return false;
+        }
         return true;
+      }
+      function conResoluciones() {
+        return raiz.classList.contains("amp-resoluciones");
+      }
+      function formulasQueSeSalen() {
+        return Array.prototype.filter.call(ampliacion.tarjeta.querySelectorAll(".math.inline"), function (formula) {
+          var caja = formula.closest(".final, p, li, dd, dt, figcaption, div");
+          if (!caja || formula.closest("td, th, .sol-chip, .sol-resultado") || !visible(formula)) {
+            return false;
+          }
+          var estilo = window.getComputedStyle(caja);
+          var borde =
+            caja.getBoundingClientRect().right - parseFloat(estilo.paddingRight) - parseFloat(estilo.borderRightWidth);
+          return Array.prototype.some.call(formula.querySelectorAll(".katex-html > .base"), function (pieza) {
+            return pieza.getBoundingClientRect().right > borde + 1;
+          });
+        });
+      }
+      function seSaleLoAbierto(caja) {
+        if (caja.scrollWidth > caja.clientWidth + 1) {
+          return true;
+        }
+        var estilo = window.getComputedStyle(caja);
+        var borde =
+          caja.getBoundingClientRect().right - parseFloat(estilo.paddingRight) - parseFloat(estilo.borderRightWidth);
+        return Array.prototype.some.call(caja.querySelectorAll(".katex-html > .base, .final"), function (pieza) {
+          return pieza.getBoundingClientRect().right > borde + 1;
+        });
       }
       function seSale(caja) {
         var piezas = caja.classList.contains("math")
@@ -12406,7 +12725,7 @@ Bachillerato</p>
         var a = ampliacion;
         ponerZoom(zoom || 1);
         cabe();
-        if (!zoom || !a.tarjeta.querySelector(".formula-partible")) {
+        if (!zoom || conResoluciones() || !a.tarjeta.querySelector(".formula-partible")) {
           return zoom;
         }
         for (var menor = zoom - 0.05; menor >= Math.max(1, zoom * 0.85); menor -= 0.05) {
@@ -12417,6 +12736,47 @@ Bachillerato</p>
         }
         return zoom;
       }
+      var MENOR_LETRA_A_LO_ANCHO = 0.6;
+      var PANTALLA_ANCHA = window.matchMedia ? window.matchMedia("(min-width: 42.0625rem)") : null;
+      function letraSiNoCabe() {
+        var a = ampliacion;
+        if (!conResoluciones() || (PANTALLA_ANCHA && !PANTALLA_ANCHA.matches)) {
+          return 1;
+        }
+        a.soloAncho = true;
+        try {
+          ponerZoom(1);
+          if (cabe()) {
+            return 1;
+          }
+          var abajo = MENOR_LETRA_A_LO_ANCHO;
+          ponerZoom(abajo);
+          if (!cabe()) {
+            return abajo;
+          }
+          var arriba = 1;
+          while (arriba - abajo > 0.02) {
+            var medio = (abajo + arriba) / 2;
+            ponerZoom(medio);
+            if (cabe()) {
+              abajo = medio;
+            } else {
+              arriba = medio;
+            }
+          }
+          return Math.floor(abajo * 100) / 100;
+        } finally {
+          a.soloAncho = false;
+        }
+      }
+      function marcarLoImprescindible() {
+        if (!conResoluciones()) {
+          return;
+        }
+        formulasQueSeSalen().forEach(function (formula) {
+          formula.classList.add("amp-imprescindible");
+        });
+      }
       function componer(unidad) {
         var a = ampliacion;
         a.numeros = [];
@@ -12426,14 +12786,25 @@ Bachillerato</p>
         [unidad].concat(hijosVisibles(unidad)).forEach(function (lista) {
           a.numeros = a.numeros.concat(numerosDe(lista, !lista.closest(".ejercicios, .resultado")));
         });
+        a.letras = [];
+        Array.prototype.forEach.call(unidad.querySelectorAll('li > ol[type="a"]'), function (lista) {
+          a.letras = a.letras.concat(numerosDe(lista, false));
+        });
         var piezas = piezasDe(unidad);
         var rotulos = fijosDe(unidad);
         a.partible = false;
         var entera = evitarPartir(mayorZoom(1, AMPLIACION_MAXIMA));
         var esTabla = unidad.tagName === "TABLE";
         var unaSola = [{ piezas: [unidad], visibles: [unidad], zoom: entera || 1, partible: a.partible }];
-        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? LETRA_MINIMA_JUNTAS : LETRA_PARA_IR_ENTERA)) {
+        function enteraSiNoCabe() {
+          if (!entera && conResoluciones()) {
+            mostrar([unidad]);
+            unaSola[0].zoom = letraSiNoCabe();
+          }
           return unaSola;
+        }
+        if (piezas.length < 2 || entera >= a.objetivo * (esTabla ? LETRA_MINIMA_JUNTAS : LETRA_PARA_IR_ENTERA)) {
+          return enteraSiNoCabe();
         }
         var meta = a.objetivo;
         if (esTabla) {
@@ -12445,7 +12816,7 @@ Bachillerato</p>
         }
         var tramos = tramosDe(unidad, piezas, rotulos, meta);
         if (tramos.length < 2) {
-          return unaSola;
+          return enteraSiNoCabe();
         }
         var partes = [];
         var i = 0;
@@ -12466,7 +12837,7 @@ Bachillerato</p>
         partes.forEach(function (parte) {
           mostrar(parte.visibles);
           a.partible = false;
-          parte.zoom = evitarPartir(mayorZoom(1, meta)) || 1;
+          parte.zoom = evitarPartir(mayorZoom(1, meta)) || letraSiNoCabe();
           parte.partible = a.partible;
         });
         return partes;
@@ -12485,6 +12856,9 @@ Bachillerato</p>
         }
         if (!bloque) {
           bloque = solucionesAparte(seccion);
+        }
+        if (bloque && bloque.classList.contains("respuestas-repartidas")) {
+          return null;
         }
         var lista = bloque ? bloque.querySelector(":scope > ol") : null;
         return lista ? numerosDe(lista, false) : null;
@@ -12559,6 +12933,17 @@ Bachillerato</p>
       }
       function rotular() {
         var a = ampliacion;
+        var parte = a.paginas[a.pagina];
+        if (parte.tipo === "apartado") {
+          cuenta.textContent = rotuloDelApartado(parte);
+          botonAnterior.disabled = false;
+          botonSiguiente.disabled = false;
+          botonResultados.hidden = true;
+          botonResultados.setAttribute("aria-pressed", "false");
+          botonResuelto.hidden = true;
+          botonResuelto.setAttribute("aria-pressed", "false");
+          return;
+        }
         var unidad = a.unidades[a.indice];
         var ambito = unidad.closest("section.level3") || unidad.closest("section.level2");
         var suyas = a.unidades.filter(function (otra) {
@@ -12568,16 +12953,73 @@ Bachillerato</p>
         if (a.paginas.length > 1) {
           lugar += " · parte " + (a.pagina + 1) + " de " + a.paginas.length;
         }
+        if (parte.tipo === "resuelto" && a.resuelto && a.resuelto.cuantos > 1) {
+          lugar = rotuloDelApartado(parte) + " · parte " + (a.pagina - a.resuelto.inicio + 1) + " de " + a.resuelto.cuantos;
+        }
         cuenta.textContent = lugar;
         botonAnterior.disabled = a.indice === 0 && a.pagina === 0;
         botonSiguiente.disabled =
           a.indice === a.unidades.length - 1 && a.pagina === a.paginas.length - 1;
-        botonSoluciones.hidden = respuestasDe(a.paginas[a.pagina]).length === 0;
-        botonSoluciones.setAttribute("aria-pressed", a.conSoluciones ? "true" : "false");
+        var ojos = botonesALaVista("ojo");
+        botonResultados.hidden = !ojos.length;
+        var delElegido = ojos;
+        if (ejerciciosDeLaParte(parte).length > 1) {
+          var elegido = ejercicioElegido(parte);
+          delElegido = ojos.filter(function (ojo) {
+            return !!elegido && elegido.contains(ojo);
+          });
+        }
+        botonResultados.setAttribute(
+          "aria-pressed",
+          parte.tipo !== "resuelto" && delElegido.length && delElegido.every(estaAbierto) ? "true" : "false"
+        );
+        botonResuelto.hidden =
+          parte.tipo !== "resuelto" && !botonesALaVista("lapiz").length && respuestasDe(parte).length === 0;
+        botonResuelto.setAttribute("aria-pressed", parte.tipo === "resuelto" || a.conSoluciones ? "true" : "false");
+      }
+      function botonesALaVista(clase) {
+        return Array.prototype.filter.call(ampliacion.tarjeta.querySelectorAll(".sol-ico." + clase), visible);
+      }
+      function estaAbierto(boton) {
+        return boton.getAttribute("aria-expanded") === "true";
       }
       function pintarParte() {
         var a = ampliacion;
         var parte = a.paginas[a.pagina];
+        marcarApartados(parte);
+        if (parte.tipo === "apartado") {
+          mostrar(parte.visibles);
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          parte.imprescindibles.forEach(function (formula) {
+            formula.classList.add("amp-imprescindible");
+          });
+          a.zoomPuesto = parte.zoom;
+          ponerZoom(parte.zoom);
+          marcarLoImprescindible();
+          if (parte.desplaza) {
+            var hueco = a.tarjeta.getBoundingClientRect().bottom - a.ultimo.getBoundingClientRect().bottom + 1;
+            if (hueco > 0) {
+              a.ultimo.style.setProperty("margin-bottom", Math.ceil(hueco) + "px", "important");
+              a.estirado = a.ultimo;
+            }
+          }
+          a.tarjeta.scrollTop = 0;
+          rotular();
+          return;
+        }
+        if (parte.tipo === "resuelto") {
+          mostrar(parte.visibles);
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          a.zoomPuesto = parte.zoom;
+          ponerZoom(parte.zoom);
+          partirLoImprescindible();
+          marcarLoImprescindible();
+          a.tarjeta.scrollTop = 0;
+          rotular();
+          return;
+        }
         var respuestas = a.conSoluciones ? respuestasDe(parte) : [];
         a.numeros = a.numeros.filter(function (par) {
           return !a.soluciones || a.soluciones.indexOf(par) === -1;
@@ -12588,19 +13030,958 @@ Bachillerato</p>
         mostrar(parte.visibles.concat(respuestas));
         a.partible = !!parte.partible;
         a.tarjeta.classList.toggle("ampliar-partible", a.partible);
-        ponerZoom(respuestas.length ? mayorZoom(1, parte.zoom) || 1 : parte.zoom);
+        a.zoomPuesto = respuestas.length ? mayorZoom(1, parte.zoom) || 1 : reservarLaParte(parte);
+        ponerZoom(a.zoomPuesto);
         partirLoImprescindible();
+        marcarLoImprescindible();
         a.tarjeta.scrollTop = 0;
         rotular();
+      }
+      function reservarLaParte(parte) {
+        var a = ampliacion;
+        var ojos = botonesALaVista("ojo");
+        if (!ojos.length) {
+          return parte.zoom;
+        }
+        if (parte.reserva === undefined && ojos.some(estaAbierto)) {
+          parte.reserva = true;
+        }
+        if (parte.reserva === false) {
+          return parte.zoom;
+        }
+        ojos.forEach(function (ojo) {
+          if (!estaAbierto(ojo)) {
+            ponerCaja(ojo, false, false, true);
+          }
+        });
+        if (parte.letraReservada === undefined) {
+          var letra = evitarPartir(mayorZoom(1, parte.zoom));
+          parte.letraReservada = letra || letraSiNoCabe();
+          parte.partibleReservada = a.partible;
+          parte.reservaNoCabe = !letra;
+        }
+        if (parte.reserva === undefined) {
+          parte.reserva = !parte.reservaNoCabe && parte.letraReservada >= LETRA_PARA_IR_ENTERA * parte.zoom;
+        }
+        if (parte.reserva && parte.reservaNoCabe) {
+          ojos.forEach(function (ojo) {
+            if (!estaAbierto(ojo)) {
+              ponerCaja(ojo, false);
+            }
+          });
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          return mayorZoom(1, parte.zoom) || letraSiNoCabe();
+        }
+        if (!parte.reserva) {
+          ojos.forEach(function (ojo) {
+            ponerCaja(ojo, false);
+          });
+          a.partible = !!parte.partible;
+          a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+          return parte.zoom;
+        }
+        a.partible = !!parte.partibleReservada;
+        a.tarjeta.classList.toggle("ampliar-partible", a.partible);
+        return parte.letraReservada;
+      }
+      function ponerCaja(boton, abierto, vaciar, reservado) {
+        if (abierto) {
+          Array.prototype.forEach.call(boton.parentElement.children, function (otro) {
+            if (otro !== boton && otro.getAttribute("aria-expanded") === "true") {
+              ponerCaja(otro, false);
+            }
+          });
+        }
+        boton.dispatchEvent(
+          new CustomEvent("sol-poner", {
+            bubbles: true,
+            detail: { boton: boton, abierto: abierto, vaciar: !!vaciar, reservado: !abierto && !!reservado }
+          })
+        );
+        var caja = document.getElementById(boton.getAttribute("aria-controls") || "");
+        if (caja) {
+          caja.classList.toggle("amp-reservado", !abierto && !!reservado);
+        }
+      }
+      function taparLoAbierto() {
+        Array.prototype.forEach.call(contenido.querySelectorAll(".sol-ico"), function (boton) {
+          var caja = document.getElementById(boton.getAttribute("aria-controls") || "");
+          if (boton.getAttribute("aria-expanded") === "true" || (caja && caja.firstChild)) {
+            ponerCaja(boton, false, true);
+          }
+        });
+      }
+      function ejercicioDe(boton) {
+        var lista = boton.closest("ol.ampliable");
+        var ejercicio = boton;
+        while (lista && ejercicio.parentElement && ejercicio.parentElement !== lista) {
+          ejercicio = ejercicio.parentElement;
+        }
+        return lista ? ejercicio : null;
+      }
+      function ejerciciosDeLaParte(parte) {
+        var unidad = ampliacion.unidades[ampliacion.indice];
+        if (unidad.tagName !== "OL" || !parte.piezas) {
+          return [];
+        }
+        var lis = parte.piezas[0] === unidad ? Array.prototype.slice.call(unidad.children) : parte.piezas;
+        return lis.filter(function (li) {
+          return li.tagName === "LI" && li.parentElement === unidad;
+        });
+      }
+      function ejercicioElegido(parte) {
+        var a = ampliacion;
+        var ejercicios = ejerciciosDeLaParte(parte);
+        if (a.elegido && ejercicios.indexOf(a.elegido) !== -1) {
+          return a.elegido;
+        }
+        for (var i = 0; i < ejercicios.length; i++) {
+          if (a.toque && ejercicios[i].contains(a.toque)) {
+            return ejercicios[i];
+          }
+        }
+        return ejercicios[0] || null;
+      }
+      function unEjercicioPorPantalla(elegido, siempre, sinPintar) {
+        var a = ampliacion;
+        var unidad = a.unidades[a.indice];
+        var parte = a.paginas[a.pagina];
+        var entera = parte.piezas[0] === unidad;
+        if (!elegido || (!entera && parte.piezas.length < 2) || (!siempre && a.zoomPuesto >= a.objetivo * 0.85)) {
+          return false;
+        }
+        var ejercicios = ejerciciosDeLaParte(parte);
+        var lugar = ejercicios.indexOf(elegido);
+        if (ejercicios.length < 2 || lugar === -1) {
+          return false;
+        }
+        var sueltos = [];
+        contenido.classList.add("ampliar-componiendo");
+        try {
+          sueltos = ejercicios.map(function (li) {
+            var suelto = { piezas: [li], visibles: [li], zoom: 1, suelto: true };
+            mostrar([li]);
+            a.partible = false;
+            suelto.zoom = evitarPartir(mayorZoom(1, a.objetivo)) || letraSiNoCabe();
+            suelto.partible = a.partible;
+            return suelto;
+          });
+        } finally {
+          contenido.classList.remove("ampliar-componiendo");
+        }
+        sueltos[lugar].reserva = true;
+        Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(sueltos));
+        a.pagina += lugar;
+        if (!sinPintar) {
+          pintarParte();
+        }
+        return true;
+      }
+      function alternarOjo(boton, ejercicio) {
+        var a = ampliacion;
+        var parte = a.paginas[a.pagina];
+        if (parte.tipo) {
+          return;
+        }
+        var abierto = estaAbierto(boton);
+        a.elegido = ejercicio;
+        if (parte.reserva && !parte.reservaNoCabe) {
+          ponerCaja(boton, !abierto, false, abierto);
+          rotular();
+          return;
+        }
+        if (parte.reserva) {
+          ponerCaja(boton, !abierto);
+          pintarParte();
+          return;
+        }
+        ponerCaja(boton, true);
+        parte.reserva = true;
+        if (!unEjercicioPorPantalla(ejercicio, true)) {
+          pintarParte();
+        }
+      }
+      function alternarResultados() {
+        var a = ampliacion;
+        if (!a || botonResultados.hidden || a.paginas[a.pagina].tipo === "apartado") {
+          return;
+        }
+        if (a.resuelto) {
+          dejarLoResuelto();
+        }
+        var parte = a.paginas[a.pagina];
+        var elegido = ejercicioElegido(parte);
+        if (elegido) {
+          a.elegido = elegido;
+          unEjercicioPorPantalla(elegido, true, true);
+          parte = a.paginas[a.pagina];
+        }
+        parte.reserva = true;
+        pintarParte();
+        var ojos = botonesALaVista("ojo");
+        var destapar = !ojos.every(estaAbierto);
+        ojos.forEach(function (ojo) {
+          ponerCaja(ojo, destapar, false, !destapar && !parte.reservaNoCabe);
+        });
+        if (parte.reservaNoCabe) {
+          pintarParte();
+        } else {
+          rotular();
+        }
+      }
+
+      var LETRAS_DE_APARTADO = "abcdefghijklmnopqrstuvwxyz";
+      var ROMANOS = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii"];
+      var TOPE_DE_LA_LETRA_COMUN = 0.15;
+      function apartadoDelLapiz(lapiz, ejercicio) {
+        var pareja = lapiz.closest(".sol-apartado");
+        if (pareja && ejercicio.contains(pareja)) {
+          return pareja;
+        }
+        var li = lapiz.closest("li");
+        return li && li !== ejercicio && ejercicio.contains(li) ? li : ejercicio;
+      }
+      function visiblesDelApartado(ejercicio, apartado) {
+        if (apartado === ejercicio) {
+          return [ejercicio];
+        }
+        var visibles = [apartado];
+        for (var dentro = apartado; dentro !== ejercicio && dentro.parentElement; dentro = dentro.parentElement) {
+          var nivel = dentro.parentElement;
+          if (
+            nivel.tagName === "OL" ||
+            nivel.tagName === "UL" ||
+            (nivel.classList && nivel.classList.contains("sol-barra"))
+          ) {
+            continue;
+          }
+          for (var i = 0; i < nivel.children.length && nivel.children[i] !== dentro; i++) {
+            visibles.push(nivel.children[i]);
+          }
+        }
+        return visibles;
+      }
+      function marcaDeLaLista(li) {
+        var lista = li.parentElement;
+        var numero = 1;
+        numerosDe(lista, false).forEach(function (par) {
+          if (par[0] === li) {
+            numero = par[1];
+          }
+        });
+        var tipo = lista.getAttribute("type");
+        if (tipo === "a" || tipo === "A") {
+          var letra = LETRAS_DE_APARTADO.charAt(numero - 1) || String(numero);
+          return (tipo === "A" ? letra.toUpperCase() : letra) + ")";
+        }
+        if (tipo === "i") {
+          return (ROMANOS[numero - 1] || String(numero)) + ")";
+        }
+        return numero + ")";
+      }
+      function rotuloDelApartado(parte) {
+        var rotulo = numeroYLetra(parte);
+        if (parte.tipo === "apartado" && parte.trozos > 1) {
+          rotulo += " · " + (parte.trozo + 1) + " de " + parte.trozos;
+        }
+        return rotulo;
+      }
+      function numeroYLetra(parte) {
+        var numero = "";
+        numerosDe(parte.ejercicio.parentElement, false).forEach(function (par) {
+          if (par[0] === parte.ejercicio) {
+            numero = String(par[1]);
+          }
+        });
+        var marcas = [];
+        for (var nodo = parte.apartado; nodo && nodo !== parte.ejercicio; nodo = nodo.parentElement) {
+          if (nodo.tagName === "LI") {
+            marcas.unshift(marcaDeLaLista(nodo));
+          } else if (nodo.classList.contains("sol-apartado")) {
+            marcas.unshift(texto(nodo.querySelector(".sol-letra")));
+          }
+        }
+        return [numero].concat(marcas).filter(Boolean).join(" ");
+      }
+      function marcarApartado(parte, puesto) {
+        var a = ampliacion;
+        var pasos = document.getElementById(parte.lapiz.getAttribute("aria-controls") || "");
+        parte.apartado.classList.toggle("apartado-en-pantalla", puesto);
+        raiz.classList.toggle("vista-apartado", puesto);
+        a.fija = puesto ? parte.ejercicio : null;
+        if (puesto) {
+          ponerCaja(parte.lapiz, true);
+        } else if (parte.lapiz.getAttribute("aria-expanded") === "true") {
+          ponerCaja(parte.lapiz, false);
+        }
+        if (pasos) {
+          pasos.classList.toggle("amp-paso", puesto);
+        }
+      }
+      function marcarApartados(parte) {
+        var a = ampliacion;
+        a.paginas.forEach(function (otra) {
+          if (
+            otra !== parte && otra.tipo === "apartado" && otra.apartado.classList.contains("apartado-en-pantalla") &&
+            (parte.tipo !== "apartado" || otra.apartado !== parte.apartado)
+          ) {
+            marcarApartado(otra, false);
+          }
+        });
+        raiz.classList.toggle("vista-resuelto", parte.tipo === "resuelto");
+        if (parte.tipo === "apartado") {
+          marcarApartado(parte, true);
+        } else {
+          raiz.classList.remove("vista-apartado");
+          a.fija = parte.tipo === "resuelto" && a.resuelto && a.resuelto.cuantos > 1 ? parte.ejercicio : null;
+        }
+      }
+      function letraDelApartado(parte) {
+        var a = ampliacion;
+        a.partible = false;
+        var zoom = mayorZoom(1, a.objetivo);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        parte.imprescindibles = [];
+        parte.desplaza = false;
+        if (!zoom) {
+          zoom = letraSiNoCabe();
+          ponerZoom(zoom);
+          parte.desplaza = !cabe();
+          parte.imprescindibles = formulasQueSeSalen();
+        }
+        return zoom;
+      }
+      function letraComun(letras) {
+        var menor = Math.min.apply(null, letras);
+        var mayor = Math.max.apply(null, letras);
+        if (mayor - menor > TOPE_DE_LA_LETRA_COMUN + 1e-9) {
+          return letras.slice();
+        }
+        return letras.map(function () {
+          return menor;
+        });
+      }
+      function siguienteApartado(partes, i, paso) {
+        var actual = partes[i];
+        for (var j = i + paso; j >= 0 && j < partes.length; j += paso) {
+          var otra = partes[j];
+          if (!otra || otra.tipo !== "apartado" || otra.ejercicio !== actual.ejercicio) {
+            return -1;
+          }
+          if (otra.lapiz) {
+            return j;
+          }
+        }
+        return -1;
+      }
+      function verApartado(lapiz, origen) {
+        var a = ampliacion;
+        var ejercicio = a && lapiz ? ejercicioDe(lapiz) : null;
+        if (!ejercicio) {
+          return;
+        }
+        var volverAResuelto = null;
+        if (a.recorrido) {
+          origen = a.recorrido.origen;
+          volverAResuelto = a.recorrido.volverAResuelto;
+          dejarElRecorrido();
+        }
+        if (a.resuelto) {
+          volverAResuelto = { grupo: a.pagina - a.resuelto.inicio, ejercicio: a.resuelto.ejercicio };
+          dejarLoResuelto();
+        }
+        var unidad = a.unidades[a.indice];
+        var desde = -1;
+        a.paginas.forEach(function (parte, lugar) {
+          var lleva = parte.piezas[0] === unidad || parte.piezas.indexOf(ejercicio) !== -1;
+          if (lleva && (desde === -1 || lugar === a.pagina)) {
+            desde = lugar;
+          }
+        });
+        if (desde === -1) {
+          return;
+        }
+        var abiertos = Array.prototype.slice.call(ejercicio.querySelectorAll('.sol-ico.ojo[aria-expanded="true"]'));
+        mostrar([ejercicio]);
+        var lapices = Array.prototype.filter.call(ejercicio.querySelectorAll(".sol-ico.lapiz"), function (otro) {
+          return otro === lapiz || visible(otro);
+        });
+        var paginas = lapices.map(function (otro) {
+          var apartado = apartadoDelLapiz(otro, ejercicio);
+          var visibles = visiblesDelApartado(ejercicio, apartado);
+          var pasos = document.getElementById(otro.getAttribute("aria-controls") || "");
+          if (pasos && !apartado.contains(pasos)) {
+            visibles.push(pasos);
+          }
+          return {
+            tipo: "apartado",
+            ejercicio: ejercicio,
+            apartado: apartado,
+            lapiz: otro,
+            piezas: [ejercicio],
+            visibles: visibles,
+            zoom: 1,
+            imprescindibles: []
+          };
+        });
+        var conPartes = [];
+        paginas.forEach(function (parte) {
+          marcarApartado(parte, true);
+          mostrar(parte.visibles);
+          parte.zoom = letraDelApartado(parte);
+          conPartes = conPartes.concat(partirElPaso(parte, letraDeUnaParte));
+          marcarApartado(parte, false);
+        });
+        paginas = conPartes;
+        var letras = letraComun(
+          paginas.map(function (parte) {
+            return parte.zoom;
+          })
+        );
+        paginas.forEach(function (parte, lugar) {
+          parte.zoom = letras[lugar];
+        });
+        a.recorrido = {
+          origen: origen,
+          desde: desde,
+          inicio: desde + 1,
+          cuantos: paginas.length,
+          abiertos: abiertos,
+          volverAResuelto: volverAResuelto
+        };
+        Array.prototype.splice.apply(a.paginas, [desde + 1, 0].concat(paginas));
+        var primera = 0;
+        while (primera < paginas.length - 1 && paginas[primera].lapiz !== lapiz) {
+          primera++;
+        }
+        a.pagina = desde + 1 + (paginas[primera].lapiz === lapiz ? primera : 0);
+        pintarParte();
+      }
+      function letraDeUnaParte() {
+        var a = ampliacion;
+        a.partible = false;
+        var zoom = mayorZoom(1, a.objetivo);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        return zoom;
+      }
+      function dejarElRecorrido(volver) {
+        var a = ampliacion;
+        var r = a.recorrido;
+        if (!r) {
+          return;
+        }
+        a.paginas.slice(r.inicio, r.inicio + r.cuantos).forEach(function (parte) {
+          marcarApartado(parte, false);
+        });
+        limpiarLosTramos();
+        a.paginas.splice(r.inicio, r.cuantos);
+        a.pagina = r.desde;
+        a.recorrido = null;
+        a.fija = null;
+        raiz.classList.remove("vista-apartado");
+        r.abiertos.forEach(function (ojo) {
+          ponerCaja(ojo, true);
+        });
+        if (volver && r.volverAResuelto) {
+          verResuelto(r.volverAResuelto.ejercicio, true);
+          a.pagina = a.resuelto.inicio + Math.min(r.volverAResuelto.grupo, a.resuelto.cuantos - 1);
+        }
+      }
+      function volverAlEjercicio() {
+        dejarElRecorrido(true);
+        pintarParte();
+      }
+      function pasarDeApartado(paso) {
+        var a = ampliacion;
+        var otra = siguienteApartado(a.paginas, a.pagina, paso);
+        if (otra === -1) {
+          volverAlEjercicio();
+          return;
+        }
+        a.pagina = otra;
+        pintarParte();
+      }
+      function cerrarOVolver() {
+        if (ampliacion && ampliacion.recorrido && ampliacion.recorrido.origen === "ejercicio") {
+          volverAlEjercicio();
+          return;
+        }
+        cerrarAmpliacion();
+      }
+
+      var GANANCIA_MINIMA_AL_PARTIR = 0.15;
+      function partirElPaso(parte, medir) {
+        var a = ampliacion;
+        var pasos = parte.lapiz ? document.getElementById(parte.lapiz.getAttribute("aria-controls") || "") : null;
+        if (!pasos) {
+          return [parte];
+        }
+        mostrar(parte.visibles);
+        if (!visible(pasos)) {
+          return [parte];
+        }
+        ponerZoom(0.7 * a.objetivo);
+        if (cabe()) {
+          return [parte];
+        }
+        var base = alrededorDelPaso(parte.visibles, pasos);
+        var tramos = base ? tramosDelPaso(pasos) : [];
+        if (tramos.length < 2) {
+          limpiarLosTramos(pasos);
+          mostrar(parte.visibles);
+          return [parte];
+        }
+        var reparto = repartirElPaso(
+          tramos,
+          parte.desplaza ? 0 : parte.zoom,
+          function (grupo, letra) {
+            mostrar(base.concat(elementosDelGrupo(grupo)));
+            a.partible = false;
+            a.tarjeta.classList.remove("ampliar-partible");
+            ponerZoom(letra || a.objetivo);
+            return cabe();
+          },
+          function (grupo) {
+            mostrar(base.concat(elementosDelGrupo(grupo)));
+            var letra = medir();
+            grupo.partible = a.partible;
+            return letra;
+          }
+        );
+        if (!reparto) {
+          limpiarLosTramos(pasos);
+          mostrar(parte.visibles);
+          return [parte];
+        }
+        return reparto.pantallas.map(function (grupo, k) {
+          var trozo = {};
+          Object.keys(parte).forEach(function (clave) {
+            trozo[clave] = parte[clave];
+          });
+          trozo.visibles = base.concat(elementosDelGrupo(grupo));
+          trozo.zoom = reparto.letra;
+          trozo.partible = !!grupo.partible;
+          trozo.imprescindibles = [];
+          trozo.desplaza = false;
+          trozo.trozo = k;
+          trozo.trozos = reparto.pantallas.length;
+          return trozo;
+        });
+      }
+      function alrededorDelPaso(visibles, pasos) {
+        var base = [];
+        for (var i = 0; i < visibles.length; i++) {
+          var caja = visibles[i];
+          if (caja === pasos) {
+            continue;
+          }
+          if (!caja.contains(pasos)) {
+            base.push(caja);
+          } else if (pasos.parentElement === caja) {
+            Array.prototype.forEach.call(caja.children, function (hijo) {
+              if (hijo !== pasos) {
+                base.push(hijo);
+              }
+            });
+          } else {
+            return null;
+          }
+        }
+        return base;
+      }
+      function tramosDelPaso(pasos) {
+        limpiarLosTramos(pasos);
+        var lista = pasos.querySelector(":scope > ol.lista-solucion-ejercicio");
+        var caja = lista && lista.children.length === 1 ? lista.children[0] : pasos;
+        var atomos = [];
+        if (caja !== pasos) {
+          envolverLasRachas(pasos);
+          Array.prototype.forEach.call(pasos.children, function (hijo) {
+            if (hijo !== lista) {
+              atomos.push({ pieza: hijo, fija: true });
+            }
+          });
+        }
+        envolverLasRachas(caja);
+        Array.prototype.forEach.call(caja.children, function (pieza) {
+          if (pieza.matches(".sol-letra, figure") || (pieza.matches("p") && pieza.querySelector("img") && !texto(pieza))) {
+            atomos.push({ pieza: pieza, fija: true });
+            return;
+          }
+          var formula = pieza.matches(".math.display")
+            ? pieza
+            : esFormula(pieza) ? pieza.querySelector(":scope > .math.display") : null;
+          var cadena = formula ? filasDeLaCadena(texDeLaCuenta(formula)) : null;
+          if (cadena && cadena.filas.length > 1) {
+            cadena.trozos = {};
+            cadena.filas.forEach(function (fila, k) {
+              atomos.push({ pieza: formula, cadena: cadena, fila: k, cuenta: true });
+            });
+            return;
+          }
+          atomos.push({ pieza: pieza, cuenta: pieza.matches(".math.display") || !!pieza.querySelector(".math.display") });
+        });
+        atomos.forEach(function (atomo, i) {
+          var siguiente = atomos[i + 1];
+          atomo.anuncia = !!siguiente && !atomo.cuenta && !atomo.fija && anunciaLaCuenta(atomo.pieza, siguiente);
+        });
+        return unirLosAtomos(atomos);
+      }
+      function envolverLasRachas(caja) {
+        var racha = null;
+        Array.prototype.slice.call(caja.childNodes).forEach(function (nodo) {
+          var enLinea = nodo.nodeType === 3 || (nodo.nodeType === 1 && !esBloqueDelPaso(nodo));
+          if (!enLinea) {
+            racha = null;
+            return;
+          }
+          if (!racha) {
+            if (nodo.nodeType === 3 && !nodo.textContent.trim()) {
+              return;
+            }
+            racha = document.createElement("span");
+            racha.className = "tramo-ampliado";
+            caja.insertBefore(racha, nodo);
+          }
+          racha.appendChild(nodo);
+        });
+      }
+      function esBloqueDelPaso(nodo) {
+        return nodo.matches("p, div, ol, ul, table, figure, blockquote, .math.display, .sol-letra");
+      }
+      function anunciaLaCuenta(pieza, siguiente) {
+        var final = texto(pieza).slice(-1);
+        if (final === "" || acabaEnFormula(pieza)) {
+          return false;
+        }
+        return final === ":" || (!!siguiente.cuenta && pieza.matches("p, .tramo-ampliado") && ".!?…".indexOf(final) === -1);
+      }
+      function unirLosAtomos(atomos) {
+        var ultima = -1;
+        atomos.forEach(function (atomo, i) {
+          if (atomo.cuenta) {
+            ultima = i;
+          }
+        });
+        var tramos = [];
+        var juntar = false;
+        atomos.forEach(function (atomo, i) {
+          if (tramos.length && (juntar || (ultima !== -1 && i > ultima))) {
+            tramos[tramos.length - 1].push(atomo);
+          } else {
+            tramos.push([atomo]);
+          }
+          juntar = !!(atomo.fija || atomo.anuncia);
+        });
+        return tramos;
+      }
+      function repartirElPaso(tramos, entera, cabeJunto, letraDe) {
+        function empaquetar(letra) {
+          var pantallas = [];
+          var i = 0;
+          while (i < tramos.length) {
+            var grupo = tramos[i].slice();
+            i++;
+            while (i < tramos.length && cabeJunto(grupo.concat(tramos[i]), letra)) {
+              grupo = grupo.concat(tramos[i]);
+              i++;
+            }
+            pantallas.push(grupo);
+          }
+          return pantallas;
+        }
+        var pantallas = empaquetar(null);
+        if (pantallas.length < 2) {
+          return null;
+        }
+        var letra = Math.min.apply(null, pantallas.map(letraDe));
+        if (!letra || letra < entera + GANANCIA_MINIMA_AL_PARTIR - 1e-9) {
+          return null;
+        }
+        if (pantallas.length > 2) {
+          var menos = empaquetar(letra);
+          if (menos.length > 1 && menos.length < pantallas.length) {
+            var suya = Math.min.apply(null, menos.map(letraDe));
+            if (suya >= letra - 1e-9) {
+              pantallas = menos;
+              letra = suya;
+            }
+          }
+        }
+        return { pantallas: pantallas, letra: letra };
+      }
+      function filasDeLaCadena(tex) {
+        var limpio = (tex || "").trim();
+        var abre = "\\begin{aligned}";
+        var cierra = "\\end{aligned}";
+        if (limpio.indexOf(abre) !== 0 || limpio.slice(-cierra.length) !== cierra) {
+          return null;
+        }
+        var cuerpo = limpio.slice(abre.length, limpio.length - cierra.length);
+        var filas = [];
+        var huecos = [];
+        var desde = 0;
+        var llaves = 0;
+        var entornos = 0;
+        for (var i = 0; i < cuerpo.length; i++) {
+          var signo = cuerpo.charAt(i);
+          if (signo === "{") {
+            llaves++;
+          } else if (signo === "}") {
+            llaves--;
+          } else if (signo === "\\") {
+            var resto = cuerpo.slice(i, i + 7);
+            if (resto === "\\begin{" || resto.slice(0, 5) === "\\end{") {
+              entornos += resto === "\\begin{" ? 1 : -1;
+              var nombre = cuerpo.indexOf("}", i);
+              i = nombre === -1 ? cuerpo.length : nombre;
+            } else if (cuerpo.charAt(i + 1) === "\\" && !llaves && !entornos) {
+              var hueco = /^\s*\[[^\]]*\]/.exec(cuerpo.slice(i + 2));
+              filas.push(cuerpo.slice(desde, i));
+              huecos.push("\\\\" + (hueco ? hueco[0].trim() : ""));
+              desde = i + 2 + (hueco ? hueco[0].length : 0);
+              i = desde - 1;
+            } else {
+              i++;
+            }
+          }
+        }
+        filas.push(cuerpo.slice(desde));
+        if (filas.length > 1 && !filas[filas.length - 1].trim()) {
+          filas.pop();
+          huecos.pop();
+        }
+        if (llaves || entornos) {
+          return null;
+        }
+        return { filas: filas, huecos: huecos };
+      }
+      function cadenaEntre(cadena, desde, hasta) {
+        var filas = cadena.filas.slice(desde, hasta + 1);
+        var conFraccion = filas.some(function (fila) {
+          return /\\[dt]?frac/.test(fila);
+        });
+        var tex = filas[0];
+        for (var k = 1; k < filas.length; k++) {
+          var hueco = cadena.huecos[desde + k - 1];
+          tex += (conFraccion && hueco.indexOf("[") === -1 ? "\\\\[6pt]" : hueco) + filas[k];
+        }
+        return "\\begin{aligned}" + tex + "\\end{aligned}";
+      }
+      function texDeLaCuenta(formula) {
+        var nota = formula.querySelector("annotation");
+        var tex = nota ? nota.textContent.trim() : "";
+        if (tex.slice(0, 2) === "\\[") {
+          tex = tex.slice(2);
+        }
+        if (tex.slice(-2) === "\\]") {
+          tex = tex.slice(0, -2);
+        }
+        return tex.trim();
+      }
+      function trozoDeLaCuenta(cuenta, cadena, desde, hasta) {
+        if (desde === 0 && hasta === cadena.filas.length - 1) {
+          return cuenta;
+        }
+        var clave = desde + "-" + hasta;
+        if (!cadena.trozos[clave]) {
+          var trozo = document.createElement("span");
+          trozo.className = "math display tramo-de-cadena";
+          trozo.innerHTML = window.katex
+            ? window.katex.renderToString(cadenaEntre(cadena, desde, hasta), { displayMode: true, throwOnError: false })
+            : "";
+          cuenta.parentNode.insertBefore(trozo, cuenta.nextSibling);
+          trozo.dispatchEvent(new CustomEvent("ampliar-huecos", { bubbles: true }));
+          cadena.trozos[clave] = trozo;
+        }
+        return cadena.trozos[clave];
+      }
+      function elementosDelGrupo(grupo) {
+        var elementos = [];
+        var i = 0;
+        while (i < grupo.length) {
+          var atomo = grupo[i];
+          var j = i;
+          if (atomo.cadena) {
+            while (j + 1 < grupo.length && grupo[j + 1].cadena === atomo.cadena) {
+              j++;
+            }
+            elementos.push(trozoDeLaCuenta(atomo.pieza, atomo.cadena, atomo.fila, grupo[j].fila));
+          } else {
+            elementos.push(atomo.pieza);
+          }
+          i = j + 1;
+        }
+        return elementos;
+      }
+      function limpiarLosTramos(dentro) {
+        var caja = dentro || contenido;
+        Array.prototype.forEach.call(caja.querySelectorAll(".tramo-de-cadena"), function (trozo) {
+          trozo.parentNode.removeChild(trozo);
+        });
+        Array.prototype.forEach.call(caja.querySelectorAll(".tramo-ampliado"), function (racha) {
+          while (racha.firstChild) {
+            racha.parentNode.insertBefore(racha.firstChild, racha);
+          }
+          racha.parentNode.removeChild(racha);
+        });
+      }
+
+      function apartadosDelEjercicio(ejercicio) {
+        var lista = ejercicio.querySelector(':scope > ol[type="a"]');
+        if (lista && lista.querySelector(":scope > li .sol-ico")) {
+          return Array.prototype.filter.call(lista.children, function (li) {
+            return li.tagName === "LI";
+          });
+        }
+        var parejas = ejercicio.querySelectorAll(":scope > .sol-barra > .sol-apartado");
+        return parejas.length ? Array.prototype.slice.call(parejas) : [ejercicio];
+      }
+      function botonDe(apartado, clase) {
+        return apartado.querySelector(".sol-ico." + clase);
+      }
+      function visiblesDelGrupo(ejercicio, apartados) {
+        var visibles = [];
+        function poner(elemento) {
+          if (elemento && visibles.indexOf(elemento) === -1) {
+            visibles.push(elemento);
+          }
+        }
+        apartados.forEach(function (apartado) {
+          visiblesDelApartado(ejercicio, apartado).forEach(poner);
+          ["ojo", "lapiz"].forEach(function (clase) {
+            var boton = botonDe(apartado, clase);
+            var caja = boton ? document.getElementById(boton.getAttribute("aria-controls") || "") : null;
+            if (caja && !apartado.contains(caja)) {
+              poner(caja);
+            }
+          });
+        });
+        return visibles;
+      }
+      function letraDeResuelto() {
+        return letraDeUnaParte();
+      }
+      function verResuelto(ejercicio, sinPintar) {
+        var a = ampliacion;
+        var original = a.paginas[a.pagina];
+        var apartados = apartadosDelEjercicio(ejercicio);
+        var lapices = [];
+        var ojos = [];
+        apartados.forEach(function (apartado) {
+          var lapiz = botonDe(apartado, "lapiz");
+          var ojo = botonDe(apartado, "ojo");
+          if (lapiz) {
+            if (ojo) {
+              ponerCaja(ojo, false);
+            }
+            ponerCaja(lapiz, true);
+            lapices.push(lapiz);
+          } else if (ojo) {
+            ponerCaja(ojo, true);
+            ojos.push(ojo);
+          }
+        });
+        raiz.classList.add("vista-resuelto");
+        var grupos = [apartados];
+        a.fija = null;
+        mostrar([ejercicio]);
+        a.partible = false;
+        a.tarjeta.classList.remove("ampliar-partible");
+        ponerZoom(LETRA_PARA_IR_ENTERA * a.objetivo);
+        if (apartados.length > 1 && !cabe()) {
+          a.fija = ejercicio;
+          grupos = [];
+          var grupo = [apartados[0]];
+          for (var i = 1; i < apartados.length; i++) {
+            mostrar(visiblesDelGrupo(ejercicio, grupo.concat([apartados[i]])));
+            ponerZoom(LETRA_PARA_IR_ENTERA * a.objetivo);
+            if (cabe()) {
+              grupo.push(apartados[i]);
+            } else {
+              grupos.push(grupo);
+              grupo = [apartados[i]];
+            }
+          }
+          grupos.push(grupo);
+        }
+        var paginas = [];
+        grupos.forEach(function (suyos) {
+          var visibles = grupos.length > 1 ? visiblesDelGrupo(ejercicio, suyos) : [ejercicio];
+          mostrar(visibles);
+          var zoom = letraDeResuelto();
+          var parte = {
+            tipo: "resuelto",
+            ejercicio: ejercicio,
+            apartado: ejercicio,
+            piezas: [ejercicio],
+            visibles: visibles,
+            zoom: zoom || 1,
+            desplaza: false,
+            partible: a.partible
+          };
+          if (!zoom) {
+            parte.zoom = letraSiNoCabe();
+            ponerZoom(parte.zoom);
+            parte.desplaza = !cabe();
+          }
+          var lapiz = suyos.length === 1 ? botonDe(suyos[0], "lapiz") : null;
+          if (lapiz) {
+            parte.lapiz = lapiz;
+            paginas = paginas.concat(partirElPaso(parte, letraDeResuelto));
+          } else {
+            paginas.push(parte);
+          }
+        });
+        a.resuelto = {
+          ejercicio: ejercicio,
+          inicio: a.pagina,
+          cuantos: paginas.length,
+          original: original,
+          lapices: lapices,
+          ojos: ojos
+        };
+        Array.prototype.splice.apply(a.paginas, [a.pagina, 1].concat(paginas));
+        if (!sinPintar) {
+          pintarParte();
+        }
+      }
+      function dejarLoResuelto() {
+        var a = ampliacion;
+        var r = a.resuelto;
+        if (!r) {
+          return;
+        }
+        r.lapices.forEach(function (lapiz) {
+          ponerCaja(lapiz, false);
+        });
+        r.ojos.forEach(function (ojo) {
+          ponerCaja(ojo, false);
+        });
+        limpiarLosTramos();
+        a.paginas.splice(r.inicio, r.cuantos, r.original);
+        a.pagina = r.inicio;
+        a.resuelto = null;
+        a.fija = null;
+        raiz.classList.remove("vista-resuelto");
       }
       function prepararUnidad(indice, cual, toque) {
         var a = ampliacion;
         a.indice = indice;
         a.conSoluciones = false;
         a.toque = toque || null;
+        raiz.classList.toggle("amp-resoluciones", !!a.unidades[indice].querySelector(".sol-ico"));
         titular(a.unidades[indice]);
         a.soluciones = solucionesDeLaLista(a.unidades[indice]);
-        a.paginas = componer(a.unidades[indice]);
+        contenido.classList.add("ampliar-componiendo");
+        try {
+          a.paginas = componer(a.unidades[indice]);
+        } finally {
+          contenido.classList.remove("ampliar-componiendo");
+        }
         if (!a.paginas.length) {
           cerrarAmpliacion();
           return;
@@ -12616,15 +13997,25 @@ Bachillerato</p>
             }
           });
         }
+        var entrada = a.entrada;
+        a.entrada = null;
+        if (entrada === "ojo" || entrada === "apartado") {
+          return;
+        }
         pintarParte();
       }
       function letraObjetivo(letra) {
         return Math.min(2.4, Math.max(1.3, (LETRA_OBJETIVO * window.innerHeight) / letra));
       }
-      function abrirAmpliacion(unidad, toque) {
+      function abrirAmpliacion(unidad, toque, extra) {
         if (!activo() || ampliacion) {
           return;
         }
+        var enLoAbierto = toque && toque.closest ? toque.closest(".sol-chip, .sol-resultado, .sol-pasos") : null;
+        if (enLoAbierto && enLoAbierto.parentElement) {
+          toque = enLoAbierto.parentElement;
+        }
+        taparLoAbierto();
         var unidades = Array.prototype.filter.call(contenido.querySelectorAll(".ampliable"), visible);
         var indice = unidades.indexOf(unidad);
         if (indice === -1) {
@@ -12641,45 +14032,112 @@ Bachillerato</p>
           paginas: [],
           pagina: 0,
           margenArriba: 76,
-          partible: false
+          partible: false,
+          zoomPuesto: 1,
+          elegido: null,
+          solo: false,
+          recorrido: null,
+          resuelto: null,
+          fija: null,
+          estirado: null,
+          subido: null,
+          entrada: null,
+          soloAncho: false
         };
+        var abrir = extra && extra.abrir ? Array.prototype.slice.call(extra.abrir) : [];
+        if (abrir.length) {
+          ampliacion.entrada = extra.vista === "apartado" ? "apartado" : "ojo";
+        }
         raiz.classList.add("ampliando");
         prepararUnidad(indice, "primera", toque);
+        if (ampliacion && abrir.length && extra.vista === "apartado") {
+          verApartado(abrir[0], "pagina");
+          return;
+        }
+        if (ampliacion && abrir.length) {
+          abrir.forEach(function (boton) {
+            ponerCaja(boton, true);
+          });
+          ampliacion.elegido = ejercicioDe(abrir[0]);
+          ampliacion.solo = !!extra.solo;
+          pintarParte();
+          unEjercicioPorPantalla(ampliacion.elegido, ampliacion.solo);
+        }
       }
       function cerrarAmpliacion() {
         if (!ampliacion) {
           return;
         }
         var y = ampliacion.y;
+        dejarElRecorrido();
+        dejarLoResuelto();
+        taparLoAbierto();
+        limpiarLosTramos();
         limpiar();
         ampliacion = null;
+        cerradaEn = Date.now();
         raiz.style.fontSize = "";
-        raiz.classList.remove("ampliando");
+        raiz.classList.remove("ampliando", "vista-apartado", "vista-resuelto", "amp-resoluciones");
         window.scrollTo({ top: y, left: 0, behavior: "instant" });
         pintar();
       }
       function pasar(paso) {
         var a = ampliacion;
+        if (a.recorrido) {
+          pasarDeApartado(paso);
+          return;
+        }
         var parte = a.pagina + paso;
-        if (parte >= 0 && parte < a.paginas.length) {
+        var indice = a.indice + paso;
+        var enLaUnidad = parte >= 0 && parte < a.paginas.length;
+        if (!enLaUnidad && !(indice >= 0 && indice < a.unidades.length)) {
+          return;
+        }
+        var r = a.resuelto;
+        if (r && parte >= r.inicio && parte < r.inicio + r.cuantos) {
+          a.pagina = parte;
+          pintarParte();
+          return;
+        }
+        if (r) {
+          dejarLoResuelto();
+          parte = a.pagina + paso;
+          enLaUnidad = parte >= 0 && parte < a.paginas.length;
+        }
+        taparLoAbierto();
+        if (enLaUnidad) {
           a.pagina = parte;
           a.conSoluciones = false;
           a.toque = null;
           pintarParte();
           return;
         }
-        var indice = a.indice + paso;
-        if (indice >= 0 && indice < a.unidades.length) {
-          prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
-        }
+        prepararUnidad(indice, paso < 0 ? "ultima" : "primera", null);
       }
       function alternarRespuestas() {
         var a = ampliacion;
-        if (botonSoluciones.hidden) {
+        if (botonResuelto.hidden || a.paginas[a.pagina].tipo === "apartado") {
+          return;
+        }
+        if (a.resuelto) {
+          dejarLoResuelto();
+          pintarParte();
+          return;
+        }
+        var parte = a.paginas[a.pagina];
+        var elegido = ejercicioElegido(parte);
+        if (elegido && !elegido.querySelector(".sol-ico.lapiz")) {
+          elegido = ejerciciosDeLaParte(parte).filter(function (li) {
+            return !!li.querySelector(".sol-ico.lapiz");
+          })[0] || null;
+        }
+        if (elegido) {
+          a.elegido = elegido;
+          unEjercicioPorPantalla(elegido, true, true);
+          verResuelto(elegido);
           return;
         }
         a.conSoluciones = !a.conSoluciones;
-        var parte = a.paginas[a.pagina];
         if (a.conSoluciones) {
           mostrar([a.unidades[a.indice]]);
           var ejercicios = piezasDe(a.unidades[a.indice]).filter(function (li) {
@@ -12729,10 +14187,10 @@ Bachillerato</p>
             break;
           case "s":
           case "S":
-            alternarRespuestas();
+            alternarResultados();
             break;
           case "Escape":
-            cerrarAmpliacion();
+            cerrarOVolver();
             break;
           default:
             return;
@@ -12762,13 +14220,46 @@ Bachillerato</p>
         }
         var orden = boton.getAttribute("data-ampliar");
         if (orden === "cerrar") {
-          cerrarAmpliacion();
-        } else if (orden === "soluciones") {
+          cerrarOVolver();
+        } else if (orden === "resultados") {
+          alternarResultados();
+        } else if (orden === "resuelto") {
           alternarRespuestas();
         } else {
           pasar(orden === "siguiente" ? 1 : -1);
         }
         boton.blur();
+      });
+      contenido.addEventListener("sol-clase", function (evento) {
+        var datos = evento.detail || {};
+        var boton = datos.boton;
+        if (!activo() || !boton) {
+          return;
+        }
+        var ejercicio = ejercicioDe(boton);
+        if (!ejercicio) {
+          return;
+        }
+        if (!ampliacion) {
+          abrirAmpliacion(ejercicio.parentElement, ejercicio, {
+            vista: datos.que === "lapiz" ? "apartado" : "ejercicio",
+            abrir: [boton]
+          });
+          return;
+        }
+        if (datos.que === "lapiz") {
+          var vista = ampliacion.paginas[ampliacion.pagina];
+          if (ampliacion.recorrido && vista.lapiz === boton) {
+            volverAlEjercicio();
+          } else {
+            verApartado(boton, "ejercicio");
+          }
+          return;
+        }
+        if (ampliacion.recorrido) {
+          return;
+        }
+        alternarOjo(boton, ejercicio);
       });
       var gesto = null;
       document.addEventListener(
@@ -12811,12 +14302,59 @@ Bachillerato</p>
         window.requestAnimationFrame(function () {
           recomposicion = false;
           if (ampliacion) {
+            var vista = ampliacion.paginas[ampliacion.pagina];
+            var delEjercicio = ampliacion.recorrido
+              ? ampliacion.paginas[ampliacion.recorrido.desde]
+              : ampliacion.resuelto ? ampliacion.resuelto.original : vista;
+            var suelto = delEjercicio && delEjercicio.suelto ? delEjercicio.piezas[0] : null;
+            var enApartado = ampliacion.recorrido
+              ? {
+                  lapiz: vista.lapiz,
+                  trozo: vista.trozo || 0,
+                  origen: ampliacion.recorrido.origen,
+                  resuelto: ampliacion.recorrido.volverAResuelto
+                }
+              : null;
+            dejarElRecorrido();
+            var enResuelto = ampliacion.resuelto
+              ? { ejercicio: ampliacion.resuelto.ejercicio, grupo: ampliacion.pagina - ampliacion.resuelto.inicio }
+              : null;
+            dejarLoResuelto();
+            var conSoluciones = ampliacion.conSoluciones;
             ampliacion.objetivo = letraObjetivo(ampliacion.letra);
             prepararUnidad(
               ampliacion.indice,
               "primera",
               ampliacion.paginas[ampliacion.pagina].piezas[0]
             );
+            var elegido = ampliacion && (suelto || ampliacion.elegido);
+            if (elegido && (suelto || elegido.querySelector('.sol-ico[aria-expanded="true"]'))) {
+              unEjercicioPorPantalla(elegido, !!suelto || ampliacion.solo);
+            }
+            if (ampliacion && conSoluciones) {
+              alternarRespuestas();
+            }
+            if (ampliacion && enResuelto) {
+              ampliacion.elegido = enResuelto.ejercicio;
+              alternarRespuestas();
+              if (ampliacion.resuelto) {
+                ampliacion.pagina =
+                  ampliacion.resuelto.inicio + Math.min(enResuelto.grupo, ampliacion.resuelto.cuantos - 1);
+                pintarParte();
+              }
+            }
+            if (ampliacion && enApartado) {
+              verApartado(enApartado.lapiz, enApartado.origen);
+              var recorrido = ampliacion && ampliacion.recorrido;
+              if (recorrido) {
+                recorrido.volverAResuelto = enApartado.resuelto;
+                var otra = ampliacion.paginas[ampliacion.pagina + enApartado.trozo];
+                if (enApartado.trozo && otra && otra.lapiz === enApartado.lapiz) {
+                  ampliacion.pagina += enApartado.trozo;
+                  pintarParte();
+                }
+              }
+            }
           }
         });
       });
