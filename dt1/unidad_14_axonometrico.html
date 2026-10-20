@@ -28261,6 +28261,169 @@ Bachillerato</p>
         construir: bloqueCaballeraConstruir
       };
 
+      // ---- La unidad 16, la normalización y las vistas (desde el 20 de
+      // octubre de 2026) ----
+
+      // Una línea a trazos, para las aristas ocultas: trazos de `trazo` px
+      // separados `hueco` px, con el estilo dado.
+      function lineaATrazos(p, q, estilo, trazo, hueco) {
+        var largo = distancia(p, q);
+        var u = unitario(p, q);
+        var t = trazo || 7;
+        var h = hueco || 4;
+        var lista = [];
+        var s = 0;
+        while (s < largo - 0.5) {
+          lista.push(seg(avanzar(p, u, s), avanzar(p, u, Math.min(largo, s + t)), estilo || "dato", { sinRegla: true }));
+          s += t + h;
+        }
+        return lista;
+      }
+
+      // Una línea fina de trazo y punto, para los ejes: trazos largos, un
+      // punto (un trazo muy corto) y huecos.
+      function lineaDeEje(p, q) {
+        var largo = distancia(p, q);
+        var u = unitario(p, q);
+        var lista = [];
+        var s = 0;
+        while (s < largo - 0.5) {
+          lista.push(seg(avanzar(p, u, s), avanzar(p, u, Math.min(largo, s + 14)), "aux", { sinRegla: true }));
+          s += 14 + 3;
+          if (s < largo - 1) {
+            lista.push(seg(avanzar(p, u, s), avanzar(p, u, Math.min(largo, s + 1.5)), "aux", { sinRegla: true }));
+          }
+          s += 1.5 + 3;
+        }
+        return lista;
+      }
+
+      // Las tres vistas, por el método del primer diedro, de una pieza en L
+      // con un agujero vertical: la caja de a (ancho, X) × b (fondo, Y) × c
+      // (alto, Z), con la parte de delante, de fondo b − b1, rebajada a la
+      // altura c1, y un agujero de radio r que atraviesa la parte alta de
+      // arriba abajo, en su centro. El alzado, arriba a la izquierda; la
+      // planta, debajo, y el perfil izquierdo (la vista desde la izquierda),
+      // a la derecha del alzado. Los fondos pasan de la planta al perfil
+      // por una recta a 45°.
+      function vistasPiezaGeometria(d) {
+        var e = d.escala;
+        var A = d.alzado; // esquina de abajo a la izquierda del alzado
+        var hueco = d.hueco || 40;
+        // La planta: debajo del alzado, con el fondo hacia abajo (la cara
+        // de delante, abajo).
+        var planta0 = A.y + hueco; // línea de atrás de la planta
+        // El perfil izquierdo: a la derecha del alzado. En el primer diedro
+        // la cara de atrás de la pieza queda del lado del alzado, como en la
+        // planta: a la izquierda del perfil, y la de delante, a la derecha.
+        var perfil0 = A.x + d.a * e + hueco;
+        return { e: e, A: A, planta0: planta0, perfil0: perfil0, xAgujero: A.x + (d.a * e) / 2 };
+      }
+
+      // Las partes del dibujo de las tres vistas, por separado, y las
+      // medidas que las sitúan: las usa también la acotación de la
+      // unidad 18.
+      function vistasPiezaPartes(d) {
+        var g = vistasPiezaGeometria(d);
+        var e = g.e;
+        var A = g.A;
+        var x0 = A.x;
+        var x1 = A.x + d.a * e;
+        var zAlto = A.y - d.c * e;
+        var zBajo = A.y - d.c1 * e;
+        var enPlanta = function (y) {
+          return g.planta0 + y * e;
+        };
+        var enPerfil = function (y) {
+          return g.perfil0 + y * e;
+        };
+        var r = d.r * e;
+        var xa = g.xAgujero;
+        var ya = d.b1 / 2;
+        // El alzado: el contorno, la arista del escalón y el agujero oculto.
+        var alzado = poligonoDe([pt(x0, A.y), pt(x0, zAlto), pt(x1, zAlto), pt(x1, A.y)], "sol").concat(
+          [seg(pt(x0, zBajo), pt(x1, zBajo), "sol")],
+          lineaATrazos(pt(xa - r, zAlto), pt(xa - r, A.y)),
+          lineaATrazos(pt(xa + r, zAlto), pt(xa + r, A.y)),
+          lineaDeEje(pt(xa, zAlto - 12), pt(xa, A.y + 12))
+        );
+        // La planta: el contorno, la arista del escalón y el agujero.
+        var planta = poligonoDe([pt(x0, enPlanta(0)), pt(x1, enPlanta(0)), pt(x1, enPlanta(d.b)), pt(x0, enPlanta(d.b))], "sol").concat(
+          [seg(pt(x0, enPlanta(d.b1)), pt(x1, enPlanta(d.b1)), "sol"),
+            arco(pt(xa, enPlanta(ya)), r, 0, TAU, "sol")],
+          lineaDeEje(pt(xa - r - 12, enPlanta(ya)), pt(xa + r + 12, enPlanta(ya))),
+          lineaDeEje(pt(xa, enPlanta(ya) - r - 12), pt(xa, enPlanta(ya) + r + 12))
+        );
+        // El perfil izquierdo: el perfil en L y el agujero oculto.
+        var perfil = poligonoDe([
+          pt(enPerfil(0), A.y), pt(enPerfil(0), zAlto), pt(enPerfil(d.b1), zAlto),
+          pt(enPerfil(d.b1), zBajo), pt(enPerfil(d.b), zBajo), pt(enPerfil(d.b), A.y)
+        ], "sol").concat(
+          lineaATrazos(pt(enPerfil(ya - d.r), zAlto), pt(enPerfil(ya - d.r), A.y)),
+          lineaATrazos(pt(enPerfil(ya + d.r), zAlto), pt(enPerfil(ya + d.r), A.y)),
+          lineaDeEje(pt(enPerfil(ya), zAlto - 12), pt(enPerfil(ya), A.y + 12))
+        );
+        // Las líneas de correspondencia y la recta a 45°: sale de la esquina
+        // en la que se cortan la línea de atrás de la planta y la del perfil,
+        // y baja hacia la derecha; el fondo y, que en la planta está a la
+        // altura enPlanta(y), en el perfil está en enPerfil(y), a la misma
+        // distancia de esa esquina.
+        var fondos = [0, d.b1, d.b, ya - d.r, ya + d.r];
+        var cuarenta = seg(pt(g.perfil0 - 12, g.planta0 - 12), pt(enPerfil(d.b) + 12, enPlanta(d.b) + 12), "aux");
+        var aPerfil = fondos.map(function (y) {
+          // De la planta, a la derecha, hasta la recta a 45°; de ahí, arriba
+          // hasta el perfil.
+          var yy = enPlanta(y);
+          var q = pt(g.perfil0 + (yy - g.planta0), yy);
+          return [seg(pt(x1 + 6, yy), q, "aux"), seg(q, pt(q.x, A.y + 6), "aux")];
+        });
+        return {
+          alzado: alzado, planta: planta, perfil: perfil,
+          bajada: [seg(pt(x0, A.y + 6), pt(x0, enPlanta(0) - 6), "aux"), seg(pt(x1, A.y + 6), pt(x1, enPlanta(0) - 6), "aux"),
+            seg(pt(xa - r, A.y + 6), pt(xa - r, enPlanta(ya) - 6), "aux"), seg(pt(xa + r, A.y + 6), pt(xa + r, enPlanta(ya) - 6), "aux")],
+          giro: [cuarenta].concat([].concat.apply([], aPerfil), [
+            seg(pt(x1 + 6, zAlto), pt(g.perfil0 - 6, zAlto), "aux"),
+            seg(pt(x1 + 6, zBajo), pt(g.perfil0 - 6, zBajo), "aux")
+          ]),
+          x0: x0, x1: x1, y0: A.y, zAlto: zAlto, zBajo: zBajo, xa: xa, ya: ya, r: r,
+          enPlanta: enPlanta, enPerfil: enPerfil
+        };
+      }
+
+      function vistasPiezaConstruir(d) {
+        var v = vistasPiezaPartes(d);
+        var nombre = function (p, texto) {
+          return rotulo(p, texto, { recta: true, cuerpo: 14 });
+        };
+        return {
+          base: [],
+          pasos: [
+            v.alzado.concat([nombre(pt((v.x0 + v.x1) / 2, v.zAlto - 24), "Alzado")]),
+            v.bajada.concat(v.planta, [nombre(pt((v.x0 + v.x1) / 2, v.enPlanta(d.b) + 22), "Planta")]),
+            v.giro,
+            v.perfil.concat([nombre(pt(v.enPerfil(d.b / 2), v.zAlto - 24), "Perfil izquierdo")])
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["vistas-de-una-pieza"] = {
+        datos: function () {
+          return { alzado: pt(70, 160), a: 7, b: 5, c: 4, b1: 3, c1: 1.5, r: 0.8, escala: 26 };
+        },
+        asas: function (d) {
+          return { alzado: d.alzado };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.b1 > 2 * d.r && d.b1 < d.b && d.c1 > 0 && d.c1 < d.c && 2 * d.r < d.a &&
+            cabe(vistasPiezaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: vistasPiezaConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -31860,6 +32023,108 @@ Bachillerato</p>
           var c2 = pt(o.x + mitadV.x, o.y - r + mitadV.y);
           lista.push(elipse(c2, pt(0, r), mitadV), punto(c2, "", null));
           lista.push(pieDeFigura(480, 318, "En la cara de delante, una circunferencia; en las otras, elipses"));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 16, la normalización y las vistas ----
+
+      // El símbolo del método de proyección: las dos vistas de un tronco de
+      // cono, el alzado (un trapecio) y la vista lateral (dos
+      // circunferencias concéntricas), con la lateral a la derecha o a la
+      // izquierda. c es el centro del alzado y k, su tamaño.
+      function simboloDeMetodo(c, k, lateralALaDerecha) {
+        var h = k;
+        // El tronco tiene la base pequeña a la izquierda: visto desde la
+        // izquierda se ven las dos circunferencias. Con el método del primer
+        // diedro esa vista va a la derecha del alzado, y con el del tercero,
+        // a la izquierda.
+        var trapecio = [pt(c.x - h * 0.6, c.y - h / 4), pt(c.x + h * 0.6, c.y - h / 2), pt(c.x + h * 0.6, c.y + h / 2), pt(c.x - h * 0.6, c.y + h / 4)];
+        var lado = pt(c.x + (lateralALaDerecha ? 1 : -1) * h * 1.8, c.y);
+        return poligonoDe(trapecio, "dato").concat([
+          arco(lado, h / 2, 0, TAU, "dato"),
+          arco(lado, h / 4, 0, TAU, "dato"),
+          seg(pt(c.x - h * 0.9, c.y), pt(c.x + h * 0.9, c.y), "aux", { sinRegla: true }),
+          seg(pt(lado.x - h * 0.7, lado.y), pt(lado.x + h * 0.7, lado.y), "aux", { sinRegla: true }),
+          seg(pt(lado.x, lado.y - h * 0.7), pt(lado.x, lado.y + h * 0.7), "aux", { sinRegla: true })
+        ]);
+      }
+
+      // La disposición de las seis vistas en los dos métodos: cada vista,
+      // un recuadro con su letra; A, el alzado, en el centro.
+      figuras.metodos_de_proyeccion = {
+        lienzo: [960, 360],
+        trazos: function () {
+          var lista = [];
+          var caja = function (c, letra, nombre) {
+            lista = lista.concat(poligonoDe([pt(c.x - 34, c.y - 24), pt(c.x + 34, c.y - 24), pt(c.x + 34, c.y + 24), pt(c.x - 34, c.y + 24)], "dato"));
+            lista.push(rotulo(pt(c.x, c.y - 4), letra, { recta: true, cuerpo: 18, negrita: true }),
+              rotulo(pt(c.x, c.y + 13), nombre, { recta: true, cuerpo: 11 }));
+          };
+          var disponer = function (o, primero) {
+            var dx = 80;
+            var dy = 58;
+            caja(o, "A", "alzado");
+            caja(pt(o.x, o.y + (primero ? dy : -dy)), "B", "planta");
+            caja(pt(o.x + (primero ? dx : -dx), o.y), "C", "perfil izq.");
+            caja(pt(o.x + (primero ? -dx : dx), o.y), "D", "perfil der.");
+            caja(pt(o.x, o.y + (primero ? -dy : dy)), "E", "inferior");
+            caja(pt(o.x + (primero ? 2 * dx : 2 * dx), o.y), "F", "posterior");
+          };
+          disponer(pt(220, 150), true);
+          lista = lista.concat(simboloDeMetodo(pt(190, 285), 34, true));
+          lista.push(pieDeFigura(240, 346, "Primer diedro (método europeo)"));
+          disponer(pt(660, 150), false);
+          lista = lista.concat(simboloDeMetodo(pt(690, 285), 34, false));
+          lista.push(pieDeFigura(700, 346, "Tercer diedro (método americano)"));
+          return lista;
+        }
+      };
+
+      // Los tipos de línea más usados, con su letra en la norma y su uso.
+      figuras.tipos_de_lineas = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var fila = function (y, letra, dibujo, texto) {
+            var p = pt(70, y);
+            var q = pt(330, y);
+            lista = lista.concat(dibujo(p, q));
+            lista.push(rotulo(pt(40, y), letra, { recta: true, cuerpo: 16, negrita: true }),
+              rotulo(pt(620, y), texto, { recta: true, cuerpo: 14 }));
+          };
+          fila(40, "A", function (p, q) {
+            return [seg(p, q, "sol")];
+          }, "Llena gruesa: contornos y aristas vistos");
+          fila(90, "B", function (p, q) {
+            return [seg(p, q, "aux")];
+          }, "Llena fina: cotas, proyección, rayados, ejes cortos");
+          fila(140, "E/F", function (p, q) {
+            return lineaATrazos(p, q, "dato", 10, 5);
+          }, "De trazos: contornos y aristas ocultos");
+          fila(190, "G", function (p, q) {
+            return lineaDeEje(p, q);
+          }, "Fina de trazo y punto: ejes y planos de simetría");
+          fila(240, "H", function (p, q) {
+            return lineaDeEje(p, q).concat([seg(p, avanzar(p, unitario(p, q), 18), "sol"), seg(avanzar(q, unitario(q, p), 18), q, "sol")]);
+          }, "Trazo y punto, gruesa en los extremos: planos de corte");
+          fila(290, "K", function (p, q) {
+            var lista2 = [];
+            var u = unitario(p, q);
+            var s = 0;
+            var largo = distancia(p, q);
+            while (s < largo - 1) {
+              lista2.push(seg(avanzar(p, u, s), avanzar(p, u, Math.min(largo, s + 14)), "aux", { sinRegla: true }));
+              s += 17;
+              [0, 4].forEach(function (k) {
+                if (s + k < largo - 1) {
+                  lista2.push(seg(avanzar(p, u, s + k), avanzar(p, u, s + k + 1.5), "aux", { sinRegla: true }));
+                }
+              });
+              s += 8.5;
+            }
+            return lista2;
+          }, "Trazo y doble punto: piezas vecinas y posiciones extremas");
           return lista;
         }
       };
