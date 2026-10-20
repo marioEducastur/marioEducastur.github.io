@@ -19877,6 +19877,1306 @@ Bachillerato</p>
         }
       };
 
+      // ---- La unidad 4, los triángulos y el arco capaz (desde el 20 de
+      // octubre de 2026) ----
+      //
+      // Las longitudes de los datos van en milímetros, y `escala` dice
+      // cuántos píxeles de la lámina tiene cada milímetro; los ángulos, en
+      // grados. Así un trazado de ejercicio da sus datos tal cual, con
+      // `datos`. Con `cifras`, los datos se rotulan con sus medidas, como en
+      // los ejercicios; sin ella, con sus letras, como en la teoría.
+      //
+      // Un ángulo dado se traza de una vez, con su marca y su valor
+      // (`anguloDado`): cómo se construye es de la unidad 2, y lo nuevo aquí
+      // es el triángulo. Solo el trazado de dos lados y el ángulo que forman
+      // lo lleva con el compás desde su dibujo, como hace el libro.
+
+      var GRADO = Math.PI / 180;
+
+      // Un ángulo en grados, como se escribe: 37,5 da «37°30′».
+      function enGrados(valor) {
+        var enteros = Math.floor(valor + 1e-6);
+        var minutos = Math.round((valor - enteros) * 60);
+        if (minutos === 60) {
+          enteros += 1;
+          minutos = 0;
+        }
+        return enteros + "°" + (minutos ? minutos + "′" : "");
+      }
+
+      // Lo que avanza p en la dirección u: su proyección sobre ella.
+      function sobre(p, origen, u) {
+        return (p.x - origen.x) * u.x + (p.y - origen.y) * u.y;
+      }
+
+      function distanciaASegmento(q, a, b) {
+        if (distancia(a, b) < 1e-9) {
+          return distancia(q, a);
+        }
+        return distancia(q, entre(a, b, acotar(fraccionEn(a, b, q), 0, 1)));
+      }
+
+      // Dónde va la letra de p para quedar lo más lejos posible de lo que hay
+      // cerca: de los segmentos `segmentos` (pares de puntos) y de las
+      // circunferencias `circulos` ({ c, r }). De dieciséis sitios alrededor
+      // de p, a `lejos`, el más despejado.
+      function letraLibre(p, segmentos, circulos, lejos) {
+        var mejor = null;
+        var holgura = -Infinity;
+        var i;
+        var q;
+        var h;
+        for (i = 0; i < 16; i += 1) {
+          q = polar(p, lejos, (i * TAU) / 16);
+          h = Infinity;
+          segmentos.forEach(function (s) {
+            h = Math.min(h, distanciaASegmento(q, s[0], s[1]));
+          });
+          (circulos || []).forEach(function (k) {
+            h = Math.min(h, Math.abs(distancia(q, k.c) - k.r));
+          });
+          if (h > holgura + 0.5) {
+            holgura = h;
+            mejor = polar(pt(0, 0), lejos, (i * TAU) / 16);
+          }
+        }
+        return mejor;
+      }
+
+      // Un ángulo dado, con vértice en v: un lado va en la dirección `desde`
+      // (un ángulo de la pantalla, en radianes) y el otro, girado `grados`
+      // hacia el lado `sentido` (1, el de la normal de arriba de esa
+      // dirección; -1, el otro). Se traza de una vez: la semirrecta, de largo
+      // `largo`, su marca y su valor, `texto` (recto si lleva cifras), en el
+      // hueco del ángulo o, con `fraccion`, a esa parte del ángulo contada
+      // desde el primer lado. El recto lleva su marca y no su valor. Devuelve
+      // la dirección del lado nuevo y los trazos.
+      function anguloDado(v, desde, grados, sentido, largo, texto, radio, fraccion) {
+        var hacia = desde - (sentido < 0 ? -1 : 1) * grados * GRADO;
+        var r = radio || 30;
+        var cifras = /[0-9]/.test(texto);
+        var medio = Math.max(0.12, Math.sin((grados * GRADO) / 2));
+        var ancho = cifras ? 4.6 * texto.length : 6;
+        var lejos = Math.max(r + 15, (ancho + 6) / medio);
+        // Si dentro no cabe sin alejarse, va por fuera, pasado el lado nuevo.
+        var sitio = lejos > r + 40
+          ? polar(v, r + 10 + ancho, hacia - (sentido < 0 ? -1 : 1) * 0.42)
+          : fraccion
+          ? polar(v, Math.max(lejos, r + 20), desde - (sentido < 0 ? -1 : 1) * grados * GRADO * fraccion)
+          : enMedio(v, desde, hacia, lejos);
+        if (Math.abs(grados - 90) < 1e-6) {
+          return {
+            hacia: hacia,
+            letra: null,
+            trazos: [seg(v, polar(v, largo, hacia), "aux"), recto(v, polar(v, 10, desde), polar(v, 10, hacia))]
+          };
+        }
+        return {
+          hacia: hacia,
+          letra: sitio,
+          trazos: [
+            seg(v, polar(v, largo, hacia), "aux"),
+            marcaAngulo(v, polar(v, 10, desde), polar(v, 10, hacia), r, 1),
+            rotulo(sitio, texto, cifras ? { recta: true, cuerpo: 16 } : null)
+          ]
+        };
+      }
+
+      // El arco capaz del segmento pq bajo el ángulo `grados`, del lado
+      // `lado` (1, el de la normal de arriba de pq; -1, el otro): el centro O,
+      // en la mediatriz; el radio; los ángulos de su arco, de p a q pasando
+      // por ese lado, y la dirección de la recta t que forma en p el ángulo
+      // dado con pq, del otro lado. Si el ángulo es recto, O es el punto medio.
+      function arcoCapazGeometria(p, q, grados, lado) {
+        var u = unitario(p, q);
+        var arriba = normalArriba(u);
+        var s = lado < 0 ? -1 : 1;
+        var n = pt(arriba.x * s, arriba.y * s);
+        var mitad = distancia(p, q) / 2;
+        var M = entre(p, q, 0.5);
+        var alfa = grados * GRADO;
+        var recto = Math.abs(grados - 90) < 1e-6;
+        var O = recto ? M : avanzar(M, n, mitad / Math.tan(alfa));
+        var R = mitad / Math.sin(alfa);
+        var ap = angulo(O, p);
+        var aq = angulo(O, q);
+        var cima = angulo(O, avanzar(O, n, 1));
+        var hastaQ = ((aq - ap) % TAU + TAU) % TAU;
+        var hastaCima = ((cima - ap) % TAU + TAU) % TAU;
+        return {
+          u: u,
+          n: n,
+          lado: s,
+          M: M,
+          O: O,
+          R: R,
+          recto: recto,
+          a0: ap,
+          a1: ap + (hastaCima < hastaQ ? hastaQ : hastaQ - TAU),
+          t: angulo(p, q) + s * alfa,
+          cima: avanzar(O, n, R),
+          // Hasta dónde llega O en la mediatriz, contado hacia la normal de
+          // arriba de pq desde M: lo que tiene que alcanzar su recta.
+          alturaO: recto ? 0 : (s * mitad) / Math.tan(alfa)
+        };
+      }
+
+      // La mediatriz de pq con el compás, larga hasta las alturas `alturas`
+      // (contadas desde el punto medio hacia la normal de arriba de pq) y
+      // con 16 px de más: los arquitos de abertura `factor` veces pq y la
+      // recta que une sus cortes. Sin `factor`, la abertura es la primera de
+      // cuatro cuyos cortes quedan lejos de las alturas `evitar` (la de O).
+      function mediatrizHasta(p, q, alturas, factor, evitar) {
+        var mitad = distancia(p, q) / 2;
+        var lejos = function (f) {
+          var h = Math.sqrt(f * f - 0.25) * 2 * mitad;
+          return (evitar || []).every(function (a) {
+            return Math.abs(Math.abs(a) - h) > 36;
+          });
+        };
+        var elegido = factor || [0.56, 0.52, 0.62, 0.7].filter(lejos)[0] || 0.56;
+        var radio = 2 * mitad * elegido;
+        var alto = Math.sqrt(radio * radio - mitad * mitad);
+        var arriba = Math.max.apply(null, [alto].concat(alturas));
+        var abajo = Math.min.apply(null, [-alto].concat(alturas));
+        return mediatrizConCompas(p, q, radio, 0.15, arriba - alto + 16, -abajo - alto + 16);
+      }
+
+      // El arco capaz dibujado: la mediatriz de pq; en p, el ángulo dado
+      // del otro lado de pq, con su recta t; la perpendicular a t por p, que
+      // corta a la mediatriz en O, y el arco con centro en O. `alturas` añade
+      // las alturas (como en `mediatrizHasta`) a las que tiene que llegar la
+      // mediatriz. Devuelve cada parte aparte, para que el trazado de la
+      // teoría haga un paso de cada una; los demás la ponen en un solo paso.
+      // Con un ángulo recto, la mediatriz da el centro, M, y el arco es la
+      // semicircunferencia.
+      function arcoCapazTrazos(p, q, g, texto, estilo, alturas, letraO) {
+        var med = mediatrizHasta(p, q, [g.alturaO].concat(alturas || []), null, g.recto ? [] : [g.alturaO]);
+        var largo = Math.max(56, Math.min(96, distancia(p, q) * 0.36));
+        var ang;
+        var w;
+        var letra;
+        var partes = { mediatriz: med.trazos, angulo: [], perpendicular: [], arco: [] };
+        if (!g.recto) {
+          ang = anguloDado(p, angulo(p, q), Math.abs(giro(angulo(p, q), g.t)) / GRADO, -g.lado, largo, texto, 28,
+            Math.abs(giro(angulo(p, q), g.t)) > Math.PI / 2
+              ? 1 - Math.PI / 4 / Math.abs(giro(angulo(p, q), g.t))
+              : null);
+          w = unitario(p, g.O);
+          letra = letraO || letraEnHueco(g.O, [avanzar(g.O, g.n, 1), avanzar(g.O, g.n, -1), p, opuesto(g.O, p)], 24);
+          partes.angulo = ang.trazos;
+          partes.perpendicular = [
+            seg(avanzar(p, w, -10), avanzar(g.O, w, 24), "aux"),
+            recto(p, polar(p, 10, g.t), avanzar(p, w, 10)),
+            punto(g.O, "O", letra)
+          ];
+          partes.letraT = polar(p, largo + 14, g.t);
+        } else {
+          letra = letraO || letraEnHueco(g.M, [p, q, avanzar(g.M, g.n, 1), avanzar(g.M, g.n, -1)], 24);
+          partes.perpendicular = [punto(g.M, "M", letra)];
+        }
+        partes.arco = [abrir(g.O, polar(g.O, g.R, g.a0)), arco(g.O, g.R, g.a0, g.a1, estilo || "aux")];
+        partes.todos = partes.mediatriz.concat(partes.angulo, partes.perpendicular, partes.arco);
+        return partes;
+      }
+
+      // Lo que dibuja el arco capaz de pq, para que las letras lo esquiven:
+      // la mediatriz, la perpendicular a t, la recta t con su valor y el arco.
+      function obstaculosDelArcoCapaz(p, q, g, texto) {
+        var largo = Math.max(56, Math.min(96, distancia(p, q) * 0.36));
+        var w = unitario(p, g.O);
+        var ang = g.recto
+          ? null
+          : anguloDado(p, angulo(p, q), Math.abs(giro(angulo(p, q), g.t)) / GRADO, -g.lado, largo, texto || "α", 28,
+            Math.abs(giro(angulo(p, q), g.t)) > Math.PI / 2
+              ? 1 - Math.PI / 4 / Math.abs(giro(angulo(p, q), g.t))
+              : null);
+        var segmentos = [[avanzar(g.M, g.n, -260), avanzar(g.M, g.n, 260)]];
+        var a0 = angulo(p, q);
+        var barrido = giro(a0, g.t);
+        var i;
+        var marca;
+        if (!g.recto) {
+          segmentos.push(
+            [avanzar(p, w, -10), avanzar(g.O, w, 24)],
+            [p, polar(p, largo, g.t)],
+            [ang.letra, ang.letra],
+            [avanzar(polar(p, 13, g.t), w, 13), avanzar(polar(p, 13, g.t), w, 13)]
+          );
+          // La marca del ángulo, por puntos.
+          for (i = 0; i <= 4; i += 1) {
+            marca = polar(p, 28, a0 + (barrido * i) / 4);
+            segmentos.push([marca, marca]);
+          }
+        }
+        return { segmentos: segmentos, circulos: [{ c: g.O, r: g.R }] };
+      }
+
+      // ---- El triángulo por dos lugares geométricos ----
+      //
+      // El lado a, BC, es el dato que ya está dibujado, y el vértice A cumple
+      // dos condiciones, cada una con su lugar geométrico. Son dos de estas, y
+      // se trazan en este orden: `capaz`, el arco capaz de BC bajo ese ángulo
+      // (el que forma el triángulo en A); `eje`, la mediatriz de BC (A
+      // equidista de B y de C: el triángulo es isósceles); `h`, la paralela a
+      // BC a esa distancia (la altura); `m`, la circunferencia de centro el
+      // punto medio M de BC y ese radio (la mediana); `c`, la de centro B y
+      // radio c, y `b`, la de centro C y radio b. A está del lado `lado` de
+      // BC (1, arriba) y, si hay dos cortes de ese lado, `sol` dice cuál se
+      // dibuja (1, el de más cerca de B; 2, el otro; 0, los dos). Cada lugar es
+      // un paso, y el último une A con B y con C.
+
+      var LUGARES = ["capaz", "eje", "h", "m", "c", "b"];
+
+      function cortesDeCurvas(k1, k2) {
+        var recta;
+        var circulo;
+        var P;
+        if (k1.w && k2.w) {
+          P = corteRectas(k1.p, avanzar(k1.p, k1.w, 1), k2.p, avanzar(k2.p, k2.w, 1));
+          return P ? [P] : [];
+        }
+        if (k1.w || k2.w) {
+          recta = k1.w ? k1 : k2;
+          circulo = k1.w ? k2 : k1;
+          return cortesRectaCircunferencia(recta.p, avanzar(recta.p, recta.w, 1), circulo.c, circulo.r) || [];
+        }
+        return cortesCircunferencias(k1.c, k1.r, k2.c, k2.r) || [];
+      }
+
+      function porLugaresGeometria(d) {
+        var e = d.escala;
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var B = d.B;
+        var C = avanzar(B, u, d.a * e);
+        var arriba = normalArriba(u);
+        var lado = d.lado < 0 ? -1 : 1;
+        var n = pt(arriba.x * lado, arriba.y * lado);
+        var M = entre(B, C, 0.5);
+        var lugares = [];
+        var cortes;
+        var todas;
+        var vistas;
+        LUGARES.forEach(function (tipo) {
+          var l;
+          if (!d[tipo]) {
+            return;
+          }
+          l = { tipo: tipo };
+          if (tipo === "capaz") {
+            l.g = arcoCapazGeometria(B, C, d.capaz, lado);
+            l.curva = { c: l.g.O, r: l.g.R };
+          } else if (tipo === "eje") {
+            l.curva = { p: M, w: n };
+          } else if (tipo === "h") {
+            l.curva = { p: avanzar(B, n, d.h * e), w: u };
+          } else {
+            l.curva = { c: tipo === "m" ? M : tipo === "c" ? B : C, r: d[tipo] * e };
+          }
+          lugares.push(l);
+        });
+        if (lugares.length !== 2) {
+          return null;
+        }
+        cortes = cortesDeCurvas(lugares[0].curva, lugares[1].curva);
+        todas = [];
+        cortes.forEach(function (P) {
+          var repetido = todas.some(function (Q) {
+            return distancia(P, Q) < 1;
+          });
+          if (!repetido && sobre(P, B, n) > 1) {
+            todas.push(P);
+          }
+        });
+        todas.sort(function (P, Q) {
+          return sobre(P, B, u) - sobre(Q, B, u);
+        });
+        vistas = d.sol === 1 ? todas.slice(0, 1) : d.sol === 2 ? todas.slice(1, 2) : todas;
+        return { e: e, u: u, n: n, lado: lado, B: B, C: C, M: M, lugares: lugares, todas: todas, vistas: vistas };
+      }
+
+      // La dirección de la tangente en p a un lugar que pasa por p.
+      function tangenteDelLugar(l, p) {
+        if (l.curva.w) {
+          return l.curva.w;
+        }
+        return normalArriba(unitario(l.curva.c, p));
+      }
+
+      // Las letras: B y C, entre el lado y lo que sale de ellos; cada A, entre
+      // los lados del triángulo y los dos lugares que pasan por él.
+      function porLugaresLetras(d, g) {
+        var cerca = function (p, w) {
+          return [avanzar(p, w, 1), avanzar(p, w, -1)];
+        };
+        var deB = [g.C];
+        var deC = [g.B];
+        var capaz = g.lugares.filter(function (l) {
+          return l.tipo === "capaz";
+        })[0];
+        g.vistas.forEach(function (A) {
+          deB.push(A);
+          deC.push(A);
+        });
+        var altura = g.lugares.filter(function (l) {
+          return l.tipo === "h";
+        })[0];
+        var tPie = altura ? pieDeLaAltura(g, d.h * g.e) : null;
+        if (capaz && !capaz.g.recto) {
+          deB.push(polar(g.B, 10, capaz.g.t), opuesto(g.B, polar(g.B, 10, capaz.g.t)), opuesto(g.B, capaz.g.O), capaz.g.O);
+          deC.push(avanzar(g.C, normalArriba(unitario(capaz.g.O, g.C)), 1), avanzar(g.C, normalArriba(unitario(capaz.g.O, g.C)), -1));
+        }
+        if (tPie !== null && tPie < 0) {
+          deB.push(avanzar(g.B, g.u, -1));
+        }
+        if (tPie !== null && tPie > distancia(g.B, g.C)) {
+          deC.push(avanzar(g.C, g.u, 1));
+        }
+        return {
+          B: letraEnHueco(g.B, deB, 18),
+          C: letraEnHueco(g.C, deC, 18),
+          A: g.vistas.map(function (A) {
+            var hacia = [g.B, g.C];
+            g.lugares.forEach(function (l) {
+              hacia = hacia.concat(cerca(A, tangenteDelLugar(l, A)));
+            });
+            return letraEnHueco(A, hacia, 18);
+          })
+        };
+      }
+
+      // Los arcos de una circunferencia lugar junto a los cortes: uno que los
+      // abarca, si están cerca, o uno junto a cada uno.
+      function arcosJuntoA(c, r, puntos) {
+        var angulos = puntos
+          .map(function (P) {
+            return angulo(c, P);
+          })
+          .sort(function (a, b) {
+            return a - b;
+          });
+        var trazos = [];
+        var compas = null;
+        var tramos = [];
+        if (angulos.length === 2 && Math.abs(giro(angulos[0], angulos[1])) < 0.9) {
+          tramos.push([angulos[0], angulos[0] + giro(angulos[0], angulos[1])]);
+        } else {
+          angulos.forEach(function (a) {
+            tramos.push([a, a]);
+          });
+        }
+        tramos.forEach(function (tramo) {
+          var desde = Math.min(tramo[0], tramo[1]) - 0.22;
+          var hasta = Math.max(tramo[0], tramo[1]) + 0.22;
+          trazos.push(compas ? girarCorto(c, r, compas, desde) : abrir(c, polar(c, r, desde)));
+          trazos.push(arco(c, r, desde, hasta));
+          compas = hasta;
+        });
+        return trazos;
+      }
+
+      // Dónde va la perpendicular de la altura: en la recta de BC, por fuera
+      // de B, de C y de los pies de los vértices, del lado que quepa.
+      function pieDeLaAltura(g, alto) {
+        var largo = distancia(g.B, g.C);
+        var proyecciones = [0, largo].concat(
+          g.vistas.map(function (A) {
+            return sobre(A, g.B, g.u);
+          })
+        );
+        var izquierda = Math.min.apply(null, proyecciones) - 60;
+        var derecha = Math.max.apply(null, proyecciones) + 60;
+        var dentro = function (t) {
+          var P = avanzar(g.B, g.u, t);
+          var Q = avanzar(P, g.n, alto);
+          return dentroDeLaLamina([P, Q], 24);
+        };
+        return dentro(izquierda) ? izquierda : dentro(derecha) ? derecha : null;
+      }
+
+      function porLugaresConstruir(d) {
+        var g = porLugaresGeometria(d);
+        var letras = porLugaresLetras(d, g);
+        var cifras = Boolean(d.cifras);
+        var largo = distancia(g.B, g.C);
+        var mediatriz = false;
+        var puntoM = false;
+        var pasos = [];
+        var porque = [];
+        var nombres = g.vistas.length === 2 ? ["A", "A′"] : ["A"];
+        var A = g.vistas[0];
+        var alturas = g.vistas.map(function (P) {
+          return sobre(P, g.M, normalArriba(g.u));
+        });
+        var etiquetaA = function () {
+          return g.vistas.map(function (P, i) {
+            return punto(P, nombres[i], letras.A[i]);
+          });
+        };
+        var conMediatriz = g.lugares.some(function (l) {
+          return l.tipo === "eje" || l.tipo === "m" || l.tipo === "capaz";
+        });
+        var capazEnB = g.lugares.some(function (l) {
+          return l.tipo === "capaz" && !l.g.recto;
+        });
+        var ladoA = avanzar(entre(g.B, g.C, capazEnB ? 0.74 : conMediatriz ? 0.28 : 0.5), g.n, -17);
+        // Lo que hay dibujado, para que las letras de O y de M lo esquiven.
+        var segmentos = [[g.B, g.C], [ladoA, ladoA]];
+        var circulos = [];
+        var letraO = null;
+        var letraM;
+        g.vistas.forEach(function (P) {
+          segmentos.push([g.B, P], [g.C, P], [g.M, P]);
+        });
+        g.lugares.forEach(function (l) {
+          var k;
+          if (l.tipo === "capaz") {
+            k = obstaculosDelArcoCapaz(g.B, g.C, l.g, cifras ? enGrados(d.capaz) : "α");
+            segmentos = segmentos.concat(k.segmentos);
+            circulos = circulos.concat(k.circulos);
+          } else if (l.tipo === "eje" || l.tipo === "m") {
+            segmentos.push([avanzar(g.M, g.n, -260), avanzar(g.M, g.n, 260)]);
+            if (l.tipo === "m") {
+              circulos.push({ c: g.M, r: d.m * g.e });
+            }
+          } else if (l.tipo === "h") {
+            segmentos.push([avanzar(l.curva.p, g.u, -600), avanzar(l.curva.p, g.u, 600)]);
+          } else {
+            circulos.push({ c: l.tipo === "c" ? g.B : g.C, r: d[l.tipo] * g.e });
+          }
+        });
+        g.lugares.forEach(function (l) {
+          if (l.tipo === "capaz" && !l.g.recto) {
+            letraO = letraLibre(l.g.O, segmentos, circulos, 24);
+            segmentos.push([avanzar(l.g.O, letraO, 1), avanzar(l.g.O, letraO, 1)]);
+          }
+        });
+        letraM = letraLibre(g.M, segmentos, circulos, 24);
+        g.lugares.forEach(function (l, i) {
+          var trazos = [];
+          var t;
+          var P0;
+          var Q0;
+          var tramo;
+          var tPie;
+          var w;
+          if (l.tipo === "capaz") {
+            t = arcoCapazTrazos(g.B, g.C, l.g, cifras ? enGrados(d.capaz) : "α", "aux", alturas,
+              l.g.recto ? letraM : letraO);
+            trazos = t.todos;
+            mediatriz = true;
+            puntoM = l.g.recto;
+            porque.push(
+              marcaAngulo(A, g.B, g.C, 26, 1, { sector: true }),
+              rotulo(enMedio(A, angulo(A, g.B), angulo(A, g.C), 44), cifras ? enGrados(d.capaz) : "α",
+                cifras ? { recta: true, cuerpo: 16 } : null)
+            );
+          } else if (l.tipo === "eje") {
+            if (mediatriz) {
+              trazos.push(seg(g.M, avanzar(A, g.n, 24), "aux"));
+            } else {
+              trazos = mediatrizHasta(g.B, g.C, alturas.map(function (h) {
+                return h + 10;
+              })).trazos;
+              mediatriz = true;
+            }
+            porque.push(igual(g.B, A), igual(g.C, A));
+          } else if (l.tipo === "h") {
+            tPie = pieDeLaAltura(g, d.h * g.e);
+            P0 = avanzar(g.B, g.u, tPie);
+            Q0 = avanzar(P0, g.n, d.h * g.e);
+            tramo = tramoEnLaLamina(Q0, g.u, 16);
+            w = tPie < 0 ? pt(-g.u.x, -g.u.y) : g.u;
+            if (tPie < 0 || tPie > largo) {
+              trazos.push(seg(tPie < 0 ? g.B : g.C, avanzar(P0, w, 16), "aux"));
+            }
+            trazos.push(
+              seg(P0, avanzar(Q0, g.n, 10), "aux"),
+              recto(P0, avanzar(P0, w, -10), Q0)
+            );
+            trazos = trazos.concat(
+              cifras
+                ? [rotulo(avanzar(entre(P0, Q0, 0.5), w, 22), conComa(d.h), { recta: true, cuerpo: 15 })]
+                : [rotulo(avanzar(entre(P0, Q0, 0.5), w, 22), "hₐ")]
+            );
+            trazos.push(seg(tramo[0], tramo[1], "aux"));
+            g.vistas.forEach(function (P) {
+              var F = pie(g.B, g.C, P);
+              porque.push(seg(P, F, "guia", { sinRegla: true }), recto(F, g.B, P));
+            });
+          } else if (l.tipo === "m") {
+            if (!mediatriz) {
+              trazos = mediatrizHasta(g.B, g.C, []).trazos;
+              mediatriz = true;
+            }
+            if (!puntoM) {
+              trazos.push(punto(g.M, "M", letraM));
+              puntoM = true;
+            }
+            trazos = trazos.concat(arcosJuntoA(g.M, d.m * g.e, g.vistas));
+            porque.push(seg(g.M, A, "guia", { sinRegla: true }), igual(g.B, g.M), igual(g.M, g.C));
+          } else {
+            trazos = arcosJuntoA(l.tipo === "c" ? g.B : g.C, d[l.tipo] * g.e, g.vistas);
+            porque.push(
+              rotulo(
+                avanzar(entre(l.tipo === "c" ? g.B : g.C, A, 0.5),
+                  normalLejos(unitario(l.tipo === "c" ? g.B : g.C, A), unitario(A, l.tipo === "c" ? g.C : g.B)), 16),
+                cifras ? conComa(d[l.tipo]) : l.tipo,
+                cifras ? { recta: true, cuerpo: 15 } : null
+              )
+            );
+          }
+          if (i === g.lugares.length - 1) {
+            trazos = trazos.concat(etiquetaA());
+          }
+          pasos.push(i === 0 && g.lugares[0].tipo === "capaz" ? deprisa(trazos, 0.75) : trazos);
+        });
+        pasos.push(
+          [seg(g.B, g.C, "sol")].concat(
+            [].concat.apply([], g.vistas.map(function (P) {
+              return [seg(g.B, P, "sol"), seg(g.C, P, "sol")];
+            }))
+          )
+        );
+        return {
+          base: [
+            seg(g.B, g.C, "dato"),
+            punto(g.B, "B", letras.B, { forma: "hueco" }),
+            punto(g.C, "C", letras.C, { forma: "hueco" }),
+            rotulo(ladoA, cifras ? conComa(d.a) : "a", cifras ? { recta: true, cuerpo: 15 } : null)
+          ],
+          pasos: pasos,
+          porque: aprisa(porque)
+        };
+      }
+
+      // Que el triángulo tenga altura, que sus letras no choquen y que todo
+      // quepa en la lámina.
+      function porLugaresVale(d) {
+        var g = porLugaresGeometria(d);
+        var largo;
+        var letras;
+        var sitios;
+        var i;
+        var j;
+        if (!g || !g.vistas.length || (d.sol === 2 && g.todas.length < 2)) {
+          return false;
+        }
+        largo = d.a * d.escala;
+        if (Math.abs(g.u.y) > 0.35 || largo < 110 || largo > 460) {
+          return false;
+        }
+        if (
+          !g.vistas.every(function (A) {
+            var angB = Math.abs(giro(angulo(g.B, g.C), angulo(g.B, A)));
+            var angC = Math.abs(giro(angulo(g.C, g.B), angulo(g.C, A)));
+            return sobre(A, g.B, g.n) > 34 && angB > 0.12 && angC > 0.12;
+          })
+        ) {
+          return false;
+        }
+        if (g.lugares.some(function (l) {
+          return l.tipo === "h";
+        }) && pieDeLaAltura(g, d.h * d.escala) === null) {
+          return false;
+        }
+        letras = porLugaresLetras(d, g);
+        sitios = [avanzar(g.B, letras.B, 1), avanzar(g.C, letras.C, 1)].concat(
+          g.vistas.map(function (A, k) {
+            return avanzar(A, letras.A[k], 1);
+          })
+        );
+        for (i = 0; i < sitios.length; i += 1) {
+          for (j = i + 1; j < sitios.length; j += 1) {
+            if (distancia(sitios[i], sitios[j]) < 26) {
+              return false;
+            }
+          }
+        }
+        return dentroDeLaLamina(sitios, 14) && cabe(porLugaresConstruir(d), 6, [ANCHO, ALTO]);
+      }
+
+      // Los trazados de esta familia comparten todo menos sus datos de
+      // partida. Se arrastran B, que lleva el triángulo entero, y C, que gira
+      // el lado y cambia su largo.
+      function porLugaresAsas(d) {
+        return { B: d.B, C: avanzar(d.B, polar(pt(0, 0), 1, d.fi || 0), d.a * d.escala) };
+      }
+
+      function porLugaresMover(d, nombre, p) {
+        var nuevo = copia(d);
+        if (nombre === "B") {
+          nuevo.B = p;
+        } else {
+          nuevo.fi = angulo(d.B, p);
+          nuevo.a = distancia(d.B, p) / d.escala;
+        }
+        return nuevo;
+      }
+
+      construcciones["triangulo-por-sus-lados"] = {
+        datos: function () {
+          return { B: pt(150, 330), fi: 0, a: 72, c: 60, b: 50, escala: 4, lado: 1, sol: 1 };
+        },
+        asas: porLugaresAsas,
+        mover: porLugaresMover,
+        valido: porLugaresVale,
+        construir: porLugaresConstruir
+      };
+
+      construcciones["triangulo-altura-y-mediana"] = {
+        datos: function () {
+          return { B: pt(160, 290), fi: 0, a: 70, h: 40, m: 46, escala: 4, lado: 1, sol: 2 };
+        },
+        asas: porLugaresAsas,
+        mover: porLugaresMover,
+        valido: porLugaresVale,
+        construir: porLugaresConstruir
+      };
+
+      construcciones["rectangulo-hipotenusa-y-cateto"] = {
+        datos: function () {
+          return { B: pt(160, 290), fi: 0, a: 70, capaz: 90, b: 42, escala: 4, lado: 1, sol: 1 };
+        },
+        asas: porLugaresAsas,
+        mover: porLugaresMover,
+        valido: porLugaresVale,
+        construir: porLugaresConstruir
+      };
+
+      construcciones["triangulo-con-arco-capaz"] = {
+        datos: function () {
+          return { B: pt(172, 300), fi: 0, a: 64, capaz: 55, h: 54, escala: 4, lado: 1, sol: 2 };
+        },
+        asas: porLugaresAsas,
+        mover: porLugaresMover,
+        valido: porLugaresVale,
+        construir: porLugaresConstruir
+      };
+
+      // ---- Dos lados y el ángulo que forman ----
+      //
+      // El lado c, AB, sobre una recta desde A, y el lado b, AC, sobre el
+      // otro lado del ángulo en A. Con `copia`, el ángulo está dibujado aparte,
+      // con vértice en V, y se lleva a A con el compás, como en la unidad 2;
+      // sin ella, se traza de una vez (`anguloDado`).
+
+      function dosLadosYAnguloGeometria(d) {
+        var e = d.escala;
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var lado = d.lado < 0 ? -1 : 1;
+        var hacia = (d.fi || 0) - lado * d.ang * GRADO;
+        return {
+          u: u,
+          lado: lado,
+          n: pt(normalArriba(u).x * lado, normalArriba(u).y * lado),
+          hacia: hacia,
+          A: d.A,
+          B: avanzar(d.A, u, d.c * e),
+          C: polar(d.A, d.b * e, hacia)
+        };
+      }
+
+      function dosLadosYAnguloLetras(d, g) {
+        var nB = normalArriba(g.u);
+        var nC = normalArriba(unitario(g.A, g.C));
+        return {
+          A: letraEnHueco(g.A, [g.B, g.C, avanzar(g.A, g.u, -1)], 18),
+          B: letraEnHueco(g.B, [g.A, g.C, avanzar(g.B, g.u, 1), avanzar(g.B, nB, 1), avanzar(g.B, nB, -1)], 23),
+          C: letraEnHueco(g.C, [g.A, g.B, avanzar(g.C, unitario(g.A, g.C), 1), avanzar(g.C, nC, 1), avanzar(g.C, nC, -1)], 23)
+        };
+      }
+
+      function dosLadosYAnguloConstruir(d) {
+        var g = dosLadosYAnguloGeometria(d);
+        var letras = dosLadosYAnguloLetras(d, g);
+        var e = d.escala;
+        var cifras = Boolean(d.cifras);
+        var fi = d.fi || 0;
+        var s = g.lado;
+        var largoRayo = d.b * e + 34;
+        var base = [];
+        var paso2;
+        var r0 = 56;
+        var V;
+        var P1;
+        var P2;
+        var P3;
+        var P4;
+        var cuerda;
+        var a4;
+        var ang;
+        var nAB = normalLejos(g.u, unitario(g.A, g.C));
+        var nAC = normalLejos(unitario(g.A, g.C), g.u);
+        if (d.copia) {
+          V = d.V;
+          base = [
+            seg(V, polar(V, 104, fi), "dato"),
+            seg(V, polar(V, 104, g.hacia), "dato"),
+            punto(V, "V", letraEnHueco(V, [polar(V, 10, fi), polar(V, 10, g.hacia)], 18), { forma: "hueco" }),
+            marcaAngulo(V, polar(V, 10, fi), polar(V, 10, g.hacia), 24, 1),
+            rotulo(enMedio(V, fi, g.hacia, 76), "α")
+          ];
+          P1 = polar(V, r0, fi);
+          P2 = polar(V, r0, g.hacia);
+          P3 = polar(g.A, r0, fi);
+          P4 = polar(g.A, r0, g.hacia);
+          cuerda = distancia(P1, P2);
+          a4 = angulo(P3, P4);
+          paso2 = deprisa(
+            [
+              abrir(V, polar(V, r0, fi + s * 0.16)),
+              arco(V, r0, fi + s * 0.16, g.hacia - s * 0.16),
+              llevar(V, polar(V, r0, g.hacia - s * 0.16), g.A, polar(g.A, r0, fi + s * 0.16)),
+              arco(g.A, r0, fi + s * 0.16, g.hacia - s * 0.4),
+              abrir(P1, P2),
+              llevar(P1, P2, P3, polar(P3, cuerda, a4 + s * 0.3)),
+              arco(P3, cuerda, a4 + s * 0.3, a4 - s * 0.3),
+              seg(g.A, polar(g.A, largoRayo, g.hacia), "aux")
+            ],
+            0.8
+          );
+        } else {
+          ang = anguloDado(g.A, fi, d.ang, s, largoRayo, cifras ? enGrados(d.ang) : "α", 30);
+          paso2 = ang.trazos;
+        }
+        return {
+          base: base.concat([punto(g.A, "A", letras.A, { forma: "hueco" })]),
+          pasos: [
+            [
+              seg(avanzar(g.A, g.u, -22), avanzar(g.A, g.u, d.c * e + 36), "aux"),
+              abrir(g.A, polar(g.A, d.c * e, fi + s * 0.14)),
+              arco(g.A, d.c * e, fi + s * 0.14, fi - s * 0.14),
+              punto(g.B, "B", letras.B),
+              rotulo(avanzar(entre(g.A, g.B, 0.5), nAB, 16), cifras ? conComa(d.c) : "c",
+                cifras ? { recta: true, cuerpo: 15 } : null)
+            ],
+            paso2,
+            [
+              abrir(g.A, polar(g.A, d.b * e, g.hacia + s * 0.12)),
+              arco(g.A, d.b * e, g.hacia + s * 0.12, g.hacia - s * 0.12),
+              punto(g.C, "C", letras.C),
+              rotulo(avanzar(entre(g.A, g.C, 0.62), nAC, 16), cifras ? conComa(d.b) : "b",
+                cifras ? { recta: true, cuerpo: 15 } : null)
+            ],
+            [seg(g.A, g.B, "sol"), seg(g.A, g.C, "sol"), seg(g.B, g.C, "sol")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["triangulo-dos-lados-y-angulo"] = {
+        datos: function () {
+          return { A: pt(196, 336), fi: 0, c: 72, b: 48, ang: 55, escala: 4, lado: 1, copia: 1, V: pt(52, 150) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: dosLadosYAnguloGeometria(d).B };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            nuevo.c = distancia(d.A, p) / d.escala;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = dosLadosYAnguloGeometria(d);
+          var letras = dosLadosYAnguloLetras(d, g);
+          if (d.c * d.escala < 120 || d.c * d.escala > 430 || d.ang < 20 || d.ang > 140) {
+            return false;
+          }
+          if (distancia(g.B, g.C) < 60 || sobre(g.C, g.A, g.n) < 40) {
+            return false;
+          }
+          if (d.copia && Math.abs(giro(d.fi || 0, 0)) > 0.4) {
+            return false;
+          }
+          return (
+            dentroDeLaLamina(
+              [avanzar(g.A, letras.A, 1), avanzar(g.B, letras.B, 1), avanzar(g.C, letras.C, 1)],
+              14
+            ) && cabe(dosLadosYAnguloConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: dosLadosYAnguloConstruir
+      };
+
+      // ---- Un lado y los dos ángulos contiguos ----
+      //
+      // El lado a, BC, ya dibujado; en B, el ángulo `angB`, y en C, el
+      // `angC`, los dos hacia el mismo lado. Sus lados se cortan en A. Solo
+      // para los ejercicios, que llevan sus pasos en la solución.
+
+      function ladoYDosAngulosGeometria(d) {
+        var e = d.escala;
+        var fi = d.fi || 0;
+        var u = polar(pt(0, 0), 1, fi);
+        var lado = d.lado < 0 ? -1 : 1;
+        var B = d.B;
+        var C = avanzar(B, u, d.a * e);
+        var haciaB = fi - lado * d.angB * GRADO;
+        var haciaC = fi + Math.PI + lado * d.angC * GRADO;
+        var A = corteRectas(B, polar(B, 1, haciaB), C, polar(C, 1, haciaC));
+        return { u: u, lado: lado, n: pt(normalArriba(u).x * lado, normalArriba(u).y * lado), B: B, C: C, A: A, haciaB: haciaB, haciaC: haciaC };
+      }
+
+      function ladoYDosAngulosLetras(d, g) {
+        return {
+          A: letraEnHueco(g.A, [g.B, g.C, opuesto(g.A, g.B), opuesto(g.A, g.C)], 18),
+          B: letraEnHueco(g.B, [g.A, g.C], 18),
+          C: letraEnHueco(g.C, [g.A, g.B], 18)
+        };
+      }
+
+      function ladoYDosAngulosConstruir(d) {
+        var g = ladoYDosAngulosGeometria(d);
+        var letras = ladoYDosAngulosLetras(d, g);
+        var cifras = Boolean(d.cifras);
+        var fi = d.fi || 0;
+        var enB = anguloDado(g.B, fi, d.angB, g.lado, distancia(g.B, g.A) + 30,
+          cifras ? enGrados(d.angB) : "β", 30);
+        var enC = anguloDado(g.C, fi + Math.PI, d.angC, -g.lado, distancia(g.C, g.A) + 30,
+          cifras ? enGrados(d.angC) : "γ", 30);
+        return {
+          base: [
+            seg(g.B, g.C, "dato"),
+            punto(g.B, "B", letras.B, { forma: "hueco" }),
+            punto(g.C, "C", letras.C, { forma: "hueco" }),
+            rotulo(avanzar(entre(g.B, g.C, 0.5), g.n, -17), cifras ? conComa(d.a) : "a",
+              cifras ? { recta: true, cuerpo: 15 } : null)
+          ],
+          pasos: [
+            enB.trazos,
+            enC.trazos.concat([punto(g.A, "A", letras.A)]),
+            [seg(g.B, g.C, "sol"), seg(g.B, g.A, "sol"), seg(g.C, g.A, "sol")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["triangulo-lado-y-dos-angulos"] = {
+        datos: function () {
+          return { B: pt(160, 320), fi: 0, a: 70, angB: 30, angC: 75, escala: 4, lado: 1, cifras: 1 };
+        },
+        asas: function (d) {
+          return { B: d.B, C: ladoYDosAngulosGeometria(d).C };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "B") {
+            nuevo.B = p;
+          } else {
+            nuevo.fi = angulo(d.B, p);
+            nuevo.a = distancia(d.B, p) / d.escala;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = ladoYDosAngulosGeometria(d);
+          var letras;
+          if (!g.A || d.angB + d.angC >= 170 || Math.abs(g.u.y) > 0.35) {
+            return false;
+          }
+          if (d.a * d.escala < 110 || d.a * d.escala > 440 || sobre(g.A, g.B, g.n) < 34) {
+            return false;
+          }
+          letras = ladoYDosAngulosLetras(d, g);
+          return (
+            dentroDeLaLamina(
+              [avanzar(g.A, letras.A, 1), avanzar(g.B, letras.B, 1), avanzar(g.C, letras.C, 1)],
+              14
+            ) && cabe(ladoYDosAngulosConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: ladoYDosAngulosConstruir
+      };
+
+      // ---- La circunferencia inscrita ----
+      //
+      // Las bisectrices de A y de B, con el compás (`bisectrizConCompas`),
+      // se cortan en el incentro I; la perpendicular por I al lado AB da el
+      // punto de tangencia T, y la circunferencia de centro I pasa por T.
+
+      function inscritaGeometria(d) {
+        var a = distancia(d.B, d.C);
+        var b = distancia(d.A, d.C);
+        var c = distancia(d.A, d.B);
+        var suma = a + b + c;
+        var I = pt((a * d.A.x + b * d.B.x + c * d.C.x) / suma, (a * d.A.y + b * d.B.y + c * d.C.y) / suma);
+        return {
+          I: I,
+          T: pie(d.A, d.B, I),
+          Ta: pie(d.B, d.C, I),
+          Tb: pie(d.A, d.C, I),
+          r: distancia(I, pie(d.A, d.B, I))
+        };
+      }
+
+      // La bisectriz del ángulo de vértice v entre las direcciones a p y a q,
+      // con el compás: un arco de radio `radio` que corta a los dos lados y,
+      // con la misma abertura, dos arcos que se cortan dentro del ángulo.
+      // Devuelve sus trazos, el corte X y la dirección de la bisectriz.
+      function bisectrizDibujada(v, p, q, radio, hasta) {
+        var a0 = angulo(v, p);
+        var a1 = a0 + giro(a0, angulo(v, q));
+        var s = giro(a0, a1) < 0 ? -1 : 1;
+        var P1 = polar(v, radio, a0);
+        var P2 = polar(v, radio, a1);
+        var b = bisectrizConCompas(v, P1, P2, radio, 0.2);
+        var w = unitario(v, b.x);
+        var arcos = arcosConCompas({ c: v, t: polar(v, radio, a1 + s * 0.14) }, b.arcos);
+        return {
+          x: b.x,
+          w: w,
+          trazos: [
+            abrir(v, polar(v, radio, a0 - s * 0.14)),
+            arco(v, radio, a0 - s * 0.14, a1 + s * 0.14)
+          ].concat(arcos.trazos, [seg(v, avanzar(v, w, hasta), "aux")])
+        };
+      }
+
+      function inscritaLetras(d, g) {
+        var abajo = normalLejos(unitario(d.A, d.B), unitario(d.A, d.C));
+        return {
+          A: letraEnHueco(d.A, [d.B, d.C, g.I], 18),
+          B: letraEnHueco(d.B, [d.A, d.C, g.I], 18),
+          C: letraEnHueco(d.C, [d.A, d.B, g.I], 18),
+          I: letraEnHueco(g.I, [d.A, d.B, g.T, avanzar(g.I, unitario(d.A, g.I), 1), avanzar(g.I, unitario(d.B, g.I), 1)], 18),
+          T: mezcla(unitario(d.A, d.B), 17, abajo, -17)
+        };
+      }
+
+      function inscritaConstruir(d) {
+        var g = inscritaGeometria(d);
+        var letras = inscritaLetras(d, g);
+        var radioA = Math.min(distancia(d.A, d.B), distancia(d.A, d.C)) * 0.3;
+        var radioB = Math.min(distancia(d.B, d.A), distancia(d.B, d.C)) * 0.3;
+        var enA = bisectrizDibujada(d.A, d.B, d.C, radioA, distancia(d.A, g.I) + 36);
+        var enB = bisectrizDibujada(d.B, d.A, d.C, radioB, distancia(d.B, g.I) + 36);
+        var perpendicular = perpendicularDesde(g.I, d.A, d.B, 30);
+        var aT = angulo(g.I, g.T);
+        return {
+          base: [
+            seg(d.A, d.B, "dato"),
+            seg(d.B, d.C, "dato"),
+            seg(d.C, d.A, "dato"),
+            punto(d.A, "A", letras.A, { forma: "hueco" }),
+            punto(d.B, "B", letras.B, { forma: "hueco" }),
+            punto(d.C, "C", letras.C, { forma: "hueco" })
+          ],
+          pasos: [
+            enA.trazos,
+            enB.trazos.concat([punto(g.I, "I", letras.I)]),
+            perpendicular.trazos.concat([
+              seg(g.I, avanzar(perpendicular.N, unitario(g.I, perpendicular.N), 12), "aux"),
+              punto(g.T, "T", letras.T)
+            ]),
+            [abrir(g.I, polar(g.I, g.r, aT)), arco(g.I, g.r, aT, aT + TAU, "sol")]
+          ],
+          porque: aprisa([
+            seg(g.I, g.T, "guia", { sinRegla: true }),
+            seg(g.I, g.Ta, "guia", { sinRegla: true }),
+            seg(g.I, g.Tb, "guia", { sinRegla: true }),
+            recto(g.Ta, d.C, g.I),
+            recto(g.Tb, d.A, g.I),
+            igual(g.I, g.T),
+            igual(g.I, g.Ta),
+            igual(g.I, g.Tb)
+          ])
+        };
+      }
+
+      construcciones["circunferencia-inscrita"] = {
+        datos: function () {
+          return { A: pt(120, 330), B: pt(470, 330), C: pt(330, 70) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, C: d.C };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = inscritaGeometria(d);
+          var letras = inscritaLetras(d, g);
+          var angulos = [
+            Math.abs(giro(angulo(d.A, d.B), angulo(d.A, d.C))),
+            Math.abs(giro(angulo(d.B, d.A), angulo(d.B, d.C))),
+            Math.abs(giro(angulo(d.C, d.A), angulo(d.C, d.B)))
+          ];
+          if (Math.abs(unitario(d.A, d.B).y) > 0.3 || d.C.y > Math.min(d.A.y, d.B.y) - 80) {
+            return false;
+          }
+          if (Math.min.apply(null, angulos) < 0.45 || angulos[0] > 2.2 || angulos[1] > 2.2 || g.r < 34) {
+            return false;
+          }
+          return (
+            dentroDeLaLamina(
+              [
+                avanzar(d.A, letras.A, 1),
+                avanzar(d.B, letras.B, 1),
+                avanzar(d.C, letras.C, 1),
+                avanzar(g.T, letras.T, 1)
+              ],
+              14
+            ) && cabe(inscritaConstruir(d), 6, [ANCHO, ALTO])
+          );
+        },
+        construir: inscritaConstruir
+      };
+
+      // ---- El baricentro ----
+      //
+      // Los puntos medios de BC y de AC, con sus mediatrices (M y N), y las
+      // medianas AM y BN, que se cortan en G. Solo para los ejercicios.
+
+      function baricentroGeometria(d) {
+        return {
+          M: entre(d.B, d.C, 0.5),
+          N: entre(d.A, d.C, 0.5),
+          G: pt((d.A.x + d.B.x + d.C.x) / 3, (d.A.y + d.B.y + d.C.y) / 3)
+        };
+      }
+
+      function baricentroConstruir(d) {
+        var g = baricentroGeometria(d);
+        var lado = function (p, q) {
+          return mediatrizConCompas(p, q, distancia(p, q) * 0.55, 0.16, 10, 10);
+        };
+        var enBC = lado(d.B, d.C);
+        var enAC = lado(d.A, d.C);
+        var segmentos = [[d.A, d.B], [d.B, d.C], [d.C, d.A], [d.A, g.M], [d.B, g.N]].concat(
+          [enBC, enAC].map(function (m) {
+            return [m.cortes[0], m.cortes[1]];
+          })
+        );
+        var libre = function (p, lejos) {
+          var hacia = letraLibre(p, segmentos, [], lejos);
+          segmentos.push([avanzar(p, hacia, 1), avanzar(p, hacia, 1)]);
+          return hacia;
+        };
+        var letraG = libre(g.G, 18);
+        var letraM = libre(g.M, 20);
+        var letraN = libre(g.N, 20);
+        return {
+          base: [
+            seg(d.A, d.B, "dato"),
+            seg(d.B, d.C, "dato"),
+            seg(d.C, d.A, "dato"),
+            punto(d.A, "A", letraEnHueco(d.A, [d.B, d.C, g.G], 18), { forma: "hueco" }),
+            punto(d.B, "B", letraEnHueco(d.B, [d.A, d.C, g.G], 18), { forma: "hueco" }),
+            punto(d.C, "C", letraEnHueco(d.C, [d.A, d.B, g.G], 18), { forma: "hueco" })
+          ],
+          pasos: [
+            enBC.trazos.concat([punto(g.M, "M", letraM)]),
+            enAC.trazos.concat([punto(g.N, "N", letraN)]),
+            [seg(d.A, g.M, "sol"), seg(d.B, g.N, "sol"), punto(g.G, "G", letraG, { estilo: "sol" })]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones.baricentro = {
+        datos: function () {
+          return { A: pt(150, 330), B: pt(450, 330), C: pt(330, 90) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, C: d.C };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var angulos = [
+            Math.abs(giro(angulo(d.A, d.B), angulo(d.A, d.C))),
+            Math.abs(giro(angulo(d.B, d.A), angulo(d.B, d.C))),
+            Math.abs(giro(angulo(d.C, d.A), angulo(d.C, d.B)))
+          ];
+          if (Math.min.apply(null, angulos) < 0.4 || Math.min(distancia(d.A, d.B), distancia(d.B, d.C), distancia(d.A, d.C)) < 120) {
+            return false;
+          }
+          return cabe(baricentroConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: baricentroConstruir
+      };
+
+      // ---- El arco capaz ----
+      //
+      // El segmento AB es el dato; el ángulo, `ang`. Un paso para cada
+      // pieza: la mediatriz, el ángulo en A con su recta t, la perpendicular
+      // a t por A, que da O, y el arco.
+
+      function arcoCapazDatos(d) {
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var A = d.A;
+        var B = avanzar(A, u, d.ab * d.escala);
+        return { A: A, B: B, g: arcoCapazGeometria(A, B, d.ang, d.lado < 0 ? -1 : 1) };
+      }
+
+      function arcoCapazConstruir(d) {
+        var k = arcoCapazDatos(d);
+        var g = k.g;
+        var cifras = Boolean(d.cifras);
+        var texto = cifras ? enGrados(d.ang) : "α";
+        var partes = arcoCapazTrazos(k.A, k.B, g, texto, "sol", [g.alturaO + 4]);
+        var obstaculos = obstaculosDelArcoCapaz(k.A, k.B, g, texto);
+        var segmentos = obstaculos.segmentos.concat([[k.A, k.B]]);
+        var arcoP = g.a0 + (g.a1 - g.a0) * (d.ang > 90 ? 0.32 : 0.2);
+        var P = polar(g.O, g.R, arcoP);
+        var alturaP = Math.abs(sobre(P, k.A, g.n));
+        var letraA = letraLibre(k.A, segmentos, obstaculos.circulos, 20);
+        var letraB = letraLibre(k.B, segmentos, obstaculos.circulos, 20);
+        var letraP = letraLibre(P, segmentos.concat([[P, k.A], [P, k.B]]), obstaculos.circulos, 20);
+        var finT = polar(k.A, Math.max(56, Math.min(96, distancia(k.A, k.B) * 0.36)), g.t);
+        var letraT = avanzar(finT, letraLibre(finT, segmentos.concat([
+          [avanzar(k.A, letraA, 1), avanzar(k.A, letraA, 1)]
+        ]), obstaculos.circulos, 15), 1);
+        return {
+          base: [
+            seg(k.A, k.B, "dato"),
+            punto(k.A, "A", letraA, { forma: "hueco" }),
+            punto(k.B, "B", letraB, { forma: "hueco" })
+          ],
+          pasos: [
+            partes.mediatriz,
+            partes.angulo.concat([rotulo(letraT, "t")]),
+            partes.perpendicular,
+            partes.arco
+          ],
+          porque: aprisa([
+            seg(P, k.A, "guia", { sinRegla: true }),
+            seg(P, k.B, "guia", { sinRegla: true }),
+            marcaAngulo(P, k.A, k.B, 26, 1, { sector: true }),
+            rotulo(enMedio(P, angulo(P, k.A), angulo(P, k.B), Math.min(46, alturaP * 0.6)), texto, cifras ? { recta: true, cuerpo: 16 } : null),
+            punto(P, "P", letraP)
+          ])
+        };
+      }
+
+      construcciones["arco-capaz"] = {
+        datos: function () {
+          return { A: pt(195, 300), fi: 0, ab: 60, ang: 50, escala: 3.5, lado: 1 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: arcoCapazDatos(d).B };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            nuevo.fi = angulo(d.A, p);
+            nuevo.ab = distancia(d.A, p) / d.escala;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var k = arcoCapazDatos(d);
+          var largo = d.ab * d.escala;
+          if (largo < 120 || largo > 400 || Math.abs(k.g.u.y) > 0.35 || Math.abs(d.ang - 90) < 10) {
+            return false;
+          }
+          if (d.ang < 25 || d.ang > 150) {
+            return false;
+          }
+          return cabe(arcoCapazConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: arcoCapazConstruir
+      };
+
+      // ---- El punto desde el que se ven dos segmentos con dos ángulos ----
+      //
+      // Los segmentos AB y BC, que comparten B. El arco capaz de AB bajo
+      // `alfa` y el de BC bajo `beta`, cada uno del lado que dicen `ladoAB` y
+      // `ladoBC`, se cortan en B y en V. Solo para los ejercicios.
+
+      function dosArcosGeometria(d) {
+        var g1 = arcoCapazGeometria(d.A, d.B, d.alfa, d.ladoAB);
+        var g2 = arcoCapazGeometria(d.C, d.B, d.beta, -d.ladoBC);
+        var cortes = cortesCircunferencias(g1.O, g1.R, g2.O, g2.R);
+        var V = null;
+        if (cortes) {
+          V = distancia(cortes[0], d.B) > distancia(cortes[1], d.B) ? cortes[0] : cortes[1];
+        }
+        return { g1: g1, g2: g2, V: V };
+      }
+
+      // Que V esté de verdad en los dos arcos: del lado de cada segmento.
+      function dosArcosVale(d, k) {
+        return (
+          k.V &&
+          distancia(k.V, d.B) > 40 &&
+          sobre(k.V, d.A, k.g1.n) > 4 &&
+          sobre(k.V, d.C, k.g2.n) > 4
+        );
+      }
+
+      function dosArcosConstruir(d) {
+        var k = dosArcosGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var p1 = arcoCapazTrazos(d.A, d.B, k.g1, cifras ? enGrados(d.alfa) : "α", "aux", [],
+          null);
+        var p2 = arcoCapazTrazos(d.C, d.B, k.g2, cifras ? enGrados(d.beta) : "β", "aux", [],
+          null);
+        var o1 = obstaculosDelArcoCapaz(d.A, d.B, k.g1, cifras ? enGrados(d.alfa) : "α");
+        var o2 = obstaculosDelArcoCapaz(d.C, d.B, k.g2, cifras ? enGrados(d.beta) : "β");
+        var segmentos = [[d.A, d.B], [d.B, d.C], [k.V, d.A], [k.V, d.B], [k.V, d.C]].concat(o1.segmentos, o2.segmentos);
+        var circulos = o1.circulos.concat(o2.circulos);
+        var libre = function (p, lejos) {
+          var hacia = letraLibre(p, segmentos, circulos, lejos);
+          segmentos.push([avanzar(p, hacia, 1), avanzar(p, hacia, 1)]);
+          return hacia;
+        };
+        var letraV = libre(k.V, 20);
+        var letraO1 = libre(k.g1.O, 24);
+        var letraO2 = libre(k.g2.O, 24);
+        var letraA = libre(d.A, 20);
+        var letraB = libre(d.B, 20);
+        var letraC = libre(d.C, 20);
+        var cambiarO = function (trazos, nombre, letra) {
+          return trazos.map(function (e) {
+            return e.tipo === "punto" && e.nombre === "O" ? con(copia(e), { nombre: nombre, hacia: letra }) : e;
+          });
+        };
+        return {
+          base: [
+            seg(d.A, d.B, "dato"),
+            seg(d.B, d.C, "dato"),
+            punto(d.A, "A", letraA, { forma: "hueco" }),
+            punto(d.B, "B", letraB, { forma: "hueco" }),
+            punto(d.C, "C", letraC, { forma: "hueco" })
+          ],
+          pasos: [
+            deprisa(cambiarO(p1.todos, "O₁", letraO1), 0.75),
+            deprisa(cambiarO(p2.todos, "O₂", letraO2), 0.75).concat([punto(k.V, "V", letraV)]),
+            [seg(k.V, d.A, "sol"), seg(k.V, d.B, "sol"), seg(k.V, d.C, "sol")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["dos-arcos-capaces"] = {
+        datos: function () {
+          return { A: pt(120, 330), B: pt(296, 330), C: pt(440, 330), alfa: 45, beta: 30, ladoAB: 1, ladoBC: 1, cifras: 1 };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B, C: d.C };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var k = dosArcosGeometria(d);
+          if (distancia(d.A, d.B) < 110 || distancia(d.B, d.C) < 110 || !dosArcosVale(d, k)) {
+            return false;
+          }
+          return cabe(dosArcosConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: dosArcosConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -21108,6 +22408,365 @@ Bachillerato</p>
             medida(pt(x0 - 52, y0 + 56 * k), "5,60"),
             rotulo(pt(682 + 90 * k, 318), "E 1:50", { recta: true, cuerpo: 18, fijo: true })
           ]);
+        }
+      };
+
+      // ---- Las figuras de la unidad 4, los triángulos ----
+
+      // Un pie de figura en letra recta.
+      function pieDeFigura(x, y, texto) {
+        return rotulo(pt(x, y), texto, { recta: true, cuerpo: 16, fijo: true });
+      }
+
+      // Los tres vértices de un triángulo, con su letra en el hueco de fuera.
+      function verticesConLetra(A, B, C, nombres, hueco) {
+        var lista = [A, B, C];
+        return lista.map(function (P, i) {
+          var otros = lista.filter(function (Q, j) {
+            return j !== i;
+          });
+          return punto(P, nombres ? nombres[i] : "ABC".charAt(i), letraEnHueco(P, otros, 18), hueco ? { forma: "hueco" } : null);
+        });
+      }
+
+      // Los ángulos de un triángulo suman 180 grados, y un ángulo exterior
+      // mide lo que los dos interiores que no tiene al lado.
+      figuras.angulos_del_triangulo = {
+        lienzo: [900, 300],
+        trazos: function () {
+          var A = pt(60, 246);
+          var B = pt(352, 246);
+          var C = pt(222, 82);
+          var izquierda = pt(70, 82);
+          var derecha = pt(386, 82);
+          var A2 = pt(500, 246);
+          var B2 = pt(722, 246);
+          var C2 = pt(642, 82);
+          var fuera = pt(850, 246);
+          return [
+            seg(A, B, "dato"),
+            seg(B, C, "dato"),
+            seg(C, A, "dato"),
+            seg(izquierda, derecha, "aux"),
+            marcaAngulo(A, B, C, 34, 1),
+            marcaAngulo(B, C, A, 34, 2),
+            marcaAngulo(C, A, B, 20, 3),
+            marcaAngulo(C, izquierda, A, 42, 1),
+            marcaAngulo(C, B, derecha, 42, 2)
+          ]
+            .concat(verticesConLetra(A, B, C))
+            .concat([
+              rotulo(pt(372, 72), "r", { fijo: true }),
+              pieDeFigura(206, 288, "La paralela r por C: A, B y C llenan un llano")
+            ])
+            .concat([
+              seg(A2, B2, "dato"),
+              seg(B2, C2, "dato"),
+              seg(C2, A2, "dato"),
+              seg(B2, fuera, "aux"),
+              marcaAngulo(A2, B2, C2, 34, 1),
+              marcaAngulo(C2, A2, B2, 30, 2),
+              marcaAngulo(B2, fuera, C2, 30, 3, { sector: true })
+            ])
+            .concat(verticesConLetra(A2, B2, C2))
+            .concat([pieDeFigura(672, 288, "El exterior en B mide lo que A y C juntos")]);
+        }
+      };
+
+      // Las clases de triángulos, por sus lados y por sus ángulos.
+      figuras.clases_de_triangulos = {
+        lienzo: [900, 470],
+        trazos: function () {
+          var lista = [];
+          var triangulo = function (A, B, C) {
+            lista.push(seg(A, B, "dato"), seg(B, C, "dato"), seg(C, A, "dato"));
+          };
+          // Por sus lados.
+          var E = [pt(60, 190), pt(220, 190), pt(140, 51.4)];
+          var I = [pt(372, 190), pt(512, 190), pt(442, 40)];
+          var S = [pt(640, 190), pt(840, 190), pt(700, 70)];
+          // Por sus ángulos.
+          var Ag = [pt(52, 410), pt(228, 410), pt(150, 270)];
+          var R = [pt(360, 410), pt(530, 410), pt(360, 290)];
+          var Ob = [pt(620, 410), pt(850, 410), pt(680, 340)];
+          [E, I, S, Ag, R, Ob].forEach(function (t) {
+            triangulo(t[0], t[1], t[2]);
+          });
+          lista.push(
+            igual(E[0], E[1]), igual(E[1], E[2]), igual(E[2], E[0]),
+            igual(I[1], I[2], 2), igual(I[2], I[0], 2),
+            igual(S[0], S[1]), igual(S[1], S[2], 2), igual(S[2], S[0], 3),
+            marcaAngulo(E[0], E[1], E[2], 22, 1), marcaAngulo(E[1], E[2], E[0], 22, 1), marcaAngulo(E[2], E[0], E[1], 22, 1),
+            marcaAngulo(I[0], I[1], I[2], 22, 1), marcaAngulo(I[1], I[2], I[0], 22, 1),
+            recto(R[0], R[1], R[2]),
+            marcaAngulo(Ob[2], Ob[0], Ob[1], 22, 1, { sector: true }),
+            rotulo(pt(445, 426), "cateto", { recta: true, cuerpo: 13, fijo: true }),
+            rotulo(pt(325, 352), "cateto", { recta: true, cuerpo: 13, fijo: true }),
+            rotulo(pt(480, 336), "hipotenusa", { recta: true, cuerpo: 13, fijo: true }),
+            pieDeFigura(140, 222, "Equilátero"),
+            pieDeFigura(442, 222, "Isósceles"),
+            pieDeFigura(740, 222, "Escaleno"),
+            pieDeFigura(140, 454, "Acutángulo"),
+            pieDeFigura(445, 454, "Rectángulo"),
+            pieDeFigura(735, 454, "Obtusángulo")
+          );
+          return lista;
+        }
+      };
+
+      // Las rectas y los puntos notables, en un mismo triángulo acutángulo.
+      figuras.puntos_notables = {
+        lienzo: [960, 340],
+        trazos: function () {
+          var lista = [];
+          [0, 1, 2, 3].forEach(function (k) {
+            var x = 240 * k;
+            var A = pt(x + 40, 262);
+            var B = pt(x + 200, 262);
+            var C = pt(x + 140, 96);
+            var a = distancia(B, C);
+            var b = distancia(A, C);
+            var c = distancia(A, B);
+            var Ma = entre(B, C, 0.5);
+            var Mb = entre(A, C, 0.5);
+            var Mc = entre(A, B, 0.5);
+            var O;
+            var I;
+            var H;
+            var G;
+            var r;
+            lista.push(seg(A, B, "dato"), seg(B, C, "dato"), seg(C, A, "dato"));
+            if (k === 0) {
+              O = corteRectas(Mc, avanzar(Mc, normalArriba(unitario(A, B)), 1), Ma, avanzar(Ma, normalArriba(unitario(B, C)), 1));
+              [[A, B, Mc], [B, C, Ma], [C, A, Mb]].forEach(function (l) {
+                var w = unitario(l[2], O);
+                lista.push(seg(avanzar(l[2], w, -26), avanzar(O, w, 26), "aux"), recto(l[2], l[1], avanzar(l[2], w, 1)));
+              });
+              lista.push(
+                arco(O, distancia(O, A), 0, TAU, "sol"),
+                punto(O, "O", letraEnHueco(O, [Ma, Mb, Mc, opuesto(O, Ma), opuesto(O, Mb), opuesto(O, Mc)], 18)),
+                pieDeFigura(x + 120, 330, "Circuncentro")
+              );
+            } else if (k === 1) {
+              I = pt((a * A.x + b * B.x + c * C.x) / (a + b + c), (a * A.y + b * B.y + c * C.y) / (a + b + c));
+              r = distancia(I, pie(A, B, I));
+              [A, B, C].forEach(function (V) {
+                lista.push(seg(V, avanzar(V, unitario(V, I), distancia(V, I) + 24), "aux"));
+              });
+              lista.push(
+                arco(I, r, 0, TAU, "sol"),
+                punto(I, "I", letraEnHueco(I, [A, B, C, opuesto(I, A), opuesto(I, B), opuesto(I, C)], 16)),
+                pieDeFigura(x + 120, 330, "Incentro")
+              );
+            } else if (k === 2) {
+              H = corteRectas(A, pie(B, C, A), B, pie(A, C, B));
+              [[A, B, C], [B, C, A], [C, A, B]].forEach(function (l) {
+                var F = pie(l[1], l[2], l[0]);
+                lista.push(seg(l[0], F, "aux"), recto(F, l[1], l[0]));
+              });
+              lista.push(
+                punto(H, "H", letraEnHueco(H, [A, B, C, pie(B, C, A), pie(A, C, B), pie(A, B, C)], 18)),
+                pieDeFigura(x + 120, 330, "Ortocentro")
+              );
+            } else {
+              G = pt((A.x + B.x + C.x) / 3, (A.y + B.y + C.y) / 3);
+              [[A, Ma, B, C], [B, Mb, A, C], [C, Mc, A, B]].forEach(function (l, j) {
+                lista.push(seg(l[0], l[1], "aux"), igual(l[2], l[1], j + 1), igual(l[1], l[3], j + 1), punto(l[1], ""));
+              });
+              lista.push(
+                punto(G, "G", letraEnHueco(G, [A, B, C, Ma, Mb, Mc], 18)),
+                pieDeFigura(x + 120, 330, "Baricentro")
+              );
+            }
+            lista = lista.concat(verticesConLetra(A, B, C));
+          });
+          return lista;
+        }
+      };
+
+      // Los seis ángulos relacionados con una circunferencia, con el arco o
+      // los arcos que abarcan en verde.
+      figuras.angulos_en_la_circunferencia = {
+        lienzo: [900, 590],
+        trazos: function () {
+          var lista = [];
+          var R = 88;
+          var vineta = function (k) {
+            var x = 300 * (k % 3) + 150;
+            var y = Math.floor(k / 3) * 295 + 125;
+            return pt(x, y);
+          };
+          var marca = function (V, P, Q) {
+            lista.push(marcaAngulo(V, P, Q, 24, 1, { sector: true }));
+          };
+          var enLa = function (O, grados) {
+            return polar(O, R, grados * GRADO);
+          };
+          var arcoDe = function (O, g0, g1, estilo) {
+            lista.push(arco(O, R, g0 * GRADO, g1 * GRADO, estilo || "sol"));
+          };
+          var O;
+          var P;
+          var Q;
+          var V;
+          var P2;
+          var Q2;
+          var t;
+          var T1;
+          var T2;
+          // Central.
+          O = vineta(0);
+          P = enLa(O, 20);
+          Q = enLa(O, 110);
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, 20, 110);
+          lista.push(seg(O, P, "dato"), seg(O, Q, "dato"));
+          marca(O, P, Q);
+          lista.push(punto(O, "O", pt(-6, -18)), pieDeFigura(O.x, O.y + 132, "Central: mide su arco"));
+          // Inscrito.
+          O = vineta(1);
+          P = enLa(O, 20);
+          Q = enLa(O, 110);
+          V = enLa(O, 250);
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, 20, 110);
+          lista.push(seg(V, P, "dato"), seg(V, Q, "dato"), seg(O, P, "guia", { sinRegla: true }), seg(O, Q, "guia", { sinRegla: true }), punto(O, "", null));
+          marca(V, P, Q);
+          lista.push(punto(V, "V", pt(-6, -18)), pieDeFigura(O.x, O.y + 132, "Inscrito: la mitad de su arco"));
+          // Semiinscrito: una cuerda y la tangente en V.
+          O = vineta(2);
+          V = enLa(O, 90);
+          P = enLa(O, 345);
+          t = normalArriba(unitario(O, V));
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, -15, 90);
+          lista.push(seg(avanzar(V, t, -96), avanzar(V, t, 96), "dato"), seg(V, P, "dato"));
+          marca(V, avanzar(V, t, 10), P);
+          lista.push(punto(V, "V", pt(-12, 20)), pieDeFigura(O.x, O.y + 132, "Semiinscrito: la mitad de su arco"));
+          // Interior: dos cuerdas que se cortan dentro.
+          O = vineta(3);
+          V = pt(O.x + 22, O.y + 16);
+          P = enLa(O, 200);
+          Q = enLa(O, 250);
+          P2 = cortesRectaCircunferencia(P, V, O, R)[1];
+          Q2 = cortesRectaCircunferencia(Q, V, O, R)[1];
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, 200, 250);
+          arcoDe(O, angulo(O, P2) / GRADO, angulo(O, P2) / GRADO + giro(angulo(O, P2), angulo(O, Q2)) / GRADO);
+          lista.push(seg(P, P2, "dato"), seg(Q, Q2, "dato"));
+          marca(V, P, Q);
+          lista.push(punto(V, "V", letraEnHueco(V, [P, Q, P2, Q2], 18)), pieDeFigura(O.x, O.y + 132, "Interior: la semisuma de sus arcos"));
+          // Exterior: dos secantes desde fuera.
+          O = vineta(4);
+          V = pt(O.x - 130, O.y - 70);
+          P = cortesRectaCircunferencia(V, polar(V, 1, 12 * GRADO), O, R);
+          Q = cortesRectaCircunferencia(V, polar(V, 1, 52 * GRADO), O, R);
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, angulo(O, P[1]) / GRADO, angulo(O, P[1]) / GRADO + giro(angulo(O, P[1]), angulo(O, Q[1])) / GRADO);
+          arcoDe(O, angulo(O, P[0]) / GRADO, angulo(O, P[0]) / GRADO + giro(angulo(O, P[0]), angulo(O, Q[0])) / GRADO, "guia");
+          lista.push(seg(V, avanzar(P[1], unitario(V, P[1]), 12), "dato"), seg(V, avanzar(Q[1], unitario(V, Q[1]), 12), "dato"));
+          marca(V, P[1], Q[1]);
+          lista.push(punto(V, "V", pt(-14, -10)), pieDeFigura(O.x, O.y + 132, "Exterior: la semidiferencia"));
+          // Circunscrito: las dos tangentes desde V.
+          O = vineta(5);
+          V = pt(O.x - 140, O.y);
+          T1 = cortesCircunferencias(O, R, entre(O, V, 0.5), distancia(O, V) / 2)[0];
+          T2 = cortesCircunferencias(O, R, entre(O, V, 0.5), distancia(O, V) / 2)[1];
+          lista.push(arco(O, R, 0, TAU, "dato"));
+          arcoDe(O, angulo(O, T1) / GRADO, angulo(O, T1) / GRADO + (TAU + giro(angulo(O, T1), angulo(O, T2))) / GRADO);
+          arcoDe(O, angulo(O, T2) / GRADO, angulo(O, T2) / GRADO + giro(angulo(O, T2), angulo(O, T1)) / GRADO, "guia");
+          lista.push(seg(V, avanzar(T1, unitario(V, T1), 26), "dato"), seg(V, avanzar(T2, unitario(V, T2), 26), "dato"));
+          marca(V, T1, T2);
+          lista.push(punto(V, "V", pt(-16, 4)), pieDeFigura(O.x, O.y + 132, "Circunscrito: la semidiferencia"));
+          return lista;
+        }
+      };
+
+      // Las soluciones de los problemas de triángulos: el rectángulo con la
+      // hipotenusa y su altura, el barco que ve tres faros y la
+      // circunferencia inscrita en el isósceles.
+      figuras.problemas_triangulos = {
+        lienzo: [960, 340],
+        trazos: function () {
+          var e = 3;
+          var lista = [];
+          // 29: hipotenusa de 70 mm y altura de 28 mm.
+          var B = pt(52, 296);
+          var C = pt(52 + 70 * e, 296);
+          var M = entre(B, C, 0.5);
+          var A = pt(M.x + 21 * e, 296 - 28 * e);
+          var P0 = pt(C.x + 26, 296);
+          var g1;
+          var g2;
+          var Af;
+          var Bf;
+          var Cf;
+          var V;
+          var I;
+          var T;
+          lista.push(
+            numero(pt(24, 26), "29"),
+            arco(M, 35 * e, Math.PI, TAU, "aux"),
+            seg(pt(M.x, 296 + 18), pt(M.x, 296 - 35 * e - 14), "aux"),
+            seg(pt(30, A.y), pt(296, A.y), "aux"),
+            seg(P0, pt(P0.x, A.y), "aux"),
+            recto(P0, pt(P0.x - 10, 296), pt(P0.x, A.y)),
+            seg(C, P0, "aux"),
+            medida(pt(P0.x + 16, (296 + A.y) / 2), "28"),
+            seg(B, C, "sol"),
+            seg(A, B, "sol"),
+            seg(A, C, "sol"),
+            recto(A, B, C),
+            medida(pt(M.x - 50, 314), "70"),
+            punto(M, "M", pt(15, 16))
+          );
+          lista = lista.concat(verticesConLetra(A, B, C, ["A", "B", "C"], false));
+          // 30: los faros A, B y C, en línea, y el barco V.
+          Af = pt(346, 296);
+          Bf = pt(346 + 44 * e, 296);
+          Cf = pt(346 + 80 * e, 296);
+          g1 = arcoCapazGeometria(Af, Bf, 45, 1);
+          g2 = arcoCapazGeometria(Cf, Bf, 30, -1);
+          V = pt(Af.x + 32.2 * e, 296 - 51.39 * e);
+          lista.push(
+            numero(pt(344, 26), "30"),
+            seg(pt(330, 296), pt(Cf.x + 16, 296), "dato"),
+            arco(g1.O, g1.R, g1.a0, g1.a1, "aux"),
+            arco(g2.O, g2.R, g2.a0, g2.a1, "aux"),
+            seg(V, Af, "sol"),
+            seg(V, Bf, "sol"),
+            seg(V, Cf, "sol"),
+            marcaAngulo(V, Af, Bf, 30, 1),
+            marcaAngulo(V, Bf, Cf, 44, 2),
+            rotulo(enMedio(V, angulo(V, Af), angulo(V, Bf), 62), "45°", { recta: true, cuerpo: 15, fijo: true }),
+            rotulo(enMedio(V, angulo(V, Bf), angulo(V, Cf), 82), "30°", { recta: true, cuerpo: 15, fijo: true }),
+            punto(Af, "A", pt(-4, 20), { forma: "hueco" }),
+            punto(Bf, "B", pt(0, 20), { forma: "hueco" }),
+            punto(Cf, "C", pt(4, 20), { forma: "hueco" }),
+            punto(V, "V", pt(0, -19), { estilo: "sol" })
+          );
+          // 31: el isósceles de 64 mm de base y 60 mm de altura y su
+          // circunferencia inscrita.
+          Af = pt(704, 296);
+          Bf = pt(704 + 64 * e, 296);
+          Cf = pt(800, 296 - 60 * e);
+          T = pt(800, 296);
+          I = pt(800, 296 - 19.2 * e);
+          lista.push(
+            numero(pt(664, 26), "31"),
+            seg(Af, Bf, "dato"),
+            seg(Bf, Cf, "dato"),
+            seg(Cf, Af, "dato"),
+            seg(pt(800, 312), pt(800, Cf.y - 12), "aux"),
+            seg(Af, avanzar(Af, unitario(Af, I), distancia(Af, I) + 26), "aux"),
+            arco(I, 19.2 * e, 0, TAU, "sol"),
+            seg(I, T, "guia", { sinRegla: true }),
+            medida(pt(812, (296 + I.y) / 2 + 2), "19,2"),
+            punto(I, "I", pt(-15, -10)),
+            punto(T, "T", pt(-14, 18))
+          );
+          lista = lista.concat(verticesConLetra(Af, Bf, Cf, ["A", "B", "C"], false));
+          return lista;
         }
       };
 
@@ -28435,7 +30094,9 @@ Bachillerato</p>
       // componer, entre sus marcas, para que la componga TextoDeLaFuente
       // como compone la página las suyas.
       function conLasLetras(textos, nombres) {
-        if (!Object.keys(nombres).length) {
+        // Los de la solución de un ejercicio ya llevan las letras de su
+        // enunciado: `nombres` solo cambia las del dibujo.
+        if (!Object.keys(nombres).length || textos.deLaSolucion) {
           return textos;
         }
         const T = window.TRAZADOS_DT;
@@ -28498,6 +30159,7 @@ Bachillerato</p>
         };
         return {
           lista: lista,
+          deLaSolucion: true,
           datos: parrafo(antes),
           pasos: Array.from(lista.children).map((paso) => paso.innerHTML),
           porque: parrafo(despues)
