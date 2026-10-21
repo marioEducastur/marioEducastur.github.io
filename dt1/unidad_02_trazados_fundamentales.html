@@ -32276,7 +32276,7 @@ Bachillerato</p>
           seg(pt(x1, y - 2), pt(x1, yc - 5), "aux", { sinRegla: true }),
           seg(pt(x0 - 20, yc), pt(x1 + 20, yc), "aux", { sinRegla: true })
         ].concat(puntaLlena(pt(x0, yc), pt(-1, 0)), puntaLlena(pt(x1, yc), pt(1, 0)), [
-          rotulo(pt((x0 + x1) / 2, yc - 14), texto)
+          rotulo(pt((x0 + x1) / 2, yc - 14), texto, { color: "aux", cuerpo: 19 })
         ]);
       }
 
@@ -32337,6 +32337,104 @@ Bachillerato</p>
             cabe(pautaRotulacionConstruir(d), 6, [ANCHO, ALTO]);
         },
         construir: pautaRotulacionConstruir
+      };
+
+      // ---- La unidad 18, la acotación (desde el 20 de octubre de 2026) ----
+
+      // Una cota con la cifra en letra recta.
+      function cotaRecta(a, b, texto, sep) {
+        return con(cota(a, b, texto, sep), { recta: true });
+      }
+
+      // Una línea de referencia que señala un contorno: acaba en una flecha
+      // llena sobre él, en p, y sale en la dirección del ángulo `a` hasta
+      // un hombro horizontal, donde va el texto.
+      function referenciaConFlecha(p, a, largo, texto) {
+        var u = polar(pt(0, 0), 1, a);
+        var q = avanzar(p, u, largo);
+        var lado = u.x >= 0 ? 1 : -1;
+        var r = pt(q.x + lado * 12, q.y);
+        return [seg(p, q, "aux"), seg(q, r, "aux")].concat(puntaLlena(p, u), [
+          rotulo(pt(r.x + lado * (6 + texto.length * 4.4), r.y - 2), texto, { recta: true, cuerpo: 15 })
+        ]);
+      }
+
+      // Una cota demasiado corta para llevar las flechas dentro: las
+      // líneas auxiliares, como en una cota, y la línea de cota, que se
+      // prolonga por los dos lados con las flechas por fuera. La cifra, en
+      // letra recta y del color de las cotas, por fuera de la línea.
+      function cotaConFlechasFuera(a, b, texto, sep) {
+        var uu = unitario(a, b);
+        var nn = pt(-uu.y, uu.x);
+        var lado = sep < 0 ? -1 : 1;
+        var a2 = avanzar(a, nn, sep);
+        var b2 = avanzar(b, nn, sep);
+        return [
+          seg(avanzar(a, nn, lado * 5), avanzar(a, nn, sep + lado * 6), "aux", { sinRegla: true }),
+          seg(avanzar(b, nn, lado * 5), avanzar(b, nn, sep + lado * 6), "aux", { sinRegla: true }),
+          seg(avanzar(a2, uu, -20), avanzar(b2, uu, 20), "aux", { sinRegla: true })
+        ].concat(puntaLlena(a2, pt(-uu.x, -uu.y)), puntaLlena(b2, uu), [
+          rotulo(avanzar(entre(a2, b2, 0.5), nn, lado * 15), texto, { recta: true, cuerpo: 19, color: "aux" })
+        ]);
+      }
+
+      // La acotación de la pieza en L de la unidad 16 sobre sus tres vistas:
+      // las medidas generales (el ancho bajo la planta, el alto a la
+      // izquierda del alzado y el fondo bajo el perfil); las del escalón,
+      // en el perfil, que es donde se ve, y las del agujero: su diámetro en
+      // la planta, donde se ve como circunferencia, y su posición, con cotas
+      // a sus ejes. Las cifras, en milímetros: las medidas de los datos van
+      // en centímetros.
+      function acotarPiezaConstruir(d) {
+        var v = vistasPiezaPartes(d);
+        var mm = function (x) {
+          return conComa(x * 10, 1);
+        };
+        var nombre = function (p, texto) {
+          return rotulo(p, texto, { recta: true, cuerpo: 13 });
+        };
+        var pB = v.enPlanta(d.b);
+        var p0 = v.enPlanta(0);
+        var pa = v.enPlanta(v.ya);
+        return {
+          base: v.alzado.concat(v.planta, v.perfil),
+          pasos: [
+            [
+              cotaRecta(pt(v.x0, pB), pt(v.x1, pB), mm(d.a), 24),
+              cotaRecta(pt(v.x0, v.y0), pt(v.x0, v.zAlto), mm(d.c), -24),
+              cotaRecta(pt(v.enPerfil(0), v.y0), pt(v.enPerfil(d.b), v.y0), mm(d.b), 24)
+            ],
+            [
+              cotaRecta(pt(v.enPerfil(d.b), v.y0), pt(v.enPerfil(d.b), v.zBajo), mm(d.c1), 22),
+              cotaRecta(pt(v.enPerfil(0), v.zAlto), pt(v.enPerfil(d.b1), v.zAlto), mm(d.b1), -18)
+            ],
+            referenciaConFlecha(polar(pt(v.xa, pa), v.r, -Math.PI / 4), -Math.PI / 4, 50, "⌀" + mm(2 * d.r)).concat(
+              lineaDeEje(pt(v.xa - v.r - 12, pa), pt(v.x0 - 4, pa)),
+              lineaDeEje(pt(v.xa, p0 - 4), pt(v.xa, pa - v.r - 12)),
+              [
+                cotaRecta(pt(v.x0, p0), pt(v.xa, p0), mm(d.a / 2), -16),
+                cotaRecta(pt(v.x0, p0), pt(v.x0, pa), mm(d.b1 / 2), 24)
+              ])
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["acotar-una-pieza"] = {
+        datos: function () {
+          return { alzado: pt(90, 150), a: 6, b: 5, c: 3.5, b1: 3, c1: 1.5, r: 0.6, escala: 24, hueco: 64 };
+        },
+        asas: function (d) {
+          return { alzado: d.alzado };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.b1 > 2 * d.r && d.b1 < d.b && d.c1 > 0 && d.c1 < d.c && 2 * d.r < d.a &&
+            cabe(acotarPiezaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: acotarPiezaConstruir
       };
 
       // ---- Figuras sin pasos, solo para las fuentes ----
@@ -36040,6 +36138,102 @@ Bachillerato</p>
             }
             return lista2;
           }, "Trazo y doble punto: piezas vecinas y posiciones extremas");
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 18, la acotación ----
+
+      // Los elementos de una cota sobre una placa con un chaflán: la línea
+      // de cota, las líneas auxiliares, los extremos (flechas), la cifra,
+      // una línea de referencia y la indicación de origen.
+      figuras.elementos_de_cota = {
+        lienzo: [960, 320],
+        trazos: function () {
+          var lista = [];
+          var texto = { recta: true, cuerpo: 14 };
+          // La placa: un rectángulo de 120 × 40 con la esquina de arriba a la
+          // derecha achaflanada a 10 × 45°, a 3 px por milímetro.
+          var A = pt(160, 230);
+          var B = pt(520, 230);
+          var C = pt(520, 140);
+          var D = pt(490, 110);
+          var E = pt(160, 110);
+          lista = lista.concat(poligonoDe([A, B, C, D, E], "sol"));
+          lista.push(cotaRecta(A, B, "120", 46), cotaRecta(A, E, "40", -40));
+          lista = lista.concat(referenciaConFlecha(entre(C, D, 0.5), -Math.PI / 4, 40, "10 × 45°"));
+          // Los nombres, con una línea de guía hasta lo que nombran.
+          var guia = function (desde, hasta, centro, nombre) {
+            lista.push(seg(desde, hasta, "guia", { sinRegla: true }), rotulo(centro, nombre, texto));
+          };
+          guia(pt(240, 276), pt(240, 296), pt(240, 308), "línea de cota");
+          guia(pt(366, 291), pt(420, 300), pt(474, 304), "cifra de cota");
+          guia(pt(520, 262), pt(600, 262), pt(684, 262), "línea auxiliar de cota");
+          guia(pt(168, 276), pt(120, 296), pt(92, 306), "extremo");
+          guia(pt(522, 108), pt(640, 134), pt(700, 146), "línea de referencia");
+          return lista;
+        }
+      };
+
+      // Las formas de disponer las cotas sobre una misma barra escalonada:
+      // en serie, en paralelo, con cotas superpuestas desde un origen y
+      // combinada.
+      figuras.disposicion_de_cotas = {
+        lienzo: [960, 330],
+        trazos: function () {
+          var lista = [];
+          var barra = function (o) {
+            // Tres escalones de 40, 30 y 30 de largo y 30, 20 y 10 de alto,
+            // a 1,6 px por unidad.
+            var k = 1.6;
+            var p = function (x, y) {
+              return pt(o.x + x * k, o.y - y * k);
+            };
+            lista = lista.concat(poligonoDe([p(0, 0), p(100, 0), p(100, 10), p(70, 10), p(70, 20), p(40, 20), p(40, 30), p(0, 30)], "sol"));
+            return p;
+          };
+          var marcas = [0, 40, 70, 100];
+          // En serie.
+          var p = barra(pt(30, 150));
+          marcas.slice(1).forEach(function (x, i) {
+            lista.push(cotaRecta(p(marcas[i], 0), p(x, 0), String(x - marcas[i]), 22));
+          });
+          lista.push(pieDeFigura(110, 290, "En serie"));
+          // En paralelo.
+          p = barra(pt(262, 150));
+          marcas.slice(1).forEach(function (x, i) {
+            lista.push(cotaRecta(p(0, 0), p(x, 0), String(x), 20 + 34 * i));
+          });
+          lista.push(pieDeFigura(342, 290, "En paralelo"));
+          // Superpuestas, desde un origen.
+          p = barra(pt(494, 150));
+          var linea = p(0, 0).y + 26;
+          lista.push(seg(pt(p(0, 0).x, linea), pt(p(100, 0).x + 6, linea), "aux"), arco(pt(p(0, 0).x, linea), 4, 0, TAU, "aux"));
+          marcas.forEach(function (x) {
+            lista.push(seg(p(x, 0), pt(p(x, 0).x, linea + 6), "aux", { sinRegla: true }));
+            if (x > 0) {
+              var q = pt(p(x, 0).x, linea);
+              // La cifra, encima de la línea y entera a la izquierda de su
+              // línea auxiliar.
+              lista = lista.concat(puntaLlena(q, pt(-1, 0)));
+              lista.push(rotulo(pt(q.x - 5 - String(x).length * 3.8, q.y - 12), String(x), { recta: true, cuerpo: 13 }));
+            } else {
+              lista.push(rotulo(pt(p(0, 0).x - 11, linea - 12), "0", { recta: true, cuerpo: 13 }));
+            }
+          });
+          lista.push(pieDeFigura(574, 290, "Superpuestas, desde un origen"));
+          // Combinada.
+          p = barra(pt(726, 150));
+          lista.push(
+            cotaRecta(p(0, 0), p(100, 0), "100", 54),
+            cotaRecta(p(0, 0), p(40, 0), "40", 18),
+            cotaRecta(p(40, 0), p(70, 0), "30", 18),
+            cotaRecta(p(0, 0), p(0, 30), "30", -22)
+          );
+          // La cota del último escalón es más corta que dos flechas: van
+          // por fuera.
+          lista = lista.concat(cotaConFlechasFuera(p(100, 0), p(100, 10), "10", 22));
+          lista.push(pieDeFigura(806, 290, "Combinada"));
           return lista;
         }
       };
