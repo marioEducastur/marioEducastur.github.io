@@ -28363,6 +28363,156 @@ Bachillerato</p>
         construir: rectanguloAureoConstruir
       };
 
+      // ---- La unidad 1, los instrumentos y los formatos (desde el 21 de
+      // octubre de 2026) ----
+
+      // La serie A de formatos: el A0, de 841 × 1189 mm, y cada uno de los
+      // siguientes, la mitad del anterior, partido por la mitad de su lado
+      // largo. El A0 se dibuja apaisado, con su esquina de arriba a la
+      // izquierda en O, a `escala` px por mm, y se parte en espiral: el A1,
+      // a la izquierda; el A2, arriba a la derecha; el A3, abajo, y los dos
+      // A4, en el último rincón.
+      function serieDeFormatosConstruir(d) {
+        var e = d.escala;
+        var L = 1189;
+        var H = 841;
+        var p = function (x, y) {
+          return pt(d.O.x + x * e, d.O.y + y * e);
+        };
+        // El nombre de un formato y sus medidas, en el centro de su trozo.
+        var nombre = function (x0, y0, x1, y1, texto, medidas) {
+          var c = p((x0 + x1) / 2, (y0 + y1) / 2);
+          return [
+            rotulo(pt(c.x, c.y - 6), texto, { recta: true, cuerpo: 18 }),
+            rotulo(pt(c.x, c.y + 14), medidas, { recta: true, cuerpo: 12 })
+          ];
+        };
+        return {
+          // El A0, con sus lados acotados por fuera y su nombre en la
+          // esquina de arriba a la derecha.
+          base: poligonoDe([p(0, 0), p(L, 0), p(L, H), p(0, H)], "dato").concat([
+            cotaRecta(p(0, 0), p(L, 0), "1189", -22),
+            // La cifra del lado corto, junto a su línea de cota y no encima:
+            // es horizontal y más ancha que el sitio que deja la cota.
+            cotaRecta(p(0, H), p(0, 0), "", -22),
+            rotulo(pt(p(0, 0).x - 48, p(0, H / 2).y), "841", { recta: true, cuerpo: 19, color: "aux" }),
+            rotulo(pt(p(L, 0).x + 22, p(L, 0).y - 20), "A0", { recta: true, cuerpo: 18 })
+          ]),
+          pasos: [
+            [seg(p(L / 2, 0), p(L / 2, H), "sol")].concat(nombre(0, 0, L / 2, H, "A1", "594 × 841")),
+            [seg(p(L / 2, H / 2), p(L, H / 2), "sol")].concat(nombre(L / 2, 0, L, H / 2, "A2", "420 × 594")),
+            [seg(p((3 * L) / 4, H / 2), p((3 * L) / 4, H), "sol")].concat(nombre(L / 2, H / 2, (3 * L) / 4, H, "A3", "297 × 420")),
+            [seg(p((3 * L) / 4, (3 * H) / 4), p(L, (3 * H) / 4), "sol")].concat(
+              nombre((3 * L) / 4, H / 2, L, (3 * H) / 4, "A4", "210 × 297"),
+              nombre((3 * L) / 4, (3 * H) / 4, L, H, "A4", "210 × 297")
+            )
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["serie-de-formatos"] = {
+        datos: function () {
+          return { O: pt(80, 56), escala: 0.39 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.escala >= 0.3 && cabe(serieDeFormatosConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: serieDeFormatosConstruir
+      };
+
+      // La lámina preparada (UNE-EN ISO 5457): la hoja de ancho × alto mm,
+      // con su esquina de arriba a la izquierda en O, a `escala` px por mm;
+      // el recuadro, a 20 mm del borde izquierdo y a m = 10 mm de los demás,
+      // en todos los formatos; el cuadro de rotulación, de 180 × 30 mm, en
+      // la esquina de abajo a la derecha del recuadro, y las señales de
+      // centrado, en los extremos de los dos ejes de simetría de la hoja,
+      // hasta 5 mm dentro del recuadro.
+      // La cota de un margen, de a (en el borde de la hoja) a b (en el
+      // recuadro): es más corta que dos flechas, así que van por fuera, y
+      // la cifra, en `donde`, fuera de la hoja.
+      function cotaDeMargen(a, b, texto, donde) {
+        var uu = unitario(a, b);
+        return [seg(avanzar(a, uu, -20), avanzar(b, uu, 20), "aux", { sinRegla: true })].concat(
+          puntaLlena(a, pt(-uu.x, -uu.y)), puntaLlena(b, uu),
+          [rotulo(donde, texto, { recta: true, cuerpo: 19, color: "aux" })]
+        );
+      }
+
+      function laminaPreparadaGeometria(d) {
+        var e = d.escala;
+        var W = d.ancho;
+        var H = d.alto;
+        var m = 10;
+        var p = function (x, y) {
+          return pt(d.O.x + x * e, d.O.y + y * e);
+        };
+        return {
+          W: W, H: H, m: m, p: p,
+          hoja: [p(0, 0), p(W, 0), p(W, H), p(0, H)],
+          recuadro: [p(20, m), p(W - m, m), p(W - m, H - m), p(20, H - m)],
+          cuadro: [p(W - m - 180, H - m - 30), p(W - m, H - m - 30), p(W - m, H - m), p(W - m - 180, H - m)]
+        };
+      }
+
+      function laminaPreparadaConstruir(d) {
+        var g = laminaPreparadaGeometria(d);
+        var p = g.p;
+        var W = g.W;
+        var H = g.H;
+        var m = g.m;
+        return {
+          base: poligonoDe(g.hoja, "dato").concat([
+            cotaRecta(p(0, H), p(W, H), String(W), 24),
+            // La cifra del alto, junto a su línea de cota y no encima: es
+            // horizontal y más ancha que el sitio que deja la cota.
+            cotaRecta(p(W, H), p(W, 0), "", 24),
+            rotulo(pt(p(W, 0).x + 24 + 22, p(0, H / 2).y), String(H), { recta: true, cuerpo: 19, color: "aux" })
+          ]),
+          pasos: [
+            // El recuadro, con los márgenes acotados: el de la izquierda y el
+            // de arriba (los de la derecha y abajo son como el de arriba).
+            poligonoDe(g.recuadro, "sol").concat(
+              cotaDeMargen(p(0, H * 0.3), p(20, H * 0.3), "20", pt(p(0, 0).x - 16, p(0, H * 0.3).y - 14)),
+              cotaDeMargen(p(W * 0.72, 0), p(W * 0.72, m), String(m), pt(p(W * 0.72, 0).x + 18, p(0, 0).y - 13))
+            ),
+            poligonoDe(g.cuadro, "sol").concat([
+              rotulo(entre(g.cuadro[0], g.cuadro[2], 0.5), "Cuadro de rotulación", { recta: true, cuerpo: 12 }),
+              cotaRecta(g.cuadro[0], g.cuadro[1], "180", -16)
+            ]),
+            [
+              seg(p(W / 2, 0), p(W / 2, m + 5), "sol"),
+              seg(p(W / 2, H), p(W / 2, H - m - 5), "sol"),
+              seg(p(0, H / 2), p(25, H / 2), "sol"),
+              seg(p(W, H / 2), p(W - m - 5, H / 2), "sol")
+            ]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["lamina-preparada"] = {
+        datos: function () {
+          return { O: pt(185, 28), ancho: 210, alto: 297, escala: 1.05 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.ancho > 200 && d.alto > 200 && d.escala > 0 && cabe(laminaPreparadaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: laminaPreparadaConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -32209,6 +32359,49 @@ Bachillerato</p>
           lista.push(seg(pt(R0.x + lado / 2, R0.y), pt(R0.x + lado / 2, R0.y - alto), "dato"),
             rotulo(pt(R0.x + lado / 2, R0.y + 16), "√2", texto), rotulo(pt(R0.x - 12, R0.y - alto / 2), "1", texto),
             pieDeFigura(820, 286, "Rectángulo 1 : √2"));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 1, los instrumentos y los formatos ----
+
+      // La escuadra y el cartabón de un mismo juego: la escuadra, un
+      // triángulo rectángulo isósceles (45°, 45° y 90°); el cartabón, uno de
+      // 30°, 60° y 90°, y la hipotenusa de la escuadra, igual que el cateto
+      // mayor del cartabón, h.
+      figuras.juego_de_plantillas = {
+        lienzo: [960, 310],
+        trazos: function () {
+          var lista = [];
+          var texto = { recta: true, cuerpo: 14 };
+          var h = 240;
+          // Un ángulo marcado en v, entre las direcciones hacia a y b, con su
+          // valor dentro, sobre la bisectriz.
+          var marca = function (v, a, b, valor, dentro) {
+            lista.push(marcaAngulo(v, a, b, 30), rotulo(enMedio(v, angulo(v, a), angulo(v, b), dentro), valor, texto));
+          };
+          // La escuadra: el ángulo recto en R1 y los catetos de h/√2.
+          var c = h / Math.SQRT2;
+          var R1 = pt(150, 250);
+          var P1 = pt(R1.x + c, R1.y);
+          var Q1 = pt(R1.x, R1.y - c);
+          lista = lista.concat(poligonoDe([R1, P1, Q1], "sol"));
+          lista.push(recto(R1, P1, Q1));
+          marca(P1, R1, Q1, "45°", 52);
+          marca(Q1, R1, P1, "45°", 52);
+          lista.push(rotulo(avanzar(entre(P1, Q1, 0.5), pt(Math.SQRT1_2, -Math.SQRT1_2), 16), "h", { cuerpo: 18 }));
+          lista.push(pieDeFigura(R1.x + c / 2, 296, "Escuadra"));
+          // El cartabón: el ángulo recto en R2, el cateto mayor de h y el
+          // menor de h · tg 30°.
+          var R2 = pt(560, 250);
+          var P2 = pt(R2.x + h, R2.y);
+          var Q2 = pt(R2.x, R2.y - h * Math.tan(Math.PI / 6));
+          lista = lista.concat(poligonoDe([R2, P2, Q2], "sol"));
+          lista.push(recto(R2, P2, Q2));
+          marca(P2, R2, Q2, "30°", 62);
+          marca(Q2, R2, P2, "60°", 46);
+          lista.push(rotulo(pt(R2.x + h / 2, R2.y + 20), "h", { cuerpo: 18 }));
+          lista.push(pieDeFigura(R2.x + h / 2, 296, "Cartabón"));
           return lista;
         }
       };
