@@ -28990,6 +28990,127 @@ Bachillerato</p>
         construir: acotarPiezaConstruir
       };
 
+      // ---- La unidad 19, arte, dibujo técnico y diseño (desde el 20 de
+      // octubre de 2026) ----
+
+      // El número de oro, φ = (1 + √5)/2.
+      var NUMERO_DE_ORO = (1 + Math.sqrt(5)) / 2;
+
+      // La sección áurea de un segmento AB: la perpendicular a AB por B, con
+      // BC = AB/2; la recta AC; el arco de centro C y radio CB, que corta a
+      // AC en D, y el arco de centro A y radio AD, que corta a AB en E. AE es
+      // la parte mayor: AB/AE = AE/EB = φ.
+      function seccionAureaGeometria(d) {
+        var u = unitario(d.A, d.B);
+        var n = normalArriba(u);
+        var l = distancia(d.A, d.B);
+        var C = avanzar(d.B, n, l / 2);
+        var D = avanzar(C, unitario(C, d.A), l / 2);
+        var E = avanzar(d.A, u, distancia(d.A, D));
+        return { u: u, n: n, l: l, C: C, D: D, E: E };
+      }
+
+      function seccionAureaConstruir(d) {
+        var g = seccionAureaGeometria(d);
+        var aC = angulo(g.C, d.B);
+        var aD = angulo(g.C, g.D);
+        var bD = angulo(d.A, g.D);
+        var bE = angulo(d.A, g.E);
+        var M = entre(d.A, d.B, 0.5);
+        return {
+          base: [seg(d.A, d.B, "dato"), punto(d.A, "A", pt(-14, 10)), punto(d.B, "B", pt(14, 10))],
+          pasos: [
+            // La mitad de AB con la mediatriz, llevada sobre la perpendicular
+            // por B.
+            [
+              seg(d.B, avanzar(d.B, g.n, g.l / 2 + 24), "aux"),
+              recto(d.B, d.A, g.C),
+              punto(M, "M", pt(0, 18)),
+              abrir(d.B, M),
+              arco(d.B, g.l / 2, angulo(d.B, M), angulo(d.B, M) + giro(angulo(d.B, M), angulo(d.B, g.C)), "aux"),
+              punto(g.C, "C", pt(16, -20))
+            ],
+            [seg(d.A, avanzar(g.C, unitario(d.A, g.C), 12), "aux")],
+            [abrir(g.C, d.B), arco(g.C, g.l / 2, aC, aC + giro(aC, aD), "aux"), punto(g.D, "D", pt(-4, -18))],
+            [abrir(d.A, g.D), arco(d.A, distancia(d.A, g.D), bD, bD + giro(bD, bE), "aux"), punto(g.E, "E", pt(0, 18), { estilo: "sol" }),
+              seg(d.A, g.E, "sol")]
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["seccion-aurea"] = {
+        datos: function () {
+          return { A: pt(130, 300), B: pt(470, 300) };
+        },
+        asas: function (d) {
+          return { A: d.A, B: d.B };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return distancia(d.A, d.B) > 120 && cabe(seccionAureaConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: seccionAureaConstruir
+      };
+
+      // El rectángulo áureo a partir del cuadrado ABCD de lado l: M, el
+      // punto medio de AB; el arco de centro M y radio MC lleva C a la
+      // prolongación de AB en E, y la perpendicular por E cierra el
+      // rectángulo AEFD, cuyos lados están en la razón φ.
+      function rectanguloAureoGeometria(d) {
+        var l = d.l;
+        var A = d.A;
+        var B = pt(A.x + l, A.y);
+        var C = pt(A.x + l, A.y - l);
+        var D = pt(A.x, A.y - l);
+        var M = pt(A.x + l / 2, A.y);
+        var E = pt(A.x + l * NUMERO_DE_ORO, A.y);
+        var F = pt(E.x, D.y);
+        return { A: A, B: B, C: C, D: D, M: M, E: E, F: F };
+      }
+
+      function rectanguloAureoConstruir(d) {
+        var g = rectanguloAureoGeometria(d);
+        var a0 = angulo(g.M, g.C);
+        return {
+          base: poligonoDe([g.A, g.B, g.C, g.D], "dato").concat([
+            punto(g.A, "A", pt(-14, 12)), punto(g.B, "B", pt(-2, 18)),
+            punto(g.C, "C", pt(-12, -14)), punto(g.D, "D", pt(12, -14)),
+            // El lado del cuadrado, que es el dato, acotado a la izquierda.
+            cota(g.A, g.D, "l", -34),
+            // Un rótulo vacío que deja libre la esquina de arriba a la
+            // izquierda de cada viñeta de la tira, donde va el número del
+            // paso: sin él, el número tapa el extremo de la cota.
+            rotulo(pt(g.A.x - 58, g.D.y - 34), "")
+          ]),
+          pasos: [
+            [punto(g.M, "M", pt(0, 18)), seg(g.M, g.C, "aux")],
+            [seg(g.B, avanzar(g.E, pt(1, 0), 20), "aux"), abrir(g.M, g.C), arco(g.M, distancia(g.M, g.C), a0, 0, "aux"),
+              punto(g.E, "E", pt(6, 18))],
+            poligonoDe([g.A, g.E, g.F, g.D], "sol").concat([punto(g.F, "F", pt(14, -12))])
+          ],
+          porque: null
+        };
+      }
+
+      construcciones["rectangulo-aureo"] = {
+        datos: function () {
+          return { A: pt(120, 320), l: 220 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, q) {
+          return moverDato(d, nombre, q);
+        },
+        valido: function (d) {
+          return d.l > 60 && cabe(rectanguloAureoConstruir(d), 6, [ANCHO, ALTO]);
+        },
+        construir: rectanguloAureoConstruir
+      };
+
       // ---- Figuras sin pasos, solo para las fuentes ----
 
       var figuras = {};
@@ -32787,6 +32908,55 @@ Bachillerato</p>
           // por fuera.
           lista = lista.concat(cotaConFlechasFuera(p(100, 0), p(100, 10), "10", 22));
           lista.push(pieDeFigura(806, 290, "Combinada"));
+          return lista;
+        }
+      };
+
+      // ---- Las figuras de la unidad 19, arte, dibujo técnico y diseño ----
+
+      // Cuatro figuras de proporciones armónicas: el pentágono regular y la
+      // estrella que forman sus diagonales, que están con el lado en la
+      // razón φ; el triángulo rectángulo de lados 3, 4 y 5; el triángulo
+      // equilátero inscrito en el hexágono regular, y el rectángulo 1:√2 de
+      // los formatos, que al partirlo por la mitad da dos semejantes a él.
+      figuras.proporciones_armonicas = {
+        lienzo: [960, 300],
+        trazos: function () {
+          var lista = [];
+          var texto = { recta: true, cuerpo: 13 };
+          // El pentágono estrellado.
+          var c = pt(120, 140);
+          var r = 80;
+          var v = [0, 1, 2, 3, 4].map(function (k) {
+            return polar(c, r, -Math.PI / 2 + (k * 2 * Math.PI) / 5);
+          });
+          lista = lista.concat(poligonoDe(v, "dato"), poligonoDe([v[0], v[2], v[4], v[1], v[3]], "sol"));
+          lista.push(pieDeFigura(120, 286, "Diagonal : lado = φ"));
+          // El triángulo de lados 3, 4 y 5.
+          var o = pt(280, 230);
+          var k = 40;
+          var P = pt(o.x + 4 * k, o.y);
+          var Q = pt(o.x, o.y - 3 * k);
+          lista = lista.concat(poligonoDe([o, P, Q], "sol"));
+          lista.push(recto(o, P, Q),
+            rotulo(pt(o.x + 2 * k, o.y + 16), "4", texto), rotulo(pt(o.x - 14, o.y - 1.5 * k), "3", texto),
+            rotulo(avanzar(entre(P, Q, 0.5), normalArriba(unitario(P, Q)), -14), "5", texto),
+            pieDeFigura(345, 286, "Triángulo de lados 3, 4 y 5"));
+          // El triángulo equilátero en el hexágono.
+          var h = pt(605, 140);
+          var hex = [0, 1, 2, 3, 4, 5].map(function (j) {
+            return polar(h, 85, -Math.PI / 2 + (j * Math.PI) / 3);
+          });
+          lista = lista.concat(poligonoDe(hex, "dato"), poligonoDe([hex[0], hex[2], hex[4]], "sol"));
+          lista.push(pieDeFigura(612, 286, "Triángulo equilátero y hexágono"));
+          // El rectángulo 1:√2, partido por la mitad.
+          var R0 = pt(760, 225);
+          var lado = 120;
+          var alto = lado / Math.SQRT2;
+          lista = lista.concat(poligonoDe([R0, pt(R0.x + lado, R0.y), pt(R0.x + lado, R0.y - alto), pt(R0.x, R0.y - alto)], "sol"));
+          lista.push(seg(pt(R0.x + lado / 2, R0.y), pt(R0.x + lado / 2, R0.y - alto), "dato"),
+            rotulo(pt(R0.x + lado / 2, R0.y + 16), "√2", texto), rotulo(pt(R0.x - 12, R0.y - alto / 2), "1", texto),
+            pieDeFigura(820, 286, "Rectángulo 1 : √2"));
           return lista;
         }
       };
