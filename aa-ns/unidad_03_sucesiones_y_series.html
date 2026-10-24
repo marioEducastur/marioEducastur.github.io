@@ -18760,6 +18760,58 @@ Enfoques NS</p>
               { x: 320, y: alto(206.8, 17), tex: "x^2+8x+16=(x+4)^2", cuerpo: 17, opacidad: 0.97 }
             ]
           };
+        },
+
+        "ruffini": function () {
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="M246 124H486V162H246Z" fill="#fff" fill-opacity="0.1" stroke="none"/>' +
+            '<path d="M246 26V162" stroke-width="2"/>' +
+            '<path d="M222 124H486" stroke-width="2"/>' +
+            '<path d="M428 130V158" stroke-opacity="0.8" stroke-width="1.5"/>' +
+            "</g>";
+          var alto = function (base, cuerpo) { return r(base - 0.34 * cuerpo); };
+          var fila = function (base, columnas, opacidad) {
+            return columnas.map(function (c) {
+              return { x: c[0], y: alto(base, 22), tex: c[1], cuerpo: 22, opacidad: opacidad };
+            });
+          };
+          return {
+            dibujo: dibujo,
+            rotulos: [].concat(
+              fila(64, [[282, "1"], [340, "{-}3"], [398, "{-}4"], [455, "12"]], 1),
+              fila(110, [[226, "2"]], 0.95),
+              fila(110, [[340, "2"], [398, "{-}2"], [455, "{-}12"]], 0.9),
+              fila(151, [[282, "1"], [340, "{-}1"], [398, "{-}6"], [455, "0"]], 1),
+              [{ x: 320, y: alto(206.8, 17), tex: "x^3-3x^2-4x+12=(x-2)(x^2-x-6)", cuerpo: 17, opacidad: 0.97 }]
+            )
+          };
+        },
+
+        "escalones": function () {
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="M170 170V132H290V170Z" fill="#fff" fill-opacity="0.1" stroke="none"/>' +
+            '<path d="M290 170V94H410V170Z" fill="#fff" fill-opacity="0.16" stroke="none"/>' +
+            '<path d="M410 170V56H530V170Z" fill="#fff" fill-opacity="0.24" stroke="none"/>' +
+            '<path d="M140 170H560" stroke-opacity="0.6" stroke-width="1.4"/>' +
+            '<path d="M170 170V132H290V94H410V56H530V170" stroke-width="2"/>' +
+            '<path d="M502 56V18" stroke-width="1.8"/>' +
+            '<path d="M502 20L528 28L502 36" stroke-width="1.8"/>' +
+            "</g>";
+          var alto = function (base, cuerpo) { return r(base - 0.34 * cuerpo); };
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: 230, y: alto(157, 17), texto: "Nivel 1", cuerpo: 17, opacidad: 0.96 },
+              { x: 350, y: alto(138, 17), texto: "Nivel 2", cuerpo: 17, opacidad: 0.96 },
+              { x: 470, y: alto(119, 17), texto: "Nivel 3", cuerpo: 17, opacidad: 0.96 },
+              { x: 230, y: alto(121, 15), texto: "1–6", cuerpo: 15, opacidad: 0.85 },
+              { x: 350, y: alto(83, 15), texto: "7–18", cuerpo: 15, opacidad: 0.85 },
+              { x: 460, y: alto(45, 15), texto: "19–24", cuerpo: 15, opacidad: 0.85 },
+              { x: 320, y: alto(206.8, 17), texto: "24 polinomios · 3 niveles", cuerpo: 17, opacidad: 0.97 }
+            ]
+          };
         }
       };
 
@@ -31905,6 +31957,25 @@ Enfoques NS</p>
               )
             },
             {
+              nombre: "Factores irreducibles",
+              texto: (
+                <>
+                  Los de grado <Mates tex="1" /> y los de grado <Mates tex="2" /> con discriminante negativo, como{" "}
+                  <Sujeta tex="x^2+1">:</Sujeta> no tienen raíces reales y ya no se pueden descomponer.
+                </>
+              )
+            },
+            {
+              nombre: "Sumar y restar",
+              tex: "\\begin{aligned}&4x^4+1\\\\={}&\\left(2x^2+1\\right)^2-(2x)^2\\end{aligned}",
+              texto: (
+                <>
+                  Se suma y se resta lo que le falta para ser un cuadrado, y la diferencia de cuadrados que queda se parte
+                  en dos factores de grado <Sujeta tex="2">.</Sujeta>
+                </>
+              )
+            },
+            {
               nombre: "Coeficientes desconocidos",
               texto: (
                 <>
@@ -32338,7 +32409,8 @@ Enfoques NS</p>
               texto: (
                 <>
                   Todo a un miembro, se factoriza y se estudia el signo entre cada dos ceros, con la tabla de signos o con la
-                  gráfica de <Sujeta tex="g-f">.</Sujeta> Los ceros entran si la desigualdad no es estricta.
+                  gráfica de <Sujeta tex="g-f">.</Sujeta> Para el signo de un tramo, basta un número cualquiera de él. Los
+                  ceros entran si la desigualdad no es estricta.
                 </>
               )
             },
