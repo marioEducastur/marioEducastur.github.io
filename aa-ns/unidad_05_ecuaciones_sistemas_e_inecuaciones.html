@@ -26474,7 +26474,7 @@ Enfoques NS</p>
           var fichas = [
             { x: 277, nombre: "exponente 0", tex: "a^0=1", de: "\\dfrac{a^n}{a^n}=a^{n-n}=a^0" },
             { x: 431, nombre: "negativo", tex: "a^{-n}=\\frac{1}{a^n}", de: "a^{-n}\\cdot a^n=a^0=1" },
-            { x: 585, nombre: "fraccionario", tex: "a^{1/n}=\\sqrt[n]{a}", de: "\\left(a^{1/n}\\right)^n=a" }
+            { x: 585, nombre: "racional", tex: "a^{1/n}=\\sqrt[n]{a}", de: "\\left(a^{1/n}\\right)^n=a" }
           ];
           var d = '<rect x="778" y="22" width="180" height="44" rx="22" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
           var rotulos = [];
@@ -26947,7 +26947,7 @@ Enfoques NS</p>
         "induccion": function () {
           var arriba = 22, alto = 60, medio = arriba + alto / 2, bajo = arriba + alto;
           var partes = [
-            { x: 122, ancho: 128, nombre: "caso base", realce: true },
+            { x: 122, ancho: 128, nombre: "caso inicial", realce: true },
             { x: 276, ancho: 115, nombre: "hipótesis" },
             { x: 417, ancho: 326, nombre: "paso inductivo", realce: true },
             { x: 769, ancho: 120, nombre: "conclusión" }
@@ -29243,7 +29243,7 @@ Enfoques NS</p>
             alto="276"
             descripcion={
               "Una fila de cajas: P(1), P(2), P(3), P(4), P(5) y puntos suspensivos. " +
-              "La primera lleva una marca: es el caso base. De cada caja a la " +
+              "La primera lleva una marca: es el caso inicial. De cada caja a la " +
               "siguiente va una flecha, con k igual a 1, 2, 3, 4 y 5: es el paso " +
               "inductivo, P(k) implica P(k más 1), para cada k. Por esas flechas la " +
               "marca pasa a P(2), a P(3), a P(4) y a P(5). Debajo: P(n) es verdadera " +
@@ -29254,7 +29254,7 @@ Enfoques NS</p>
                 El paso inductivo no dice que <Mates tex="P(k)" /> sea verdadera: pone una flecha
                 de cada afirmación a la siguiente, y la misma demostración sirve
                 para <Mates tex="{k=1}" />, para <Mates tex="{k=2}" />, para <Mates tex="{k=3}" />… El caso
-                base marca la primera y, flecha a flecha, quedan marcadas todas:
+                inicial marca la primera y, flecha a flecha, quedan marcadas todas:
                 a <Mates tex="P(5)" /> se llega en cuatro pasos, y a cualquier otra, igual.
               </>
             }
@@ -29269,7 +29269,7 @@ Enfoques NS</p>
                   …
                 </Rotulo>
                 <Rotulo t={2.3} x="62" y="192" fontSize="18" opacity="0.95">
-                  {palabra("caso base")}
+                  {palabra("caso inicial")}
                 </Rotulo>
                 <Rotulo t={3} x="343.5" y="30" fontSize="20">
                   {palabra("paso inductivo: ")}
@@ -31599,7 +31599,7 @@ Enfoques NS</p>
 
       const CASOS_DE_RACIONALIZAR = [
         { titulo: "abajo hay una raíz cuadrada", gesto: "se multiplica, arriba y abajo, por esa misma raíz" },
-        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por la raíz que completa el índice" },
+        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por la raíz que completa la potencia" },
         { titulo: "abajo hay una suma o una resta con raíces", gesto: "se multiplica por el conjugado: sale una suma por diferencia" }
       ];
 
@@ -32141,24 +32141,27 @@ Enfoques NS</p>
           },
           pista: (
             <>
-              El exponente <Mates tex="0" />, el negativo y el fraccionario se definen para que las propiedades de
+              El exponente <Mates tex="0" />, el negativo y el racional se definen para que las propiedades de
               siempre sigan valiendo.
             </>
           ),
           fichas: [
             { nombre: "Producto y cociente, misma base", tex: "\\begin{gathered}a^m\\cdot a^n=a^{m+n}\\\\[2pt]\\frac{a^m}{a^n}=a^{m-n}\\end{gathered}" },
             { nombre: "Potencia de una potencia", tex: "\\left(a^m\\right)^n=a^{m\\cdot n}" },
-            { nombre: "Potencia de un producto", tex: "(a\\cdot b)^n=a^n\\cdot b^n" },
+            {
+              nombre: "Potencia de un producto y de un cociente",
+              tex: "\\begin{gathered}(a\\cdot b)^n=a^n\\cdot b^n\\\\[2pt]\\left(\\frac ab\\right)^n=\\frac{a^n}{b^n}\\end{gathered}"
+            },
             { nombre: "Exponente cero y negativo", tex: "a^0=1\\qquad a^{-n}=\\frac{1}{a^n}" },
             {
-              nombre: "Exponente fraccionario",
+              nombre: "Exponente racional",
               tex: "\\begin{gathered}a^{1/n}=\\sqrt[n]{a}\\\\a^{m/n}=\\sqrt[n]{a^m}\\end{gathered}",
               texto: "El denominador del exponente es el índice de la raíz."
             },
             {
               nombre: "Para operar",
               tex: "\\begin{aligned}\\sqrt[3]{25}\\cdot125^{1/2}&=5^{2/3}\\cdot5^{3/2}\\\\&=5^{13/6}\\end{aligned}",
-              texto: "Todo se escribe como potencia de un mismo número primo, y se suman o se restan los exponentes."
+              texto: "Se descompone en factores primos, se escribe todo con una base común y se suman o se restan los exponentes."
             },
             {
               nombre: "No vienen en el cuadernillo",
@@ -34661,7 +34664,7 @@ Enfoques NS</p>
           ),
           fichas: [
             {
-              nombre: "Binomio de Newton",
+              nombre: "Teorema del binomio de Newton",
               tex: "(a+b)^n=\\sum_{r=0}^{n}{}^{n}C_{r}\\,a^{n-r}b^{r}",
               texto: (
                 <>
@@ -34683,7 +34686,7 @@ Enfoques NS</p>
               nombre: "Triángulo de Pascal",
               texto: (
                 <>
-                  En clase, de Tartaglia. La fila <Mates tex="n" />, contando como fila <Mates tex="0" /> la del vértice,
+                  También se llama de Tartaglia. La fila <Mates tex="n" />, contando como fila <Mates tex="0" /> la del vértice,
                   es <Mates tex="{}^{n}C_{0},\ {}^{n}C_{1},\ \ldots,\ {}^{n}C_{n}" />.
                 </>
               )
@@ -35696,8 +35699,8 @@ Enfoques NS</p>
               tex: "|r|<1",
               texto: (
                 <>
-                  Es decir, <Mates tex="-1<r<1" />: se dice que la serie converge. Si <Mates tex="|r|\geq1" />, no hay
-                  suma: la serie diverge.
+                  Es decir, <Mates tex="-1<r<1" />: se dice que la serie converge. Si <Mates tex="|r|\geq1" /> y{" "}
+                  <Mates tex="u_1\neq0" />, no hay suma: la serie diverge.
                 </>
               )
             },
@@ -35949,7 +35952,7 @@ Enfoques NS</p>
             </>
           ),
           tex: "\\begin{gathered}6^n+4\\ \\text{ es divisible por }5\\\\\\text{para todo }n\\in\\mathbb Z^+\\end{gathered}",
-          porque: <>Otra afirmación sobre todos los enteros positivos: caso base y paso inductivo.</>
+          porque: <>Otra afirmación sobre todos los enteros positivos: caso inicial y paso inductivo.</>
         },
         {
           metodo: 2,
@@ -35992,7 +35995,7 @@ Enfoques NS</p>
             <>
               {palabra("para todo ")}
               {cursiva("n")} ∈ {enterosPositivos}
-              {palabra(": caso base y paso inductivo")}
+              {palabra(": caso inicial y paso inductivo")}
             </>
           )
         },
@@ -36179,7 +36182,7 @@ Enfoques NS</p>
           siguiente = angulo;
         }
         const mensaje = !e.base
-          ? "sin caso base no cae ninguna"
+          ? "sin caso inicial no cae ninguna"
           : e.paso
             ? "caen todas: la afirmación es cierta para todos"
             : "sin paso inductivo, la caída se para";
@@ -36222,7 +36225,7 @@ Enfoques NS</p>
                 {palabra(mensaje)}
               </Rotulo>
               <Rotulo t={1.5} x="320" y="276" fontSize="19" fillOpacity={e.base ? 1 : 0.55}>
-                {palabra("caso base: ", true)}
+                {palabra("caso inicial: ", true)}
                 {palabra(e.base ? "cae la primera ficha, " : "la primera ficha no cae, ")}
                 {cursiva("P")}({e.inicio})
               </Rotulo>
@@ -36663,16 +36666,16 @@ Enfoques NS</p>
           descripcion: (e) =>
             "Una fila de fichas de dominó, una por cada afirmación, desde P de " + e.inicio + ". " +
             (!e.base
-              ? "El caso base falla: la primera ficha no cae, y no cae ninguna."
+              ? "El caso inicial falla: la primera ficha no cae, y no cae ninguna."
               : e.paso
-                ? "Se cumplen el caso base y el paso inductivo: caen todas."
-                : "El caso base se cumple, pero el paso inductivo falla: caen las cuatro primeras y la caída se para."),
+                ? "Se cumplen el caso inicial y el paso inductivo: caen todas."
+                : "El caso inicial se cumple, pero el paso inductivo falla: caen las cuatro primeras y la caída se para."),
           mandos: () => [
             {
               tipo: "opciones",
               clave: "base",
-              nombre: "el caso base",
-              rotulo: "Caso base",
+              nombre: "el caso inicial",
+              rotulo: "Caso inicial",
               opciones: [
                 { valor: true, rotulo: "Se cumple" },
                 { valor: false, rotulo: "Falla" }
@@ -36703,7 +36706,7 @@ Enfoques NS</p>
             if (!e.paso) {
               return [
                 <>
-                  Como «<Mates tex="n^2-n+11" /> es primo»: cumple el caso base y es cierta hasta <Mates tex="n=10" />,
+                  Como «<Mates tex="n^2-n+11" /> es primo»: cumple el caso inicial y es cierta hasta <Mates tex="n=10" />,
                   pero ningún paso la lleva de <Mates tex="k" /> a <Mates tex="k+1" />, y falla en <Mates tex="n=11" />.
                 </>
               ];
@@ -36721,7 +36724,7 @@ Enfoques NS</p>
           ),
           fichas: [
             {
-              nombre: "1. Caso base",
+              nombre: "1. Caso inicial",
               texto: (
                 <>
                   Se comprueba <Mates tex="P(1)" /> calculando por separado los dos miembros; no basta decir que «se
@@ -36762,7 +36765,7 @@ Enfoques NS</p>
               texto: (
                 <>
                   En el IB, <Mates tex="\mathbb N" /> incluye el <Mates tex="0" />: «para todo{" "}
-                  <Mates tex="n\in\mathbb N" />» tiene el caso base en <Mates tex="n=0" />. «Para todo entero{" "}
+                  <Mates tex="n\in\mathbb N" />» tiene el caso inicial en <Mates tex="n=0" />. «Para todo entero{" "}
                   <Mates tex="n\geq4" />», en <Mates tex="n=4" />, con la hipótesis para algún <Mates tex="k\geq4" />.
                 </>
               )
@@ -36787,7 +36790,7 @@ Enfoques NS</p>
               <Mates tex="P(k)" /> implica <Mates tex="P(k+1)" />.
             </>,
             <>
-              Un caso base que da <Mates tex="0" /> no falla: <Mates tex="0" /> es múltiplo de cualquier entero.
+              Un caso inicial que da <Mates tex="0" /> no falla: <Mates tex="0" /> es múltiplo de cualquier entero.
             </>
           ]
         },
@@ -36849,7 +36852,7 @@ Enfoques NS</p>
             },
             {
               nombre: "Recurrencias",
-              texto: "El caso base es el primer término, y el paso usa la ley de recurrencia."
+              texto: "El caso inicial es el primer término, y el paso usa la ley de recurrencia."
             },
             {
               nombre: "Desigualdades",
@@ -47760,7 +47763,7 @@ Enfoques NS</p>
           titular: "No cae ninguna ficha",
           conclusion:
             "Cada ficha tiraría a la siguiente, pero la primera no cae " +
-            "y nadie empieza la caída: sin caso base no hay " +
+            "y nadie empieza la caída: sin caso inicial no hay " +
             "demostración. De hecho, la afirmación es falsa para todo n.",
           comprobar: (n) => ({
             vale: false,
@@ -47822,7 +47825,7 @@ Enfoques NS</p>
             "que 6k + 3, que a su vez es mayor que 2k + 3.",
           titular: "Caen todas las fichas desde la segunda",
           conclusion:
-            "El caso base no tiene por qué ser n = 1: es el primer valor " +
+            "El caso inicial no tiene por qué ser n = 1: es el primer valor " +
             "del enunciado. Aquí la fila empieza en la ficha 2, y la " +
             "afirmación es verdadera para todo entero n ≥ 2.",
           comprobar: (n) => {
@@ -48044,7 +48047,7 @@ Enfoques NS</p>
               >
                 <strong>
                   {(afirmacion.baseVale ? "✓ " : "✗ ") +
-                    "Caso base: el empujón"}
+                    "Caso inicial: el empujón"}
                 </strong>
                 {afirmacion.baseTexto}
               </div>
@@ -51269,7 +51272,7 @@ Enfoques NS</p>
                 role="img"
                 aria-label={
                   "Puntos en capas con forma de pentágono. La primera capa, " +
-                  "un punto, es el caso base. Con " +
+                  "un punto, es el caso inicial. Con " +
                   capasDe(capas) +
                   " hay " +
                   puntosDe(suma(capas)) +
@@ -51354,7 +51357,7 @@ Enfoques NS</p>
                   fontWeight="800"
                   fill={COLORES_IB.turquesa}
                 >
-                  caso base
+                  caso inicial
                 </text>
                 {anadida && (
                   <g>
@@ -51476,7 +51479,7 @@ Enfoques NS</p>
                 className="parte-induccion"
                 style={{ "--color-parte": COLORES_IB.turquesa }}
               >
-                <strong>1. Caso base: la primera capa</strong>
+                <strong>1. Caso inicial: la primera capa</strong>
                 Es {conSigno(<MatematicaFijaIB tex="P(1)" />, ".")} Con una
                 capa hay 1 punto, y la fórmula
                 da {conSigno(<MatematicaFijaIB tex="\frac{1\cdot2}{2}=1" />, ":")} es
@@ -51502,7 +51505,7 @@ Enfoques NS</p>
                   }
                 />
                 {capas === 1 &&
-                  " Con una sola capa, la hipótesis es el propio caso base."}
+                  " Con una sola capa, la hipótesis es el propio caso inicial."}
                 <span className="con-letras">
                   Con letras:
                   <br />

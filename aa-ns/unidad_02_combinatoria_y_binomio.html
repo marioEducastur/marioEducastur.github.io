@@ -7510,13 +7510,23 @@ Enfoques NS</p>
                 <strong>sin importar el orden</strong>, se puede hacer
                 de</p>
                 <p><span class="math display">\[
-                {}^{n}C_{r}=\binom{n}{r}=\frac{n!}{r!\,(n-r)!}
+                \begin{aligned}
+                {}^{n}C_{r}=\binom{n}{r}&amp;=\frac{n\,(n-1)\cdots(n-r+1)}{r!}\\
+                &amp;=\frac{n!}{r!\,(n-r)!}
+                \end{aligned}
                 \]</span></p>
                 <p>maneras, que son las <strong>combinaciones</strong>
                 de <span class="math inline">\(n\)</span> elementos
                 tomados de <span class="math inline">\(r\)</span> en
                 <span class="formula-con-signo"><span
-                class="math inline">\(r\)</span>.</span> El número <span
+                class="math inline">\(r\)</span>.</span> La primera
+                forma es la de calcular a mano: arriba, los <span
+                class="math inline">\(r\)</span> primeros factores de
+                <span class="formula-con-signo"><span
+                class="math inline">\(n!\)</span>,</span> que cuentan
+                las ordenaciones, y abajo, las <span
+                class="math inline">\(r!\)</span> veces que sale cada
+                grupo. El número <span
                 class="math inline">\({}^{n}C_{r}\)</span> se llama
                 <strong>número combinatorio</strong> o coeficiente
                 binomial, y <span
@@ -8134,7 +8144,7 @@ Enfoques NS</p>
                 <div class="friso-apartado" data-friso="binomio" aria-hidden="true"></div>
                 <div class="curiosidad" data-dibujo="yang-hui">
                 <p><span class="rotulo-curiosidad">¿Sabías que…?</span>
-                El triángulo de Pascal, que en clase se llama de
+                El triángulo de Pascal, que también se llama de
                 Tartaglia, no es de ninguno de los dos: Tartaglia lo
                 publicó en 1556, un siglo antes que Pascal, pero ya
                 estaba en un libro chino de 1261, en el que Yang Hui
@@ -8148,7 +8158,7 @@ Enfoques NS</p>
                 con números combinatorios</h3>
                 <p>Al elevar <span class="math inline">\(a+b\)</span> al
                 cuadrado, al cubo, a la cuarta… los coeficientes forman
-                el <strong>triángulo de Pascal</strong>, que en clase se
+                el <strong>triángulo de Pascal</strong>, que también se
                 llama triángulo de Tartaglia. Cada fila empieza y acaba
                 en <span class="formula-con-signo"><span
                 class="math inline">\(1\)</span>,</span> y cada número
@@ -8181,10 +8191,12 @@ Enfoques NS</p>
                 \]</span></p>
                 <p>De un término al siguiente, el exponente de <span
                 class="math inline">\(a\)</span> baja una unidad y el de
-                <span class="math inline">\(b\)</span> sube una. El
-                triángulo basta con exponentes pequeños; con los demás
-                hace falta saber qué número ocupa cada lugar sin
-                escribir las filas anteriores.</p>
+                <span class="math inline">\(b\)</span> sube una, y en
+                todos suman <span class="formula-con-signo"><span
+                class="math inline">\(4\)</span>,</span> el exponente
+                del binomio. El triángulo basta con exponentes pequeños;
+                con los demás hace falta saber qué número ocupa cada
+                lugar sin escribir las filas anteriores.</p>
                 <p>Los números de cada fila del triángulo de Pascal son
                 los <span class="formula-con-signo"><span
                 class="math inline">\({}^{n}C_{r}\)</span>:</span> la
@@ -8212,17 +8224,57 @@ Enfoques NS</p>
                 y una <span class="formula-con-signo"><span
                 class="math inline">\(b\)</span>,</span> <span
                 class="formula-con-signo"><span
-                class="math inline">\({}^{3}C_{1}=3\)</span>.</span> En
-                general, el término con <span
-                class="math inline">\(b^r\)</span> aparece tantas veces
-                como palabras hay con <span
+                class="math inline">\({}^{3}C_{1}=3\)</span>:</span>
+                tantas como maneras de elegir de cuál de los tres
+                factores sale la <span class="formula-con-signo"><span
+                class="math inline">\(b\)</span>.</span> En general, el
+                término con <span class="math inline">\(b^r\)</span>
+                aparece tantas veces como palabras hay con <span
                 class="math inline">\(r\)</span> letras <span
                 class="math inline">\(b\)</span> y <span
                 class="math inline">\(n-r\)</span> letras <span
                 class="formula-con-signo"><span
-                class="math inline">\(a\)</span>:</span> <span
+                class="math inline">\(a\)</span>,</span> es decir, como
+                maneras de elegir de qué <span
+                class="math inline">\(r\)</span> de los <span
+                class="math inline">\(n\)</span> factores sale la <span
+                class="formula-con-signo"><span
+                class="math inline">\(b\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\({}^{n}C_{r}\)</span>.</span></p>
+                <p>La regla del triángulo, cada número de dentro es la
+                suma de los dos que tiene encima, dice con números
+                combinatorios que, para <span
+                class="formula-con-signo"><span
+                class="math inline">\(1\leq r\leq
+                n-1\)</span>,</span></p>
+                <p><span class="math display">\[
+                {}^{n}C_{r}={}^{n-1}C_{r-1}+{}^{n-1}C_{r}
+                \]</span></p>
+                <p>Es la <strong>identidad de Pascal</strong>, y se
+                justifica contando. Para elegir <span
+                class="math inline">\(r\)</span> objetos entre <span
+                class="math inline">\(n\)</span> se fija uno de ellos,
+                <span class="formula-con-signo"><span
+                class="math inline">\(X\)</span>.</span> Si <span
+                class="math inline">\(X\)</span> está entre los
+                elegidos, faltan <span class="formula-con-signo"><span
+                class="math inline">\(r-1\)</span>,</span> que se eligen
+                entre los otros <span class="formula-con-signo"><span
+                class="math inline">\(n-1\)</span>:</span> hay <span
+                class="math inline">\({}^{n-1}C_{r-1}\)</span> maneras.
+                Si no está, los <span class="math inline">\(r\)</span>
+                se eligen entre los otros <span
+                class="formula-con-signo"><span
+                class="math inline">\(n-1\)</span>:</span> hay <span
+                class="formula-con-signo"><span
+                class="math inline">\({}^{n-1}C_{r}\)</span>.</span>
+                Cada elección está en uno solo de los dos casos, así que
+                se suman (principio de suma). En la fila <span
+                class="formula-con-signo"><span
+                class="math inline">\(4\)</span>,</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\({}^{4}C_{2}={}^{3}C_{1}+{}^{3}C_{2}=3+3=6\)</span>.</span></p>
                 <div id="triangulo-binomio"
                 class="interactivo bloque-didactico"
                 data-componente="triangulo-binomio"
@@ -8261,7 +8313,8 @@ Enfoques NS</p>
                 </div>
                 <div class="resultado bloque-didactico con-nombre">
                 <p><span class="etiqueta-bloque">Resultado</span> <span
-                class="nombre-bloque">Binomio de Newton</span></p>
+                class="nombre-bloque">Teorema del binomio de
+                Newton</span></p>
                 <p>Para <span class="math inline">\(n\in\mathbb
                 N\)</span> (está en el cuadernillo de fórmulas):</p>
                 <p><span class="math display">\[
@@ -8290,7 +8343,18 @@ Enfoques NS</p>
                 class="math inline">\(r+1\)</span> (el primero es el de
                 <span class="formula-con-signo"><span
                 class="math inline">\(r=0\)</span>);</span> se usa para
-                hallar un término sin desarrollar todo el binomio.</p>
+                hallar un término sin desarrollar todo el binomio. Como
+                <span class="math inline">\(r\)</span> va de <span
+                class="math inline">\(0\)</span> a <span
+                class="formula-con-signo"><span
+                class="math inline">\(n\)</span>,</span> el desarrollo
+                tiene <span class="math inline">\(n+1\)</span> términos.
+                En los apuntes de clase la letra es <span
+                class="formula-con-signo"><span
+                class="math inline">\(k\)</span>,</span> y el término
+                del lugar <span class="math inline">\(k+1\)</span> se
+                escribe <span class="formula-con-signo"><span
+                class="math inline">\(T_{k+1}\)</span>.</span></p>
                 </div>
                 <p><span class="math display">\[
                 \begin{aligned}
@@ -8387,13 +8451,10 @@ Enfoques NS</p>
                 <strong>coeficiente</strong>; ese número junto con la
                 potencia es el <strong>término</strong>.</li>
                 </ol>
-                <p>Si se pide el término del lugar <span
+                <p>Si se pide el término de un lugar concreto, <span
+                class="math inline">\(r\)</span> no se despeja: es una
+                unidad menos que el lugar, contando desde <span
                 class="formula-con-signo"><span
-                class="math inline">\(k\)</span>,</span> <span
-                class="math inline">\(r\)</span> no se despeja: es <span
-                class="formula-con-signo"><span
-                class="math inline">\(k-1\)</span>,</span> contando
-                desde <span class="formula-con-signo"><span
                 class="math inline">\(a^n\)</span>.</span></p>
                 <p>Si el binomio lleva dos letras, como <span
                 class="formula-con-signo"><span
@@ -8755,11 +8816,32 @@ Enfoques NS</p>
                 <li><strong>(Libreta)</strong> Desarrolle y simplifique
                 <span
                 class="math inline">\(\left(x^2-\frac{2}{x}\right)^4\)</span></li>
+                <li><strong>(Apuntes de números, pág. 11)</strong> Sea
+                <span class="math inline">\(n\)</span> un entero
+                positivo. Al sustituir <span
+                class="math inline">\(a=b=1\)</span> en el binomio de
+                Newton se obtiene que los números de la fila <span
+                class="math inline">\(n\)</span> del triángulo de Pascal
+                suman <span class="formula-con-signo"><span
+                class="math inline">\(2^n\)</span>.</span> Cada elemento
+                de un conjunto de <span class="math inline">\(n\)</span>
+                elementos puede estar o no estar en un subconjunto:
+                <ol type="a">
+                <li>Explique por qué el conjunto tiene <span
+                class="math inline">\(2^n\)</span> subconjuntos,
+                contando el vacío y el propio conjunto.</li>
+                <li>Agrupe los subconjuntos según su número de elementos
+                y explique por qué la suma de la fila <span
+                class="math inline">\(n\)</span> cuenta lo mismo que
+                a).</li>
+                </ol></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <p>Son los cinco ejercicios del desarrollo del binomio
-                que se hicieron en clase.</p>
+                <p>Los cinco primeros son los ejercicios del desarrollo
+                del binomio que se hicieron en clase, y el último, el
+                recuadro «Para pensar» de los apuntes de clase de
+                números (pág. 11).</p>
                 <ol start="42" type="1">
                 <li>El término general es <span class="math display">\[
                 {}^{10}C_{r}\,2^{10-r}(3x)^{r}={}^{10}C_{r}\,2^{10-r}\,3^{r}\,x^{r}
@@ -8839,6 +8921,97 @@ Enfoques NS</p>
                 ={}&amp;\boxed{x^8-8x^5+24x^2-\frac{32}{x}+\frac{16}{x^4}}
                 \end{aligned}
                 \]</span></li>
+                <li>La suma del enunciado sale de tomar <span
+                class="math inline">\(a=b=1\)</span> en <span
+                class="formula-con-signo"><span
+                class="math inline">\((a+b)^n=\sum\limits_{r=0}^{n}{}^{n}C_{r}\,a^{n-r}b^{r}\)</span>:</span>
+                toda potencia de <span class="math inline">\(1\)</span>
+                vale <span class="formula-con-signo"><span
+                class="math inline">\(1\)</span>,</span> y queda <span
+                class="formula-con-signo"><span
+                class="math inline">\({}^{n}C_{0}+{}^{n}C_{1}+\cdots+{}^{n}C_{n}=(1+1)^n=2^n\)</span>,</span>
+                la suma de la teoría del subapartado. Aquí se cuenta lo
+                mismo de otra manera.
+                <ol type="a">
+                <li>Para formar un subconjunto se recorren los <span
+                class="math inline">\(n\)</span> elementos uno a uno y,
+                con cada uno, se decide si está o no está: <span
+                class="math inline">\(2\)</span> opciones por elemento.
+                Es una elección en <span
+                class="math inline">\(n\)</span> etapas, y lo que se
+                decide con un elemento no cambia las opciones de los
+                demás, así que, por el principio de multiplicación
+                (subapartado 1.1), se multiplican las opciones de cada
+                etapa: <span class="math display">\[
+                \underbrace{2\cdot2\cdots2}_{n\text{ elementos}}=2^n
+                \]</span> Cada forma de decidir da un subconjunto
+                distinto, y cada subconjunto sale de una sola: decir
+                «no» a todos los elementos da el vacío, <span
+                class="formula-con-signo"><span
+                class="math inline">\(\emptyset\)</span>,</span> y decir
+                «sí» a todos, el conjunto entero. Así, <span
+                class="final-con-signo"><span class="final">un conjunto
+                de <span class="math inline">\(n\)</span> elementos
+                tiene <span class="math inline">\(2^n\)</span>
+                subconjuntos</span>.</span></li>
+                <li>Se agrupan los subconjuntos según su número de
+                elementos, <span class="formula-con-signo"><span
+                class="math inline">\(r\)</span>,</span> que va de <span
+                class="math inline">\(0\)</span> a <span
+                class="formula-con-signo"><span
+                class="math inline">\(n\)</span>.</span> Dos grupos
+                distintos no tienen subconjuntos comunes, así que, por
+                el principio de suma (subapartado 1.1), el total es la
+                suma de lo que hay en cada grupo. Un subconjunto de
+                <span class="math inline">\(r\)</span> elementos es una
+                elección de <span class="math inline">\(r\)</span>
+                elementos entre los <span
+                class="math inline">\(n\)</span> en la que no importa el
+                orden, es decir, una combinación, y hay <span
+                class="math inline">\({}^{n}C_{r}\)</span> (subapartado
+                2.3). Por eso <span class="math display">\[
+                \begin{aligned}
+                &amp;\text{número de subconjuntos}\\
+                ={}&amp;{}^{n}C_{0}+{}^{n}C_{1}+\cdots+{}^{n}C_{n}
+                \end{aligned}
+                \]</span> Por a), ese mismo número es <span
+                class="formula-con-signo"><span
+                class="math inline">\(2^n\)</span>:</span> la suma de la
+                fila y la cuenta de
+                <ol type="a">
+                <li>son dos maneras de contar lo mismo, y por eso la
+                igualdad del enunciado se justifica también contando,
+                sin el binomio: <span class="final-con-signo"><span
+                class="final">cada <span
+                class="math inline">\({}^{n}C_{r}\)</span> cuenta los
+                subconjuntos de <span class="math inline">\(r\)</span>
+                elementos, y la fila <span
+                class="math inline">\(n\)</span> entera, todos, que son
+                <span class="math inline">\(2^n\)</span></span>.</span>
+                Comprobación con <span class="formula-con-signo"><span
+                class="math inline">\(n=3\)</span>:</span> los
+                subconjuntos de <span
+                class="math inline">\(\{P,Q,R\}\)</span> son <span
+                class="formula-con-signo"><span
+                class="math inline">\(\emptyset\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\{P\}\)</span>,</span> <span
+                class="math inline">\(\{Q\}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\{R\}\)</span>;</span> <span
+                class="formula-con-signo"><span
+                class="math inline">\(\{P,Q\}\)</span>,</span> <span
+                class="math inline">\(\{P,R\}\)</span> y <span
+                class="formula-con-signo"><span
+                class="math inline">\(\{Q,R\}\)</span>,</span> y el
+                propio <span class="formula-con-signo"><span
+                class="math inline">\(\{P,Q,R\}\)</span>.</span> Son
+                <span class="formula-con-signo"><span
+                class="math inline">\(1+3+3+1=8=2^3\)</span>,</span> la
+                suma de la fila <span class="formula-con-signo"><span
+                class="math inline">\(3\)</span>.</span></li>
+                </ol></li>
+                </ol></li>
                 </ol>
                 </div>
                 </section>
@@ -8846,7 +9019,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios como los
                 del libro</h4>
-                <ol start="47" type="1">
+                <ol start="48" type="1">
                 <li>Escriba, ya simplificados, los cuatro primeros
                 términos de cada desarrollo:
                 <ol type="a">
@@ -8897,7 +9070,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="47" type="1">
+                <ol start="48" type="1">
                 <li>En los tres se escriben los términos de <span
                 class="math inline">\(r=0\)</span> a <span
                 class="math inline">\(r=3\)</span> del binomio de
@@ -8998,11 +9171,10 @@ Enfoques NS</p>
                 \end{aligned}
                 \]</span></li>
                 </ol></li>
-                <li>El término del lugar <span
-                class="math inline">\(k\)</span> es el de <span
+                <li>El término de cada lugar es el de <span
+                class="math inline">\(r\)</span> una unidad menor,
+                porque el primero es el de <span
                 class="formula-con-signo"><span
-                class="math inline">\(r=k-1\)</span>,</span> porque el
-                primero es el de <span class="formula-con-signo"><span
                 class="math inline">\(r=0\)</span>,</span> el de <span
                 class="formula-con-signo"><span
                 class="math inline">\(a^n\)</span>.</span> En cada
@@ -9264,7 +9436,10 @@ Enfoques NS</p>
                 </div>
                 <p><strong>(Apuntes de clase)</strong> «Números», 3.2 a
                 3.4: el triángulo de Pascal, la fórmula del binomio y un
-                primer desarrollo (págs. 9 y 10).</p>
+                primer desarrollo (págs. 9 y 10); 3.5: el término
+                general para hallar un solo término, como el
+                independiente (pág. 10), y, en 3.6, cuándo un término no
+                existe (pág. 11).</p>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1I,
                 preguntas 1, 2, 3, 5 y 9 (pág. 61), y repaso del
                 capítulo 1, pregunta 6 (pág. 68). Soluciones del libro
@@ -9276,7 +9451,7 @@ Enfoques NS</p>
                 class="math inline">\(880a^5\)</span> y <span
                 class="formula-con-signo"><span
                 class="math inline">\(-448x^2y^3\)</span>.</span> Los
-                ejercicios 47 a 52 son del mismo tipo que las preguntas
+                ejercicios 48 a 53 son del mismo tipo que las preguntas
                 del capítulo 1, con otros datos, una a una y en el mismo
                 orden.</p>
                 </section>
@@ -9316,6 +9491,10 @@ Enfoques NS</p>
                 class="math inline">\(r=3\)</span>,</span> se buscan
                 tres naturales consecutivos con el producto que pide la
                 ecuación, o se usa la tabla de la calculadora.</li>
+                <li>Si después se pide otro término, se escribe el
+                término general con el valor hallado y se busca su <span
+                class="math inline">\(r\)</span> como en el subapartado
+                anterior.</li>
                 </ol>
                 </div>
                 <div class="ejemplo bloque-didactico">
@@ -9516,7 +9695,7 @@ Enfoques NS</p>
                 <section id="ejercicios-6"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="53" type="1">
+                <ol start="54" type="1">
                 <li>Halle los valores de <span
                 class="math inline">\(k\)</span> si el coeficiente de
                 <span class="math inline">\(x^2\)</span> en <span
@@ -9570,7 +9749,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="53" type="1">
+                <ol start="54" type="1">
                 <li>El término en <span
                 class="math inline">\(x^2\)</span> es el de <span
                 class="formula-con-signo"><span
@@ -9742,7 +9921,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios de
                 clase</h4>
-                <ol start="60" type="1">
+                <ol start="61" type="1">
                 <li><strong>(Libreta)</strong>
                 <ol type="a">
                 <li>Desarrolle <span
@@ -9792,7 +9971,7 @@ Enfoques NS</p>
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
                 <p>Son los cinco problemas con el binomio que se
                 hicieron en clase.</p>
-                <ol start="60" type="1">
+                <ol start="61" type="1">
                 <li><ol type="a">
                 <li>Con <span class="formula-con-signo"><span
                 class="math inline">\(n=5\)</span>,</span> los <span
@@ -9938,7 +10117,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios como los
                 del libro</h4>
-                <ol start="65" type="1">
+                <ol start="66" type="1">
                 <li><ol type="a">
                 <li>Desarrolle <span
                 class="math inline">\(\left(4-\frac{x}{7}\right)^4\)</span></li>
@@ -10011,7 +10190,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="65" type="1">
+                <ol start="66" type="1">
                 <li><ol type="a">
                 <li>Se desarrolla con los coeficientes <span
                 class="formula-con-signo"><span
@@ -10562,13 +10741,14 @@ Enfoques NS</p>
                 </ol></li>
                 </ol>
                 </div>
-                <p><strong>(Apuntes de clase)</strong> «Números», 3.5 y
-                3.6: el término general y un problema con un parámetro
-                (págs. 10 y 11).</p>
+                <p><strong>(Apuntes de clase)</strong> «Números», 3.5:
+                un parámetro que se halla con un coeficiente (pág. 10),
+                y 3.6: un problema con dos coeficientes y un parámetro
+                (pág. 11).</p>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 1I,
                 preguntas 4, 6, 7 y 8 (pág. 61), y repaso del
                 capítulo 1, pregunta 15 (pág. 68). Soluciones del libro
-                en las páginas 761 y 764. Los ejercicios 65 a 69 son del
+                en las páginas 761 y 764. Los ejercicios 66 a 70 son del
                 mismo tipo que las preguntas del capítulo 1, con otros
                 datos, una a una y en el mismo orden.</p>
                 </section>
@@ -10850,7 +11030,7 @@ Enfoques NS</p>
                 <section id="ejercicios-7"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="70" type="1">
+                <ol start="71" type="1">
                 <li>Desarrolle hasta <span
                 class="math inline">\(x^3\)</span> e indique para qué
                 valores de <span class="math inline">\(x\)</span> es
@@ -10874,7 +11054,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="70" type="1">
+                <ol start="71" type="1">
                 <li>Se aplica el desarrollo de <span
                 class="math inline">\((1+x)^n\)</span> con lo que
                 acompaña al <span class="math inline">\(1\)</span> en el
@@ -10968,7 +11148,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios como los
                 del libro</h4>
-                <ol start="72" type="1">
+                <ol start="73" type="1">
                 <li>Para <span class="formula-con-signo"><span
                 class="math inline">\(|x|&lt;\frac{1}{7}\)</span>,</span>
                 desarrolle hasta <span class="formula-con-signo"><span
@@ -11078,7 +11258,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="72" type="1">
+                <ol start="73" type="1">
                 <li>Cada fracción es una potencia de exponente entero
                 negativo de un binomio que empieza por <span
                 class="formula-con-signo"><span
@@ -11850,7 +12030,7 @@ Enfoques NS</p>
                 preguntas 4 b) y 16 (pág. 68; la 16 necesita las
                 fracciones simples, que todavía no están en ninguna
                 unidad). Soluciones del libro en las páginas 761, 762 y
-                764. Los ejercicios 72 a 80 son del mismo tipo que las
+                764. Los ejercicios 73 a 81 son del mismo tipo que las
                 preguntas del capítulo 1, con otros datos, una a una y
                 en el mismo orden.</p>
                 </section>
@@ -11887,7 +12067,7 @@ Enfoques NS</p>
                 <section id="ejercicios-8"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="81" type="1">
+                <ol start="82" type="1">
                 <li><strong>[Puntuación máxima: 6]</strong> El
                 desarrollo de <span class="formula-con-signo"><span
                 class="math inline">\((1+kx)^n\)</span>,</span> con
@@ -11929,7 +12109,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="81" type="1">
+                <ol start="82" type="1">
                 <li>El término en <span class="math inline">\(x\)</span>
                 es <span class="formula-con-signo"><span
                 class="math inline">\({}^{n}C_{1}\,kx=nkx\)</span>,</span>
@@ -12040,7 +12220,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios como los
                 del libro</h4>
-                <ol start="85" type="1">
+                <ol start="86" type="1">
                 <li><strong>[Puntuación máxima: 6]</strong> Cuando se
                 desarrolla <span class="formula-con-signo"><span
                 class="math inline">\((1-9x)^n\)</span>,</span> con
@@ -12066,7 +12246,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="85" type="1">
+                <ol start="86" type="1">
                 <li>El exponente es racional, así que el coeficiente no
                 se puede escribir con <span
                 class="math inline">\({}^{n}C_{2}\)</span> y
@@ -12231,7 +12411,7 @@ Enfoques NS</p>
                 <p><strong>(Libro)</strong> Oxford: repaso del
                 capítulo 1, preguntas tipo examen 18 y 20 (pág. 69).
                 Soluciones del libro en las páginas 764 y 765. Los
-                ejercicios 85 y 86 son del mismo tipo que las preguntas
+                ejercicios 86 y 87 son del mismo tipo que las preguntas
                 del capítulo 1, con otros datos, una a una y en el mismo
                 orden.</p>
                 </section>
@@ -12244,7 +12424,7 @@ Enfoques NS</p>
                 <section id="ejercicios-9"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="87" type="1">
+                <ol start="88" type="1">
                 <li><strong>[Puntuación máxima: 7]</strong> Un club
                 tiene <span class="math inline">\(10\)</span> chicas y
                 <span class="math inline">\(8\)</span> chicos, y se
@@ -12272,7 +12452,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="87" type="1">
+                <ol start="88" type="1">
                 <li>En un equipo no importa el orden: son combinaciones.
                 <ol type="a">
                 <li>Se eligen <span class="math inline">\(6\)</span>
@@ -12335,7 +12515,7 @@ Enfoques NS</p>
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios como los
                 del libro</h4>
-                <ol start="89" type="1">
+                <ol start="90" type="1">
                 <li><strong>[Puntuación máxima: 4]</strong> Halle el
                 coeficiente de <span class="math inline">\(x^3\)</span>
                 en el desarrollo de <span
@@ -12374,7 +12554,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="89" type="1">
+                <ol start="90" type="1">
                 <li>Al multiplicar <span
                 class="math inline">\((7+2x)\)</span> por el desarrollo
                 de <span class="formula-con-signo"><span
@@ -12640,7 +12820,7 @@ Enfoques NS</p>
                 <p><strong>(Libro)</strong> Oxford: repaso del
                 capítulo 1, preguntas tipo examen 17, 24 y 25 (pág. 69).
                 Soluciones del libro en las páginas 764 y 765. Los
-                ejercicios 89 a 91 son del mismo tipo que las preguntas
+                ejercicios 90 a 92 son del mismo tipo que las preguntas
                 del capítulo 1, con otros datos, una a una y en el mismo
                 orden.</p>
                 </section>
@@ -12653,7 +12833,7 @@ Enfoques NS</p>
                 <section id="ejercicios-10"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
-                <ol start="92" type="1">
+                <ol start="93" type="1">
                 <li><strong>[Puntuación máxima: 15]</strong> Newton
                 calculaba raíces con su desarrollo del binomio. En esta
                 pregunta se aproximan <span
@@ -12689,7 +12869,7 @@ Enfoques NS</p>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
-                <ol start="92" type="1">
+                <ol start="93" type="1">
                 <li><ol type="a">
                 <li>Con <span class="math inline">\(n=\frac12\)</span>
                 en el desarrollo de <span
@@ -12806,8 +12986,8 @@ Enfoques NS</p>
                 se pegan en un bloque, que también se ordena por dentro.
                 Dos objetos separados son el total menos los juntos; con
                 tres o más, se colocan en huecos distintos.</li>
-                <li><strong>Binomio de Newton.</strong> <span
-                class="formula-con-signo"><span
+                <li><strong>Teorema del binomio de Newton.</strong>
+                <span class="formula-con-signo"><span
                 class="math inline">\((a+b)^n=\sum\limits_{r=0}^{n}{}^{n}C_{r}\,a^{n-r}b^{r}\)</span>.</span>
                 El término general, <span
                 class="formula-con-signo"><span
@@ -17243,7 +17423,7 @@ Enfoques NS</p>
           var fichas = [
             { x: 277, nombre: "exponente 0", tex: "a^0=1", de: "\\dfrac{a^n}{a^n}=a^{n-n}=a^0" },
             { x: 431, nombre: "negativo", tex: "a^{-n}=\\frac{1}{a^n}", de: "a^{-n}\\cdot a^n=a^0=1" },
-            { x: 585, nombre: "fraccionario", tex: "a^{1/n}=\\sqrt[n]{a}", de: "\\left(a^{1/n}\\right)^n=a" }
+            { x: 585, nombre: "racional", tex: "a^{1/n}=\\sqrt[n]{a}", de: "\\left(a^{1/n}\\right)^n=a" }
           ];
           var d = '<rect x="778" y="22" width="180" height="44" rx="22" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
           var rotulos = [];
@@ -17716,7 +17896,7 @@ Enfoques NS</p>
         "induccion": function () {
           var arriba = 22, alto = 60, medio = arriba + alto / 2, bajo = arriba + alto;
           var partes = [
-            { x: 122, ancho: 128, nombre: "caso base", realce: true },
+            { x: 122, ancho: 128, nombre: "caso inicial", realce: true },
             { x: 276, ancho: 115, nombre: "hipótesis" },
             { x: 417, ancho: 326, nombre: "paso inductivo", realce: true },
             { x: 769, ancho: 120, nombre: "conclusión" }
@@ -20012,7 +20192,7 @@ Enfoques NS</p>
             alto="276"
             descripcion={
               "Una fila de cajas: P(1), P(2), P(3), P(4), P(5) y puntos suspensivos. " +
-              "La primera lleva una marca: es el caso base. De cada caja a la " +
+              "La primera lleva una marca: es el caso inicial. De cada caja a la " +
               "siguiente va una flecha, con k igual a 1, 2, 3, 4 y 5: es el paso " +
               "inductivo, P(k) implica P(k más 1), para cada k. Por esas flechas la " +
               "marca pasa a P(2), a P(3), a P(4) y a P(5). Debajo: P(n) es verdadera " +
@@ -20023,7 +20203,7 @@ Enfoques NS</p>
                 El paso inductivo no dice que <Mates tex="P(k)" /> sea verdadera: pone una flecha
                 de cada afirmación a la siguiente, y la misma demostración sirve
                 para <Mates tex="{k=1}" />, para <Mates tex="{k=2}" />, para <Mates tex="{k=3}" />… El caso
-                base marca la primera y, flecha a flecha, quedan marcadas todas:
+                inicial marca la primera y, flecha a flecha, quedan marcadas todas:
                 a <Mates tex="P(5)" /> se llega en cuatro pasos, y a cualquier otra, igual.
               </>
             }
@@ -20038,7 +20218,7 @@ Enfoques NS</p>
                   …
                 </Rotulo>
                 <Rotulo t={2.3} x="62" y="192" fontSize="18" opacity="0.95">
-                  {palabra("caso base")}
+                  {palabra("caso inicial")}
                 </Rotulo>
                 <Rotulo t={3} x="343.5" y="30" fontSize="20">
                   {palabra("paso inductivo: ")}
@@ -22368,7 +22548,7 @@ Enfoques NS</p>
 
       const CASOS_DE_RACIONALIZAR = [
         { titulo: "abajo hay una raíz cuadrada", gesto: "se multiplica, arriba y abajo, por esa misma raíz" },
-        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por la raíz que completa el índice" },
+        { titulo: "abajo hay una raíz de otro índice", gesto: "se multiplica por la raíz que completa la potencia" },
         { titulo: "abajo hay una suma o una resta con raíces", gesto: "se multiplica por el conjugado: sale una suma por diferencia" }
       ];
 
@@ -22910,24 +23090,27 @@ Enfoques NS</p>
           },
           pista: (
             <>
-              El exponente <Mates tex="0" />, el negativo y el fraccionario se definen para que las propiedades de
+              El exponente <Mates tex="0" />, el negativo y el racional se definen para que las propiedades de
               siempre sigan valiendo.
             </>
           ),
           fichas: [
             { nombre: "Producto y cociente, misma base", tex: "\\begin{gathered}a^m\\cdot a^n=a^{m+n}\\\\[2pt]\\frac{a^m}{a^n}=a^{m-n}\\end{gathered}" },
             { nombre: "Potencia de una potencia", tex: "\\left(a^m\\right)^n=a^{m\\cdot n}" },
-            { nombre: "Potencia de un producto", tex: "(a\\cdot b)^n=a^n\\cdot b^n" },
+            {
+              nombre: "Potencia de un producto y de un cociente",
+              tex: "\\begin{gathered}(a\\cdot b)^n=a^n\\cdot b^n\\\\[2pt]\\left(\\frac ab\\right)^n=\\frac{a^n}{b^n}\\end{gathered}"
+            },
             { nombre: "Exponente cero y negativo", tex: "a^0=1\\qquad a^{-n}=\\frac{1}{a^n}" },
             {
-              nombre: "Exponente fraccionario",
+              nombre: "Exponente racional",
               tex: "\\begin{gathered}a^{1/n}=\\sqrt[n]{a}\\\\a^{m/n}=\\sqrt[n]{a^m}\\end{gathered}",
               texto: "El denominador del exponente es el índice de la raíz."
             },
             {
               nombre: "Para operar",
               tex: "\\begin{aligned}\\sqrt[3]{25}\\cdot125^{1/2}&=5^{2/3}\\cdot5^{3/2}\\\\&=5^{13/6}\\end{aligned}",
-              texto: "Todo se escribe como potencia de un mismo número primo, y se suman o se restan los exponentes."
+              texto: "Se descompone en factores primos, se escribe todo con una base común y se suman o se restan los exponentes."
             },
             {
               nombre: "No vienen en el cuadernillo",
@@ -25430,7 +25613,7 @@ Enfoques NS</p>
           ),
           fichas: [
             {
-              nombre: "Binomio de Newton",
+              nombre: "Teorema del binomio de Newton",
               tex: "(a+b)^n=\\sum_{r=0}^{n}{}^{n}C_{r}\\,a^{n-r}b^{r}",
               texto: (
                 <>
@@ -25452,7 +25635,7 @@ Enfoques NS</p>
               nombre: "Triángulo de Pascal",
               texto: (
                 <>
-                  En clase, de Tartaglia. La fila <Mates tex="n" />, contando como fila <Mates tex="0" /> la del vértice,
+                  También se llama de Tartaglia. La fila <Mates tex="n" />, contando como fila <Mates tex="0" /> la del vértice,
                   es <Mates tex="{}^{n}C_{0},\ {}^{n}C_{1},\ \ldots,\ {}^{n}C_{n}" />.
                 </>
               )
@@ -26465,8 +26648,8 @@ Enfoques NS</p>
               tex: "|r|<1",
               texto: (
                 <>
-                  Es decir, <Mates tex="-1<r<1" />: se dice que la serie converge. Si <Mates tex="|r|\geq1" />, no hay
-                  suma: la serie diverge.
+                  Es decir, <Mates tex="-1<r<1" />: se dice que la serie converge. Si <Mates tex="|r|\geq1" /> y{" "}
+                  <Mates tex="u_1\neq0" />, no hay suma: la serie diverge.
                 </>
               )
             },
@@ -26718,7 +26901,7 @@ Enfoques NS</p>
             </>
           ),
           tex: "\\begin{gathered}6^n+4\\ \\text{ es divisible por }5\\\\\\text{para todo }n\\in\\mathbb Z^+\\end{gathered}",
-          porque: <>Otra afirmación sobre todos los enteros positivos: caso base y paso inductivo.</>
+          porque: <>Otra afirmación sobre todos los enteros positivos: caso inicial y paso inductivo.</>
         },
         {
           metodo: 2,
@@ -26761,7 +26944,7 @@ Enfoques NS</p>
             <>
               {palabra("para todo ")}
               {cursiva("n")} ∈ {enterosPositivos}
-              {palabra(": caso base y paso inductivo")}
+              {palabra(": caso inicial y paso inductivo")}
             </>
           )
         },
@@ -26948,7 +27131,7 @@ Enfoques NS</p>
           siguiente = angulo;
         }
         const mensaje = !e.base
-          ? "sin caso base no cae ninguna"
+          ? "sin caso inicial no cae ninguna"
           : e.paso
             ? "caen todas: la afirmación es cierta para todos"
             : "sin paso inductivo, la caída se para";
@@ -26991,7 +27174,7 @@ Enfoques NS</p>
                 {palabra(mensaje)}
               </Rotulo>
               <Rotulo t={1.5} x="320" y="276" fontSize="19" fillOpacity={e.base ? 1 : 0.55}>
-                {palabra("caso base: ", true)}
+                {palabra("caso inicial: ", true)}
                 {palabra(e.base ? "cae la primera ficha, " : "la primera ficha no cae, ")}
                 {cursiva("P")}({e.inicio})
               </Rotulo>
@@ -27432,16 +27615,16 @@ Enfoques NS</p>
           descripcion: (e) =>
             "Una fila de fichas de dominó, una por cada afirmación, desde P de " + e.inicio + ". " +
             (!e.base
-              ? "El caso base falla: la primera ficha no cae, y no cae ninguna."
+              ? "El caso inicial falla: la primera ficha no cae, y no cae ninguna."
               : e.paso
-                ? "Se cumplen el caso base y el paso inductivo: caen todas."
-                : "El caso base se cumple, pero el paso inductivo falla: caen las cuatro primeras y la caída se para."),
+                ? "Se cumplen el caso inicial y el paso inductivo: caen todas."
+                : "El caso inicial se cumple, pero el paso inductivo falla: caen las cuatro primeras y la caída se para."),
           mandos: () => [
             {
               tipo: "opciones",
               clave: "base",
-              nombre: "el caso base",
-              rotulo: "Caso base",
+              nombre: "el caso inicial",
+              rotulo: "Caso inicial",
               opciones: [
                 { valor: true, rotulo: "Se cumple" },
                 { valor: false, rotulo: "Falla" }
@@ -27472,7 +27655,7 @@ Enfoques NS</p>
             if (!e.paso) {
               return [
                 <>
-                  Como «<Mates tex="n^2-n+11" /> es primo»: cumple el caso base y es cierta hasta <Mates tex="n=10" />,
+                  Como «<Mates tex="n^2-n+11" /> es primo»: cumple el caso inicial y es cierta hasta <Mates tex="n=10" />,
                   pero ningún paso la lleva de <Mates tex="k" /> a <Mates tex="k+1" />, y falla en <Mates tex="n=11" />.
                 </>
               ];
@@ -27490,7 +27673,7 @@ Enfoques NS</p>
           ),
           fichas: [
             {
-              nombre: "1. Caso base",
+              nombre: "1. Caso inicial",
               texto: (
                 <>
                   Se comprueba <Mates tex="P(1)" /> calculando por separado los dos miembros; no basta decir que «se
@@ -27531,7 +27714,7 @@ Enfoques NS</p>
               texto: (
                 <>
                   En el IB, <Mates tex="\mathbb N" /> incluye el <Mates tex="0" />: «para todo{" "}
-                  <Mates tex="n\in\mathbb N" />» tiene el caso base en <Mates tex="n=0" />. «Para todo entero{" "}
+                  <Mates tex="n\in\mathbb N" />» tiene el caso inicial en <Mates tex="n=0" />. «Para todo entero{" "}
                   <Mates tex="n\geq4" />», en <Mates tex="n=4" />, con la hipótesis para algún <Mates tex="k\geq4" />.
                 </>
               )
@@ -27556,7 +27739,7 @@ Enfoques NS</p>
               <Mates tex="P(k)" /> implica <Mates tex="P(k+1)" />.
             </>,
             <>
-              Un caso base que da <Mates tex="0" /> no falla: <Mates tex="0" /> es múltiplo de cualquier entero.
+              Un caso inicial que da <Mates tex="0" /> no falla: <Mates tex="0" /> es múltiplo de cualquier entero.
             </>
           ]
         },
@@ -27618,7 +27801,7 @@ Enfoques NS</p>
             },
             {
               nombre: "Recurrencias",
-              texto: "El caso base es el primer término, y el paso usa la ley de recurrencia."
+              texto: "El caso inicial es el primer término, y el paso usa la ley de recurrencia."
             },
             {
               nombre: "Desigualdades",
@@ -38529,7 +38712,7 @@ Enfoques NS</p>
           titular: "No cae ninguna ficha",
           conclusion:
             "Cada ficha tiraría a la siguiente, pero la primera no cae " +
-            "y nadie empieza la caída: sin caso base no hay " +
+            "y nadie empieza la caída: sin caso inicial no hay " +
             "demostración. De hecho, la afirmación es falsa para todo n.",
           comprobar: (n) => ({
             vale: false,
@@ -38591,7 +38774,7 @@ Enfoques NS</p>
             "que 6k + 3, que a su vez es mayor que 2k + 3.",
           titular: "Caen todas las fichas desde la segunda",
           conclusion:
-            "El caso base no tiene por qué ser n = 1: es el primer valor " +
+            "El caso inicial no tiene por qué ser n = 1: es el primer valor " +
             "del enunciado. Aquí la fila empieza en la ficha 2, y la " +
             "afirmación es verdadera para todo entero n ≥ 2.",
           comprobar: (n) => {
@@ -38813,7 +38996,7 @@ Enfoques NS</p>
               >
                 <strong>
                   {(afirmacion.baseVale ? "✓ " : "✗ ") +
-                    "Caso base: el empujón"}
+                    "Caso inicial: el empujón"}
                 </strong>
                 {afirmacion.baseTexto}
               </div>
@@ -42038,7 +42221,7 @@ Enfoques NS</p>
                 role="img"
                 aria-label={
                   "Puntos en capas con forma de pentágono. La primera capa, " +
-                  "un punto, es el caso base. Con " +
+                  "un punto, es el caso inicial. Con " +
                   capasDe(capas) +
                   " hay " +
                   puntosDe(suma(capas)) +
@@ -42123,7 +42306,7 @@ Enfoques NS</p>
                   fontWeight="800"
                   fill={COLORES_IB.turquesa}
                 >
-                  caso base
+                  caso inicial
                 </text>
                 {anadida && (
                   <g>
@@ -42245,7 +42428,7 @@ Enfoques NS</p>
                 className="parte-induccion"
                 style={{ "--color-parte": COLORES_IB.turquesa }}
               >
-                <strong>1. Caso base: la primera capa</strong>
+                <strong>1. Caso inicial: la primera capa</strong>
                 Es {conSigno(<MatematicaFijaIB tex="P(1)" />, ".")} Con una
                 capa hay 1 punto, y la fórmula
                 da {conSigno(<MatematicaFijaIB tex="\frac{1\cdot2}{2}=1" />, ":")} es
@@ -42271,7 +42454,7 @@ Enfoques NS</p>
                   }
                 />
                 {capas === 1 &&
-                  " Con una sola capa, la hipótesis es el propio caso base."}
+                  " Con una sola capa, la hipótesis es el propio caso inicial."}
                 <span className="con-letras">
                   Con letras:
                   <br />
