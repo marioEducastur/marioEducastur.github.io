@@ -3835,6 +3835,82 @@
       }
     }
 
+    /* El diario de clase (desde el 25 de octubre de 2026, traído de
+       Mate_IB 543be3e). Su portada, en celeste; cada día lleva el color de
+       la unidad de su tema, en su título, en la pastilla del tema y en los
+       números de sus ejercicios; sus enlaces son pastillas. Solo lo usan
+       las páginas que monta scripts/diario.py. */
+    .portada-unidad[data-tono="celeste"] {
+      background:
+        radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+        linear-gradient(120deg, #0b3d5c 0%, #0369a1 66%, #3aa0d6 100%);
+    }
+
+    @media screen {
+      section.dia-de-clase[data-tono="azul"] { --apartado: #1d4ed8; --apartado-suave: #eaf1ff; }
+      section.dia-de-clase[data-tono="violeta"] { --apartado: #6d28d9; --apartado-suave: #f4efff; }
+      section.dia-de-clase[data-tono="turquesa"] { --apartado: #0f766e; --apartado-suave: #e6f5f3; }
+      section.dia-de-clase[data-tono="granate"] { --apartado: #b4233a; --apartado-suave: #fdeef1; }
+      section.dia-de-clase[data-tono="ambar"] { --apartado: #9a4e05; --apartado-suave: #fff5e5; }
+      section.dia-de-clase[data-tono="rosa"] { --apartado: #d02670; --apartado-suave: #fdf0f7; }
+      section.dia-de-clase[data-tono="oliva"] { --apartado: #4d7c0f; --apartado-suave: #f1f7e7; }
+      section.dia-de-clase[data-tono="indigo"] { --apartado: #4338ca; --apartado-suave: #eef0ff; }
+
+      #contenido-unidad section.dia-de-clase > h3 {
+        color: var(--apartado);
+      }
+    }
+
+    /* «Se explicó» y «Se hizo» se rotulan igual: son las partes de un
+       mismo día, no subtítulos de la teoría. */
+    #contenido-unidad section.dia-de-clase section.level4 > h4:not(.ejercicios) {
+      padding-bottom: 0;
+      color: #27466f;
+      border-bottom: 0;
+      font-size: 1.13rem;
+      font-weight: 700;
+    }
+
+    #contenido-unidad a.tema-del-dia {
+      display: inline-block;
+      margin: 0 0.4rem 0.3rem 0;
+      padding: 0.2rem 0.8rem;
+      color: var(--apartado, var(--acento));
+      background: var(--apartado-suave, var(--acento-suave));
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    #contenido-unidad a.remision {
+      padding: 0.05rem 0.55rem;
+      color: var(--apartado, var(--acento-oscuro));
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: 999px;
+      font-size: 0.86em;
+      font-weight: 650;
+      text-decoration: none;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    #contenido-unidad a.ir-a-la-ultima {
+      display: inline-block;
+      padding: 0.35rem 0.95rem;
+      color: #ffffff;
+      background: #0369a1;
+      border-radius: 1rem;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    #contenido-unidad :is(a.tema-del-dia, a.remision, a.ir-a-la-ultima):is(:hover, :focus-visible) {
+      text-decoration: underline;
+      text-underline-offset: 0.16em;
+    }
+
     /* Curso DT: trazados propios. Piezas del reproductor que dibuja una
        construcción paso a paso con la regla y el compás; solo las tiene este
        curso y no se portan a los demás. Sin el signo del dólar: la plantilla
@@ -31013,6 +31089,1165 @@ Bachillerato</p>
       };
 
       // ---- Figuras sin pasos, solo para las fuentes ----
+
+      // ---- El diario de clase (desde el 25 de octubre de 2026) ----
+      //
+      // Los trazados de los ejercicios del diario que no encajaban en ninguna
+      // construcción de las unidades. Como en la unidad 4: longitudes en
+      // milímetros con su `escala` y ángulos en grados. Cada construcción
+      // tiene los pasos de la solución de su ejercicio, que lleva sus textos
+      // (`pasos-de="solucion"`), y sus letras las coloca `letrero`.
+
+      // Que las letras no pisen nada y que todo quepa en la lámina.
+      function diarioCabe(c) {
+        return letrasDespejadas(c) && cabe(c, 6, [ANCHO, ALTO]);
+      }
+
+      // Las letras de los puntos de una lista de pasos: cada punto [p,
+      // nombre, paso] se añade al final de su paso, con su letra colocada por
+      // `letrero`, que esquiva todo lo dibujado.
+      function diarioLetras(pasos, base, puntos, medidas) {
+        var todos = base.concat([].concat.apply([], pasos));
+        var letras = letrero(todos, puntos.map(function (q) {
+          return q[0];
+        }));
+        puntos.forEach(function (q) {
+          var trazo = punto(q[0], q[1], letras.letra(q[0], q[1], q[4]), q[3]);
+          if (q[2] < 0) {
+            base.push(trazo);
+          } else {
+            pasos[q[2]].push(trazo);
+          }
+        });
+        (medidas || []).forEach(function (m) {
+          var trazo = letras.medida(anclasDe(m[0], m[1]), m[4] || 17, m[2]);
+          if (m[3] < 0) {
+            base.push(trazo);
+          } else {
+            pasos[m[3]].push(trazo);
+          }
+        });
+        return { base: base, pasos: pasos, porque: null };
+      }
+
+      // La perpendicular a la recta que va de p a q, levantada en q, hacia el
+      // lado n, con su marca: de largo `largo`.
+      function diarioPerpendicular(q, p, n, largo) {
+        return [seg(q, avanzar(q, n, largo), "aux"), recto(q, p, avanzar(q, n, 10))];
+      }
+
+      // El corte de la semirrecta que sale de p en la dirección w con la
+      // circunferencia de centro c y radio r, el más lejano de p.
+      function diarioCorteLejano(p, w, c, r) {
+        var cortes = cortesRectaCircunferencia(p, avanzar(p, w, 1), c, r);
+        return cortes ? cortes[1] : null;
+      }
+
+      // ---- 7: √2, √3 y √4 con triángulos rectángulos encadenados ----
+      //
+      // OA es la unidad, hacia la derecha. Cada vértice nuevo está a una
+      // unidad del anterior, en la perpendicular a la última hipotenusa,
+      // girando hacia arriba: OB = √2, OC = √3 y OD = √4.
+
+      function diarioEspiralGeometria(d) {
+        var u = d.u * d.escala;
+        var P = [d.O, avanzar(d.O, pt(1, 0), u)];
+        var i;
+        var ultimo;
+        for (i = 0; i < 3; i += 1) {
+          ultimo = P[P.length - 1];
+          P.push(avanzar(ultimo, normalArriba(unitario(d.O, ultimo)), u));
+        }
+        return { u: u, O: d.O, A: P[1], B: P[2], C: P[3], D: P[4] };
+      }
+
+      function diarioEspiralConstruir(d) {
+        var g = diarioEspiralGeometria(d);
+        var tramos = [[g.A, g.B], [g.B, g.C], [g.C, g.D]];
+        var antes = null;
+        var pasos = tramos.map(function (t) {
+          var arcoNuevo = arcoJunto(antes, t[0], g.u, t[1], 26);
+          antes = arcoNuevo.despues;
+          return diarioPerpendicular(t[0], g.O, unitario(t[0], t[1]), g.u + 18)
+            .concat(arcoNuevo.trazos, [seg(g.O, t[1], "sol")]);
+        });
+        var base = [seg(g.O, g.A, "dato")];
+        return diarioLetras(pasos, base,
+          [[g.O, "O", -1, { forma: "hueco" }], [g.A, "A", -1], [g.B, "B", 0], [g.C, "C", 1], [g.D, "D", 2]],
+          [
+            [g.O, g.A, conComa(d.u), -1],
+            [g.O, g.B, conComa(Math.round(d.u * Math.SQRT2 * 10) / 10), 0],
+            [g.O, g.C, conComa(Math.round(d.u * Math.sqrt(3) * 10) / 10), 1, 22],
+            [g.O, g.D, conComa(2 * d.u), 2]
+          ]);
+      }
+
+      construcciones["diario-raices-en-espiral"] = {
+        datos: function () {
+          return { O: pt(250, 300), u: 10, escala: 8 };
+        },
+        asas: function (d) {
+          return { O: d.O, A: diarioEspiralGeometria(d).A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "O") {
+            nuevo.O = p;
+          } else {
+            nuevo.u = Math.max(1, (p.x - d.O.x) / d.escala);
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          return d.u * d.escala > 50 && diarioCabe(diarioEspiralConstruir(d));
+        },
+        construir: diarioEspiralConstruir
+      };
+
+      // ---- 9 y 11: un triángulo partido con paralelas a un lado ----
+      //
+      // El triángulo ABC, con CA hacia la derecha y B arriba. Los triángulos
+      // de vértice C con 1/3 (y, con `dos`, también 2/3) del área tienen sus
+      // lados sobre CA medios proporcionales entre CA y su tercio (o sus
+      // dos tercios): CA en tres partes con Tales, la semicircunferencia de
+      // diámetro CA, por debajo, y las perpendiculares por las divisiones;
+      // con centro en C, sus cortes se llevan a CA, y por allí, las
+      // paralelas a AB.
+
+      function diarioPartesGeometria(d) {
+        var e = d.escala;
+        var C = d.C;
+        var A = pt(C.x + d.b * e, C.y);
+        var xB = (d.a * d.a - d.c * d.c + d.b * d.b) / (2 * d.b);
+        var yB = d.a * d.a - xB * xB;
+        if (yB <= 0) {
+          return null;
+        }
+        var B = pt(C.x + xB * e, C.y - Math.sqrt(yB) * e);
+        var cuales = d.dos ? [1, 2] : [1];
+        var O = entre(C, A, 0.5);
+        var R = distancia(C, A) / 2;
+        var P = cuales.map(function (k) {
+          return entre(C, A, k / 3);
+        });
+        var M = P.map(function (q) {
+          return pt(q.x, q.y + Math.sqrt(R * R - (q.x - O.x) * (q.x - O.x)));
+        });
+        var A2 = M.map(function (m) {
+          return pt(C.x + distancia(C, m), C.y);
+        });
+        var B2 = A2.map(function (q) {
+          return entre(C, B, (q.x - C.x) / (A.x - C.x));
+        });
+        return { e: e, C: C, A: A, B: B, O: O, R: R, P: P, M: M, A2: A2, B2: B2, cuales: cuales };
+      }
+
+      function diarioPartesConstruir(d) {
+        var g = diarioPartesGeometria(d);
+        var tales = partesPorTales(g.C, g.A, 3, g.cuales, 1);
+        var med = mediatrizHasta(g.C, g.A, [-g.R - 10]);
+        var dos = g.cuales.length > 1;
+        var subi = function (i) {
+          return dos ? String.fromCharCode(8321 + i) : "′";
+        };
+        var nombreP = function (i) {
+          return dos ? "P" + subi(i) : "P";
+        };
+        var antes = null;
+        var arcos = [];
+        g.M.forEach(function (m, i) {
+          var a0 = angulo(g.C, m);
+          arcos.push(moverCompas(antes, g.C, m), arco(g.C, distancia(g.C, m), a0, -0.04));
+          antes = { c: g.C, t: polar(g.C, distancia(g.C, m), -0.04) };
+        });
+        var pasos = [
+          tales.trazos.slice(),
+          med.trazos.concat([
+            abrir(g.O, polar(g.O, g.R, 0)),
+            arco(g.O, g.R, 0, Math.PI)
+          ], [].concat.apply([], g.P.map(function (q, i) {
+            return [seg(q, avanzar(g.M[i], pt(0, 1), 14), "aux"), recto(q, g.A, g.M[i])];
+          }))),
+          arcos,
+          [].concat.apply([], g.A2.map(function (q, i) {
+            var w = unitario(q, g.B2[i]);
+            return [seg(avanzar(q, w, -12), avanzar(g.B2[i], w, 12), "sol")];
+          }))
+        ];
+        var base = [
+          seg(g.C, g.A, "dato"),
+          seg(g.A, g.B, "dato"),
+          seg(g.B, g.C, "dato")
+        ];
+        var puntos = [[g.C, "C", -1, { forma: "hueco" }], [g.A, "A", -1], [g.B, "B", -1]];
+        g.P.forEach(function (q, i) {
+          puntos.push([q, nombreP(i), 0]);
+          puntos.push([g.M[i], dos ? "M" + subi(i) : "M", 1]);
+          puntos.push([g.A2[i], dos ? "A" + subi(i) : "A′", 2, null, 24]);
+          puntos.push([g.B2[i], dos ? "B" + subi(i) : "B′", 3]);
+        });
+        // Con una sola paralela, la medida de CA′; con dos, no caben.
+        var medidas = g.A2.length > 1 ? [] : g.A2.map(function (q) {
+          return [g.C, q, conComa(Math.round(((q.x - g.C.x) / g.e) * 10) / 10), 2, 16];
+        });
+        return diarioLetras(pasos, base, puntos, medidas);
+      }
+
+      construcciones["diario-triangulo-en-partes"] = {
+        datos: function () {
+          return { C: pt(170, 246), a: 70, b: 60, c: 50, escala: 4.2 };
+        },
+        asas: function (d) {
+          return { C: d.C };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.C = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioPartesGeometria(d);
+          return Boolean(g) && trianguloVale(g.A, g.B, g.C, 80) && diarioCabe(diarioPartesConstruir(d));
+        },
+        construir: diarioPartesConstruir
+      };
+
+      // ---- 12: un círculo en tres partes de igual área ----
+      //
+      // El radio OA, hacia la derecha, en tres partes con Tales; la
+      // semicircunferencia de diámetro OA, por debajo, y las
+      // perpendiculares por las divisiones dan M₁ y M₂: OM₁ y OM₂ son los
+      // radios de las dos circunferencias concéntricas.
+
+      function diarioCirculoGeometria(d) {
+        var R = d.R * d.escala;
+        var O = d.O;
+        var A = pt(O.x + R, O.y);
+        var Q = entre(O, A, 0.5);
+        var P = [entre(O, A, 1 / 3), entre(O, A, 2 / 3)];
+        var M = P.map(function (q) {
+          return pt(q.x, q.y + Math.sqrt((R * R) / 4 - (q.x - Q.x) * (q.x - Q.x)));
+        });
+        return { R: R, O: O, A: A, Q: Q, P: P, M: M };
+      }
+
+      function diarioCirculoConstruir(d) {
+        var g = diarioCirculoGeometria(d);
+        var tales = partesPorTales(g.O, g.A, 3, [1, 2], 1);
+        var med = mediatrizHasta(g.O, g.A, [-g.R / 2 - 10], 0.56);
+        var radios = g.M.map(function (m) {
+          return distancia(g.O, m);
+        });
+        var pasos = [
+          [seg(g.O, g.A, "aux")].concat(tales.trazos),
+          med.trazos.concat([
+            abrir(g.Q, polar(g.Q, g.R / 2, 0)),
+            arco(g.Q, g.R / 2, 0, Math.PI)
+          ], [].concat.apply([], g.P.map(function (q, i) {
+            return [seg(q, avanzar(g.M[i], pt(0, 1), 12), "aux"), recto(q, g.A, g.M[i])];
+          }))),
+          [
+            abrir(g.O, g.M[0]),
+            arco(g.O, radios[0], angulo(g.O, g.M[0]), angulo(g.O, g.M[0]) + TAU, "sol"),
+            abrir(g.O, g.M[1]),
+            arco(g.O, radios[1], angulo(g.O, g.M[1]), angulo(g.O, g.M[1]) + TAU, "sol")
+          ]
+        ];
+        var base = [arco(g.O, g.R, 0, TAU, "dato")];
+        return diarioLetras(pasos, base,
+          [
+            [g.O, "O", -1, { forma: "hueco" }], [g.A, "A", 0], [g.P[0], "P₁", 0], [g.P[1], "P₂", 0],
+            [g.M[0], "M₁", 1], [g.M[1], "M₂", 1]
+          ],
+          []);
+      }
+
+      construcciones["diario-circulo-en-partes"] = {
+        datos: function () {
+          return { O: pt(300, 200), R: 45, escala: 3.6 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.O = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          return diarioCabe(diarioCirculoConstruir(d));
+        },
+        construir: diarioCirculoConstruir
+      };
+
+      // ---- 15: la bisectriz con la mediatriz de una cuerda ----
+      //
+      // El vértice V, en la circunferencia, a la izquierda; sus lados, a
+      // `ang`/2 a cada lado de la dirección `fi`, cortan a la circunferencia
+      // en 1 y 2. La mediatriz de la cuerda 12 corta al arco 12 que no tiene
+      // a V en M, y VM es la bisectriz.
+
+      function diarioCuerdaGeometria(d) {
+        var R = d.R * d.escala;
+        var O = d.O;
+        var V = pt(O.x - R, O.y);
+        var mitad = (d.ang * GRADO) / 2;
+        var fi = d.fi * GRADO;
+        var P1 = diarioCorteLejano(V, polar(pt(0, 0), 1, fi - mitad), O, R);
+        var P2 = diarioCorteLejano(V, polar(pt(0, 0), 1, fi + mitad), O, R);
+        var Q = entre(P1, P2, 0.5);
+        var M = avanzar(O, unitario(O, Q), R);
+        return { R: R, O: O, V: V, P1: P1, P2: P2, Q: Q, M: M, fi: fi, mitad: mitad };
+      }
+
+      function diarioCuerdaConstruir(d) {
+        var g = diarioCuerdaGeometria(d);
+        var alto = sobre(g.M, g.Q, normalArriba(unitario(g.P1, g.P2)));
+        var med = mediatrizHasta(g.P1, g.P2, [alto], null, [alto]);
+        var lado = function (p) {
+          return seg(g.V, avanzar(p, unitario(g.V, p), 30), "dato");
+        };
+        var base = [
+          arco(g.O, g.R, 0, TAU, "dato"),
+          lado(g.P1),
+          lado(g.P2),
+          marcaAngulo(g.V, g.P1, g.P2, 40, 1),
+          rotulo(polar(g.V, 72, angulo(g.V, g.P2) - 0.3 * g.mitad * 2), enGrados(d.ang), { recta: true, cuerpo: 16 })
+        ];
+        var pasos = [
+          [],
+          [seg(g.P1, g.P2, "aux")].concat(med.trazos),
+          [
+            seg(g.V, avanzar(g.M, unitario(g.V, g.M), 16), "sol"),
+            marcaAngulo(g.V, g.P1, g.M, 52, 2),
+            marcaAngulo(g.V, g.M, g.P2, 58, 2)
+          ]
+        ];
+        return diarioLetras(pasos, base,
+          [[g.V, "V", -1, { forma: "hueco" }], [g.O, "O", -1], [g.P1, "1", 0], [g.P2, "2", 0], [g.M, "M", 1]],
+          []);
+      }
+
+      construcciones["diario-bisectriz-con-la-cuerda"] = {
+        datos: function () {
+          return { O: pt(330, 200), R: 40, escala: 4, ang: 70, fi: -20 };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.O = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioCuerdaGeometria(d);
+          return Boolean(g.P1 && g.P2) && diarioCabe(diarioCuerdaConstruir(d));
+        },
+        construir: diarioCuerdaConstruir
+      };
+
+      // ---- 17: el triángulo equilátero dada la altura ----
+      //
+      // La altura AH, vertical; G, a sus dos tercios desde A, con Tales, es
+      // el baricentro y el circuncentro. La circunferencia de centro G que
+      // pasa por A corta a la perpendicular a AH por H en B y en C.
+
+      function diarioEquilateroGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var H = pt(A.x, A.y + d.h * e);
+        var G = entre(A, H, 2 / 3);
+        var R = distancia(G, A);
+        var mitad = Math.sqrt(R * R - distancia(G, H) * distancia(G, H));
+        return { e: e, A: A, H: H, G: G, R: R, B: pt(H.x - mitad, H.y), C: pt(H.x + mitad, H.y) };
+      }
+
+      function diarioEquilateroConstruir(d) {
+        var g = diarioEquilateroGeometria(d);
+        var tales = partesPorTales(g.A, g.H, 3, [2], 1);
+        var pasos = [
+          [seg(g.A, g.H, "dato")].concat(tales.trazos),
+          [abrir(g.G, g.A), arco(g.G, g.R, -Math.PI / 2, -Math.PI / 2 + TAU)],
+          [
+            seg(avanzar(g.B, pt(-1, 0), 30), avanzar(g.C, pt(1, 0), 30), "aux"),
+            recto(g.H, g.A, g.C),
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol"),
+            seg(g.C, g.A, "sol")
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [[g.A, "A", -1, { forma: "hueco" }], [g.H, "H", 0], [g.G, "G", 0], [g.B, "B", 2], [g.C, "C", 2]],
+          [
+            [g.A, g.G, conComa(Math.round((2 * d.h) / 3 * 10) / 10), 0],
+            [g.B, g.C, conComa(Math.round(((2 * d.h) / Math.sqrt(3)) * 10) / 10), 2, 18]
+          ]);
+      }
+
+      construcciones["diario-equilatero-por-la-altura"] = {
+        datos: function () {
+          return { A: pt(300, 45), h: 60, escala: 4 };
+        },
+        asas: function (d) {
+          return { A: d.A, H: diarioEquilateroGeometria(d).H };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "A") {
+            nuevo.A = p;
+          } else {
+            nuevo.h = Math.max(1, (p.y - d.A.y) / d.escala);
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          return d.h * d.escala > 120 && diarioCabe(diarioEquilateroConstruir(d));
+        },
+        construir: diarioEquilateroConstruir
+      };
+
+      // ---- 18: la altura, la bisectriz y la mediana del mismo vértice ----
+      //
+      // La construcción del ejercicio 45 de la unidad 4, con los pies de la
+      // bisectriz y de la mediana más juntos de lo que allí se admite.
+
+      construcciones["diario-altura-bisectriz-y-mediana"] = {
+        datos: function () {
+          return { H: pt(200, 250), h: 60, m: 64, w: 62, escala: 3.6 };
+        },
+        asas: function (d) {
+          return construcciones["triangulo-altura-mediana-y-bisectriz"].asas(d);
+        },
+        mover: function (d, nombre, p) {
+          return construcciones["triangulo-altura-mediana-y-bisectriz"].mover(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = alturaMedianaBisectrizGeometria(d);
+          if (!g || distancia(g.W, g.M) < 18 || !trianguloVale(g.A, g.B, g.C, 80)) {
+            return false;
+          }
+          return diarioCabe(alturaMedianaBisectrizConstruir(d));
+        },
+        construir: alturaMedianaBisectrizConstruir
+      };
+
+      // ---- 19: la altura, la mediana y el ángulo del mismo vértice ----
+      //
+      // La recta r de BC y, por H, su perpendicular, con A a la altura h. El
+      // arco de radio m con centro en A corta a r en M, y A′ es el
+      // simétrico de A respecto de M. B y C ven AA′ bajo 180° − ang: están en
+      // los dos arcos capaces, uno a cada lado de AA′; los centros, O₁ y O₂,
+      // son simétricos respecto de M.
+
+      function diarioAlturaMedianaAnguloGeometria(d) {
+        var e = d.escala;
+        var u = pt(1, 0);
+        var n = pt(0, -1);
+        var H = d.H;
+        var A = avanzar(H, n, d.h * e);
+        if (d.m <= d.h) {
+          return null;
+        }
+        var M = avanzar(H, u, Math.sqrt(d.m * d.m - d.h * d.h) * e);
+        var A2 = pt(2 * M.x - A.x, 2 * M.y - A.y);
+        var arcos = [1, -1].map(function (lado) {
+          return arcoCapazGeometria(A, A2, 180 - d.ang, lado);
+        });
+        // De cada arco, su corte con r que ve AA′ bajo el ángulo pedido.
+        var cortes = arcos.map(function (g) {
+          var c = cortesRectaCircunferencia(H, avanzar(H, u, 1), g.O, g.R);
+          if (!c) {
+            return null;
+          }
+          return c.filter(function (p) {
+            return Math.abs(anguloEn(p, A, A2) - (180 - d.ang) * GRADO) < 0.01;
+          })[0] || null;
+        });
+        if (!cortes[0] || !cortes[1]) {
+          return null;
+        }
+        var izquierda = cortes[0].x < cortes[1].x ? 0 : 1;
+        return {
+          e: e, u: u, n: n, H: H, A: A, M: M, A2: A2,
+          arcoB: arcos[izquierda], arcoC: arcos[1 - izquierda],
+          B: cortes[izquierda], C: cortes[1 - izquierda]
+        };
+      }
+
+      function diarioAlturaMedianaAnguloConstruir(d) {
+        var g = diarioAlturaMedianaAnguloGeometria(d);
+        var r = rectaDeLaLamina(g.H, g.u);
+        var alto = perpendicularConAlto(g.H, g.n, d.h * g.e, pt(-1, 0));
+        var arcoM = arcoJunto(null, g.A, d.m * g.e, g.M, 34);
+        var w = unitario(g.A, g.M);
+        var arcoA2 = arcoJunto(arcoM.despues, g.M, d.m * g.e, g.A2, 26);
+        // Sin el valor del ángulo, que no cabe junto a A: lo dice el paso.
+        var capaz = arcoCapazTrazos(g.A, g.A2, g.arcoB, "", "aux",
+          [g.arcoC.alturaO], pt(d.letraO1x || 14, d.letraO1y || -24));
+        // El centro del primer arco se llama O₁.
+        capaz.todos.forEach(function (e) {
+          if (e.tipo === "punto" && e.nombre === "O") {
+            e.nombre = "O₁";
+          }
+        });
+        var O2 = g.arcoC.O;
+        var rO = distancia(g.M, g.arcoB.O);
+        var aO2 = angulo(g.M, O2);
+        var pasos = [
+          [r.trazo].concat(alto.trazos),
+          arcoM.trazos.concat([seg(g.A, avanzar(g.A2, w, 18), "aux")], arcoA2.trazos),
+          capaz.todos.filter(function (e) {
+            return !(e.tipo === "rotulo" && e.texto === "");
+          }),
+          [
+            moverCompas(null, g.M, polar(g.M, rO, aO2 - 0.2)),
+            arco(g.M, rO, aO2 - 0.2, aO2 + 0.2),
+            abrir(O2, polar(O2, g.arcoC.R, g.arcoC.a0)),
+            arco(O2, g.arcoC.R, g.arcoC.a0, g.arcoC.a1),
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol"),
+            seg(g.C, g.A, "sol")
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [
+            [g.H, "H", 0], [g.A, "A", 0], [g.M, "M", 1], [g.A2, "A′", 1],
+            [g.B, "B", 2], [O2, "O₂", 3], [g.C, "C", 3]
+          ],
+          [[g.H, g.A, conComa(d.h), 0, 18]]);
+      }
+
+      construcciones["diario-altura-mediana-y-angulo"] = {
+        datos: function () {
+          return { H: pt(250, 210), h: 60, m: 62, ang: 75, escala: 2.6 };
+        },
+        asas: function (d) {
+          return { H: d.H };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.H = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioAlturaMedianaAnguloGeometria(d);
+          return Boolean(g) && trianguloVale(g.A, g.B, g.C, 60) && diarioCabe(diarioAlturaMedianaAnguloConstruir(d));
+        },
+        construir: diarioAlturaMedianaAnguloConstruir
+      };
+
+      // ---- 21: el triángulo rectángulo dadas la hipotenusa y la suma ----
+      //
+      // AS es la suma de los catetos, hacia la derecha. En S, un ángulo de
+      // 45° hacia arriba; el arco de radio la hipotenusa con centro en A lo
+      // corta en C (el corte más cercano a S), y el pie B de la
+      // perpendicular desde C es el vértice del ángulo recto.
+
+      function diarioSumaGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var S = pt(A.x + d.s * e, A.y);
+        var w = polar(pt(0, 0), 1, (5 * Math.PI) / 4);
+        var cortes = cortesRectaCircunferencia(S, avanzar(S, w, 1), A, d.c * e);
+        if (!cortes) {
+          return null;
+        }
+        // De los dos cortes, el que va hacia arriba y está más cerca de S.
+        var C = cortes.filter(function (p) {
+          return p.y < A.y - 1;
+        }).sort(function (p, q) {
+          return distancia(S, p) - distancia(S, q);
+        })[0];
+        if (!C) {
+          return null;
+        }
+        return { e: e, A: A, S: S, C: C, B: pt(C.x, A.y) };
+      }
+
+      function diarioSumaConstruir(d) {
+        var g = diarioSumaGeometria(d);
+        var enS = anguloDado(g.S, Math.PI, 45, -1, distancia(g.S, g.C) + 40, "45°", 34);
+        var arcoC = arcoJunto(null, g.A, d.c * g.e, g.C, 36);
+        var pasos = [
+          [seg(g.A, g.S, "dato")].concat(enS.trazos),
+          arcoC.trazos.slice(),
+          [
+            seg(g.C, g.B, "sol"),
+            recto(g.B, g.S, g.C),
+            seg(g.A, g.B, "sol"),
+            seg(g.A, g.C, "sol"),
+            igual(g.B, g.S, 1),
+            igual(g.B, g.C, 1)
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [[g.A, "A", 0, { forma: "hueco" }], [g.S, "S", 0], [g.C, "C", 1], [g.B, "B", 2]],
+          [
+            [g.A, g.S, conComa(d.s), 0, 18],
+            [g.A, g.C, conComa(d.c), 2],
+            [g.A, g.B, conComa(Math.round(((g.B.x - g.A.x) / g.e) * 10) / 10), 2, 18]
+          ]);
+      }
+
+      construcciones["diario-rectangulo-hipotenusa-y-suma"] = {
+        datos: function () {
+          return { A: pt(60, 300), s: 80, c: 60, escala: 6 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.A = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioSumaGeometria(d);
+          return Boolean(g) && diarioCabe(diarioSumaConstruir(d));
+        },
+        construir: diarioSumaConstruir
+      };
+
+      // ---- 22: el triángulo rectángulo dadas la hipotenusa y la
+      // diferencia ----
+      //
+      // DB es la diferencia, hacia la derecha, y la recta sigue hacia la
+      // izquierda de D. En D, un ángulo de 135° con DB, hacia arriba; el
+      // arco de radio la hipotenusa con centro en B lo corta en A, y el pie
+      // C de la perpendicular desde A es el vértice del ángulo recto.
+
+      function diarioDiferenciaGeometria(d) {
+        var e = d.escala;
+        var D = d.D;
+        var B = pt(D.x + d.dif * e, D.y);
+        var w = polar(pt(0, 0), 1, (5 * Math.PI) / 4);
+        var cortes = cortesRectaCircunferencia(D, avanzar(D, w, 1), B, d.c * e);
+        if (!cortes) {
+          return null;
+        }
+        var A = cortes.filter(function (p) {
+          return p.y < D.y - 1;
+        })[0];
+        if (!A) {
+          return null;
+        }
+        return { e: e, D: D, B: B, A: A, C: pt(A.x, D.y) };
+      }
+
+      function diarioDiferenciaConstruir(d) {
+        var g = diarioDiferenciaGeometria(d);
+        var enD = anguloDado(g.D, 0, 135, 1, distancia(g.D, g.A) + 36, "135°", 26);
+        var arcoA = arcoJunto(null, g.B, d.c * g.e, g.A, 36);
+        var pasos = [
+          [seg(g.D, g.B, "dato"), seg(avanzar(g.C, pt(-1, 0), 40), g.D, "aux")].concat(enD.trazos),
+          arcoA.trazos.slice(),
+          [
+            seg(g.A, g.C, "sol"),
+            recto(g.C, g.B, g.A),
+            seg(g.C, g.B, "sol"),
+            seg(g.A, g.B, "sol"),
+            igual(g.C, g.D, 1),
+            igual(g.C, g.A, 1)
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [[g.D, "D", 0, { forma: "hueco" }], [g.B, "B", 0], [g.A, "A", 1], [g.C, "C", 2]],
+          [
+            [g.D, g.B, conComa(d.dif), 0, 18],
+            [g.A, g.B, conComa(d.c), 2],
+            [g.C, g.B, conComa(Math.round(((g.B.x - g.C.x) / g.e) * 10) / 10), 2, 34],
+            [g.A, g.C, conComa(Math.round(((g.C.y - g.A.y) / g.e) * 10) / 10), 2]
+          ]);
+      }
+
+      construcciones["diario-rectangulo-hipotenusa-y-diferencia"] = {
+        datos: function () {
+          return { D: pt(270, 300), dif: 25, c: 60, escala: 6 };
+        },
+        asas: function (d) {
+          return { D: d.D };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.D = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioDiferenciaGeometria(d);
+          return Boolean(g) && diarioCabe(diarioDiferenciaConstruir(d));
+        },
+        construir: diarioDiferenciaConstruir
+      };
+
+      // ---- 23: el triángulo rectángulo dadas la suma y la diferencia ----
+      //
+      // Desde C, hacia la derecha, la suma hasta S y la diferencia hasta D.
+      // La mediatriz de DS da A: CA es la semisuma y AS, la semidiferencia.
+      // En A, la perpendicular, con AB = AS.
+
+      function diarioSumaDiferenciaGeometria(d) {
+        var e = d.escala;
+        var C = d.C;
+        var S = pt(C.x + d.s * e, C.y);
+        var D = pt(C.x + d.dif * e, C.y);
+        var A = entre(D, S, 0.5);
+        return { e: e, C: C, S: S, D: D, A: A, B: pt(A.x, A.y - distancia(A, S)) };
+      }
+
+      function diarioSumaDiferenciaConstruir(d) {
+        var g = diarioSumaDiferenciaGeometria(d);
+        var arcoS = arcoJunto(null, g.C, d.s * g.e, g.S, 30);
+        var arcoD = arcoJunto(arcoS.despues, g.C, d.dif * g.e, g.D, 30);
+        var med = mediatrizHasta(g.D, g.S, [], 0.62);
+        var b = distancia(g.A, g.S);
+        var pasos = [
+          [seg(g.C, avanzar(g.S, pt(1, 0), 30), "aux")].concat(arcoS.trazos, arcoD.trazos),
+          med.trazos.slice(),
+          [
+            seg(g.A, avanzar(g.B, pt(0, -1), 18), "aux"),
+            recto(g.A, g.S, g.B),
+            abrir(g.A, g.S),
+            arco(g.A, b, 0, -Math.PI / 2),
+            seg(g.C, g.A, "sol"),
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol")
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [[g.C, "C", -1, { forma: "hueco" }], [g.S, "S", 0], [g.D, "D", 0], [g.A, "A", 1], [g.B, "B", 2]],
+          [
+            [g.C, g.S, conComa(d.s), 0, 36],
+            [g.C, g.D, conComa(d.dif), 0, 18],
+            [g.B, g.C, conComa(Math.round((distancia(g.B, g.C) / g.e) * 10) / 10), 2, 18]
+          ]);
+      }
+
+      construcciones["diario-rectangulo-suma-y-diferencia"] = {
+        datos: function () {
+          return { C: pt(50, 300), s: 80, dif: 30, escala: 6 };
+        },
+        asas: function (d) {
+          return { C: d.C };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.C = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          return d.s > d.dif && diarioCabe(diarioSumaDiferenciaConstruir(d));
+        },
+        construir: diarioSumaDiferenciaConstruir
+      };
+
+      // ---- 24: el triángulo rectángulo dadas la inscrita y la
+      // circunscrita ----
+      //
+      // La hipotenusa BC es el diámetro de la circunscrita. El incentro I
+      // está en la paralela a BC a la distancia r y en el arco capaz de 135°
+      // de BC, por encima, cuyo centro K es el punto en que la mediatriz de
+      // BC corta a la circunscrita por debajo (el radio KB forma 45° con BC).
+      // La otra tangente desde B a la inscrita corta a la circunscrita en A.
+
+      function diarioInscritaGeometria(d) {
+        var e = d.escala;
+        var B = d.B;
+        var C = pt(B.x + d.a * e, B.y);
+        var Q = entre(B, C, 0.5);
+        var R = distancia(B, C) / 2;
+        var r = d.r * e;
+        var capaz = arcoCapazGeometria(B, C, 135, 1);
+        // El incentro: a r por encima de BC, en el arco capaz.
+        var cortes = cortesRectaCircunferencia(pt(B.x, B.y - r), pt(C.x, C.y - r), capaz.O, capaz.R);
+        if (!cortes) {
+          return null;
+        }
+        // El de la derecha: así el ángulo recto queda cerca de C.
+        var I = cortes[1];
+        // A: la recta de B simétrica de BC respecto de BI.
+        var aBI = angulo(B, I);
+        var aBA = 2 * aBI;
+        var corte = cortesRectaCircunferencia(B, polar(B, 1, aBA), Q, R);
+        var A = corte ? corte[1] : null;
+        var T = pie(B, polar(B, 1, aBA), I);
+        return { e: e, B: B, C: C, Q: Q, R: R, r: r, capaz: capaz, I: I, A: A, T: T };
+      }
+
+      function diarioInscritaConstruir(d) {
+        var g = diarioInscritaGeometria(d);
+        var med = mediatrizHasta(g.B, g.C, [g.capaz.alturaO], null, [g.capaz.alturaO]);
+        var m = pt(g.B.x + 30, g.B.y);
+        var paralela = rectaDeLaLamina(pt(g.B.x, g.B.y - g.r), pt(1, 0));
+        var pasos = [
+          med.trazos.concat([
+            abrir(g.Q, polar(g.Q, g.R, 0)),
+            arco(g.Q, g.R, 0, TAU)
+          ]),
+          [
+            seg(m, avanzar(m, pt(0, -1), g.r + 12), "aux"),
+            recto(m, g.C, avanzar(m, pt(0, -1), 10)),
+            arco(m, g.r, -Math.PI / 2 - 0.3, -Math.PI / 2 + 0.3),
+            paralela.trazo,
+            abrir(g.capaz.O, g.B),
+            arco(g.capaz.O, g.capaz.R, g.capaz.a0, g.capaz.a1)
+          ],
+          [abrir(g.I, polar(g.I, g.r, Math.PI / 2)), arco(g.I, g.r, Math.PI / 2, Math.PI / 2 + TAU)],
+          [
+            seg(g.B, avanzar(g.A, unitario(g.B, g.A), 16), "aux"),
+            seg(g.A, g.B, "sol"),
+            seg(g.A, g.C, "sol"),
+            seg(g.B, g.C, "sol")
+          ]
+        ];
+        return diarioLetras(pasos, [seg(g.B, g.C, "dato")],
+          [
+            [g.B, "B", -1, { forma: "hueco" }], [g.C, "C", -1, { forma: "hueco" }], [g.Q, "Q", 0],
+            [g.capaz.O, "K", 0], [g.I, "I", 1], [g.A, "A", 3]
+          ],
+          [[g.B, g.C, conComa(d.a), -1, 18]]);
+      }
+
+      construcciones["diario-rectangulo-inscrita-y-circunscrita"] = {
+        datos: function () {
+          return { B: pt(120, 190), a: 100, r: 12, escala: 3.4 };
+        },
+        asas: function (d) {
+          return { B: d.B };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.B = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioInscritaGeometria(d);
+          return Boolean(g && g.A) && diarioCabe(diarioInscritaConstruir(d));
+        },
+        construir: diarioInscritaConstruir
+      };
+
+      // ---- 25: el rectángulo dados el lado mayor y el ángulo de las
+      // diagonales ----
+      //
+      // El centro O del rectángulo ve el lado mayor AB bajo 180° − ang: está
+      // en su arco capaz, por encima, y en la mediatriz (la cima del arco).
+      // Las diagonales desde A y desde B por O llegan a las perpendiculares
+      // a AB por B y por A: C y D.
+
+      function diarioRectanguloDiagonalesGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.l * e, A.y);
+        var capaz = arcoCapazGeometria(A, B, 180 - d.ang, 1);
+        var alto = d.l * Math.tan((d.ang * GRADO) / 2) * e;
+        return {
+          e: e, A: A, B: B, capaz: capaz, O: capaz.cima,
+          C: pt(B.x, B.y - alto), D: pt(A.x, A.y - alto), alto: alto
+        };
+      }
+
+      function diarioRectanguloDiagonalesConstruir(d) {
+        var g = diarioRectanguloDiagonalesGeometria(d);
+        var capaz = arcoCapazTrazos(g.A, g.B, g.capaz, enGrados(180 - d.ang), "aux", [g.alto / 2 + 10]);
+        capaz.todos.forEach(function (e) {
+          if (e.tipo === "punto" && e.nombre === "O") {
+            e.nombre = "K";
+          }
+        });
+        var pasos = [
+          [seg(g.A, g.B, "dato")],
+          capaz.todos.slice(),
+          [
+            seg(g.A, avanzar(g.D, pt(0, -1), 16), "aux"),
+            recto(g.A, g.B, g.D),
+            seg(g.B, avanzar(g.C, pt(0, -1), 16), "aux"),
+            recto(g.B, g.A, g.C),
+            seg(g.A, g.C, "aux"),
+            seg(g.B, g.D, "aux"),
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol"),
+            seg(g.C, g.D, "sol"),
+            seg(g.D, g.A, "sol")
+          ]
+        ];
+        return diarioLetras(pasos, [],
+          [[g.A, "A", 0, { forma: "hueco" }], [g.B, "B", 0], [g.O, "O", 1, null, 24], [g.C, "C", 2], [g.D, "D", 2]],
+          [
+            [g.A, g.B, conComa(d.l), 0, 18],
+            [g.B, g.C, conComa(Math.round((g.alto / g.e) * 10) / 10), 2, 22]
+          ]);
+      }
+
+      construcciones["diario-rectangulo-lado-y-diagonales"] = {
+        datos: function () {
+          return { A: pt(140, 220), l: 90, ang: 45, escala: 3.5 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.A = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          return d.ang > 20 && d.ang < 90 && diarioCabe(diarioRectanguloDiagonalesConstruir(d));
+        },
+        construir: diarioRectanguloDiagonalesConstruir
+      };
+
+      // ---- 26: el rectángulo de proporción y área dadas ----
+      //
+      // Arriba a la izquierda, un rectángulo de lados `p` y `q` (en la
+      // proporción pedida) y su cuadratura: el lado l′. Abajo, el lado l del
+      // cuadrado del área pedida, medio proporcional entre `m` y `n`. A la
+      // derecha, el cuarto proporcional: en r, l′ y l desde O; en s, p y q;
+      // las paralelas por L dan los lados pedidos.
+
+      function diarioProporcionGeometria(d) {
+        var e = d.escala;
+        // La cuadratura del rectángulo pequeño: base q, altura p.
+        var R0 = d.R0;
+        var R1 = pt(R0.x + d.q * e, R0.y);
+        var R2 = pt(R1.x, R1.y - d.p * e);
+        var R3 = pt(R0.x, R2.y);
+        var E = pt(R1.x + d.p * e, R1.y);
+        var Oa = entre(R0, E, 0.5);
+        var ra = distancia(R0, E) / 2;
+        var la = Math.sqrt(d.p * d.q) * e;
+        var Ma = pt(R1.x, R1.y - la);
+        // El medio proporcional entre m y n.
+        var S0 = d.S0;
+        var S1 = pt(S0.x + d.m * e, S0.y);
+        var S2 = pt(S1.x + d.n * e, S0.y);
+        var Ob = entre(S0, S2, 0.5);
+        var rb = distancia(S0, S2) / 2;
+        var lb = Math.sqrt(d.m * d.n) * e;
+        var Mb = pt(S1.x, S1.y - lb);
+        // El cuarto proporcional.
+        var O = d.O;
+        var ur = polar(pt(0, 0), 1, -d.abre * GRADO);
+        var us = pt(1, 0);
+        var L1 = avanzar(O, ur, la);
+        var L2 = avanzar(O, ur, lb);
+        var k = lb / la;
+        var P = avanzar(O, us, d.p * e);
+        var Qq = avanzar(O, us, d.q * e);
+        var P2 = avanzar(O, us, d.p * e * k);
+        var Q2 = avanzar(O, us, d.q * e * k);
+        return {
+          e: e, R0: R0, R1: R1, R2: R2, R3: R3, E: E, Oa: Oa, ra: ra, la: la, Ma: Ma,
+          S0: S0, S1: S1, S2: S2, Ob: Ob, rb: rb, lb: lb, Mb: Mb,
+          O: O, ur: ur, us: us, L1: L1, L2: L2, k: k, P: P, Q: Qq, P2: P2, Q2: Q2
+        };
+      }
+
+      function diarioProporcionConstruir(d) {
+        var g = diarioProporcionGeometria(d);
+        var cifra = function (v) {
+          return conComa(Math.round(v * 10) / 10);
+        };
+        var finR = avanzar(g.L2, g.ur, 26);
+        var finS = avanzar(g.Q2, g.us, 26);
+        var pasos = [
+          [
+            seg(g.R1, avanzar(g.E, pt(1, 0), 12), "aux"),
+            abrir(g.R1, g.R2),
+            arco(g.R1, d.p * g.e, -Math.PI / 2, 0.05),
+            abrir(g.Oa, polar(g.Oa, g.ra, 0)),
+            arco(g.Oa, g.ra, 0, -Math.PI),
+            seg(g.R2, avanzar(g.Ma, pt(0, -1), 12), "aux"),
+            seg(g.R1, g.Ma, "sol")
+          ],
+          [
+            seg(g.S0, g.S2, "dato"),
+            abrir(g.Ob, polar(g.Ob, g.rb, 0)),
+            arco(g.Ob, g.rb, 0, -Math.PI),
+            seg(g.S1, avanzar(g.Mb, pt(0, -1), 12), "aux"),
+            recto(g.S1, g.S2, g.Mb),
+            seg(g.S1, g.Mb, "sol")
+          ],
+          [
+            seg(g.O, finR, "aux"),
+            seg(g.O, finS, "aux"),
+            seg(g.O, g.L1, "dato"),
+            arco(g.O, g.lb, -d.abre * GRADO - 0.1, -d.abre * GRADO + 0.1),
+            seg(g.L1, g.P, "aux"),
+            seg(g.L1, g.Q, "aux"),
+            seg(avanzar(g.L2, unitario(g.P2, g.L2), 12), g.P2, "aux"),
+            seg(avanzar(g.L2, unitario(g.Q2, g.L2), 12), g.Q2, "aux"),
+            seg(g.O, g.Q2, "sol"),
+            cota(g.O, g.P2, cifra(d.p * g.k), 30),
+            cota(g.O, g.Q2, cifra(d.q * g.k), 52)
+          ]
+        ];
+        var base = [
+          seg(g.R0, g.R1, "dato"), seg(g.R1, g.R2, "dato"), seg(g.R2, g.R3, "dato"), seg(g.R3, g.R0, "dato")
+        ];
+        return diarioLetras(pasos, base,
+          [
+            [g.Ma, "M", 0], [g.Mb, "N", 1], [g.O, "O", 2, { forma: "hueco" }], [g.P, "P", 2], [g.Q, "Q", 2],
+            [g.L1, "L′", 2], [g.L2, "L", 2], [g.P2, "P′", 2], [g.Q2, "Q′", 2]
+          ],
+          [
+            [g.R0, g.R1, cifra(d.q), -1, 16],
+            [g.R0, g.R3, cifra(d.p), -1, 16],
+            [g.R1, g.Ma, cifra(g.la / g.e), 0, 18],
+            [g.S0, g.S1, cifra(d.m), 1, 16],
+            [g.S1, g.S2, cifra(d.n), 1, 16],
+            [g.S1, g.Mb, cifra(g.lb / g.e), 1, 18]
+
+          ]);
+      }
+
+      construcciones["diario-rectangulo-proporcion-y-area"] = {
+        datos: function () {
+          return {
+            R0: pt(40, 140), S0: pt(30, 375), O: pt(330, 312),
+            p: 20, q: 30, m: 60, n: 40, abre: 50, escala: 2.8
+          };
+        },
+        asas: function (d) {
+          return { O: d.O };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.O = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          return diarioCabe(diarioProporcionConstruir(d));
+        },
+        construir: diarioProporcionConstruir
+      };
+
+      // ---- 28: el trapecio dadas las bases y las diagonales ----
+      //
+      // AB es la base mayor, hacia la derecha, y BE, la menor, en su
+      // prolongación. C está a d₁ de A y a d₂ de E; D, en la paralela a AB
+      // por C, a la base menor de C, hacia A.
+
+      function diarioTrapecioDiagonalesGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.base * e, A.y);
+        var E = pt(B.x + d.b * e, A.y);
+        var cortes = cortesCircunferencias(A, d.d1 * e, E, d.d2 * e);
+        if (!cortes) {
+          return null;
+        }
+        var C = cortes[0];
+        return { e: e, A: A, B: B, E: E, C: C, D: pt(C.x - d.b * e, C.y) };
+      }
+
+      function diarioTrapecioDiagonalesConstruir(d) {
+        var g = diarioTrapecioDiagonalesGeometria(d);
+        var arcoE = arcoJunto(null, g.B, d.b * g.e, g.E, 20);
+        var arcoC1 = arcoJunto(arcoE.despues, g.A, d.d1 * g.e, g.C, 32);
+        var arcoC2 = arcoJunto(arcoC1.despues, g.E, d.d2 * g.e, g.C, 32);
+        var arcoD = arcoJunto(arcoC2.despues, g.C, d.b * g.e, g.D, 22);
+        var pasos = [
+          [seg(g.A, g.B, "dato"), seg(g.B, avanzar(g.E, pt(1, 0), 14), "aux")].concat(arcoE.trazos),
+          arcoC1.trazos.concat(arcoC2.trazos, [seg(g.A, g.C, "aux"), seg(g.E, g.C, "aux")]),
+          [seg(avanzar(g.D, pt(-1, 0), 30), avanzar(g.C, pt(1, 0), 30), "aux")].concat(arcoD.trazos, [
+            seg(g.B, g.D, "aux"),
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol"),
+            seg(g.C, g.D, "sol"),
+            seg(g.D, g.A, "sol")
+          ])
+        ];
+        return diarioLetras(pasos, [],
+          [[g.A, "A", 0, { forma: "hueco" }], [g.B, "B", 0], [g.E, "E", 0], [g.C, "C", 1], [g.D, "D", 2]],
+          [
+            [g.A, g.B, conComa(d.base), 0, 18],
+            [g.B, g.E, conComa(d.b), 0, 18],
+            [g.A, g.C, conComa(d.d1), 1],
+            [g.E, g.C, conComa(d.d2), 1]
+          ]);
+      }
+
+      construcciones["diario-trapecio-bases-y-diagonales"] = {
+        datos: function () {
+          return { A: pt(45, 320), base: 80, b: 30, d1: 80, d2: 70, escala: 4.6 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.A = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioTrapecioDiagonalesGeometria(d);
+          return Boolean(g) && diarioCabe(diarioTrapecioDiagonalesConstruir(d));
+        },
+        construir: diarioTrapecioDiagonalesConstruir
+      };
+
+      // ---- 29: el trapecio dadas las bases y los lados no paralelos ----
+      //
+      // AB es la base mayor; C′, a la base menor de B. D está a l₁ de A y a
+      // l₂ de C′; C, en la paralela a AB por D, a la base menor, hacia B.
+
+      function diarioTrapecioLadosGeometria(d) {
+        var e = d.escala;
+        var A = d.A;
+        var B = pt(A.x + d.base * e, A.y);
+        var C1 = pt(B.x - d.b * e, A.y);
+        var cortes = cortesCircunferencias(A, d.l1 * e, C1, d.l2 * e);
+        if (!cortes) {
+          return null;
+        }
+        var D = cortes[0];
+        return { e: e, A: A, B: B, C1: C1, D: D, C: pt(D.x + d.b * e, D.y) };
+      }
+
+      function diarioTrapecioLadosConstruir(d) {
+        var g = diarioTrapecioLadosGeometria(d);
+        var arcoC1 = arcoJunto(null, g.B, d.b * g.e, g.C1, 20);
+        var arcoD1 = arcoJunto(arcoC1.despues, g.A, d.l1 * g.e, g.D, 32);
+        var arcoD2 = arcoJunto(arcoD1.despues, g.C1, d.l2 * g.e, g.D, 32);
+        var arcoC = arcoJunto(arcoD2.despues, g.D, d.b * g.e, g.C, 22);
+        var pasos = [
+          [seg(g.A, g.B, "dato")].concat(arcoC1.trazos),
+          arcoD1.trazos.concat(arcoD2.trazos, [seg(g.A, g.D, "aux"), seg(g.C1, g.D, "aux")]),
+          [seg(avanzar(g.D, pt(-1, 0), 30), avanzar(g.C, pt(1, 0), 30), "aux")].concat(arcoC.trazos, [
+            seg(g.A, g.B, "sol"),
+            seg(g.B, g.C, "sol"),
+            seg(g.C, g.D, "sol"),
+            seg(g.D, g.A, "sol")
+          ])
+        ];
+        return diarioLetras(pasos, [],
+          [[g.A, "A", 0, { forma: "hueco" }], [g.B, "B", 0], [g.C1, "C′", 0], [g.D, "D", 1], [g.C, "C", 2]],
+          [
+            [g.A, g.B, conComa(d.base), 0, 18],
+            [g.A, g.D, conComa(d.l1), 1],
+            [g.C1, g.D, conComa(d.l2), 1]
+          ]);
+      }
+
+      construcciones["diario-trapecio-bases-y-lados"] = {
+        datos: function () {
+          return { A: pt(80, 320), base: 80, b: 30, l1: 70, l2: 50, escala: 5 };
+        },
+        asas: function (d) {
+          return { A: d.A };
+        },
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo.A = p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = diarioTrapecioLadosGeometria(d);
+          return Boolean(g) && diarioCabe(diarioTrapecioLadosConstruir(d));
+        },
+        construir: diarioTrapecioLadosConstruir
+      };
 
       var figuras = {};
 
