@@ -3716,6 +3716,448 @@
       display: contents;
     }
 
+    .tres-planos {
+      --tp-tono: #6d28d9;
+      --tp-oro: #ffd166;
+      color: #ffffff;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    html.modo-clase .tres-planos {
+      font-size: 1.15rem;
+    }
+
+    .tres-planos,
+    .tres-planos * {
+      box-sizing: border-box;
+    }
+
+    .tres-planos p {
+      margin: 0;
+    }
+
+    .tres-planos button {
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      background: none;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      font: inherit;
+      font-weight: inherit;
+      text-transform: none;
+      transform: none;
+      transition: none;
+      cursor: pointer;
+    }
+
+    .tres-planos button:hover,
+    .tres-planos button:focus-visible {
+      box-shadow: none;
+      transform: none;
+    }
+
+    .tres-planos button:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    .tres-planos .tp-tarjeta {
+      overflow: hidden;
+      border-radius: 1.1rem;
+      background:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+      box-shadow: 0 12px 28px rgb(22 59 114 / 0.16);
+    }
+
+    .tres-planos .tp-cinta {
+      display: flex;
+      align-items: center;
+      gap: 0.75em;
+      padding: 0.7em 1em;
+    }
+
+    .tres-planos .tp-icono {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 2.1em;
+      height: 2.1em;
+      border-radius: 50%;
+      background: rgb(255 255 255 / 0.16);
+    }
+
+    .tres-planos .tp-icono svg {
+      width: 1.2em;
+      height: 1.2em;
+    }
+
+    .tres-planos .tp-rotulo {
+      flex: none;
+      padding: 0.18em 0.7em;
+      border: 1.5px solid rgb(255 255 255 / 0.85);
+      border-radius: 999px;
+      font-size: 0.62em;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .tres-planos .tp-titulo {
+      flex: 1;
+      min-width: 0;
+      font-weight: 700;
+    }
+
+    .tres-planos .tp-lienzo {
+      padding: 0.1em 0.9em 1.1em;
+    }
+
+    .tres-planos .tp-idea {
+      max-width: 46em;
+      margin: 0.1em auto 0.9em;
+      text-align: center;
+      font-size: 1.02em;
+      font-weight: 600;
+    }
+
+    .tres-planos .tp-pestanas {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.35em;
+      margin: 0 0 0.8em;
+    }
+
+    .tres-planos .tp-pestana {
+      padding: 0.32em 0.85em;
+      border: 1.5px solid rgb(255 255 255 / 0.5);
+      border-radius: 999px;
+      color: #ffffff;
+      background: rgb(255 255 255 / 0.1);
+      font-size: 0.74em;
+      font-weight: 800;
+    }
+
+    .tres-planos .tp-pestana[aria-selected="true"] {
+      color: var(--tp-tono);
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    .tres-planos .tp-columnas {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(8, auto);
+    }
+
+    .tres-planos .tp-caso {
+      display: grid;
+      grid-row: span 8;
+      grid-template-rows: subgrid;
+      align-content: start;
+      min-width: 0;
+      padding: 0 0.7em;
+    }
+
+    .tres-planos .tp-caso + .tp-caso {
+      border-left: 1px dashed rgb(255 255 255 / 0.32);
+    }
+
+    .tres-planos .tp-tipo {
+      justify-self: center;
+      align-self: start;
+      padding: 0.2em 0.75em;
+      border: 1.5px solid rgb(255 255 255 / 0.8);
+      border-radius: 999px;
+      font-size: 0.6em;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .tres-planos .tp-resultado {
+      margin: 0.3em 0 0;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .tres-planos .tp-frase {
+      margin: 0.15em 0 0;
+      text-align: center;
+      font-size: 0.84em;
+      color: rgb(255 255 255 / 0.9);
+    }
+
+    .tres-planos .tp-escena {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 0.92;
+      max-height: 36vh;
+      margin: 0.15em 0 0.2em;
+    }
+
+    .tres-planos .tp-escena canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: grab;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tres-planos .tp-escena canvas.tp-agarrando {
+      cursor: grabbing;
+    }
+
+    .tres-planos .tp-sistema {
+      display: grid;
+      justify-content: center;
+      gap: 0.15em;
+      margin: 0.1em 0 0;
+    }
+
+    .tres-planos .tp-ec {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.06em 0.45em 0.06em 0.2em;
+      border-radius: 0.5em;
+      text-align: left;
+    }
+
+    .tres-planos .tp-ec.tp-resaltada {
+      background: rgb(255 255 255 / 0.14);
+    }
+
+    @media (hover: hover) {
+      .tres-planos .tp-ec:hover {
+        background: rgb(255 255 255 / 0.14);
+      }
+    }
+
+    .tres-planos .tp-chapa {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 1.75em;
+      height: 1.3em;
+      border-radius: 0.4em;
+      color: #24124f;
+      font-size: 0.68em;
+      font-weight: 800;
+    }
+
+    .tres-planos .tp-ec .katex,
+    .tres-planos .tp-dato .katex,
+    .tres-planos .tp-lectura .katex {
+      font-size: 1.05em;
+    }
+
+    .tres-planos .tp-datos {
+      display: grid;
+      gap: 0.2em;
+      margin: 0.55em 0 0;
+    }
+
+    .tres-planos .tp-dato {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0 0.45em;
+      font-size: 0.9em;
+      text-align: center;
+    }
+
+    .tres-planos .tp-etq {
+      color: rgb(255 255 255 / 0.72);
+      font-size: 0.74em;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tres-planos .tp-lectura {
+      display: grid;
+      justify-items: center;
+      gap: 0.1em;
+      margin: 0.55em 0 0;
+      padding: 0.4em 0.5em 0.45em;
+      border-radius: 0.7em;
+      background: rgb(20 6 60 / 0.22);
+      font-size: 0.88em;
+      text-align: center;
+    }
+
+    .tres-planos .tp-lectura.tp-en-los-tres {
+      background: rgb(255 209 102 / 0.22);
+      box-shadow: inset 0 0 0 1.5px rgb(255 209 102 / 0.7);
+    }
+
+    .tres-planos .tp-veredicto {
+      font-size: 0.78em;
+      font-weight: 800;
+    }
+
+    .tres-planos .tp-en-los-tres .tp-veredicto {
+      color: var(--tp-oro);
+    }
+
+    .tres-planos .tp-nota {
+      font-size: 0.85em;
+      color: rgb(255 255 255 / 0.85);
+    }
+
+    .tres-planos .tp-otra {
+      justify-self: center;
+      align-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45em;
+      margin: 0.6em 0 0;
+      padding: 0.32em 0.9em;
+      border: 1.5px solid rgb(255 255 255 / 0.75);
+      border-radius: 999px;
+      color: #ffffff;
+      background: rgb(255 255 255 / 0.1);
+      font-size: 0.78em;
+      font-weight: 800;
+    }
+
+    @media (hover: hover) {
+      .tres-planos .tp-otra:hover {
+        background: rgb(255 255 255 / 0.2);
+      }
+    }
+
+    .tres-planos .tp-cuenta {
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    .tres-planos .tp-unica {
+      justify-self: center;
+      align-self: start;
+      margin: 0.75em 0 0;
+      color: rgb(255 255 255 / 0.75);
+      font-size: 0.78em;
+      text-align: center;
+    }
+
+    .tres-planos .tp-mandos {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      padding: 0.7em 1em 0.35em;
+      color: var(--texto);
+      background: var(--superficie);
+    }
+
+    .tres-planos .tp-mando {
+      flex: none;
+      display: inline-grid;
+      place-items: center;
+      width: 2.6em;
+      height: 2.6em;
+      border: 1.5px solid var(--tp-tono);
+      border-radius: 999px;
+      color: #ffffff;
+      background: var(--tp-tono);
+    }
+
+    .tres-planos .tp-mando:focus-visible {
+      outline-color: var(--tp-tono);
+    }
+
+    .tres-planos .tp-mando svg {
+      width: 1.15em;
+      height: 1.15em;
+    }
+
+    .tres-planos .tp-control-punto {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      gap: 0.05em;
+    }
+
+    .tres-planos .tp-control-punto label {
+      color: var(--texto-suave);
+      font-size: 0.78em;
+      line-height: 1.25;
+    }
+
+    .tres-planos .tp-control-punto input {
+      width: 100%;
+      margin: 0;
+      accent-color: var(--tp-tono);
+    }
+
+    .tres-planos .tp-pie {
+      padding: 0.4em 1em 1em;
+      color: var(--texto-suave);
+      background: var(--superficie);
+      font-size: 0.86em;
+    }
+
+    .tres-planos.tp-estrecho .tp-pestanas {
+      display: flex;
+    }
+
+    .tres-planos.tp-estrecho .tp-columnas {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tres-planos.tp-estrecho .tp-caso {
+      display: none;
+      padding: 0;
+    }
+
+    .tres-planos.tp-estrecho .tp-caso.tp-activa {
+      display: grid;
+    }
+
+    .tres-planos.tp-estrecho .tp-caso + .tp-caso {
+      border-left: 0;
+    }
+
+    .tres-planos.tp-estrecho .tp-escena {
+      aspect-ratio: 1 / 0.82;
+    }
+
+    .tres-planos.tp-estrecho .tp-idea {
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 360px) {
+      .tres-planos .tp-pestanas {
+        gap: 0.25em;
+      }
+
+      .tres-planos .tp-pestana {
+        padding: 0.3em 0.45em;
+        font-size: 0.7em;
+      }
+
+      .tres-planos .tp-lienzo {
+        padding-left: 0.7em;
+        padding-right: 0.7em;
+      }
+    }
+
     .paisaje {
       --pz-u: 17px;
       --pz-texto: #172033;
@@ -11786,6 +12228,32 @@ Bachillerato</p>
                 una recta entera de puntos, o un plano entero si los
                 tres coinciden, y en uno incompatible no existe ningún
                 punto común a los tres.</p>
+                <div id="tres-planos"
+                class="interactivo bloque-didactico"
+                data-componente="tres-planos"
+                data-titulo="Lo que comparten tres planos">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p><strong>Mira lo que comparten los tres
+                planos.</strong> Los del primer ejemplo del método de
+                Gauss se cortan en un solo punto, <span
+                class="formula-con-signo"><span
+                class="math inline">\((1,-2,3)\)</span>.</span> Si se
+                cambia solo la tercera ecuación por <span
+                class="formula-con-signo"><span
+                class="math inline">\(x+4y=-7\)</span>,</span> los tres
+                planos pasan por la recta en la que se cortan los dos
+                primeros y la comparten entera: el sistema es compatible
+                indeterminado. Con <span class="formula-con-signo"><span
+                class="math inline">\(x+4y=-1\)</span>,</span> el tercer
+                plano es paralelo a esa recta y no hay ningún punto
+                común: el sistema es incompatible. La última fila al
+                escalonar dice lo mismo: <span
+                class="formula-con-signo"><span
+                class="math inline">\(-5z=-15\)</span>,</span> <span
+                class="math inline">\(0=0\)</span> o <span
+                class="formula-con-signo"><span
+                class="math inline">\(0=6\)</span>.</span></p>
+                </div>
                 <div class="ampliacion bloque-didactico plegable">
                 <p><span class="etiqueta-bloque">Para ampliar</span></p>
                 <p><strong>Gauss, el algoritmo y el niño que sumaba
@@ -23197,6 +23665,818 @@ void main() {
       }
 
       window.PaisajePotencias = { montar: montar, hayWebGL: hayWebGL };
+    })();
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function sum(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+      function res(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+      function esc(k, a) { return [k * a[0], k * a[1], k * a[2]]; }
+      function pe(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+      function pv(a, b) {
+        return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+      }
+      function mod(a) { return Math.hypot(a[0], a[1], a[2]); }
+      function uni(a) { return esc(1 / mod(a), a); }
+      function acota(t) { return Math.max(0, Math.min(1, t)); }
+      function suave(t) { t = acota(t); return t * t * (3 - 2 * t); }
+      function tramo(t, a, b) { return acota((t - a) / (b - a)); }
+
+      function plano(f) {
+        const n = [f[0], f[1], f[2]], m = mod(n);
+        return { n: esc(1 / m, n), d: f[3] / m };
+      }
+      function mismoPlano(p, q) {
+        const s = pe(p.n, q.n);
+        return Math.abs(Math.abs(s) - 1) < 1e-9 && Math.abs(p.d - Math.sign(s) * q.d) < 1e-9;
+      }
+      function paralelos(p, q) { return mod(pv(p.n, q.n)) < 1e-9; }
+      function rectaComun(p, q) {
+        const d = pv(p.n, q.n), dd = pe(d, d);
+        if (dd < 1e-12) return null;
+        return { p: esc(1 / dd, sum(esc(p.d, pv(q.n, d)), esc(q.d, pv(d, p.n)))), d: uni(d) };
+      }
+      function cramer(F) {
+        const det = function (m) {
+          return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+            m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+            m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+        };
+        const A = F.map(function (f) { return f.slice(0, 3); });
+        const b = F.map(function (f) { return f[3]; });
+        const D = det(A);
+        return [0, 1, 2].map(function (c) {
+          return det(A.map(function (r, i) { return r.map(function (v, j) { return j === c ? b[i] : v; }); })) / D;
+        });
+      }
+      function rango(M) {
+        const m = M.map(function (r) { return r.slice(); });
+        let r = 0;
+        for (let c = 0; c < m[0].length && r < m.length; c++) {
+          let p = r;
+          for (let i = r + 1; i < m.length; i++) if (Math.abs(m[i][c]) > Math.abs(m[p][c])) p = i;
+          if (Math.abs(m[p][c]) < 1e-9) continue;
+          const t = m[r]; m[r] = m[p]; m[p] = t;
+          for (let i = 0; i < m.length; i++) {
+            if (i === r) continue;
+            const k = m[i][c] / m[r][c];
+            for (let j = c; j < m[0].length; j++) m[i][j] -= k * m[r][j];
+          }
+          r++;
+        }
+        return r;
+      }
+
+      const E1 = [1, 1, 1, 2], E2 = [2, -1, 3, 13];
+      const VISTA = { yaw: -2.1, pitch: 0.36 };
+      const DE_LADO = { yaw: 0.02, pitch: 0.31 };
+      const CASOS = [
+        { clave: "cd", tipo: "Compatible determinado", corto: "Determinado",
+          unica: "Siempre es así: los tres planos pasan por un punto y solo comparten ese.",
+          variantes: [
+            { resultado: "Un punto", frase: "Los tres planos se cortan en un solo punto.",
+              filas: [E1, E2, [1, 2, -1, -6]], escalona: "-5z=-15",
+              solucion: ["Solución", "(1,\\,-2,\\,3)"], forma: "punto" }
+          ] },
+        { clave: "ci", tipo: "Compatible indeterminado", corto: "Indeterminado",
+          variantes: [
+            { resultado: "Una recta", frase: "Los tres planos pasan por la misma recta.",
+              filas: [E1, E2, [1, 4, 0, -7]], escalona: "0=0",
+              solucion: ["Soluciones", "x=-7-4t,\\ \\ y=t,\\ \\ z=9+3t"], forma: "recta" },
+            { resultado: "Una recta", frase: "Dos de las ecuaciones son el mismo plano; el tercero lo corta en una recta.",
+              filas: [E1, E2, [2, 2, 2, 4]], escalona: "0=0",
+              solucion: ["Soluciones", "x=-7-4t,\\ \\ y=t,\\ \\ z=9+3t"], forma: "recta" },
+            { resultado: "Un plano", frase: "Las tres ecuaciones son el mismo plano.",
+              filas: [E1, [2, 2, 2, 4], [3, 3, 3, 6]], escalona: "0=0\\ \\text{y}\\ 0=0",
+              solucion: ["Soluciones", "\\text{todo el plano } x+y+z=2"], forma: "plano", vista: DE_LADO }
+          ] },
+        { clave: "si", tipo: "Incompatible", corto: "Incompatible",
+          variantes: [
+            { resultado: "Ningún punto", frase: "Se cortan de dos en dos en tres rectas paralelas.",
+              filas: [E1, E2, [1, 4, 0, -1]], escalona: "0=6",
+              solucion: ["Soluciones", "\\text{ninguna}"], forma: "ninguno" },
+            { resultado: "Ningún punto", frase: "Dos planos son paralelos y el tercero corta a los dos.",
+              filas: [E1, E2, [1, 1, 1, 5]], escalona: "0=3",
+              solucion: ["Soluciones", "\\text{ninguna}"], forma: "ninguno", vista: DE_LADO },
+            { resultado: "Ningún punto", frase: "Los tres planos son paralelos.",
+              filas: [E1, [1, 1, 1, 5], [1, 1, 1, -1]], escalona: "0=3\\ \\text{y}\\ 0=-3",
+              solucion: ["Soluciones", "\\text{ninguna}"], forma: "ninguno", vista: DE_LADO },
+            { resultado: "Ningún punto", frase: "Dos de las ecuaciones son el mismo plano, y la otra, un plano paralelo a él.",
+              filas: [E1, [2, 2, 2, 4], [1, 1, 1, 5]], escalona: "0=0\\ \\text{y}\\ 0=3",
+              solucion: ["Soluciones", "\\text{ninguna}"], forma: "ninguno", vista: DE_LADO }
+          ] }
+      ];
+      CASOS.forEach(function (caso) {
+        caso.variantes.forEach(function (v) {
+          const rA = rango(v.filas.map(function (f) { return f.slice(0, 3); })), rB = rango(v.filas);
+          const tipo = rA === 3 ? "cd" : rA === rB ? "ci" : "si";
+          if (tipo !== caso.clave) console.error("Tres planos: posición mal clasificada:", caso.clave, v.frase);
+        });
+      });
+
+      function texEcuacion(f) {
+        const v = ["x", "y", "z"];
+        let s = "", hay = false;
+        for (let i = 0; i < 3; i++) {
+          const c = f[i];
+          if (!c) continue;
+          const a = Math.abs(c);
+          s += hay ? (c < 0 ? "-" : "+") : (c < 0 ? "-" : "");
+          s += (a === 1 ? "" : String(a)) + v[i];
+          hay = true;
+        }
+        return (hay ? s : "0") + "=" + (f[3] < 0 ? "-" : "") + Math.abs(f[3]);
+      }
+      function tex(fuente) {
+        return window.katex.renderToString(fuente, { throwOnError: false });
+      }
+      function numero(v) {
+        const r = Math.round(v * 10) / 10;
+        return Math.abs(r - Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(1).replace(".", "{,}");
+      }
+      function escapa(texto) {
+        return String(texto).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;").split("\"").join("&quot;");
+      }
+
+      const COLOR = [[125, 211, 252], [253, 186, 116], [74, 222, 128]];
+      const ORO = [255, 209, 102];
+      const SUB = ["₁", "₂", "₃"];
+      function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; }
+      function mezcla(cs) {
+        return [0, 1, 2].map(function (k) {
+          return Math.round(cs.reduce(function (s, c) { return s + c[k]; }, 0) / cs.length);
+        });
+      }
+      function funde(a, b, t) { return [0, 1, 2].map(function (k) { return Math.round(a[k] + (b[k] - a[k]) * t); }); }
+
+      const C = [1, -2, 3], R = 4.4;
+      const T = { e: [[0, 0.9], [0.75, 1.65], [2.25, 3.15]], linea: 0.6, sol: [3.6, 4.5], textos: [4.1, 4.9], fin: 5 };
+
+      function vistas(W, H, o) {
+        const cy = Math.cos(o.yaw), sy = Math.sin(o.yaw), cp = Math.cos(o.pitch), sp = Math.sin(o.pitch);
+        const r = [cy, -sy, 0], u = [sy * sp, cy * sp, cp], w = [-sy * cp, -cy * cp, sp];
+        const D = R * 5, S = (Math.min(W, H * 1.05) * 0.5) / R * (D - R) / D;
+        const ojo = sum(C, esc(D, w));
+        const proy = function (P) {
+          const q = res(P, C), X = pe(q, r), Y = pe(q, u), Z = pe(q, w), k = D / (D - Z);
+          return [W / 2 + S * k * X, H * 0.5 - S * k * Y, Z];
+        };
+        return { proy: proy, ojo: ojo, r: r, u: u, w: w };
+      }
+
+      function disco(pl, escala) {
+        const dist = pe(pl.n, C) - pl.d;
+        if (Math.abs(dist) >= R * 0.995) return null;
+        const c = res(C, esc(dist, pl.n)), r = Math.sqrt(R * R - dist * dist) * escala;
+        if (r < 1e-3) return null;
+        const a = Math.abs(pl.n[0]) < 0.8 ? [1, 0, 0] : [0, 1, 0];
+        const e1 = uni(pv(pl.n, a)), e2 = pv(pl.n, e1), pts = [];
+        for (let i = 0; i < 96; i++) {
+          const t = (i / 96) * Math.PI * 2;
+          pts.push(sum(c, sum(esc(r * Math.cos(t), e1), esc(r * Math.sin(t), e2))));
+        }
+        return { c: c, r: r, e1: e1, e2: e2, pts: pts };
+      }
+      function cuerda(L, dk) {
+        const q = res(L.p, dk.c), b = pe(L.d, q), k = pe(q, q) - dk.r * dk.r, disc = b * b - k;
+        if (disc <= 0) return null;
+        const s = Math.sqrt(disc);
+        return [-b - s, -b + s];
+      }
+      function corta(a, b) { return a && b ? [Math.max(a[0], b[0]), Math.min(a[1], b[1])] : null; }
+
+      function divide(pts, s) {
+        const A = [], B = [];
+        for (let i = 0; i < pts.length; i++) {
+          const j = (i + 1) % pts.length, p = pts[i], q = pts[j], a = s[i], b = s[j];
+          if (a >= -1e-7) A.push(p);
+          if (a <= 1e-7) B.push(p);
+          if ((a > 1e-7 && b < -1e-7) || (a < -1e-7 && b > 1e-7)) {
+            const x = sum(p, esc(a / (a - b), res(q, p)));
+            A.push(x); B.push(x);
+          }
+        }
+        return [A.length >= 3 ? A : null, B.length >= 3 ? B : null];
+      }
+      function arbol(lista) {
+        if (!lista.length) return null;
+        const raiz = lista[0], pl = raiz.pl;
+        const nodo = { pl: pl, pol: [raiz], delante: [], detras: [] };
+        lista.slice(1).forEach(function (x) {
+          const s = x.pts.map(function (p) { return pe(pl.n, p) - pl.d; });
+          const mas = s.some(function (v) { return v > 1e-7; }), menos = s.some(function (v) { return v < -1e-7; });
+          if (!mas && !menos) nodo.pol.push(x);
+          else if (!menos) nodo.delante.push(x);
+          else if (!mas) nodo.detras.push(x);
+          else {
+            const partes = divide(x.pts, s);
+            if (partes[0]) nodo.delante.push({ pts: partes[0], pl: x.pl, sup: x.sup });
+            if (partes[1]) nodo.detras.push({ pts: partes[1], pl: x.pl, sup: x.sup });
+          }
+        });
+        nodo.delante = arbol(nodo.delante);
+        nodo.detras = arbol(nodo.detras);
+        return nodo;
+      }
+      function recorre(nodo, ojo, pinta) {
+        if (!nodo) return;
+        const lado = pe(nodo.pl.n, ojo) - nodo.pl.d;
+        const primero = lado >= 0 ? nodo.detras : nodo.delante, luego = lado >= 0 ? nodo.delante : nodo.detras;
+        recorre(primero, ojo, pinta);
+        nodo.pol.forEach(pinta);
+        recorre(luego, ojo, pinta);
+      }
+
+      function superficies(filas) {
+        const sups = [];
+        filas.forEach(function (f, k) {
+          const pl = plano(f);
+          const s = sups.find(function (x) { return mismoPlano(x.pl, pl); });
+          if (s) s.idx.push(k); else sups.push({ pl: pl, idx: [k] });
+        });
+        return sups;
+      }
+      function recorrido(conf) {
+        const p1 = plano(conf.filas[0]), p2 = plano(conf.filas[1]);
+        if (mismoPlano(p1, p2)) return { nota: "E₁ y E₂ son el mismo plano: aquí no hay una recta que recorrer." };
+        if (paralelos(p1, p2)) return { nota: "E₁ y E₂ son paralelos: ni siquiera ellos dos tienen un punto común." };
+        const L = rectaComun(p1, p2);
+        const p0 = sum(L.p, esc(pe(res(C, L.p), L.d), L.d)), q = mod(res(p0, C));
+        return { L: L, p0: p0, largo: 0.82 * Math.sqrt(Math.max(0, R * R - q * q)) };
+      }
+      function posicion(rc, u) { return sum(rc.p0, esc(u * rc.largo, rc.L.d)); }
+
+      function camino(ctx, pr) {
+        ctx.beginPath();
+        pr.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
+        ctx.closePath();
+      }
+      function redondeado(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      }
+      function rotulo(ctx, x, y, texto, fondo, k) {
+        ctx.font = "700 " + Math.round(12 * k) + "px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+        const w = ctx.measureText(texto).width + 12 * k, h = 20 * k;
+        ctx.fillStyle = fondo;
+        redondeado(ctx, x - w / 2, y - h / 2, w, h, 6 * k);
+        ctx.fill();
+        ctx.fillStyle = "#24124f";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(texto, x, y + 0.5);
+      }
+
+      function hayLienzo() {
+        try {
+          const c = document.createElement("canvas");
+          return !!(c.getContext && c.getContext("2d"));
+        } catch (error) {
+          return false;
+        }
+      }
+
+      let contador = 0;
+
+      function montar(raiz, opciones) {
+        opciones = opciones || {};
+        contador += 1;
+        const idPunto = "tp-punto-" + contador;
+        const reducido = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        const titulo = opciones.titulo || "Lo que comparten tres planos";
+
+        raiz.classList.add("tres-planos");
+        raiz.innerHTML =
+          '<div class="tp-tarjeta">' +
+          '<div class="tp-cinta">' +
+          '<span class="tp-icono" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round">' +
+          '<path d="M3 9l9-4 9 4-9 4z"/><path d="M3 14l9 4 9-4" opacity=".75"/><path d="M12 13v8" opacity=".75"/></svg></span>' +
+          '<span class="tp-rotulo">En 3D</span>' +
+          '<span class="tp-titulo" role="heading" aria-level="2">' + escapa(titulo) + "</span>" +
+          "</div>" +
+          '<div class="tp-lienzo">' +
+          '<p class="tp-idea">Cada ecuación es un plano. Las soluciones son los puntos que están en los tres planos a la vez.</p>' +
+          '<div class="tp-pestanas" role="tablist" aria-label="Tipo de sistema"></div>' +
+          '<div class="tp-columnas"></div>' +
+          "</div>" +
+          '<div class="tp-mandos">' +
+          '<button class="tp-mando" type="button" aria-label="Ver otra vez cómo se forma">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>' +
+          '<div class="tp-control-punto">' +
+          '<label for="' + idPunto + '">Mueve el punto blanco por la recta en la que se cortan E₁ y E₂ (o arrástralo en un dibujo):</label>' +
+          '<input type="range" id="' + idPunto + '" min="-1000" max="1000" value="550">' +
+          "</div>" +
+          "</div>" +
+          '<p class="tp-pie">Arrastra un dibujo para girar los tres a la vez y toca una ecuación para ver su plano. ' +
+          "Los dos primeros planos son los mismos en los tres sistemas: solo cambia el tercero, el verde. " +
+          "Si corta a la recta en la que se cortan los otros dos, los tres comparten un punto; si contiene esa recta, " +
+          "la comparten entera; si es paralelo a ella, no comparten ninguno. La última fila al escalonar dice lo mismo: " +
+          "−5z = −15 da una sola z; 0 = 0 se cumple siempre, y 0 = 6, nunca. Con «Otra posición» se ven las " +
+          "demás formas de cada tipo: cambia el dibujo, no lo que comparten los tres planos.</p>" +
+          "</div>";
+
+        const columnas = raiz.querySelector(".tp-columnas");
+        const pestanas = raiz.querySelector(".tp-pestanas");
+        const deslizador = raiz.querySelector("#" + idPunto);
+        const escenas = [];
+        const cam = { dyaw: 0, dpitch: 0, oscila: 0, vaiven: !reducido };
+        const punto = { u: 0.55 };
+        let resaltado = { caso: null, k: -1 };
+        let inicio = null;
+        let tiempoFijo = reducido ? T.fin : null;
+        let visible = false;
+        let animando = false;
+        let desmontado = false;
+        let letra = 1;
+
+        function vistaDe(e) {
+          const b = (e.conf && e.conf.vista) || VISTA;
+          return { yaw: b.yaw + cam.dyaw + cam.oscila, pitch: Math.max(-0.15, Math.min(1.35, b.pitch + cam.dpitch)) };
+        }
+
+        function lado(conf, P) {
+          const f = conf.filas[2];
+          return f[0] * P[0] + f[1] * P[1] + f[2] * P[2];
+        }
+        function lectura(e) {
+          const caja = e.art.querySelector(".tp-lectura"), rc = e.conf.recorrido;
+          if (!rc.L) {
+            caja.classList.remove("tp-en-los-tres");
+            caja.innerHTML = '<span class="tp-nota">' + rc.nota + "</span>";
+            e.dentro = false;
+            return;
+          }
+          const f = e.conf.filas[2], P = posicion(rc, punto.u), v = lado(e.conf, P), ok = Math.abs(v - f[3]) < 0.02;
+          e.dentro = ok;
+          const izq = texEcuacion(f).split("=")[0];
+          caja.classList.toggle("tp-en-los-tres", ok);
+          caja.innerHTML = '<span class="tp-etq">En el punto blanco</span>' +
+            "<span>" + tex(izq + "=" + (ok ? numero(f[3]) : numero(v) + "\\neq " + numero(f[3]))) + "</span>" +
+            '<span class="tp-veredicto">' + (ok ? "✓ Está en los tres planos" : "✗ No está en el plano verde") + "</span>";
+        }
+        function mueve(u) {
+          u = Math.max(-1, Math.min(1, u));
+          const cd = escenas.find(function (e) { return e.caso.clave === "cd"; });
+          if (cd && cd.conf.recorrido.L) {
+            const rc = cd.conf.recorrido, sol = cramer(cd.conf.filas), us = pe(res(sol, rc.p0), rc.L.d) / rc.largo;
+            if (Math.abs(u - us) < 0.04) u = us;
+          }
+          punto.u = u;
+          deslizador.value = String(Math.round(u * 1000));
+          escenas.forEach(lectura);
+          pide();
+        }
+
+        function pintaTextos(e) {
+          const v = e.caso.variantes[e.v];
+          e.conf = Object.assign({}, v, { sups: superficies(v.filas) });
+          e.conf.recorrido = recorrido(e.conf);
+          e.art.querySelector(".tp-resultado").textContent = v.resultado;
+          e.art.querySelector(".tp-frase").textContent = v.frase;
+          e.art.querySelector(".tp-escalona .tp-valor").innerHTML = tex(v.escalona);
+          e.art.querySelector(".tp-solucion .tp-etq").textContent = v.solucion[0];
+          e.art.querySelector(".tp-solucion .tp-valor").innerHTML = tex(v.solucion[1]);
+          e.canvas.setAttribute("aria-label", e.caso.tipo + ": " + v.frase);
+          const cuenta = e.art.querySelector(".tp-otra .tp-cuenta");
+          if (cuenta) cuenta.textContent = (e.v + 1) + " de " + e.caso.variantes.length;
+          const sis = e.art.querySelector(".tp-sistema");
+          sis.innerHTML = v.filas.map(function (f, k) {
+            return '<button class="tp-ec" type="button" data-k="' + k + '" aria-label="Resaltar el plano E' + (k + 1) + '">' +
+              '<span class="tp-chapa" style="background:' + rgba(COLOR[k], 1) + '">E' + SUB[k] + "</span>" +
+              tex(texEcuacion(f)) + "</button>";
+          }).join("");
+          Array.prototype.forEach.call(sis.querySelectorAll(".tp-ec"), function (b) {
+            b.addEventListener("click", function () {
+              const k = Number(b.dataset.k);
+              resaltado = resaltado.caso === e.caso.clave && resaltado.k === k ? { caso: null, k: -1 } : { caso: e.caso.clave, k: k };
+              Array.prototype.forEach.call(raiz.querySelectorAll(".tp-ec"), function (x) {
+                x.classList.toggle("tp-resaltada",
+                  x.closest(".tp-caso").dataset.caso === resaltado.caso && Number(x.dataset.k) === resaltado.k);
+              });
+              pide();
+            });
+          });
+          lectura(e);
+          e.ultimoTextos = -1;
+        }
+
+        function montaColumna(caso) {
+          const art = document.createElement("article");
+          art.className = "tp-caso" + (caso.clave === "cd" ? " tp-activa" : "");
+          art.dataset.caso = caso.clave;
+          art.innerHTML =
+            '<span class="tp-tipo">' + caso.tipo + "</span>" +
+            '<p class="tp-resultado"></p>' +
+            '<p class="tp-frase"></p>' +
+            '<div class="tp-escena"><canvas role="img"></canvas></div>' +
+            '<div class="tp-sistema"></div>' +
+            '<div class="tp-datos">' +
+            '<p class="tp-dato tp-escalona"><span class="tp-etq">Al escalonar</span><span class="tp-valor"></span></p>' +
+            '<p class="tp-dato tp-solucion"><span class="tp-etq"></span><span class="tp-valor"></span></p>' +
+            "</div>" +
+            '<div class="tp-lectura" aria-live="polite"></div>' +
+            (caso.variantes.length > 1
+              ? '<button class="tp-otra" type="button">Otra posición <span class="tp-cuenta"></span></button>'
+              : '<p class="tp-unica">' + caso.unica + "</p>");
+          columnas.appendChild(art);
+          const canvas = art.querySelector("canvas");
+          const e = { caso: caso, art: art, canvas: canvas, ctx: canvas.getContext("2d"), W: 0, H: 0, dpr: 1, v: 0, t0: null, ritmo: 1, ultimoTextos: -1, dentro: false, puntoPantalla: null };
+          escenas.push(e);
+          pintaTextos(e);
+          const otra = art.querySelector(".tp-otra");
+          if (otra) {
+            otra.addEventListener("click", function () {
+              e.v = (e.v + 1) % caso.variantes.length;
+              if (resaltado.caso === caso.clave) resaltado = { caso: null, k: -1 };
+              pintaTextos(e);
+              e.t0 = performance.now();
+              e.ritmo = 2.2;
+              pide();
+            });
+          }
+          const pestana = document.createElement("button");
+          pestana.type = "button";
+          pestana.className = "tp-pestana";
+          pestana.setAttribute("role", "tab");
+          pestana.setAttribute("aria-selected", caso.clave === "cd" ? "true" : "false");
+          pestana.textContent = caso.corto;
+          pestana.addEventListener("click", function () {
+            Array.prototype.forEach.call(pestanas.children, function (x) { x.setAttribute("aria-selected", x === pestana ? "true" : "false"); });
+            escenas.forEach(function (x) { x.art.classList.toggle("tp-activa", x === e); });
+            requestAnimationFrame(function () { escenas.forEach(ajusta); pide(); });
+          });
+          pestanas.appendChild(pestana);
+        }
+
+        CASOS.forEach(montaColumna);
+
+        function ajusta(e) {
+          const r = e.canvas.getBoundingClientRect();
+          e.dpr = Math.min(window.devicePixelRatio || 1, 2);
+          e.W = r.width;
+          e.H = r.height;
+          e.canvas.width = Math.max(1, Math.round(r.width * e.dpr));
+          e.canvas.height = Math.max(1, Math.round(r.height * e.dpr));
+        }
+
+        function dibuja(e, tt, ahora) {
+          const ctx = e.ctx, W = e.W, H = e.H;
+          if (!W || !H) return;
+          ctx.setTransform(e.dpr, 0, 0, e.dpr, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+          const V = vistas(W, H, vistaDe(e)), proy = V.proy, ojo = V.ojo;
+          const sups = e.conf.sups, forma = e.conf.forma;
+          const crece = [0, 1, 2].map(function (k) { return suave(tramo(tt, T.e[k][0], T.e[k][1])); });
+          const aparece = function (s) { return Math.max.apply(null, s.idx.map(function (k) { return crece[k]; })); };
+          const discos = sups.map(function (s) { const g = aparece(s); return g > 0.001 ? disco(s.pl, 0.35 + 0.65 * g) : null; });
+          const gSol = suave(tramo(tt, T.sol[0], T.sol[1]));
+          const enfoque = resaltado.caso === e.caso.clave ? resaltado.k : -1;
+
+          const estilos = sups.map(function (s, i) {
+            const dk = discos[i];
+            if (!dk) return null;
+            let col = mezcla(s.idx.map(function (k) { return COLOR[k]; }));
+            if (forma === "plano") col = funde(col, ORO, gSol);
+            let alfa = aparece(s);
+            if (forma === "plano") alfa *= 1 + 0.4 * gSol;
+            if (enfoque >= 0) alfa *= s.idx.indexOf(enfoque) >= 0 ? 1.25 : 0.3;
+            let v = res(V.u, esc(pe(V.u, s.pl.n), s.pl.n));
+            v = mod(v) > 1e-3 ? uni(v) : dk.e1;
+            const A = proy(sum(dk.c, esc(dk.r, v))), B = proy(res(dk.c, esc(dk.r, v)));
+            const grad = ctx.createLinearGradient(A[0], A[1], B[0], B[1]);
+            grad.addColorStop(0, rgba(col, Math.min(0.85, 0.6 * alfa)));
+            grad.addColorStop(1, rgba(col, Math.min(0.6, 0.24 * alfa)));
+            return { col: col, alfa: alfa, grad: grad };
+          });
+          const rayas = sups.map(function (s, i) {
+            const dk = discos[i];
+            if (!dk) return [];
+            let h = pv(s.pl.n, [0, 0, 1]);
+            h = mod(h) > 1e-3 ? uni(h) : dk.e1;
+            const v = pv(s.pl.n, h), out = [];
+            for (let k = -3; k <= 3; k++) {
+              const o = (k / 4) * dk.r, m = Math.sqrt(Math.max(0, dk.r * dk.r - o * o)), base = sum(dk.c, esc(o, v));
+              out.push([proy(sum(base, esc(-m, h))), proy(sum(base, esc(m, h)))]);
+            }
+            return out;
+          });
+
+          const lista = [];
+          sups.forEach(function (s, i) { if (discos[i]) lista.push({ pts: discos[i].pts, pl: s.pl, sup: i }); });
+          recorre(arbol(lista), ojo, function (pz) {
+            camino(ctx, pz.pts.map(proy));
+            ctx.fillStyle = estilos[pz.sup].grad;
+            ctx.fill();
+            ctx.save();
+            ctx.clip();
+            ctx.beginPath();
+            rayas[pz.sup].forEach(function (par) { ctx.moveTo(par[0][0], par[0][1]); ctx.lineTo(par[1][0], par[1][1]); });
+            ctx.strokeStyle = "rgba(255,255,255," + 0.16 * Math.min(1, estilos[pz.sup].alfa) + ")";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.restore();
+          });
+          sups.forEach(function (s, i) {
+            const dk = discos[i];
+            if (!dk) return;
+            const pr = dk.pts.map(proy), st = estilos[i];
+            ctx.lineWidth = 1.7;
+            if (s.idx.length === 1 || forma === "plano") {
+              camino(ctx, pr);
+              ctx.strokeStyle = rgba(forma === "plano" ? st.col : COLOR[s.idx[0]], Math.min(1, 0.95 * st.alfa));
+              ctx.stroke();
+            } else {
+              const n = s.idx.length;
+              s.idx.forEach(function (k, j) {
+                ctx.setLineDash([9, 9 * (n - 1)]);
+                ctx.lineDashOffset = -9 * j;
+                camino(ctx, pr);
+                ctx.strokeStyle = rgba(COLOR[k], Math.min(1, 0.95 * st.alfa));
+                ctx.stroke();
+              });
+              ctx.setLineDash([]);
+              ctx.lineDashOffset = 0;
+            }
+          });
+
+          let rectaSol = null;
+          if (forma === "recta") rectaSol = rectaComun(sups[0].pl, sups[1].pl);
+          for (let i = 0; i < sups.length; i++) {
+            for (let j = i + 1; j < sups.length; j++) {
+              if (!discos[i] || !discos[j] || paralelos(sups[i].pl, sups[j].pl)) continue;
+              const L = rectaComun(sups[i].pl, sups[j].pl);
+              const esSol = rectaSol && mod(pv(L.d, rectaSol.d)) < 1e-6 && mod(pv(res(L.p, rectaSol.p), rectaSol.d)) < 1e-6;
+              if (esSol && gSol >= 1) continue;
+              const I = corta(cuerda(L, discos[i]), cuerda(L, discos[j]));
+              if (!I || I[1] <= I[0]) continue;
+              const empieza = Math.max(T.e[sups[i].idx[0]][1], T.e[sups[j].idx[0]][1]);
+              const g = suave(tramo(tt, empieza, empieza + T.linea));
+              if (g <= 0) continue;
+              const m = (I[0] + I[1]) / 2, hh = ((I[1] - I[0]) / 2) * g;
+              const a = proy(sum(L.p, esc(m - hh, L.d))), b = proy(sum(L.p, esc(m + hh, L.d)));
+              ctx.beginPath();
+              ctx.moveTo(a[0], a[1]);
+              ctx.lineTo(b[0], b[1]);
+              ctx.strokeStyle = "rgba(255,255,255," + 0.92 * g + ")";
+              ctx.lineWidth = forma === "ninguno" ? 2.2 : 1.8;
+              ctx.stroke();
+            }
+          }
+
+          if (gSol > 0 && forma === "punto") {
+            const P = proy(cramer(e.conf.filas));
+            const radio = 6.5 * letra * (gSol < 1 ? 1 + 0.45 * Math.sin(Math.PI * gSol) : 1);
+            if (gSol >= 1 && tiempoFijo === null && !reducido) {
+              const fase = ((ahora / 1000) % 1.8) / 1.8;
+              ctx.beginPath();
+              ctx.arc(P[0], P[1], (8 + 14 * fase) * letra, 0, Math.PI * 2);
+              ctx.strokeStyle = rgba(ORO, 0.7 * (1 - fase));
+              ctx.lineWidth = 2;
+              ctx.stroke();
+            }
+            ctx.save();
+            ctx.shadowColor = "rgba(255,209,102,0.95)";
+            ctx.shadowBlur = 18 * gSol;
+            ctx.beginPath();
+            ctx.arc(P[0], P[1], radio, 0, Math.PI * 2);
+            ctx.fillStyle = rgba(ORO, gSol);
+            ctx.fill();
+            ctx.restore();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(255,255,255," + gSol + ")";
+            ctx.stroke();
+          }
+          if (gSol > 0 && forma === "recta" && rectaSol) {
+            let I = [-Infinity, Infinity];
+            discos.forEach(function (dk) { if (dk) I = corta(I, cuerda(rectaSol, dk)) || [0, 0]; });
+            if (I[1] > I[0]) {
+              const m = (I[0] + I[1]) / 2, hh = ((I[1] - I[0]) / 2) * gSol;
+              const a = proy(sum(rectaSol.p, esc(m - hh, rectaSol.d))), b = proy(sum(rectaSol.p, esc(m + hh, rectaSol.d)));
+              ctx.save();
+              ctx.shadowColor = "rgba(255,209,102,0.95)";
+              ctx.shadowBlur = 16;
+              ctx.beginPath();
+              ctx.moveTo(a[0], a[1]);
+              ctx.lineTo(b[0], b[1]);
+              ctx.strokeStyle = rgba(ORO, 1);
+              ctx.lineWidth = 4.5 * letra;
+              ctx.lineCap = "round";
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+
+          const lados = [[-0.85, -0.55], [0.85, -0.55], [0.25, 0.97]];
+          const puestos = [];
+          sups.forEach(function (s, i) {
+            const dk = discos[i];
+            if (!dk || estilos[i].alfa < 0.5) return;
+            const k0 = s.idx[0], pc = proy(dk.c);
+            let mejor = null, valor = -Infinity;
+            for (let a = 0; a < 36; a++) {
+              const t = (a / 36) * Math.PI * 2;
+              const P = proy(sum(dk.c, sum(esc(dk.r * Math.cos(t), dk.e1), esc(dk.r * Math.sin(t), dk.e2))));
+              let v = (P[0] - pc[0]) * lados[k0][0] + (P[1] - pc[1]) * lados[k0][1];
+              puestos.forEach(function (q) { if (Math.hypot(P[0] - q[0], P[1] - q[1]) < 34 * letra) v -= 400; });
+              if (P[0] < 24 || P[0] > W - 24 || P[1] < 14 || P[1] > H - 14) v -= 1000;
+              if (v > valor) { valor = v; mejor = P; }
+            }
+            puestos.push(mejor);
+            const texto = s.idx.map(function (k) { return "E" + SUB[k]; }).join(" = ");
+            const col = s.idx.length > 1 ? mezcla(s.idx.map(function (k) { return COLOR[k]; })) : COLOR[k0];
+            rotulo(ctx, Math.min(W - 30 * letra, Math.max(30 * letra, mejor[0])), Math.min(H - 12 * letra, Math.max(12 * letra, mejor[1])), texto, rgba(col, 0.95), letra);
+          });
+
+          e.puntoPantalla = null;
+          const gPunto = suave(tramo(tt, T.textos[0], T.textos[1]));
+          if (gPunto > 0 && e.conf.recorrido.L) {
+            const P = proy(posicion(e.conf.recorrido, punto.u));
+            e.puntoPantalla = P;
+            ctx.save();
+            if (e.dentro) {
+              ctx.shadowColor = "rgba(255,209,102,0.95)";
+              ctx.shadowBlur = 16;
+            }
+            ctx.beginPath();
+            ctx.arc(P[0], P[1], 7 * letra, 0, Math.PI * 2);
+            ctx.fillStyle = e.dentro ? rgba(ORO, gPunto) : "rgba(255,255,255," + gPunto + ")";
+            ctx.fill();
+            ctx.restore();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "rgba(59,26,134," + gPunto + ")";
+            ctx.stroke();
+          }
+
+          const O = [26 * letra, H - 22 * letra];
+          [["x", [1, 0, 0]], ["y", [0, 1, 0]], ["z", [0, 0, 1]]].forEach(function (par) {
+            const dx = pe(par[1], V.r) * 15 * letra, dy = -pe(par[1], V.u) * 15 * letra;
+            ctx.beginPath();
+            ctx.moveTo(O[0], O[1]);
+            ctx.lineTo(O[0] + dx, O[1] + dy);
+            ctx.strokeStyle = "rgba(255,255,255,0.75)";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.font = "italic " + Math.round(13 * letra) + "px KaTeX_Math, 'Times New Roman', serif";
+            ctx.fillStyle = "rgba(255,255,255,0.85)";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(par[0], O[0] + dx * 1.45, O[1] + dy * 1.45);
+          });
+        }
+
+        function textos(e, tt) {
+          const paso = Math.round(tt * 20) / 20;
+          if (paso === e.ultimoTextos) return;
+          e.ultimoTextos = paso;
+          const crece = [0, 1, 2].map(function (k) { return suave(tramo(tt, T.e[k][0], T.e[k][1] - 0.3)); });
+          const fin = suave(tramo(tt, T.textos[0], T.textos[1]));
+          Array.prototype.forEach.call(e.art.querySelectorAll(".tp-ec"), function (b) { b.style.opacity = crece[Number(b.dataset.k)]; });
+          [".tp-resultado", ".tp-frase", ".tp-datos", ".tp-lectura"].forEach(function (sel) { e.art.querySelector(sel).style.opacity = fin; });
+        }
+
+        function tiempoDe(e, ahora) {
+          if (tiempoFijo !== null) return tiempoFijo;
+          if (e.t0 !== null) return ((ahora - e.t0) / 1000) * e.ritmo;
+          if (inicio === null) return 0;
+          return (ahora - inicio) / 1000;
+        }
+        function dibujarYa() {
+          const ahora = performance.now();
+          escenas.forEach(function (e) { if (!e.W) ajusta(e); });
+          if (cam.vaiven && inicio !== null) cam.oscila = 0.2 * Math.sin((ahora - inicio) / 3200);
+          escenas.forEach(function (e) {
+            const tt = tiempoDe(e, ahora);
+            textos(e, tt);
+            dibuja(e, tt, ahora);
+          });
+        }
+        function quiereMovimiento() {
+          if (!visible || desmontado) return false;
+          if (cam.vaiven) return true;
+          const ahora = performance.now();
+          return escenas.some(function (e) {
+            const tt = tiempoDe(e, ahora);
+            return tiempoFijo === null && (tt < T.fin + 0.2 || (e.conf.forma === "punto" && !reducido));
+          });
+        }
+        function bucle() {
+          animando = false;
+          if (desmontado) return;
+          dibujarYa();
+          if (quiereMovimiento()) {
+            animando = true;
+            requestAnimationFrame(bucle);
+          }
+        }
+        function pide() {
+          if (!animando && !desmontado) {
+            animando = true;
+            requestAnimationFrame(bucle);
+          }
+        }
+
+        raiz.querySelector(".tp-mando").addEventListener("click", function () {
+          inicio = performance.now();
+          escenas.forEach(function (e) { e.t0 = null; e.ritmo = 1; e.ultimoTextos = -1; });
+          cam.dyaw = 0; cam.dpitch = 0; cam.oscila = 0; cam.vaiven = !reducido;
+          pide();
+        });
+        deslizador.addEventListener("input", function () { mueve(Number(deslizador.value) / 1000); });
+
+        escenas.forEach(function (e) {
+          let arrastre = null;
+          const enLienzo = function (ev) {
+            const r = e.canvas.getBoundingClientRect();
+            return [ev.clientX - r.left, ev.clientY - r.top];
+          };
+          e.canvas.addEventListener("pointerdown", function (ev) {
+            const p = enLienzo(ev), P = e.puntoPantalla;
+            const conPunto = !!P && Math.hypot(p[0] - P[0], p[1] - P[1]) < 24 * letra;
+            arrastre = { x: ev.clientX, y: ev.clientY, punto: conPunto };
+            if (cam.vaiven) { cam.vaiven = false; cam.dyaw += cam.oscila; cam.oscila = 0; }
+            try { e.canvas.setPointerCapture(ev.pointerId); } catch (error) { arrastre.sinCaptura = true; }
+            e.canvas.classList.add("tp-agarrando");
+          });
+          e.canvas.addEventListener("pointermove", function (ev) {
+            if (!arrastre) return;
+            if (arrastre.punto) {
+              const rc = e.conf.recorrido, V = vistas(e.W, e.H, vistaDe(e));
+              const A = V.proy(posicion(rc, -1)), B = V.proy(posicion(rc, 1)), p = enLienzo(ev);
+              const dx = B[0] - A[0], dy = B[1] - A[1];
+              const s = ((p[0] - A[0]) * dx + (p[1] - A[1]) * dy) / (dx * dx + dy * dy || 1);
+              mueve(2 * s - 1);
+              return;
+            }
+            cam.dyaw -= (ev.clientX - arrastre.x) * 0.009;
+            cam.dpitch = Math.max(-0.5, Math.min(1.0, cam.dpitch + (ev.clientY - arrastre.y) * 0.007));
+            arrastre.x = ev.clientX;
+            arrastre.y = ev.clientY;
+            pide();
+          });
+          const suelta = function () { arrastre = null; e.canvas.classList.remove("tp-agarrando"); };
+          e.canvas.addEventListener("pointerup", suelta);
+          e.canvas.addEventListener("pointercancel", suelta);
+        });
+
+        function mide() {
+          const ancho = raiz.getBoundingClientRect().width;
+          raiz.classList.toggle("tp-estrecho", ancho > 0 && ancho < 640);
+          letra = Math.max(0.9, Math.min(1.5, parseFloat(window.getComputedStyle(raiz).fontSize) / 16 || 1));
+          escenas.forEach(ajusta);
+          pide();
+        }
+        const redimensionador = window.ResizeObserver ? new ResizeObserver(mide) : null;
+        if (redimensionador) redimensionador.observe(raiz);
+        else window.addEventListener("resize", mide);
+        const observador = window.IntersectionObserver
+          ? new IntersectionObserver(function (entradas) {
+            visible = entradas.some(function (x) { return x.isIntersecting; });
+            if (visible && inicio === null) inicio = performance.now();
+            if (visible) pide();
+          }, { threshold: 0.25 })
+          : null;
+        if (observador) observador.observe(raiz.querySelector(".tp-columnas"));
+        else { visible = true; inicio = performance.now(); }
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () { escenas.forEach(function (e) { e.ultimoTextos = -1; }); pide(); });
+        }
+        mide();
+        mueve(punto.u);
+
+        raiz.__tresPlanos = {
+          escenas: escenas,
+          cam: cam,
+          punto: punto,
+          mueve: mueve,
+          medir: mide,
+          dibujarYa: dibujarYa,
+          fijarTiempo: function (t) { tiempoFijo = t; escenas.forEach(function (e) { e.ultimoTextos = -1; }); dibujarYa(); },
+          quieto: function () { cam.vaiven = false; cam.oscila = 0; dibujarYa(); }
+        };
+
+        return {
+          desmontar: function () {
+            if (desmontado) return;
+            desmontado = true;
+            if (observador) observador.disconnect();
+            if (redimensionador) redimensionador.disconnect();
+            else window.removeEventListener("resize", mide);
+            raiz.innerHTML = "";
+            raiz.classList.remove("tres-planos", "tp-estrecho");
+            delete raiz.__tresPlanos;
+          }
+        };
+      }
+
+      window.TresPlanos = { montar: montar, hayLienzo: hayLienzo };
     })();
   </script>
 
@@ -39741,6 +41021,43 @@ void main() {
         );
       }
 
+      function TresPlanosInteractivo({ configuracion, alPreparar }) {
+        const caja = React.useRef(null);
+        const [disponible] = React.useState(
+          () =>
+            !!window.katex &&
+            !!window.TresPlanos &&
+            window.TresPlanos.hayLienzo()
+        );
+        const [fallo, setFallo] = React.useState(null);
+
+        React.useEffect(() => {
+          if (!disponible) {
+            return undefined;
+          }
+          let control = null;
+          try {
+            control = window.TresPlanos.montar(caja.current, {
+              titulo: configuracion.titulo
+            });
+          } catch (error) {
+            setFallo(error);
+            return undefined;
+          }
+          alPreparar();
+          return () => control.desmontar();
+        }, [disponible]);
+
+        if (fallo) {
+          throw fallo;
+        }
+        if (!disponible) {
+          return null;
+        }
+
+        return <div ref={caja} className="tres-planos" />;
+      }
+
 
 
       const IGUALDADES_A_PRUEBA = [
@@ -41167,6 +42484,7 @@ void main() {
         "escala-cosmica": EscalaCosmicaInteractivo,
         "ley-benford": LeyBenfordInteractivo,
         "paisaje-potencias": PaisajePotenciasInteractivo,
+        "tres-planos": TresPlanosInteractivo,
         cazarraices: CazarraicesInteractivo,
         "identidad-o-no": IdentidadONoInteractivo,
         "tabla-signos": TablaSignosInteractivo,
