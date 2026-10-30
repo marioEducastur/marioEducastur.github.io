@@ -37697,6 +37697,10 @@ Enfoques NS</p>
           respaldo.classList.add("interactivo-fallback");
           respaldo.before(anfitrion);
           anfitrion.append(respaldo, montaje);
+          if (respaldo.id) {
+            anfitrion.id = respaldo.id;
+            respaldo.removeAttribute("id");
+          }
 
           const preparado = () => anfitrion.classList.add("is-enhanced");
           const fallo = () => anfitrion.classList.remove("is-enhanced");
@@ -37718,6 +37722,32 @@ Enfoques NS</p>
             fallo();
           }
         });
+
+      let ancla = null;
+      try {
+        ancla = window.location.hash
+          ? document.getElementById(decodeURIComponent(window.location.hash.slice(1)))
+          : null;
+      } catch (error) {
+        ancla = null;
+      }
+      const pagina = document.getElementById("contenido-unidad");
+      if (ancla && pagina && pagina.contains(ancla) && window.ResizeObserver) {
+        let aMano = false;
+        const quieto = () => {
+          aMano = true;
+        };
+        ["wheel", "touchstart", "keydown", "mousedown"].forEach((evento) =>
+          window.addEventListener(evento, quieto, { passive: true, once: true })
+        );
+        const vigilante = new ResizeObserver(() => {
+          if (!aMano) {
+            ancla.scrollIntoView({ block: "start", behavior: "instant" });
+          }
+        });
+        vigilante.observe(pagina);
+        setTimeout(() => vigilante.disconnect(), 2000);
+      }
     })();
   </script>
 </body>
