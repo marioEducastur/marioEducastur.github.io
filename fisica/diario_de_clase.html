@@ -3531,6 +3531,96 @@
       font-weight: 750;
     }
 
+
+    .arrastre-tiempo-ib {
+      cursor: ew-resize;
+      touch-action: pan-y;
+    }
+
+    .lectura-graficas-ib {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2rem 1.1rem;
+      margin: 0.5rem 0 0.2rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 650;
+    }
+
+    .cuerda-ib {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 1.2rem;
+    }
+
+    .cuerda-ib .control-rango {
+      flex: 1 1 12rem;
+    }
+
+    .metodo-de-los-pasos-ib {
+      margin: 1.1rem 0 0;
+      font-weight: 750;
+    }
+
+    .letras-ib button {
+      min-width: 3rem;
+      font-family: KaTeX_Math, "Times New Roman", serif;
+      font-size: 1.25rem;
+    }
+
+
+    .frases-ib {
+      margin: 0.7rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .frases-ib > li {
+      margin: 0.35rem 0;
+      padding-left: 1.6rem;
+      color: var(--texto-suave);
+      text-indent: -1.6rem;
+    }
+
+    .frases-ib > li::before {
+      content: "\2013";
+      display: inline-block;
+      width: 1.6rem;
+      text-indent: 0;
+      color: var(--texto-suave);
+    }
+
+    .frases-ib > li.encendida {
+      color: var(--texto);
+      font-weight: 650;
+    }
+
+    .frases-ib > li.encendida::before {
+      content: "\2713";
+      color: var(--verde);
+    }
+
+    .asa-ib {
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .asa-ib:active {
+      cursor: grabbing;
+    }
+
+    .tabla-estrecha-ib .tabla-ib th,
+    .tabla-estrecha-ib .tabla-ib td {
+      padding: 0.25rem 0.5rem;
+    }
+
+    .zona-grafica.zona-libre-ib svg.grafica-ib:has(.arrastre-tiempo-ib) {
+      touch-action: pan-y;
+    }
+
+    .zona-grafica.zona-libre-ib svg.grafica-ib:has(.asa-ib) {
+      touch-action: none;
+    }
+
     .infografia-ib {
       --tono: #6d28d9;
       --lienzo:
@@ -4103,6 +4193,14 @@
 
     .resumen-ib .arrastre-ib.dos-ejes {
       cursor: move;
+      touch-action: none;
+    }
+
+    .resumen-ib svg:has(.arrastre-ib) {
+      touch-action: pan-y;
+    }
+
+    .resumen-ib svg:has(.arrastre-ib.dos-ejes) {
       touch-action: none;
     }
 
@@ -13355,6 +13453,661 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         };
       }
 
+
+      function graficasDelMovimiento(datos) {
+        var movimiento = tramosDeUnMovil(datos);
+        var trozos = [];
+        movimiento.tramos.forEach(function (tramo, i) {
+          var cortes = [tramo.desde, tramo.hasta];
+          if (tramo.a !== 0 && tramo.v0 * tramo.v1 < 0) {
+            cortes = [tramo.desde, tramo.desde - tramo.v0 / tramo.a, tramo.hasta];
+          }
+          for (var k = 0; k + 1 < cortes.length; k += 1) {
+            var v0 = k === 0 ? tramo.v0 : 0;
+            var v1 = k + 2 === cortes.length ? tramo.v1 : 0;
+            trozos.push({
+              tramo: i,
+              desde: cortes[k],
+              hasta: cortes[k + 1],
+              v0: v0,
+              v1: v1,
+              a: tramo.a,
+              area: ((v0 + v1) / 2) * (cortes[k + 1] - cortes[k])
+            });
+          }
+        });
+        var arriba = 0;
+        var abajo = 0;
+        var vueltas = [];
+        var signoAnterior = 0;
+        trozos.forEach(function (trozo) {
+          var signo = trozo.area > 0 ? 1 : trozo.area < 0 ? -1 : 0;
+          if (signo > 0) {
+            arriba += trozo.area;
+          } else if (signo < 0) {
+            abajo -= trozo.area;
+          }
+          if (signo !== 0) {
+            if (signoAnterior !== 0 && signo !== signoAnterior) {
+              vueltas.push(trozo.desde);
+            }
+            signoAnterior = signo;
+          }
+        });
+        var ultimo = datos.tramos.length ? datos.tramos[datos.tramos.length - 1] : null;
+        return {
+          movimiento: movimiento,
+          s0: datos.x0,
+          u: datos.v0,
+          trozos: trozos,
+          arriba: arriba,
+          abajo: abajo,
+          desplazamiento: sinRuido(arriba - abajo, arriba + abajo),
+          distancia: arriba + abajo,
+          vueltas: vueltas,
+          suelo: ultimo && ultimo.suelo && !movimiento.sinFin ? movimiento.duracion : null
+        };
+      }
+
+      function estadoDeLasGraficas(graficas, t) {
+        var fin = graficas.movimiento.duracion;
+        var ahora = Math.max(0, Math.min(fin, t));
+        var estado = estadoEnLosTramos(graficas.movimiento, ahora);
+        var arriba = 0;
+        var abajo = 0;
+        graficas.trozos.forEach(function (trozo) {
+          if (ahora <= trozo.desde) {
+            return;
+          }
+          var hasta = Math.min(ahora, trozo.hasta);
+          var vHasta = trozo.v0 + trozo.a * (hasta - trozo.desde);
+          var area = ((trozo.v0 + vHasta) / 2) * (hasta - trozo.desde);
+          if (area > 0) {
+            arriba += area;
+          } else {
+            abajo -= area;
+          }
+        });
+        var cambioDeV = 0;
+        var escala = 0;
+        graficas.movimiento.tramos.forEach(function (tramo) {
+          if (ahora > tramo.desde) {
+            var parte = tramo.a * (Math.min(ahora, tramo.hasta) - tramo.desde);
+            cambioDeV += parte;
+            escala += Math.abs(parte);
+          }
+        });
+        return {
+          t: ahora,
+          s: estado.x,
+          v: estado.v,
+          a: estado.a,
+          tramo: estado.tramo,
+          arriba: arriba,
+          abajo: abajo,
+          desplazamiento: sinRuido(arriba - abajo, arriba + abajo),
+          distancia: arriba + abajo,
+          cambioDeV: sinRuido(cambioDeV, escala)
+        };
+      }
+
+      function velocidadDeLaAtleta(vf, tau, t) {
+        return vf * (1 - Math.exp(-t / tau));
+      }
+
+      function aceleracionDeLaAtleta(vf, tau, t) {
+        return (vf / tau) * Math.exp(-t / tau);
+      }
+
+      function curvaDeLaAtleta(datos) {
+        var vf = datos.vf;
+        var tau = datos.tau;
+        var T = datos.duracion;
+        var v = function (t) {
+          return velocidadDeLaAtleta(vf, tau, t);
+        };
+        var decimas = function (valor) {
+          return redondearMitad(valor, 1);
+        };
+        var tabla = [];
+        for (var k = 0; k <= T; k += 1) {
+          tabla.push({ t: k, v: decimas(v(k)) });
+        }
+        var trapeciosDe = function (valores, dt) {
+          var areas = [];
+          for (var i = 0; i + 1 < valores.length; i += 1) {
+            areas.push(((valores[i] + valores[i + 1]) / 2) * dt);
+          }
+          return { areas: areas, area: areas.reduce(function (suma, uno) { return suma + uno; }, 0) };
+        };
+        var deLaTabla = trapeciosDe(
+          tabla.map(function (fila) {
+            return fila.v;
+          }),
+          1
+        );
+        var n = datos.trapecios;
+        var dt = T / n;
+        var nodos = [];
+        for (var i = 0; i <= n; i += 1) {
+          nodos.push(n === T ? tabla[i].v : v(i * dt));
+        }
+        var conN = trapeciosDe(nodos, dt);
+        var exacta = vf * (T - tau * (1 - Math.exp(-T / tau)));
+
+        var t0 = datos.tangente;
+        var v0 = v(t0);
+        var pendiente = aceleracionDeLaAtleta(vf, tau, t0);
+        var enLaTangente = function (t) {
+          return v0 + pendiente * (t - t0);
+        };
+        var dentro = function (t) {
+          var valor = enLaTangente(t);
+          return valor >= -1e-9 && valor <= datos.techo + 1e-9;
+        };
+        var lectura = null;
+        [1, 0.5, 0.2, 0.1].some(function (rejilla) {
+          var puntos = [];
+          for (var j = 0; j * rejilla <= T + 1e-9; j += 1) {
+            var instante = redondearMitad(j * rejilla, 1);
+            if (dentro(instante)) {
+              puntos.push(instante);
+            }
+          }
+          if (puntos.length < 2) {
+            return false;
+          }
+          var tA = puntos[0];
+          var tB = puntos[puntos.length - 1];
+          var vA = decimas(enLaTangente(tA));
+          var vB = decimas(enLaTangente(tB));
+          lectura = { rejilla: rejilla, tA: tA, tB: tB, vA: vA, vB: vB, pendiente: (vB - vA) / (tB - tA) };
+          return true;
+        });
+
+        var t1 = Math.min(datos.cuerda[0], datos.cuerda[1]);
+        var t2 = Math.max(datos.cuerda[0], datos.cuerda[1]);
+        var cuerda = {
+          t1: t1,
+          t2: t2,
+          v1: tabla[t1].v,
+          v2: tabla[t2].v,
+          pendiente: t2 > t1 ? (tabla[t2].v - tabla[t1].v) / (t2 - t1) : null
+        };
+        return {
+          tabla: tabla,
+          areasDeLaTabla: deLaTabla.areas,
+          areaDeLaTabla: deLaTabla.area,
+          media: deLaTabla.area / T,
+          trapecios: { n: n, dt: dt, nodos: nodos, areas: conN.areas, area: conN.area, deLaTabla: n === T },
+          exacta: exacta,
+          tangente: { t: t0, v: v0, pendiente: pendiente, lectura: lectura },
+          cuerda: cuerda
+        };
+      }
+
+      var LETRAS_DEL_MOVIMIENTO = ["s", "u", "v", "a", "t"];
+      var ECUACIONES_DEL_MOVIMIENTO = {
+        s: ["u", "v", "a", "t"],
+        v: ["s", "u", "a", "t"],
+        t: ["s", "u", "v", "a"],
+        a: ["s", "u", "v", "t"]
+      };
+
+      function resolverElMovimiento(datos, pedida) {
+        var conocidas = LETRAS_DEL_MOVIMIENTO.filter(function (letra) {
+          return datos[letra] !== null && datos[letra] !== undefined;
+        });
+        var incognitas = LETRAS_DEL_MOVIMIENTO.filter(function (letra) {
+          return conocidas.indexOf(letra) < 0;
+        });
+        if (conocidas.length !== 3) {
+          return { conocidas: conocidas, incognitas: incognitas, estado: "faltan", soluciones: [], descartadas: [] };
+        }
+        var s = datos.s;
+        var u = datos.u;
+        var v = datos.v;
+        var a = datos.a;
+        var t = datos.t;
+        var candidatos = [];
+        var especial = null;
+        var segundoGrado = null;
+        var radicando = null;
+        var una = function (sol) {
+          candidatos.push(sol);
+        };
+        var cuadratica = function (A, B, C) {
+          var normal = A < 0 ? [-A, -B, -C] : [A, B, C];
+          var raices = raicesDeSegundoGrado(normal[0], normal[1], normal[2]);
+          segundoGrado = {
+            A: normal[0],
+            B: normal[1],
+            C: normal[2],
+            discriminante: normal[1] * normal[1] - 4 * normal[0] * normal[2],
+            raices: raices.raices,
+            doble: raices.doble
+          };
+          return raices.raices;
+        };
+        var clave = conocidas.join("");
+        if (clave === "suv") {
+          if (u + v === 0) {
+            especial = s === 0 ? "indeterminada" : "incompatibles";
+          } else if (s === 0) {
+            especial = v === u ? "alEmpezar" : "incompatibles";
+          } else {
+            una({ s: s, u: u, v: v, a: (v * v - u * u) / (2 * s), t: (2 * s) / (u + v) });
+          }
+        } else if (clave === "sua") {
+          if (a === 0) {
+            if (u === 0) {
+              especial = s === 0 ? "indeterminada" : "incompatibles";
+            } else {
+              una({ s: s, u: u, v: u, a: 0, t: s / u });
+            }
+          } else {
+            radicando = u * u + 2 * a * s;
+            cuadratica(a / 2, u, -s).forEach(function (raiz) {
+              una({ s: s, u: u, v: u + a * raiz, a: a, t: raiz });
+            });
+            if (!candidatos.length) {
+              especial = "raiz";
+            }
+          }
+        } else if (clave === "sut") {
+          una({ s: s, u: u, v: (2 * s) / t - u, a: (2 * (s - u * t)) / (t * t), t: t });
+        } else if (clave === "sva") {
+          if (a === 0) {
+            if (v === 0) {
+              especial = s === 0 ? "indeterminada" : "incompatibles";
+            } else {
+              una({ s: s, u: v, v: v, a: 0, t: s / v });
+            }
+          } else {
+            radicando = v * v - 2 * a * s;
+            if (radicando < -1e-12 * Math.max(1, v * v, Math.abs(2 * a * s))) {
+              especial = "raiz";
+            } else {
+              var r = Math.sqrt(Math.max(0, radicando));
+              (r === 0 ? [0] : [r, -r]).forEach(function (inicial) {
+                una({ s: s, u: inicial, v: v, a: a, t: (v - inicial) / a });
+              });
+            }
+          }
+        } else if (clave === "svt") {
+          var deSvt = (2 * s) / t - v;
+          una({ s: s, u: deSvt, v: v, a: (v - deSvt) / t, t: t });
+        } else if (clave === "sat") {
+          var deSat = (s - (a * t * t) / 2) / t;
+          una({ s: s, u: deSat, v: deSat + a * t, a: a, t: t });
+        } else if (clave === "uva") {
+          if (a === 0) {
+            especial = v === u ? "indeterminada" : "incompatibles";
+          } else {
+            una({ s: (v * v - u * u) / (2 * a), u: u, v: v, a: a, t: (v - u) / a });
+          }
+        } else if (clave === "uvt") {
+          una({ s: ((u + v) * t) / 2, u: u, v: v, a: (v - u) / t, t: t });
+        } else if (clave === "uat") {
+          una({ s: u * t + (a * t * t) / 2, u: u, v: u + a * t, a: a, t: t });
+        } else {
+          var deVat = v - a * t;
+          una({ s: ((deVat + v) * t) / 2, u: deVat, v: v, a: a, t: t });
+        }
+
+        var cero = 1e-12 * Math.max(1, Math.abs(t || 0));
+        var soluciones = candidatos.filter(function (sol) {
+          return isFinite(sol.t) && sol.t > cero;
+        });
+        soluciones.sort(function (una, otra) {
+          return una.t - otra.t;
+        });
+        var descartadas = candidatos.filter(function (sol) {
+          return isFinite(sol.t) && sol.t < -cero;
+        });
+        var alEmpezar = candidatos.filter(function (sol) {
+          return isFinite(sol.t) && Math.abs(sol.t) <= cero;
+        });
+        var estado;
+        var porque = null;
+        if (especial === "indeterminada") {
+          estado = "indeterminada";
+        } else if (especial === "incompatibles" || especial === "raiz") {
+          estado = "ninguna";
+          porque = especial;
+        } else if (especial === "alEmpezar") {
+          estado = "ninguna";
+          porque = "alEmpezar";
+        } else if (soluciones.length === 0) {
+          estado = "ninguna";
+          porque = alEmpezar.length ? "alEmpezar" : "tiempo";
+        } else {
+          estado = soluciones.length > 1 ? "dos" : "una";
+        }
+
+        var primera = incognitas.indexOf("u") >= 0 ? "u" : incognitas.indexOf(pedida) >= 0 ? pedida : incognitas[0];
+        var segunda = incognitas[0] === primera ? incognitas[1] : incognitas[0];
+        var ecuacionSegunda = primera;
+        if (primera === "u") {
+          ecuacionSegunda = segunda === "s" || (segunda === "t" && a === 0) ? "a" : "s";
+        }
+        return {
+          conocidas: conocidas,
+          incognitas: incognitas,
+          primera: primera,
+          segunda: segunda,
+          cambiada: pedida !== undefined && pedida !== null && primera !== pedida,
+          ecuacionPrimera: segunda,
+          ecuacionSegunda: ecuacionSegunda,
+          conLosDatos: primera !== "u",
+          estado: estado,
+          porque: porque,
+          soluciones: soluciones,
+          descartadas: descartadas,
+          alEmpezar: alEmpezar,
+          segundoGrado: segundoGrado,
+          radicando: radicando
+        };
+      }
+
+
+      function pasoDeRungeKutta(f, t, e, h) {
+        var n = e.length;
+        var mas = function (k, factor) {
+          var otro = new Array(n);
+          for (var i = 0; i < n; i += 1) {
+            otro[i] = e[i] + factor * k[i];
+          }
+          return otro;
+        };
+        var k1 = f(t, e);
+        var k2 = f(t + h / 2, mas(k1, h / 2));
+        var k3 = f(t + h / 2, mas(k2, h / 2));
+        var k4 = f(t + h, mas(k3, h));
+        var nuevo = new Array(n);
+        for (var j = 0; j < n; j += 1) {
+          nuevo[j] = e[j] + (h / 6) * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
+        }
+        return nuevo;
+      }
+
+      function entreMuestras(muestras, t) {
+        var bajo = 0;
+        var alto = muestras.length - 1;
+        if (!(t > muestras[0].t)) {
+          return muestras[0];
+        }
+        if (t >= muestras[alto].t) {
+          return muestras[alto];
+        }
+        while (alto - bajo > 1) {
+          var medio = Math.floor((bajo + alto) / 2);
+          if (muestras[medio].t <= t) {
+            bajo = medio;
+          } else {
+            alto = medio;
+          }
+        }
+        var a = muestras[bajo];
+        var b = muestras[alto];
+        var parte = (t - a.t) / (b.t - a.t);
+        var punto = { t: t };
+        Object.keys(a).forEach(function (clave) {
+          if (clave !== "t") {
+            punto[clave] = a[clave] + parte * (b[clave] - a[clave]);
+          }
+        });
+        return punto;
+      }
+
+      function tiroOblicuo(datos) {
+        var lanzado = tiro({ h: datos.h, v0: datos.u, angulo: datos.angulo, g: datos.g });
+        var sube = lanzado.vy0 > 0 && lanzado.vuelo > 0;
+        var subida = sube ? lanzado.vy0 / datos.g : 0;
+        return {
+          ux: lanzado.vx,
+          uy: lanzado.vy0,
+          vx: lanzado.vx,
+          vy0: lanzado.vy0,
+          vuelo: lanzado.vuelo,
+          alcance: lanzado.alcance,
+          vy: lanzado.vy,
+          rapidez: lanzado.rapidez,
+          angulo: lanzado.angulo,
+          sube: sube,
+          subida: subida,
+          bajada: lanzado.vuelo - subida,
+          alturaMaxima: sube ? datos.h + (lanzado.vy0 * lanzado.vy0) / (2 * datos.g) : datos.h,
+          xCima: lanzado.vx * subida
+        };
+      }
+
+      function tiroConAire(datos) {
+        var paso = datos.paso || 1e-4;
+        var cada = Math.max(1, Math.round(1e-3 / paso));
+        var g = datos.g;
+        var km = datos.km;
+        var radianes = (datos.angulo * Math.PI) / 180;
+        var f = function (t, e) {
+          var v = Math.sqrt(e[2] * e[2] + e[3] * e[3]);
+          return [e[2], e[3], -km * v * e[2], -g - km * v * e[3]];
+        };
+        var e = [0, datos.h, datos.u * Math.cos(radianes), datos.u * Math.sin(radianes)];
+        var ux = e[2];
+        var uy = e[3];
+        var muestras = [{ t: 0, x: 0, y: datos.h, vx: ux, vy: uy }];
+        var subida = uy > 0 ? null : 0;
+        var alturaMaxima = datos.h;
+        var xCima = 0;
+        var llegada = { t: 0, x: 0, y: datos.h, vx: ux, vy: uy };
+        if (datos.h > 0 || uy > 0) {
+          for (var k = 1; k <= 5000000; k += 1) {
+            var t = (k - 1) * paso;
+            var nuevo = pasoDeRungeKutta(f, t, e, paso);
+            if (subida === null && nuevo[3] < 0 && e[3] >= 0) {
+              var enLaCima = e[3] / (e[3] - nuevo[3]);
+              subida = t + enLaCima * paso;
+              xCima = e[0] + enLaCima * (nuevo[0] - e[0]);
+            }
+            if (nuevo[1] < 0) {
+              var parte = e[1] / (e[1] - nuevo[1]);
+              llegada = {
+                t: t + parte * paso,
+                x: e[0] + parte * (nuevo[0] - e[0]),
+                y: 0,
+                vx: e[2] + parte * (nuevo[2] - e[2]),
+                vy: e[3] + parte * (nuevo[3] - e[3])
+              };
+              muestras.push(llegada);
+              break;
+            }
+            e = nuevo;
+            alturaMaxima = Math.max(alturaMaxima, e[1]);
+            if (k % cada === 0) {
+              muestras.push({ t: k * paso, x: e[0], y: e[1], vx: e[2], vy: e[3] });
+            }
+          }
+        }
+        var sube = subida !== null && subida > 0;
+        var hastaLaCima = subida === null ? 0 : subida;
+        return {
+          paso: paso,
+          km: km,
+          g: g,
+          muestras: muestras,
+          ux: ux,
+          uy: uy,
+          vuelo: llegada.t,
+          alcance: llegada.x,
+          vx: llegada.vx,
+          vy: llegada.vy,
+          rapidez: Math.sqrt(llegada.vx * llegada.vx + llegada.vy * llegada.vy),
+          angulo: (Math.atan2(-llegada.vy, llegada.vx) * 180) / Math.PI,
+          sube: sube,
+          subida: hastaLaCima,
+          bajada: llegada.t - hastaLaCima,
+          alturaMaxima: alturaMaxima,
+          xCima: xCima
+        };
+      }
+
+      function puntoConAire(lanzado, t) {
+        var punto = entreMuestras(lanzado.muestras, t);
+        var v = Math.sqrt(punto.vx * punto.vx + punto.vy * punto.vy);
+        return {
+          x: punto.x,
+          y: punto.y,
+          vx: punto.vx,
+          vy: punto.vy,
+          ax: -lanzado.km * v * punto.vx,
+          ay: -lanzado.g - lanzado.km * v * punto.vy
+        };
+      }
+
+      function caidaConAire(datos) {
+        var g = datos.g;
+        var paso = datos.paso || 1e-3;
+        var cada = Math.max(1, Math.round(1e-3 / paso));
+        var k1 = g / (datos.vt1 * datos.vt1);
+        var k2 = g / (datos.vt2 * datos.vt2);
+        var abre = datos.abre;
+        var cierra = datos.abre + datos.apertura;
+        var km = function (t) {
+          return t <= abre ? k1 : t >= cierra ? k2 : k1 + ((k2 - k1) * (t - abre)) / datos.apertura;
+        };
+        var f = function (t, e) {
+          return [e[1], g - km(t) * e[1] * e[1]];
+        };
+        var cortes = [0];
+        [abre, cierra, datos.duracion].forEach(function (corte) {
+          if (corte > cortes[cortes.length - 1] && corte <= datos.duracion) {
+            cortes.push(corte);
+          }
+        });
+        var e = [0, 0];
+        var muestras = [{ t: 0, s: 0, v: 0 }];
+        var peor = { a: g, t: 0 };
+        var alAbrir = null;
+        for (var i = 0; i + 1 < cortes.length; i += 1) {
+          var desde = cortes[i];
+          var hasta = cortes[i + 1];
+          var n = Math.max(1, Math.ceil((hasta - desde) / paso - 1e-9));
+          var h = (hasta - desde) / n;
+          for (var j = 1; j <= n; j += 1) {
+            e = pasoDeRungeKutta(f, desde + (j - 1) * h, e, h);
+            var t = j === n ? hasta : desde + j * h;
+            var a = g - km(t) * e[1] * e[1];
+            if (a < peor.a) {
+              peor = { a: a, t: t };
+            }
+            if (j % cada === 0 || j === n) {
+              muestras.push({ t: t, s: e[0], v: e[1] });
+            }
+          }
+          if (hasta === abre) {
+            alAbrir = { t: abre, s: e[0], v: e[1] };
+          }
+        }
+        return {
+          g: g,
+          k1: k1,
+          k2: k2,
+          abre: abre,
+          cierra: cierra,
+          apertura: datos.apertura,
+          duracion: datos.duracion,
+          paso: paso,
+          muestras: muestras,
+          peor: peor,
+          alAbrir: alAbrir,
+          deGolpe: alAbrir ? k2 * alAbrir.v * alAbrir.v - g : null
+        };
+      }
+
+      function estadoDeLaCaida(caida, t) {
+        var punto = entreMuestras(caida.muestras, t);
+        var instante = Math.max(0, Math.min(caida.duracion, t));
+        var km =
+          instante <= caida.abre
+            ? caida.k1
+            : instante >= caida.cierra
+              ? caida.k2
+              : caida.k1 + ((caida.k2 - caida.k1) * (instante - caida.abre)) / caida.apertura;
+        var aire = km * punto.v * punto.v;
+        return { t: instante, s: punto.s, v: punto.v, km: km, a: caida.g - aire, resistencia: aire / caida.g };
+      }
+
+      function fallosDeUnaRecta(m, b, puntos) {
+        var fallos = [];
+        for (var i = 0; i < puntos.length; i += 1) {
+          var p = puntos[i];
+          var izquierda = m * (p.x - p.dx) + b;
+          var derecha = m * (p.x + p.dx) + b;
+          if (Math.min(izquierda, derecha) > p.y + p.dy + 1e-12 || Math.max(izquierda, derecha) < p.y - p.dy - 1e-12) {
+            fallos.push(i);
+          }
+        }
+        return fallos;
+      }
+
+      function rectasExtremas(puntos) {
+        var esquinas = [];
+        puntos.forEach(function (p) {
+          esquinas.push([p.x - p.dx, p.y - p.dy], [p.x - p.dx, p.y + p.dy], [p.x + p.dx, p.y - p.dy], [p.x + p.dx, p.y + p.dy]);
+        });
+        var maxima = null;
+        var minima = null;
+        for (var i = 0; i < esquinas.length; i += 1) {
+          for (var j = i + 1; j < esquinas.length; j += 1) {
+            var xa = esquinas[i][0];
+            var ya = esquinas[i][1];
+            var xb = esquinas[j][0];
+            var yb = esquinas[j][1];
+            if (Math.abs(xb - xa) < 1e-12) {
+              continue;
+            }
+            var m = (yb - ya) / (xb - xa);
+            var b = ya - m * xa;
+            if (fallosDeUnaRecta(m, b, puntos).length > 0) {
+              continue;
+            }
+            if (maxima === null || m > maxima.m || (m === maxima.m && b > maxima.b)) {
+              maxima = { m: m, b: b };
+            }
+            if (minima === null || m < minima.m || (m === minima.m && b < minima.b)) {
+              minima = { m: m, b: b };
+            }
+          }
+        }
+        return { maxima: maxima, minima: minima };
+      }
+
+      function caidaConFotopuerta(alturas, tiempos, dh, dt) {
+        var puntos = alturas.map(function (h, i) {
+          var t = tiempos[i];
+          return { x: t * t, dx: 2 * t * dt, y: h, dy: dh, t: t, fraccionaria: (2 * dt) / t };
+        });
+        var ajuste = rectaDeAjuste(
+          puntos.map(function (p) {
+            return p.x;
+          }),
+          alturas,
+          false
+        );
+        var extremas = rectasExtremas(puntos);
+        var g = 2 * ajuste.m;
+        var dg = extremas.maxima && extremas.minima ? extremas.maxima.m - extremas.minima.m : null;
+        return {
+          puntos: puntos,
+          ajuste: ajuste,
+          maxima: extremas.maxima,
+          minima: extremas.minima,
+          g: g,
+          dg: dg,
+          escrita: dg !== null && dg > 0 ? escribirConIncertidumbre(g, dg) : null
+        };
+      }
+
       raiz.ModelosIB = {
         leerNumero: leerNumero,
         redondearCifras: redondearCifras,
@@ -13391,6 +14144,24 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         encuentroDeDosMoviles: encuentroDeDosMoviles,
         posicionesDeDosMoviles: posicionesDeDosMoviles,
         velocidadMedia: velocidadMedia,
+        graficasDelMovimiento: graficasDelMovimiento,
+        estadoDeLasGraficas: estadoDeLasGraficas,
+        velocidadDeLaAtleta: velocidadDeLaAtleta,
+        aceleracionDeLaAtleta: aceleracionDeLaAtleta,
+        curvaDeLaAtleta: curvaDeLaAtleta,
+        LETRAS_DEL_MOVIMIENTO: LETRAS_DEL_MOVIMIENTO,
+        ECUACIONES_DEL_MOVIMIENTO: ECUACIONES_DEL_MOVIMIENTO,
+        resolverElMovimiento: resolverElMovimiento,
+        pasoDeRungeKutta: pasoDeRungeKutta,
+        entreMuestras: entreMuestras,
+        tiroOblicuo: tiroOblicuo,
+        tiroConAire: tiroConAire,
+        puntoConAire: puntoConAire,
+        caidaConAire: caidaConAire,
+        estadoDeLaCaida: estadoDeLaCaida,
+        fallosDeUnaRecta: fallosDeUnaRecta,
+        rectasExtremas: rectasExtremas,
+        caidaConFotopuerta: caidaConFotopuerta,
         MOVIMIENTOS: MOVIMIENTOS
       };
     })(typeof window !== "undefined" ? window : globalThis);
@@ -13785,6 +14556,7 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         );
       }
 
+
       window.PiezasIB = {
         Trazo: Trazo,
         Velo: Velo,
@@ -13807,7 +14579,8 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         n1: n1
       };
 
-      window.InfografiasIB = {};
+      window.InfografiasIB = {
+      };
     })();
   </script>
 
@@ -14479,6 +15252,7 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         }
         return estacion;
       }
+
 
 
 
@@ -15622,6 +16396,69 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
         return (x0 ? deEnMedioTexIB(x0, c) : "") + lineal + cuadrado || "0";
       }
 
+      window.KitLaboratoriosIB = {
+        COLORES_IB: COLORES_IB,
+        partesDeNumeroIB: partesDeNumeroIB,
+        agruparMilesIB: agruparMilesIB,
+        numeroIB: numeroIB,
+        texIB: texIB,
+        igualIB: igualIB,
+        cifrasIB: cifrasIB,
+        escalaIB: escalaIB,
+        marcasIB: marcasIB,
+        EjesIB: EjesIB,
+        usarAvanceIB: usarAvanceIB,
+        FormulaVivaIB: FormulaVivaIB,
+        fijoIB: fijoIB,
+        fijoTexIB: fijoTexIB,
+        modelosIB: modelosIB,
+        VOLADOS_IB: VOLADOS_IB,
+        significativasIB: significativasIB,
+        significativasTexIB: significativasTexIB,
+        redondeadoIB: redondeadoIB,
+        redondeadoTexIB: redondeadoTexIB,
+        conParentesisTexIB: conParentesisTexIB,
+        terminoTexIB: terminoTexIB,
+        UnidadIB: UnidadIB,
+        unidadTexIB: unidadTexIB,
+        escribirDatoIB: escribirDatoIB,
+        CampoNumericoIB: CampoNumericoIB,
+        usarRelojIB: usarRelojIB,
+        MandosRelojIB: MandosRelojIB,
+        FlechaIB: FlechaIB,
+        puntoDelDibujoIB: puntoDelDibujoIB,
+        CifrasIB: CifrasIB,
+        EscalaIB: EscalaIB,
+        caminoIB: caminoIB,
+        PasosIB: PasosIB,
+        enteroOCifrasIB: enteroOCifrasIB,
+        enteroOCifrasTexIB: enteroOCifrasTexIB,
+        vectorTexIB: vectorTexIB,
+        vectorTextoIB: vectorTextoIB,
+        vectorParaUnidadTexIB: vectorParaUnidadTexIB,
+        vectorParaUnidadIB: vectorParaUnidadIB,
+        marcasDeTextoIB: marcasDeTextoIB,
+        valorRedondoIB: valorRedondoIB,
+        anchoDeRotuloIB: anchoDeRotuloIB,
+        RotuloIB: RotuloIB,
+        EscalaDeFlechaIB: EscalaDeFlechaIB,
+        colocadorIB: colocadorIB,
+        sitiosJuntoAIB: sitiosJuntoAIB,
+        TablaIB: TablaIB,
+        verFocoIB: verFocoIB,
+        ritmoIB: ritmoIB,
+        exactoOCifrasIB: exactoOCifrasIB,
+        exactoOCifrasTexIB: exactoOCifrasTexIB,
+        deEnMedioIB: deEnMedioIB,
+        deEnMedioTexIB: deEnMedioTexIB,
+        cuadraIB: cuadraIB,
+        cifrasDeEnMedioIB: cifrasDeEnMedioIB,
+        mayusculaIB: mayusculaIB,
+        enPalabrasIB: enPalabrasIB,
+        CasosIB: CasosIB,
+        posicionTexIB: posicionTexIB,
+      };
+
 
 
 
@@ -15637,6 +16474,44 @@ clase día a día, con la fecha de cada hoja de la libreta</p>
 
 
       window.LaboratoriosIB = {
+      };
+    })();
+  </script>
+
+  <script type="text/babel" data-presets="env,react">
+    (() => {
+      if (!window.React || !window.KitLaboratoriosIB || !window.LaboratoriosIB) {
+        return;
+      }
+
+
+      const kit = window.KitLaboratoriosIB;
+      const {
+        COLORES_IB, partesDeNumeroIB, agruparMilesIB, numeroIB, texIB, igualIB,
+        cifrasIB, escalaIB, marcasIB, EjesIB, usarAvanceIB, FormulaVivaIB,
+        fijoIB, fijoTexIB, modelosIB, VOLADOS_IB, significativasIB,
+        significativasTexIB, redondeadoIB, redondeadoTexIB, conParentesisTexIB,
+        terminoTexIB, UnidadIB, unidadTexIB, escribirDatoIB, CampoNumericoIB,
+        usarRelojIB, MandosRelojIB, FlechaIB, puntoDelDibujoIB, CifrasIB,
+        EscalaIB, caminoIB, PasosIB, enteroOCifrasIB, enteroOCifrasTexIB,
+        vectorTexIB, vectorTextoIB, vectorParaUnidadTexIB, vectorParaUnidadIB,
+        marcasDeTextoIB, valorRedondoIB, anchoDeRotuloIB, RotuloIB,
+        EscalaDeFlechaIB, colocadorIB, sitiosJuntoAIB, TablaIB, verFocoIB,
+        ritmoIB, exactoOCifrasIB, exactoOCifrasTexIB, deEnMedioIB,
+        deEnMedioTexIB, cuadraIB, cifrasDeEnMedioIB, mayusculaIB, enPalabrasIB,
+        CasosIB, posicionTexIB
+      } = kit;
+
+
+
+
+
+
+
+
+
+      window.LaboratoriosIB = {
+        ...window.LaboratoriosIB,
       };
     })();
   </script>
