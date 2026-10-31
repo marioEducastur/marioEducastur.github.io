@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="author" content="Mario Rodríguez Boya">
+  <meta name="copyright" content="© 2026 Mario Rodríguez Boya. Todos los derechos reservados.">
+  <title>Física IB — Nivel Superior</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --texto: #182033;
+      --texto-suave: #4b5568;
+      --fondo: #ffffff;
+      --fondo-suave: #f4f7fb;
+      --borde: #d6dce7;
+      --acento: #2557a7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      max-width: 68rem;
+      margin: 0 auto;
+      padding: clamp(2rem, 8vw, 6rem) clamp(1rem, 5vw, 3rem);
+      color: var(--texto);
+      background: var(--fondo);
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    header {
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      max-width: 18ch;
+      margin: 0 0 1rem;
+      color: #111827;
+      font-size: clamp(2.25rem, 7vw, 4.5rem);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      text-wrap: balance;
+    }
+
+    .subtitulo {
+      max-width: 48rem;
+      margin: 0;
+      color: var(--texto-suave);
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+    }
+
+    section {
+      padding: clamp(1.25rem, 4vw, 2rem);
+      border: 1px solid var(--borde);
+      border-radius: 0.75rem;
+      background: var(--fondo-suave);
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      color: #111827;
+      font-size: 1.6rem;
+    }
+
+    .lista-unidades {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .lista-unidades:empty {
+      display: none;
+    }
+
+    .sin-unidades {
+      margin: 0;
+      color: var(--texto-suave);
+    }
+
+    main > section + section {
+      margin-top: 1.5rem;
+    }
+
+    .tarjeta-recurso {
+      display: grid;
+      grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+      gap: 1.4rem;
+      align-items: center;
+      padding: 1.1rem 1.25rem;
+      border: 1px solid var(--borde);
+      border-radius: 0.75rem;
+      background: var(--fondo);
+      color: inherit;
+      font-weight: 400;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .tarjeta-recurso:hover,
+    .tarjeta-recurso:focus-visible {
+      border-color: var(--acento);
+      box-shadow: 0 14px 30px -18px rgb(37 87 167 / 0.55);
+      transform: translateY(-2px);
+    }
+
+    .mini-dibujo {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* «En clase» (desde el 30 de octubre de 2026, como en Química): el
+       diario de clase y cada unidad de «La clase», cada uno en su tarjeta,
+       una debajo de otra. */
+    .tarjetas-en-clase {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .recurso-titulo {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--acento);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .recurso-texto {
+      display: block;
+      color: var(--texto-suave);
+    }
+
+    @media (max-width: 560px) {
+      .tarjeta-recurso {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .lista-unidades:not(:empty) + .sin-unidades {
+      display: none;
+    }
+
+    a {
+      color: var(--acento);
+      font-weight: 650;
+      text-underline-offset: 0.16em;
+    }
+
+    .pie-autoria {
+      max-width: 46rem;
+      margin: 3.5rem auto 0;
+      padding: 1.1rem 1rem 0;
+      border-top: 1px solid var(--borde);
+      color: var(--texto-suave);
+      font-size: 0.84rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .pie-autoria p {
+      margin: 0;
+    }
+
+    .pie-autoria .firma-autoria {
+      margin-bottom: 0.3rem;
+      color: var(--texto);
+      font-weight: 700;
+    }
+
+    /* Al imprimir, ninguna tarjeta se parte entre dos hojas y el aviso no se
+       separa de la firma (paso 4, 30 de octubre de 2026). */
+    @media print {
+      body {
+        padding: 0;
+      }
+
+      header {
+        margin-bottom: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2.6rem;
+      }
+
+      section {
+        padding: 1rem 1.25rem;
+      }
+
+      /* En rejilla, Chrome pasa todas las tarjetas a la hoja siguiente en
+         cuanto una no cabe; una debajo de otra, solo la que no cabe. */
+      .tarjetas-en-clase {
+        display: block;
+      }
+
+      .tarjetas-en-clase > * + * {
+        margin-top: 1rem;
+      }
+
+      .tarjeta-recurso {
+        grid-template-columns: 10rem minmax(0, 1fr);
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+      }
+
+      .pie-autoria {
+        margin-top: 1.5rem;
+      }
+
+      .tarjeta-recurso,
+      .pie-autoria {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Física IB</h1>
+    <p class="subtitulo">
+      Apuntes y recursos de Física del Programa del Diploma del IB, Nivel
+      Superior, con los problemas resueltos y explicados paso a paso.
+    </p>
+  </header>
+
+  <main>
+    <section aria-labelledby="titulo-en-clase">
+      <h2 id="titulo-en-clase">En clase</h2>
+      <div class="tarjetas-en-clase">
+        <a class="tarjeta-recurso tarjeta-diario" href="diario_de_clase.html#ultima-clase">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#faf8ff" stroke="#d9cff8" stroke-width="1.5"/><circle cx="9" cy="15" r="2.4" fill="#d9cff8"/><circle cx="9" cy="36" r="2.4" fill="#d9cff8"/><circle cx="9" cy="58" r="2.4" fill="#d9cff8"/><circle cx="9" cy="79" r="2.4" fill="#d9cff8"/><path d="M19 4V90" stroke="#ddd6fe" stroke-width="1.2"/><rect x="23" y="70" width="151" height="19" rx="4" fill="#ede9fe"/><g font-size="7.5" font-weight="700" text-anchor="middle" fill="#4c1d95"><rect x="27" y="9" width="24" height="12" rx="3" fill="#c4b5fd"/><text x="39" y="17.7">jue</text><rect x="27" y="30" width="24" height="12" rx="3" fill="#c4b5fd"/><text x="39" y="38.7">vie</text><rect x="27" y="51" width="24" height="12" rx="3" fill="#c4b5fd"/><text x="39" y="59.7">mar</text><rect x="27" y="73" width="24" height="12" rx="3" fill="#c4b5fd"/><text x="39" y="81.7">vie</text></g><g fill="#c9d3e3"><rect x="57" y="10" width="80" height="4" rx="2"/><rect x="57" y="31" width="70" height="4" rx="2"/><rect x="57" y="52" width="86" height="4" rx="2"/><rect x="57" y="74" width="64" height="4" rx="2"/></g><g fill="#dde3ee"><rect x="57" y="16" width="52" height="4" rx="2"/><rect x="57" y="37" width="60" height="4" rx="2"/><rect x="57" y="58" width="44" height="4" rx="2"/><rect x="57" y="80" width="56" height="4" rx="2"/></g><g fill="none" stroke="#2f9e6e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M152 14l4 4l8 -9"/><path d="M152 35l4 4l8 -9"/><path d="M152 56l4 4l8 -9"/><path d="M152 78l4 4l8 -9"/></g></svg>
+          <span>
+            <span class="recurso-titulo">Diario de clase</span>
+            <span class="recurso-texto">Cada día de clase, con la fecha de su hoja de la libreta: qué se explicó, dónde se explica mejor y los ejercicios que se hicieron, con su solución paso a paso. Se abre en la última clase.</span>
+          </span>
+        </a>
+        <a class="tarjeta-recurso tarjeta-clase" href="unidad_00_la_clase_medidas_y_vectores.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#faf8ff" stroke="#d9cff8" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#e6e0fa" stroke-width="0.8"/><g fill="none" stroke="#c4b5fd" stroke-width="1.6" stroke-dasharray="3 3"><path d="M55 55L73 19M37 37L73 19"/></g><g fill="none" stroke="#6d28d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 73L55 55M48 54.8L55 55L50.9 60.7"/><path d="M19 73L37 37M31.3 41.1L37 37L37.2 44"/><path d="M19 73L73 19M65.3 21.3L73 19L70.7 26.7" stroke-width="2.8"/></g><circle cx="19" cy="73" r="2.6" fill="#6d28d9"/><rect x="100" y="66" width="68" height="18" rx="2.5" fill="#c4b5fd"/><path d="M106 66V74M112 66V70M118 66V70M124 66V70M130 66V74M136 66V70M142 66V70M148 66V70M154 66V74M160 66V70" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round"/><rect x="112" y="46" width="36" height="20" rx="2" fill="#ede9fe"/><g fill="none" stroke="#6d28d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="100" y="66" width="68" height="18" rx="2.5"/><rect x="112" y="46" width="36" height="20" rx="2"/><path d="M112 31V41M148 31V41M113 36H147M117 33L113 36L117 39M143 33L147 36L143 39" stroke-width="1.5"/></g></svg>
+          <span>
+            <span class="recurso-titulo">La clase I: medidas y vectores</span>
+            <span class="recurso-texto">Lo dado en clase, por temas y con sus ejercicios resueltos paso a paso: las magnitudes y sus unidades, las cifras significativas, las incertidumbres y los vectores. Cada subapartado dice dónde profundizar en los libros.</span>
+          </span>
+        </a>
+        <a class="tarjeta-recurso tarjeta-clase" href="unidad_01_la_clase_el_movimiento_con_vectores.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#f3fbfa" stroke="#bfe0db" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#dcefec" stroke-width="0.8"/><path d="M19 73Q60 72 95 20" fill="none" stroke="#7fcfc4" stroke-width="1.6" stroke-dasharray="3 3"/><g fill="none" stroke="#0f766e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 73L66 53.4M60.1 52.6L66 53.4L62.4 58.2"/><path d="M66 53.4L85.9 36.6M80 37.7L85.9 36.6L83.9 42.3" stroke-width="2.8"/></g><circle cx="19" cy="73" r="2.6" fill="#0f766e"/><circle cx="66" cy="53.4" r="2.6" fill="#0f766e"/><rect x="129" y="23" width="10" height="6" rx="1.5" fill="#7fcfc4"/><circle cx="134" cy="52" r="22" fill="#d5f0eb"/><g fill="none" stroke="#0f766e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="129" y="23" width="10" height="6" rx="1.5" stroke-width="1.5"/><circle cx="134" cy="52" r="22"/><path d="M134 34V38M152 52H148M134 70V66M116 52H120" stroke-width="1.5"/><path d="M134 52L143 42"/></g><circle cx="134" cy="52" r="2.2" fill="#0f766e"/></svg>
+          <span>
+            <span class="recurso-titulo">La clase II: el movimiento con vectores</span>
+            <span class="recurso-texto">Lo dado en clase, por temas y con sus ejercicios resueltos paso a paso: la posición y la trayectoria, el desplazamiento y la distancia recorrida, la velocidad media e instantánea y la aceleración, con sus componentes intrínsecas. Cada subapartado dice dónde profundizar en los libros.</span>
+          </span>
+        </a>
+        <a class="tarjeta-recurso tarjeta-clase" href="unidad_02_la_clase_los_movimientos.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#fdf1f3" stroke="#f0c9d0" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#f7dde2" stroke-width="0.8"/><path d="M24 22Q52 22 80 82" fill="none" stroke="#d95a6c" stroke-width="1.6" stroke-dasharray="3 3"/><g fill="none" stroke="#b4233a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22H24"/><path d="M8 84H96" stroke-width="1.5"/><path d="M24 22H39M34 18.5L39 22L34 25.5" stroke-width="1.8"/></g><g fill="#b4233a"><circle cx="24" cy="22" r="2.6"/><circle cx="38" cy="25.75" r="2.3"/><circle cx="52" cy="37" r="2.3"/><circle cx="66" cy="55.75" r="2.3"/><circle cx="80" cy="82" r="2.6"/></g><path d="M112 80V66L150 32V80Z" fill="#f4c9d1"/><g fill="none" stroke="#b4233a" stroke-linecap="round" stroke-linejoin="round"><path d="M112 82V22M110 80H170M108.5 26L112 22L115.5 26M166 76.5L170 80L166 83.5" stroke-width="1.5"/><path d="M112 66L150 32H166" stroke-width="2.4"/></g></svg>
+          <span>
+            <span class="recurso-titulo">La clase III: los movimientos</span>
+            <span class="recurso-texto">Lo dado en clase, por temas y con sus ejercicios resueltos paso a paso: el movimiento rectilíneo uniforme y los encuentros, el uniformemente acelerado y las frenadas, la caída libre, el tiro horizontal y la práctica de la rampa. Cada subapartado dice dónde profundizar en los libros.</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section aria-labelledby="titulo-unidades">
+      <h2 id="titulo-unidades">Unidades</h2>
+      <ul class="lista-unidades"></ul>
+      <p class="sin-unidades">Todavía no hay unidades del IB publicadas.</p>
+    </section>
+  </main>
+
+  <footer class="pie-autoria">
+    <p class="firma-autoria">© 2026 Mario Rodríguez Boya. Todos los derechos reservados.</p>
+    <p>
+      Estos apuntes son para consultarlos y estudiar con ellos. No se
+      permite reproducirlos, distribuirlos, publicarlos ni transformarlos,
+      total o parcialmente, sin autorización expresa del autor.
+    </p>
+  </footer>
+</body>
+</html>
