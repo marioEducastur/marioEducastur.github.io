@@ -69,23 +69,43 @@
       font-size: 1.6rem;
     }
 
+    /* Las unidades del IB, cada una en su tarjeta con su dibujo, como las
+       de «En clase», con antetítulo, título, resumen y fichas (1 de
+       noviembre de 2026). El dibujo va en el tono de los interactivos de su
+       unidad y sale de su teoría. */
     .lista-unidades {
-      margin: 0;
-      padding-left: 1.25rem;
+      display: grid;
+      gap: 1rem;
     }
 
     .lista-unidades:empty {
       display: none;
     }
-    .lista-unidades li {
-      margin: 0 0 1rem;
-    }
-    .lista-unidades li:last-child {
-      margin-bottom: 0;
-    }
-    .resumen-unidad {
+
+    .antetitulo {
       display: block;
+      margin-bottom: 0.15rem;
       color: var(--texto-suave);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .fichas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.7rem;
+    }
+
+    .fichas span {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: #e3edfd;
+      color: #1e40af;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
 
     .sin-unidades {
@@ -183,6 +203,54 @@
       color: var(--texto);
       font-weight: 700;
     }
+
+    /* Al imprimir, ninguna tarjeta se parte entre dos hojas y el aviso no se
+       separa de la firma (1 de noviembre de 2026, con las tarjetas de las
+       unidades). */
+    @media print {
+      body {
+        padding: 0;
+      }
+
+      header {
+        margin-bottom: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2.6rem;
+      }
+
+      section {
+        padding: 1rem 1.25rem;
+      }
+
+      /* En rejilla, Chrome pasa todas las tarjetas a la hoja siguiente en
+         cuanto una no cabe; una debajo de otra, solo la que no cabe. */
+      .tarjetas-en-clase,
+      .lista-unidades {
+        display: block;
+      }
+
+      .tarjetas-en-clase > * + *,
+      .lista-unidades > * + * {
+        margin-top: 1rem;
+      }
+
+      .tarjeta-recurso {
+        grid-template-columns: 10rem minmax(0, 1fr);
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+      }
+
+      .pie-autoria {
+        margin-top: 1.5rem;
+      }
+
+      .tarjeta-recurso,
+      .pie-autoria {
+        break-inside: avoid;
+      }
+    }
   </style>
 </head>
 <body>
@@ -217,20 +285,35 @@
 
     <section aria-labelledby="titulo-unidades">
       <h2 id="titulo-unidades">Unidades</h2>
-      <ul class="lista-unidades">
-        <li>
-          <a href="unidad_01_naturaleza_corpuscular.html">Unidad 1: Modelos de la naturaleza corpuscular de la materia</a>
-          <span class="resumen-unidad">Estructura 1: mezclas y estados, el átomo nuclear, configuraciones electrónicas, el mol y los gases ideales.</span>
-        </li>
-        <li>
-          <a href="unidad_02_enlace_y_estructura.html">Unidad 2: Modelos del enlace y de la estructura</a>
-          <span class="resumen-unidad">Estructura 2: los modelos iónico, covalente y metálico, y de los modelos a los materiales.</span>
-        </li>
-        <li>
-          <a href="unidad_03_clasificacion_de_la_materia.html">Unidad 3: Clasificación de la materia</a>
-          <span class="resumen-unidad">Estructura 3: la tabla periódica y los grupos funcionales.</span>
-        </li>
-      </ul>
+      <div class="lista-unidades">
+        <a class="tarjeta-recurso tarjeta-unidad" href="unidad_01_naturaleza_corpuscular.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#faf8ff" stroke="#d9cff8" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#e6e0fa" stroke-width="0.8"/><g fill="none" stroke="#6d28d9" stroke-width="1.3"><circle cx="46" cy="47" r="15"/><circle cx="46" cy="47" r="31"/></g><g fill="#ede9fe" stroke="#6d28d9" stroke-width="0.8"><circle cx="47.24" cy="47" r="1.45"/><circle cx="46.24" cy="44.24" r="1.45"/><circle cx="42.34" cy="46.35" r="1.45"/><circle cx="44.84" cy="51.31" r="1.45"/><circle cx="50.79" cy="48.75" r="1.45"/><circle cx="48.4" cy="41.86" r="1.45"/></g><g fill="#6d28d9"><circle cx="44.42" cy="48.45" r="1.75"/><circle cx="47.99" cy="49.6" r="1.75"/><circle cx="49.46" cy="44.8" r="1.75"/><circle cx="43.79" cy="42.75" r="1.75"/><circle cx="41.01" cy="49.06" r="1.75"/><circle cx="47.78" cy="52.66" r="1.75"/></g><g fill="#6d28d9" stroke="#faf8ff" stroke-width="1.2"><circle cx="33.01" cy="39.5" r="2.7"/><circle cx="58.99" cy="54.5" r="2.7"/><circle cx="67.92" cy="25.08" r="2.7"/><circle cx="24.08" cy="25.08" r="2.7"/><circle cx="24.08" cy="68.92" r="2.7"/><circle cx="67.92" cy="68.92" r="2.7"/></g><rect x="113" y="40" width="50" height="43" fill="#ede9fe"/><rect x="113.5" y="33" width="49" height="7" rx="1.5" fill="#c4b5fd" stroke="#6d28d9" stroke-width="1.5"/><g fill="none" stroke="#6d28d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M112 24V84H164V24"/><path d="M138 33V12M129 12H147"/></g><g fill="#6d28d9"><circle cx="121" cy="49" r="2.3"/><circle cx="140" cy="52" r="2.3"/><circle cx="155" cy="47" r="2.3"/><circle cx="128" cy="63" r="2.3"/><circle cx="151" cy="65" r="2.3"/><circle cx="118" cy="76" r="2.3"/><circle cx="137" cy="76" r="2.3"/><circle cx="157" cy="78" r="2.3"/></g><path d="M123.98 47.36L129.32 44.42M128.06 46.69L129.32 44.42L126.73 44.28M152.82 49.61L148.92 54.3M149.27 51.72L148.92 54.3L151.39 53.49M124.9 64.4L119.34 66.9M120.78 64.74L119.34 66.9L121.91 67.25M152.4 61.9L154.9 56.34M155.25 58.91L154.9 56.34L152.74 57.78M140.36 76.5L146.39 77.41M144.01 78.44L146.39 77.41L144.42 75.72" fill="none" stroke="#6d28d9" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>
+            <span class="antetitulo">Unidad 1 · Estructura 1</span>
+            <span class="recurso-titulo">Modelos de la naturaleza corpuscular de la materia</span>
+            <span class="recurso-texto">Mezclas y estados, el átomo nuclear, configuraciones electrónicas, el mol y los gases ideales.</span>
+            <span class="fichas"><span>2 laboratorios</span><span>3 infografías</span><span>Lo esencial interactivo</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-recurso tarjeta-unidad" href="unidad_02_enlace_y_estructura.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#f3fbfa" stroke="#bfe0db" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#dcefec" stroke-width="0.8"/><path d="M20 38L58 38M20 57L58 57M20 76L58 76M20 38L20 76M39 38L39 76M58 38L58 76M31 30.5L69 30.5M31 49.5L69 49.5M31 68.5L69 68.5M31 30.5L31 68.5M50 30.5L50 68.5M69 30.5L69 68.5M42 23L80 23M42 42L80 42M42 61L80 61M42 23L42 61M61 23L61 61M80 23L80 61M20 38L42 23M20 57L42 42M20 76L42 61M39 38L61 23M39 57L61 42M39 76L61 61M58 38L80 23M58 57L80 42M58 76L80 61" stroke="#7fcfc4" stroke-width="1.1"/><circle cx="42" cy="23" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="61" cy="23" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="80" cy="23" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="42" cy="42" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="61" cy="42" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="80" cy="42" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="42" cy="61" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="61" cy="61" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="80" cy="61" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="31" cy="30.5" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="50" cy="30.5" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="69" cy="30.5" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="31" cy="49.5" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="50" cy="49.5" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="69" cy="49.5" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="31" cy="68.5" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="50" cy="68.5" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="69" cy="68.5" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="20" cy="38" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="39" cy="38" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="58" cy="38" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="20" cy="57" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="39" cy="57" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="58" cy="57" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="20" cy="76" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><circle cx="39" cy="76" r="2.8" fill="#0f766e" stroke="#f3fbfa" stroke-width="0.8"/><circle cx="58" cy="76" r="4.7" fill="#7fcfc4" stroke="#0f766e" stroke-width="1.2"/><path d="M116 82L135.5 82L125.75 60.4Z" fill="#d5f0eb"/><path d="M125.75 60.4L142 24.4L148.5 38.8L132.25 74.8Z" fill="#7fcfc4"/><path d="M132.25 74.8L148.5 38.8L168 82L135.5 82Z" fill="#aadfd7"/><path d="M135.5 82L125.75 60.4M132.25 74.8L148.5 38.8" stroke="#0f766e" stroke-width="1"/><g fill="none" stroke="#0f766e" stroke-linecap="round" stroke-linejoin="round"><path d="M112 84L112 13M114.55 15.55L112 13L109.45 15.55" stroke-width="1.5"/><path d="M110 82L175 82M172.45 84.55L175 82L172.45 79.45" stroke-width="1.5"/><path d="M116 82L142 24.4L168 82Z" stroke-width="2.2"/></g><g fill="#0f766e"><circle cx="116" cy="82" r="2.4"/><circle cx="142" cy="24.4" r="2.4"/><circle cx="168" cy="82" r="2.4"/></g></svg>
+          <span>
+            <span class="antetitulo">Unidad 2 · Estructura 2</span>
+            <span class="recurso-titulo">Modelos del enlace y de la estructura</span>
+            <span class="recurso-texto">Los modelos iónico, covalente y metálico, y de los modelos a los materiales.</span>
+            <span class="fichas"><span>2 laboratorios</span><span>3 infografías</span><span>Lo esencial interactivo</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-recurso tarjeta-unidad" href="unidad_03_clasificacion_de_la_materia.html">
+          <svg class="mini-dibujo" viewBox="0 0 179 94" aria-hidden="true" focusable="false"><rect x="0.75" y="0.75" width="177.5" height="92.5" rx="6" fill="#f2f7ff" stroke="#c6dafc" stroke-width="1.5"/><path d="M4 19H175M4 37H175M4 55H175M4 73H175M19 4V90M37 4V90M55 4V90M73 4V90M91 4V90M109 4V90M127 4V90M145 4V90M163 4V90" stroke="#dde8fb" stroke-width="0.8"/><rect x="7" y="26" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="92" y="26" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="7" y="31" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="31" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="31" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="7" y="36" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="36" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="36" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="7" y="41" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="41" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="41" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="7" y="46" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="46" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="46" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="7" y="51" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="51" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="51" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="7" y="56" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="12" y="56" width="4.3" height="4.3" rx="0.9" fill="#1d4ed8"/><rect x="67" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="72" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="77" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="82" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="87" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="92" y="56" width="4.3" height="4.3" rx="0.9" fill="#5f8ff0"/><rect x="17" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="22" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="27" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="32" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="37" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="42" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="47" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="52" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="57" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="62" y="41" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="17" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="22" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="27" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="32" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="37" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="42" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="47" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="52" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="57" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="62" y="46" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="17" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="22" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="27" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="32" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="37" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="42" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="47" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="52" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="57" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="62" y="51" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="17" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="22" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="27" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="32" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="37" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="42" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="47" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="52" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="57" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="62" y="56" width="4.3" height="4.3" rx="0.9" fill="#a3c0f7"/><rect x="22" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="27" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="32" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="37" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="42" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="47" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="52" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="57" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="62" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="67" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="72" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="77" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="82" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="87" y="63.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="22" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="27" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="32" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="37" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="42" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="47" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="52" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="57" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="62" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="67" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="72" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="77" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="82" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><rect x="87" y="68.4" width="4.3" height="4.3" rx="0.9" fill="#cfe0fc"/><g font-size="7" font-weight="700" text-anchor="middle" fill="#1d4ed8"><text x="14.15" y="23.8">s</text><text x="41.65" y="38.8">d</text><text x="81.65" y="28.8">p</text><text x="19.15" y="72.1">f</text></g><ellipse cx="113.2" cy="44.2" rx="12" ry="8.8" fill="#d6e6fd" stroke="#93b8f5" stroke-width="1.2" stroke-dasharray="2.6 2"/><text x="119.9" y="47.5" font-size="9.2" font-weight="700" text-anchor="end" fill="#1d4ed8">HO</text><path d="M120.83 46.7L130 52L143.5 44.2L157 52L170.5 44.2M157 52V68" fill="none" stroke="#1d4ed8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>
+            <span class="antetitulo">Unidad 3 · Estructura 3</span>
+            <span class="recurso-titulo">Clasificación de la materia</span>
+            <span class="recurso-texto">La tabla periódica y los grupos funcionales.</span>
+            <span class="fichas"><span>2 laboratorios</span><span>3 infografías</span><span>Lo esencial interactivo</span><span>Apuntes y soluciones en PDF</span></span>
+          </span>
+        </a>
+      </div>
     </section>
 
     <section aria-labelledby="titulo-recursos">
