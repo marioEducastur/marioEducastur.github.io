@@ -14801,6 +14801,164 @@ Enfoques NS</p>
         );
       }
 
+
+      function FronterasUvesInfografia({ configuracion, alPreparar }) {
+        const x = cursiva("x");
+        const y = cursiva("y");
+        const eje = 232;
+        const px = (valor) => 40 + 48 * (valor + 1.6);
+        const py = (valor) => eje - 17 * valor;
+        const punto = (u, v) => n1(px(u)) + " " + n1(py(v));
+        const primera = (u) => Math.abs(2 * u - 7);
+        const segunda = (u) => Math.abs(u + 1);
+        const uvePrimera = "M" + punto(-1.6, primera(-1.6)) + "L" + punto(3.5, 0) + "L" + punto(9.5, 12);
+        const uveSegunda = "M" + punto(-1.6, segunda(-1.6)) + "L" + punto(-1, 0) + "L" + punto(10, 11);
+        const encima1 =
+          "M" + punto(-1.6, primera(-1.6)) + "L" + punto(2, 3) + "L" + punto(-1, 0) + "L" + punto(-1.6, segunda(-1.6)) + "Z";
+        const encima2 = "M" + punto(8, 9) + "L" + punto(9.5, 12) + "L" + punto(9.5, segunda(9.5)) + "Z";
+        const fronteras = [
+          [2, 3, 2.9],
+          [8, 9, 3.2]
+        ];
+        const pruebas = [
+          [0, 5, "7 ≥ 1", "cierto"],
+          [5, 5.8, "3 ≥ 6", "falso"],
+          [9, 6.6, "11 ≥ 10", "cierto"]
+        ];
+
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="oliva"
+            titulo="Las fronteras, en la gráfica"
+            duracion={8.6}
+            alto="330"
+            descripcion={
+              "Arriba, la inecuación valor absoluto de 2x menos 7 mayor o igual que valor absoluto de x " +
+              "más 1. La uve y igual al valor absoluto de 2x menos 7, con el vértice en x igual a 7 " +
+              "medios, y la uve y igual al valor absoluto de x más 1, con el vértice en x igual a menos " +
+              "1. Se cortan en los puntos 2, 3 y 8, 9: sus abscisas, 2 y 8, son las fronteras, y parten " +
+              "el eje x en tres tramos. En cada tramo, una línea vertical marca un número de prueba y " +
+              "las alturas de las dos uves: en x igual a 0, 7 y 1, y 7 mayor o igual que 1 es cierto; " +
+              "en x igual a 5, 3 y 6, y 3 mayor o igual que 6 es falso; en x igual a 9, 11 y 10, y 11 " +
+              "mayor o igual que 10 es cierto. Quedan sombreadas las zonas en que la primera uve va " +
+              "por encima de la segunda, y resaltados en el eje los tramos hasta 2 y desde 8, con sus " +
+              "extremos. Debajo, la solución: x menor o igual que 2 o x mayor o igual que 8."
+            }
+            texto={
+              <>
+                Las fronteras son los cortes de las dos uves. Entre dos cortes, una uve va siempre por encima
+                de la otra: por eso un número de prueba decide el tramo entero.
+              </>
+            }
+            rotulos={
+              <g>
+                <Rotulo t={0.1} x="320" y="34" fontSize="22">
+                  |2{x} − 7| ≥ |{x} + 1|
+                </Rotulo>
+                <Rotulo t={0.6} x="628" y="256" fontSize="19" opacity="0.9">
+                  {x}
+                </Rotulo>
+                <Rotulo t={1.4} x="84" y="66" fontSize="18" textAnchor="start">
+                  {y} = |2{x} − 7|
+                </Rotulo>
+                <Rotulo como="g" t={1.5} opacity="0.7">
+                  <Quebrado x={px(3.5)} y={262} s={16} ancho={11} arriba="7" abajo="2" />
+                </Rotulo>
+                <Rotulo t={2.2} x="245" y="134" fontSize="18">
+                  {y} = |{x} + 1|
+                </Rotulo>
+                <Rotulo t={2.3} x={n1(px(-1))} y="256" fontSize="17" opacity="0.7">
+                  −1
+                </Rotulo>
+                <Rotulo t={3.05} x="240" y="191" fontSize="16" fontWeight="700" textAnchor="start">
+                  (2; 3)
+                </Rotulo>
+                <Rotulo t={3.35} x="486" y="62" fontSize="16" fontWeight="700" textAnchor="end">
+                  (8; 9)
+                </Rotulo>
+                {fronteras.map(([u], orden) => (
+                  <g key={u}>
+                    <Rotulo t={4 + 0.1 * orden} x={n1(px(u))} y="256" fontSize="17" fontWeight="700">
+                      {u}
+                    </Rotulo>
+                    <Rotulo t={4.3 + 0.1 * orden} x={n1(px(u) - 6)} y="221" fontSize="16" textAnchor="end">
+                      {palabra("frontera")}
+                    </Rotulo>
+                  </g>
+                ))}
+                {pruebas.map(([u, t, cuenta, dice]) => (
+                  <g key={u}>
+                    <Rotulo t={t} x={n1(px(u))} y="256" fontSize="17">
+                      {u}
+                    </Rotulo>
+                    <Rotulo t={t + 0.35} x={n1(px(u))} y="282" fontSize="16">
+                      {cuenta}, {palabra(dice, true)}
+                    </Rotulo>
+                  </g>
+                ))}
+                <Rotulo t={8} x="320" y="318" fontSize="21">
+                  {palabra("solución:")}
+                  {HUECO}
+                  <tspan fontWeight="700">
+                    {x} ≤ 2 {palabra("o", true)} {x} ≥ 8
+                  </tspan>
+                </Rotulo>
+              </g>
+            }
+          >
+            <Velo t={7.4} d={encima1} fill="#fff" fillOpacity="0.22" stroke="none" />
+            <Velo t={7.5} d={encima2} fill="#fff" fillOpacity="0.22" stroke="none" />
+            <Trazo t={0.2} dura={0.45} d={"M14 " + eje + "H620"} strokeOpacity="0.9" />
+            <Velo t={0.6} d={"M612 " + (eje - 6) + "l10 6l-10 6"} strokeOpacity="0.9" />
+            <Halo t={0.6} dura={1} d={uvePrimera} grosor={2.6} />
+            <Trazo t={1.6} dura={0.8} d={uveSegunda} strokeWidth="2.2" strokeOpacity="0.95" />
+            {fronteras.map(([u, v], orden) => (
+              <Velo
+                key={u}
+                t={3.8 + 0.1 * orden}
+                d={"M" + n1(px(u)) + " " + n1(py(v) + 8) + "V" + eje}
+                strokeOpacity="0.6"
+                strokeWidth="1.3"
+                strokeDasharray="1.5 5"
+              />
+            ))}
+            {pruebas.map(([u, t]) => (
+              <Trazo
+                key={u}
+                t={t}
+                dura={0.35}
+                d={"M" + n1(px(u)) + " " + eje + "V" + n1(py(Math.max(primera(u), segunda(u))))}
+                strokeOpacity="0.6"
+                strokeWidth="1.4"
+              />
+            ))}
+            <Trazo t={7.6} dura={0.3} d={"M18 " + eje + "H" + n1(px(2))} strokeOpacity="0.22" strokeWidth="14" strokeLinecap="butt" />
+            <Trazo t={7.6} dura={0.3} d={"M18 " + eje + "H" + n1(px(2))} strokeWidth="5" strokeLinecap="butt" />
+            <Trazo t={7.8} dura={0.3} d={"M" + n1(px(8)) + " " + eje + "H606"} strokeOpacity="0.22" strokeWidth="14" strokeLinecap="butt" />
+            <Trazo t={7.8} dura={0.3} d={"M" + n1(px(8)) + " " + eje + "H606"} strokeWidth="5" strokeLinecap="butt" />
+            {fronteras.map(([u, v, t], orden) => (
+              <g key={u}>
+                <Punto t={t} cx={px(u)} cy={py(v)} r="11" fillOpacity="0.26" />
+                <Punto t={t} cx={px(u)} cy={py(v)} r="5.6" />
+                <Punto t={4 + 0.1 * orden} cx={px(u)} cy={eje} r="4.5" />
+              </g>
+            ))}
+            {pruebas.map(([u, t]) => (
+              <g key={u}>
+                <Punto t={t + 0.25} cx={px(u)} cy={py(primera(u))} r="4.2" />
+                <Punto t={t + 0.25} cx={px(u)} cy={py(segunda(u))} r="4.2" />
+              </g>
+            ))}
+            {fronteras.map(([u]) => (
+              <Punto key={u} t={7.7} cx={px(u)} cy={eje} r="6" stroke="#fff" strokeWidth="2" />
+            ))}
+            <Luz t={0.6} dura={1} d={uvePrimera} />
+          </InfografiaIB>
+        );
+      }
+
       window.PiezasIB = {
         Trazo: Trazo,
         Velo: Velo,
@@ -14843,7 +15001,8 @@ Enfoques NS</p>
         "infografia-raices-coeficientes": RaicesCoeficientesInfografia,
         "infografia-grafica-ceros": GraficaCerosInfografia,
         "infografia-por-encima": PorEncimaInfografia,
-        "infografia-solucion-sobra": SolucionSobraInfografia
+        "infografia-solucion-sobra": SolucionSobraInfografia,
+        "infografia-fronteras-uves": FronterasUvesInfografia
       };
     })();
   </script>
