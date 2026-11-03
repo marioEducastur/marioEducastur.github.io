@@ -3141,6 +3141,79 @@
       }
     }
 
+    @media screen {
+      section.dia-de-clase[data-tono="azul"] { --apartado: #1d4ed8; --apartado-suave: #eaf1ff; }
+      section.dia-de-clase[data-tono="violeta"] { --apartado: #6d28d9; --apartado-suave: #f4efff; }
+      section.dia-de-clase[data-tono="turquesa"] { --apartado: #0f766e; --apartado-suave: #e6f5f3; }
+      section.dia-de-clase[data-tono="granate"] { --apartado: #b4233a; --apartado-suave: #fdeef1; }
+      section.dia-de-clase[data-tono="ambar"] { --apartado: #9a4e05; --apartado-suave: #fff5e5; }
+      section.dia-de-clase[data-tono="rosa"] { --apartado: #d02670; --apartado-suave: #fdf0f7; }
+
+      #contenido-unidad section.dia-de-clase > h3 {
+        color: var(--apartado);
+      }
+
+      #contenido-unidad section.dia-de-clase section.level4 > h4:not(.ejercicios) {
+        padding-bottom: 0;
+        color: #27466f;
+        border-bottom: 0;
+        font-size: 1.13rem;
+        font-weight: 700;
+      }
+
+      #contenido-unidad a.tema-del-dia {
+        display: inline-block;
+        margin: 0 0.4rem 0.3rem 0;
+        padding: 0.2rem 0.8rem;
+        color: var(--apartado, var(--acento));
+        background: var(--apartado-suave, var(--acento-suave));
+        border-radius: 999px;
+        font-size: 0.88rem;
+        font-weight: 750;
+        text-decoration: none;
+      }
+
+      #contenido-unidad a.remision {
+        padding: 0.05rem 0.55rem;
+        color: var(--apartado, var(--acento-oscuro));
+        background: var(--superficie);
+        border: 1px solid var(--borde);
+        border-radius: 999px;
+        font-size: 0.86em;
+        font-weight: 650;
+        text-decoration: none;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
+
+      #contenido-unidad a.en-su-unidad {
+        margin-left: 0.3rem;
+        padding: 0.05rem 0.55rem;
+        color: var(--texto-suave);
+        background: var(--apartado-suave, var(--acento-suave));
+        border-radius: 999px;
+        font-size: 0.8em;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      #contenido-unidad a.ir-a-la-ultima {
+        display: inline-block;
+        padding: 0.35rem 0.95rem;
+        color: #ffffff;
+        background: var(--acento);
+        border-radius: 1rem;
+        font-weight: 750;
+        text-decoration: none;
+      }
+
+      #contenido-unidad :is(a.tema-del-dia, a.remision, a.en-su-unidad, a.ir-a-la-ultima):is(:hover, :focus-visible) {
+        text-decoration: underline;
+        text-underline-offset: 0.16em;
+      }
+    }
+
     .tabla-ruffini {
       margin: 0.6rem auto;
       border-collapse: collapse;
@@ -3278,6 +3351,23 @@
       font-size: 1.6rem;
     }
 
+    .fichas-formulador button:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .fichas-formulador button:disabled:hover {
+        color: var(--acento-oscuro);
+        border-color: #cbd8e8;
+        background: #ffffff;
+        box-shadow: none;
+        transform: none;
+      }
+    }
+
     .selector-ib select {
       width: 100%;
       padding: 0.35rem 0.5rem;
@@ -3286,6 +3376,70 @@
       background: var(--superficie);
       border: 1px solid var(--borde);
       border-radius: 0.5rem;
+    }
+
+    .zona-grafica.zona-espejo-ib svg.grafica-ib {
+      min-width: 0;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .zona-espejo-ib .se-desliza-ib {
+      transition: transform 0.7s ease;
+    }
+
+    .zona-espejo-ib .se-desvanece-ib {
+      transition: opacity 0.45s ease;
+    }
+
+    .zona-grafica.zona-exactitud-ib {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+      gap: 0.6rem 1.2rem;
+      align-items: start;
+    }
+
+    .zona-grafica.zona-exactitud-ib svg.grafica-ib {
+      min-width: 0;
+      max-width: 24rem;
+      margin: 0 auto;
+    }
+
+    .zona-exactitud-ib .cae-ib {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: cae-el-dardo-ib 0.4s ease-out;
+    }
+
+    @keyframes cae-el-dardo-ib {
+      from {
+        opacity: 0;
+        transform: scale(2.6);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .acciones-exactitud-ib button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    @media (hover: hover) {
+      .acciones-exactitud-ib button:disabled:hover {
+        background: var(--acento);
+        box-shadow: none;
+        transform: none;
+      }
+
+      .acciones-exactitud-ib button.secundario:disabled:hover {
+        color: var(--acento-oscuro);
+        background: #e5edf9;
+      }
     }
 
     .infografia-ib {
@@ -3687,6 +3841,57 @@
     @keyframes ib-garabato {
       from { stroke-dashoffset: 100; }
       to { stroke-dashoffset: 0; }
+    }
+
+    .lienzo-infografia-ib :is(.e-giro, .e-amago-giro, .e-sube-baja, .e-amago-sube) {
+      animation-play-state: paused;
+      animation-fill-mode: both;
+      animation-delay: calc(var(--t, 0s) - var(--ahora, 99s));
+      animation-duration: var(--d, 1s);
+      animation-timing-function: ease-in-out;
+    }
+
+    .lienzo-infografia-ib :is(.e-giro, .e-amago-giro) {
+      transform-box: view-box;
+    }
+
+    .lienzo-infografia-ib .e-giro {
+      animation-name: ib-giro;
+    }
+
+    .lienzo-infografia-ib .e-amago-giro {
+      animation-name: ib-amago-giro;
+    }
+
+    .lienzo-infografia-ib .e-sube-baja {
+      animation-name: ib-sube-baja;
+    }
+
+    .lienzo-infografia-ib .e-amago-sube {
+      animation-name: ib-amago-sube;
+    }
+
+    @keyframes ib-giro {
+      from { transform: scaleY(1); }
+      to { transform: scaleY(-1); }
+    }
+
+    @keyframes ib-amago-giro {
+      0%, 100% { transform: scaleY(1); }
+      45% { transform: scaleY(0.4); }
+      60% { transform: scaleY(0.5); }
+    }
+
+    @keyframes ib-sube-baja {
+      from { transform: translateY(0px); opacity: 1; }
+      50% { opacity: 0.12; }
+      to { transform: translateY(var(--dy, 0px)); opacity: 1; }
+    }
+
+    @keyframes ib-amago-sube {
+      0%, 100% { transform: translateY(0px); }
+      45% { transform: translateY(calc(var(--dy, 0px) * 0.3)); }
+      60% { transform: translateY(calc(var(--dy, 0px) * 0.25)); }
     }
 
     .resumen-ib {
@@ -4749,19 +4954,8 @@ Estructura 1</p>
           class="toc-section-number">6</span> Lo esencial</a></li>
           </ul>
         </nav>
-                <div class="descargas-unidad">
-          <p class="titulo-indice">En PDF</p>
-          <div class="fila-descargas">
-                        <a class="pastilla-descarga apuntes" href="salida/Qui_IB_Naturaleza_corpuscular.pdf" target="_blank" rel="noopener" aria-label="Apuntes de la unidad en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Apuntes</span></a>
-                                    <a class="pastilla-descarga soluciones" href="salida/Qui_IB_Naturaleza_corpuscular_soluciones.pdf" target="_blank" rel="noopener" aria-label="Soluciones de los ejercicios en PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones</span></a>
-                      </div>
-        </div>
               </aside>
-                  <div class="descargas-movil">
-                <a class="pastilla-descarga apuntes" href="salida/Qui_IB_Naturaleza_corpuscular.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Apuntes en PDF</span></a>
-                        <a class="pastilla-descarga soluciones" href="salida/Qui_IB_Naturaleza_corpuscular_soluciones.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg><span>Soluciones en PDF</span></a>
-              </div>
-      
+            
       <main
         id="contenido-unidad"
         tabindex="-1"
@@ -10048,7 +10242,7 @@ Estructura 1</p>
         );
       }
       var TOPE_DE_ENCOGER = 60;
-      function encogerCuentas(caja) {
+      function encogerCuentas(caja, salvo) {
         if (quieta(caja)) {
           return;
         }
@@ -10058,6 +10252,9 @@ Estructura 1</p>
           parseFloat(estilo.borderLeftWidth) +
           parseFloat(estilo.paddingLeft);
         Array.prototype.forEach.call(caja.querySelectorAll(".math.display"), function (cuenta) {
+          if (salvo && cuenta.closest(salvo)) {
+            return;
+          }
           var dentro = cuenta.querySelector(".katex-display");
           if (!dentro) {
             return;
@@ -10202,10 +10399,19 @@ Estructura 1</p>
           deslizarLasQueNoCaben(caja);
         });
       }
+      function encogerLosEnunciados() {
+        Array.prototype.forEach.call(
+          contenido.querySelectorAll("section.ejercicios > ol > li"),
+          function (enunciado) {
+            encogerCuentas(enunciado, ".sol-pasos, .sol-chip");
+          }
+        );
+      }
       function encogerLasAbiertas() {
         if (htmlRaiz.classList.contains("ampliando")) {
           return;
         }
+        encogerLosEnunciados();
         unidades.forEach(function (unidad) {
           ["pasos", "chip"].forEach(function (que) {
             var caja = unidad[que];
@@ -13845,7 +14051,8 @@ Estructura 1</p>
         caja: caja,
         abanico: abanico,
         cuando: cuando,
-        n1: n1
+        n1: n1,
+        caminosDeEnlaces: caminosDeEnlaces
       };
 
 
@@ -14829,6 +15036,600 @@ Estructura 1</p>
         );
       }
 
+
+      const TINTA_AMBAR = "#5c2f04";
+
+      function trozosDeGrupo(rotulo) {
+        return rotulo.match(/[A-Za-z()]+|[0-9]+/g) || [];
+      }
+
+      function GrupoQuimico({ rotulo }) {
+        return (
+          <tspan>
+            {trozosDeGrupo(rotulo).map((trozo, orden) =>
+              /[0-9]/.test(trozo) ? <Sub key={orden}>{trozo}</Sub> : <tspan key={orden}>{trozo}</tspan>
+            )}
+          </tspan>
+        );
+      }
+
+      function anchoDeGrupo(rotulo, cuerpo) {
+        let total = 0;
+        trozosDeGrupo(rotulo).forEach((trozo) => {
+          if (/[0-9]/.test(trozo)) {
+            total += 0.34 * trozo.length;
+            return;
+          }
+          for (const letra of trozo) {
+            total += /[A-Z]/.test(letra) ? 0.74 : letra === "(" || letra === ")" ? 0.39 : 0.5;
+          }
+        });
+        return total * cuerpo;
+      }
+
+      function caminosDeEnlaces(grupos, enlaces, cuerpo) {
+        return enlaces.map(([a, b, orden]) => {
+          const [x1, y1, r1] = grupos[a];
+          const [x2, y2, r2] = grupos[b];
+          const horizontal = Math.abs(x2 - x1) > Math.abs(y2 - y1);
+          const huecos = orden === 2 ? [-3.2, 3.2] : orden === 3 ? [-4.6, 0, 4.6] : [0];
+          return huecos
+            .map((s) => {
+              let tramo;
+              if (horizontal) {
+                const sentido = x2 > x1 ? 1 : -1;
+                tramo = [x1 + sentido * (anchoDeGrupo(r1, cuerpo) / 2 + 5), y1 + s, x2 - sentido * (anchoDeGrupo(r2, cuerpo) / 2 + 5), y2 + s];
+              } else {
+                const sentido = y2 > y1 ? 1 : -1;
+                tramo = [x1 + s, y1 + sentido * (0.5 * cuerpo + 3), x2 + s, y2 - sentido * (0.5 * cuerpo + 3)];
+              }
+              return "M" + n1(tramo[0]) + " " + n1(tramo[1]) + "L" + n1(tramo[2]) + " " + n1(tramo[3]);
+            })
+            .join("");
+        });
+      }
+
+
+      function CadenaMasLargaInfografia({ configuracion, alPreparar }) {
+        const cuerpo = 23;
+        const fila = 96;
+        const grupos = {
+          a: [84, fila, "CH3"],
+          b: [194, fila, "CH"],
+          c: [304, fila, "CH"],
+          d: [414, fila, "CH2"],
+          e: [524, fila, "CH3"],
+          f: [194, fila + 68, "CH2"],
+          g: [194, fila + 136, "CH3"],
+          h: [304, fila + 68, "CH3"]
+        };
+        const enlaces = [
+          ["a", "b", 1],
+          ["b", "c", 1],
+          ["c", "d", 1],
+          ["d", "e", 1],
+          ["b", "f", 1],
+          ["f", "g", 1],
+          ["c", "h", 1]
+        ];
+        const numeros = [
+          ["e", 1, 0, -42],
+          ["d", 2, 0, -42],
+          ["c", 3, 0, -42],
+          ["b", 4, 0, -42],
+          ["f", 5, 48, 0],
+          ["g", 6, 48, 0]
+        ];
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="La cadena más larga"
+            duracion={9}
+            alto="336"
+            descripcion={
+              "La fórmula semidesarrollada de un alcano. En línea, CH3, CH, CH, CH2 y CH3; del segundo carbono " +
+              "cuelga un CH2 con un CH3 debajo, y del tercero, un CH3. Primero se rodea la línea horizontal, de cinco " +
+              "carbonos. Después se marca la cadena que baja por la rama de dos carbonos, que tiene seis. Se numera " +
+              "desde la derecha, del 1 al 6, y quedan dos metilos, en los carbonos 3 y 4. Abajo, tachado, el nombre " +
+              "equivocado, 2-etil-3-metilpentano, y el correcto, 3,4-dimetilhexano."
+            }
+            texto={
+              <>
+                La cadena principal es la más larga, aunque doble por una rama. Se numera desde el extremo más cercano a
+                una rama (aquí dan lo mismo los dos), y lo que queda fuera de la cadena son las ramas: dos metilos.
+              </>
+            }
+            rotulos={
+              <g>
+                {Object.keys(grupos).map((clave, orden) => (
+                  <Rotulo key={clave} t={0.2 + 0.08 * orden} x={grupos[clave][0]} y={n1(grupos[clave][1] + 0.35 * cuerpo)} fontSize={cuerpo}>
+                    <GrupoQuimico rotulo={grupos[clave][2]} />
+                  </Rotulo>
+                ))}
+                <Rotulo t={2.0} x="170" y="282" fontSize="15" opacity="0.9">
+                  {palabra("en línea recta: 5 carbonos")}
+                </Rotulo>
+                <Rotulo t={3.6} x="462" y="282" fontSize="15">
+                  {palabra("doblando por la rama: 6", true)}
+                </Rotulo>
+                {numeros.map(([clave, numero, dx, dy], orden) => (
+                  <Rotulo
+                    key={"n" + numero}
+                    t={4.6 + 0.25 * orden}
+                    x={grupos[clave][0] + dx}
+                    y={n1(grupos[clave][1] + dy + 5)}
+                    fontSize="14"
+                    fill={TINTA_AMBAR}
+                    fontWeight="700"
+                  >
+                    {numero}
+                  </Rotulo>
+                ))}
+                <Rotulo t={6.6} x="84" y="148" fontSize="14">
+                  {palabra("metil en el 4")}
+                </Rotulo>
+                <Rotulo t={6.9} x="342" y="169" fontSize="14" textAnchor="start">
+                  {palabra("metil en el 3")}
+                </Rotulo>
+                <Rotulo t={7.4} x="170" y="320" fontSize="15" opacity="0.75">
+                  {palabra("2-etil-3-metilpentano")}
+                </Rotulo>
+                <Rotulo t={8.0} x="462" y="321" fontSize="21">
+                  {palabra("3,4-dimetilhexano", true)}
+                </Rotulo>
+              </g>
+            }
+          >
+            {caminosDeEnlaces(grupos, enlaces, cuerpo).map((d, orden) => (
+              <Trazo key={orden} t={0.1 + 0.08 * orden} dura={0.3} d={d} strokeWidth="2.2" />
+            ))}
+            <Velo t={1.5} d={caja(46, fila - 27, 516, 54, 24)} strokeWidth="1.6" strokeDasharray="5 6" strokeOpacity="0.9" />
+            <Trazo t={3.0} dura={1.0} d={"M194 " + (fila + 152) + "V" + fila + "H550"} strokeWidth="36" strokeOpacity="0.2" />
+            {numeros.map(([clave, numero, dx, dy], orden) => (
+              <Punto key={"p" + numero} t={4.5 + 0.25 * orden} cx={grupos[clave][0] + dx} cy={grupos[clave][1] + dy} r="11" />
+            ))}
+            <Trazo t={6.3} dura={0.4} d={anillo(84, fila, 31)} strokeWidth="2" />
+            <Trazo t={6.6} dura={0.4} d={anillo(304, fila + 68, 31)} strokeWidth="2" />
+            <Trazo t={7.6} dura={0.4} d="M90 315H250" strokeWidth="2" />
+          </InfografiaIB>
+        );
+      }
+
+
+      function GrupoPrincipalInfografia({ configuracion, alPreparar }) {
+        const cuerpo = 23;
+        const fila = 150;
+        const grupos = {
+          c1: [92, fila, "CHO"],
+          c2: [205, fila, "CH2"],
+          c3: [318, fila, "CH"],
+          c4: [431, fila, "CO"],
+          c5: [544, fila, "CH3"],
+          oh: [318, fila - 72, "OH"]
+        };
+        const enlaces = [
+          ["c1", "c2", 1],
+          ["c2", "c3", 1],
+          ["c3", "c4", 1],
+          ["c4", "c5", 1],
+          ["c3", "oh", 1]
+        ];
+        const cadena = ["c1", "c2", "c3", "c4", "c5"];
+        const papeles = [
+          { x: 92, texto: "-al", t: 5.6, fuerte: true },
+          { x: 318, texto: "hidroxi-", t: 5.9 },
+          { x: 431, texto: "oxo-", t: 6.2 }
+        ];
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="El grupo que da el nombre"
+            duracion={8.4}
+            alto="334"
+            descripcion={
+              "La fórmula semidesarrollada de un compuesto de cinco carbonos: CHO, CH2, CH, CO y CH3, con un OH que " +
+              "sale hacia arriba del tercer carbono. Se rodean sus tres grupos: un aldehído, un alcohol y una cetona. " +
+              "Manda el aldehído, que va antes que la cetona y que el alcohol: da la terminación -al, y su carbono es " +
+              "el 1. Se numeran los carbonos del 1 al 5; el alcohol, en el 3, pasa a prefijo, hidroxi-, y la cetona, " +
+              "en el 4, oxo-. Abajo, el nombre: 3-hidroxi-4-oxopentanal."
+            }
+            texto={
+              <>
+                El grupo de más prioridad da la terminación y el localizador más bajo (aquí, el aldehído es el carbono 1);
+                los demás son prefijos, con su localizador y por orden alfabético: hidroxi va antes que oxo.
+              </>
+            }
+            rotulos={
+              <g>
+                {Object.keys(grupos).map((clave, orden) => (
+                  <Rotulo key={clave} t={0.2 + 0.08 * orden} x={grupos[clave][0]} y={n1(grupos[clave][1] + 0.35 * cuerpo)} fontSize={cuerpo}>
+                    <GrupoQuimico rotulo={grupos[clave][2]} />
+                  </Rotulo>
+                ))}
+                <Rotulo t={1.6} x="92" y="114" fontSize="14">
+                  {palabra("aldehído")}
+                </Rotulo>
+                <Rotulo t={1.8} x="350" y="84" fontSize="14" textAnchor="start">
+                  {palabra("alcohol")}
+                </Rotulo>
+                <Rotulo t={2.0} x="431" y="114" fontSize="14">
+                  {palabra("cetona")}
+                </Rotulo>
+                <Rotulo t={2.9} x="320" y="276" fontSize="15">
+                  {palabra("manda el ", false)}
+                  {palabra("aldehído", true)}
+                  {palabra(": aldehído > cetona > alcohol")}
+                </Rotulo>
+                {cadena.map((clave, orden) => (
+                  <Rotulo key={"n" + clave} t={4.3 + 0.2 * orden} x={grupos[clave][0]} y={fila + 49} fontSize="14" fill={TINTA_AMBAR} fontWeight="700">
+                    {orden + 1}
+                  </Rotulo>
+                ))}
+                {papeles.map((papel) => (
+                  <Rotulo key={papel.texto} t={papel.t} x={papel.x} y={fila + 88} fontSize="15">
+                    {palabra(papel.texto, papel.fuerte)}
+                  </Rotulo>
+                ))}
+                <Rotulo t={7.1} x="320" y="320" fontSize="22">
+                  {palabra("3-hidroxi-4-oxopentanal", true)}
+                </Rotulo>
+              </g>
+            }
+          >
+            {caminosDeEnlaces(grupos, enlaces, cuerpo).map((d, orden) => (
+              <Trazo key={orden} t={0.1 + 0.08 * orden} dura={0.3} d={d} strokeWidth="2.2" />
+            ))}
+            <Trazo t={1.3} dura={0.5} d={caja(52, fila - 23, 80, 46, 12)} strokeWidth="1.8" />
+            <Trazo t={1.5} dura={0.5} d={caja(292, fila - 95, 52, 46, 12)} strokeWidth="1.8" />
+            <Trazo t={1.7} dura={0.5} d={caja(403, fila - 23, 56, 46, 12)} strokeWidth="1.8" />
+            <Trazo t={3.4} dura={0.6} d={caja(46, fila - 29, 92, 58, 14)} strokeWidth="5" strokeOpacity="0.35" />
+            {cadena.map((clave, orden) => (
+              <Punto key={"p" + clave} t={4.2 + 0.2 * orden} cx={grupos[clave][0]} cy={fila + 44} r="11" />
+            ))}
+          </InfografiaIB>
+        );
+      }
+
+
+      function PrepararDisolucionInfografia({ configuracion, alPreparar }) {
+        const pasos = [
+          { x: 64, t: 0.3, nombre: "1. pesar", detalle: "tarar y añadir 5 g" },
+          { x: 192, t: 1.8, nombre: "2. disolver", detalle: "con la varilla" },
+          { x: 320, t: 3.3, nombre: "3. trasvasar", detalle: "y enjuagar el vaso" },
+          { x: 448, t: 4.8, nombre: "4. enrasar", detalle: "menisco en el aforo" },
+          { x: 576, t: 6.3, nombre: "5. invertir", detalle: "tapado, varias veces" }
+        ];
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="Preparar una disolución"
+            duracion={7.8}
+            alto="290"
+            descripcion={
+              "Cinco dibujos en fila. En el primero, una balanza con un vidrio de reloj y un montoncito de azúcar; la " +
+              "pantalla marca 5,0 gramos. En el segundo, un vaso de precipitados con agua y una varilla de vidrio. En " +
+              "el tercero, un embudo sobre un matraz aforado, con una flecha que viene del vaso. En el cuarto, el " +
+              "cuello del matraz visto de cerca: la parte de abajo del menisco toca la marca del aforo, y un ojo la " +
+              "mira a su altura. En el quinto, el matraz tapado y una flecha curva: se le da la vuelta varias veces."
+            }
+            texto={
+              <>
+                La masa se mide en la balanza, tarada con el vidrio de reloj, y el volumen, en el matraz aforado: el vaso
+                solo sirve para disolver. Se enrasa con los ojos a la altura del aforo, mirando la parte de abajo del
+                menisco.
+              </>
+            }
+            rotulos={
+              <g>
+                <Rotulo t={1.1} x="64" y="202" fontSize="12">
+                  5,0 g
+                </Rotulo>
+                {pasos.map((paso) => (
+                  <g key={paso.nombre}>
+                    <Rotulo t={paso.t + 0.6} x={paso.x} y="250" fontSize="15">
+                      {palabra(paso.nombre, true)}
+                    </Rotulo>
+                    <Rotulo t={paso.t + 0.75} x={paso.x} y="272" fontSize="12" opacity="0.9">
+                      {palabra(paso.detalle)}
+                    </Rotulo>
+                  </g>
+                ))}
+              </g>
+            }
+          >
+            <Trazo t={0.3} dura={0.4} d={caja(26, 178, 76, 40, 6)} />
+            <Trazo t={0.5} dura={0.3} d={caja(42, 188, 44, 20, 3)} strokeWidth="1.4" />
+            <Trazo t={0.6} dura={0.3} d="M64 178V168M36 168H92" />
+            <Trazo t={0.8} dura={0.3} d="M40 161Q64 172 88 161" strokeWidth="2.2" />
+            <Velo t={1.0} d="M53 162Q64 148 75 162Z" fill="#fff" stroke="none" />
+            <Trazo t={1.8} dura={0.5} d="M156 90L160 96V204Q160 212 168 212H216Q224 212 224 204V96" strokeWidth="2.2" />
+            <Trazo t={2.0} dura={0.3} d="M217 130H224M217 160H224M217 190H224" strokeWidth="1.4" />
+            <Velo t={2.1} d="M161 150H223V204Q223 211 216 211H168Q161 211 161 204Z" fill="#fff" fillOpacity="0.22" stroke="none" />
+            <Trazo t={2.4} dura={0.3} d="M178 70L206 206" strokeWidth="3" />
+            <Trazo t={2.6} dura={0.3} d="M172 186Q192 196 212 184" strokeWidth="1.4" />
+            <Trazo t={3.3} dura={0.4} d="M312 84V150M328 84V150" strokeWidth="2.2" />
+            <Trazo t={3.4} dura={0.5} d={anillo(320, 184, 36)} strokeWidth="2.2" />
+            <Trazo t={3.6} dura={0.3} d="M306 112H334" strokeWidth="1.6" />
+            <Trazo t={3.7} dura={0.4} d="M296 52H344L326 74V88M314 88V74L296 52" strokeWidth="1.8" />
+            <Velo t={3.9} como="circle" cx="320" cy="186" r="33" fill="#fff" fillOpacity="0.22" stroke="none" />
+            <Trazo t={4.0} dura={0.4} d="M226 82Q258 40 290 50" strokeWidth="1.8" />
+            <Velo t={4.4} d={puntaDeFlecha(294, 52, 1, 0.35, 10)} fill="#fff" stroke="none" />
+            <Trazo t={4.8} dura={0.4} d="M430 64V214M466 64V214" strokeWidth="2.2" />
+            <Trazo t={5.0} dura={0.3} d="M420 140H476" strokeWidth="2" />
+            <Velo t={5.2} d="M431 135Q448 146 465 135V213H431Z" fill="#fff" fillOpacity="0.25" stroke="none" />
+            <Trazo t={5.3} dura={0.3} d="M431 134Q448 147 465 134" strokeWidth="2.6" />
+            <Trazo t={5.5} dura={0.3} d="M380 140Q394 128 408 140Q394 152 380 140Z" strokeWidth="1.8" />
+            <Punto t={5.6} cx="394" cy="140" r="3.4" />
+            <Velo t={5.7} d="M410 140H428" strokeWidth="1.4" strokeDasharray="3 4" />
+            <Trazo t={6.3} dura={0.4} d="M568 104V148M584 104V148" strokeWidth="2.2" />
+            <Trazo t={6.4} dura={0.5} d={anillo(576, 180, 33)} strokeWidth="2.2" />
+            <Trazo t={6.6} dura={0.3} d={caja(564, 90, 24, 14, 3)} strokeWidth="1.8" />
+            <Trazo t={6.8} dura={0.5} d="M524 130A52 52 0 1 1 628 130" strokeWidth="1.8" />
+            <Velo t={7.3} d={puntaDeFlecha(628, 136, 0, 1, 10)} fill="#fff" stroke="none" />
+          </InfografiaIB>
+        );
+      }
+
+
+      function enlaceEntreAtomos(x1, y1, x2, y2, hueco, orden) {
+        const largo = Math.hypot(x2 - x1, y2 - y1);
+        const ux = (x2 - x1) / largo;
+        const uy = (y2 - y1) / largo;
+        return (orden === 2 ? [-3.2, 3.2] : [0])
+          .map(
+            (s) =>
+              "M" + n1(x1 + ux * hueco - uy * s) + " " + n1(y1 + uy * hueco + ux * s) +
+              "L" + n1(x2 - ux * hueco - uy * s) + " " + n1(y2 - uy * hueco + ux * s)
+          )
+          .join("");
+      }
+
+      function GrupoAlFinal({ t, x, y, rotulo, lado, cuerpo }) {
+        const mitad = 0.37 * cuerpo;
+        const ancla = lado === "izquierda" ? "end" : lado === "derecha" ? "start" : "middle";
+        const equis = lado === "izquierda" ? x + mitad : lado === "derecha" ? x - mitad : x;
+        return (
+          <Rotulo t={t} x={n1(equis)} y={n1(y + 0.35 * cuerpo)} fontSize={cuerpo} textAnchor={ancla}>
+            <GrupoQuimico rotulo={rotulo} />
+          </Rotulo>
+        );
+      }
+
+      function GiroDelEnlace({ t, dura, eje, amago, children }) {
+        const estilo = cuando(t, dura);
+        estilo.transformOrigin = "0px " + eje + "px";
+        return (
+          <g className={amago ? "e-amago-giro" : "e-giro"} style={estilo}>
+            {children}
+          </g>
+        );
+      }
+
+      function RotuloDelGiro({ t, dura, dy, amago, children }) {
+        const estilo = cuando(t, dura);
+        estilo["--dy"] = n1(dy) + "px";
+        return (
+          <g className={amago ? "e-amago-sube" : "e-sube-baja"} style={estilo}>
+            {children}
+          </g>
+        );
+      }
+
+      function flechaDeGiro(x, eje) {
+        return {
+          arco: "M" + x + " " + (eje - 22) + "A8 22 0 1 1 " + (x - 8) + " " + eje,
+          punta: puntaDeFlecha(x - 8, eje - 7, 0, -1, 9)
+        };
+      }
+
+      function CisTransInfografia({ configuracion, alPreparar }) {
+        const cuerpo = 22;
+        const alcance = 56;
+        const hueco = 13;
+        const hacia = (c, grados) => [
+          c[0] + alcance * Math.cos((grados * Math.PI) / 180),
+          c[1] - alcance * Math.sin((grados * Math.PI) / 180)
+        ];
+        const A1 = [196, 104];
+        const A2 = [284, 104];
+        const B1 = [150, 276];
+        const B2 = [216, 276];
+        const T1 = [424, 276];
+        const T2 = [490, 276];
+        const M2 = [250, 452];
+        const M3 = [316, 452];
+        const simple = [
+          [A1, 180, "H", "centro"],
+          [A1, 90, "COOH", "derecha"],
+          [A1, 270, "H", "centro"],
+          [A2, 0, "H", "centro"]
+        ];
+        const queGira = [
+          [A2, 90, "COOH", "derecha"],
+          [A2, 270, "H", "centro"]
+        ];
+        const cis = [
+          [B1, 120, "HOOC", "izquierda"],
+          [B1, 240, "H", "centro"]
+        ];
+        const queIntenta = [
+          [B2, 60, "COOH", "derecha"],
+          [B2, 300, "H", "centro"]
+        ];
+        const trans = [
+          [T1, 120, "HOOC", "izquierda"],
+          [T1, 240, "H", "centro"],
+          [T2, 60, "H", "centro"],
+          [T2, 300, "COOH", "derecha"]
+        ];
+        const metilbuteno = [
+          [M2, 120, "H3C", "izquierda"],
+          [M2, 240, "H3C", "izquierda"],
+          [M3, 60, "H", "centro"],
+          [M3, 300, "CH3", "derecha"]
+        ];
+        const enlace = ([c, grados]) => {
+          const [x, y] = hacia(c, grados);
+          return enlaceEntreAtomos(c[0], c[1], x, y, hueco, 1);
+        };
+        const doble = (c1, c2) => enlaceEntreAtomos(c1[0], c1[1], c2[0], c2[1], hueco, 2);
+        const grupo = ([c, grados, rotulo, lado], t, clave) => {
+          const [x, y] = hacia(c, grados);
+          return <GrupoAlFinal key={clave} t={t} x={x} y={y} rotulo={rotulo} lado={lado} cuerpo={cuerpo} />;
+        };
+        const carbono = (c, t) => (
+          <Rotulo key={"c" + c[0] + "-" + c[1]} t={t} x={c[0]} y={n1(c[1] + 0.35 * cuerpo)} fontSize={cuerpo}>
+            C
+          </Rotulo>
+        );
+        const recorrido = ([c, grados]) => 2 * (c[1] - hacia(c, grados)[1]);
+        const flechaSimple = flechaDeGiro(240, A1[1]);
+        const flechaDoble = flechaDeGiro(183, B1[1]);
+        return (
+          <InfografiaIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="Por qué hay isómeros cis y trans"
+            duracion={13}
+            alto="526"
+            descripcion={
+              "Tres moléculas, una debajo de otra. Arriba, el ácido butanodioico: dos carbonos unidos por un " +
+              "enlace simple, cada uno con un grupo COOH arriba. El carbono de la derecha gira alrededor del " +
+              "enlace, y su COOH pasa abajo: sigue siendo el mismo compuesto. En medio, el ácido butenodioico, " +
+              "con un enlace doble entre los dos carbonos y los dos COOH arriba: el carbono de la derecha intenta " +
+              "girar y no puede, y una cruz lo dice. Al lado, la otra forma, con un COOH arriba y el otro abajo, y " +
+              "entre las dos, el signo de distinto. Debajo, sus nombres: el cis, con los dos COOH al mismo lado, " +
+              "es el ácido maleico y funde a 131 grados; el trans, con los COOH en lados opuestos, es el " +
+              "fumárico y funde a 287 grados. Abajo, el 2-metilbut-2-eno, con dos metilos en el mismo carbono " +
+              "del enlace doble, rodeados: no tiene ni cis ni trans."
+            }
+            texto={
+              <>
+                Un enlace simple gira, y el ácido butanodioico es el mismo compuesto con los dos{" "}
+                <Mates tex="\mathrm{COOH}" /> a un lado o en lados opuestos. Un enlace doble no gira sin romperse:
+                en el ácido butenodioico, los dos <Mates tex="\mathrm{COOH}" /> al mismo lado (el cis, el ácido
+                maleico) o en lados opuestos (el trans, el fumárico) son dos compuestos distintos. Si un carbono del
+                enlace doble lleva dos sustituyentes iguales, como el 2-metilbut-2-eno, no hay ni cis ni trans.
+              </>
+            }
+            rotulos={
+              <g>
+                <Rotulo t={0.15} x="24" y="34" fontSize="16" textAnchor="start">
+                  {palabra("Enlace simple", true)}
+                </Rotulo>
+                {carbono(A1, 0.3)}
+                {carbono(A2, 0.35)}
+                {simple.map((sustituyente, orden) => grupo(sustituyente, 0.45 + 0.08 * orden, "s" + orden))}
+                {queGira.map((sustituyente, orden) => (
+                  <RotuloDelGiro key={"g" + orden} t={2.0} dura={1.6} dy={recorrido(sustituyente)}>
+                    {grupo(sustituyente, 0.77 + 0.08 * orden, "gg" + orden)}
+                  </RotuloDelGiro>
+                ))}
+                <Rotulo t={3.8} x="150" y="34" fontSize="16" textAnchor="start">
+                  {palabra("gira")}
+                </Rotulo>
+                <Rotulo t={4.0} x="505" y="96" fontSize="15">
+                  {palabra("ácido butanodioico", true)}
+                </Rotulo>
+                <Rotulo t={4.2} x="505" y="118" fontSize="14">
+                  {palabra("sigue siendo el mismo compuesto")}
+                </Rotulo>
+
+                <Rotulo t={4.9} x="24" y="206" fontSize="16" textAnchor="start">
+                  {palabra("Enlace doble", true)}
+                </Rotulo>
+                {carbono(B1, 5.0)}
+                {carbono(B2, 5.05)}
+                {cis.map((sustituyente, orden) => grupo(sustituyente, 5.2 + 0.08 * orden, "c" + orden))}
+                {queIntenta.map((sustituyente, orden) => (
+                  <RotuloDelGiro key={"i" + orden} t={6.5} dura={1.2} dy={recorrido(sustituyente)} amago>
+                    {grupo(sustituyente, 5.36 + 0.08 * orden, "ii" + orden)}
+                  </RotuloDelGiro>
+                ))}
+                <Rotulo t={8.0} x="142" y="206" fontSize="16" textAnchor="start">
+                  {palabra("no gira")}
+                </Rotulo>
+                {carbono(T1, 8.4)}
+                {carbono(T2, 8.45)}
+                {trans.map((sustituyente, orden) => grupo(sustituyente, 8.6 + 0.08 * orden, "t" + orden))}
+                <Rotulo t={9.6} x="183" y="356" fontSize="15">
+                  {palabra("cis: ácido maleico", true)}
+                </Rotulo>
+                <Rotulo t={9.75} x="183" y="376" fontSize="14">
+                  {palabra("funde a 131 °C")}
+                </Rotulo>
+                <Rotulo t={9.9} x="457" y="356" fontSize="15">
+                  {palabra("trans: ácido fumárico", true)}
+                </Rotulo>
+                <Rotulo t={10.05} x="457" y="376" fontSize="14">
+                  {palabra("funde a 287 °C")}
+                </Rotulo>
+
+                {carbono(M2, 10.7)}
+                {carbono(M3, 10.75)}
+                {metilbuteno.map((sustituyente, orden) => grupo(sustituyente, 10.9 + 0.08 * orden, "m" + orden))}
+                <Rotulo t={12.0} x="505" y="436" fontSize="15">
+                  {palabra("2-metilbut-2-eno", true)}
+                </Rotulo>
+                <Rotulo t={12.2} x="505" y="458" fontSize="14">
+                  {palabra("dos iguales en un carbono:")}
+                </Rotulo>
+                <Rotulo t={12.4} x="505" y="479" fontSize="15">
+                  {palabra("ni cis ni trans", true)}
+                </Rotulo>
+              </g>
+            }
+          >
+            <Trazo t={0.3} dura={0.3} d={enlaceEntreAtomos(A1[0], A1[1], A2[0], A2[1], hueco, 1)} strokeWidth="2.2" />
+            {simple.map((sustituyente, orden) => (
+              <Trazo key={"s" + orden} t={0.35 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+            ))}
+            <GiroDelEnlace t={2.0} dura={1.6} eje={A1[1]}>
+              {queGira.map((sustituyente, orden) => (
+                <Trazo key={"g" + orden} t={0.67 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+              ))}
+            </GiroDelEnlace>
+            <Trazo t={1.2} dura={0.5} d={flechaSimple.arco} strokeWidth="2" />
+            <Velo t={1.6} d={flechaSimple.punta} fill="#fff" stroke="none" />
+
+            <Trazo t={5.1} dura={0.3} d={doble(B1, B2)} strokeWidth="2.2" />
+            {cis.map((sustituyente, orden) => (
+              <Trazo key={"c" + orden} t={5.15 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+            ))}
+            <GiroDelEnlace t={6.5} dura={1.2} eje={B1[1]} amago>
+              {queIntenta.map((sustituyente, orden) => (
+                <Trazo key={"i" + orden} t={5.31 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+              ))}
+            </GiroDelEnlace>
+            <Trazo t={6.0} dura={0.5} d={flechaDoble.arco} strokeWidth="2" />
+            <Velo t={6.4} d={flechaDoble.punta} fill="#fff" stroke="none" />
+            <Luz t={6.6} dura={1.0} d={"M" + (B1[0] + hueco) + " " + (B1[1] - 3.2) + "H" + (B2[0] - hueco)} />
+            <Punto t={7.8} cx="183" cy="246" r="12" />
+            <Trazo t={7.95} dura={0.25} d="M177.5 240.5L188.5 251.5M188.5 240.5L177.5 251.5" stroke={TINTA_AMBAR} strokeWidth="2.6" />
+
+            <Trazo t={8.5} dura={0.3} d={doble(T1, T2)} strokeWidth="2.2" />
+            {trans.map((sustituyente, orden) => (
+              <Trazo key={"t" + orden} t={8.55 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+            ))}
+            <Trazo t={9.3} dura={0.3} d="M308 270H332M308 282H332" strokeWidth="2.4" />
+            <Trazo t={9.45} dura={0.2} d="M325.5 262L314.5 290" strokeWidth="2.4" />
+
+            <Trazo t={10.8} dura={0.3} d={doble(M2, M3)} strokeWidth="2.2" />
+            {metilbuteno.map((sustituyente, orden) => (
+              <Trazo key={"m" + orden} t={10.85 + 0.08 * orden} dura={0.3} d={enlace(sustituyente)} strokeWidth="2.2" />
+            ))}
+            <Trazo t={11.5} dura={0.6} d={caja(180, 388, 60, 128, 16)} strokeWidth="2" />
+          </InfografiaIB>
+        );
+      }
+
       window.InfografiasIB = {
         "infografia-tres-estados": TresEstadosInfografia,
         "infografia-salto-del-electron": SaltoDelElectronInfografia,
@@ -14838,7 +15639,11 @@ Estructura 1</p>
         "infografia-mar-de-electrones": MarDeElectronesInfografia,
         "infografia-bloques-tabla": BloquesTablaInfografia,
         "infografia-grupos-1-y-17": GruposAlcalinosYHalogenosInfografia,
-        "infografia-serie-homologa": SerieHomologaInfografia
+        "infografia-serie-homologa": SerieHomologaInfografia,
+        "infografia-cadena-mas-larga": CadenaMasLargaInfografia,
+        "infografia-grupo-principal": GrupoPrincipalInfografia,
+        "infografia-preparar-disolucion": PrepararDisolucionInfografia,
+        "infografia-cis-trans": CisTransInfografia
       };
     })();
   </script>
@@ -14851,7 +15656,7 @@ Estructura 1</p>
       }
 
       const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React;
-      const { Trazo, Velo, Punto, Barra, Rotulo, Halo, cursiva, palabra, POR, HUECO, Sub, Sup, Quebrado, Raiz, Mates, caja, abanico, n1 } = piezas;
+      const { Trazo, Velo, Punto, Barra, Rotulo, Halo, cursiva, palabra, POR, HUECO, Sub, Sup, Quebrado, Raiz, Mates, caja, abanico, n1, caminosDeEnlaces } = piezas;
 
 
       const MENOS = "−";
@@ -19553,10 +20358,1415 @@ Estructura 1</p>
         );
       }
 
+
+
+      const TINTA_AMBAR_DEL_RESUMEN = "#5c2f04";
+
+      const partesDeGrupo = (rotulo) => rotulo.match(/[A-Za-z()]+|[0-9]+/g) || [];
+
+      function SemidesarrolladaDelResumen({ molecula }) {
+        const cuerpo = 21;
+        const { grupos, enlaces, cadena } = molecula;
+        const camino = cadena.map((clave, orden) => (orden ? "L" : "M") + grupos[clave][0] + " " + grupos[clave][1]).join("");
+        return (
+          <>
+            <Trazo t={0.5} dura={0.6} d={camino} strokeWidth="32" strokeOpacity="0.2" />
+            {caminosDeEnlaces(grupos, enlaces, cuerpo).map((d, orden) => (
+              <Trazo key={orden} t={0.05 + 0.04 * orden} dura={0.25} d={d} strokeWidth="2.2" />
+            ))}
+            {cadena.map((clave, orden) => {
+              const [x, y] = grupos[clave];
+              const [dx, dy] = molecula.lugarDelNumero(clave);
+              return <Punto key={"p" + clave} t={0.9 + 0.06 * orden} cx={x + dx} cy={y + dy} r="10" />;
+            })}
+            <Letras>
+              {Object.keys(grupos).map((clave, orden) => (
+                <Rotulo key={clave} t={0.1 + 0.04 * orden} x={grupos[clave][0]} y={n1(grupos[clave][1] + 0.35 * cuerpo)} fontSize={cuerpo}>
+                  <FormulaDeRotulo partes={partesDeGrupo(grupos[clave][2])} />
+                </Rotulo>
+              ))}
+              {cadena.map((clave, orden) => {
+                const [x, y] = grupos[clave];
+                const [dx, dy] = molecula.lugarDelNumero(clave);
+                return (
+                  <Rotulo key={"n" + clave} t={0.95 + 0.06 * orden} x={x + dx} y={y + dy + 5} fontSize="13" fill={TINTA_AMBAR_DEL_RESUMEN} fontWeight="700">
+                    {orden + 1}
+                  </Rotulo>
+                );
+              })}
+              <Rotulo t={1.3} x="320" y="300" fontSize="22">
+                {palabra(molecula.nombre, true)}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      function enlaceDelResumen(x1, y1, x2, y2, hueco, orden) {
+        const largo = Math.hypot(x2 - x1, y2 - y1);
+        const ux = (x2 - x1) / largo;
+        const uy = (y2 - y1) / largo;
+        return (orden === 2 ? [-3.2, 3.2] : [0])
+          .map(
+            (s) =>
+              "M" + n1(x1 + ux * hueco - uy * s) + " " + n1(y1 + uy * hueco + ux * s) +
+              "L" + n1(x2 - ux * hueco - uy * s) + " " + n1(y2 - uy * hueco + ux * s)
+          )
+          .join("");
+      }
+
+      const haciaDelResumen = (x, y, grados, largo) => [
+        x + largo * Math.cos((grados * Math.PI) / 180),
+        y - largo * Math.sin((grados * Math.PI) / 180)
+      ];
+
+      function GrupoDelResumen({ t, x, y, partes, lado, cuerpo }) {
+        const mitad = 0.37 * cuerpo;
+        const ancla = lado === "izquierda" ? "end" : lado === "derecha" ? "start" : "middle";
+        const equis = lado === "izquierda" ? x + mitad : lado === "derecha" ? x - mitad : x;
+        return (
+          <Rotulo t={t} x={n1(equis)} y={n1(y + 0.35 * cuerpo)} fontSize={cuerpo} textAnchor={ancla}>
+            <FormulaDeRotulo partes={partes} />
+          </Rotulo>
+        );
+      }
+
+      const distintoDelResumen = (x, y) =>
+        "M" + (x - 12) + " " + (y - 6) + "H" + (x + 12) + "M" + (x - 12) + " " + (y + 6) + "H" + (x + 12) +
+        "M" + (x + 6) + " " + (y - 14) + "L" + (x - 6) + " " + (y + 14);
+
+      const PUNTOS_DEL_TERMOMETRO = [
+        { celsius: -273, rotulo: "cero absoluto" },
+        { celsius: -183, rotulo: "hierve el oxígeno" },
+        { celsius: 0, rotulo: "funde el hielo" },
+        { celsius: 100, rotulo: "hierve el agua" }
+      ];
+
+      const alturaEnElTermometroDeLaClase = (celsius) => 262 - ((celsius + 273) * 210) / 373;
+
+      function TemperaturaDibujo({ e }) {
+        const nivel = alturaEnElTermometroDeLaClase(e.t);
+        return (
+          <>
+            <Trazo t={0.1} dura={0.7} d="M191 274V44A9 9 0 0 1 209 44V274A17 17 0 1 1 191 274Z" strokeWidth="2" />
+            <Barra t={0.6} x="195" y={n1(nivel)} width="10" height={n1(284 - nivel)} />
+            <Punto t={0.5} cx="200" cy="288" r="12" />
+            {PUNTOS_DEL_TERMOMETRO.map((punto, orden) => {
+              const y = alturaEnElTermometroDeLaClase(punto.celsius);
+              return (
+                <Trazo key={punto.celsius} t={0.3 + 0.08 * orden} dura={0.2} d={"M174 " + n1(y) + "H189M211 " + n1(y) + "H226"} strokeWidth="1.6" />
+              );
+            })}
+            <path d={"M168 " + n1(nivel) + "H232"} fill="none" stroke="#fff" strokeWidth="3" />
+            <Letras>
+              <Rotulo t={0.1} x="160" y="30" fontSize="15" textAnchor="end">
+                {palabra("grados Celsius")}
+              </Rotulo>
+              <Rotulo t={0.1} x="240" y="30" fontSize="15" textAnchor="start">
+                {palabra("kelvin")}
+              </Rotulo>
+              {PUNTOS_DEL_TERMOMETRO.map((punto, orden) => {
+                const y = n1(alturaEnElTermometroDeLaClase(punto.celsius) + 5);
+                return (
+                  <g key={punto.celsius}>
+                    <Rotulo t={0.4 + 0.08 * orden} x="166" y={y} fontSize="15" textAnchor="end">
+                      {cifra(punto.celsius, 0) + " °C"}
+                    </Rotulo>
+                    <Rotulo t={0.45 + 0.08 * orden} x="234" y={y} fontSize="15" textAnchor="start">
+                      {cifra(punto.celsius + 273, 0) + " K"}
+                    </Rotulo>
+                    <Rotulo t={0.5 + 0.08 * orden} x="300" y={y} fontSize="13" textAnchor="start" opacity="0.88">
+                      {palabra(punto.rotulo)}
+                    </Rotulo>
+                  </g>
+                );
+              })}
+              <Rotulo t={0.9} x="530" y="118" fontSize="28">
+                {cursiva("θ")}
+                {" = " + cifra(e.t, 0) + " °C"}
+              </Rotulo>
+              <Rotulo t={1.0} x="530" y="152" fontSize="15" opacity="0.9">
+                {palabra("+ 273")}
+              </Rotulo>
+              <Rotulo t={1.1} x="530" y="192" fontSize="28">
+                {cursiva("T")}
+                {" = " + cifra(e.t + 273, 0) + " K"}
+              </Rotulo>
+              <Rotulo t={1.3} x="530" y="250" fontSize="14">
+                {palabra("un kelvin mide lo mismo")}
+              </Rotulo>
+              <Rotulo t={1.35} x="530" y="272" fontSize="14">
+                {palabra("que un grado Celsius")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const COMPUESTOS_DE_LA_CLASE = [
+        { partes: ["SO", "3"], tex: "SO_3", atomos: [["S", 1, 6], ["O", 3, -2]], tipo: "un óxido", nombres: "trióxido de azufre, u óxido de azufre(VI)" },
+        { partes: ["Cu", "2", "O"], tex: "Cu_2O", atomos: [["Cu", 2, 1], ["O", 1, -2]], tipo: "un óxido", nombres: "óxido de dicobre, u óxido de cobre(I)" },
+        { partes: ["Al", "2", "S", "3"], tex: "Al_2S_3", atomos: [["Al", 2, 3], ["S", 3, -2]], tipo: "una sal binaria", nombres: "trisulfuro de dialuminio, o sulfuro de aluminio" },
+        { partes: ["BaO", "2"], tex: "BaO_2", atomos: [["Ba", 1, 2], ["O", 2, -1]], tipo: "un peróxido", nombres: "peróxido de bario: cada oxígeno, con −1" },
+        { partes: ["BaH", "2"], tex: "BaH_2", atomos: [["Ba", 1, 2], ["H", 2, -1]], tipo: "un hidruro", nombres: "dihidruro de bario, o hidruro de bario: con un metal, el hidrógeno tiene −1" },
+        { partes: ["HI"], tex: "HI", atomos: [["H", 1, 1], ["I", 1, -1]], tipo: "un ácido binario", nombres: "yoduro de hidrógeno; disuelto en agua, ácido yodhídrico" },
+        { partes: ["Zn(OH)", "2"], tex: "Zn(OH)_2", atomos: [["Zn", 1, 2], ["O", 2, -2], ["H", 2, 1]], tipo: "un hidróxido", nombres: "hidróxido de cinc" },
+        { partes: ["HBrO", "2"], tex: "HBrO_2", atomos: [["H", 1, 1], ["Br", 1, 3], ["O", 2, -2]], tipo: "un oxoácido", nombres: "ácido bromoso: el bromo, con +3, el segundo de sus cuatro" },
+        { partes: ["H", "4", "As", "2", "O", "7"], tex: "H_4As_2O_7", atomos: [["H", 4, 1], ["As", 2, 5], ["O", 7, -2]], tipo: "un oxoácido", nombres: "ácido piroarsénico: su óxido, con dos moléculas de agua" },
+        { partes: ["H", "3", "AsO", "3", "S"], tex: "H_3AsO_3S", atomos: [["H", 3, 1], ["As", 1, 5], ["O", 3, -2], ["S", 1, -2]], tipo: "un oxoácido", nombres: "ácido tioarsénico: un oxígeno del ortoarsénico pasa a azufre" },
+        { partes: ["Fe", "2", "(SO", "4", ")", "3"], tex: "Fe_2(SO_4)_3", atomos: [["Fe", 2, 3], ["S", 3, 6], ["O", 12, -2]], tipo: "una oxisal", nombres: "sulfato de hierro(III)" },
+        { partes: ["Ca(HCO", "3", ")", "2"], tex: "Ca(HCO_3)_2", atomos: [["Ca", 1, 2], ["H", 2, 1], ["C", 2, 4], ["O", 6, -2]], tipo: "una sal ácida", nombres: "hidrogenocarbonato de calcio" }
+      ];
+
+      const sumaDeOxidacion = (compuesto) =>
+        compuesto.atomos
+          .map(([, n, valor]) => (n === 1 ? "(" + conSignoTex(valor) + ")" : n + "\\cdot(" + conSignoTex(valor) + ")"))
+          .join("+") + "=0";
+
+      function FormulacionDibujo({ e }) {
+        const compuesto = COMPUESTOS_DE_LA_CLASE[e.i];
+        const paso = Math.min(150, 520 / compuesto.atomos.length);
+        const inicio = 320 - (paso * (compuesto.atomos.length - 1)) / 2;
+        const terminos = compuesto.atomos.map(([, n, valor]) => (n === 1 ? "" : n + POR) + "(" + conSigno(valor) + ")");
+        return (
+          <>
+            {compuesto.atomos.map(([simbolo], orden) => (
+              <Punto key={simbolo} t={0.3 + 0.1 * orden} cx={n1(inicio + paso * orden)} cy="150" r="26" />
+            ))}
+            <Letras>
+              <Rotulo t={0.1} x="320" y="62" fontSize="36">
+                <FormulaDeRotulo partes={compuesto.partes} />
+              </Rotulo>
+              <Rotulo t={0.2} x="320" y="94" fontSize="15" opacity="0.9">
+                {palabra(compuesto.tipo)}
+              </Rotulo>
+              {compuesto.atomos.map(([simbolo, n, valor], orden) => (
+                <g key={simbolo}>
+                  <Rotulo t={0.35 + 0.1 * orden} x={n1(inicio + paso * orden)} y="157" fontSize="19" fill={TINTA_AMBAR_DEL_RESUMEN} fontWeight="700">
+                    {conSigno(valor)}
+                  </Rotulo>
+                  <Rotulo t={0.45 + 0.1 * orden} x={n1(inicio + paso * orden)} y="214" fontSize="24">
+                    {simbolo}
+                  </Rotulo>
+                  <Rotulo t={0.5 + 0.1 * orden} x={n1(inicio + paso * orden)} y="240" fontSize="15" opacity="0.9">
+                    {n === 1 ? palabra("un átomo") : palabra(n + " átomos")}
+                  </Rotulo>
+                </g>
+              ))}
+              <Rotulo t={1.0} x="320" y="290" fontSize="19">
+                {terminos.join(" + ") + " = 0"}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ENLACES_DEL_CARBONO = [
+        { nombre: "simple", serie: "alcanos", angulo: "109,5°", anguloTex: "109{,}5^{\\circ}", zonas: 4, forma: "tetraédrica", hibrido: "sp³", ejemplo: "CH_3{-}CH_3", ejemploNombre: "el etano" },
+        { nombre: "doble", serie: "alquenos", angulo: "120°", anguloTex: "120^{\\circ}", zonas: 3, forma: "plana trigonal", hibrido: "sp²", ejemplo: "CH_2{=}CH_2", ejemploNombre: "el eteno" },
+        { nombre: "triple", serie: "alquinos", angulo: "180°", anguloTex: "180^{\\circ}", zonas: 2, forma: "lineal", hibrido: "sp", ejemplo: "HC{\\equiv}CH", ejemploNombre: "el etino" }
+      ];
+
+      const VALENCIAS_DE_LA_CLASE = [["C", 4], ["N", 3], ["O", 2], ["H, X", 1]];
+
+      function CarbonoDibujo({ enlace: cual }) {
+        const enlace = ENLACES_DEL_CARBONO[cual];
+        const cx = 470;
+        const cy = 168;
+        let trazos = [];
+        let extremos = [];
+        let arco = "";
+        let lugarDelAngulo = [cx, cy - 72];
+        if (cual === 0) {
+          trazos = [
+            "M" + (cx - 26) + " " + cy + "H" + (cx + 26),
+            "M" + (cx - 52) + " " + (cy - 9) + "L" + (cx - 90) + " " + (cy - 38),
+            "M" + (cx + 52) + " " + (cy - 9) + "L" + (cx + 90) + " " + (cy - 38)
+          ];
+          extremos = [[cx - 102, cy - 48], [cx + 102, cy - 48], [cx - 88, cy + 70], [cx - 36, cy + 82], [cx + 88, cy + 70], [cx + 36, cy + 82]];
+          arco = "M" + (cx - 16) + " " + (cy - 4) + "Q" + (cx - 34) + " " + (cy - 34) + " " + (cx - 59) + " " + (cy - 14);
+          lugarDelAngulo = [cx - 32, cy - 50];
+        } else if (cual === 1) {
+          trazos = [
+            "M" + (cx - 40) + " " + cy + "L" + (cx - 76) + " " + (cy - 60),
+            "M" + (cx - 40) + " " + cy + "L" + (cx - 76) + " " + (cy + 60),
+            "M" + (cx + 40) + " " + cy + "L" + (cx + 76) + " " + (cy - 60),
+            "M" + (cx + 40) + " " + cy + "L" + (cx + 76) + " " + (cy + 60),
+            "M" + (cx - 26) + " " + (cy - 5) + "H" + (cx + 26) + "M" + (cx - 26) + " " + (cy + 5) + "H" + (cx + 26)
+          ];
+          extremos = [[cx - 86, cy - 76], [cx - 86, cy + 78], [cx + 86, cy - 76], [cx + 86, cy + 78]];
+          arco = "M" + (cx - 62) + " " + (cy - 36) + "Q" + (cx - 92) + " " + cy + " " + (cx - 62) + " " + (cy + 36);
+          lugarDelAngulo = [cx - 124, cy + 6];
+        } else {
+          trazos = [
+            "M" + (cx - 96) + " " + cy + "H" + (cx - 54),
+            "M" + (cx - 26) + " " + (cy - 7) + "H" + (cx + 26) + "M" + (cx - 26) + " " + cy + "H" + (cx + 26) + "M" + (cx - 26) + " " + (cy + 7) + "H" + (cx + 26),
+            "M" + (cx + 54) + " " + cy + "H" + (cx + 96)
+          ];
+          extremos = [[cx - 110, cy], [cx + 110, cy]];
+          arco = "M" + (cx - 70) + " " + (cy - 14) + "A70 70 0 0 1 " + (cx + 70) + " " + (cy - 14);
+          lugarDelAngulo = [cx, cy - 92];
+        }
+        const centros = [[cx - 40, cy], [cx + 40, cy]];
+        return (
+          <>
+            {VALENCIAS_DE_LA_CLASE.map(([simbolo, n], fila) =>
+              Array.from({ length: n }, (_, k) => (
+                <Trazo
+                  key={simbolo + k}
+                  t={0.2 + 0.1 * fila + 0.05 * k}
+                  dura={0.15}
+                  d={"M" + (150 + 22 * k) + " " + (98 + 38 * fila) + "h14"}
+                  strokeWidth="3"
+                />
+              ))
+            )}
+            {trazos.map((d, orden) => (
+              <Trazo key={cual + "-" + orden} t={0.5 + 0.1 * orden} dura={0.3} d={d} strokeWidth="2.6" />
+            ))}
+            {cual === 0 &&
+              [[cx - 40, -1], [cx + 40, 1]].map(([x, lado]) => (
+                <g key={"cuna" + lado}>
+                  <Velo t={0.8} d={"M" + x + " " + (cy + 14) + "L" + (x + 40 * lado) + " " + (cy + 54) + "L" + (x + 30 * lado) + " " + (cy + 60) + "Z"} fill="#fff" stroke="none" />
+                  <Velo t={0.9} d={"M" + x + " " + (cy + 16) + "L" + (x - 4 * lado) + " " + (cy + 62)} strokeWidth="2.6" strokeDasharray="4 5" />
+                </g>
+              ))}
+            <Trazo t={1.2} dura={0.3} d={arco} strokeWidth="1.6" strokeOpacity="0.85" />
+            <Letras>
+              <Rotulo t={0.1} x="150" y="60" fontSize="16">
+                {palabra("enlaces que forma", true)}
+              </Rotulo>
+              {VALENCIAS_DE_LA_CLASE.map(([simbolo, n], fila) => (
+                <g key={simbolo}>
+                  <Rotulo t={0.15 + 0.1 * fila} x="96" y={104 + 38 * fila} fontSize="22">
+                    {simbolo}
+                  </Rotulo>
+                  <Rotulo t={0.2 + 0.1 * fila} x="132" y={104 + 38 * fila} fontSize="18" fill={TINTA_AMBAR_DEL_RESUMEN} fontWeight="700">
+                    {n}
+                  </Rotulo>
+                </g>
+              ))}
+              <Rotulo t={0.9} x="150" y="268" fontSize="15">
+                {palabra("cuatro electrones de valencia:")}
+              </Rotulo>
+              <Rotulo t={1.0} x="150" y="292" fontSize="15">
+                {palabra("cuatro enlaces", true)}
+              </Rotulo>
+              {centros.map(([x, y], orden) => (
+                <Rotulo key={"c" + orden} t={0.45} x={x} y={y + 8} fontSize="22">
+                  C
+                </Rotulo>
+              ))}
+              {extremos.map(([x, y], orden) => (
+                <Rotulo key={"h" + orden} t={0.8 + 0.05 * orden} x={x} y={y + 7} fontSize="19">
+                  H
+                </Rotulo>
+              ))}
+              <Rotulo t={1.3} x={lugarDelAngulo[0]} y={lugarDelAngulo[1]} fontSize="16">
+                {enlace.angulo}
+              </Rotulo>
+              <Rotulo t={1.2} x={cx} y="300" fontSize="17">
+                {palabra(enlace.serie + ": enlace " + enlace.nombre + ", " + enlace.forma, true)}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ALCANOS_DE_LA_CLASE = [
+        {
+          nombre: "3,4-dimetilhexano",
+          grupos: {
+            a: [110, 100, "CH3"],
+            b: [215, 100, "CH"],
+            c: [320, 100, "CH"],
+            d: [425, 100, "CH2"],
+            e: [530, 100, "CH3"],
+            f: [215, 166, "CH2"],
+            g: [215, 232, "CH3"],
+            h: [320, 166, "CH3"]
+          },
+          enlaces: [["a", "b", 1], ["b", "c", 1], ["c", "d", 1], ["d", "e", 1], ["b", "f", 1], ["f", "g", 1], ["c", "h", 1]],
+          cadena: ["e", "d", "c", "b", "f", "g"],
+          lugarDelNumero: (clave) => (clave === "f" || clave === "g" ? [-44, 0] : [0, -40]),
+          explicacion: "La línea horizontal tiene cinco carbonos, pero sigue por el etilo: la cadena más larga tiene seis. Desde cualquiera de sus extremos, los dos metilos quedan en el 3 y el 4."
+        },
+        {
+          nombre: "3-etil-2,4-dimetilpentano",
+          grupos: {
+            a: [120, 120, "CH3"],
+            b: [220, 120, "CH"],
+            c: [320, 120, "CH"],
+            d: [420, 120, "CH"],
+            e: [520, 120, "CH3"],
+            f: [220, 54, "CH3"],
+            g: [320, 186, "CH2"],
+            h: [320, 252, "CH3"],
+            i: [420, 54, "CH3"]
+          },
+          enlaces: [["a", "b", 1], ["b", "c", 1], ["c", "d", 1], ["d", "e", 1], ["b", "f", 1], ["c", "g", 1], ["g", "h", 1], ["d", "i", 1]],
+          cadena: ["a", "b", "c", "d", "e"],
+          lugarDelNumero: (clave) => ({ a: [0, -36], b: [-32, 28], c: [32, -30], d: [32, 28], e: [0, -36] })[clave],
+          explicacion: "Cinco carbonos en línea, y siguiendo por el etilo, otros cinco: manda la cadena con más ramas, la horizontal, con tres. Metilos en el 2 y el 4 y etilo en el 3; etil va antes que metil."
+        }
+      ];
+
+      function CarbonoYAlcanosDibujo({ e }) {
+        if (e.v >= ENLACES_DEL_CARBONO.length) {
+          return <SemidesarrolladaDelResumen key={e.v} molecula={ALCANOS_DE_LA_CLASE[e.v - ENLACES_DEL_CARBONO.length]} />;
+        }
+        return <CarbonoDibujo enlace={e.v} />;
+      }
+
+      const GRUPOS_DE_LA_CLASE = [
+        { corto: "ácido", rotulo: ["R–COOH"], sufijo: "ácido …-oico", prefijo: "carboxi-", ejemplo: "CH_3{-}CH(CH_3){-}CH_2{-}COOH", ejemploNombre: "ácido 3-metilbutanoico" },
+        { corto: "éster", rotulo: ["R–COO–R′"], sufijo: "…-oato de …-ilo", prefijo: "alcoxicarbonil-", ejemplo: "CH_3{-}COO{-}CH_3", ejemploNombre: "etanoato de metilo" },
+        { corto: "amida", femenino: true, rotulo: ["R–CONH", "2"], sufijo: "-amida", prefijo: "carbamoil-", ejemplo: "CH_3{-}CONH_2", ejemploNombre: "etanamida" },
+        { corto: "nitrilo", rotulo: ["R–C≡N"], sufijo: "-nitrilo", prefijo: "ciano-", ejemplo: "CH_3{-}CH_2{-}CH_2{-}C{\\equiv}N", ejemploNombre: "butanonitrilo" },
+        { corto: "aldehído", rotulo: ["R–CHO"], sufijo: "-al", prefijo: "oxo- (o formil-)", ejemplo: "CH_3{-}CHO", ejemploNombre: "etanal" },
+        { corto: "cetona", femenino: true, rotulo: ["R–CO–R′"], sufijo: "-ona", prefijo: "oxo-", ejemplo: "CH_3{-}CO{-}CH_2{-}CH_2{-}CH_3", ejemploNombre: "pentan-2-ona" },
+        { corto: "alcohol", rotulo: ["R–OH"], sufijo: "-ol", prefijo: "hidroxi-", ejemplo: "CH_3{-}CH_2{-}CH_2{-}CH_2{-}CH_2OH", ejemploNombre: "pentan-1-ol" },
+        { corto: "amina", femenino: true, rotulo: ["R–NH", "2"], sufijo: "-amina", prefijo: "amino-", ejemplo: "CH_3{-}CH_2{-}CH_2{-}CH_2{-}NH{-}CH_3", ejemploNombre: "butilmetilamina, una amina secundaria" },
+        { corto: "éter", rotulo: ["R–O–R′"], sufijo: "los dos radicales y la palabra éter", prefijo: "alcoxi-", ejemplo: "CH_3{-}O{-}CH_2{-}CH_2{-}CH_2{-}CH_3", ejemploNombre: "butil metil éter" }
+      ];
+
+      function GruposFuncionalesDibujo({ e }) {
+        const grupo = GRUPOS_DE_LA_CLASE[e.g];
+        return (
+          <>
+            {GRUPOS_DE_LA_CLASE.map((uno, orden) =>
+              orden === e.g ? (
+                <Barra key={orden} t={0.3 + 0.04 * orden} x="430" y={n1(22 + 31 * orden)} width="170" height="26" rx="8" fillOpacity="0.95" />
+              ) : (
+                <Trazo key={orden} t={0.1 + 0.04 * orden} dura={0.2} d={caja(430, 22 + 31 * orden, 170, 26, 8)} strokeWidth="1.4" strokeOpacity="0.7" />
+              )
+            )}
+            <Trazo t={0.6} dura={0.3} d={"M" + 404 + " " + (35 + 31 * e.g) + "H" + 422} strokeWidth="2" />
+            <Velo t={0.85} d={puntaAbierta(426, 35 + 31 * e.g, 1, 0, 8)} strokeWidth="2" />
+            <Letras>
+              {GRUPOS_DE_LA_CLASE.map((uno, orden) => (
+                <Rotulo
+                  key={orden}
+                  t={0.15 + 0.04 * orden}
+                  x="515"
+                  y={n1(40 + 31 * orden)}
+                  fontSize="14"
+                  fill={orden === e.g ? TINTA_AMBAR_DEL_RESUMEN : "#fff"}
+                  fontWeight={orden === e.g ? 700 : 400}
+                >
+                  {palabra(orden + 1 + ". " + uno.corto)}
+                </Rotulo>
+              ))}
+              <Rotulo t={0.2} x="200" y="104" fontSize="40">
+                <FormulaDeRotulo partes={grupo.rotulo} />
+              </Rotulo>
+              <Rotulo t={0.6} x="200" y="176" fontSize="16">
+                {palabra("si es el principal: ")}
+                {palabra(grupo.sufijo, true)}
+              </Rotulo>
+              <Rotulo t={0.75} x="200" y="214" fontSize="16">
+                {palabra("si no, prefijo: ")}
+                {palabra(grupo.prefijo, true)}
+              </Rotulo>
+              <Rotulo t={0.9} x="200" y="276" fontSize="15" opacity="0.92">
+                {palabra("prioridad " + (e.g + 1) + " de " + GRUPOS_DE_LA_CLASE.length)}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const PENTAN_1_OL = ["CH", "3", "–CH", "2", "–CH", "2", "–CH", "2", "–CH", "2", "OH"];
+
+      const ISOMEROS_DE_LA_CLASE = [
+        {
+          corto: "de cadena",
+          titulo: "isómeros de cadena",
+          formula: ["C", "5", "H", "12", "O"],
+          formulaTex: "C_5H_{12}O",
+          izquierda: { partes: PENTAN_1_OL, nombre: "pentan-1-ol" },
+          derecha: { partes: ["CH", "3", "–CH", "2", "–CH(CH", "3", ")–CH", "2", "OH"], nombre: "2-metilbutan-1-ol" },
+          idea: ["La cadena: lineal en uno y con una rama en el otro."]
+        },
+        {
+          corto: "de posición",
+          titulo: "isómeros de posición",
+          formula: ["C", "3", "H", "6", "Br", "2"],
+          formulaTex: "C_3H_6Br_2",
+          izquierda: { partes: ["CH", "3", "–CH", "2", "–CHBr", "2"], nombre: "1,1-dibromopropano" },
+          derecha: { partes: ["CH", "3", "–CHBr–CH", "2", "Br"], nombre: "1,2-dibromopropano" },
+          idea: ["El mismo grupo, en otro carbono de la cadena."]
+        },
+        {
+          corto: "de función",
+          titulo: "isómeros de función",
+          formula: ["C", "5", "H", "12", "O"],
+          formulaTex: "C_5H_{12}O",
+          izquierda: { partes: PENTAN_1_OL, nombre: "pentan-1-ol, un alcohol" },
+          derecha: { partes: ["CH", "3", "–O–CH", "2", "–CH", "2", "–CH", "2", "–CH", "3"], nombre: "butil metil éter, un éter" },
+          idea: ["Otra familia: el alcohol hierve a 138 °C, y el éter,", "sin enlaces de hidrógeno entre sus moléculas, a 70 °C."]
+        },
+        {
+          corto: "cis-trans",
+          titulo: "isómeros cis y trans",
+          formula: ["C", "4", "H", "4", "O", "4"],
+          formulaTex: "HOOC{-}CH{=}CH{-}COOH",
+          espacial: true,
+          idea: ["El enlace doble no gira: son dos compuestos."]
+        },
+        {
+          corto: "óptica",
+          titulo: "dos enantiómeros",
+          formula: ["CHBrClF"],
+          formulaTex: "CHBrClF",
+          espacial: true,
+          idea: ["Imágenes en un espejo que no se superponen;", "giran la luz polarizada en sentidos opuestos."]
+        }
+      ];
+
+      const ALQUENOS_DE_LA_CLASE = [
+        { x: 130, nombre: "cis: ácido maleico", detalle: "funde a 131 °C", arriba: [["HOOC"], ["COOH"]], abajo: [["H"], ["H"]] },
+        { x: 444, nombre: "trans: ácido fumárico", detalle: "funde a 287 °C", arriba: [["HOOC"], ["H"]], abajo: [["H"], ["COOH"]] }
+      ];
+
+      function AlquenoDelResumen({ alqueno, t }) {
+        const y = 170;
+        const cuerpo = 20;
+        const c1 = [alqueno.x, y];
+        const c2 = [alqueno.x + 66, y];
+        const sustituyentes = [
+          [c1, 120, alqueno.arriba[0], "izquierda"],
+          [c1, 240, alqueno.abajo[0], "izquierda"],
+          [c2, 60, alqueno.arriba[1], "derecha"],
+          [c2, 300, alqueno.abajo[1], "derecha"]
+        ];
+        return (
+          <>
+            <Trazo t={t} dura={0.3} d={enlaceDelResumen(c1[0], y, c2[0], y, 12, 2)} strokeWidth="2.2" />
+            {sustituyentes.map(([c, grados], orden) => {
+              const [x2, y2] = haciaDelResumen(c[0], c[1], grados, 52);
+              return <Trazo key={orden} t={t + 0.1 + 0.06 * orden} dura={0.25} d={enlaceDelResumen(c[0], c[1], x2, y2, 12, 1)} strokeWidth="2.2" />;
+            })}
+            <Letras>
+              {[c1, c2].map(([x], orden) => (
+                <Rotulo key={"c" + orden} t={t + 0.05} x={x} y={y + 7} fontSize={cuerpo}>
+                  C
+                </Rotulo>
+              ))}
+              {sustituyentes.map(([c, grados, partes, lado], orden) => {
+                const [x2, y2] = haciaDelResumen(c[0], c[1], grados, 52);
+                return (
+                  <GrupoDelResumen
+                    key={orden}
+                    t={t + 0.2 + 0.06 * orden}
+                    x={x2}
+                    y={y2}
+                    partes={partes}
+                    lado={partes[0] === "H" ? "centro" : lado}
+                    cuerpo={cuerpo}
+                  />
+                );
+              })}
+              <Rotulo t={t + 0.6} x={alqueno.x + 33} y="262" fontSize="15">
+                {palabra(alqueno.nombre, true)}
+              </Rotulo>
+              <Rotulo t={t + 0.7} x={alqueno.x + 33} y="284" fontSize="14">
+                {palabra(alqueno.detalle)}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ENLACES_DEL_ASIMETRICO = [
+        ["Br", "plano", 90],
+        ["Cl", "plano", 330],
+        ["F", "cuna", 210],
+        ["H", "rayas", 150]
+      ];
+
+      function AsimetricoDelResumen({ x, espejo, t }) {
+        const y = 170;
+        const largo = 56;
+        return (
+          <>
+            {ENLACES_DEL_ASIMETRICO.map(([simbolo, tipo, grados], orden) => {
+              const angulo = espejo ? 180 - grados : grados;
+              const [x2, y2] = haciaDelResumen(x, y, angulo, largo - 14);
+              const [x1, y1] = haciaDelResumen(x, y, angulo, 13);
+              const ux = (x2 - x1) / (largo - 27);
+              const uy = (y2 - y1) / (largo - 27);
+              if (tipo === "cuna") {
+                const d =
+                  "M" + n1(x1 - uy) + " " + n1(y1 + ux) + "L" + n1(x2 - 6 * uy) + " " + n1(y2 + 6 * ux) +
+                  "L" + n1(x2 + 6 * uy) + " " + n1(y2 - 6 * ux) + "L" + n1(x1 + uy) + " " + n1(y1 - ux) + "Z";
+                return <Velo key={simbolo} t={t + 0.1 * orden} d={d} fill="#fff" stroke="none" />;
+              }
+              if (tipo === "rayas") {
+                let d = "";
+                for (let paso = 0; paso < 5; paso += 1) {
+                  const a = 3 + paso * 6.2;
+                  const mitad = 1.4 + paso * 1.2;
+                  const px = x1 + ux * a;
+                  const py = y1 + uy * a;
+                  d += "M" + n1(px - uy * mitad) + " " + n1(py + ux * mitad) + "L" + n1(px + uy * mitad) + " " + n1(py - ux * mitad);
+                }
+                return <Velo key={simbolo} t={t + 0.1 * orden} d={d} strokeWidth="1.8" />;
+              }
+              return <Trazo key={simbolo} t={t + 0.1 * orden} dura={0.25} d={"M" + n1(x1) + " " + n1(y1) + "L" + n1(x2) + " " + n1(y2)} strokeWidth="2.2" />;
+            })}
+            <Letras>
+              <Rotulo t={t} x={x} y={y + 7} fontSize="20">
+                C
+              </Rotulo>
+              {ENLACES_DEL_ASIMETRICO.map(([simbolo, , grados], orden) => {
+                const angulo = espejo ? 180 - grados : grados;
+                const [x2, y2] = haciaDelResumen(x, y, angulo, largo);
+                const lado = angulo === 90 ? "centro" : Math.cos((angulo * Math.PI) / 180) < 0 ? "izquierda" : "derecha";
+                return <GrupoDelResumen key={simbolo} t={t + 0.15 + 0.1 * orden} x={x2} y={y2} partes={[simbolo]} lado={lado} cuerpo={20} />;
+              })}
+            </Letras>
+          </>
+        );
+      }
+
+      function IsomeriaDibujo({ e }) {
+        const isomero = ISOMEROS_DE_LA_CLASE[e.i];
+        let cuerpo = null;
+        if (e.i === 3) {
+          cuerpo = (
+            <>
+              <AlquenoDelResumen key="cis" alqueno={ALQUENOS_DE_LA_CLASE[0]} t={0.2} />
+              <AlquenoDelResumen key="trans" alqueno={ALQUENOS_DE_LA_CLASE[1]} t={0.6} />
+              <Trazo t={1.0} dura={0.3} d={distintoDelResumen(320, 170)} strokeWidth="2.4" />
+            </>
+          );
+        } else if (e.i === 4) {
+          cuerpo = (
+            <>
+              <AsimetricoDelResumen key="izquierda" x={190} espejo={false} t={0.2} />
+              <AsimetricoDelResumen key="derecha" x={450} espejo t={0.6} />
+              <Velo t={0.1} d="M320 92V246" strokeWidth="1.6" strokeDasharray="6 6" strokeOpacity="0.85" />
+              <Letras>
+                <Rotulo t={0.2} x="320" y="84" fontSize="13" opacity="0.88">
+                  {palabra("espejo")}
+                </Rotulo>
+                <Rotulo t={1.0} x="320" y="270" fontSize="14">
+                  {palabra("la cuña llena sale hacia ti; la rayada se va detrás")}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        } else {
+          cuerpo = (
+            <>
+              <Trazo t={0.7} dura={0.3} d={distintoDelResumen(320, 150)} strokeWidth="2.4" />
+              <Letras>
+                {[isomero.izquierda, isomero.derecha].map((lado, orden) => (
+                  <g key={orden}>
+                    <Rotulo t={0.3 + 0.2 * orden} x={orden ? 480 : 160} y="157" fontSize="19">
+                      <FormulaDeRotulo partes={lado.partes} />
+                    </Rotulo>
+                    <Rotulo t={0.4 + 0.2 * orden} x={orden ? 480 : 160} y="196" fontSize="15">
+                      {palabra(lado.nombre, true)}
+                    </Rotulo>
+                  </g>
+                ))}
+              </Letras>
+            </>
+          );
+        }
+        return (
+          <>
+            {cuerpo}
+            <Letras>
+              <Rotulo t={0.05} x="320" y="40" fontSize="20">
+                {palabra(isomero.titulo, true)}
+              </Rotulo>
+              <Rotulo t={0.1} x="320" y="66" fontSize="15">
+                {palabra("la misma fórmula molecular: ")}
+                <FormulaDeRotulo partes={isomero.formula} />
+              </Rotulo>
+              {e.i < 3 &&
+                isomero.idea.map((linea, orden) => (
+                  <Rotulo key={orden} t={1.0 + 0.1 * orden} x="320" y={n1(258 + 24 * orden)} fontSize="15">
+                    {palabra(linea)}
+                  </Rotulo>
+                ))}
+            </Letras>
+          </>
+        );
+      }
+
+      const ANALISIS_DE_LA_CLASE = {
+        porcentajes: [52.2, 13.0, 34.8],
+        masas: [12.01, 1.01, 16.0],
+        empirica: ["C", "2", "H", "6", "O"]
+      };
+
+      const cuatroCifras = (valor) => cifra(valor, Math.max(0, 3 - Math.floor(Math.log10(Math.abs(valor)))), true);
+
+      function molesDelAnalisis() {
+        const moles = ANALISIS_DE_LA_CLASE.porcentajes.map((porcentaje, orden) => porcentaje / ANALISIS_DE_LA_CLASE.masas[orden]);
+        const menor = Math.min.apply(null, moles);
+        return { moles, cocientes: moles.map((mol) => mol / menor) };
+      }
+
+      const MASA_MOLAR_DEL_VAPOR = (0.44 * 0.082 * 373) / (1.0 * 0.153);
+
+      function EmpiricaDibujo() {
+        const { moles, cocientes } = molesDelAnalisis();
+        const mayor = Math.max.apply(null, moles);
+        const columnas = [150, 300, 450];
+        return (
+          <>
+            {moles.map((mol, orden) => {
+              const alto = (110 * mol) / mayor;
+              return (
+                <Barra
+                  key={orden}
+                  t={0.4 + 0.12 * orden}
+                  x={columnas[orden] - 26}
+                  y={n1(212 - alto)}
+                  width="52"
+                  height={n1(alto)}
+                  fillOpacity="0.85"
+                />
+              );
+            })}
+            <Trazo t={0.3} dura={0.3} d="M100 213H500" strokeWidth="1.6" strokeOpacity="0.8" />
+            <Letras>
+              {["C", "H", "O"].map((simbolo, orden) => (
+                <g key={simbolo}>
+                  <Rotulo t={0.1} x={columnas[orden]} y="40" fontSize="24" fontWeight="700">
+                    {simbolo}
+                  </Rotulo>
+                  <Rotulo t={0.2} x={columnas[orden]} y="66" fontSize="15" opacity="0.92">
+                    {cifra(ANALISIS_DE_LA_CLASE.porcentajes[orden], 1, true) + " %"}
+                  </Rotulo>
+                  <Rotulo t={0.6 + 0.12 * orden} x={columnas[orden]} y="236" fontSize="14" opacity="0.92">
+                    {palabra(cuatroCifras(moles[orden]) + " mol")}
+                  </Rotulo>
+                  <Rotulo t={0.9 + 0.1 * orden} x={columnas[orden]} y="258" fontSize="16" fontWeight="700">
+                    {cifra(cocientes[orden], 3)}
+                  </Rotulo>
+                </g>
+              ))}
+              <Rotulo t={1.0} x="580" y="236" fontSize="13" opacity="0.85">
+                {palabra("moles")}
+              </Rotulo>
+              <Rotulo t={1.1} x="580" y="258" fontSize="13" opacity="0.85">
+                {palabra("entre el menor")}
+              </Rotulo>
+              <Rotulo t={1.2} x="300" y="300" fontSize="26" fontWeight="700">
+                <FormulaDeRotulo partes={ANALISIS_DE_LA_CLASE.empirica} />
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      function MolecularDibujo() {
+        return (
+          <>
+            <Trazo t={0.4} dura={0.3} d={caja(110, 150, 140, 48, 10)} strokeWidth="2" />
+            <Trazo t={0.5} dura={0.3} d={caja(110, 208, 140, 48, 10)} strokeWidth="2" />
+            <Trazo t={0.8} dura={0.4} d="M270 203H352" strokeWidth="2" />
+            <Velo t={1.1} d={puntaAbierta(358, 203, 1, 0, 9)} strokeWidth="2" />
+            <Barra t={1.2} x="372" y="150" width="170" height="106" rx="12" fillOpacity="0.95" />
+            <Letras>
+              <Rotulo t={0.1} x="320" y="40" fontSize="16">
+                {palabra("el vapor: 0,440 g en 153 mL, a 100 °C y 1,00 atm")}
+              </Rotulo>
+              <Rotulo t={0.3} x="320" y="104" fontSize="26">
+                {cursiva("M")}
+                {" = 88,0 "}
+                {palabra("g mol")}
+                <Sup>{MENOS + "1"}</Sup>
+              </Rotulo>
+              {[150, 208].map((y, orden) => (
+                <g key={y}>
+                  <Rotulo t={0.5 + 0.1 * orden} x="180" y={y + 23} fontSize="20">
+                    <FormulaDeRotulo partes={["C", "2", "H", "4", "O"]} />
+                  </Rotulo>
+                  <Rotulo t={0.55 + 0.1 * orden} x="180" y={y + 41} fontSize="12" opacity="0.9">
+                    {palabra("44,06 g mol")}
+                    <Sup>{MENOS + "1"}</Sup>
+                  </Rotulo>
+                </g>
+              ))}
+              <Rotulo t={0.9} x="311" y="192" fontSize="16">
+                {palabra("por 2")}
+              </Rotulo>
+              <Rotulo t={1.3} x="457" y="206" fontSize="30" fill={TINTA_AMBAR_DEL_RESUMEN}>
+                <FormulaDeRotulo partes={["C", "4", "H", "8", "O", "2"]} />
+              </Rotulo>
+              <Rotulo t={1.35} x="457" y="236" fontSize="13" fill={TINTA_AMBAR_DEL_RESUMEN}>
+                {palabra("88,0 g mol")}
+                <Sup>{MENOS + "1"}</Sup>
+              </Rotulo>
+              <Rotulo t={1.5} x="320" y="296" fontSize="15">
+                {palabra("la molecular: " + cifra(88.0 / 44.06, 2, true) + " veces la empírica")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      function FormulaEmpiricaDibujo({ e }) {
+        return e.p === 0 ? <EmpiricaDibujo key="empirica" /> : <MolecularDibujo key="molecular" />;
+      }
+
+      const INSTRUMENTOS_DE_LA_CLASE = [
+        {
+          corto: "vaso",
+          nombre: "El vaso de precipitados",
+          linea: "instrumento graduado, a ojo",
+          lectura: "(30\\pm5)\\ \\mathrm{mL}",
+          rotulo: "30 ± 5 mL",
+          regla: "Marcas cada 10 mL: la mitad, 5 mL. Solo sirve para disolver y trasvasar.",
+          d: "M282 74L286 80V250Q286 258 294 258H346Q354 258 354 250V80",
+          marcas: [130, 170, 210],
+          marcaX: 352,
+          menisco: [288, 352],
+          nivel: 190
+        },
+        {
+          corto: "probeta",
+          nombre: "La probeta",
+          linea: "instrumento graduado",
+          lectura: "(36{,}0\\pm0{,}5)\\ \\mathrm{mL}",
+          rotulo: "36,0 ± 0,5 mL",
+          regla: "Marcas cada 1 mL: la mitad, 0,5 mL. La medida, con las cifras decimales de su incertidumbre.",
+          d: "M306 40V250H334V40M286 258H354",
+          marcas: [80, 100, 120, 140, 160, 180, 200, 220],
+          marcaX: 334,
+          menisco: [308, 332],
+          nivel: 150
+        },
+        {
+          corto: "bureta",
+          nombre: "La bureta",
+          linea: "instrumento graduado",
+          lectura: "(12{,}35\\pm0{,}05)\\ \\mathrm{mL}",
+          rotulo: "12,35 ± 0,05 mL",
+          regla: "Marcas cada 0,1 mL: la mitad, 0,05 mL. Mide lo que se añade gota a gota.",
+          d: "M312 30V226M328 30V226M312 226L318 244V262M328 226L322 244V262M304 236H336",
+          marcas: [60, 80, 100, 120, 140, 160, 180, 200],
+          marcaX: 328,
+          menisco: [314, 326],
+          nivel: 92
+        },
+        {
+          corto: "pipeta",
+          nombre: "La pipeta aforada",
+          linea: "instrumento aforado",
+          lectura: "(10{,}00\\pm0{,}02)\\ \\mathrm{mL}",
+          rotulo: "10,00 ± 0,02 mL",
+          regla: "Un solo volumen, con la incertidumbre del fabricante.",
+          d: "M316 30V120M324 30V120M316 120Q296 150 316 182M324 120Q344 150 324 182M316 182V262M324 182V262",
+          marcas: [],
+          nivel: 70
+        },
+        {
+          corto: "matraz",
+          nombre: "El matraz aforado",
+          linea: "instrumento aforado",
+          lectura: "(50{,}00\\pm0{,}06)\\ \\mathrm{mL}",
+          rotulo: "50,00 ± 0,06 mL",
+          regla: "Un solo volumen, para preparar disoluciones: se enrasa con la parte de abajo del menisco en el aforo.",
+          d: "M310 40V166M330 40V166M310 166Q262 196 284 240Q300 262 320 262Q340 262 356 240Q378 196 330 166",
+          marcas: [],
+          nivel: 90
+        },
+        {
+          corto: "balanza",
+          nombre: "La balanza",
+          linea: "instrumento digital",
+          lectura: "(5{,}03\\pm0{,}01)\\ \\mathrm{g}",
+          rotulo: "5,03 ± 0,01 g",
+          pantalla: "5,03 g",
+          regla: "Una unidad de la última cifra. Se pesa sobre el vidrio de reloj, con la balanza tarada.",
+          d: "M250 196H390V256H250ZM320 196V180M262 180H378",
+          marcas: [],
+          nivel: null
+        },
+        {
+          corto: "crisol",
+          nombre: "El crisol",
+          linea: "para secar un hidrato",
+          lectura: "x=\\frac{n(\\mathrm{H_2O})}{n(\\mathrm{BaCl_2})}=\\frac{0{,}020\\,14}{0{,}010\\,00}=2{,}01",
+          rotulo: "25,595 g",
+          sub: "masa constante: ya no queda agua",
+          regla: "Se calienta y se pesa hasta que dos pesadas seguidas coinciden: 25,601, 25,595 y 25,595 g. Se pierden 0,363 g de agua y quedan 2,083 g de sal anhidra: x = 2, el BaCl₂⋅2H₂O.",
+          d: "M282 146H358L346 196H294ZM262 202H378M320 214Q298 240 320 262Q342 240 320 214ZM312 262V288M328 262V288",
+          marcas: [],
+          nivel: null
+        }
+      ];
+
+      function LaboratorioDibujo({ e }) {
+        const instrumento = INSTRUMENTOS_DE_LA_CLASE[e.k];
+        return (
+          <>
+            <Trazo key={"i" + e.k} t={0.1} dura={0.6} d={instrumento.d} strokeWidth="2.4" />
+            {instrumento.marcas.map((y, orden) => (
+              <Trazo key={e.k + "-" + orden} t={0.5 + 0.03 * orden} dura={0.15} d={"M" + instrumento.marcaX + " " + y + "h-10"} strokeWidth="1.4" />
+            ))}
+            {instrumento.menisco && (
+              <Trazo
+                t={0.9}
+                dura={0.3}
+                d={"M" + instrumento.menisco[0] + " " + instrumento.nivel + "Q320 " + (instrumento.nivel + 9) + " " + instrumento.menisco[1] + " " + instrumento.nivel}
+                strokeWidth="2.2"
+              />
+            )}
+            {(instrumento.corto === "matraz" || instrumento.corto === "pipeta") && (
+              <Trazo t={0.9} dura={0.3} d={"M298 " + instrumento.nivel + "H342"} strokeWidth="2" />
+            )}
+            {instrumento.pantalla && <Trazo t={0.7} dura={0.3} d={caja(278, 212, 84, 28, 4)} strokeWidth="1.6" />}
+            <Letras>
+              {instrumento.pantalla && (
+                <Rotulo t={1.0} x="320" y="232" fontSize="16">
+                  {instrumento.pantalla}
+                </Rotulo>
+              )}
+              <Rotulo t={0.3} x="120" y="100" fontSize="20">
+                {palabra(instrumento.nombre, true)}
+              </Rotulo>
+              <Rotulo t={0.5} x="120" y="134" fontSize="16">
+                {palabra(instrumento.linea)}
+              </Rotulo>
+              <Rotulo t={1.1} x="510" y="160" fontSize="22">
+                {instrumento.rotulo}
+              </Rotulo>
+              <Rotulo t={1.2} x="510" y="190" fontSize="13" opacity="0.9">
+                {palabra(instrumento.sub || "una medida, con su incertidumbre")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ESTACIONES_CLASE = [
+        {
+          clave: "materia",
+          nombre: "La materia y las medidas",
+          inicial: { t: 25 },
+          duracion: 1.8,
+          Dibujo: TemperaturaDibujo,
+          descripcion: (e) =>
+            "Un termómetro con dos escalas: a la izquierda, en grados Celsius, y a la derecha, en kelvin. Marca " +
+            cifra(e.t, 0) + " °C, que son " + cifra(e.t + 273, 0) + " K. Tiene señalados el cero absoluto, −273 °C o 0 K; " +
+            "el oxígeno, que hierve a −183 °C o 90 K; el hielo, que funde a 0 °C o 273 K, y el agua, que hierve a 100 °C o 373 K.",
+          mandos: () => [
+            {
+              tipo: "barra",
+              clave: "t",
+              nombre: "la temperatura en grados Celsius",
+              rotulo: "Temperatura",
+              min: -273,
+              max: 100,
+              salto: 1,
+              escribe: (valor) => cifra(valor, 0) + " °C"
+            }
+          ],
+          vivo: (e) => [
+            "T=" + enTex(e.t, 0) + "+273=" + enTex(e.t + 273, 0) + "\\ \\mathrm{K}",
+            <>Un kelvin mide lo mismo que un grado Celsius: las dos escalas solo se diferencian en el cero, y en kelvin no hay temperaturas negativas.</>
+          ],
+          pista: <>Mueve la temperatura: las dos escalas marcan lo mismo, con el cero en otro sitio.</>,
+          fichas: [
+            {
+              nombre: "Elemento y compuesto",
+              texto: "Un elemento tiene un solo tipo de átomo, como el ozono, O₃; un compuesto, elementos distintos en proporción fija. Orgánico, si lleva carbono, salvo los óxidos del carbono, los carbonatos y los hidrogenocarbonatos."
+            },
+            {
+              nombre: "Las magnitudes del SI",
+              texto: "Siete fundamentales: longitud (m), masa (kg), tiempo (s), temperatura (K), intensidad de corriente (A), cantidad de sustancia (mol) e intensidad luminosa (cd). Las demás son derivadas: el volumen, en m³."
+            },
+            {
+              nombre: "Los prefijos",
+              tex: "\\text{mili }10^{-3}\\quad\\text{micro }10^{-6}\\quad\\text{nano }10^{-9}",
+              texto: "De atto, 10⁻¹⁸, a exa, 10¹⁸. Al cubo, el prefijo también: 1 cm³ = 10⁻⁶ m³, y 1 dm³ = 1 L."
+            },
+            {
+              nombre: "La temperatura",
+              tex: "T/\\mathrm{K}=\\theta/{}^{\\circ}\\mathrm{C}+273",
+              texto: "El cero absoluto es 0 K, −273,15 °C. Una diferencia de temperaturas vale lo mismo en kelvin que en grados Celsius."
+            },
+            {
+              nombre: "Los tres enlaces",
+              texto: "Metal y no metal, iónico; no metales, covalente; metales, metálico. Los tres son atracciones eléctricas."
+            },
+            {
+              nombre: "Las familias",
+              texto: "Las filas son los periodos, y las columnas, los grupos: 1 alcalinos, 2 alcalinotérreos, 13 térreos, 14 carbonoideos, 15 nitrogenoideos, 16 calcógenos, 17 halógenos y 18 gases nobles."
+            }
+          ],
+          ojo: [
+            "El kelvin no lleva grado: 300 K, no 300 °K.",
+            "De grados Celsius a kelvin siempre se suma: −10 °C son 263 K, no −283 K.",
+            "Las familias son las columnas, los grupos; las filas son los periodos.",
+            "El ozono, O₃, no es un compuesto: sus tres átomos son de oxígeno."
+          ]
+        },
+        {
+          clave: "formulacion",
+          nombre: "Formulación",
+          inicial: { i: 10 },
+          duracion: 1.6,
+          Dibujo: FormulacionDibujo,
+          descripcion: (e) => {
+            const compuesto = COMPUESTOS_DE_LA_CLASE[e.i];
+            return (
+              "La fórmula " + compuesto.partes.join("") + ", " + compuesto.tipo + ", y, debajo, cada elemento con su número de oxidación: " +
+              compuesto.atomos.map(([simbolo, n, valor]) => simbolo + ", " + conSigno(valor) + (n === 1 ? "" : ", " + n + " átomos")).join("; ") +
+              ". La suma es cero. Se llama " + compuesto.nombres + "."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "el compuesto",
+              rotulo: "Compuesto",
+              opciones: COMPUESTOS_DE_LA_CLASE.map((compuesto, orden) => ({ valor: orden, rotulo: <Mates tex={"\\mathrm{" + compuesto.tex + "}"} /> }))
+            }
+          ],
+          vivo: (e) => {
+            const compuesto = COMPUESTOS_DE_LA_CLASE[e.i];
+            return [sumaDeOxidacion(compuesto), <>{compuesto.nombres.charAt(0).toUpperCase() + compuesto.nombres.slice(1)}.</>];
+          },
+          pista: <>Elige un compuesto: cada número de oxidación, por los átomos que hay, suma cero.</>,
+          fichas: [
+            {
+              nombre: "Las reglas",
+              tex: "\\mathrm{H}\\colon\\ +1\\qquad\\mathrm{O}\\colon\\ -2\\qquad\\textstyle\\sum=0",
+              texto: "El hidrógeno tiene −1 con un metal, en los hidruros, y el oxígeno, −1 en los peróxidos. En un ion, la suma es su carga."
+            },
+            {
+              nombre: "Dos nombres",
+              texto: "Con prefijos se cuentan los átomos: trisulfuro de dialuminio. Con romanos va el número de oxidación, óxido de cobre(I), que no se escribe si el elemento solo tiene uno: sulfuro de aluminio."
+            },
+            {
+              nombre: "Los oxoácidos",
+              tex: "\\text{óxido}+\\mathrm{H_2O}\\longrightarrow\\text{oxoácido}",
+              texto: "-oso, el número de oxidación menor, y -ico, el mayor; con cuatro, hipo-…-oso y per-…-ico. Meta-, piro- y orto-, con una, dos o tres moléculas de agua; di-, dos ácidos menos una de agua; tio-, un oxígeno pasa a azufre."
+            },
+            {
+              nombre: "Hidruros y ácidos binarios",
+              texto: "Con un metal, el ion hidruro, H⁻, con −1. El compuesto de hidrógeno y un no metal, disuelto en agua, es el ácido …hídrico, y su sal, …uro."
+            },
+            {
+              nombre: "Aniones y sales",
+              tex: "\\text{-ico}\\rightarrow\\text{-ato}\\qquad\\text{-oso}\\rightarrow\\text{-ito}",
+              texto: "H₂CO₃, HCO₃⁻, CO₃²⁻. Tantos iones de cada uno como hagan falta para que las cargas sumen cero, y entre paréntesis si el de varios átomos va más de una vez."
+            }
+          ],
+          ojo: [
+            "El peróxido de potasio es K₂O₂: el O₂²⁻ no se parte, y su 2 no se simplifica.",
+            "El calcio solo tiene +2: «óxido de calcio(II)» lleva un número que sobra.",
+            "El sulfato de hierro(III) es Fe₂(SO₄)₃, con el sulfato entre paréntesis.",
+            "El ácido clorhídrico no tiene oxígeno: el acabado en -hídrico es un ácido binario."
+          ]
+        },
+        {
+          clave: "carbono",
+          nombre: "El carbono y los alcanos",
+          inicial: { v: 0 },
+          duracion: 1.8,
+          Dibujo: CarbonoYAlcanosDibujo,
+          descripcion: (e) => {
+            if (e.v >= ENLACES_DEL_CARBONO.length) {
+              const alcano = ALCANOS_DE_LA_CLASE[e.v - ENLACES_DEL_CARBONO.length];
+              return "La fórmula semidesarrollada del " + alcano.nombre + ", con su cadena principal resaltada y numerada. " + alcano.explicacion;
+            }
+            const enlace = ENLACES_DEL_CARBONO[e.v];
+            return (
+              "A la izquierda, los enlaces que forma cada átomo: el carbono, cuatro; el nitrógeno, tres; el oxígeno, dos, y el " +
+              "hidrógeno y los halógenos, uno. A la derecha, " + enlace.ejemploNombre + ", con un enlace " + enlace.nombre +
+              " entre sus carbonos: forma " + enlace.forma + ", a " + enlace.angulo + "."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "v",
+              nombre: "el enlace entre carbonos o el alcano",
+              rotulo: "Ver",
+              opciones: ENLACES_DEL_CARBONO.map((enlace, orden) => ({ valor: orden, rotulo: "enlace " + enlace.nombre })).concat(
+                ALCANOS_DE_LA_CLASE.map((alcano, orden) => ({ valor: ENLACES_DEL_CARBONO.length + orden, rotulo: alcano.nombre }))
+              )
+            }
+          ],
+          vivo: (e) => {
+            if (e.v >= ENLACES_DEL_CARBONO.length) {
+              return [<>{ALCANOS_DE_LA_CLASE[e.v - ENLACES_DEL_CARBONO.length].explicacion}</>];
+            }
+            const enlace = ENLACES_DEL_CARBONO[e.v];
+            return [
+              "\\mathrm{" + enlace.ejemplo + "}\\qquad " + enlace.anguloTex,
+              <>
+                {enlace.serie.charAt(0).toUpperCase() + enlace.serie.slice(1)}: {enlace.zonas} dominios electrónicos alrededor de
+                cada carbono, forma {enlace.forma}. En el Nivel Superior, hibridación {enlace.hibrido}.
+              </>
+            ];
+          },
+          pista: <>Elige un enlace entre carbonos, o un alcano con ramas: su cadena principal va resaltada y numerada.</>,
+          fichas: [
+            {
+              nombre: "Cuatro enlaces",
+              tex: "\\mathrm{C}\\colon 4\\quad\\mathrm{N}\\colon 3\\quad\\mathrm{O}\\colon 2\\quad\\mathrm{H},\\ \\mathrm{X}\\colon 1",
+              texto: "Cada átomo forma los enlaces que le faltan para completar su capa de valencia, ocho electrones (el hidrógeno, dos): el carbono comparte sus cuatro electrones de valencia."
+            },
+            {
+              nombre: "Los ángulos",
+              tex: "109{,}5^{\\circ}\\qquad 120^{\\circ}\\qquad 180^{\\circ}",
+              texto: "Simple, doble y triple: cuatro, tres y dos dominios electrónicos alrededor del carbono."
+            },
+            {
+              nombre: "El orden de llenado",
+              texto: "El diagrama de las diagonales: 1s, 2s, 2p, 3s, 3p, 4s, 3d, 4p… En un subnivel s caben 2 electrones; en un p, 6; en un d, 10, y en un f, 14."
+            },
+            {
+              nombre: "La cadena principal",
+              texto: "La más larga, aunque doble por una rama; si hay dos igual de largas, la de más ramas. En un alqueno, la más larga que contiene el enlace doble."
+            },
+            {
+              nombre: "Numerar y escribir",
+              texto: "El localizador más bajo para la primera rama; las ramas, por orden alfabético, sin contar di- ni tri-; comas entre números y guiones entre número y letra."
+            },
+            {
+              nombre: "Fórmulas generales",
+              tex: "\\mathrm{C}_{n}\\mathrm{H}_{2n+2}\\qquad\\mathrm{C}_{n}\\mathrm{H}_{2n}",
+              texto: "Alcanos y cicloalcanos: al cerrar el anillo se pierden dos hidrógenos."
+            }
+          ],
+          ojo: [
+            "Un etilo en el carbono 2 alarga la cadena: el «2-etil-3-metilpentano» es el 3,4-dimetilhexano.",
+            "Las ramas, por orden alfabético: 5-etil-3-metiloctano, no 3-metil-5-etiloctano.",
+            "Un enlace doble cuenta como un solo dominio: en el pent-2-eno, 120°, no 109,5°.",
+            "El carbono forma cuatro enlaces, aunque en su diagrama solo tenga dos electrones desapareados."
+          ]
+        },
+        {
+          clave: "grupos",
+          nombre: "Grupos funcionales",
+          inicial: { g: 4 },
+          duracion: 1.6,
+          Dibujo: GruposFuncionalesDibujo,
+          descripcion: (e) => {
+            const grupo = GRUPOS_DE_LA_CLASE[e.g];
+            return (
+              "A la izquierda, el grupo " + grupo.corto + ", " + grupo.rotulo.join("") + ": si es el grupo principal, se " +
+              "nombra con " + grupo.sufijo + "; si no, lleva el prefijo " + grupo.prefijo + ". A la derecha, la lista de prioridad, " +
+              "del ácido al éter, con " + (grupo.femenino ? "la " : "el ") + grupo.corto + " en el puesto " + (e.g + 1) + "."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "g",
+              nombre: "el grupo funcional",
+              rotulo: "Grupo",
+              opciones: GRUPOS_DE_LA_CLASE.map((grupo, orden) => ({ valor: orden, rotulo: grupo.corto }))
+            }
+          ],
+          vivo: (e) => {
+            const grupo = GRUPOS_DE_LA_CLASE[e.g];
+            return [
+              "\\mathrm{" + grupo.ejemplo + "}",
+              <>
+                Es {grupo.femenino ? "la" : "el"} {grupo.ejemploNombre}. Con varios grupos, el de más prioridad da la terminación, y
+                los demás, prefijos.
+              </>
+            ];
+          },
+          pista: <>Elige un grupo: su puesto en la lista dice si manda sobre los demás.</>,
+          fichas: [
+            {
+              nombre: "Las terminaciones",
+              texto: "-ol, -al, -ona, ácido …-oico, …-oato de …-ilo, -amida, -amina y -nitrilo. Los halógenos y los radicales siempre son prefijos."
+            },
+            {
+              nombre: "La prioridad",
+              texto: "Ácido, éster, amida, nitrilo, aldehído, cetona, alcohol, amina y éter. Los enlaces dobles y triples van en la raíz, con -en- e -in-."
+            },
+            {
+              nombre: "Con varios grupos",
+              texto: "El principal da la terminación y el localizador más bajo; los demás son prefijos, por orden alfabético: 3-hidroxi-4-oxopentanal."
+            },
+            {
+              nombre: "Las aminas",
+              texto: "Primaria, R–NH₂; secundaria, R–NH–R′; terciaria, R–N(R″)–R′: se cuentan los carbonos unidos al nitrógeno. En clase, con sus radicales y -amina."
+            },
+            {
+              nombre: "Los aromáticos",
+              tex: "\\mathrm{C_6H_6}\\colon\\ \\text{benceno}\\qquad\\mathrm{C_6H_5{-}}\\colon\\ \\text{fenil-}",
+              texto: "Seis enlaces iguales, con los electrones repartidos por el anillo. De memoria: benceno, tolueno, fenol, anilina, benzaldehído y ácido benzoico."
+            }
+          ],
+          ojo: [
+            "El carbono del aldehído siempre es el 1, y no se escribe: pentanal, no pentan-1-al.",
+            "En una amina se cuentan los carbonos unidos al nitrógeno: (CH₃)₃C–NH₂ es primaria.",
+            "El C₆H₅–CH₂–OH no es el fenol: con un CH₂ en medio es un alcohol, el fenilmetanol.",
+            "La o del alcano se pierde delante de una vocal: pentanamida, no pentanoamida."
+          ]
+        },
+        {
+          clave: "isomeria",
+          nombre: "La isomería",
+          inicial: { i: 0 },
+          duracion: 1.8,
+          Dibujo: IsomeriaDibujo,
+          descripcion: (e) => {
+            const isomero = ISOMEROS_DE_LA_CLASE[e.i];
+            if (e.i === 3) {
+              return (
+                "Los dos ácidos butenodioicos, de fórmula C4H4O4, con su enlace doble y sus sustituyentes a 120 grados. A la " +
+                "izquierda, el cis, el ácido maleico, con los dos COOH al mismo lado, que funde a 131 °C; a la derecha, el trans, " +
+                "el ácido fumárico, con los COOH en lados opuestos, que funde a 287 °C. Entre los dos, el signo de distinto."
+              );
+            }
+            if (e.i === 4) {
+              return (
+                "El bromoclorofluorometano y su imagen en un espejo, la línea discontinua del medio. Cada carbono lleva un bromo " +
+                "arriba y un cloro en el plano del papel, un flúor en una cuña llena, que sale hacia ti, y un hidrógeno en una " +
+                "rayada, que se va detrás. Son dos enantiómeros."
+              );
+            }
+            return (
+              "Dos " + isomero.titulo + " de fórmula " + isomero.formula.join("") + ": a la izquierda, el " +
+              isomero.izquierda.nombre + ", " + isomero.izquierda.partes.join("") + "; a la derecha, el " +
+              isomero.derecha.nombre + ", " + isomero.derecha.partes.join("") + ". " + isomero.idea.join(" ")
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "el tipo de isomería",
+              rotulo: "Isomería",
+              opciones: ISOMEROS_DE_LA_CLASE.map((isomero, orden) => ({ valor: orden, rotulo: isomero.corto }))
+            }
+          ],
+          vivo: (e) => {
+            const isomero = ISOMEROS_DE_LA_CLASE[e.i];
+            if (e.i === 3) {
+              return [
+                "\\mathrm{" + isomero.formulaTex + "}",
+                <>El cis, con los dos grupos COOH al mismo lado, y el trans, en lados opuestos, son dos compuestos. En el IB, del Nivel Superior.</>
+              ];
+            }
+            if (e.i === 4) {
+              return [
+                "\\mathrm{C^{*}}\\colon\\ \\mathrm{H},\\ \\mathrm{F},\\ \\mathrm{Cl},\\ \\mathrm{Br}",
+                <>Un carbono con cuatro sustituyentes distintos: dos enantiómeros, (+) y (−); cuál es cuál se mide, no se ve en el dibujo. En el IB, del Nivel Superior.</>
+              ];
+            }
+            return ["\\mathrm{" + isomero.formulaTex + "}", <>{isomero.idea.join(" ")}</>];
+          },
+          pista: <>Elige un tipo de isomería: los dos compuestos tienen siempre la misma fórmula molecular.</>,
+          fichas: [
+            {
+              nombre: "Isómeros",
+              tex: "\\text{la misma fórmula molecular}",
+              texto: "Estructurales, si sus átomos se unen en otro orden; espaciales, si se colocan de otra manera en el espacio."
+            },
+            {
+              nombre: "Los estructurales",
+              texto: "De cadena, lineal o con ramas; de posición, el grupo en otro carbono, y de función, otra familia: alcohol y éter, aldehído y cetona, ácido y éster, enlace doble y ciclo."
+            },
+            {
+              nombre: "Cis y trans",
+              tex: "\\begin{aligned}\\text{cis}&\\colon\\ \\text{al mismo lado}\\\\\\text{trans}&\\colon\\ \\text{en lados opuestos}\\end{aligned}",
+              texto: "Solo si cada carbono del enlace doble lleva dos sustituyentes distintos: el enlace doble no gira."
+            },
+            {
+              nombre: "El carbono asimétrico",
+              tex: "\\mathrm{C^{*}}\\colon\\ \\text{cuatro sustituyentes distintos}",
+              texto: "Da dos enantiómeros, imágenes en un espejo que no se superponen. Se dibujan con cuñas: la llena sale hacia ti, y la rayada se va detrás."
+            },
+            {
+              nombre: "La luz polarizada",
+              tex: "(+)\\colon\\ \\text{dextrógiro}\\qquad(-)\\colon\\ \\text{levógiro}",
+              texto: "Los dos enantiómeros la giran el mismo ángulo en sentidos opuestos; la mezcla racémica, con los dos a partes iguales, no la desvía."
+            }
+          ],
+          ojo: [
+            "Con la misma fórmula empírica no basta: el eteno, C₂H₄, y el ciclohexano, C₆H₁₂, no son isómeros.",
+            "Si un carbono del enlace doble lleva dos sustituyentes iguales, como el CH₂= del extremo de una cadena, no hay cis ni trans.",
+            "Los dos enantiómeros hierven a la misma temperatura: solo se distinguen frente a la luz polarizada y a otras moléculas quirales.",
+            "La D y la L no son (+) y (−): la D-fructosa es levógira."
+          ]
+        },
+        {
+          clave: "formula",
+          nombre: "Empírica y molecular",
+          inicial: { p: 0 },
+          duracion: 1.9,
+          Dibujo: FormulaEmpiricaDibujo,
+          descripcion: (e) => {
+            if (e.p === 1) {
+              return (
+                "El vapor del ejemplo, 0,440 g en 153 mL a 100 °C y 1,00 atm, tiene una masa molar de 88,0 gramos por mol. La " +
+                "fórmula empírica, C2H4O, de 44,06, dos veces, da la molecular, C4H8O2."
+              );
+            }
+            const { moles, cocientes } = molesDelAnalisis();
+            return (
+              "Tres columnas, carbono, hidrógeno y oxígeno, con sus porcentajes, 52,2 %, 13,0 % y 34,8 %, y una barra con los " +
+              "moles de cada uno: " + moles.map((mol) => cuatroCifras(mol)).join("; ") + ". Divididos entre el menor quedan " +
+              cocientes.map((valor) => cifra(valor, 3)).join("; ") + ". Abajo, la fórmula empírica, C2H6O."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "p",
+              nombre: "el ejemplo",
+              rotulo: "Ejemplo",
+              opciones: [
+                { valor: 0, rotulo: "del análisis a la empírica" },
+                { valor: 1, rotulo: "con el vapor, la molecular" }
+              ]
+            }
+          ],
+          vivo: (e) =>
+            e.p === 0
+              ? [
+                  "\\begin{aligned}\\mathrm{C}&\\colon\\ \\frac{52{,}2}{12{,}01}=4{,}346\\\\[6pt]\\mathrm{H}&\\colon\\ \\frac{13{,}0}{1{,}01}=12{,}87\\\\[6pt]\\mathrm{O}&\\colon\\ \\frac{34{,}8}{16{,}00}=2{,}175\\end{aligned}",
+                  <>Entre el menor, 2,175, quedan 1,998, 5,918 y 1, cerca de 2, 6 y 1: la fórmula empírica es C₂H₆O, la del etanol.</>
+                ]
+              : [
+                  "M=\\frac{0{,}440\\cdot0{,}082\\cdot373}{1{,}00\\cdot0{,}153}=" + enTex(MASA_MOLAR_DEL_VAPOR, 1, true) + "\\ \\mathrm{g\\,mol^{-1}}",
+                  <>La empírica, C₂H₄O, tiene 44,06 g mol⁻¹: x = 88,0 / 44,06 = 2,00, y la molecular es C₄H₈O₂.</>
+                ],
+          pista: <>Cambia de ejemplo: del análisis sale la empírica, y con la masa molar del vapor, la molecular.</>,
+          fichas: [
+            {
+              nombre: "La empírica",
+              texto: "Cien gramos; cada masa entre su masa atómica; todo entre el menor. Si acaba en 0,5, por 2; en 0,33 o 0,67, por 3; en 0,25 o 0,75, por 4."
+            },
+            {
+              nombre: "La masa molar del vapor",
+              tex: "pV=nRT\\qquad n=\\frac{m}{M}\\qquad M=\\frac{m\\,R\\,T}{p\\,V}"
+            },
+            {
+              nombre: "Las unidades",
+              tex: "\\begin{aligned}R&=0{,}082\\ \\mathrm{atm\\,L\\,mol^{-1}\\,K^{-1}}\\\\R&=8{,}31\\ \\mathrm{J\\,K^{-1}\\,mol^{-1}}\\end{aligned}",
+              texto: "Con 0,082, atmósferas, litros y kelvin; con 8,31, la del IB, pascales y metros cúbicos."
+            },
+            {
+              nombre: "La molecular",
+              tex: "x=\\frac{M}{M_{\\text{empírica}}}",
+              texto: "Los subíndices de la empírica, multiplicados por x."
+            }
+          ],
+          ojo: [
+            "Un 1,5 no se redondea a 2: se multiplica todo por 2.",
+            "Se divide entre la masa atómica, 12,01 en el carbono, no entre el número atómico, 6.",
+            "La temperatura va en kelvin: 100 °C son 373 K.",
+            "Con R = 0,082, el volumen va en litros: 153 mL son 0,153 L."
+          ]
+        },
+        {
+          clave: "laboratorio",
+          nombre: "En el laboratorio",
+          inicial: { k: 4 },
+          duracion: 1.6,
+          Dibujo: LaboratorioDibujo,
+          descripcion: (e) => {
+            const instrumento = INSTRUMENTOS_DE_LA_CLASE[e.k];
+            return instrumento.nombre + ", " + instrumento.linea + ", y una medida hecha con él: " + instrumento.rotulo + ". " + instrumento.regla;
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "k",
+              nombre: "el instrumento",
+              rotulo: "Instrumento",
+              opciones: INSTRUMENTOS_DE_LA_CLASE.map((instrumento, orden) => ({ valor: orden, rotulo: instrumento.corto }))
+            }
+          ],
+          vivo: (e) => {
+            const instrumento = INSTRUMENTOS_DE_LA_CLASE[e.k];
+            return [instrumento.lectura, <>{instrumento.regla}</>];
+          },
+          pista: <>Elige un instrumento: su tipo dice cómo se calcula la incertidumbre. Con el crisol, el agua de un hidrato.</>,
+          fichas: [
+            {
+              nombre: "La incertidumbre",
+              texto: "Con escala, la mitad de la menor división; digital, una unidad de la última cifra; aforado, la del fabricante."
+            },
+            {
+              nombre: "Graduado o aforado",
+              texto: "Graduado: una escala y muchos volúmenes, como la probeta o la bureta. Aforado: una sola marca y mucha exactitud, como el matraz o la pipeta aforada."
+            },
+            {
+              nombre: "El menisco",
+              texto: "Se lee por la parte de abajo, con los ojos a la altura de la marca. Enrasar es llevarlo justo al aforo."
+            },
+            {
+              nombre: "La densidad",
+              tex: "d=\\frac{m}{V}",
+              texto: "La masa, por diferencia de dos pesadas. En un cociente se suman las incertidumbres relativas."
+            },
+            {
+              nombre: "El agua de hidratación",
+              tex: "M(\\text{hidrato})=M(\\text{sal})+n\\cdot18{,}02\\ \\mathrm{g\\,mol^{-1}}",
+              texto: "Se calienta hasta masa constante; x es el cociente de los moles de agua y de sal anhidra."
+            }
+          ],
+          ojo: [
+            "El vaso de precipitados no mide volúmenes exactos: solo disuelve y trasvasa.",
+            "Se pesa sobre el vidrio de reloj, con la balanza tarada.",
+            "La densidad sale con la masa del líquido, no con la del matraz lleno.",
+            "En el ZnSO₄⋅7H₂O el punto no multiplica: su masa molar es 161,45 + 7⋅18,02."
+          ]
+        }
+      ];
+
+      function LaClaseResumen({ configuracion, alPreparar }) {
+        return (
+          <ResumenIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="La clase, de un vistazo"
+            estaciones={ESTACIONES_CLASE}
+          />
+        );
+      }
+
+
+      const ESTACIONES_ORGANICA = [
+        estacionDe(ESTACIONES_CLASE, "carbono"),
+        estacionDe(ESTACIONES_CLASIFICACION, "series"),
+        estacionDe(ESTACIONES_CLASE, "grupos"),
+        estacionDe(ESTACIONES_CLASIFICACION, "isomeros"),
+        estacionDe(ESTACIONES_CLASE, "isomeria")
+      ];
+
+      function RepasoOrganicaResumen({ configuracion, alPreparar }) {
+        return (
+          <ResumenIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="ambar"
+            titulo="La orgánica, de un vistazo"
+            estaciones={ESTACIONES_ORGANICA}
+          />
+        );
+      }
+
       window.ResumenesIB = {
         "resumen-naturaleza-corpuscular": NaturalezaCorpuscularResumen,
         "resumen-enlace-y-estructura": EnlaceYEstructuraResumen,
-        "resumen-clasificacion-de-la-materia": ClasificacionDeLaMateriaResumen
+        "resumen-clasificacion-de-la-materia": ClasificacionDeLaMateriaResumen,
+        "resumen-la-clase": LaClaseResumen,
+        "resumen-repaso-organica": RepasoOrganicaResumen
       };
     })();
   </script>
@@ -21734,6 +23944,1447 @@ Estructura 1</p>
         );
       }
 
+
+      function TexEnLineaIB({ tex }) {
+        if (!window.katex) {
+          return <span>{tex}</span>;
+        }
+        return (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: window.katex.renderToString(tex, {
+                displayMode: false,
+                output: "htmlAndMathml",
+                strict: "ignore",
+                throwOnError: false
+              })
+            }}
+          />
+        );
+      }
+
+      const IZQUIERDA_DEL_FORMULADOR = [
+        { clave: "H", tex: "H", boton: "\\overset{+1}{\\mathrm{H}}", nombre: "hidrógeno", carga: 1, tipo: "hidrogeno" },
+        { clave: "Na", tex: "Na", boton: "\\overset{+1}{\\mathrm{Na}}", nombre: "sodio", carga: 1, unico: true, hidruro: true },
+        { clave: "K", tex: "K", boton: "\\overset{+1}{\\mathrm{K}}", nombre: "potasio", carga: 1, unico: true, hidruro: true },
+        { clave: "NH4", tex: "NH_4", boton: "\\mathrm{NH_4^{+}}", nombre: "amonio", carga: 1, unico: true, tipo: "amonio", poliatomico: true },
+        { clave: "Be", tex: "Be", boton: "\\overset{+2}{\\mathrm{Be}}", nombre: "berilio", carga: 2, unico: true, hidruro: true },
+        { clave: "Mg", tex: "Mg", boton: "\\overset{+2}{\\mathrm{Mg}}", nombre: "magnesio", carga: 2, unico: true, hidruro: true },
+        { clave: "Ca", tex: "Ca", boton: "\\overset{+2}{\\mathrm{Ca}}", nombre: "calcio", carga: 2, unico: true, hidruro: true },
+        { clave: "Al", tex: "Al", boton: "\\overset{+3}{\\mathrm{Al}}", nombre: "aluminio", carga: 3, unico: true, hidruro: true },
+        { clave: "Fe2", tex: "Fe", boton: "\\overset{+2}{\\mathrm{Fe}}", nombre: "hierro", carga: 2 },
+        { clave: "Fe3", tex: "Fe", boton: "\\overset{+3}{\\mathrm{Fe}}", nombre: "hierro", carga: 3 },
+        { clave: "Cu2", tex: "Cu", boton: "\\overset{+2}{\\mathrm{Cu}}", nombre: "cobre", carga: 2 },
+        { clave: "Pb4", tex: "Pb", boton: "\\overset{+4}{\\mathrm{Pb}}", nombre: "plomo", carga: 4, solo: ["O", "S", "F", "Cl"] },
+        { clave: "Cr6", tex: "Cr", boton: "\\overset{+6}{\\mathrm{Cr}}", nombre: "cromo", carga: 6, solo: ["O", "S"] },
+        { clave: "N2", tex: "N", boton: "\\overset{+2}{\\mathrm{N}}", nombre: "nitrógeno", carga: 2, solo: ["O"] },
+        { clave: "C4", tex: "C", boton: "\\overset{+4}{\\mathrm{C}}", nombre: "carbono", carga: 4, solo: ["O"] },
+        { clave: "S6", tex: "S", boton: "\\overset{+6}{\\mathrm{S}}", nombre: "azufre", carga: 6, solo: ["O"] },
+        { clave: "P5", tex: "P", boton: "\\overset{+5}{\\mathrm{P}}", nombre: "fósforo", carga: 5, solo: ["O"] }
+      ];
+
+      const DERECHA_DEL_FORMULADOR = [
+        { clave: "O", tex: "O", boton: "\\mathrm{O^{2-}}", nombre: "óxido", carga: -2, tipo: "binario" },
+        { clave: "Hm", tex: "H", boton: "\\mathrm{H^{-}}", nombre: "hidruro", carga: -1, tipo: "hidruro" },
+        { clave: "F", tex: "F", boton: "\\mathrm{F^{-}}", nombre: "fluoruro", carga: -1, tipo: "binario", hidracido: "fluorhídrico" },
+        { clave: "Cl", tex: "Cl", boton: "\\mathrm{Cl^{-}}", nombre: "cloruro", carga: -1, tipo: "binario", hidracido: "clorhídrico" },
+        { clave: "Br", tex: "Br", boton: "\\mathrm{Br^{-}}", nombre: "bromuro", carga: -1, tipo: "binario", hidracido: "bromhídrico" },
+        { clave: "S", tex: "S", boton: "\\mathrm{S^{2-}}", nombre: "sulfuro", carga: -2, tipo: "binario", hidracido: "sulfhídrico" },
+        { clave: "OH", tex: "OH", boton: "\\mathrm{OH^{-}}", nombre: "hidróxido", carga: -1, tipo: "hidroxido", poliatomico: true },
+        { clave: "NO3", tex: "NO_3", boton: "\\mathrm{NO_3^{-}}", nombre: "nitrato", carga: -1, tipo: "oxoanion", acido: "nítrico", poliatomico: true },
+        { clave: "NO2", tex: "NO_2", boton: "\\mathrm{NO_2^{-}}", nombre: "nitrito", carga: -1, tipo: "oxoanion", acido: "nitroso", poliatomico: true },
+        { clave: "ClO", tex: "ClO", boton: "\\mathrm{ClO^{-}}", nombre: "hipoclorito", carga: -1, tipo: "oxoanion", acido: "hipocloroso", poliatomico: true },
+        { clave: "MnO4", tex: "MnO_4", boton: "\\mathrm{MnO_4^{-}}", nombre: "permanganato", carga: -1, tipo: "oxoanion", acido: "permangánico", poliatomico: true },
+        { clave: "CO3", tex: "CO_3", boton: "\\mathrm{CO_3^{2-}}", nombre: "carbonato", carga: -2, tipo: "oxoanion", acido: "carbónico", poliatomico: true },
+        { clave: "SO4", tex: "SO_4", boton: "\\mathrm{SO_4^{2-}}", nombre: "sulfato", carga: -2, tipo: "oxoanion", acido: "sulfúrico", poliatomico: true },
+        { clave: "PO4", tex: "PO_4", boton: "\\mathrm{PO_4^{3-}}", nombre: "fosfato", carga: -3, tipo: "oxoanion", acido: "fosfórico", poliatomico: true },
+        { clave: "HCO3", tex: "HCO_3", boton: "\\mathrm{HCO_3^{-}}", nombre: "hidrogenocarbonato", carga: -1, tipo: "acido", poliatomico: true },
+        { clave: "HPO4", tex: "HPO_4", boton: "\\mathrm{HPO_4^{2-}}", nombre: "hidrogenofosfato", carga: -2, tipo: "acido", poliatomico: true },
+        { clave: "H2PO4", tex: "H_2PO_4", boton: "\\mathrm{H_2PO_4^{-}}", nombre: "dihidrogenofosfato", carga: -1, tipo: "acido", poliatomico: true }
+      ];
+
+      const PREFIJOS_DE_CANTIDAD = ["", "mono", "di", "tri", "tetra", "penta", "hexa", "hepta"];
+      const ROMANOS_DEL_FORMULADOR = ["", "I", "II", "III", "IV", "V", "VI", "VII"];
+
+      function maximoComunDivisor(a, b) {
+        return b ? maximoComunDivisor(b, a % b) : a;
+      }
+
+      function combinables(izquierda, derecha) {
+        if (izquierda.solo) {
+          return izquierda.solo.indexOf(derecha.clave) >= 0;
+        }
+        if (derecha.tipo === "hidruro") {
+          return Boolean(izquierda.hidruro);
+        }
+        if (izquierda.tipo === "hidrogeno") {
+          return (derecha.tipo === "binario" && derecha.clave !== "O") || derecha.tipo === "oxoanion";
+        }
+        if (izquierda.tipo === "amonio") {
+          return derecha.clave !== "O" && derecha.clave !== "OH";
+        }
+        return true;
+      }
+
+      function conPrefijo(cuantos, nombre, conMono) {
+        const prefijo = cuantos === 1 ? (conMono ? "mono" : "") : PREFIJOS_DE_CANTIDAD[cuantos];
+        if (prefijo === "mono" && nombre.charAt(0) === "ó") {
+          return "mon" + nombre;
+        }
+        return prefijo + nombre;
+      }
+
+      const conSignoDelFormulador = (valor) => (valor > 0 ? "+" + valor : "-" + Math.abs(valor));
+
+      function compuestoFormulado(izquierda, derecha) {
+        const positiva = izquierda.carga;
+        const negativa = -derecha.carga;
+        const divisor = maximoComunDivisor(positiva, negativa);
+        const nIzquierda = negativa / divisor;
+        const nDerecha = positiva / divisor;
+        const parte = (ion, n) =>
+          n === 1 ? ion.tex : ion.poliatomico ? "(" + ion.tex + ")_{" + n + "}" : ion.tex + "_{" + n + "}";
+        const romano = izquierda.unico ? "" : "(" + ROMANOS_DEL_FORMULADOR[izquierda.carga] + ")";
+        const nombres = [];
+        let tipo;
+        if (izquierda.tipo === "hidrogeno") {
+          if (derecha.tipo === "oxoanion") {
+            tipo = "Oxoácido";
+            nombres.push(["Nombre", "ácido " + derecha.acido]);
+          } else {
+            tipo = "Compuesto de hidrógeno con un no metal";
+            nombres.push(["Nombre", derecha.nombre + " de hidrógeno"]);
+            if (nIzquierda > 1) {
+              nombres.push(["Con prefijos", derecha.nombre + " de " + conPrefijo(nIzquierda, "hidrógeno", false)]);
+            }
+            nombres.push(["Disuelto en agua", "ácido " + derecha.hidracido]);
+          }
+        } else if (derecha.tipo === "oxoanion" || derecha.tipo === "acido") {
+          tipo = derecha.tipo === "acido" ? "Sal ácida" : "Oxisal";
+          nombres.push(["Nombre", derecha.nombre + " de " + izquierda.nombre + romano]);
+        } else if (izquierda.tipo === "amonio") {
+          tipo = "Sal del ion amonio";
+          nombres.push(["Nombre", derecha.nombre + " de amonio"]);
+        } else {
+          tipo =
+            derecha.clave === "O"
+              ? "Óxido"
+              : derecha.tipo === "hidruro"
+                ? "Hidruro metálico"
+                : derecha.tipo === "hidroxido"
+                  ? "Hidróxido"
+                  : "Compuesto de dos elementos";
+          const conPrefijos =
+            conPrefijo(nDerecha, derecha.nombre, derecha.clave === "O" && !izquierda.unico) + " de " + conPrefijo(nIzquierda, izquierda.nombre, false);
+          const conNumero = derecha.nombre + " de " + izquierda.nombre + romano;
+          if (conPrefijos === conNumero) {
+            nombres.push(["Con prefijos y con el número de oxidación", conNumero]);
+          } else {
+            nombres.push(["Con prefijos", conPrefijos]);
+            nombres.push(["Con el número de oxidación", conNumero]);
+          }
+        }
+        const termino = (n, carga) =>
+          n === 1 ? "(" + conSignoDelFormulador(carga) + ")" : n + "\\cdot(" + conSignoDelFormulador(carga) + ")";
+        return {
+          formula: parte(izquierda, nIzquierda) + parte(derecha, nDerecha),
+          nIzquierda,
+          nDerecha,
+          tipo,
+          nombres,
+          suma: termino(nIzquierda, positiva) + "+" + termino(nDerecha, -negativa) + "=0"
+        };
+      }
+
+      function SimboloDeFicha({ tex }) {
+        const trozos = tex.replace(/[{}]/g, "").split(/_([0-9]+)/);
+        return (
+          <>
+            {trozos.map((trozo, orden) =>
+              orden % 2 === 1 ? (
+                <tspan key={orden}>
+                  <tspan dy="0.3em" fontSize="0.68em">
+                    {trozo}
+                  </tspan>
+                  <tspan dy="-0.204em">{"\u200B"}</tspan>
+                </tspan>
+              ) : (
+                <tspan key={orden}>{trozo}</tspan>
+              )
+            )}
+          </>
+        );
+      }
+
+      function FormuladorInorganicoInteractivo({ configuracion, alPreparar }) {
+        const [izquierda, setIzquierda] = React.useState("Al");
+        const [derecha, setDerecha] = React.useState("SO4");
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const ionIzquierda = IZQUIERDA_DEL_FORMULADOR.find((ion) => ion.clave === izquierda);
+        const ionDerecha = DERECHA_DEL_FORMULADOR.find((ion) => ion.clave === derecha);
+        const elegirIzquierda = (clave) => {
+          const nueva = IZQUIERDA_DEL_FORMULADOR.find((ion) => ion.clave === clave);
+          setIzquierda(clave);
+          if (!combinables(nueva, ionDerecha)) {
+            setDerecha(DERECHA_DEL_FORMULADOR.find((ion) => combinables(nueva, ion)).clave);
+          }
+        };
+        const compuesto = compuestoFormulado(ionIzquierda, ionDerecha);
+
+        const ancho = 66;
+        const hueco = 8;
+        const separacion = 30;
+        const total = (compuesto.nIzquierda + compuesto.nDerecha) * (ancho + hueco) - hueco + separacion;
+        const inicio = 320 - total / 2;
+        const fichas = [];
+        for (let k = 0; k < compuesto.nIzquierda; k += 1) {
+          fichas.push({ x: inicio + k * (ancho + hueco), ion: ionIzquierda, positiva: true });
+        }
+        const inicioDerecha = inicio + compuesto.nIzquierda * (ancho + hueco) - hueco + separacion;
+        for (let k = 0; k < compuesto.nDerecha; k += 1) {
+          fichas.push({ x: inicioDerecha + k * (ancho + hueco), ion: ionDerecha, positiva: false });
+        }
+        const finIzquierda = inicio + compuesto.nIzquierda * (ancho + hueco) - hueco;
+        const finDerecha = inicioDerecha + compuesto.nDerecha * (ancho + hueco) - hueco;
+        const signo = (valor) => (valor > 0 ? "+" + valor : "−" + Math.abs(valor));
+        const sumaPositiva = compuesto.nIzquierda * ionIzquierda.carga;
+        const sumaNegativa = compuesto.nDerecha * ionDerecha.carga;
+        const cuantosDe = (n, ion, esAnion) =>
+          esAnion || ion.poliatomico
+            ? (n === 1 ? "un ion " : n + " iones ") + ion.nombre
+            : (n === 1 ? "un átomo de " : n + " átomos de ") + ion.nombre;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Del número de oxidación al nombre"}</p>
+            <p className="instruccion-interactivo">
+              Elige a la izquierda el elemento, con su número de oxidación (o el ion amonio, o el hidrógeno de los
+              ácidos), y a la derecha el anión. Se toman tantos de cada uno como haga falta para que las cargas sumen
+              cero: así sale la fórmula, y de ella, los nombres. Las parejas que no se formulan en clase no se pueden
+              elegir, y no todos los compuestos que salen existen de verdad: son ejercicios de formulación.
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <p>A la izquierda, con su número de oxidación</p>
+                <div className="fichas-interactivo" role="group" aria-label="Elemento o ion de la izquierda">
+                  {IZQUIERDA_DEL_FORMULADOR.map((ion) => (
+                    <button key={ion.clave} type="button" aria-pressed={izquierda === ion.clave} onClick={() => elegirIzquierda(ion.clave)}>
+                      <TexEnLineaIB tex={ion.boton} />
+                    </button>
+                  ))}
+                </div>
+                <p>A la derecha, el anión</p>
+                <div className="fichas-interactivo fichas-formulador" role="group" aria-label="Anión de la derecha">
+                  {DERECHA_DEL_FORMULADOR.map((ion) => (
+                    <button
+                      key={ion.clave}
+                      type="button"
+                      aria-pressed={derecha === ion.clave}
+                      disabled={!combinables(ionIzquierda, ion)}
+                      onClick={() => setDerecha(ion.clave)}
+                    >
+                      <TexEnLineaIB tex={ion.boton} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="panel-control" aria-live="polite">
+                <p className="ficha-elemento-ib">
+                  <strong>{compuesto.tipo}</strong>
+                </p>
+                {compuesto.nombres.map(([etiqueta, nombre]) => (
+                  <p key={etiqueta}>
+                    {etiqueta}: <strong>{nombre}</strong>
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 640 170"
+                role="img"
+                aria-label={
+                  cuantosDe(compuesto.nIzquierda, ionIzquierda, false) + ", con " + signo(ionIzquierda.carga) +
+                  (compuesto.nIzquierda > 1 ? " cada uno" : "") + ", y " + cuantosDe(compuesto.nDerecha, ionDerecha, true) +
+                  ", con " + signo(ionDerecha.carga) + (compuesto.nDerecha > 1 ? " cada uno" : "") + ": suman " +
+                  signo(sumaPositiva) + " y " + signo(sumaNegativa) + ", cero en total."
+                }
+              >
+                {fichas.map((ficha, orden) => (
+                  <g key={orden}>
+                    <rect
+                      x={ficha.x}
+                      y="24"
+                      width={ancho}
+                      height="54"
+                      rx="10"
+                      fill={ficha.positiva ? "#dbeafe" : "#ffedd5"}
+                      stroke={ficha.positiva ? "#1d4ed8" : "#c2410c"}
+                      strokeWidth="2"
+                    />
+                    <text x={ficha.x + ancho / 2} y="57" fontSize={ficha.ion.tex.length > 4 ? 15 : 19} textAnchor="middle" fill="var(--texto)">
+                      <SimboloDeFicha tex={ficha.ion.tex} />
+                    </text>
+                    <text x={ficha.x + ancho / 2} y="96" fontSize="15" textAnchor="middle" fill={ficha.positiva ? "#1e3a8a" : "#7c2d12"} fontWeight="700">
+                      {signo(ficha.positiva ? ficha.ion.carga : ficha.ion.carga)}
+                    </text>
+                  </g>
+                ))}
+                <path
+                  d={"M" + inicio + " 108v8H" + finIzquierda + "v-8M" + inicioDerecha + " 108v8H" + finDerecha + "v-8"}
+                  fill="none"
+                  stroke="var(--texto-suave)"
+                  strokeWidth="1.5"
+                />
+                <text x={(inicio + finIzquierda) / 2} y="140" fontSize="18" textAnchor="middle" fill="#1e3a8a" fontWeight="700">
+                  {signo(sumaPositiva)}
+                </text>
+                <text x={(inicioDerecha + finDerecha) / 2} y="140" fontSize="18" textAnchor="middle" fill="#7c2d12" fontWeight="700">
+                  {signo(sumaNegativa)}
+                </text>
+                <text x="320" y="164" fontSize="14" textAnchor="middle" fill="var(--texto-suave)">
+                  {"las cargas se anulan: la suma es cero"}
+                </text>
+              </svg>
+            </div>
+
+            <FormulaVivaIB tex={"\\mathrm{" + compuesto.formula + "}\\qquad " + compuesto.suma} />
+          </div>
+        );
+      }
+
+
+      const SITIOS_DEL_ESPEJO = ["arriba", "derecha", "cuna", "rayas"];
+
+      const DIRECCIONES_DEL_ESPEJO = {
+        arriba: [0, 1, 0],
+        derecha: [Math.sqrt(8) / 3, -1 / 3, 0],
+        cuna: [-Math.sqrt(2) / 3, -1 / 3, Math.sqrt(2 / 3)],
+        rayas: [-Math.sqrt(2) / 3, -1 / 3, -Math.sqrt(2 / 3)]
+      };
+
+      const ATOMOS_DEL_ESPEJO = {
+        H: { nombre: "hidrógeno", plural: "hidrógenos", radio: 13, cuerpo: 15, relleno: "#ffffff", borde: "#64748b", letra: "#1e293b" },
+        F: { nombre: "flúor", radio: 15, cuerpo: 16, relleno: "#bef264", borde: "#4d7c0f", letra: "#1a2e05" },
+        Cl: { nombre: "cloro", plural: "cloros", radio: 18, cuerpo: 17, relleno: "#16a34a", borde: "#14532d", letra: "#ffffff" },
+        Br: { nombre: "bromo", plural: "bromos", radio: 20, cuerpo: 18, relleno: "#9f1d2b", borde: "#5f0f19", letra: "#ffffff" }
+      };
+
+      const CUARTOS_DEL_ESPEJO = {
+        F: { formula: "CHBrClF", nombre: "Bromoclorofluorometano" },
+        H: { formula: "CH_2BrCl", nombre: "Bromoclorometano" },
+        Cl: { formula: "CHBrCl_2", nombre: "Bromodiclorometano" },
+        Br: { formula: "CHBr_2Cl", nombre: "Dibromoclorometano" }
+      };
+
+      const IDENTIDAD_DEL_ESPEJO = [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+      ];
+
+      const REFLEJO_DEL_ESPEJO = [
+        [-1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+      ];
+
+      function productoEspejo(a, b) {
+        return a.map((fila) => [0, 1, 2].map((j) => fila[0] * b[0][j] + fila[1] * b[1][j] + fila[2] * b[2][j]));
+      }
+
+      function aplicarEspejo(a, v) {
+        return a.map((fila) => fila[0] * v[0] + fila[1] * v[1] + fila[2] * v[2]);
+      }
+
+      function traspuestaEspejo(a) {
+        return [0, 1, 2].map((i) => [0, 1, 2].map((j) => a[j][i]));
+      }
+
+      function giroEspejo(eje, angulo) {
+        const largo = Math.hypot(eje[0], eje[1], eje[2]);
+        const x = eje[0] / largo;
+        const y = eje[1] / largo;
+        const z = eje[2] / largo;
+        const c = Math.cos(angulo);
+        const s = Math.sin(angulo);
+        const k = 1 - c;
+        return [
+          [c + x * x * k, x * y * k - z * s, x * z * k + y * s],
+          [y * x * k + z * s, c + y * y * k, y * z * k - x * s],
+          [z * x * k - y * s, z * y * k + x * s, c + z * z * k]
+        ];
+      }
+
+      function ejeYAnguloEspejo(a) {
+        const angulo = Math.acos(Math.max(-1, Math.min(1, (a[0][0] + a[1][1] + a[2][2] - 1) / 2)));
+        const eje = [a[2][1] - a[1][2], a[0][2] - a[2][0], a[1][0] - a[0][1]];
+        if (Math.hypot(eje[0], eje[1], eje[2]) > 1e-6) {
+          return { eje, angulo };
+        }
+        if (angulo < 1e-6) {
+          return { eje: [0, 1, 0], angulo: 0 };
+        }
+        const columnas = [0, 1, 2].map((j) => [a[0][j] + (j === 0 ? 1 : 0), a[1][j] + (j === 1 ? 1 : 0), a[2][j] + (j === 2 ? 1 : 0)]);
+        columnas.sort((p, q) => Math.hypot(q[0], q[1], q[2]) - Math.hypot(p[0], p[1], p[2]));
+        return { eje: columnas[0], angulo };
+      }
+
+      function ortonormalEspejo(a) {
+        const largoX = Math.hypot(a[0][0], a[0][1], a[0][2]);
+        const x = a[0].map((c) => c / largoX);
+        const proyeccion = a[1][0] * x[0] + a[1][1] * x[1] + a[1][2] * x[2];
+        const resto = a[1].map((c, i) => c - proyeccion * x[i]);
+        const largoY = Math.hypot(resto[0], resto[1], resto[2]);
+        const y = resto.map((c) => c / largoY);
+        return [x, y, [x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0]]];
+      }
+
+      const GIROS_DEL_TETRAEDRO = [IDENTIDAD_DEL_ESPEJO]
+        .concat(
+          ...SITIOS_DEL_ESPEJO.map((sitio) =>
+            [1, 2].map((veces) => giroEspejo(DIRECCIONES_DEL_ESPEJO[sitio], (veces * 2 * Math.PI) / 3))
+          )
+        )
+        .concat(
+          ["derecha", "cuna", "rayas"].map((otro) =>
+            giroEspejo(
+              DIRECCIONES_DEL_ESPEJO.arriba.map((c, i) => c + DIRECCIONES_DEL_ESPEJO[otro][i]),
+              Math.PI
+            )
+          )
+        );
+
+      const POSICIONES_QUE_ENCAJAN = GIROS_DEL_TETRAEDRO.map((giro) =>
+        productoEspejo(giro, giroEspejo([0, 1, 0], Math.PI))
+      );
+
+      const VISTA_DEL_ESPEJO = giroEspejo([1, 0, 0], (28 * Math.PI) / 180);
+
+      function posicionQueEncajaCerca(giro, holgura) {
+        let mejor = null;
+        let menor = holgura;
+        POSICIONES_QUE_ENCAJAN.forEach((posicion) => {
+          const angulo = ejeYAnguloEspejo(productoEspejo(posicion, traspuestaEspejo(giro))).angulo;
+          if (angulo < menor) {
+            menor = angulo;
+            mejor = posicion;
+          }
+        });
+        return mejor;
+      }
+
+      function comparacionDelEspejo(giro, etiquetas) {
+        const destinos = SITIOS_DEL_ESPEJO.map((sitio) => {
+          const u = aplicarEspejo(giro, aplicarEspejo(REFLEJO_DEL_ESPEJO, DIRECCIONES_DEL_ESPEJO[sitio]));
+          let destino = null;
+          let coseno = -2;
+          SITIOS_DEL_ESPEJO.forEach((otro) => {
+            const d = DIRECCIONES_DEL_ESPEJO[otro];
+            const producto = u[0] * d[0] + u[1] * d[1] + u[2] * d[2];
+            if (producto > coseno) {
+              coseno = producto;
+              destino = otro;
+            }
+          });
+          return { sitio, destino, coseno };
+        });
+        const encaja =
+          destinos.every((uno) => uno.coseno > Math.cos((20 * Math.PI) / 180)) &&
+          new Set(destinos.map((uno) => uno.destino)).size === 4;
+        const coinciden = encaja ? destinos.filter((uno) => etiquetas[uno.sitio] === etiquetas[uno.destino]) : [];
+        return {
+          encaja,
+          coinciden: coinciden.map((uno) => uno.sitio),
+          cambiados: encaja ? destinos.filter((uno) => coinciden.indexOf(uno) < 0).map((uno) => uno.sitio) : []
+        };
+      }
+
+      function nombresDelEspejo(sitios, etiquetas, yaNombrados) {
+        const trozos = [];
+        const vistos = {};
+        sitios.forEach((sitio) => {
+          const simbolo = etiquetas[sitio];
+          if (vistos[simbolo]) {
+            return;
+          }
+          vistos[simbolo] = true;
+          const atomo = ATOMOS_DEL_ESPEJO[simbolo];
+          const enLaMolecula = SITIOS_DEL_ESPEJO.filter((otro) => etiquetas[otro] === simbolo).length;
+          const aqui = sitios.filter((otro) => etiquetas[otro] === simbolo).length;
+          if (aqui === 2) {
+            trozos.push("los dos " + atomo.plural);
+          } else if (enLaMolecula === 1) {
+            trozos.push("el " + atomo.nombre);
+          } else {
+            trozos.push((yaNombrados.indexOf(simbolo) >= 0 ? "el otro " : "un ") + atomo.nombre);
+          }
+        });
+        return trozos.length === 1 ? trozos[0] : trozos.slice(0, -1).join(", ") + " y " + trozos[trozos.length - 1];
+      }
+
+      function estadoDelEspejo(comparacion, etiquetas) {
+        if (!comparacion.encaja) {
+          return [
+            "No encaja.",
+            "Los enlaces de la imagen no apuntan donde los de la molécula: gírala hasta que encajen."
+          ];
+        }
+        const coinciden = comparacion.coinciden;
+        if (coinciden.length === 4) {
+          return [
+            "Se superponen.",
+            "Cada sustituyente de la imagen cae donde el mismo de la molécula: son la misma molécula."
+          ];
+        }
+        if (coinciden.length === 0) {
+          return ["No se superponen.", "No coincide ninguno: los cuatro sustituyentes quedan cambiados de sitio."];
+        }
+        return [
+          "No se superponen.",
+          (coinciden.length === 1 ? "Coincide " : "Coinciden ") +
+            nombresDelEspejo(coinciden, etiquetas, []) +
+            ", pero " +
+            nombresDelEspejo(comparacion.cambiados, etiquetas, coinciden.map((sitio) => etiquetas[sitio])) +
+            " quedan cambiados de sitio."
+        ];
+      }
+
+      function MoleculaDelEspejo({ centro, vectores, etiquetas, aros }) {
+        const largo = 88;
+        const radioDelCarbono = 14;
+        const piezas = SITIOS_DEL_ESPEJO.map((sitio) => {
+          const visto = aplicarEspejo(VISTA_DEL_ESPEJO, vectores[sitio]);
+          const cerca = 4 / (4 - visto[2]);
+          const enElPapel = Math.hypot(visto[0], visto[1]);
+          const alargado = 1 + 0.6 * (1 - enElPapel);
+          return {
+            sitio,
+            simbolo: etiquetas[sitio],
+            atomo: ATOMOS_DEL_ESPEJO[etiquetas[sitio]],
+            x: centro.x + largo * visto[0] * cerca * alargado,
+            y: centro.y - largo * visto[1] * cerca * alargado,
+            fondo: visto[2],
+            papel: vectores[sitio][2],
+            cerca
+          };
+        });
+        const enlace = (pieza) => {
+          const dx = pieza.x - centro.x;
+          const dy = pieza.y - centro.y;
+          const visto = Math.hypot(dx, dy);
+          const radio = pieza.atomo.radio * pieza.cerca;
+          if (visto < radioDelCarbono + radio + 4) {
+            return null;
+          }
+          const ux = dx / visto;
+          const uy = dy / visto;
+          const desde = radioDelCarbono - (pieza.fondo < 0 ? 3 : 0);
+          const hasta = visto - radio + 1;
+          const punto = (a, lado) =>
+            (centro.x + ux * a - uy * lado).toFixed(1) + " " + (centro.y + uy * a + ux * lado).toFixed(1);
+          if (pieza.papel > 0.3) {
+            const ancho = 7.5 * pieza.cerca;
+            return (
+              <polygon
+                points={punto(desde, 1.2) + " " + punto(hasta, ancho) + " " + punto(hasta, -ancho) + " " + punto(desde, -1.2)}
+                fill="var(--texto)"
+              />
+            );
+          }
+          if (pieza.papel < -0.3) {
+            let rayas = "";
+            for (let paso = 0; paso < 6; paso += 1) {
+              const a = desde + 3 + ((hasta - desde - 5) * paso) / 5;
+              const mitad = 1.6 + (6 * pieza.cerca * (a - desde)) / (hasta - desde);
+              rayas += "M" + punto(a, mitad) + "L" + punto(a, -mitad);
+            }
+            return <path d={rayas} fill="none" stroke="var(--texto)" strokeWidth="2.2" />;
+          }
+          return (
+            <path
+              d={"M" + punto(desde, 0) + "L" + punto(hasta, 0)}
+              fill="none"
+              stroke="var(--texto)"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+          );
+        };
+        const atomo = (pieza) => {
+          const radio = pieza.atomo.radio * pieza.cerca;
+          const aro = aros ? aros[pieza.sitio] : null;
+          return (
+            <g>
+              {aro && (
+                <circle
+                  cx={pieza.x.toFixed(1)}
+                  cy={pieza.y.toFixed(1)}
+                  r={(radio + 5).toFixed(1)}
+                  fill="none"
+                  stroke={aro.color}
+                  strokeWidth="3"
+                  strokeDasharray={aro.discontinuo ? "5 4" : undefined}
+                />
+              )}
+              <circle
+                cx={pieza.x.toFixed(1)}
+                cy={pieza.y.toFixed(1)}
+                r={radio.toFixed(1)}
+                fill={pieza.atomo.relleno}
+                stroke={pieza.atomo.borde}
+                strokeWidth="1.8"
+              />
+              <text
+                x={pieza.x.toFixed(1)}
+                y={(pieza.y + 0.35 * pieza.atomo.cuerpo * pieza.cerca).toFixed(1)}
+                fontSize={(pieza.atomo.cuerpo * pieza.cerca).toFixed(1)}
+                fontWeight="700"
+                textAnchor="middle"
+                fill={pieza.atomo.letra}
+              >
+                {pieza.simbolo}
+              </text>
+            </g>
+          );
+        };
+        const ordenadas = piezas.slice().sort((a, b) => a.fondo - b.fondo);
+        const dibujar = (pieza) => (
+          <g key={pieza.sitio}>
+            {enlace(pieza)}
+            {atomo(pieza)}
+          </g>
+        );
+        return (
+          <g>
+            {ordenadas.filter((pieza) => pieza.fondo < 0).map(dibujar)}
+            <circle cx={centro.x} cy={centro.y} r={radioDelCarbono} fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
+            <text x={centro.x} y={centro.y + 5} fontSize="14" fontWeight="700" textAnchor="middle" fill="#ffffff">
+              C
+            </text>
+            {ordenadas.filter((pieza) => pieza.fondo >= 0).map(dibujar)}
+          </g>
+        );
+      }
+
+      function sinDesplazarLaPagina(evento) {
+        if (evento.cancelable) {
+          evento.preventDefault();
+        }
+      }
+
+      const CENTRO_DE_LA_MOLECULA = { x: 135, y: 148 };
+      const CENTRO_DE_LA_IMAGEN = { x: 405, y: 148 };
+
+      function MoleculaEnElEspejoInteractivo({ configuracion, alPreparar }) {
+        const [cuarto, setCuarto] = React.useState("F");
+        const [giro, setGiro] = React.useState(IDENTIDAD_DEL_ESPEJO);
+        const [animacion, setAnimacion] = React.useState(null);
+        const [encima, setEncima] = React.useState(false);
+        const { avance, lanzar, quitar } = usarAvanceIB();
+        const arrastre = React.useRef(null);
+        const nodoDeLaZona = React.useRef(null);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        React.useEffect(() => {
+          if (animacion && avance === 1) {
+            setGiro(ortonormalEspejo(productoEspejo(giroEspejo(animacion.eje, animacion.angulo), animacion.desde)));
+            setAnimacion(null);
+            quitar();
+          }
+        }, [animacion, avance, quitar]);
+
+        const zona = React.useCallback((nodo) => {
+          if (nodoDeLaZona.current) {
+            nodoDeLaZona.current.removeEventListener("touchstart", sinDesplazarLaPagina);
+            nodoDeLaZona.current.removeEventListener("touchmove", sinDesplazarLaPagina);
+          }
+          nodoDeLaZona.current = nodo;
+          if (nodo) {
+            nodo.addEventListener("touchstart", sinDesplazarLaPagina, { passive: false });
+            nodo.addEventListener("touchmove", sinDesplazarLaPagina, { passive: false });
+          }
+        }, []);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const visto =
+          animacion && avance !== null
+            ? productoEspejo(giroEspejo(animacion.eje, animacion.angulo * avance), animacion.desde)
+            : giro;
+
+        const girar = (eje, angulo, duracion) => {
+          const desde = ortonormalEspejo(visto);
+          setGiro(desde);
+          if (angulo < 1e-4) {
+            setAnimacion(null);
+            quitar();
+            return;
+          }
+          setAnimacion({ desde, eje, angulo });
+          lanzar(duracion);
+        };
+
+        const etiquetas = { arriba: "Br", derecha: "Cl", cuna: cuarto, rayas: "H" };
+        const compuesto = CUARTOS_DEL_ESPEJO[cuarto];
+        const quiral = cuarto === "F";
+        const comparacion = comparacionDelEspejo(visto, etiquetas);
+        const [fuerte, resto] = estadoDelEspejo(comparacion, etiquetas);
+
+        const enElMando = (sitio, conNombre) => {
+          const simbolo = etiquetas[sitio];
+          const palabra = conNombre ? ATOMOS_DEL_ESPEJO[simbolo].nombre : simbolo;
+          const iguales = SITIOS_DEL_ESPEJO.filter((otro) => etiquetas[otro] === simbolo);
+          if (iguales.length === 1) {
+            return "el " + palabra;
+          }
+          return (iguales[0] === sitio ? "un " : "el otro ") + palabra;
+        };
+
+        const sobreUnEnlace = (sitio) => {
+          const eje = aplicarEspejo(visto, aplicarEspejo(REFLEJO_DEL_ESPEJO, DIRECCIONES_DEL_ESPEJO[sitio]));
+          girar(eje, (2 * Math.PI) / 3, 800);
+        };
+
+        const volverAEmpezar = () => {
+          const vuelta = ejeYAnguloEspejo(traspuestaEspejo(ortonormalEspejo(visto)));
+          girar(vuelta.eje, vuelta.angulo, 700);
+          setEncima(false);
+        };
+
+        const cambiarCuarto = (simbolo) => {
+          setCuarto(simbolo);
+          setAnimacion(null);
+          quitar();
+          setGiro(IDENTIDAD_DEL_ESPEJO);
+        };
+
+        const puntoDelDibujo = (evento) => {
+          const lienzo = evento.currentTarget.ownerSVGElement;
+          const matriz = lienzo && lienzo.getScreenCTM();
+          if (!matriz) {
+            return null;
+          }
+          const punto = new DOMPoint(evento.clientX, evento.clientY).matrixTransform(matriz.inverse());
+          return [punto.x, punto.y];
+        };
+
+        const empezarArrastre = (evento) => {
+          const punto = puntoDelDibujo(evento);
+          if (!punto) {
+            return;
+          }
+          evento.preventDefault();
+          try {
+            evento.currentTarget.setPointerCapture(evento.pointerId);
+          } catch (error) {
+          }
+          const desde = ortonormalEspejo(visto);
+          setAnimacion(null);
+          quitar();
+          setGiro(desde);
+          arrastre.current = { punto, giro: desde };
+        };
+
+        const moverArrastre = (evento) => {
+          const estado = arrastre.current;
+          if (!estado) {
+            return;
+          }
+          const punto = puntoDelDibujo(evento);
+          if (!punto) {
+            return;
+          }
+          const dx = punto[0] - estado.punto[0];
+          const dy = punto[1] - estado.punto[1];
+          if (dx === 0 && dy === 0) {
+            return;
+          }
+          const enLaVista = giroEspejo([dy, dx, 0], Math.hypot(dx, dy) / 70);
+          const nuevo = ortonormalEspejo(
+            productoEspejo(
+              traspuestaEspejo(VISTA_DEL_ESPEJO),
+              productoEspejo(enLaVista, productoEspejo(VISTA_DEL_ESPEJO, estado.giro))
+            )
+          );
+          arrastre.current = { punto, giro: nuevo };
+          setGiro(nuevo);
+        };
+
+        const acabarArrastre = () => {
+          const estado = arrastre.current;
+          if (!estado) {
+            return;
+          }
+          arrastre.current = null;
+          const objetivo = posicionQueEncajaCerca(estado.giro, (35 * Math.PI) / 180);
+          if (objetivo) {
+            const camino = ejeYAnguloEspejo(productoEspejo(objetivo, traspuestaEspejo(estado.giro)));
+            setGiro(estado.giro);
+            if (camino.angulo > 1e-4) {
+              setAnimacion({ desde: estado.giro, eje: camino.eje, angulo: camino.angulo });
+              lanzar(300);
+            }
+          }
+        };
+
+        const vectoresDeLaImagen = {};
+        SITIOS_DEL_ESPEJO.forEach((sitio) => {
+          vectoresDeLaImagen[sitio] = aplicarEspejo(visto, aplicarEspejo(REFLEJO_DEL_ESPEJO, DIRECCIONES_DEL_ESPEJO[sitio]));
+        });
+        const aros = {};
+        if (comparacion.encaja) {
+          SITIOS_DEL_ESPEJO.forEach((sitio) => {
+            aros[sitio] =
+              comparacion.coinciden.indexOf(sitio) >= 0
+                ? { color: COLORES_IB.azul }
+                : { color: COLORES_IB.naranja, discontinuo: true };
+          });
+        }
+        const medio = (CENTRO_DE_LA_MOLECULA.x + CENTRO_DE_LA_IMAGEN.x) / 2;
+        const aLaMolecula = encima ? medio - CENTRO_DE_LA_MOLECULA.x : 0;
+        const aLaImagen = encima ? medio - CENTRO_DE_LA_IMAGEN.x : 0;
+        const descripcion =
+          "A la izquierda de un espejo, el " + compuesto.nombre.toLowerCase() + ": un carbono con un bromo arriba y " +
+          "un cloro a la derecha, en el plano del papel, " + (quiral ? "un flúor" : cuarto === "H" ? "un hidrógeno" :
+          cuarto === "Cl" ? "otro cloro" : "otro bromo") + " en una cuña llena, que sale hacia ti, y un hidrógeno " +
+          "en una cuña rayada, que se va detrás. A la derecha, su imagen en el espejo" +
+          (encima ? ", puesta encima de la molécula" : "") + ". " + fuerte + " " + resto;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Una molécula y su imagen en el espejo"}</p>
+            <p className="instruccion-interactivo">
+              A la izquierda, un carbono con sus cuatro sustituyentes; a la derecha, su imagen en un espejo. Los
+              enlaces del plano del papel son líneas; la cuña llena sale hacia ti, y la rayada se va detrás del papel.
+              Intenta poner la imagen encima de la molécula: gírala arrastrándola con el ratón o con el dedo, o con los
+              mandos, que le dan media vuelta o la giran 120° sobre uno de sus enlaces, que se queda quieto. Después
+              cambia el flúor por otro átomo y vuelve a intentarlo.
+            </p>
+
+            <div className="zona-grafica zona-espejo-ib">
+              <svg className="grafica-ib" viewBox="0 0 540 300" role="img" aria-label={descripcion}>
+                <g className="se-desvanece-ib" style={{ opacity: encima ? 0 : 1 }}>
+                  <rect x="262" y="26" width="16" height="240" rx="3" fill="#dbeafe" />
+                  <path d="M270 26V266" fill="none" stroke="#64748b" strokeWidth="1.5" strokeDasharray="5 5" />
+                  <text x="270" y="18" fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                    espejo
+                  </text>
+                </g>
+                <g className="se-desliza-ib" style={{ transform: "translate(" + aLaMolecula + "px, 0px)" }}>
+                  <MoleculaDelEspejo
+                    centro={CENTRO_DE_LA_MOLECULA}
+                    vectores={DIRECCIONES_DEL_ESPEJO}
+                    etiquetas={etiquetas}
+                    aros={null}
+                  />
+                </g>
+                <g className="se-desliza-ib" style={{ transform: "translate(" + aLaImagen + "px, 0px)" }}>
+                  <g style={{ opacity: encima ? 0.72 : 1 }}>
+                    <MoleculaDelEspejo
+                      centro={CENTRO_DE_LA_IMAGEN}
+                      vectores={vectoresDeLaImagen}
+                      etiquetas={etiquetas}
+                      aros={aros}
+                    />
+                  </g>
+                  <circle
+                    ref={zona}
+                    className="punto-arrastrable"
+                    cx={CENTRO_DE_LA_IMAGEN.x}
+                    cy={CENTRO_DE_LA_IMAGEN.y}
+                    r="125"
+                    fill="#ffffff"
+                    fillOpacity="0"
+                    onPointerDown={empezarArrastre}
+                    onPointerMove={moverArrastre}
+                    onPointerUp={acabarArrastre}
+                    onPointerCancel={acabarArrastre}
+                    onLostPointerCapture={acabarArrastre}
+                  />
+                </g>
+                <g className="se-desvanece-ib" style={{ opacity: encima ? 0 : 1 }}>
+                  <text x={CENTRO_DE_LA_MOLECULA.x} y="292" fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                    la molécula
+                  </text>
+                  <text x={CENTRO_DE_LA_IMAGEN.x} y="292" fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                    su imagen en el espejo
+                  </text>
+                </g>
+                <text
+                  className="se-desvanece-ib"
+                  style={{ opacity: encima ? 1 : 0 }}
+                  x={medio}
+                  y="292"
+                  fontSize="16"
+                  textAnchor="middle"
+                  fill="var(--texto-suave)"
+                >
+                  la molécula y su imagen, una encima de la otra
+                </text>
+              </svg>
+            </div>
+            <p className="leyenda-ib">
+              <span style={{ "--color-leyenda": COLORES_IB.azul }}>aro azul: en el sitio del mismo átomo de la molécula</span>
+              <span style={{ "--color-leyenda": COLORES_IB.naranja }}>aro naranja: cambiado de sitio</span>
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <p>En el sitio del flúor, el de la cuña llena</p>
+                <div className="fichas-interactivo" role="group" aria-label="Átomo en el sitio del flúor">
+                  {Object.keys(CUARTOS_DEL_ESPEJO).map((simbolo) => (
+                    <button
+                      key={simbolo}
+                      type="button"
+                      aria-pressed={cuarto === simbolo}
+                      onClick={() => cambiarCuarto(simbolo)}
+                    >
+                      <TexEnLineaIB tex={"\\mathrm{" + CUARTOS_DEL_ESPEJO[simbolo].formula + "}"} />
+                    </button>
+                  ))}
+                </div>
+                <p>Gira la imagen</p>
+                <div className="fichas-interactivo" role="group" aria-label="Girar la imagen">
+                  <button
+                    type="button"
+                    aria-label="Dar media vuelta a la imagen alrededor del eje vertical"
+                    onClick={() => girar([0, 1, 0], Math.PI, 900)}
+                  >
+                    Media vuelta
+                  </button>
+                  {SITIOS_DEL_ESPEJO.map((sitio) => (
+                    <button
+                      key={sitio}
+                      type="button"
+                      aria-label={"Girar la imagen 120° alrededor de su enlace con " + enElMando(sitio, true)}
+                      onClick={() => sobreUnEnlace(sitio)}
+                    >
+                      {"120° sobre " + enElMando(sitio, false)}
+                    </button>
+                  ))}
+                </div>
+                <div className="fichas-interactivo" role="group" aria-label="Comparar la imagen con la molécula">
+                  <button type="button" aria-pressed={encima} onClick={() => setEncima((antes) => !antes)}>
+                    Ponerla encima
+                  </button>
+                  <button type="button" onClick={volverAEmpezar}>
+                    Volver a empezar
+                  </button>
+                </div>
+              </div>
+              <div className="panel-control" aria-live="polite">
+                <p>
+                  <strong>{compuesto.nombre}</strong>, <TexEnLineaIB tex={"\\mathrm{" + compuesto.formula + "}"} />
+                </p>
+                <p>
+                  {quiral ? (
+                    <>
+                      <strong>Carbono asimétrico (quiral):</strong> sus cuatro sustituyentes son distintos.
+                    </>
+                  ) : (
+                    <>
+                      <strong>No es un carbono asimétrico:</strong> lleva dos {ATOMOS_DEL_ESPEJO[cuarto].plural}.
+                    </>
+                  )}
+                </p>
+                <p>
+                  <strong>{fuerte}</strong> {resto}
+                </p>
+                <p>
+                  {quiral ? (
+                    <>
+                      <strong>Son dos enantiómeros:</strong> imágenes en un espejo que no se superponen; por mucho que
+                      gires la imagen, como mucho coinciden dos sustituyentes. Desvían el plano de la luz polarizada el
+                      mismo ángulo, uno hacia la derecha, (+), y el otro hacia la izquierda, (−); cuál es cuál se mide
+                      con un polarímetro, no se ve en el dibujo. Una mezcla de los dos a partes iguales, una mezcla
+                      racémica, no lo desvía.
+                    </>
+                  ) : (
+                    <>
+                      <strong>No es quiral:</strong> con dos sustituyentes iguales, la molécula y su imagen se pueden
+                      superponer, porque son la misma molécula, y no desvía la luz polarizada.
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+
+      const EXACTITUD_DE_PARTIDA = { verdadero: 2000, sistematico: 30, aleatorio: 10, medidas: 5 };
+      const MAXIMO_DE_PESADAS = 40;
+
+      const ZONA_CENTRAL = 15;
+
+      const DESVIOS_DE_LAS_PESADAS = (() => {
+        let semilla = 10709;
+        const azar = () => {
+          semilla = (semilla * 16807) % 2147483647;
+          return semilla / 2147483647;
+        };
+        for (let vuelta = 0; vuelta < 10; vuelta += 1) {
+          azar();
+        }
+        return Array.from({ length: MAXIMO_DE_PESADAS }, () => {
+          const radio = Math.sqrt(azar());
+          const angulo = 2 * Math.PI * azar();
+          return { x: radio * Math.cos(angulo), y: radio * Math.sin(angulo) };
+        });
+      })();
+
+      function pesadasDeLaSerie(cuantas, sistematico, aleatorio) {
+        return DESVIOS_DE_LAS_PESADAS.slice(0, cuantas).map((desvio) => ({
+          masa: EXACTITUD_DE_PARTIDA.verdadero + sistematico + Math.round(aleatorio * desvio.x),
+          altura: aleatorio * desvio.y
+        }));
+      }
+
+      function resumenDeLasPesadas(pesadas) {
+        let suma = 0;
+        const medias = pesadas.map((pesada, orden) => {
+          suma += pesada.masa;
+          return suma / (orden + 1);
+        });
+        const masas = pesadas.map((pesada) => pesada.masa);
+        const cuantas = pesadas.length;
+        return {
+          cuantas,
+          suma,
+          medias,
+          media: suma / cuantas,
+          mediaRedondeada: Math.round(suma / cuantas),
+          menor: Math.min.apply(null, masas),
+          mayor: Math.max.apply(null, masas),
+          alturaMedia: pesadas.reduce((total, pesada) => total + pesada.altura, 0) / cuantas
+        };
+      }
+
+      function centesimasEnGramos(centesimas, coma) {
+        const resto = Math.abs(centesimas) % 100;
+        return (
+          (centesimas < 0 ? "−" : "") +
+          Math.floor(Math.abs(centesimas) / 100) +
+          (coma || ",") +
+          (resto < 10 ? "0" : "") +
+          resto
+        );
+      }
+
+      function gramosDeLaPesada(centesimas) {
+        return centesimasEnGramos(centesimas) + " g";
+      }
+
+      function gramosConSigno(centesimas) {
+        return (centesimas > 0 ? "+" : "") + gramosDeLaPesada(centesimas);
+      }
+
+      function desvioDeLaMedia(desvio) {
+        if (desvio === 0) {
+          return "igual que el valor verdadero";
+        }
+        return gramosDeLaPesada(Math.abs(desvio)) + (desvio > 0 ? " por encima" : " por debajo") + " del valor verdadero";
+      }
+
+      function veredictoDeLasPesadas(resumen, sistematico) {
+        const desvio = resumen.mediaRedondeada - EXACTITUD_DE_PARTIDA.verdadero;
+        const exactas = Math.abs(desvio) <= ZONA_CENTRAL;
+        const precisas = resumen.mayor - resumen.menor <= 2 * ZONA_CENTRAL;
+        const apuntanFuera = Math.abs(sistematico) > ZONA_CENTRAL;
+        if (resumen.cuantas < 2) {
+          return {
+            exactas,
+            precisas: false,
+            fuerte: exactas ? "Exacta." : "No es exacta.",
+            resto: "Con una sola medida no se sabe si las medidas son precisas: hay que repetirla.",
+            color: COLORES_IB.gris
+          };
+        }
+        if (exactas && precisas) {
+          return {
+            exactas,
+            precisas,
+            fuerte: "Exactas y precisas.",
+            resto:
+              "La media cae en la zona central y las medidas están juntas." +
+              (apuntanFuera ? " Pero apuntan fuera de la zona: con más medidas, la media saldrá de ella." : ""),
+            color: COLORES_IB.verde
+          };
+        }
+        if (precisas) {
+          return {
+            exactas,
+            precisas,
+            fuerte: "Precisas, pero no exactas.",
+            resto:
+              "Las medidas están juntas, pero su media queda " + desvioDeLaMedia(desvio) + "." +
+              (apuntanFuera
+                ? " Es el error sistemático: por mucho que repitas, la media se queda donde apuntan las medidas."
+                : " Con más medidas, la media se acercará a donde apuntan, dentro de la zona central."),
+            color: COLORES_IB.naranja
+          };
+        }
+        if (exactas) {
+          return {
+            exactas,
+            precisas,
+            fuerte: "Exactas, pero no precisas.",
+            resto:
+              "Las medidas están dispersas, pero su media cae en la zona central: el error aleatorio se compensa al promediar." +
+              (apuntanFuera ? " Aun así, apuntan fuera de la zona, y con más medidas la media saldrá de ella." : ""),
+            color: COLORES_IB.naranja
+          };
+        }
+        return {
+          exactas,
+          precisas,
+          fuerte: "Ni exactas ni precisas.",
+          resto:
+            "Las medidas están dispersas y su media queda " + desvioDeLaMedia(desvio) + "." +
+            (apuntanFuera
+              ? " Repetir compensa el error aleatorio, pero no el sistemático: la media irá hacia donde apuntan las medidas, fuera de la zona central."
+              : " Con más medidas, el error aleatorio se compensa y la media se acercará a la zona central."),
+          color: COLORES_IB.rojo
+        };
+      }
+
+      const ESCALA_DE_LAS_PESADAS = 1.32;
+      const CENTRO_DE_LA_DIANA = { x: 172, y: 150 };
+      const AREA_DE_LA_RECTA = { izq: 40, der: 304, arr: 30, aba: 268 };
+      const GRIS_DE_LAS_PESADAS = "#64748b";
+      const VERDE_DE_LA_ZONA = "#dcfce7";
+
+      function ExactitudYPrecisionInteractivo({ configuracion, alPreparar }) {
+        const [cuantas, setCuantas] = React.useState(EXACTITUD_DE_PARTIDA.medidas);
+        const [sistematico, setSistematico] = React.useState(EXACTITUD_DE_PARTIDA.sistematico);
+        const [aleatorio, setAleatorio] = React.useState(EXACTITUD_DE_PARTIDA.aleatorio);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const verdadero = EXACTITUD_DE_PARTIDA.verdadero;
+        const pesadas = pesadasDeLaSerie(cuantas, sistematico, aleatorio);
+        const resumen = resumenDeLasPesadas(pesadas);
+        const veredicto = veredictoDeLasPesadas(resumen, sistematico);
+        const ultima = pesadas[pesadas.length - 1];
+        const lleno = cuantas >= MAXIMO_DE_PESADAS;
+        const enPartida =
+          cuantas === EXACTITUD_DE_PARTIDA.medidas &&
+          sistematico === EXACTITUD_DE_PARTIDA.sistematico &&
+          aleatorio === EXACTITUD_DE_PARTIDA.aleatorio;
+
+        const medir = (veces) => setCuantas((antes) => Math.min(MAXIMO_DE_PESADAS, antes + veces));
+        const empezarDeNuevo = () => {
+          setCuantas(EXACTITUD_DE_PARTIDA.medidas);
+          setSistematico(EXACTITUD_DE_PARTIDA.sistematico);
+          setAleatorio(EXACTITUD_DE_PARTIDA.aleatorio);
+        };
+
+        const dardoX = (masa) => CENTRO_DE_LA_DIANA.x + ESCALA_DE_LAS_PESADAS * (masa - verdadero);
+        const dardoY = (altura) => CENTRO_DE_LA_DIANA.y - ESCALA_DE_LAS_PESADAS * altura;
+        const apunta = dardoX(verdadero + sistematico);
+        const mediaX = dardoX(resumen.media);
+        const mediaY = dardoY(resumen.alturaMedia);
+
+        const area = AREA_DE_LA_RECTA;
+        const x = escalaIB(verdadero - 100, verdadero + 100, area.izq, area.der);
+        const y = escalaIB(0, MAXIMO_DE_PESADAS, area.aba, area.arr);
+        const lineaDeLaMedia = resumen.medias
+          .map((media, orden) => (orden ? "L" : "M") + x(media).toFixed(1) + " " + y(orden + 1).toFixed(1))
+          .join("");
+        const ultimaY = y(cuantas);
+
+        const sentido = (centesimas) =>
+          centesimas === 0
+            ? "en el centro"
+            : gramosDeLaPesada(Math.abs(centesimas)) + (centesimas > 0 ? " a la derecha" : " a la izquierda");
+        const descripcionDeLaDiana =
+          "Una diana con el valor verdadero, " + gramosDeLaPesada(verdadero) + ", en el centro, y " + cuantas +
+          " dardos, uno por medida, " +
+          (veredicto.precisas ? "juntos" : "dispersos") + " alrededor de un punto " + sentido(sistematico) +
+          ". Su media, " + gramosDeLaPesada(resumen.mediaRedondeada) + ", cae " +
+          (veredicto.exactas ? "dentro" : "fuera") + " de la zona central.";
+        const descripcionDeLaRecta =
+          "Las " + cuantas + " medidas en una recta de " + gramosDeLaPesada(verdadero - 100) + " a " +
+          gramosDeLaPesada(verdadero + 100) + ", una fila por medida, de la primera, abajo, a la última, arriba: van de " +
+          gramosDeLaPesada(resumen.menor) + " a " + gramosDeLaPesada(resumen.mayor) +
+          ". La línea de la media de las medidas hasta cada fila acaba en " + gramosDeLaPesada(resumen.mediaRedondeada) +
+          ". La zona central va de " + gramosDeLaPesada(verdadero - ZONA_CENTRAL) + " a " +
+          gramosDeLaPesada(verdadero + ZONA_CENTRAL) + ".";
+
+        const formula =
+          "\\bar{m}=\\dfrac{m_{1}+m_{2}+\\cdots+m_{" + cuantas + "}}{" + cuantas + "}=\\dfrac{" +
+          centesimasEnGramos(resumen.suma, "{,}") + "\\ \\mathrm{g}}{" + cuantas + "}" +
+          (resumen.suma % cuantas === 0 ? "=" : "\\approx ") +
+          centesimasEnGramos(resumen.mediaRedondeada, "{,}") + "\\ \\mathrm{g}";
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "La exactitud y la precisión"}</p>
+            <p className="instruccion-interactivo">
+              Se pesa una y otra vez una pesa patrón de {gramosDeLaPesada(verdadero)}, su valor verdadero: el centro de
+              la diana y la línea verde de la recta. Cada medida es un dardo, que se aparta del centro hacia la derecha
+              si la balanza marca de más y hacia la izquierda si marca de menos (la altura no cuenta), y un punto de la
+              recta, una fila por medida; la línea naranja es la media de las que llevas. Son exactas si la media cae
+              en la zona central, a {gramosDeLaPesada(ZONA_CENTRAL)} o menos del valor verdadero, y precisas si caben
+              todas en el ancho de esa zona. Mide otra vez y mira adónde va la media; después cambia los errores.
+            </p>
+
+            <p className="leyenda-ib">
+              <span style={{ "--color-leyenda": COLORES_IB.verde }}>el valor verdadero, {gramosDeLaPesada(verdadero)}</span>
+              <span style={{ "--color-leyenda": "#86efac" }}>la zona central</span>
+              <span style={{ "--color-leyenda": COLORES_IB.azul }}>las medidas</span>
+              <span style={{ "--color-leyenda": COLORES_IB.naranja }}>su media</span>
+              <span style={{ "--color-leyenda": GRIS_DE_LAS_PESADAS }}>donde apuntan las medidas</span>
+            </p>
+            <div className="zona-grafica zona-exactitud-ib">
+              <svg className="grafica-ib" viewBox="0 0 320 300" role="img" aria-label={descripcionDeLaDiana}>
+                {[105, 75, 45].map((radio, orden) => (
+                  <circle
+                    key={radio}
+                    cx={CENTRO_DE_LA_DIANA.x}
+                    cy={CENTRO_DE_LA_DIANA.y}
+                    r={(ESCALA_DE_LAS_PESADAS * radio).toFixed(1)}
+                    fill={orden % 2 ? "#eef2f7" : "#ffffff"}
+                    stroke="#cbd5e1"
+                    strokeWidth="1.5"
+                  />
+                ))}
+                <circle
+                  cx={CENTRO_DE_LA_DIANA.x}
+                  cy={CENTRO_DE_LA_DIANA.y}
+                  r={(ESCALA_DE_LAS_PESADAS * ZONA_CENTRAL).toFixed(1)}
+                  fill={VERDE_DE_LA_ZONA}
+                  stroke={COLORES_IB.verde}
+                  strokeWidth="2"
+                />
+                <path
+                  d={"M" + (CENTRO_DE_LA_DIANA.x - 139) + " " + CENTRO_DE_LA_DIANA.y + "H" + (CENTRO_DE_LA_DIANA.x + 139)}
+                  fill="none"
+                  stroke="#cbd5e1"
+                  strokeWidth="1"
+                />
+                <circle cx={CENTRO_DE_LA_DIANA.x} cy={CENTRO_DE_LA_DIANA.y} r="3" fill={COLORES_IB.verde} />
+                <text x="6" y="294" fontSize="14" fill="var(--texto-suave)">
+                  ← de menos
+                </text>
+                <text x="314" y="294" fontSize="14" textAnchor="end" fill="var(--texto-suave)">
+                  de más →
+                </text>
+                <path
+                  d={
+                    "M" + (apunta - 8).toFixed(1) + " " + CENTRO_DE_LA_DIANA.y + "H" + (apunta + 8).toFixed(1) +
+                    "M" + apunta.toFixed(1) + " " + (CENTRO_DE_LA_DIANA.y - 8) + "V" + (CENTRO_DE_LA_DIANA.y + 8)
+                  }
+                  fill="none"
+                  stroke={GRIS_DE_LAS_PESADAS}
+                  strokeWidth="2"
+                />
+                {pesadas.map((pesada, orden) => (
+                  <circle
+                    key={orden}
+                    cx={dardoX(pesada.masa).toFixed(1)}
+                    cy={dardoY(pesada.altura).toFixed(1)}
+                    r="4.6"
+                    fill={COLORES_IB.azul}
+                    stroke="#ffffff"
+                    strokeWidth="1.4"
+                  />
+                ))}
+                <circle
+                  key={"ultima-" + cuantas}
+                  className="cae-ib"
+                  cx={dardoX(ultima.masa).toFixed(1)}
+                  cy={dardoY(ultima.altura).toFixed(1)}
+                  r="8.5"
+                  fill="none"
+                  stroke={COLORES_IB.azul}
+                  strokeWidth="1.6"
+                />
+                <polygon
+                  points={
+                    mediaX.toFixed(1) + "," + (mediaY - 6.5).toFixed(1) + " " + (mediaX + 6.5).toFixed(1) + "," +
+                    mediaY.toFixed(1) + " " + mediaX.toFixed(1) + "," + (mediaY + 6.5).toFixed(1) + " " +
+                    (mediaX - 6.5).toFixed(1) + "," + mediaY.toFixed(1)
+                  }
+                  fill={COLORES_IB.naranja}
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                />
+              </svg>
+
+              <svg className="grafica-ib" viewBox="0 0 320 314" role="img" aria-label={descripcionDeLaRecta}>
+                <rect
+                  x={x(verdadero - ZONA_CENTRAL).toFixed(1)}
+                  y={area.arr}
+                  width={(x(verdadero + ZONA_CENTRAL) - x(verdadero - ZONA_CENTRAL)).toFixed(1)}
+                  height={area.aba - area.arr}
+                  fill={VERDE_DE_LA_ZONA}
+                />
+                <EjesIB
+                  area={area}
+                  x={x}
+                  y={y}
+                  marcasX={[verdadero - 100, verdadero - 50, verdadero, verdadero + 50, verdadero + 100]}
+                  marcasY={[10, 20, 30, 40]}
+                  textoX={(valor) => fijoIB(valor / 100, 1)}
+                  textoY={(valor) => numeroIB(valor, 0)}
+                  rotuloX="m / g"
+                  rotuloY="n.º de la medida"
+                />
+                <path
+                  d={"M" + x(verdadero) + " " + area.arr + "V" + area.aba}
+                  fill="none"
+                  stroke={COLORES_IB.verde}
+                  strokeWidth="2.5"
+                />
+                {sistematico !== 0 && (
+                  <path
+                    d={"M" + x(verdadero + sistematico).toFixed(1) + " " + area.arr + "V" + area.aba}
+                    fill="none"
+                    stroke={GRIS_DE_LAS_PESADAS}
+                    strokeWidth="1.8"
+                    strokeDasharray="6 5"
+                  />
+                )}
+                <path d={lineaDeLaMedia} fill="none" stroke={COLORES_IB.naranja} strokeWidth="2.5" strokeLinejoin="round" />
+                {pesadas.map((pesada, orden) => (
+                  <circle
+                    key={orden}
+                    cx={x(pesada.masa).toFixed(1)}
+                    cy={y(orden + 1).toFixed(1)}
+                    r="3.2"
+                    fill={COLORES_IB.azul}
+                    stroke="#ffffff"
+                    strokeWidth="1"
+                  />
+                ))}
+                <circle
+                  key={"ultima-" + cuantas}
+                  className="cae-ib"
+                  cx={x(ultima.masa).toFixed(1)}
+                  cy={ultimaY.toFixed(1)}
+                  r="6.5"
+                  fill="none"
+                  stroke={COLORES_IB.azul}
+                  strokeWidth="1.5"
+                />
+                <circle cx={x(resumen.media).toFixed(1)} cy={ultimaY.toFixed(1)} r="4.5" fill={COLORES_IB.naranja} stroke="#ffffff" strokeWidth="1.2" />
+                <polygon
+                  points={
+                    x(resumen.media).toFixed(1) + "," + area.aba + " " + (x(resumen.media) - 5).toFixed(1) + "," +
+                    (area.aba + 8) + " " + (x(resumen.media) + 5).toFixed(1) + "," + (area.aba + 8)
+                  }
+                  fill={COLORES_IB.naranja}
+                />
+              </svg>
+            </div>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <div aria-live="polite">
+                  <p>
+                    <strong>{cuantas} medidas</strong> de la pesa patrón de {gramosDeLaPesada(verdadero)}; la última,{" "}
+                    {gramosDeLaPesada(ultima.masa)}.
+                  </p>
+                  <p>
+                    {resumen.mayor === resumen.menor
+                      ? "Todas marcan lo mismo, " + gramosDeLaPesada(resumen.menor) + "."
+                      : "De la menor a la mayor: " + gramosDeLaPesada(resumen.menor) + " a " +
+                        gramosDeLaPesada(resumen.mayor) + ", " + gramosDeLaPesada(resumen.mayor - resumen.menor) +
+                        " de una a otra."}
+                  </p>
+                  <p>
+                    Media: <strong>{gramosDeLaPesada(resumen.mediaRedondeada)}</strong>,{" "}
+                    {desvioDeLaMedia(resumen.mediaRedondeada - verdadero)}.
+                  </p>
+                  <p className="veredicto-interactivo" style={{ "--color-veredicto": veredicto.color }}>
+                    <strong>{veredicto.fuerte}</strong> {veredicto.resto}
+                  </p>
+                  {lleno && (
+                    <p className="nota-escala">Ya van {MAXIMO_DE_PESADAS} medidas, todas las que caben en la recta.</p>
+                  )}
+                </div>
+                <div className="acciones-interactivo acciones-exactitud-ib">
+                  <button type="button" disabled={lleno} onClick={() => medir(1)}>
+                    Medir otra vez
+                  </button>
+                  <button type="button" className="secundario" disabled={lleno} onClick={() => medir(10)}>
+                    Diez medidas más
+                  </button>
+                  <button type="button" className="secundario" disabled={enPartida} onClick={empezarDeNuevo}>
+                    Empezar de nuevo
+                  </button>
+                </div>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Error sistemático: lo que la balanza marca de más (+) o de menos (−) en todas</span>
+                  <output>{gramosConSigno(sistematico)}</output>
+                  <input
+                    type="range"
+                    min="-50"
+                    max="50"
+                    step="10"
+                    value={sistematico}
+                    aria-valuetext={gramosConSigno(sistematico)}
+                    onChange={(evento) => setSistematico(Number(evento.target.value))}
+                  />
+                </label>
+                <label className="control-rango">
+                  <span>Error aleatorio: lo que cada medida se aparta al azar, como mucho</span>
+                  <output>±{gramosDeLaPesada(aleatorio)}</output>
+                  <input
+                    type="range"
+                    min="0"
+                    max="50"
+                    step="5"
+                    value={aleatorio}
+                    aria-valuetext={"más o menos " + gramosDeLaPesada(aleatorio)}
+                    onChange={(evento) => setAleatorio(Number(evento.target.value))}
+                  />
+                </label>
+                <p className="nota-escala">
+                  El error sistemático desplaza todas las medidas hacia el mismo lado; el aleatorio las dispersa hacia
+                  los dos.
+                </p>
+              </div>
+            </div>
+
+            <FormulaVivaIB tex={formula} />
+          </div>
+        );
+      }
+
       const COMPONENTES = {
         ejemplo: EjemploInteractivo,
         "relleno-de-orbitales": RellenoDeOrbitalesInteractivo,
@@ -21741,7 +25392,10 @@ Estructura 1</p>
         "formas-de-las-moleculas": FormasDeLasMoleculasInteractivo,
         "triangulo-de-enlace": TrianguloDeEnlaceInteractivo,
         "explorador-de-la-tabla": ExploradorDeLaTablaInteractivo,
-        "constructor-de-nombres": ConstructorDeNombresInteractivo
+        "constructor-de-nombres": ConstructorDeNombresInteractivo,
+        "formulador-inorganico": FormuladorInorganicoInteractivo,
+        "molecula-en-el-espejo": MoleculaEnElEspejoInteractivo,
+        "exactitud-y-precision": ExactitudYPrecisionInteractivo
       };
 
       Object.assign(COMPONENTES, window.InfografiasIB || {});
