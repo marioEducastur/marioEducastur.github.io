@@ -9,18 +9,37 @@
   <meta name="copyright" content="© 2026 Mario Rodríguez Boya. Todos los derechos reservados.">
   <title>Dibujo Técnico I — 1.º Bachillerato</title>
   <style>
+    /* Portada del curso (rehecha el 4 de noviembre de 2026, con el estilo
+       de las portadas del IB: la de /ib/ y la de Matemáticas IB). Escrita a
+       mano; sus dibujos, en blanco sobre el tono de cada tarjeta, son
+       construcciones del tema de cada una, y con el ratón encima se rehacen
+       paso a paso, como los trazados de las unidades. El fondo es papel
+       milimetrado; bajo el título va una cota, y el pie es un cajetín. */
     :root {
       color-scheme: light;
       --texto: #182033;
       --texto-suave: #4b5568;
-      --fondo: #ffffff;
-      --fondo-suave: #f4f7fb;
+      --fondo: #f2f5fa;
+      --superficie: #ffffff;
       --borde: #d6dce7;
       --acento: #2557a7;
+      --milimetro: rgb(37 87 167 / 0.035);
+      --centimetro: rgb(37 87 167 / 0.075);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      background-color: var(--fondo);
+      background-image:
+        linear-gradient(var(--centimetro) 1px, transparent 1px),
+        linear-gradient(90deg, var(--centimetro) 1px, transparent 1px),
+        linear-gradient(var(--milimetro) 1px, transparent 1px),
+        linear-gradient(90deg, var(--milimetro) 1px, transparent 1px);
+      background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+      background-position: -1px -1px;
     }
 
     body {
@@ -28,7 +47,6 @@
       margin: 0 auto;
       padding: clamp(2rem, 8vw, 6rem) clamp(1rem, 5vw, 3rem);
       color: var(--texto);
-      background: var(--fondo);
       font-family:
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
         Arial, sans-serif;
@@ -39,14 +57,73 @@
       margin-bottom: 3rem;
     }
 
+    .antetitulo-portal {
+      margin: 0 0 0.5rem;
+      color: #1d4ed8;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
     h1 {
-      max-width: 18ch;
-      margin: 0 0 1rem;
+      margin: 0 0 0.45rem;
       color: #111827;
       font-size: clamp(2.25rem, 7vw, 4.5rem);
       line-height: 1.08;
       letter-spacing: -0.035em;
       text-wrap: balance;
+    }
+
+    .cota-portal {
+      display: block;
+      width: min(100%, 35rem);
+      height: auto;
+      margin: 0 0 1.05rem;
+      overflow: visible;
+    }
+
+    /* La cota se acota al abrir la página: salen las líneas de referencia,
+       la de cota crece desde el centro, llegan las flechas y la cifra. */
+    @media (prefers-reduced-motion: no-preference) {
+      .cota-portal .c-referencia {
+        stroke-dasharray: 40;
+        animation: c-referencia 0.5s ease-out both;
+      }
+
+      .cota-portal .c-linea {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: c-crece 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both;
+      }
+
+      .cota-portal .c-flechas {
+        animation: c-entra 0.4s ease 1s both;
+      }
+
+      .cota-portal .c-cifra {
+        animation: c-sube 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 1.1s both;
+      }
+    }
+
+    @keyframes c-referencia {
+      from { stroke-dashoffset: 40; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes c-crece {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes c-entra {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes c-sube {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .subtitulo {
@@ -56,43 +133,46 @@
       font-size: clamp(1.05rem, 2.5vw, 1.3rem);
     }
 
-    section {
-      padding: clamp(1.25rem, 4vw, 2rem);
-      border: 1px solid var(--borde);
-      border-radius: 0.75rem;
-      background: var(--fondo-suave);
+    main > section + section {
+      margin-top: 3rem;
     }
 
     h2 {
+      margin: 0 0 0.9rem;
+      color: #163b72;
+      font-size: 0.86rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    /* Los cuatro bloques de las unidades, cada uno con su rótulo y la
+       línea fina de una lámina. */
+    .bloque + .bloque {
+      margin-top: 2.25rem;
+    }
+
+    .titulo-bloque {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
       margin: 0 0 1rem;
       color: #111827;
-      font-size: 1.6rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
     }
 
-    .en-clase {
-      margin-bottom: 1.5rem;
+    .titulo-bloque::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--borde);
+      transform: translateY(-0.3em);
     }
 
-    .entrada-diario {
-      margin: 0;
-    }
-
-    .lista-unidades {
-      margin: 0;
-      padding-left: 1.25rem;
-    }
-
-    .lista-unidades:empty {
-      display: none;
-    }
-
-    .sin-unidades {
-      margin: 0;
+    .titulo-bloque span {
       color: var(--texto-suave);
-    }
-
-    .lista-unidades:not(:empty) + .sin-unidades {
-      display: none;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
 
     a {
@@ -101,198 +181,584 @@
       text-underline-offset: 0.16em;
     }
 
+    .rejilla-unidades {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+      gap: 1.5rem;
+    }
+
+    .tarjeta-unidad {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: inherit;
+      font-weight: 400;
+      text-decoration: none;
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: 1.1rem;
+      box-shadow: 0 14px 34px rgb(22 59 114 / 0.1);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .tarjeta-unidad:focus-visible {
+      outline: 3px solid var(--tono);
+      outline-offset: 3px;
+    }
+
+    @media (hover: hover) {
+      .tarjeta-unidad:hover {
+        box-shadow: 0 18px 40px rgb(22 59 114 / 0.16);
+        transform: translateY(-2px);
+      }
+    }
+
+    .tono-azul {
+      --tono: #1d4ed8;
+      --lienzo: linear-gradient(120deg, #163b72 0%, #1d4ed8 68%, #4778de 100%);
+    }
+
+    .tono-violeta {
+      --tono: #6d28d9;
+      --lienzo: linear-gradient(120deg, #3b1a86 0%, #6d28d9 66%, #9a6cf2 100%);
+    }
+
+    .tono-turquesa {
+      --tono: #0f766e;
+      --lienzo: linear-gradient(120deg, #0b4a45 0%, #0f766e 66%, #2aa79b 100%);
+    }
+
+    .tono-granate {
+      --tono: #b4233a;
+      --lienzo: linear-gradient(120deg, #6b1626 0%, #b4233a 66%, #d95a6c 100%);
+    }
+
+    .tono-ambar {
+      --tono: #9a4e05;
+      --lienzo: linear-gradient(120deg, #5c2f04 0%, #9a4e05 66%, #c97a1e 100%);
+    }
+
+    .tono-rosa {
+      --tono: #be185d;
+      --lienzo: linear-gradient(120deg, #831843 0%, #be185d 66%, #e2558f 100%);
+    }
+
+    .tono-oliva {
+      --tono: #4d7c0f;
+      --lienzo: linear-gradient(120deg, #2b4508 0%, #4d7c0f 66%, #7fae3a 100%);
+    }
+
+    .tono-indigo {
+      --tono: #4338ca;
+      --lienzo: linear-gradient(120deg, #22205f 0%, #4338ca 66%, #7a72e8 100%);
+    }
+
+    /* El diario de clase, en celeste, como en el diario; Morís, en ciruela,
+       como su página y su puerta, que piden contraseña. */
+    .tono-celeste {
+      --tono: #0369a1;
+      --lienzo: linear-gradient(120deg, #0b3d5c 0%, #0369a1 66%, #3aa0d6 100%);
+    }
+
+    .tono-ciruela {
+      --tono: #86198f;
+      --lienzo: linear-gradient(120deg, #4a0d50 0%, #86198f 66%, #c25ac9 100%);
+    }
+
+    /* La cabecera de cada tarjeta es un plano: su tono, una luz arriba a la
+       derecha y la cuadrícula del papel, en blanco. */
+    .lienzo-tarjeta {
+      display: block;
+      flex: none;
+      overflow: hidden;
+      aspect-ratio: 640 / 225;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(rgb(255 255 255 / 0.11) 1px, transparent 1px) 0 0 / 80px 80px,
+        linear-gradient(90deg, rgb(255 255 255 / 0.11) 1px, transparent 1px) 0 0 / 80px 80px,
+        linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 16px 16px,
+        linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px) 0 0 / 16px 16px,
+        var(--lienzo);
+    }
+
+    .lienzo-tarjeta svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transition: transform 1.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .lienzo-tarjeta .rotulos {
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    .lienzo-tarjeta .e-punto {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    /* Con el ratón encima, o con el foco del teclado, la construcción se
+       retira y se vuelve a trazar, pieza a pieza, hasta quedar como estaba:
+       los datos se quedan y lo demás llega a su tiempo (--t) y, un trazo,
+       en lo que tarda en dibujarse (--d). Solo CSS; no actúa en pantallas
+       táctiles ni con el movimiento reducido. */
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .tarjeta-unidad:is(:hover, :focus-visible) svg {
+        transform: scale(1.04);
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-punto {
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-brota 0.5s cubic-bezier(0.34, 1.7, 0.5, 1) var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-rotulo {
+        animation:
+          t-apaga 0.2s ease-in forwards,
+          t-sube 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-letra {
+        animation:
+          t-apaga 0.2s ease-in forwards,
+          t-letra 0.6s ease var(--t) forwards;
+      }
+
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-velo {
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-entra 0.45s ease var(--t) forwards;
+      }
+
+      /* Un trazo se dibuja de un extremo al otro: mide 100 (pathLength) y
+         su guion, que lo cubre entero, se descubre poco a poco. */
+      .tarjeta-unidad:is(:hover, :focus-visible) .e-trazo {
+        stroke-dasharray: 100 120;
+        animation:
+          t-sale 0.2s ease-in forwards,
+          t-traza var(--d) ease-in-out var(--t) forwards;
+      }
+    }
+
+    @keyframes t-sale {
+      to { opacity: 0; }
+    }
+
+    @keyframes t-apaga {
+      to { fill-opacity: 0; stroke-opacity: 0; }
+    }
+
+    @keyframes t-brota {
+      from { opacity: 0; transform: scale(0); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes t-sube {
+      from { fill-opacity: 0; stroke-opacity: 0; transform: translateY(8px); }
+      to { fill-opacity: 1; stroke-opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes t-letra {
+      from { fill-opacity: 0; }
+      to { fill-opacity: 1; }
+    }
+
+    @keyframes t-entra {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes t-traza {
+      from { opacity: 1; stroke-dashoffset: 100; }
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+
+    .cuerpo-tarjeta {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 1.15rem 1.4rem 1.35rem;
+    }
+
+    .antetitulo {
+      color: var(--tono);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .titulo-tarjeta {
+      margin: 0.1rem 0 0.4rem;
+      color: #111827;
+      font-size: 1.55rem;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+    }
+
+    .resumen {
+      margin-bottom: 0.9rem;
+      color: var(--texto-suave);
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .fichas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: auto;
+    }
+
+    .fichas span {
+      padding: 0.22rem 0.7rem;
+      color: #3b4a63;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #eef2f8;
+      border-radius: 999px;
+    }
+
+    /* El pie es un cajetín, como el de una lámina: el curso, el nivel y la
+       escala arriba; la firma y el aviso, debajo. */
     .pie-autoria {
       max-width: 46rem;
-      margin: 3.5rem auto 0;
-      padding: 1.1rem 1rem 0;
-      border-top: 1px solid var(--borde);
+      margin: 4rem auto 0;
       color: var(--texto-suave);
       font-size: 0.84rem;
       line-height: 1.55;
       text-align: center;
+      background: var(--superficie);
+      border: 2px solid #1f2a44;
+    }
+
+    .cajetin {
+      display: grid;
+      grid-template-columns: 2fr 1.4fr 1fr;
+      border-bottom: 1px solid #1f2a44;
+      color: #1f2a44;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .cajetin span {
+      padding: 0.45rem 0.6rem;
+    }
+
+    .cajetin span + span {
+      border-left: 1px solid #1f2a44;
     }
 
     .pie-autoria p {
       margin: 0;
+      padding: 0 1rem;
     }
 
     .pie-autoria .firma-autoria {
-      margin-bottom: 0.3rem;
+      margin: 0.75rem 0 0.3rem;
       color: var(--texto);
       font-weight: 700;
+    }
+
+    .pie-autoria p:last-child {
+      padding-bottom: 0.9rem;
+    }
+
+    @media (max-width: 34rem) {
+      .cajetin {
+        grid-template-columns: 1fr;
+      }
+
+      .cajetin span + span {
+        border-left: none;
+        border-top: 1px solid #1f2a44;
+      }
     }
   </style>
 </head>
 <body>
   <header>
+    <p class="antetitulo-portal">1.º de Bachillerato</p>
     <h1>Dibujo Técnico I</h1>
+    <svg class="cota-portal" viewBox="0 0 560 40" aria-hidden="true" focusable="false" fill="none" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="tinta-cota" gradientUnits="userSpaceOnUse" x1="0" x2="560" y1="0" y2="0"><stop offset="0" stop-color="#1d4ed8"></stop><stop offset="1" stop-color="#0f766e"></stop></linearGradient></defs><g stroke="url(#tinta-cota)"><path class="c-referencia" d="M6 4V38M554 4V38" stroke-width="1.6"></path><path class="c-linea" d="M8 30H552" stroke-width="2.2"></path></g><g class="c-flechas"><path d="M7 30l15 -5v10Z" fill="#1d4ed8"></path><path d="M553 30l-15 -5v10Z" fill="#0f766e"></path></g><text class="c-cifra" x="280" y="22" text-anchor="middle" font-size="19" font-weight="700" fill="#155e75" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" letter-spacing="0.06em">210</text></svg>
     <p class="subtitulo">
-      Apuntes y recursos de 1.º de Bachillerato, con los trazados dibujados
-      paso a paso.
+      Apuntes y recursos de 1.º de Bachillerato: los trazados con regla y
+      compás, dibujados paso a paso. Se ve cada arco y se pueden mover los
+      datos.
     </p>
   </header>
 
   <main>
-    <section class="en-clase" aria-labelledby="titulo-en-clase">
+    <section aria-labelledby="titulo-en-clase">
       <h2 id="titulo-en-clase">En clase</h2>
-      <p class="entrada-diario">
-        <a href="diario_de_clase.html#ultima-clase">Diario de clase</a>
-        — lo que se hace en clase, día a día, con la fecha de cada hoja de la
-        libreta: qué se explicó, con un enlace a su unidad, y los ejercicios
-        que se hicieron, resueltos paso a paso. Se abre en la última clase.
-      </p>
-      <p class="entrada-diario">
-        <a href="moris_1_geometria_plana.html">Morís I · Geometría plana</a>
-        — los ejercicios del libro de Morís, <em>Dibujo Técnico 1. Ejercicios
-        y problemas resueltos</em>, en su orden y con sus números: el
-        enunciado, la solución del libro y el paso a paso, con el trazado.
-        Pide contraseña. Por ahora, los ejercicios 1 a 8.
-      </p>
+      <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-celeste" href="diario_de_clase.html#ultima-clase">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M150 24Q150 16 158 16H492Q500 16 500 24V201Q500 209 492 209H158Q150 209 150 201Z" stroke-width="1.8" stroke-opacity="0.9"></path><circle cx="150" cy="30" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="54" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="78" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="102" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="126" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="150" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="174" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><circle cx="150" cy="198" r="3.2" stroke-width="1.4" stroke-opacity="0.8"></circle><line x1="205" y1="20" x2="205" y2="205" stroke-width="1.2" stroke-opacity="0.55"></line><line x1="162" y1="66" x2="488" y2="66" stroke-width="1" stroke-opacity="0.18"></line><line x1="162" y1="92" x2="488" y2="92" stroke-width="1" stroke-opacity="0.18"></line><line x1="162" y1="118" x2="488" y2="118" stroke-width="1" stroke-opacity="0.18"></line><line x1="162" y1="144" x2="488" y2="144" stroke-width="1" stroke-opacity="0.18"></line><line x1="162" y1="170" x2="488" y2="170" stroke-width="1" stroke-opacity="0.18"></line><line x1="162" y1="196" x2="488" y2="196" stroke-width="1" stroke-opacity="0.18"></line><line x1="240" y1="56" x2="330" y2="56" stroke-width="1.8" stroke-opacity="0.9"></line><path class="e-trazo" style="--t:0.35s;--d:0.3s" pathLength="100" d="M295.6 33.5A60 60 0 0 0 276.9 8.7" stroke-width="1.2" stroke-opacity="0.7"></path><path class="e-trazo" style="--t:0.45s;--d:0.3s" pathLength="100" d="M293.1 8.7A60 60 0 0 0 274.4 33.5" stroke-width="1.2" stroke-opacity="0.7"></path><line class="e-trazo" style="--t:0.6s;--d:0.3s" pathLength="100" x1="285" y1="20" x2="285" y2="70" stroke-width="2.2"></line><path class="e-trazo" style="--t:0.8s;--d:0.25s" pathLength="100" d="M448 50l7 7l14 -15" stroke-width="2.4" stroke-opacity="0.95"></path><path class="e-trazo" style="--t:0.95s;--d:0.5s" pathLength="100" d="M238 134L338 134L300 84Z" stroke-width="1.8" stroke-opacity="0.9"></path><path class="e-trazo" style="--t:1.35s;--d:0.4s" pathLength="100" d="M317 113.4A20.6 20.6 0 1 0 275.8 113.4A20.6 20.6 0 1 0 317 113.4" stroke-width="2.2"></path><path class="e-trazo" style="--t:1.5s;--d:0.25s" pathLength="100" d="M448 112l7 7l14 -15" stroke-width="2.4" stroke-opacity="0.95"></path><path class="e-trazo" style="--t:1.65s;--d:0.4s" pathLength="100" d="M322 174A22 22 0 1 0 278 174A22 22 0 1 0 322 174" stroke-width="1.8" stroke-opacity="0.9"></path><line class="e-trazo" style="--t:2.0s;--d:0.3s" pathLength="100" x1="238" y1="174" x2="324.7" y2="141.1" stroke-width="2"></line><line class="e-trazo" style="--t:2.0s;--d:0.3s" pathLength="100" x1="238" y1="174" x2="324.7" y2="206.9" stroke-width="2"></line><circle class="e-punto" style="--t:1.95s" cx="238" cy="174" r="3.6" fill="#fff" stroke="none"></circle><path class="e-trazo" style="--t:2.2s;--d:0.25s" pathLength="100" d="M448 174l7 7l14 -15" stroke-width="2.4" stroke-opacity="0.95"></path></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.25s" x="178" y="53" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">lun</text><text class="e-rotulo" style="--t:0.95s" x="178" y="115" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">mié</text><text class="e-rotulo" style="--t:1.65s" x="178" y="177" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">vie</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">La clase, día a día</span>
+            <strong class="titulo-tarjeta">Diario de clase</strong>
+            <span class="resumen">Cada día de clase, con la fecha de su hoja de la libreta: qué se explicó, con un enlace a su unidad, y los ejercicios que se hicieron, resueltos paso a paso.</span>
+            <span class="fichas"><span>Se abre en la última clase</span><span>30 ejercicios con su trazado</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-ciruela" href="moris_1_geometria_plana.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M392 112A92 92 0 1 0 208 112A92 92 0 1 0 392 112" stroke-width="1.6" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.2s;--d:0.15s" pathLength="100" d="M309.6 20.5A92 92 0 0 0 290.4 20.5" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.27s;--d:0.15s" pathLength="100" d="M377.5 62.5A92 92 0 0 0 365.5 47.4" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.34s;--d:0.15s" pathLength="100" d="M387.1 141.7A92 92 0 0 0 391.3 123" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.41000000000000003s;--d:0.15s" pathLength="100" d="M331 198.6A92 92 0 0 0 348.4 190.3" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.48000000000000004s;--d:0.15s" pathLength="100" d="M251.6 190.3A92 92 0 0 0 269 198.6" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.55s;--d:0.15s" pathLength="100" d="M208.7 123A92 92 0 0 0 212.9 141.7" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.6200000000000001s;--d:0.15s" pathLength="100" d="M234.5 47.4A92 92 0 0 0 222.5 62.5" stroke-width="1.4" stroke-opacity="0.8"></path><path class="e-trazo" style="--t:0.85s;--d:1.0s" pathLength="100" d="M300 20L339.9 194.9L228.1 54.6L389.7 132.5L210.3 132.5L371.9 54.6L260.1 194.9Z" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.85s;--d:1.0s" pathLength="100" d="M300 20L339.9 194.9L228.1 54.6L389.7 132.5L210.3 132.5L371.9 54.6L260.1 194.9Z" stroke-width="3.2"></path><circle class="e-punto" style="--t:0.2s" cx="300" cy="20" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.27s" cx="371.9" cy="54.6" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.34s" cx="389.7" cy="132.5" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.41000000000000003s" cx="339.9" cy="194.9" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.48000000000000004s" cx="260.1" cy="194.9" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.55s" cx="210.3" cy="132.5" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.6200000000000001s" cx="228.1" cy="54.6" r="3.6" fill="#fff" stroke="none"></circle><path d="M511 120V104A17 17 0 0 1 545 104V120" stroke-width="2.6" stroke-opacity="0.95"></path><path d="M501 120H555V162H501Z" stroke-width="2.2" stroke-opacity="0.95" fill="#fff" fill-opacity="0.12"></path><circle cx="528" cy="137" r="4.6" fill="#fff" stroke="none"></circle><line x1="528" y1="139" x2="528" y2="150" stroke-width="3"></line></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:1.9s" x="300" y="119" font-size="20" opacity="0.9" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">7/3</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Libro resuelto · con contraseña</span>
+            <strong class="titulo-tarjeta">Morís I · Geometría plana</strong>
+            <span class="resumen">Los ejercicios del libro de Morís, <em>Dibujo Técnico 1. Ejercicios y problemas resueltos</em>, en su orden y con sus números: el enunciado, la solución del libro y el paso a paso, con el trazado.</span>
+            <span class="fichas"><span>Ejercicios 1 a 8</span><span>Pide contraseña</span></span>
+          </span>
+        </a>
+      </div>
     </section>
 
     <section aria-labelledby="titulo-unidades">
       <h2 id="titulo-unidades">Unidades</h2>
-      <ul class="lista-unidades">
-        <li>
-          <a href="unidad_01_instrumentos.html">Unidad 1: Instrumentos de dibujo y formatos</a>
-          — el papel, el portaminas y las durezas de las minas, la escuadra
-          y el cartabón, la regla, el transportador y el compás, la serie A
-          de formatos y cómo se prepara una lámina, con los ejercicios del
-          libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_02_trazados_fundamentales.html">Unidad 2: Trazados fundamentales en el plano</a>
-          — los elementos y sus nombres, la regla y el compás, la suma y la
-          diferencia de segmentos, la mediatriz y las perpendiculares, las
-          paralelas con escuadra y cartabón, el teorema de Tales, los
-          ángulos (suma, diferencia, bisectriz y los que salen con el compás
-          y con las plantillas), las rectas que se cortan fuera del papel y
-          problemas.
-        </li>
-        <li>
-          <a href="unidad_03_escalas.html">Unidad 3: Escalas</a>
-          — qué es una escala y cómo se calcula, las escalas normalizadas,
-          la escala gráfica con su contraescala, el triángulo universal de
-          escalas, la escala de transversales, cómo se dibuja a escala y
-          problemas, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_04_triangulos.html">Unidad 4: Triángulos y ángulos en la circunferencia</a>
-          — los elementos y las clases de triángulos, cómo se construyen
-          con sus lados, sus ángulos, sus alturas y sus medianas, las rectas
-          y los puntos notables con la circunferencia inscrita, los ángulos
-          en la circunferencia, el arco capaz y problemas, con los
-          ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_05_poligonos.html">Unidad 5: Cuadriláteros y polígonos regulares</a>
-          — las clases de cuadriláteros y cómo se construyen, los elementos,
-          los ángulos y las redes de los polígonos regulares, los
-          estrellados, la división de la circunferencia en partes iguales,
-          los polígonos dado el lado y problemas, con los ejercicios del
-          libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_06_relaciones.html">Unidad 6: Relaciones geométricas</a>
-          — la proporcionalidad (cuarto, tercero y medio proporcional), la
-          semejanza, la igualdad y cómo se copia una figura, la equivalencia
-          y la cuadratura, la simetría axial y la central, el camino más
-          corto y problemas, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_07_transformaciones.html">Unidad 7: Traslación, giro y homotecia</a>
-          — las transformaciones geométricas, la traslación, el giro de una
-          figura y de una recta, el centro de un giro, la homotecia directa e
-          inversa, problemas resueltos con transformaciones y problemas, con
-          los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_08_tangencias.html">Unidad 8: Tangencias, enlaces y rectificaciones</a>
-          — las posiciones de rectas y circunferencias, las rectas tangentes
-          desde un punto y comunes a dos circunferencias, las circunferencias
-          tangentes a rectas y a otras, los enlaces de rectas y arcos, la
-          rectificación de la circunferencia y problemas, con los ejercicios
-          del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_09_curvas_tecnicas.html">Unidad 9: Curvas técnicas</a>
-          — los arcos tangentes, el óvalo dado un eje o los dos, el ovoide,
-          la voluta, la espiral de Arquímedes, la hélice cilíndrica y su
-          desarrollo y problemas, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_10_conicas.html">Unidad 10: Curvas cónicas</a>
-          — las secciones del cono, los elementos de la elipse, la hipérbola
-          y la parábola, la elipse por puntos, por haces, con la
-          circunferencia principal y por envolventes, su tangente, la
-          hipérbola con sus asíntotas y la parábola por puntos y por haces,
-          con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_11_sistemas.html">Unidad 11: Sistemas de representación</a>
-          — las proyecciones cilíndrica y cónica, los sistemas diédrico, de
-          planos acotados y axonométrico, y las perspectivas caballera y
-          cónica, con el cubo dibujado paso a paso en isométrico, en
-          caballera y en cónica frontal.
-        </li>
-        <li>
-          <a href="unidad_12_diedrico.html">Unidad 12: Sistema diédrico. Punto, recta y plano</a>
-          — los diedros, el punto con su tercera proyección, las trazas de
-          la recta, la recta de perfil, las trazas del plano por tres
-          puntos, el punto de un plano, la figura plana y las rectas y los
-          planos particulares, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_13_acotados.html">Unidad 13: Sistema de planos acotados</a>
-          — el punto y su cota, la recta graduada por abatimiento, el plano
-          por tres puntos, la intersección de planos, las cubiertas, las
-          curvas de nivel y el perfil del terreno, con los ejercicios del
-          libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_14_axonometrico.html">Unidad 14: Sistema axonométrico</a>
-          — el triedro y el triángulo de trazas, la isométrica, la
-          dimétrica y la trimétrica, la escala isométrica, el punto con sus
-          proyecciones, el óvalo isométrico y una pieza desde su caja, con
-          los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_15_caballera.html">Unidad 15: Perspectiva caballera</a>
-          — el ángulo φ y el coeficiente de reducción, el punto con el
-          triángulo de reducción, la circunferencia por ocho puntos y un
-          bloque con un agujero, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_16_normalizacion.html">Unidad 16: Normalización. Vistas y líneas</a>
-          — las normas y sus objetivos, las seis vistas por los métodos
-          del primer y del tercer diedro, el alzado, la planta y el perfil
-          de una pieza y los tipos y anchuras de línea, con los ejercicios
-          del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_17_rotulacion.html">Unidad 17: Rotulación normalizada</a>
-          — las escrituras A y B, la serie de alturas, las medidas en
-          fracciones de la altura y la pauta de dos renglones, con los
-          ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_18_acotacion.html">Unidad 18: Acotación</a>
-          — las cotas y sus elementos, la cifra y los símbolos, las
-          formas de disponer las cotas y la acotación de una pieza en sus
-          vistas, con los ejercicios del libro y de Alarcón.
-        </li>
-        <li>
-          <a href="unidad_19_diseno.html">Unidad 19: Arte, dibujo técnico y diseño</a>
-          — las proporciones armónicas, el número de oro, la sección áurea
-          y el rectángulo áureo, la perspectiva del Renacimiento y el
-          diseño industrial, con los ejercicios del libro.
-        </li>
-      </ul>
-      <p class="sin-unidades">Todavía no hay unidades publicadas.</p>
+      <section class="bloque" aria-labelledby="bloque-geometria">
+        <h3 class="titulo-bloque" id="bloque-geometria">Geometría plana <span>unidades 1 a 10</span></h3>
+        <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-ambar" href="unidad_01_instrumentos.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M318 14L600.8 14L600.8 214L318 214Z" stroke-width="2" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.3s;--d:0.35s" pathLength="100" x1="459.4" y1="14" x2="459.4" y2="214" stroke-width="1.6" stroke-opacity="0.85"></line><line class="e-trazo" style="--t:0.6499999999999999s;--d:0.35s" pathLength="100" x1="459.4" y1="114" x2="600.8" y2="114" stroke-width="1.6" stroke-opacity="0.85"></line><line class="e-trazo" style="--t:0.9999999999999999s;--d:0.35s" pathLength="100" x1="530.1" y1="114" x2="530.1" y2="214" stroke-width="1.6" stroke-opacity="0.85"></line><line class="e-trazo" style="--t:1.3499999999999999s;--d:0.35s" pathLength="100" x1="530.1" y1="164" x2="600.8" y2="164" stroke-width="1.6" stroke-opacity="0.85"></line><line x1="172" y1="30" x2="102" y2="172" stroke-width="3" stroke-opacity="0.95"></line><line x1="102" y1="172" x2="96" y2="186" stroke-width="1.6" stroke-opacity="0.95"></line><line x1="172" y1="30" x2="240" y2="170" stroke-width="3" stroke-opacity="0.95"></line><path d="M240 170L248 186" stroke-width="2.2" stroke-opacity="0.95"></path><circle cx="172" cy="30" r="7" stroke-width="2.2"></circle><line x1="172" y1="23" x2="172" y2="10" stroke-width="3" stroke-opacity="0.95"></line><path class="e-trazo" style="--t:0.2s;--d:0.9s" pathLength="100" d="M245.7 212.4A152 152 0 0 0 222 101" stroke-width="2.6"></path><circle cx="96" cy="186" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.6s" x="388.7" y="121" font-size="20" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">A4</text><text class="e-rotulo" style="--t:0.95s" x="530.1" y="70" font-size="18" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">A5</text><text class="e-rotulo" style="--t:1.2999999999999998s" x="494.8" y="171" font-size="16" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">A6</text><text class="e-rotulo" style="--t:1.65s" x="565.5" y="145" font-size="14" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">A7</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 1</span>
+            <strong class="titulo-tarjeta">Instrumentos de dibujo y formatos</strong>
+            <span class="resumen">El papel y las minas, la escuadra, el cartabón, el compás y el transportador, la serie A de formatos y cómo se prepara una lámina.</span>
+            <span class="fichas"><span>3 trazados paso a paso</span><span>24 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-azul" href="unidad_02_trazados_fundamentales.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M240 112L320 36.5L400 112L320 187.5Z" stroke-width="1.3" stroke-opacity="0.45" class="e-velo" style="--t:1.5s" stroke-dasharray="1.5 5.5"></path><line x1="245" y1="112" x2="395" y2="112" stroke-width="2.2" stroke-opacity="0.95"></line><path class="e-trazo" style="--t:0.3s;--d:0.4s" pathLength="100" d="M341 68.4A110 110 0 0 0 320 36.5" stroke-width="1.5" stroke-opacity="0.75"></path><path class="e-trazo" style="--t:0.3s;--d:0.4s" pathLength="100" d="M320 187.5A110 110 0 0 0 341 155.6" stroke-width="1.5" stroke-opacity="0.75"></path><path class="e-trazo" style="--t:0.7s;--d:0.4s" pathLength="100" d="M320 36.5A110 110 0 0 0 299 68.4" stroke-width="1.5" stroke-opacity="0.75"></path><path class="e-trazo" style="--t:0.7s;--d:0.4s" pathLength="100" d="M299 155.6A110 110 0 0 0 320 187.5" stroke-width="1.5" stroke-opacity="0.75"></path><path class="e-trazo" style="--t:1.15s;--d:0.4s" pathLength="100" d="M320 12L320 212" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.15s;--d:0.4s" pathLength="100" d="M320 12L320 212" stroke-width="3.2"></path><path class="e-velo" style="--t:1.5s" d="M320 100L332 100L332 112" stroke-width="1.3" stroke-opacity="0.8"></path><circle cx="240" cy="112" r="5" stroke-width="2"></circle><circle cx="400" cy="112" r="5" stroke-width="2"></circle><circle class="e-punto" style="--t:1.0s" cx="320" cy="36.5" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.0s" cx="320" cy="187.5" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="226" y="138" font-size="19" opacity="0.95" text-anchor="middle">A</text><text x="414" y="138" font-size="19" opacity="0.95" text-anchor="middle">B</text><text class="e-rotulo" style="--t:1.05s" x="352" y="52" font-size="19" opacity="0.95" text-anchor="middle">P</text><text class="e-rotulo" style="--t:1.05s" x="352" y="182" font-size="19" opacity="0.95" text-anchor="middle">Q</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 2</span>
+            <strong class="titulo-tarjeta">Trazados fundamentales en el plano</strong>
+            <span class="resumen">Mediatriz, perpendiculares y paralelas, el teorema de Tales, los ángulos con el compás y con las plantillas y las rectas que se cortan fuera del papel.</span>
+            <span class="fichas"><span>65 trazados paso a paso</span><span>52 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-oliva" href="unidad_03_escalas.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M150 98L220 98L220 116L150 116Z" stroke-width="1.8" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.9400000000000001s;--d:0.15s" pathLength="100" x1="157" y1="107" x2="157" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:0.98s;--d:0.15s" pathLength="100" x1="164" y1="107" x2="164" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.02s;--d:0.15s" pathLength="100" x1="171" y1="107" x2="171" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.06s;--d:0.15s" pathLength="100" x1="178" y1="107" x2="178" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.1s;--d:0.15s" pathLength="100" x1="185" y1="98" x2="185" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.1400000000000001s;--d:0.15s" pathLength="100" x1="192" y1="107" x2="192" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.1800000000000002s;--d:0.15s" pathLength="100" x1="199" y1="107" x2="199" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.22s;--d:0.15s" pathLength="100" x1="206" y1="107" x2="206" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.26s;--d:0.15s" pathLength="100" x1="213" y1="107" x2="213" y2="116" stroke-width="1.2" stroke-opacity="0.8"></line><path class="e-velo" style="--t:0.2s" d="M220 98H290V116H220Z" stroke-width="1.8" fill="#fff" fill-opacity="0.85"></path><path class="e-velo" style="--t:0.32s" d="M290 98H360V116H290Z" stroke-width="1.8"></path><path class="e-velo" style="--t:0.44s" d="M360 98H430V116H360Z" stroke-width="1.8" fill="#fff" fill-opacity="0.85"></path><path class="e-velo" style="--t:0.56s" d="M430 98H500V116H430Z" stroke-width="1.8"></path><path class="e-velo" style="--t:0.68s" d="M500 98H570V116H500Z" stroke-width="1.8" fill="#fff" fill-opacity="0.85"></path><line x1="150" y1="138" x2="570" y2="138" stroke-width="1" stroke-opacity="0.35"></line></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.5s" x="150" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">1</text><text class="e-rotulo" style="--t:0.58s" x="220" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">0</text><text class="e-rotulo" style="--t:0.66s" x="290" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">1</text><text class="e-rotulo" style="--t:0.74s" x="360" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">2</text><text class="e-rotulo" style="--t:0.8200000000000001s" x="430" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">3</text><text class="e-rotulo" style="--t:0.9s" x="500" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">4</text><text class="e-rotulo" style="--t:0.98s" x="570" y="86" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">5</text><text class="e-rotulo" style="--t:0.95s" x="586" y="115" font-size="17" opacity="0.95" text-anchor="start" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">m</text><text class="e-rotulo" style="--t:1.15s" x="320" y="175" font-size="26" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">E 1:50</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 3</span>
+            <strong class="titulo-tarjeta">Escalas</strong>
+            <span class="resumen">Qué es una escala y cómo se calcula, las normalizadas, la escala gráfica con su contraescala, el triángulo universal y la de transversales.</span>
+            <span class="fichas"><span>14 trazados paso a paso</span><span>40 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-violeta" href="unidad_04_triangulos.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line x1="215" y1="182" x2="425" y2="182" stroke-width="2.2" stroke-opacity="0.95"></line><line class="e-trazo" style="--t:0.25s;--d:0.35s" pathLength="100" x1="320" y1="200" x2="320" y2="8" stroke-width="1.2" stroke-opacity="0.45"></line><path class="e-trazo" style="--t:0.45s;--d:0.8s" pathLength="100" d="M425 182A116.8 116.8 0 1 0 215 182" stroke-width="2.6"></path><line class="e-trazo" style="--t:1.15s;--d:0.3s" pathLength="100" x1="218.8" y1="72.4" x2="215" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.15s;--d:0.3s" pathLength="100" x1="218.8" y1="72.4" x2="425" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><path class="e-trazo" style="--t:1.4s;--d:0.25s" pathLength="100" d="M218.3 88.4A16 16 0 0 0 233 79.9" stroke-width="1.4" stroke-opacity="0.85"></path><circle class="e-punto" style="--t:1.15s" cx="218.8" cy="72.4" r="3.6" fill="#fff" stroke="none"></circle><line class="e-trazo" style="--t:1.45s;--d:0.3s" pathLength="100" x1="309.8" y1="14.4" x2="215" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.45s;--d:0.3s" pathLength="100" x1="309.8" y1="14.4" x2="425" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><path class="e-trazo" style="--t:1.7s;--d:0.25s" pathLength="100" d="M301.9 28.3A16 16 0 0 0 318.9 27.6" stroke-width="1.4" stroke-opacity="0.85"></path><circle class="e-punto" style="--t:1.45s" cx="309.8" cy="14.4" r="3.6" fill="#fff" stroke="none"></circle><line class="e-trazo" style="--t:1.75s;--d:0.3s" pathLength="100" x1="412.1" y1="58.9" x2="215" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.75s;--d:0.3s" pathLength="100" x1="412.1" y1="58.9" x2="425" y2="182" stroke-width="1.4" stroke-opacity="0.7"></line><path class="e-trazo" style="--t:2.0s;--d:0.25s" pathLength="100" d="M398.5 67.3A16 16 0 0 0 413.7 74.8" stroke-width="1.4" stroke-opacity="0.85"></path><circle class="e-punto" style="--t:1.75s" cx="412.1" cy="58.9" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.35s" cx="320" cy="130.8" r="3.6" fill="#fff" stroke="none"></circle><circle cx="215" cy="182" r="5" stroke-width="2"></circle><circle cx="425" cy="182" r="5" stroke-width="2"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="201" y="204" font-size="19" opacity="0.95" text-anchor="middle">A</text><text x="439" y="204" font-size="19" opacity="0.95" text-anchor="middle">B</text><text class="e-rotulo" style="--t:0.4s" x="336" y="136.8" font-size="19" opacity="0.95" text-anchor="middle">O</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 4</span>
+            <strong class="titulo-tarjeta">Triángulos y ángulos en la circunferencia</strong>
+            <span class="resumen">Cómo se construye un triángulo con sus lados, sus ángulos, sus alturas y sus medianas, los puntos notables, los ángulos en la circunferencia y el arco capaz.</span>
+            <span class="fichas"><span>39 trazados paso a paso</span><span>45 ejercicios resueltos</span><span>Morís: 1 a 4 y 6</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-turquesa" href="unidad_05_poligonos.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M412 114A92 92 0 1 0 228 114A92 92 0 1 0 412 114" stroke-width="2" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.2s;--d:0.3s" pathLength="100" x1="214" y1="114" x2="426" y2="114" stroke-width="1.2" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.2s;--d:0.3s" pathLength="100" x1="320" y1="12" x2="320" y2="216" stroke-width="1.2" stroke-opacity="0.5"></line><path class="e-trazo" style="--t:0.55s;--d:0.45s" pathLength="100" d="M324.9 19.7A102.9 102.9 0 0 0 263.3 119.4" stroke-width="1.5" stroke-opacity="0.8"></path><line class="e-trazo" style="--t:0.9s;--d:0.25s" pathLength="100" x1="320" y1="22" x2="263.1" y2="114" stroke-width="1.4" stroke-opacity="0.8"></line><path class="e-trazo" style="--t:1.15s;--d:0.8s" pathLength="100" d="M320 22L232.5 85.6L265.9 188.4L374.1 188.4L407.5 85.6Z" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.15s;--d:0.8s" pathLength="100" d="M320 22L232.5 85.6L265.9 188.4L374.1 188.4L407.5 85.6Z" stroke-width="3.2"></path><path d="M320 22L265.9 188.4L407.5 85.6L232.5 85.6L374.1 188.4Z" stroke-width="1.2" stroke-opacity="0.45" class="e-velo" style="--t:1.9s" stroke-dasharray="2 5"></path><circle class="e-punto" style="--t:0.5s" cx="366" cy="114" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.85s" cx="263.1" cy="114" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.2s" cx="320" cy="22" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.3s" cx="232.5" cy="85.6" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.4s" cx="265.9" cy="188.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.5s" cx="374.1" cy="188.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.6s" cx="407.5" cy="85.6" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.5s" x="370" y="136" font-size="19" opacity="0.95" text-anchor="middle">M</text><text class="e-rotulo" style="--t:0.85s" x="259.1" y="136" font-size="19" opacity="0.95" text-anchor="middle">N</text><text x="334" y="134" font-size="19" opacity="0.95" text-anchor="middle">O</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 5</span>
+            <strong class="titulo-tarjeta">Cuadriláteros y polígonos regulares</strong>
+            <span class="resumen">Los cuadriláteros y cómo se construyen, los polígonos regulares y los estrellados, la división de la circunferencia y los polígonos dado el lado.</span>
+            <span class="fichas"><span>28 trazados paso a paso</span><span>36 ejercicios resueltos</span><span>Morís: 5 a 8</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-granate" href="unidad_06_relaciones.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line x1="200" y1="178" x2="440" y2="178" stroke-width="2.2" stroke-opacity="0.95"></line><path class="e-trazo" style="--t:0.3s;--d:0.7s" pathLength="100" d="M440 178A120 120 0 0 0 200 178" stroke-width="1.8" stroke-opacity="0.85"></path><line class="e-trazo" style="--t:1.2s;--d:0.3s" pathLength="100" x1="200" y1="178" x2="338" y2="59.4" stroke-width="1.3" stroke-opacity="0.55"></line><line class="e-trazo" style="--t:1.2s;--d:0.3s" pathLength="100" x1="338" y1="59.4" x2="440" y2="178" stroke-width="1.3" stroke-opacity="0.55"></line><path class="e-trazo" style="--t:0.95s;--d:0.35s" pathLength="100" d="M338 178L338 59.4" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.95s;--d:0.35s" pathLength="100" d="M338 178L338 59.4" stroke-width="3.2"></path><path class="e-velo" style="--t:0.95s" d="M338 167L349 167L349 178" stroke-width="1.3" stroke-opacity="0.8"></path><path class="e-velo" style="--t:1.45s" d="M329.7 66.5L336.8 74.9L345.2 67.7" stroke-width="1.3" stroke-opacity="0.8"></path><circle cx="200" cy="178" r="5" stroke-width="2"></circle><circle cx="440" cy="178" r="5" stroke-width="2"></circle><circle cx="338" cy="178" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.1s" cx="338" cy="59.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.25s" cx="320" cy="178" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="269" y="204" font-size="19" opacity="0.95" text-anchor="middle">m</text><text x="389" y="204" font-size="19" opacity="0.95" text-anchor="middle">n</text><text class="e-rotulo" style="--t:1.15s" x="354" y="124.7" font-size="19" opacity="0.95" text-anchor="middle">x</text><text x="184" y="184" font-size="19" opacity="0.95" text-anchor="middle">A</text><text x="456" y="184" font-size="19" opacity="0.95" text-anchor="middle">B</text><text class="e-rotulo" style="--t:1.1s" x="340" y="47.4" font-size="19" opacity="0.95" text-anchor="middle">D</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 6</span>
+            <strong class="titulo-tarjeta">Relaciones geométricas</strong>
+            <span class="resumen">Cuarto, tercero y medio proporcional, la semejanza, la igualdad, la equivalencia y la cuadratura, la simetría y el camino más corto.</span>
+            <span class="fichas"><span>27 trazados paso a paso</span><span>42 ejercicios resueltos</span><span>Morís: 7</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-indigo" href="unidad_07_transformaciones.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line class="e-trazo" style="--t:0.2s;--d:0.5s" pathLength="100" x1="120" y1="168" x2="357.4" y2="121.4" stroke-width="1.2" stroke-opacity="0.5" stroke-dasharray="3 6"></line><line class="e-trazo" style="--t:0.35s;--d:0.5s" pathLength="100" x1="120" y1="168" x2="463.4" y2="185" stroke-width="1.2" stroke-opacity="0.5" stroke-dasharray="3 6"></line><line class="e-trazo" style="--t:0.5s;--d:0.5s" pathLength="100" x1="120" y1="168" x2="408.3" y2="49.3" stroke-width="1.2" stroke-opacity="0.5" stroke-dasharray="3 6"></line><path d="M232 146L282 176L256 112Z" stroke-width="2.2" stroke-opacity="0.95"></path><path class="e-trazo" style="--t:0.9s;--d:0.7s" pathLength="100" d="M344 124L444 184L392 56Z" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.9s;--d:0.7s" pathLength="100" d="M344 124L444 184L392 56Z" stroke-width="3.2"></path><circle class="e-punto" style="--t:0.9s" cx="344" cy="124" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.02s" cx="444" cy="184" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.1400000000000001s" cx="392" cy="56" r="3.6" fill="#fff" stroke="none"></circle><circle cx="120" cy="168" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="104" y="174" font-size="19" opacity="0.95" text-anchor="middle">O</text><text x="218" y="140" font-size="19" opacity="0.95" text-anchor="middle">A</text><text class="e-rotulo" style="--t:1.0s" x="327.2" y="118" font-size="19" opacity="0.95" text-anchor="middle">A′</text><text x="290" y="198" font-size="19" opacity="0.95" text-anchor="middle">B</text><text class="e-rotulo" style="--t:1.12s" x="453.6" y="206" font-size="19" opacity="0.95" text-anchor="middle">B′</text><text x="242" y="104" font-size="19" opacity="0.95" text-anchor="middle">C</text><text class="e-rotulo" style="--t:1.24s" x="375.2" y="48" font-size="19" opacity="0.95" text-anchor="middle">C′</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 7</span>
+            <strong class="titulo-tarjeta">Traslación, giro y homotecia</strong>
+            <span class="resumen">La traslación, el giro de una figura y de una recta, el centro de un giro, la homotecia y los problemas que se resuelven con ellas.</span>
+            <span class="fichas"><span>25 trazados paso a paso</span><span>31 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-rosa" href="unidad_08_tangencias.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M277 118A62 62 0 1 0 153 118A62 62 0 1 0 277 118" stroke-width="2" stroke-opacity="0.95"></path><path d="M474 118A34 34 0 1 0 406 118A34 34 0 1 0 474 118" stroke-width="2" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.2s;--d:0.4s" pathLength="100" x1="215" y1="118" x2="440" y2="118" stroke-width="1.1" stroke-opacity="0.45"></line><line class="e-trazo" style="--t:0.6s;--d:0.25s" pathLength="100" x1="215" y1="118" x2="222.7" y2="179.5" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:0.6s;--d:0.25s" pathLength="100" x1="440" y1="118" x2="444.2" y2="151.7" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><path class="e-trazo" style="--t:0.8999999999999999s;--d:0.45s" pathLength="100" d="M182.8 184.5L484.1 146.7" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.8999999999999999s;--d:0.45s" pathLength="100" d="M182.8 184.5L484.1 146.7" stroke-width="3.2"></path><circle class="e-punto" style="--t:1.2999999999999998s" cx="222.7" cy="179.5" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.2999999999999998s" cx="444.2" cy="151.7" r="3.6" fill="#fff" stroke="none"></circle><line class="e-trazo" style="--t:1.15s;--d:0.25s" pathLength="100" x1="215" y1="118" x2="222.7" y2="56.5" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:1.15s;--d:0.25s" pathLength="100" x1="440" y1="118" x2="444.2" y2="84.3" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><path class="e-trazo" style="--t:1.45s;--d:0.45s" pathLength="100" d="M182.8 51.5L484.1 89.3" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.45s;--d:0.45s" pathLength="100" d="M182.8 51.5L484.1 89.3" stroke-width="3.2"></path><circle class="e-punto" style="--t:1.8499999999999999s" cx="222.7" cy="56.5" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.8499999999999999s" cx="444.2" cy="84.3" r="3.6" fill="#fff" stroke="none"></circle><circle cx="215" cy="118" r="3.6" fill="#fff" stroke="none"></circle><circle cx="440" cy="118" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="215" y="142" font-size="18" opacity="0.95" text-anchor="middle">O₁</text><text x="440" y="140" font-size="18" opacity="0.95" text-anchor="middle">O₂</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 8</span>
+            <strong class="titulo-tarjeta">Tangencias, enlaces y rectificaciones</strong>
+            <span class="resumen">Las rectas tangentes, las circunferencias tangentes a rectas y a otras, los enlaces de rectas y arcos y la rectificación de la circunferencia.</span>
+            <span class="fichas"><span>25 trazados paso a paso</span><span>38 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-oliva" href="unidad_09_curvas_tecnicas.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line x1="184" y1="112" x2="456" y2="112" stroke-width="1.2" stroke-opacity="0.5"></line><path class="e-trazo" style="--t:0.2s;--d:0.5s" pathLength="100" d="M361.3 112A82.7 82.7 0 1 0 196 112A82.7 82.7 0 1 0 361.3 112" stroke-width="1.1" stroke-opacity="0.35"></path><path class="e-trazo" style="--t:0.2s;--d:0.5s" pathLength="100" d="M444 112A82.7 82.7 0 1 0 278.7 112A82.7 82.7 0 1 0 444 112" stroke-width="1.1" stroke-opacity="0.35"></path><line class="e-trazo" style="--t:0.7s;--d:0.3s" pathLength="100" x1="320" y1="40.4" x2="233.2" y2="190.8" stroke-width="1.1" stroke-opacity="0.45" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:0.7s;--d:0.3s" pathLength="100" x1="320" y1="40.4" x2="406.8" y2="190.8" stroke-width="1.1" stroke-opacity="0.45" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:0.7s;--d:0.3s" pathLength="100" x1="320" y1="183.6" x2="233.2" y2="33.2" stroke-width="1.1" stroke-opacity="0.45" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:0.7s;--d:0.3s" pathLength="100" x1="320" y1="183.6" x2="406.8" y2="33.2" stroke-width="1.1" stroke-opacity="0.45" stroke-dasharray="3 5"></line><path class="e-trazo" style="--t:1.05s;--d:1.0s" pathLength="100" d="M237.3 40.4A82.7 82.7 0 0 0 237.3 183.6A165.3 165.3 0 0 0 402.7 183.6A82.7 82.7 0 0 0 402.7 40.4A165.3 165.3 0 0 0 237.3 40.4" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.05s;--d:1.0s" pathLength="100" d="M237.3 40.4A82.7 82.7 0 0 0 237.3 183.6A165.3 165.3 0 0 0 402.7 183.6A82.7 82.7 0 0 0 402.7 40.4A165.3 165.3 0 0 0 237.3 40.4" stroke-width="3.2"></path><circle class="e-punto" style="--t:1.1s" cx="237.3" cy="183.6" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.25s" cx="402.7" cy="183.6" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.4000000000000001s" cx="237.3" cy="40.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.55s" cx="402.7" cy="40.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.45s" cx="278.7" cy="112" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.45s" cx="361.3" cy="112" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.45s" cx="320" cy="40.4" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.45s" cx="320" cy="183.6" r="3.6" fill="#fff" stroke="none"></circle><circle cx="196" cy="112" r="5" stroke-width="2"></circle><circle cx="444" cy="112" r="5" stroke-width="2"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.5s" x="274.7" y="134" font-size="16" opacity="0.95" text-anchor="middle">O₁</text><text class="e-rotulo" style="--t:0.5s" x="365.3" y="134" font-size="16" opacity="0.95" text-anchor="middle">O₂</text><text class="e-rotulo" style="--t:0.5s" x="338" y="45.4" font-size="16" opacity="0.95" text-anchor="middle">O₃</text><text class="e-rotulo" style="--t:0.5s" x="338" y="188.6" font-size="16" opacity="0.95" text-anchor="middle">O₄</text><text x="180" y="118" font-size="19" opacity="0.95" text-anchor="middle">A</text><text x="460" y="118" font-size="19" opacity="0.95" text-anchor="middle">B</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 9</span>
+            <strong class="titulo-tarjeta">Curvas técnicas</strong>
+            <span class="resumen">El óvalo dado un eje o los dos, el ovoide, la voluta, la espiral de Arquímedes y la hélice, con su desarrollo.</span>
+            <span class="fichas"><span>15 trazados paso a paso</span><span>32 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-azul" href="unidad_10_conicas.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line x1="152" y1="112" x2="488" y2="112" stroke-width="1.1" stroke-opacity="0.45"></line><line x1="320" y1="14" x2="320" y2="210" stroke-width="1.1" stroke-opacity="0.45"></line><path class="e-trazo" style="--t:0.3s;--d:1.1s" pathLength="100" d="M472 112A152 86 0 1 0 168 112A152 86 0 1 0 472 112" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.3s;--d:1.1s" pathLength="100" d="M472 112A152 86 0 1 0 168 112A152 86 0 1 0 472 112" stroke-width="3.2"></path><line class="e-trazo" style="--t:1.35s;--d:0.3s" pathLength="100" x1="194.7" y1="112" x2="400.5" y2="39.1" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.35s;--d:0.3s" pathLength="100" x1="445.3" y1="112" x2="400.5" y2="39.1" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.75s;--d:0.4s" pathLength="100" x1="513.7" y1="79.1" x2="287.4" y2="-0.9" stroke-width="2.2"></line><circle class="e-punto" style="--t:0.1s" cx="194.7" cy="112" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.1s" cx="445.3" cy="112" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.3s" cx="400.5" cy="39.1" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.15s" x="194.7" y="136" font-size="18" opacity="0.95" text-anchor="middle">F₁</text><text class="e-rotulo" style="--t:0.15s" x="445.3" y="136" font-size="18" opacity="0.95" text-anchor="middle">F₂</text><text class="e-rotulo" style="--t:1.3s" x="404.5" y="25.1" font-size="19" opacity="0.95" text-anchor="middle">P</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 10</span>
+            <strong class="titulo-tarjeta">Curvas cónicas</strong>
+            <span class="resumen">La elipse, la hipérbola y la parábola: sus elementos, cómo se trazan por puntos, por haces y por envolventes, y sus tangentes.</span>
+            <span class="fichas"><span>16 trazados paso a paso</span><span>29 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        </div>
+      </section>
+      <section class="bloque" aria-labelledby="bloque-sistemas">
+        <h3 class="titulo-bloque" id="bloque-sistemas">Sistemas de representación <span>unidades 11 a 15</span></h3>
+        <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-turquesa" href="unidad_11_sistemas.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M140 150L470 150L420 208L90 208Z" stroke-width="1.8" stroke-opacity="0.85" fill="#fff" fill-opacity="0.06"></path><path d="M238 34L318 22L292 76Z" stroke-width="2.2" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.25s;--d:0.45s" pathLength="100" x1="238" y1="34" x2="272" y2="170" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 6"></line><line class="e-trazo" style="--t:0.4s;--d:0.45s" pathLength="100" x1="318" y1="22" x2="352" y2="158" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 6"></line><line class="e-trazo" style="--t:0.55s;--d:0.45s" pathLength="100" x1="292" y1="76" x2="326" y2="212" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 6"></line><path class="e-trazo" style="--t:1.0s;--d:0.6s" pathLength="100" d="M272 170L352 158L326 212Z" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.0s;--d:0.6s" pathLength="100" d="M272 170L352 158L326 212Z" stroke-width="3.2"></path><circle class="e-punto" style="--t:0.95s" cx="272" cy="170" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.05s" cx="352" cy="158" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.15s" cx="326" cy="212" r="3.6" fill="#fff" stroke="none"></circle><circle cx="238" cy="34" r="3.6" fill="#fff" stroke="none"></circle><circle cx="318" cy="22" r="3.6" fill="#fff" stroke="none"></circle><circle cx="292" cy="76" r="3.6" fill="#fff" stroke="none"></circle><line class="e-trazo" style="--t:0.2s;--d:0.4s" pathLength="100" x1="520" y1="30" x2="548" y2="142" stroke-width="1.6" stroke-opacity="0.85"></line><path class="e-trazo" style="--t:0.55s;--d:0.2s" pathLength="100" d="M541 132l7 10l4 -12" stroke-width="1.6" stroke-opacity="0.85"></path></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text x="120" y="200" font-size="22" opacity="0.95" text-anchor="middle">π</text><text x="226" y="30" font-size="19" opacity="0.95" text-anchor="middle">A</text><text x="330" y="20" font-size="19" opacity="0.95" text-anchor="middle">B</text><text x="280" y="92" font-size="19" opacity="0.95" text-anchor="middle">C</text><text class="e-rotulo" style="--t:1.0s" x="258" y="176" font-size="19" opacity="0.95" text-anchor="middle">A′</text><text class="e-rotulo" style="--t:1.1s" x="368" y="162" font-size="19" opacity="0.95" text-anchor="middle">B′</text><text class="e-rotulo" style="--t:1.2s" x="330" y="216" font-size="19" opacity="0.95" text-anchor="middle">C′</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 11</span>
+            <strong class="titulo-tarjeta">Sistemas de representación</strong>
+            <span class="resumen">Las proyecciones cilíndrica y cónica y los cinco sistemas, con el cubo dibujado paso a paso en isométrico, en caballera y en cónica.</span>
+            <span class="fichas"><span>7 trazados paso a paso</span><span>12 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-violeta" href="unidad_12_diedrico.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line x1="96" y1="112" x2="544" y2="112" stroke-width="2" stroke-opacity="0.95"></line><line x1="96" y1="120" x2="126" y2="120" stroke-width="1.6" stroke-opacity="0.95"></line><line x1="514" y1="120" x2="544" y2="120" stroke-width="1.6" stroke-opacity="0.95"></line><line class="e-trazo" style="--t:0.2s;--d:0.35s" pathLength="100" x1="170" y1="58" x2="170" y2="172" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><circle class="e-punto" style="--t:0.2s" cx="170" cy="58" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:0.2s" cx="170" cy="172" r="3.6" fill="#fff" stroke="none"></circle><line class="e-trazo" style="--t:0.6s;--d:0.3s" pathLength="100" x1="238" y1="112" x2="238" y2="194" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><line class="e-trazo" style="--t:0.6s;--d:0.3s" pathLength="100" x1="500" y1="112" x2="500" y2="34" stroke-width="1.2" stroke-opacity="0.55" stroke-dasharray="3 5"></line><path class="e-trazo" style="--t:0.9s;--d:0.5s" pathLength="100" d="M206.6 121.4L531.4 24.6" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.9s;--d:0.5s" pathLength="100" d="M206.6 121.4L531.4 24.6" stroke-width="3.2"></path><path class="e-trazo" style="--t:1.2s;--d:0.5s" pathLength="100" d="M206.6 203.8L531.4 102.2" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.2s;--d:0.5s" pathLength="100" d="M206.6 203.8L531.4 102.2" stroke-width="3.2"></path><circle class="e-punto" style="--t:1.6s" cx="238" cy="194" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.6s" cx="500" cy="34" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.6s" cx="238" cy="112" r="3.6" fill="#fff" stroke="none"></circle><circle class="e-punto" style="--t:1.6s" cx="500" cy="112" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.3s" x="152" y="52" font-size="19" opacity="0.95" text-anchor="middle">P″</text><text class="e-rotulo" style="--t:0.3s" x="152" y="186" font-size="19" opacity="0.95" text-anchor="middle">P′</text><text class="e-rotulo" style="--t:1.1s" x="420" y="52" font-size="19" opacity="0.95" text-anchor="middle">r″</text><text class="e-rotulo" style="--t:1.4s" x="428" y="158" font-size="19" opacity="0.95" text-anchor="middle">r′</text><text class="e-rotulo" style="--t:1.7s" x="224" y="214" font-size="19" opacity="0.95" text-anchor="middle">H</text><text class="e-rotulo" style="--t:1.7s" x="518" y="30" font-size="19" opacity="0.95" text-anchor="middle">V</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 12</span>
+            <strong class="titulo-tarjeta">Sistema diédrico. Punto, recta y plano</strong>
+            <span class="resumen">Los diedros, el punto y su tercera proyección, las trazas de la recta y del plano, el punto de un plano y la figura plana.</span>
+            <span class="fichas"><span>13 trazados paso a paso</span><span>21 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-oliva" href="unidad_13_acotados.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><defs><mask id="mascara-curvas-de-nivel" maskUnits="userSpaceOnUse" x="0" y="0" width="640" height="225"><rect x="0" y="0" width="640" height="225" fill="#fff"></rect><rect x="477" y="66.8" width="24" height="16" rx="3" fill="#000"></rect><rect x="440.8" y="73.5" width="24" height="16" rx="3" fill="#000"></rect><rect x="404.3" y="80.3" width="24" height="16" rx="3" fill="#000"></rect><rect x="351.1" y="90.8" width="24" height="16" rx="3" fill="#000"></rect></mask></defs><g mask="url(#mascara-curvas-de-nivel)"><path class="e-trazo" style="--t:0.2s;--d:0.6s" pathLength="100" d="M543.2 116L545.3 124.5L544.1 132.9L539.9 141.2L533 149.2L524.1 156.6L513.8 163.6L502.6 170.2L490.7 176.5L478 182.4L464.6 188L450.1 193L434.6 197.3L417.9 200.6L400.4 202.8L382.5 203.9L364.5 203.9L347 203L330 201.6L313.6 199.9L297.7 198.3L281.6 197L265.1 196L247.8 195.1L229.6 194.1L210.7 192.5L191.8 189.9L173.8 186.1L157.5 180.9L144 174.4L133.9 166.8L127.4 158.4L124.3 149.6L124.2 140.7L126.2 132.1L129.5 123.9L133.2 116L136.9 108.4L140.4 101L143.8 93.6L147.7 86.2L152.5 78.9L158.7 71.6L166.7 64.7L176.6 58.2L188.1 52.3L201 47L215 42.3L229.5 37.9L244.6 33.8L260.2 29.9L276.4 26.2L293.3 22.7L311.2 19.7L330 17.6L349.4 16.6L368.8 17.1L387.7 19.3L405.3 23.1L421 28.4L434.5 34.7L445.9 41.7L455.4 49L463.7 56L471.6 62.7L479.9 68.9L489 74.8L499 80.6L509.6 86.7L520.3 93.1L530 100.2L537.9 107.8L543.2 116Z" stroke-width="2" stroke-opacity="0.95"></path><path class="e-trazo" style="--t:0.5s;--d:0.6s" pathLength="100" d="M486.8 116L490.1 122.7L491.3 129.6L489.9 136.5L485.5 143.1L478.2 149.2L468.3 154.5L456.4 159L443.4 162.6L429.9 165.4L416.6 167.8L404 170L392.1 172.2L380.8 174.7L369.7 177.4L358.3 180.3L346.4 183.2L333.6 185.9L320 187.9L305.8 189.1L291.3 189.2L276.9 188.4L263 186.5L249.7 183.9L237.1 180.6L225.3 176.9L214.1 172.8L203.4 168.5L193.3 163.9L183.9 158.9L175.7 153.5L169 147.7L164.2 141.5L161.7 135.1L161.4 128.6L163.3 122.2L166.8 116L171.3 110.1L176.2 104.6L180.8 99.2L184.8 93.9L188.2 88.3L191.2 82.5L194.3 76.4L198.2 70L203.6 63.6L210.9 57.5L220.4 52L232.1 47.5L245.5 44.1L260.2 42.1L275.5 41.2L290.8 41.4L305.7 42.4L320 43.9L333.7 45.6L346.9 47.4L359.7 49.3L372.4 51.2L384.9 53.3L397.1 55.9L408.8 58.9L419.8 62.5L429.6 66.7L438.4 71.3L446 76.3L452.8 81.5L459 86.8L464.9 92.3L470.8 97.8L476.6 103.6L482 109.6L486.8 116Z" stroke-width="1.5" stroke-opacity="0.75"></path><path class="e-trazo" style="--t:0.8s;--d:0.6s" pathLength="100" d="M429.3 116L426.6 120.6L423.3 125L419.8 129.3L416 133.5L412 137.5L407.4 141.4L402.2 145.2L396.1 148.7L389.2 151.8L381.5 154.5L373.2 156.8L364.6 158.8L355.8 160.4L346.9 161.9L338.1 163.3L329 164.8L319.8 166.4L310 167.9L299.7 169.3L288.9 170.2L277.8 170.4L266.7 169.8L256.2 168.2L246.6 165.7L238.3 162.3L231.6 158.2L226.5 153.8L222.6 149.2L219.6 144.6L217.1 140.3L214.6 136.1L211.8 132.2L208.7 128.3L205.4 124.3L202.1 120.3L199.3 116L197.4 111.5L196.8 107L197.6 102.4L199.9 97.9L203.5 93.6L208.3 89.4L213.8 85.5L220 81.8L226.6 78.3L233.7 74.9L241.3 71.7L249.6 68.7L258.6 66.1L268.3 64.2L278.5 62.9L289.1 62.4L299.7 62.8L310 63.9L319.7 65.7L328.8 67.7L337.3 69.9L345.4 72.1L353.4 74L361.6 75.6L370.3 77.1L379.5 78.6L389.1 80.2L398.8 82.3L408 85L416.3 88.3L423 92.2L427.9 96.6L430.9 101.4L431.9 106.3L431.2 111.2L429.3 116Z" stroke-width="2" stroke-opacity="0.95"></path><path class="e-trazo" style="--t:1.1s;--d:0.6s" pathLength="100" d="M373.4 116L371.2 118.9L368.2 121.7L364.7 124.2L361 126.5L357.4 128.6L354.1 130.7L351.1 132.9L348.4 135.1L345.8 137.6L342.9 140.1L339.6 142.7L335.7 145.1L331 147.3L325.5 149.1L319.5 150.3L313.1 151L306.5 151.2L300 150.9L293.6 150.3L287.5 149.4L281.6 148.4L275.9 147.2L270.3 146L265 144.6L259.9 143L255.1 141.2L250.8 139.2L247.2 136.9L244.2 134.4L241.9 131.8L240.2 129.2L238.8 126.5L237.6 123.9L236.3 121.3L234.9 118.7L233.4 116L231.8 113.2L230.4 110.2L229.5 107.1L229.4 103.9L230.5 100.7L232.8 97.7L236.4 95L241.2 92.7L246.8 90.9L252.9 89.6L259.3 88.6L265.7 88L271.8 87.5L277.6 87L283.3 86.6L288.8 86L294.3 85.4L300 84.9L305.8 84.5L311.8 84.4L317.8 84.6L323.8 85.2L329.5 86.2L335 87.4L340.2 89L345.1 90.7L349.8 92.5L354.4 94.5L358.9 96.6L363.1 98.8L367 101.3L370.3 103.9L372.8 106.8L374.2 109.8L374.4 112.9L373.4 116Z" stroke-width="1.5" stroke-opacity="0.75"></path></g><circle class="e-punto" style="--t:1.5s" cx="290" cy="118" r="3.6" fill="#fff" stroke="none"></circle></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.6000000000000001s" x="489" y="79.8" font-size="14" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">10</text><text class="e-rotulo" style="--t:0.9s" x="452.8" y="86.5" font-size="14" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">20</text><text class="e-rotulo" style="--t:1.2000000000000002s" x="416.3" y="93.3" font-size="14" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">30</text><text class="e-rotulo" style="--t:1.5s" x="363.1" y="103.8" font-size="14" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">40</text><text class="e-rotulo" style="--t:1.55s" x="298" y="109" font-size="14" opacity="0.95" text-anchor="start" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">47</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 13</span>
+            <strong class="titulo-tarjeta">Sistema de planos acotados</strong>
+            <span class="resumen">El punto y su cota, la recta graduada, el plano por tres puntos, la intersección de planos, las cubiertas y el perfil del terreno.</span>
+            <span class="fichas"><span>9 trazados paso a paso</span><span>32 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-indigo" href="unidad_14_axonometrico.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line class="e-trazo" style="--t:0.15s;--d:0.4s" pathLength="100" x1="320" y1="118" x2="201.9" y2="186.2" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.15s;--d:0.4s" pathLength="100" x1="320" y1="118" x2="438.1" y2="186.2" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.15s;--d:0.2s" pathLength="100" x1="320" y1="30" x2="320" y2="16" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.5s;--d:0.3s" pathLength="100" x1="320" y1="118" x2="243.8" y2="162" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><line class="e-trazo" style="--t:0.5s;--d:0.3s" pathLength="100" x1="320" y1="118" x2="396.2" y2="162" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><line class="e-trazo" style="--t:0.5s;--d:0.3s" pathLength="100" x1="320" y1="118" x2="320" y2="30" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><path class="e-velo" style="--t:1.6s" d="M320 206L243.8 162L243.8 74L320 118Z" fill="#fff" fill-opacity="0.1" stroke="none"></path><path class="e-velo" style="--t:1.6s" d="M320 118L243.8 74L320 30L396.2 74Z" fill="#fff" fill-opacity="0.2" stroke="none"></path><path class="e-trazo" style="--t:0.8s;--d:0.9s" pathLength="100" d="M320 206L243.8 162L243.8 74L320 30L396.2 74L396.2 162Z M320 206L320 118L243.8 74M320 118L396.2 74" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.8s;--d:0.9s" pathLength="100" d="M320 206L243.8 162L243.8 74L320 30L396.2 74L396.2 162Z M320 206L320 118L243.8 74M320 118L396.2 74" stroke-width="3"></path></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.3s" x="189.9" y="194.2" font-size="19" opacity="0.95" text-anchor="middle">X</text><text class="e-rotulo" style="--t:0.3s" x="452.1" y="194.2" font-size="19" opacity="0.95" text-anchor="middle">Y</text><text class="e-rotulo" style="--t:0.3s" x="334" y="26" font-size="19" opacity="0.95" text-anchor="middle">Z</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 14</span>
+            <strong class="titulo-tarjeta">Sistema axonométrico</strong>
+            <span class="resumen">El triedro y el triángulo de trazas, la isométrica, la escala isométrica, el óvalo isométrico y una pieza dibujada desde su caja.</span>
+            <span class="fichas"><span>7 trazados paso a paso</span><span>29 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-granate" href="unidad_15_caballera.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line class="e-trazo" style="--t:0.15s;--d:0.3s" pathLength="100" x1="192" y1="196" x2="232" y2="196" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.45s;--d:0.3s" pathLength="100" x1="232" y1="196" x2="268.8" y2="159.2" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><line class="e-trazo" style="--t:0.45s;--d:0.3s" pathLength="100" x1="268.8" y1="159.2" x2="372.8" y2="159.2" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><line class="e-trazo" style="--t:0.45s;--d:0.3s" pathLength="100" x1="268.8" y1="159.2" x2="268.8" y2="55.2" stroke-width="1.3" stroke-opacity="0.55" stroke-dasharray="4 5"></line><path class="e-velo" style="--t:1.5s" d="M232 196L336 196L336 92L232 92Z" fill="#fff" fill-opacity="0.12" stroke="none"></path><path class="e-trazo" style="--t:0.75s;--d:0.9s" pathLength="100" d="M232 196L336 196L336 92L232 92Z M336 196L372.8 159.2L372.8 55.2L336 92 M232 92L268.8 55.2L372.8 55.2" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:0.75s;--d:0.9s" pathLength="100" d="M232 196L336 196L336 92L232 92Z M336 196L372.8 159.2L372.8 55.2L336 92 M232 92L268.8 55.2L372.8 55.2" stroke-width="3"></path><path class="e-trazo" style="--t:1.3s;--d:0.25s" pathLength="100" d="M262 196A30 30 0 0 0 253.2 174.8" stroke-width="1.4" stroke-opacity="0.85"></path></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:1.35s" x="268" y="190" font-size="15" opacity="0.95" text-anchor="start" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">45°</text><text class="e-rotulo" style="--t:1.4s" x="440" y="118" font-size="20" opacity="0.95" text-anchor="start" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">k = 1/2</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 15</span>
+            <strong class="titulo-tarjeta">Perspectiva caballera</strong>
+            <span class="resumen">El ángulo y el coeficiente de reducción, el punto, la circunferencia por ocho puntos y un bloque con un agujero.</span>
+            <span class="fichas"><span>6 trazados paso a paso</span><span>23 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        </div>
+      </section>
+      <section class="bloque" aria-labelledby="bloque-normalizacion">
+        <h3 class="titulo-bloque" id="bloque-normalizacion">Normalización <span>unidades 16 a 18</span></h3>
+        <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-azul" href="unidad_16_normalizacion.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="196" y1="107" x2="196" y2="125" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="256" y1="107" x2="256" y2="125" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="340" y1="107" x2="340" y2="125" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="343" y1="20" x2="371" y2="20" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="343" y1="68" x2="371" y2="68" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><line class="e-trazo" style="--t:0.2s;--d:0.25s" pathLength="100" x1="343" y1="104" x2="371" y2="104" stroke-width="1" stroke-opacity="0.45" stroke-dasharray="2 4"></line><path class="e-trazo" style="--t:0.1s;--d:0.7s" pathLength="100" d="M196 104L340 104L340 68L256 68L256 20L196 20Z" stroke-width="2.8"></path><path class="e-trazo" style="--t:0.55s;--d:0.6s" pathLength="100" d="M196 128L340 128L340 200L196 200Z" stroke-width="2.8"></path><line class="e-trazo" style="--t:0.9s;--d:0.25s" pathLength="100" x1="256" y1="128" x2="256" y2="200" stroke-width="2.8"></line><path class="e-trazo" style="--t:1.0s;--d:0.6s" pathLength="100" d="M374 20L446 20L446 104L374 104Z" stroke-width="2.8"></path><line class="e-trazo" style="--t:1.35s;--d:0.25s" pathLength="100" x1="374" y1="68" x2="446" y2="68" stroke-width="1.4" stroke-opacity="0.75" stroke-dasharray="5 4"></line></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.3s" x="298" y="49" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">Alzado</text><text class="e-rotulo" style="--t:0.75s" x="298" y="169" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">Planta</text><text class="e-rotulo" style="--t:1.2s" x="410" y="67" font-size="13" opacity="0.85" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">Perfil</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 16</span>
+            <strong class="titulo-tarjeta">Normalización. Vistas y líneas</strong>
+            <span class="resumen">Las normas y para qué sirven, las seis vistas por el primer y el tercer diedro, el alzado, la planta y el perfil, y los tipos de línea.</span>
+            <span class="fichas"><span>2 trazados paso a paso</span><span>22 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-rosa" href="unidad_17_rotulacion.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><line class="e-trazo" style="--t:0.15s;--d:0.5s" pathLength="100" x1="70" y1="98" x2="570" y2="98" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.27s;--d:0.5s" pathLength="100" x1="70" y1="113.6" x2="570" y2="113.6" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.39s;--d:0.5s" pathLength="100" x1="70" y1="150" x2="570" y2="150" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.51s;--d:0.5s" pathLength="100" x1="70" y1="165.6" x2="570" y2="165.6" stroke-width="1.1" stroke-opacity="0.5"></line><line class="e-trazo" style="--t:0.7s;--d:0.2s" pathLength="100" x1="56" y1="98" x2="56" y2="150" stroke-width="1.6" stroke-opacity="0.9"></line><path class="e-trazo" style="--t:0.75s;--d:0.2s" pathLength="100" d="M52 105l4 -7l4 7M52 143l4 7l4 -7" stroke-width="1.6" stroke-opacity="0.9"></path><text class="e-letra" style="--t:0.95s" x="88" y="150" font-size="73" font-style="normal" font-family="Helvetica, Arial, sans-serif" fill="#fff" stroke="none" letter-spacing="2">ABC abc 123</text></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.75s" x="40" y="130" font-size="18" opacity="0.95" text-anchor="middle">h</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 17</span>
+            <strong class="titulo-tarjeta">Rotulación normalizada</strong>
+            <span class="resumen">Las escrituras A y B, la serie de alturas, las medidas en fracciones de la altura y la pauta de dos renglones.</span>
+            <span class="fichas"><span>2 trazados paso a paso</span><span>12 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        <a class="tarjeta-unidad tono-turquesa" href="unidad_18_acotacion.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M214 46L390 46L390 154L214 154Z" stroke-width="2.8"></path><path d="M328 100A26 26 0 1 0 276 100A26 26 0 1 0 328 100" stroke-width="2.8"></path><line x1="264" y1="100" x2="340" y2="100" stroke-width="1" stroke-opacity="0.6" stroke-dasharray="12 3 2 3"></line><line x1="302" y1="62" x2="302" y2="138" stroke-width="1" stroke-opacity="0.6" stroke-dasharray="12 3 2 3"></line><line class="e-trazo" style="--t:0.2s;--d:0.2s" pathLength="100" x1="214" y1="160" x2="214" y2="190" stroke-width="1.1" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:0.2s;--d:0.2s" pathLength="100" x1="390" y1="160" x2="390" y2="190" stroke-width="1.1" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:0.4s;--d:0.35s" pathLength="100" x1="214" y1="184" x2="390" y2="184" stroke-width="1.4" stroke-opacity="0.95"></line><path class="e-velo" style="--t:0.7s" d="M214 184l12 -4v8Z M390 184l-12 -4v8Z" fill="#fff" stroke="none"></path><line class="e-trazo" style="--t:0.8s;--d:0.2s" pathLength="100" x1="396" y1="46" x2="426" y2="46" stroke-width="1.1" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:0.8s;--d:0.2s" pathLength="100" x1="396" y1="154" x2="426" y2="154" stroke-width="1.1" stroke-opacity="0.8"></line><line class="e-trazo" style="--t:1.0s;--d:0.3s" pathLength="100" x1="420" y1="46" x2="420" y2="154" stroke-width="1.4" stroke-opacity="0.95"></line><path class="e-velo" style="--t:1.25s" d="M420 46l-4 12h8Z M420 154l-4 -12h8Z" fill="#fff" stroke="none"></path><line class="e-trazo" style="--t:1.4s;--d:0.25s" pathLength="100" x1="320.4" y1="81.6" x2="372.4" y2="41.6" stroke-width="1.2" stroke-opacity="0.9"></line><line class="e-trazo" style="--t:1.55s;--d:0.2s" pathLength="100" x1="372.4" y1="41.6" x2="416.4" y2="41.6" stroke-width="1.2" stroke-opacity="0.9"></line></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.6s" x="302" y="177" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">80</text><text class="e-rotulo" style="--t:1.2s" x="430" y="106" font-size="17" opacity="0.95" text-anchor="start" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">50</text><text class="e-rotulo" style="--t:1.7s" x="394.4" y="34.6" font-size="17" opacity="0.95" text-anchor="middle" font-style="normal" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">⌀30</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 18</span>
+            <strong class="titulo-tarjeta">Acotación</strong>
+            <span class="resumen">Las cotas y sus elementos, la cifra y los símbolos, cómo se disponen las cotas y la acotación de una pieza en sus vistas.</span>
+            <span class="fichas"><span>2 trazados paso a paso</span><span>24 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        </div>
+      </section>
+      <section class="bloque" aria-labelledby="bloque-diseno">
+        <h3 class="titulo-bloque" id="bloque-diseno">Arte y diseño <span>unidad 19</span></h3>
+        <div class="rejilla-unidades">
+        <a class="tarjeta-unidad tono-ambar" href="unidad_19_diseno.html">
+          <span class="lienzo-tarjeta" aria-hidden="true">
+            <svg viewBox="0 0 640 225" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g stroke="#fff"><path d="M161.4 14.5L478.6 14.5L478.6 210.5L161.4 210.5Z" stroke-width="2.2" stroke-opacity="0.95"></path><line class="e-trazo" style="--t:0.2s;--d:0.3s" pathLength="100" x1="357.4" y1="14.5" x2="357.4" y2="210.5" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:0.36s;--d:0.3s" pathLength="100" x1="357.4" y1="135.6" x2="478.6" y2="135.6" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:0.52s;--d:0.3s" pathLength="100" x1="403.7" y1="135.6" x2="403.7" y2="210.5" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:0.68s;--d:0.3s" pathLength="100" x1="357.4" y1="164.2" x2="403.7" y2="164.2" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:0.8400000000000001s;--d:0.3s" pathLength="100" x1="386" y1="135.6" x2="386" y2="164.2" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.0s;--d:0.3s" pathLength="100" x1="386" y1="153.3" x2="403.7" y2="153.3" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.16s;--d:0.3s" pathLength="100" x1="392.8" y1="153.3" x2="392.8" y2="164.2" stroke-width="1.4" stroke-opacity="0.7"></line><line class="e-trazo" style="--t:1.3199999999999998s;--d:0.3s" pathLength="100" x1="386" y1="157.5" x2="392.8" y2="157.5" stroke-width="1.4" stroke-opacity="0.7"></line><path class="e-trazo" style="--t:1.3s;--d:1.1s" pathLength="100" d="M161.4 210.5A196 196 0 0 1 357.4 14.5A121.1 121.1 0 0 1 478.6 135.6A74.9 74.9 0 0 1 403.7 210.5A46.3 46.3 0 0 1 357.4 164.2M357.4 164.2A28.6 28.6 0 0 1 386 135.6A17.7 17.7 0 0 1 403.7 153.3A10.9 10.9 0 0 1 392.8 164.2A6.8 6.8 0 0 1 386 157.5" stroke-width="9" stroke-opacity="0.16"></path><path class="e-trazo" style="--t:1.3s;--d:1.1s" pathLength="100" d="M161.4 210.5A196 196 0 0 1 357.4 14.5A121.1 121.1 0 0 1 478.6 135.6A74.9 74.9 0 0 1 403.7 210.5A46.3 46.3 0 0 1 357.4 164.2M357.4 164.2A28.6 28.6 0 0 1 386 135.6A17.7 17.7 0 0 1 403.7 153.3A10.9 10.9 0 0 1 392.8 164.2A6.8 6.8 0 0 1 386 157.5" stroke-width="3.2"></path></g><g class="rotulos" fill="#fff" stroke="none" font-style="italic"><text class="e-rotulo" style="--t:0.3s" x="496.6" y="118.5" font-size="19" opacity="0.95" text-anchor="middle">1</text><text class="e-rotulo" style="--t:0.3s" x="320" y="38.5" font-size="22" opacity="0.95" text-anchor="middle">φ</text></g></svg>
+          </span>
+          <span class="cuerpo-tarjeta">
+            <span class="antetitulo">Unidad 19</span>
+            <strong class="titulo-tarjeta">Arte, dibujo técnico y diseño</strong>
+            <span class="resumen">Las proporciones armónicas, el número de oro, la sección y el rectángulo áureos, la perspectiva del Renacimiento y el diseño industrial.</span>
+            <span class="fichas"><span>3 trazados paso a paso</span><span>14 ejercicios resueltos</span></span>
+          </span>
+        </a>
+        </div>
+      </section>
     </section>
   </main>
 
   <footer class="pie-autoria">
+    <div class="cajetin" aria-hidden="true"><span>Dibujo Técnico I</span><span>1.º de Bachillerato</span><span>Escala 1:1</span></div>
     <p class="firma-autoria">© 2026 Mario Rodríguez Boya. Todos los derechos reservados.</p>
     <p>
       Estos apuntes son para consultarlos y estudiar con ellos. No se
