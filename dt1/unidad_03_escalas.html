@@ -3845,6 +3845,15 @@
         linear-gradient(120deg, #0b3d5c 0%, #0369a1 66%, #3aa0d6 100%);
     }
 
+    /* Las páginas de los libros resueltos, con contraseña (desde el 4 de
+       noviembre de 2026, la de Morís), en ciruela, como la puerta que las
+       abre. Solo las usan las páginas que monta scripts/moris.py. */
+    .portada-unidad[data-tono="ciruela"] {
+      background:
+        radial-gradient(circle at 85% 18%, rgb(255 255 255 / 0.18), transparent 27%),
+        linear-gradient(120deg, #4a0d50 0%, #86198f 66%, #c25ac9 100%);
+    }
+
     @media screen {
       section.dia-de-clase[data-tono="azul"] { --apartado: #1d4ed8; --apartado-suave: #eaf1ff; }
       section.dia-de-clase[data-tono="violeta"] { --apartado: #6d28d9; --apartado-suave: #f4efff; }
@@ -22773,7 +22782,9 @@ Bachillerato</p>
           return seg(pt(p.x - 6, p.y), pt(p.x + 6, p.y), "aux", { sinRegla: true });
         });
         return {
-          base: [arco(O, g.R, 0, TAU, "dato"), punto(O, "O", pt(-16, 14), { forma: "hueco" })],
+          // Con un estrellado, las rectas pasan cerca del centro: la letra de
+          // O va dentro del polígono pequeño que dejan.
+          base: [arco(O, g.R, 0, TAU, "dato"), punto(O, "O", d.paso > 1 ? pt(-9, 13) : pt(-16, 14), { forma: "hueco" })],
           pasos: [
             [
               seg(pt(O.x - g.R - 16, O.y), pt(O.x + g.R + 16, O.y), "aux"),
@@ -22797,10 +22808,29 @@ Bachillerato</p>
               seg(g.C, g.F, "guia", { sinRegla: true })
             ],
             llevada.trazos,
-            poligonoDe(vertices)
+            poligonoDe(estrellaDe(vertices, d.paso))
           ],
           porque: null
         };
+      }
+
+      // Los vértices de un polígono regular en el orden de su estrellado de
+      // paso p: cada uno se une con el que está p puestos más allá. Sin paso
+      // (o con 1), el polígono, tal cual. Desde el 4 de noviembre de 2026,
+      // para el heptágono estrellado de Morís.
+      function estrellaDe(vertices, paso) {
+        var n = vertices.length;
+        var p = paso > 1 ? paso : 1;
+        var orden = [];
+        var k;
+        for (k = 0; k < n; k += 1) {
+          orden.push(vertices[(k * p) % n]);
+        }
+        return orden;
+      }
+
+      function mcd(a, b) {
+        return b ? mcd(b, a % b) : a;
       }
 
       construcciones["division-aproximada"] = {
@@ -22815,7 +22845,8 @@ Bachillerato</p>
         },
         valido: function (d) {
           var g = divisionGeometria(d);
-          return Boolean(g.F) && d.n >= 5 && d.n <= 15 && g.R > 80 && cabe(divisionConstruir(d), 6, [ANCHO, ALTO]);
+          var estrellado = !d.paso || d.paso === 1 || (d.paso > 1 && 2 * d.paso < d.n && mcd(d.n, d.paso) === 1);
+          return Boolean(g.F) && estrellado && d.n >= 5 && d.n <= 15 && g.R > 80 && cabe(divisionConstruir(d), 6, [ANCHO, ALTO]);
         },
         construir: divisionConstruir
       };
@@ -30779,7 +30810,11 @@ Bachillerato</p>
           ]
         ];
         return diarioLetras(pasos, [],
-          [[g.A, "A", 0, { forma: "hueco" }], [g.B, "B", 0], [g.O, "O", 1, null, 24], [g.C, "C", 2], [g.D, "D", 2]],
+          // La letra de O, a `lejosO` de él (24 si no se da): con un ángulo
+          // de las diagonales grande, el hueco entre ellas y la mediatriz
+          // pide algo más de sitio (desde el 4 de noviembre de 2026, el
+          // ejercicio 6 de Morís, de 50 grados).
+          [[g.A, "A", 0, { forma: "hueco" }], [g.B, "B", 0], [g.O, "O", 1, null, d.lejosO || 24], [g.C, "C", 2], [g.D, "D", 2]],
           [
             [g.A, g.B, conComa(d.l), 0, 18],
             [g.B, g.C, conComa(Math.round((g.alto / g.e) * 10) / 10), 2, 22]
