@@ -25981,6 +25981,7 @@ Enfoques NS</p>
         for (let lugar = 0; lugar < e.r; lugar += 1) {
           factores.push(e.n - lugar);
         }
+        const delFactorial = e.n <= 5 ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar) : [e.n, e.n - 1, "…", 1];
 
         return (
           <>
@@ -26042,7 +26043,7 @@ Enfoques NS</p>
               <Rotulo t={2.4} x="320" y="300" fontSize="19">
                 {e.que === "todos" && (
                   <>
-                    {e.n + POR + (e.n - 1) + POR + "…" + POR + "1"}
+                    {delFactorial.join(POR)}
                     {palabra(": cada casilla, una opción menos que la anterior")}
                   </>
                 )}
@@ -26672,7 +26673,11 @@ Enfoques NS</p>
             }
             const producto = factores.join("\\cdot");
             if (e.que === "todos") {
-              return [e.n + "!=" + e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1=" + enTex(factorial(e.n))];
+              const desarrollo =
+                e.n <= 5
+                  ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar).join("\\cdot")
+                  : e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1";
+              return [e.n + "!=" + desarrollo + "=" + enTex(factorial(e.n))];
             }
             if (e.que === "ordenados") {
               return [
@@ -27110,7 +27115,9 @@ Enfoques NS</p>
               "\\begin{aligned}" + (e.caso === 2 ? "&" + desarrollo.cabeza + "\\\\={}&" : desarrollo.cabeza + "={}&") + primera + segunda +
                 "\\end{aligned}",
               "\\text{válido si }" + desarrollo.validez,
-              Math.abs(e.t) < 1 ? (
+              Math.abs(Math.abs(e.t) - 1) < 1e-9 ? (
+                <>En el borde de la franja la condición ya no se cumple, porque es una desigualdad estricta: ahí el desarrollo no se usa.</>
+              ) : Math.abs(e.t) < 1 ? (
                 <>Dentro de la franja, cada término que se añade acerca el desarrollo a la función.</>
               ) : (
                 <>Fuera de la franja, añadir términos no mejora la aproximación: la empeora.</>
