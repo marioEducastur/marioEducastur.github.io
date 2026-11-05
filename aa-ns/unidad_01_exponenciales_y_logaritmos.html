@@ -9658,7 +9658,18 @@ Enfoques NS</p>
                 <p><strong>(Apuntes de clase)</strong> «Números», <a
                 href="apuntes_clase_01_numeros.html#resoluciones-típicas-reconocer-antes-de-calcular">2.4</a>:
                 una ecuación exponencial que se resuelve tomando
-                logaritmos (pág. 7).</p>
+                logaritmos (pág. 7). Miniapuntes, <a
+                href="apuntes_clase_04_metodos_ecuaciones.html">«Métodos
+                de ecuaciones e inecuaciones»</a>, <a
+                href="apuntes_clase_04_metodos_ecuaciones.html#logaritmos-y-exponenciales">1.2</a>:
+                los pasos de las ecuaciones logarítmicas y exponenciales
+                y cuándo hay que comprobar (pág. 2), y <a
+                href="apuntes_clase_04_metodos_ecuaciones.html#logarítmicas-y-exponenciales">2.3</a>:
+                tres ejemplos resueltos, uno logarítmico y dos
+                exponenciales (pág. 6). Los ejercicios de esos dos tipos
+                de su práctica mezclada están resueltos en la <a
+                href="unidad_05_ecuaciones_sistemas_e_inecuaciones.html#práctica-mezclada">unidad
+                5</a>.</p>
                 <p><strong>(Libro)</strong> Oxford: ejercicio 7C,
                 pregunta 6 (pág. 464); ejercicio 7D, preguntas 13, 15 y
                 16 (págs. 472 y 473); ejercicio 7E, pregunta 4
@@ -24742,6 +24753,7 @@ Enfoques NS</p>
         for (let lugar = 0; lugar < e.r; lugar += 1) {
           factores.push(e.n - lugar);
         }
+        const delFactorial = e.n <= 5 ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar) : [e.n, e.n - 1, "…", 1];
 
         return (
           <>
@@ -24803,7 +24815,7 @@ Enfoques NS</p>
               <Rotulo t={2.4} x="320" y="300" fontSize="19">
                 {e.que === "todos" && (
                   <>
-                    {e.n + POR + (e.n - 1) + POR + "…" + POR + "1"}
+                    {delFactorial.join(POR)}
                     {palabra(": cada casilla, una opción menos que la anterior")}
                   </>
                 )}
@@ -25433,7 +25445,11 @@ Enfoques NS</p>
             }
             const producto = factores.join("\\cdot");
             if (e.que === "todos") {
-              return [e.n + "!=" + e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1=" + enTex(factorial(e.n))];
+              const desarrollo =
+                e.n <= 5
+                  ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar).join("\\cdot")
+                  : e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1";
+              return [e.n + "!=" + desarrollo + "=" + enTex(factorial(e.n))];
             }
             if (e.que === "ordenados") {
               return [
@@ -25871,7 +25887,9 @@ Enfoques NS</p>
               "\\begin{aligned}" + (e.caso === 2 ? "&" + desarrollo.cabeza + "\\\\={}&" : desarrollo.cabeza + "={}&") + primera + segunda +
                 "\\end{aligned}",
               "\\text{válido si }" + desarrollo.validez,
-              Math.abs(e.t) < 1 ? (
+              Math.abs(Math.abs(e.t) - 1) < 1e-9 ? (
+                <>En el borde de la franja la condición ya no se cumple, porque es una desigualdad estricta: ahí el desarrollo no se usa.</>
+              ) : Math.abs(e.t) < 1 ? (
                 <>Dentro de la franja, cada término que se añade acerca el desarrollo a la función.</>
               ) : (
                 <>Fuera de la franja, añadir términos no mejora la aproximación: la empeora.</>
