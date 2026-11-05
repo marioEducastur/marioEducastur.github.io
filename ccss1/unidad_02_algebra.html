@@ -5789,6 +5789,198 @@
       to { stroke-dashoffset: 0; }
     }
 
+    .interactivo-host:has(> .interactivo-mount > .solucion-grafica) {
+      margin-top: -0.85rem;
+    }
+
+    .solucion-grafica {
+      overflow: hidden;
+      border: 1px solid #b7e4cf;
+      border-left: 0.34rem solid var(--verde);
+      border-radius: 0.75rem;
+      background: var(--verde-suave);
+    }
+
+    .solucion-grafica .sg-cinta {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr) auto;
+      grid-template-areas: "icono rotulo titulo accion";
+      gap: 0.3em 0.75em;
+      align-items: center;
+      width: 100%;
+      min-height: 0;
+      padding: 0.55em 0.9em;
+      border: 0;
+      border-radius: 0;
+      color: var(--verde);
+      background: none;
+      box-shadow: none;
+      font: inherit;
+      text-align: left;
+      transform: none;
+      cursor: pointer;
+    }
+
+    .solucion-grafica .sg-cinta:focus-visible {
+      outline: 3px solid var(--verde);
+      outline-offset: -4px;
+    }
+
+    .solucion-grafica .sg-icono {
+      grid-area: icono;
+      display: grid;
+      place-items: center;
+      width: 2.1em;
+      height: 2.1em;
+      border-radius: 50%;
+      background: #d5f2e4;
+    }
+
+    .solucion-grafica .sg-icono svg {
+      width: 1.35em;
+      height: 1.35em;
+    }
+
+    .solucion-grafica .sg-rotulo {
+      grid-area: rotulo;
+      padding: 0.12em 0.75em;
+      border: 1.5px solid var(--verde);
+      border-radius: 999px;
+      font-size: 0.72em;
+      font-weight: 850;
+      letter-spacing: 0.1em;
+      line-height: 1.5;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .solucion-grafica .sg-titulo {
+      grid-area: titulo;
+      color: var(--texto);
+      font-size: 1.02em;
+      font-weight: 750;
+      line-height: 1.25;
+    }
+
+    .solucion-grafica .sg-accion {
+      grid-area: accion;
+      padding: 0.28em 0.95em;
+      border-radius: 999px;
+      color: #ffffff;
+      background: var(--verde);
+      font-size: 0.82em;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 40rem) {
+      .solucion-grafica .sg-cinta {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "icono rotulo accion"
+          "titulo titulo titulo";
+      }
+
+      .solucion-grafica .sg-rotulo {
+        justify-self: start;
+      }
+    }
+
+    @media (hover: hover) {
+      .solucion-grafica .sg-cinta:hover {
+        background: rgb(4 120 87 / 0.06);
+        box-shadow: none;
+        transform: none;
+      }
+    }
+
+    .solucion-grafica .sg-cuerpo {
+      display: grid;
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition:
+        grid-template-rows 0.45s ease,
+        visibility 0s 0.45s;
+    }
+
+    .solucion-grafica.abierta .sg-cuerpo {
+      grid-template-rows: 1fr;
+      visibility: visible;
+      transition:
+        grid-template-rows 0.45s ease,
+        visibility 0s;
+    }
+
+    .solucion-grafica .sg-cuerpo > div {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .solucion-grafica .sg-cuerpo,
+      .solucion-grafica.abierta .sg-cuerpo {
+        transition: none;
+      }
+    }
+
+    .solucion-grafica .sg-lienzo {
+      margin: 0 0.8em;
+      border: 1px solid var(--borde);
+      border-radius: 0.6rem;
+      background: #ffffff;
+      cursor: default;
+    }
+
+    .solucion-grafica .rotulos {
+      font-family: KaTeX_Main, "Times New Roman", Times, serif;
+    }
+
+    .solucion-grafica .rotulos .letra-infografia {
+      font-family: KaTeX_Math, KaTeX_Main, "Times New Roman", Times, serif;
+      font-style: italic;
+    }
+
+    .solucion-grafica .sg-pie {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6em 1em;
+      align-items: baseline;
+      padding: 0.65em 1em 0.85em;
+    }
+
+    .solucion-grafica .sg-texto {
+      flex: 1 1 18em;
+      min-width: 0;
+      margin: 0;
+      color: var(--texto);
+      line-height: 1.5;
+    }
+
+    .solucion-grafica .sg-repetir {
+      display: inline-flex;
+      flex: none;
+      gap: 0.35em;
+      margin-left: auto;
+      align-items: center;
+      min-height: 0;
+      padding: 0.25em 0.8em;
+      border: 1.5px solid var(--verde);
+      border-radius: 999px;
+      color: var(--verde);
+      background: #ffffff;
+      box-shadow: none;
+      font: inherit;
+      font-size: 0.8em;
+      font-weight: 800;
+      transform: none;
+      cursor: pointer;
+    }
+
+    .solucion-grafica .sg-repetir svg {
+      width: 1em;
+      height: 1em;
+    }
+
     .esencial {
       --tono-suave: #eef3ff;
       --tono-raya: #c9d8f8;
@@ -10472,19 +10664,41 @@ Bachillerato</p>
                 \end{array}
                 \right.
                 \]</span></p>
-                <p>Con <span class="math inline">\(E_2\leftarrow
-                E_2-2E_1\)</span> y <span
-                class="math inline">\(E_3\leftarrow E_3-3E_1\)</span>
-                ambas se convierten en <span
+                <p>Eliminamos la <span class="math inline">\(x\)</span>
+                de la segunda y la tercera ecuación, que se convierten
+                las dos en <span class="formula-con-signo"><span
+                class="math inline">\(y=1\)</span>:</span></p>
+                <p><span class="math display">\[
+                \begin{aligned}
+                E_2&amp;\leftarrow E_2-2E_1\\
+                E_3&amp;\leftarrow E_3-3E_1
+                \end{aligned}
+                \qquad
+                \left\{
+                \begin{array}{rrrl}
+                x &amp; {}+y &amp; {}-z &amp; =1\\
+                &amp; y &amp; &amp; =1\\
+                &amp; y &amp; &amp; =1
+                \end{array}
+                \right.
+                \]</span></p>
+                <p>Al restarlas aparece la fila <span
                 class="formula-con-signo"><span
-                class="math inline">\(y=1\)</span>,</span> y al
-                restarlas, <span class="math inline">\(E_3\leftarrow
-                E_3-E_2\)</span> deja la fila <span
-                class="formula-con-signo"><span
-                class="math inline">\(0=0\)</span>:</span> quedan dos
-                ecuaciones útiles para tres incógnitas. Tomamos <span
-                class="math inline">\(z\)</span> como parámetro, <span
-                class="formula-con-signo"><span
+                class="math inline">\(0=0\)</span>:</span></p>
+                <p><span class="math display">\[
+                E_3\leftarrow E_3-E_2
+                \qquad
+                \left\{
+                \begin{array}{rrrl}
+                x &amp; {}+y &amp; {}-z &amp; =1\\
+                &amp; y &amp; &amp; =1\\
+                &amp; &amp; 0 &amp; =0
+                \end{array}
+                \right.
+                \]</span></p>
+                <p>Quedan dos ecuaciones útiles para tres incógnitas.
+                Tomamos <span class="math inline">\(z\)</span> como
+                parámetro, <span class="formula-con-signo"><span
                 class="math inline">\(z=t\)</span>,</span> y de <span
                 class="math inline">\(x+1-t=1\)</span> sale <span
                 class="formula-con-signo"><span
@@ -12874,12 +13088,15 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(x=3\)</span>,</span> <span
                 class="math inline">\(y=4\)</span> es solución del
-                sistema formado por <span
-                class="math inline">\(x+y=7\)</span> y <span
-                class="formula-con-signo"><span
-                class="math inline">\(2x-y=1\)</span>.</span> Decide si
-                tiene razón sin resolver el sistema y justifica tu
-                respuesta.</p></li>
+                sistema <span class="math display">\[
+                \left\{
+                \begin{array}{rrl}
+                x &amp; {}+y &amp; =7\\
+                2x &amp; {}-y &amp; =1
+                \end{array}
+                \right.
+                \]</span> Decide si tiene razón sin resolver el sistema
+                y justifica tu respuesta.</p></li>
                 <li><p><strong>Encuentra el fallo.</strong> Para
                 resolver <span class="formula-con-signo"><span
                 class="math inline">\(2x^2=7x\)</span>,</span> un
@@ -13461,9 +13678,12 @@ Bachillerato</p>
                 anual. ¿Cuántos años completos hay que esperar, como
                 mínimo, para superar los <span
                 class="math inline">\(4000\)</span> €?</p></li>
-                <li><p>Resuelve el sistema formado por <span
-                class="math inline">\(x^2+y^2=52\)</span> y <span
-                class="math inline">\(x+y=10\)</span></p></li>
+                <li><p>Resuelve el sistema <span class="math display">\[
+                \begin{cases}
+                x^2+y^2=52\\
+                x+y=10
+                \end{cases}
+                \]</span></p></li>
                 </ol>
                 <div class="resultado plegable bloque-didactico">
                 <p><span class="etiqueta-bloque">Soluciones</span></p>
@@ -13585,14 +13805,7 @@ Bachillerato</p>
                 <span class="final-con-signo"><span class="final">hacen
                 falta <span class="math inline">\(8\)</span> años
                 completos</span>.</span></p></li>
-                <li><p>El sistema es:</p>
-                <p><span class="math display">\[
-                \begin{cases}
-                x^2+y^2=52\\
-                x+y=10
-                \end{cases}
-                \]</span></p>
-                <p>Con <span class="formula-con-signo"><span
+                <li><p>Con <span class="formula-con-signo"><span
                 class="math inline">\(y=10-x\)</span>:</span> <span
                 class="formula-con-signo"><span
                 class="math inline">\(x^2+(10-x)^2=52\)</span>,</span>
@@ -38836,6 +39049,1069 @@ void main() {
         );
       }
 
+
+
+      const FUNCIONES_DE_GRAFICA = {
+        ln: Math.log,
+        log: Math.log10,
+        sqrt: Math.sqrt,
+        abs: Math.abs,
+        exp: Math.exp
+      };
+
+      function leerExpresion(texto) {
+        const fuente = String(texto);
+        const fichas = [];
+        const patron = /\s*(\d+(?:\.\d+)?|[a-z]+|[-+*^()\/])/y;
+        let posicion = 0;
+        while (fuente.slice(posicion).trim() !== "") {
+          patron.lastIndex = posicion;
+          const encontrada = patron.exec(fuente);
+          if (!encontrada) {
+            throw new Error("Expresión no válida: " + fuente);
+          }
+          fichas.push(encontrada[1]);
+          posicion = patron.lastIndex;
+        }
+        let i = 0;
+        const mira = () => fichas[i];
+        const toma = (esperada) => {
+          const ficha = fichas[i];
+          if (ficha === undefined || (esperada !== undefined && ficha !== esperada)) {
+            throw new Error("Expresión no válida: " + fuente);
+          }
+          i += 1;
+          return ficha;
+        };
+        const empiezaOperando = (ficha) => ficha !== undefined && /^[\d(a-z]/.test(ficha);
+        function suma() {
+          let a = producto();
+          while (mira() === "+" || mira() === "-") {
+            const signo = toma();
+            const izquierda = a;
+            const derecha = producto();
+            a = signo === "+" ? (x) => izquierda(x) + derecha(x) : (x) => izquierda(x) - derecha(x);
+          }
+          return a;
+        }
+        function producto() {
+          let a = conSigno();
+          for (;;) {
+            const ficha = mira();
+            const izquierda = a;
+            if (ficha === "*" || ficha === "/") {
+              toma();
+              const derecha = conSigno();
+              a = ficha === "*" ? (x) => izquierda(x) * derecha(x) : (x) => izquierda(x) / derecha(x);
+            } else if (empiezaOperando(ficha)) {
+              const derecha = potencia();
+              a = (x) => izquierda(x) * derecha(x);
+            } else {
+              return a;
+            }
+          }
+        }
+        function conSigno() {
+          if (mira() === "-") {
+            toma();
+            const a = conSigno();
+            return (x) => -a(x);
+          }
+          if (mira() === "+") {
+            toma();
+            return conSigno();
+          }
+          return potencia();
+        }
+        function potencia() {
+          const base = atomo();
+          if (mira() === "^") {
+            toma();
+            const exponente = conSigno();
+            return (x) => Math.pow(base(x), exponente(x));
+          }
+          return base;
+        }
+        function atomo() {
+          const ficha = toma();
+          if (/^\d/.test(ficha)) {
+            const valor = Number(ficha);
+            return () => valor;
+          }
+          if (ficha === "x") {
+            return (x) => x;
+          }
+          if (ficha === "e") {
+            return () => Math.E;
+          }
+          if (ficha === "pi") {
+            return () => Math.PI;
+          }
+          if (Object.prototype.hasOwnProperty.call(FUNCIONES_DE_GRAFICA, ficha)) {
+            const funcion = FUNCIONES_DE_GRAFICA[ficha];
+            toma("(");
+            const dentro = suma();
+            toma(")");
+            return (x) => funcion(dentro(x));
+          }
+          if (ficha === "(") {
+            const dentro = suma();
+            toma(")");
+            return dentro;
+          }
+          throw new Error("Expresión no válida: " + fuente);
+        }
+        const resultado = suma();
+        if (i < fichas.length) {
+          throw new Error("Expresión no válida: " + fuente);
+        }
+        return resultado;
+      }
+
+      const numeroDeGrafica = (texto) => leerExpresion(texto)(0);
+
+      function leerVentana(texto) {
+        const partes = String(texto || "").split(",").map(numeroDeGrafica);
+        if (
+          partes.length !== 4 ||
+          partes.some((valor) => !Number.isFinite(valor)) ||
+          partes[0] >= partes[1] ||
+          partes[2] >= partes[3]
+        ) {
+          throw new Error("Ventana no válida: " + texto);
+        }
+        return partes;
+      }
+
+      function leerPuntos(texto) {
+        return String(texto || "")
+          .split(";")
+          .map((par) => par.trim())
+          .filter(Boolean)
+          .map((par) => {
+            const coordenadas = par.split(",").map(numeroDeGrafica);
+            if (coordenadas.length !== 2 || coordenadas.some((valor) => !Number.isFinite(valor))) {
+              throw new Error("Punto no válido: " + par);
+            }
+            return coordenadas;
+          });
+      }
+
+      function tramosDeCurva(f, x0, x1, y0, y1, muestras) {
+        const tramos = [];
+        let tramo = [];
+        let previo = null;
+        const rango = y1 - y0;
+        const dentro = (y) => y >= y0 && y <= y1;
+        const cerrar = () => {
+          if (tramo.length > 1) {
+            tramos.push(tramo);
+          }
+          tramo = [];
+        };
+        const corte = (a, b, borde) => ({ x: a.x + ((borde - a.y) / (b.y - a.y)) * (b.x - a.x), y: borde });
+        for (let k = 0; k <= muestras; k += 1) {
+          const x = x0 + ((x1 - x0) * k) / muestras;
+          let y;
+          try {
+            y = f(x);
+          } catch (error) {
+            y = NaN;
+          }
+          if (!Number.isFinite(y)) {
+            cerrar();
+            previo = null;
+            continue;
+          }
+          const actual = { x: x, y: y };
+          if (!previo) {
+            if (dentro(y)) {
+              tramo = [actual];
+            }
+            previo = actual;
+            continue;
+          }
+          if (Math.abs(actual.y - previo.y) > 4 * rango && Math.sign(actual.y) !== Math.sign(previo.y)) {
+            cerrar();
+            previo = actual;
+            if (dentro(y)) {
+              tramo = [actual];
+            }
+            continue;
+          }
+          const antes = dentro(previo.y);
+          const ahora = dentro(actual.y);
+          if (antes && ahora) {
+            if (!tramo.length) {
+              tramo.push(previo);
+            }
+            tramo.push(actual);
+          } else if (antes) {
+            if (!tramo.length) {
+              tramo.push(previo);
+            }
+            tramo.push(corte(previo, actual, actual.y > y1 ? y1 : y0));
+            cerrar();
+          } else if (ahora) {
+            tramo = [corte(previo, actual, previo.y > y1 ? y1 : y0), actual];
+          } else if ((previo.y < y0 && actual.y > y1) || (previo.y > y1 && actual.y < y0)) {
+            tramos.push([corte(previo, actual, previo.y < y0 ? y0 : y1), corte(previo, actual, previo.y < y0 ? y1 : y0)]);
+          }
+          previo = actual;
+        }
+        cerrar();
+        return tramos;
+      }
+
+      const ESPACIO_OPERACION = " ";
+      const ESPACIO_RELACION = " ";
+      const ESPACIO_FINO = " ";
+
+      function fichasDeRotulo(texto) {
+        const patron = /\s+|log|ln|[A-Za-z]|\d+(?:\.\d+)?|[\^_{}]|[-+*:=<>(),;\/]/g;
+        const fichas = [];
+        let fin = 0;
+        let encontrada;
+        while ((encontrada = patron.exec(texto))) {
+          if (encontrada.index !== fin) {
+            throw new Error("Rótulo no válido: " + texto);
+          }
+          fichas.push(encontrada[0]);
+          fin = patron.lastIndex;
+        }
+        if (fin !== texto.length) {
+          throw new Error("Rótulo no válido: " + texto);
+        }
+        return fichas;
+      }
+
+      function arbolDeRotulo(fichas) {
+        let i = 0;
+        function grupo(hasta) {
+          const piezas = [];
+          while (i < fichas.length && fichas[i] !== hasta) {
+            const ficha = fichas[i];
+            i += 1;
+            if (ficha === "^" || ficha === "_") {
+              piezas.push({ tipo: ficha === "^" ? "sup" : "sub", dentro: unidad() });
+            } else if (ficha === "{") {
+              piezas.push({ tipo: "grupo", dentro: grupo("}") });
+              i += 1;
+            } else {
+              piezas.push({ tipo: "ficha", valor: ficha });
+            }
+          }
+          return piezas;
+        }
+        function unidad() {
+          const ficha = fichas[i];
+          i += 1;
+          if (ficha === "{") {
+            const dentro = grupo("}");
+            i += 1;
+            return dentro;
+          }
+          return [{ tipo: "ficha", valor: ficha }];
+        }
+        return grupo(undefined);
+      }
+
+      function componerRotulo(piezas, clave) {
+        const nodos = [];
+        const trozos = [];
+        let ancho = 0;
+        let sube = false;
+        let baja = false;
+        let anterior = "nada";
+        const siguiente = (desde) => {
+          for (let j = desde; j < piezas.length; j += 1) {
+            if (piezas[j].tipo !== "ficha") {
+              return "x";
+            }
+            if (piezas[j].valor.trim() !== "") {
+              return piezas[j].valor;
+            }
+          }
+          return undefined;
+        };
+        piezas.forEach((pieza, indice) => {
+          const k = clave + "-" + indice;
+          if (pieza.tipo === "sup" || pieza.tipo === "sub") {
+            const dentro = componerRotulo(pieza.dentro, k);
+            const arriba = pieza.tipo === "sup";
+            nodos.push(
+              <tspan key={k}>
+                <tspan dy={arriba ? "-0.6em" : "0.3em"} fontSize="0.68em">
+                  {dentro.nodos}
+                </tspan>
+                <tspan dy={arriba ? "0.408em" : "-0.204em"}>{"​"}</tspan>
+              </tspan>
+            );
+            dentro.trozos.forEach((trozo) => trozos.push(Object.assign({}, trozo, { escala: 0.68 * trozo.escala })));
+            ancho += 0.68 * dentro.ancho + 0.04;
+            sube = sube || arriba;
+            baja = baja || !arriba;
+            anterior = "operando";
+            return;
+          }
+          if (pieza.tipo === "grupo") {
+            const dentro = componerRotulo(pieza.dentro, k);
+            nodos.push(<tspan key={k}>{dentro.nodos}</tspan>);
+            dentro.trozos.forEach((trozo) => trozos.push(trozo));
+            ancho += dentro.ancho;
+            sube = sube || dentro.sube;
+            baja = baja || dentro.baja;
+            anterior = "operando";
+            return;
+          }
+          const ficha = pieza.valor;
+          if (ficha.trim() === "") {
+            const despues = siguiente(indice + 1);
+            if ((anterior === "operando" || anterior === "funcion") && despues !== undefined && /^[A-Za-z\d(]/.test(despues)) {
+              nodos.push(ESPACIO_FINO);
+              trozos.push({ texto: ESPACIO_FINO, cursiva: false, escala: 1 });
+              ancho += 0.17;
+            }
+            return;
+          }
+          if (ficha.length === 1 && /[A-Za-z]/.test(ficha)) {
+            nodos.push(
+              <tspan key={k} className="letra-infografia">
+                {ficha}
+              </tspan>
+            );
+            trozos.push({ texto: ficha, cursiva: true, escala: 1 });
+            ancho += ficha === "y" ? 0.5 : 0.57;
+            anterior = "operando";
+            return;
+          }
+          if (/^\d/.test(ficha)) {
+            const numero = ficha.replace(".", ",");
+            nodos.push(numero);
+            trozos.push({ texto: numero, cursiva: false, escala: 1 });
+            ancho += 0.5 * ficha.replace(".", "").length + (ficha.indexOf(".") >= 0 ? 0.28 : 0);
+            anterior = "operando";
+            return;
+          }
+          if (ficha === "log" || ficha === "ln") {
+            nodos.push(ficha);
+            trozos.push({ texto: ficha, cursiva: false, escala: 1 });
+            ancho += ficha === "log" ? 1.28 : 0.83;
+            anterior = "funcion";
+            return;
+          }
+          let signo;
+          if (ficha === "+" || (ficha === "-" && anterior === "operando")) {
+            signo = ESPACIO_OPERACION + (ficha === "+" ? "+" : "−") + ESPACIO_OPERACION;
+            ancho += 1.28;
+          } else if (ficha === "-") {
+            signo = "−";
+            ancho += 0.78;
+          } else if (ficha === "*" || ficha === ":") {
+            signo = ESPACIO_OPERACION + (ficha === "*" ? "⋅" : ":") + ESPACIO_OPERACION;
+            ancho += 0.78;
+          } else if (ficha === "=" || ficha === "<" || ficha === ">") {
+            signo = ESPACIO_RELACION + ficha + ESPACIO_RELACION;
+            ancho += 1.44;
+          } else if (ficha === "," || ficha === ";") {
+            signo = ficha + ESPACIO_OPERACION;
+            ancho += 0.53;
+          } else {
+            signo = ficha;
+            ancho += ficha === "/" ? 0.5 : 0.39;
+          }
+          nodos.push(signo);
+          trozos.push({ texto: signo, cursiva: false, escala: 1 });
+          anterior = ficha === ")" ? "operando" : "operador";
+        });
+        return { nodos: nodos, trozos: trozos, ancho: ancho, sube: sube, baja: baja };
+      }
+
+      const rotuloDeGrafica = (texto, clave) => componerRotulo(arbolDeRotulo(fichasDeRotulo(String(texto).trim())), clave);
+
+      let lienzoDeMedidas = null;
+      function medirTrozos(trozos, letra) {
+        if (!lienzoDeMedidas) {
+          lienzoDeMedidas = document.createElement("canvas").getContext("2d");
+        }
+        let total = 0;
+        trozos.forEach((trozo) => {
+          lienzoDeMedidas.font =
+            (trozo.cursiva ? "italic 700 " : "700 ") +
+            (letra * trozo.escala).toFixed(2) +
+            "px " +
+            (trozo.cursiva ? "KaTeX_Math, KaTeX_Main, " : "KaTeX_Main, ") +
+            '"Times New Roman", serif';
+          total += lienzoDeMedidas.measureText(trozo.texto).width;
+        });
+        return total;
+      }
+
+
+      const ANCHO_GRAFICA = 640;
+      const LETRA_CURVA = 21;
+      const LETRA_PUNTO = 19;
+      const LETRA_MARCA = 15;
+
+      function cifraDeGrafica(valor, decimales) {
+        const redondo = Math.round(valor);
+        const entero = Math.abs(valor - redondo) < 1e-9;
+        const texto = entero ? String(Math.abs(redondo)) : Math.abs(valor).toFixed(decimales).replace(".", ",");
+        const nulo = Number(texto.replace(",", ".")) === 0;
+        return (valor < 0 && !nulo ? "−" : "") + texto;
+      }
+
+      function pasoDeMarcas(rango, marcas) {
+        const bruto = rango / marcas;
+        const escala = Math.pow(10, Math.floor(Math.log10(bruto)));
+        let paso = 10 * escala;
+        for (const multiplo of [1, 2, 5, 10]) {
+          if (multiplo * escala >= bruto - 1e-12) {
+            paso = multiplo * escala;
+            break;
+          }
+        }
+        return rango >= 4 ? Math.max(paso, 1) : paso;
+      }
+
+      const decimalesDe = (paso) => (paso >= 1 ? 0 : Math.ceil(-Math.log10(paso) - 1e-9));
+
+      function densificar(puntos, cada) {
+        const salida = [];
+        for (let k = 1; k < puntos.length; k += 1) {
+          const [ax, ay] = puntos[k - 1];
+          const [bx, by] = puntos[k];
+          const pasos = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / cada));
+          for (let p = 0; p < pasos; p += 1) {
+            salida.push([ax + ((bx - ax) * p) / pasos, ay + ((by - ay) * p) / pasos]);
+          }
+        }
+        if (puntos.length) {
+          salida.push(puntos[puntos.length - 1]);
+        }
+        return salida;
+      }
+
+      function componerGrafica(cfg, medir, anchoTotal) {
+        const ancho = anchoTotal || ANCHO_GRAFICA;
+        const [x0, x1, y0, y1] = leerVentana(cfg.ventana || "-5,5,-5,5");
+        const ejeYDentro = x0 < 0 && x1 > 0;
+        const ejeXDentro = y0 < 0 && y1 > 0;
+        const izq = ejeYDentro ? 18 : 46;
+        const der = 24;
+        const arr = 18;
+        const aba = ejeXDentro ? 18 : 34;
+        const anchoUtil = ancho - izq - der;
+        const altoUtil = Math.min(Math.max((anchoUtil * (y1 - y0)) / (x1 - x0), 0.47 * anchoUtil), 0.74 * anchoUtil);
+        const alto = Math.round(arr + altoUtil + aba);
+        const px = (x) => izq + ((x - x0) / (x1 - x0)) * anchoUtil;
+        const py = (y) => arr + ((y1 - y) / (y1 - y0)) * altoUtil;
+        const ejeX = ejeXDentro ? py(0) : y0 >= 0 ? py(y0) : py(y1);
+        const ejeY = ejeYDentro ? px(0) : x0 >= 0 ? px(x0) : px(x1);
+
+        const pasos = cfg.paso ? String(cfg.paso).split(",").map(Number) : [];
+        const pasoX = pasos[0] || pasoDeMarcas(x1 - x0, anchoUtil / 40);
+        const pasoY = pasos[1] || pasos[0] || pasoDeMarcas(y1 - y0, altoUtil / 34);
+        const marcas = (desde, hasta, paso) => {
+          const lista = [];
+          for (let k = Math.ceil(desde / paso - 1e-9); k * paso <= hasta + 1e-9; k += 1) {
+            lista.push(Math.round(k * paso * 1e9) / 1e9);
+          }
+          return lista;
+        };
+        const marcasX = marcas(x0, x1, pasoX);
+        const marcasY = marcas(y0, y1, pasoY);
+
+        const curvas = [cfg.curva1, cfg.curva2]
+          .map((expresion, indice) => {
+            if (!expresion) {
+              return null;
+            }
+            const tramos = tramosDeCurva(leerExpresion(expresion), x0, x1, y0, y1, 900).map((tramo) =>
+              tramo.map((p) => [px(p.x), py(p.y)])
+            );
+            const d = tramos
+              .map((tramo) => tramo.map(([x, y], k) => (k ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1)).join(""))
+              .join("");
+            const texto = cfg["rotulo" + (indice + 1)] || "y=" + expresion;
+            return { indice: indice, tramos: tramos, d: d, rotulo: rotuloDeGrafica(texto, "c" + indice) };
+          })
+          .filter(Boolean);
+
+        const nombres = cfg.nombres ? String(cfg.nombres).split(";") : [];
+        const enRotulo = (valor) => {
+          const redondo = Math.round(valor);
+          return Math.abs(valor - redondo) < 1e-9 ? String(redondo) : valor.toFixed(2);
+        };
+        const puntos = leerPuntos(cfg.puntos).map(([x, y], k) => {
+          const enteros = [x, y].every((valor) => Math.abs(valor - Math.round(valor)) < 1e-9);
+          const texto = nombres[k] ? nombres[k] : "(" + enRotulo(x) + (enteros ? "," : ";") + " " + enRotulo(y) + ")";
+          return { x: x, y: y, cx: px(x), cy: py(y), rotulo: rotuloDeGrafica(texto, "p" + k) };
+        });
+
+        const obstaculos = [];
+        curvas.forEach((curva) =>
+          curva.tramos.forEach((tramo) =>
+            densificar(tramo, 4).forEach(([x, y]) => obstaculos.push({ x: x, y: y, peso: 6, curva: curva.indice }))
+          )
+        );
+        for (let x = izq; x <= izq + anchoUtil; x += 6) {
+          obstaculos.push({ x: x, y: ejeX, peso: 4 });
+        }
+        for (let y = arr; y <= arr + altoUtil; y += 6) {
+          obstaculos.push({ x: ejeY, y: y, peso: 4 });
+        }
+        const cajas = puntos.map((p) => {
+          p.caja = { x: p.cx - 10, y: p.cy - 10, w: 20, h: 20, peso: 40 };
+          return p.caja;
+        });
+
+        const tapado = (x, y) => puntos.some((p) => Math.abs(p.cx - x) < 15 && Math.abs(p.cy - y) < 15);
+        const numerosX = marcasX
+          .filter((v) => Math.abs(v) > 1e-9 && px(v) < izq + anchoUtil - 14 && px(v) > izq + 6 && !tapado(px(v), ejeX + 12))
+          .map((v) => ({ valor: v, x: px(v), y: ejeX + 19, texto: cifraDeGrafica(v, decimalesDe(pasoX)) }));
+        const numerosY = marcasY
+          .filter((v) => Math.abs(v) > 1e-9 && py(v) > arr + 14 && py(v) < arr + altoUtil - 6 && !tapado(ejeY - 14, py(v)))
+          .map((v) => ({ valor: v, x: ejeY - 7, y: py(v) + 5, texto: cifraDeGrafica(v, decimalesDe(pasoY)) }));
+        numerosX.forEach((n) => cajas.push({ x: n.x - 9, y: n.y - 12, w: 18, h: 15, peso: 4 }));
+        numerosY.forEach((n) => cajas.push({ x: n.x - 20, y: n.y - 12, w: 20, h: 15, peso: 4 }));
+        cajas.push({ x: izq + anchoUtil - 2, y: ejeX - 26, w: 26, h: 34, peso: 20 });
+        cajas.push({ x: ejeY - 8, y: arr - 20, w: 32, h: 30, peso: 20 });
+
+        function caja(x, y, rotulo, letra, anclaje) {
+          const ancho = medir ? medir(rotulo.trozos, letra) + 2 : 1.1 * rotulo.ancho * letra;
+          const arriba = letra * (rotulo.sube ? 1.02 : 0.78);
+          const abajo = letra * (rotulo.baja ? 0.42 : 0.24);
+          const izquierda = anclaje === "start" ? x : anclaje === "end" ? x - ancho : x - ancho / 2;
+          return { x: izquierda, y: y - arriba, w: ancho, h: arriba + abajo };
+        }
+
+        function coste(c, holguraDe, sin) {
+          let total = 0;
+          if (c.x < 6 || c.y < 4 || c.x + c.w > ancho - 8 || c.y + c.h > alto - 4) {
+            total += 1000;
+          }
+          obstaculos.forEach((o) => {
+            const holgura = o.curva === undefined ? 3 : holguraDe(o.curva);
+            if (o.x > c.x - holgura && o.x < c.x + c.w + holgura && o.y > c.y - holgura && o.y < c.y + c.h + holgura) {
+              total += o.peso;
+            }
+          });
+          cajas.forEach((otra) => {
+            if (otra === sin) {
+              return;
+            }
+            const ancho = Math.min(c.x + c.w, otra.x + otra.w) - Math.max(c.x, otra.x) + 3;
+            const altura = Math.min(c.y + c.h, otra.y + otra.h) - Math.max(c.y, otra.y) + 3;
+            if (ancho > 0 && altura > 0) {
+              total += (otra.peso * Math.min(ancho, 30) * Math.min(altura, 30)) / 25;
+            }
+          });
+          return total;
+        }
+
+        puntos.forEach((p) => {
+          const f = LETRA_PUNTO;
+          let mejor = null;
+          [
+            [11, 0],
+            [24, 2.5]
+          ].forEach(([g, lejos]) => {
+            [
+              [p.cx + g, p.cy - g, "start", 0],
+              [p.cx - g, p.cy - g, "end", 0.4],
+              [p.cx + g, p.cy + g + 0.78 * f, "start", 0.8],
+              [p.cx - g, p.cy + g + 0.78 * f, "end", 1.2],
+              [p.cx + g + 4, p.cy + 0.3 * f, "start", 1.6],
+              [p.cx - g - 4, p.cy + 0.3 * f, "end", 2],
+              [p.cx, p.cy - g - 5, "middle", 2.4],
+              [p.cx, p.cy + g + 0.95 * f, "middle", 2.8]
+            ].forEach(([x, y, anclaje, preferencia]) => {
+              const c = caja(x, y, p.rotulo, f, anclaje);
+              const total = coste(c, () => 4, p.caja) + preferencia + lejos;
+              if (!mejor || total < mejor.total) {
+                mejor = { x: x, y: y, anclaje: anclaje, total: total, caja: c };
+              }
+            });
+          });
+          p.lugar = mejor;
+          cajas.push(Object.assign({ peso: 30 }, mejor.caja));
+        });
+
+        curvas.forEach((curva) => {
+          const muestras = [];
+          curva.tramos.forEach((tramo) => densificar(tramo, 4).forEach((m) => muestras.push(m)));
+          const f = LETRA_CURVA;
+          let mejor = null;
+          for (let k = 0; k < muestras.length; k += 3) {
+            const [sx, sy] = muestras[k];
+            if (sx < izq + 8 || sx > izq + anchoUtil - 8 || sy < arr + 8 || sy > arr + altoUtil - 8) {
+              continue;
+            }
+            const preferencia = 0.012 * (muestras.length - 1 - k);
+            [
+              [sx + 9, sy - 9, "start"],
+              [sx - 9, sy - 9, "end"],
+              [sx + 9, sy + 9 + 0.78 * f, "start"],
+              [sx - 9, sy + 9 + 0.78 * f, "end"]
+            ].forEach(([x, y, anclaje]) => {
+              const c = caja(x, y, curva.rotulo, f, anclaje);
+              const total = coste(c, (otra) => (otra === curva.indice ? 3 : 10), null) + preferencia;
+              if (!mejor || total < mejor.total) {
+                mejor = { x: x, y: y, anclaje: anclaje, total: total, caja: c };
+              }
+            });
+          }
+          curva.lugar = mejor;
+          if (mejor) {
+            cajas.push(Object.assign({ peso: 30 }, mejor.caja));
+          }
+        });
+
+        return {
+          ancho: ancho,
+          alto: alto,
+          izq: izq,
+          arr: arr,
+          anchoUtil: anchoUtil,
+          altoUtil: altoUtil,
+          px: px,
+          py: py,
+          ejeX: ejeX,
+          ejeY: ejeY,
+          cero: ejeXDentro === ejeYDentro,
+          marcasX: marcasX,
+          marcasY: marcasY,
+          numerosX: numerosX,
+          numerosY: numerosY,
+          curvas: curvas,
+          puntos: puntos
+        };
+      }
+
+
+      function instanteDeGrafica(t, dura) {
+        const estilo = { "--t": t.toFixed(2) + "s" };
+        if (dura !== undefined) {
+          estilo["--d"] = dura.toFixed(2) + "s";
+        }
+        return estilo;
+      }
+
+      const COLORES_GRAFICA = {
+        rejilla: "#e4e9f2",
+        eje: "#3b4658",
+        numero: "#5b6578",
+        curvas: ["#1d4ed8", "#c2410c"],
+        punto: "#047857",
+        textoPunto: "#0f3b2e"
+      };
+
+      const TRAZO_DE_CURVA = [0.9, 2.2];
+      const instanteDelPunto = (k) => 3.4 + 0.4 * k;
+      const duracionDeGrafica = (puntos) => instanteDelPunto(puntos) + 0.6;
+
+      function DibujoDeGrafica({ g, descripcion }) {
+        const c = COLORES_GRAFICA;
+        const derecha = g.izq + g.anchoUtil;
+        const abajo = g.arr + g.altoUtil;
+        const halo = { stroke: "#ffffff", strokeWidth: 5, strokeLinejoin: "round", paintOrder: "stroke" };
+        return (
+          <svg
+            viewBox={"0 0 " + g.ancho + " " + g.alto}
+            role="img"
+            aria-label={descripcion}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <g className="e-velo" style={instanteDeGrafica(0.1)} stroke={c.rejilla} strokeWidth="1">
+              {g.marcasX.map((v) => (
+                <path key={"vx" + v} d={"M" + g.px(v).toFixed(1) + " " + g.arr + "V" + abajo.toFixed(1)} />
+              ))}
+              {g.marcasY.map((v) => (
+                <path key={"vy" + v} d={"M" + g.izq + " " + g.py(v).toFixed(1) + "H" + derecha.toFixed(1)} />
+              ))}
+            </g>
+            <path
+              className="e-trazo"
+              style={instanteDeGrafica(0.25, 0.5)}
+              pathLength="100"
+              d={"M" + g.izq + " " + g.ejeX.toFixed(1) + "H" + (derecha + 14)}
+              stroke={c.eje}
+              strokeWidth="1.6"
+            />
+            <path
+              className="e-trazo"
+              style={instanteDeGrafica(0.25, 0.5)}
+              pathLength="100"
+              d={"M" + g.ejeY.toFixed(1) + " " + abajo.toFixed(1) + "V" + (g.arr - 12)}
+              stroke={c.eje}
+              strokeWidth="1.6"
+            />
+            <path
+              className="e-velo"
+              style={instanteDeGrafica(0.7)}
+              d={
+                "M" + (derecha + 6) + " " + (g.ejeX - 5).toFixed(1) + "l9 5l-9 5" +
+                "M" + (g.ejeY - 5).toFixed(1) + " " + (g.arr - 4) + "l5 -9l5 9"
+              }
+              stroke={c.eje}
+              strokeWidth="1.6"
+            />
+            <g className="e-velo" style={instanteDeGrafica(0.6)} stroke={c.eje} strokeWidth="1.3">
+              {g.numerosX.map((n) => (
+                <path key={"mx" + n.valor} d={"M" + n.x.toFixed(1) + " " + (g.ejeX - 4).toFixed(1) + "v8"} />
+              ))}
+              {g.numerosY.map((n) => (
+                <path key={"my" + n.valor} d={"M" + (g.ejeY - 4).toFixed(1) + " " + (n.y - 5).toFixed(1) + "h8"} />
+              ))}
+            </g>
+            {g.curvas.map((curva) => (
+              <path
+                key={"c" + curva.indice}
+                className="e-trazo"
+                style={instanteDeGrafica(TRAZO_DE_CURVA[curva.indice], 1.1)}
+                pathLength="100"
+                d={curva.d}
+                stroke={c.curvas[curva.indice]}
+                strokeWidth="3"
+              />
+            ))}
+            {g.puntos.map((p, k) => (
+              <g key={"p" + k}>
+                <circle
+                  className="e-punto"
+                  style={instanteDeGrafica(instanteDelPunto(k))}
+                  cx={p.cx.toFixed(1)}
+                  cy={p.cy.toFixed(1)}
+                  r="12"
+                  fill={c.punto}
+                  fillOpacity="0.2"
+                />
+                <circle
+                  className="e-punto"
+                  style={instanteDeGrafica(instanteDelPunto(k))}
+                  cx={p.cx.toFixed(1)}
+                  cy={p.cy.toFixed(1)}
+                  r="6.2"
+                  fill={c.punto}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                />
+              </g>
+            ))}
+            <g className="rotulos" stroke="none">
+              {g.numerosX.map((n) => (
+                <text
+                  key={"nx" + n.valor}
+                  className="e-letra"
+                  style={instanteDeGrafica(0.6)}
+                  x={n.x.toFixed(1)}
+                  y={n.y.toFixed(1)}
+                  fontSize={LETRA_MARCA}
+                  textAnchor="middle"
+                  fill={c.numero}
+                  {...halo}
+                >
+                  {n.texto}
+                </text>
+              ))}
+              {g.numerosY.map((n) => (
+                <text
+                  key={"ny" + n.valor}
+                  className="e-letra"
+                  style={instanteDeGrafica(0.6)}
+                  x={n.x.toFixed(1)}
+                  y={n.y.toFixed(1)}
+                  fontSize={LETRA_MARCA}
+                  textAnchor="end"
+                  fill={c.numero}
+                  {...halo}
+                >
+                  {n.texto}
+                </text>
+              ))}
+              {g.cero && (
+                <text
+                  className="e-letra"
+                  style={instanteDeGrafica(0.6)}
+                  x={(g.ejeY - 7).toFixed(1)}
+                  y={(g.ejeX + 19).toFixed(1)}
+                  fontSize={LETRA_MARCA}
+                  textAnchor="end"
+                  fill={c.numero}
+                  {...halo}
+                >
+                  0
+                </text>
+              )}
+              <text className="e-letra" style={instanteDeGrafica(0.75)} x={derecha + 12} y={(g.ejeX - 10).toFixed(1)} fontSize="19" textAnchor="middle" fill={c.eje}>
+                <tspan className="letra-infografia">x</tspan>
+              </text>
+              <text className="e-letra" style={instanteDeGrafica(0.75)} x={(g.ejeY + 13).toFixed(1)} y={g.arr - 2} fontSize="19" textAnchor="start" fill={c.eje}>
+                <tspan className="letra-infografia">y</tspan>
+              </text>
+              {g.curvas.map(
+                (curva) =>
+                  curva.lugar && (
+                    <text
+                      key={"rc" + curva.indice}
+                      className="e-rotulo"
+                      style={instanteDeGrafica(TRAZO_DE_CURVA[curva.indice] + 1)}
+                      x={curva.lugar.x.toFixed(1)}
+                      y={curva.lugar.y.toFixed(1)}
+                      fontSize={LETRA_CURVA}
+                      textAnchor={curva.lugar.anclaje}
+                      fill={c.curvas[curva.indice]}
+                      fontWeight="700"
+                      {...halo}
+                    >
+                      {curva.rotulo.nodos}
+                    </text>
+                  )
+              )}
+              {g.puntos.map((p, k) => (
+                <text
+                  key={"rp" + k}
+                  className="e-rotulo"
+                  style={instanteDeGrafica(instanteDelPunto(k) + 0.2)}
+                  x={p.lugar.x.toFixed(1)}
+                  y={p.lugar.y.toFixed(1)}
+                  fontSize={LETRA_PUNTO}
+                  textAnchor={p.lugar.anclaje}
+                  fill={c.textoPunto}
+                  fontWeight="700"
+                  {...halo}
+                >
+                  {p.rotulo.nodos}
+                </text>
+              ))}
+            </g>
+          </svg>
+        );
+      }
+
+      function textoDelRespaldo(nodo) {
+        const anfitrion = nodo && nodo.closest(".interactivo-host");
+        const respaldo = anfitrion && anfitrion.querySelector(".interactivo-fallback");
+        if (!respaldo) {
+          return { html: "", plano: "" };
+        }
+        const copia = respaldo.cloneNode(true);
+        copia.querySelectorAll(".etiqueta-bloque").forEach((etiqueta) => {
+          const parrafo = etiqueta.closest("p");
+          (parrafo && parrafo.textContent.trim() === etiqueta.textContent.trim() ? parrafo : etiqueta).remove();
+        });
+        const plano = copia.cloneNode(true);
+        plano.querySelectorAll(".katex-mathml").forEach((mathml) => mathml.remove());
+        return { html: copia.innerHTML, plano: plano.textContent.replace(/\s+/g, " ").trim() };
+      }
+
+      const PASO_DE_GRAFICA = 1.4;
+
+      function SolucionGraficaInteractiva({ configuracion, alPreparar }) {
+        const raiz = React.useRef(null);
+        const lienzo = React.useRef(null);
+        const texto = React.useRef(null);
+        const arranque = React.useRef(0);
+        const instante = React.useRef(0);
+        const cuerpo = React.useId();
+        const [abierta, setAbierta] = React.useState(false);
+        const [marcha, setMarcha] = React.useState(false);
+        const [letras, setLetras] = React.useState(false);
+        const [anchoLienzo, setAnchoLienzo] = React.useState(ANCHO_GRAFICA);
+        const [respaldo, setRespaldo] = React.useState({ html: "", plano: "" });
+
+        React.useEffect(() => {
+          const caja = lienzo.current;
+          if (!caja || !window.ResizeObserver) {
+            return undefined;
+          }
+          const observador = new ResizeObserver(() => {
+            const ancho = caja.getBoundingClientRect().width;
+            if (ancho > 0) {
+              setAnchoLienzo(20 * Math.round(Math.min(ANCHO_GRAFICA, Math.max(360, 1.5 * ancho)) / 20));
+            }
+          });
+          observador.observe(caja);
+          return () => observador.disconnect();
+        }, []);
+
+        React.useEffect(() => {
+          if (!document.fonts || !document.fonts.load) {
+            return undefined;
+          }
+          let vivo = true;
+          Promise.all([
+            document.fonts.load('700 20px "KaTeX_Main"'),
+            document.fonts.load('italic 700 20px "KaTeX_Math"'),
+            document.fonts.load('20px "KaTeX_Main"'),
+            document.fonts.load('italic 20px "KaTeX_Math"')
+          ])
+            .then(() => {
+              if (vivo) {
+                setLetras(true);
+              }
+            })
+            .catch(() => {});
+          return () => {
+            vivo = false;
+          };
+        }, []);
+
+        const g = React.useMemo(() => {
+          try {
+            return componerGrafica(configuracion, letras ? medirTrozos : null, anchoLienzo);
+          } catch (error) {
+            console.error("Solución gráfica:", error);
+            return null;
+          }
+        }, [configuracion, letras, anchoLienzo]);
+        const duracion = duracionDeGrafica(g ? g.puntos.length : 0);
+
+        React.useEffect(() => {
+          if (g) {
+            alPreparar();
+          }
+          setRespaldo(textoDelRespaldo(raiz.current));
+          return () => window.clearTimeout(arranque.current);
+        }, [alPreparar, g]);
+
+        React.useLayoutEffect(() => {
+          if (texto.current && window.renderMathInElement && texto.current.textContent.indexOf("\\(") >= 0) {
+            window.renderMathInElement(texto.current, {
+              delimiters: [{ left: "\\(", right: "\\)", display: false }],
+              throwOnError: false
+            });
+          }
+        }, [respaldo.html]);
+
+        const poner = React.useCallback(
+          (t) => {
+            const ahora = Math.min(Math.max(t, 0), duracion);
+            instante.current = ahora;
+            if (lienzo.current) {
+              lienzo.current.style.setProperty("--ahora", ahora.toFixed(3) + "s");
+            }
+          },
+          [duracion]
+        );
+
+        React.useEffect(() => {
+          if (!marcha) {
+            return undefined;
+          }
+          let cuadro = 0;
+          let reloj = 0;
+          let antes = Date.now();
+          const soltar = () => {
+            window.cancelAnimationFrame(cuadro);
+            window.clearTimeout(reloj);
+          };
+          const avanza = () => {
+            soltar();
+            const ahora = Date.now();
+            const siguiente = instante.current + ((ahora - antes) / 1000) * PASO_DE_GRAFICA;
+            antes = ahora;
+            poner(siguiente);
+            if (siguiente >= duracion) {
+              setMarcha(false);
+              return;
+            }
+            cuadro = window.requestAnimationFrame(avanza);
+            reloj = window.setTimeout(avanza, 200);
+          };
+          avanza();
+          return soltar;
+        }, [marcha, duracion, poner]);
+
+        const quieta = () => Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+        const alternar = () => {
+          window.clearTimeout(arranque.current);
+          if (abierta) {
+            setMarcha(false);
+            setAbierta(false);
+            return;
+          }
+          setAbierta(true);
+          if (quieta()) {
+            poner(duracion);
+            return;
+          }
+          poner(0);
+          arranque.current = window.setTimeout(() => setMarcha(true), 500);
+        };
+
+        const repetir = () => {
+          window.clearTimeout(arranque.current);
+          if (quieta()) {
+            poner(duracion);
+            return;
+          }
+          poner(0);
+          setMarcha(true);
+        };
+
+        return (
+          <div ref={raiz} className={"solucion-grafica" + (abierta ? " abierta" : "")}>
+            <button type="button" className="sg-cinta" aria-expanded={abierta} aria-controls={cuerpo} onClick={alternar}>
+              <span className="sg-icono">
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.9"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 20.5h18M4.5 22V3" opacity="0.55" />
+                  <path d="M5.5 5.5c2.2 9 5 12.6 7.5 12.6s4.9-3.4 7.3-12.4" />
+                  <path d="M4.5 16.5L20.5 6.5" />
+                  <circle cx="8.2" cy="14.2" r="1.7" fill="currentColor" stroke="none" />
+                  <circle cx="17.9" cy="8.1" r="1.7" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <span className="sg-rotulo">Solución gráfica</span>
+              <span className="sg-titulo">{configuracion.titulo}</span>
+              <span className="sg-accion">{abierta ? "Cerrar" : "Ver"}</span>
+            </button>
+            <div className="sg-cuerpo" id={cuerpo}>
+              <div>
+                <div
+                  ref={lienzo}
+                  className="lienzo-infografia sg-lienzo"
+                  onClick={(evento) => {
+                    evento.stopPropagation();
+                  }}
+                >
+                  {g && <DibujoDeGrafica g={g} descripcion={respaldo.plano} />}
+                </div>
+                <div className="sg-pie">
+                  <p ref={texto} className="sg-texto" dangerouslySetInnerHTML={{ __html: respaldo.html }} />
+                  <button type="button" className="sg-repetir" onClick={repetir}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5.2 12.4a6.9 6.9 0 1 0 2.1-5.3M7.6 2.9v4.4H12" />
+                    </svg>
+                    Repetir
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       const COMPONENTES = {
         "triangulo-ambiguo": TrianguloAmbiguoInteractivo,
         "soluciones-ecuacion": SolucionesEcuacionInteractivo,
@@ -38856,6 +40132,7 @@ void main() {
         "ley-benford": LeyBenfordInteractivo,
         "paisaje-potencias": PaisajePotenciasInteractivo,
         "tres-planos": TresPlanosInteractivo,
+        "solucion-grafica": SolucionGraficaInteractiva,
         cazarraices: CazarraicesInteractivo,
         "identidad-o-no": IdentidadONoInteractivo,
         "tabla-signos": TablaSignosInteractivo,
