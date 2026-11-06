@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="author" content="Mario Rodríguez Boya">
+  <meta name="copyright" content="© 2026 Mario Rodríguez Boya. Todos los derechos reservados.">
+  <title>Apuntes de clase · Matemáticas IB</title>
+  <style>
+    :root {
+      --texto: #172033;
+      --suave: #4b5563;
+      --fondo: #f2f5fa;
+      --tono: #86198f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1rem;
+      color: var(--texto);
+      background: var(--fondo);
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .puerta {
+      width: min(100%, 26rem);
+      overflow: hidden;
+      border-radius: 1.1rem;
+      background: #ffffff;
+      box-shadow: 0 18px 50px rgb(23 32 51 / 0.14);
+    }
+
+    .cabecera {
+      padding: 1.6rem 1.6rem 1.4rem;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #4a0d50 0%, #86198f 66%, #c25ac9 100%);
+    }
+
+    .antetitulo {
+      margin: 0 0 0.3rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.2;
+    }
+
+    form {
+      display: grid;
+      gap: 0.85rem;
+      padding: 1.5rem 1.6rem 1.6rem;
+    }
+
+    label {
+      font-weight: 700;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 2px solid #d5dbe6;
+      border-radius: 0.65rem;
+      font: inherit;
+      font-size: 1.05rem;
+    }
+
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--tono);
+    }
+
+    .recordar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      color: var(--suave);
+      font-weight: 400;
+      font-size: 0.92rem;
+    }
+
+    button {
+      padding: 0.75rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      color: #ffffff;
+      background: var(--tono);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: progress;
+    }
+
+    .aviso {
+      min-height: 1.4em;
+      margin: 0;
+      color: #b4233a;
+      font-weight: 700;
+    }
+
+    .volver {
+      margin: 0;
+      font-size: 0.92rem;
+    }
+
+    .volver a {
+      color: var(--tono);
+    }
+
+    footer {
+      margin-top: 1.4rem;
+      color: var(--suave);
+      font-size: 0.78rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <main class="puerta">
+      <div class="cabecera">
+        <p class="antetitulo">Apuntes de clase</p>
+        <h1>Matemáticas IB</h1>
+      </div>
+      <form id="formulario" autocomplete="off">
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" autocomplete="current-password" required autofocus>
+        <label class="recordar"><input id="recordar" type="checkbox"> Recordar en este dispositivo</label>
+        <button id="entrar" type="submit">Entrar</button>
+        <p id="aviso" class="aviso" role="alert"></p>
+        <p class="volver"><a href="index.html">Volver a la portada</a></p>
+      </form>
+    </main>
+    <footer>© 2026 Mario Rodríguez Boya. Todos los derechos reservados.</footer>
+  </div>
+  <script>
+    (function () {
+      var SAL = "aa-ns · apuntes de clase · v1";
+      var VUELTAS = 600000;
+      var IV = "TSzXD3jL2k2ArEvZ";
+      var DATOS = "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";
+      var LLAVE = "apuntes-de-clase-llave";
+
+      function deBase64(texto) {
+        var binario = atob(texto);
+        var bytes = new Uint8Array(binario.length);
+        for (var i = 0; i < binario.length; i += 1) {
+          bytes[i] = binario.charCodeAt(i);
+        }
+        return bytes;
+      }
+
+      function guardada() {
+        try {
+          return sessionStorage.getItem(LLAVE) || localStorage.getItem(LLAVE);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function guardar(bruta, recordar) {
+        try {
+          sessionStorage.setItem(LLAVE, bruta);
+          if (recordar) {
+            localStorage.setItem(LLAVE, bruta);
+          }
+        } catch (e) {}
+      }
+
+      function olvidar() {
+        try {
+          sessionStorage.removeItem(LLAVE);
+          localStorage.removeItem(LLAVE);
+        } catch (e) {}
+      }
+
+      function derivar(clave) {
+        return crypto.subtle
+          .importKey("raw", new TextEncoder().encode(clave), "PBKDF2", false, ["deriveBits"])
+          .then(function (material) {
+            return crypto.subtle.deriveBits(
+              { name: "PBKDF2", salt: new TextEncoder().encode(SAL), iterations: VUELTAS, hash: "SHA-256" },
+              material,
+              256
+            );
+          });
+      }
+
+      function abrir(bruta) {
+        return crypto.subtle
+          .importKey("raw", bruta, { name: "AES-GCM" }, false, ["decrypt"])
+          .then(function (llave) {
+            return crypto.subtle.decrypt({ name: "AES-GCM", iv: deBase64(IV) }, llave, deBase64(DATOS));
+          })
+          .then(function (comprimido) {
+            var flujo = new Blob([comprimido]).stream().pipeThrough(new DecompressionStream("gzip"));
+            return new Response(flujo).text();
+          })
+          .then(function (html) {
+            document.open();
+            document.write(html);
+            document.close();
+          });
+      }
+
+      function aBase64(buffer) {
+        var bytes = new Uint8Array(buffer);
+        var texto = "";
+        for (var i = 0; i < bytes.length; i += 1) {
+          texto += String.fromCharCode(bytes[i]);
+        }
+        return btoa(texto);
+      }
+
+      var formulario = document.getElementById("formulario");
+      var boton = document.getElementById("entrar");
+      var aviso = document.getElementById("aviso");
+
+      if (!window.crypto || !crypto.subtle || typeof DecompressionStream === "undefined") {
+        aviso.textContent = "Este navegador es demasiado antiguo para abrir los apuntes.";
+        boton.disabled = true;
+        return;
+      }
+
+      var previa = guardada();
+      if (previa) {
+        abrir(deBase64(previa)).catch(olvidar);
+      }
+
+      formulario.addEventListener("submit", function (evento) {
+        evento.preventDefault();
+        boton.disabled = true;
+        aviso.textContent = "";
+        var recordar = document.getElementById("recordar").checked;
+        derivar(document.getElementById("clave").value)
+          .then(function (bruta) {
+            return abrir(bruta).then(function () {
+              guardar(aBase64(bruta), recordar);
+            });
+          })
+          .catch(function () {
+            boton.disabled = false;
+            aviso.textContent = "La contraseña no es correcta.";
+            document.getElementById("clave").select();
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
