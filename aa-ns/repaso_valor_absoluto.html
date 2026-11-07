@@ -5936,6 +5936,49 @@ Enfoques NS</p>
                 class="math inline">\([-5,3]\)</span>.</span></li>
                 </ol>
                 </div>
+                <p><strong>Otro camino: el método de los
+                signos.</strong> Se quitan las barras como en <a
+                href="#con-letras-dentro">1.2</a>. Lo de dentro, <span
+                class="formula-con-signo"><span
+                class="math inline">\(x+1\)</span>,</span> cambia de
+                signo en el centro, <span
+                class="formula-con-signo"><span
+                class="math inline">\(x=-1\)</span>:</span></p>
+                <ul>
+                <li>Si <span class="formula-con-signo"><span
+                class="math inline">\(x\geq-1\)</span>,</span> queda
+                <span class="formula-con-signo"><span
+                class="math inline">\(x+1\leq4\)</span>,</span> que da
+                <span class="formula-con-signo"><span
+                class="math inline">\(x\leq3\)</span>.</span> Con la
+                condición del caso, <span
+                class="formula-con-signo"><span
+                class="math inline">\([-1,3]\)</span>.</span></li>
+                <li>Si <span class="formula-con-signo"><span
+                class="math inline">\(x&lt;-1\)</span>,</span> queda
+                <span class="formula-con-signo"><span
+                class="math inline">\(-(x+1)\leq4\)</span>,</span> que
+                da <span class="formula-con-signo"><span
+                class="math inline">\(x\geq-5\)</span>,</span> porque al
+                multiplicar por <span class="math inline">\(-1\)</span>
+                cambia el sentido. Con la condición del caso, <span
+                class="formula-con-signo"><span
+                class="math inline">\([-5,-1)\)</span>.</span></li>
+                </ul>
+                <p>La unión de los dos casos es <span
+                class="formula-con-signo"><span
+                class="math inline">\([-5,3]\)</span>,</span> lo mismo
+                que con el centro: cada caso da la mitad que queda a su
+                lado.</p>
+                <p>Las condiciones hacen falta: sin ellas, <span
+                class="math inline">\(x\leq3\)</span> y <span
+                class="math inline">\(x\geq-5\)</span> juntos darían
+                todos los números.</p>
+                <p>Con un número al otro lado, como aquí, el centro es
+                más rápido. Con varias barras se resuelve por casos,
+                como en <a
+                href="#varios-valores-absolutos-por-casos">5.4</a> y en
+                <a href="#el-método-de-los-signos">6.5</a>.</p>
                 <section id="ejercicios-1"
                 class="level4 ejercicios unnumbered">
                 <h4 class="ejercicios unnumbered">Ejercicios</h4>
@@ -11916,6 +11959,62 @@ Enfoques NS</p>
             { x: 591, y: alto(88, 17), tex: "y=2", cuerpo: 17, opacidad: 0.95 },
             { x: 320, y: alto(206.8, 17), tex: "|x-3|<2\\iff 1<x<5", cuerpo: 17, opacidad: 0.97 }
           );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "tres-pruebas": function () {
+          var ANCHO = 140, ARRIBA = 12, ABAJO = 178, PICO = 18, CANTO = 10;
+          var pruebas = [
+            { x: 94, nombre: "Prueba 1", calculadora: false, tiempo: "1 h", ancho: 20, vuelta: 1, puntos: "55 puntos" },
+            { x: 250, nombre: "Prueba 2", calculadora: true, tiempo: "1 h", ancho: 20, vuelta: 1, puntos: "55 puntos" },
+            { x: 406, nombre: "Prueba 3", calculadora: true, tiempo: "30 min", ancho: 48.5, vuelta: 0.5, puntos: "27 puntos" }
+          ];
+          var arco = function (radio, x, y) { return "A" + radio + " " + radio + " 0 0 1 " + r(x) + " " + r(y); };
+          var caja = function (x0, y0, x1, y1, radio) {
+            return "M" + r(x0 + radio) + " " + y0 + "H" + r(x1 - radio) + arco(radio, x1, y0 + radio) +
+              "V" + r(y1 - radio) + arco(radio, x1 - radio, y1) + "H" + r(x0 + radio) + arco(radio, x0, y1 - radio) +
+              "V" + r(y0 + radio) + arco(radio, x0 + radio, y0);
+          };
+          var alto = function (base, cuerpo) { return r(base - 0.34 * cuerpo); };
+          var dibujo = FUNDIDO + "</defs>" + '<g mask="url(#adorno-mascara)" stroke="#fff">';
+          var rotulos = [];
+          pruebas.forEach(function (p) {
+            var x0 = p.x, x1 = p.x + ANCHO, c = p.x + ANCHO / 2;
+            dibujo += '<path d="M' + (x0 + CANTO) + " " + ARRIBA + "H" + (x1 - PICO) + "L" + x1 + " " + (ARRIBA + PICO) +
+              "V" + (ABAJO - CANTO) + arco(CANTO, x1 - CANTO, ABAJO) + "H" + (x0 + CANTO) + arco(CANTO, x0, ABAJO - CANTO) +
+              "V" + (ARRIBA + CANTO) + arco(CANTO, x0 + CANTO, ARRIBA) +
+              'Z" fill="#fff" fill-opacity="0.08" stroke-opacity="0.9" stroke-width="2"/>' +
+              '<path d="M' + (x1 - PICO) + " " + ARRIBA + "V" + (ARRIBA + PICO) + "H" + x1 +
+              'Z" fill="#fff" fill-opacity="0.2" stroke-opacity="0.9" stroke-width="1.6"/>' +
+              '<path d="M' + (x0 + 18) + " 52H" + (x1 - 18) + '" stroke-opacity="0.55" stroke-width="1.4"/>';
+            var teclas = "";
+            [94, 100, 106].forEach(function (y) {
+              [-10, -2, 6].forEach(function (dx) { teclas += "M" + (c + dx) + " " + y + "h4"; });
+            });
+            dibujo += '<path d="' + caja(c - 15, 69, c + 15, 111, 4) + '" fill="#fff" fill-opacity="0.14" stroke="none"/>' +
+              '<path d="' + caja(c - 15, 69, c + 15, 111, 4) + '" stroke-width="1.8"/>' +
+              '<path d="' + caja(c - 10, 74, c + 10, 87, 2) + '" stroke-opacity="0.9" stroke-width="1.3"/>' +
+              '<path d="M' + (c - 7) + " 80.5Q" + (c - 3.5) + " 73.5 " + c + " 80.5T" + (c + 7) + ' 80.5" stroke-width="1.4"/>' +
+              '<path d="' + teclas + '" stroke-opacity="0.75" stroke-width="2.6"/>';
+            if (!p.calculadora) {
+              dibujo += '<path d="M' + (c - 17.5) + " 65.5L" + (c + 17.5) + ' 114.5" stroke-width="3"/>';
+            }
+            var cx = r(c - p.ancho / 2 - 3), cy = 135;
+            var lleno = "M" + cx + " " + (cy - 3) + arco(3, cx, cy + 3) +
+              (p.vuelta === 1 ? arco(3, cx, cy - 3) : "");
+            dibujo += '<circle cx="' + cx + '" cy="' + cy + '" r="8.5" stroke-width="1.5"/>' +
+              '<path d="M' + cx + " " + (cy - 8.5) + "V" + (cy - 11.5) + "M" + r(cx - 2.6) + " " + (cy - 12) + "H" + r(cx + 2.6) +
+              '" stroke-width="1.6"/>' +
+              '<path d="' + lleno + '" stroke-opacity="0.55" stroke-width="6" stroke-linecap="butt"/>' +
+              '<path d="M' + cx + " " + cy + "V" + (p.vuelta === 1 ? cy - 6 : cy + 6) + '" stroke-width="1.5"/>';
+            rotulos.push(
+              { x: c, y: alto(41, 17), texto: p.nombre, cuerpo: 17, opacidad: 0.97 },
+              { x: r(c + 11.5), y: alto(140, 15), texto: p.tiempo, cuerpo: 15, opacidad: 0.92 },
+              { x: c, y: alto(164, 15), texto: p.puntos, cuerpo: 15, opacidad: 0.95 }
+            );
+          });
+          dibujo += "</g>";
+          rotulos.push({ x: 320, y: alto(206.8, 17), texto: "3 pruebas · 14 preguntas", cuerpo: 17, opacidad: 0.97 });
           return { dibujo: dibujo, rotulos: rotulos };
         }
       };
@@ -20383,6 +20482,7 @@ Enfoques NS</p>
         for (let lugar = 0; lugar < e.r; lugar += 1) {
           factores.push(e.n - lugar);
         }
+        const delFactorial = e.n <= 5 ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar) : [e.n, e.n - 1, "…", 1];
 
         return (
           <>
@@ -20444,7 +20544,7 @@ Enfoques NS</p>
               <Rotulo t={2.4} x="320" y="300" fontSize="19">
                 {e.que === "todos" && (
                   <>
-                    {e.n + POR + (e.n - 1) + POR + "…" + POR + "1"}
+                    {delFactorial.join(POR)}
                     {palabra(": cada casilla, una opción menos que la anterior")}
                   </>
                 )}
@@ -21074,7 +21174,11 @@ Enfoques NS</p>
             }
             const producto = factores.join("\\cdot");
             if (e.que === "todos") {
-              return [e.n + "!=" + e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1=" + enTex(factorial(e.n))];
+              const desarrollo =
+                e.n <= 5
+                  ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar).join("\\cdot")
+                  : e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1";
+              return [e.n + "!=" + desarrollo + "=" + enTex(factorial(e.n))];
             }
             if (e.que === "ordenados") {
               return [
@@ -21512,7 +21616,9 @@ Enfoques NS</p>
               "\\begin{aligned}" + (e.caso === 2 ? "&" + desarrollo.cabeza + "\\\\={}&" : desarrollo.cabeza + "={}&") + primera + segunda +
                 "\\end{aligned}",
               "\\text{válido si }" + desarrollo.validez,
-              Math.abs(e.t) < 1 ? (
+              Math.abs(Math.abs(e.t) - 1) < 1e-9 ? (
+                <>En el borde de la franja la condición ya no se cumple, porque es una desigualdad estricta: ahí el desarrollo no se usa.</>
+              ) : Math.abs(e.t) < 1 ? (
                 <>Dentro de la franja, cada término que se añade acerca el desarrollo a la función.</>
               ) : (
                 <>Fuera de la franja, añadir términos no mejora la aproximación: la empeora.</>
@@ -24781,6 +24887,117 @@ Enfoques NS</p>
         );
       }
 
+      const PASOS_DEL_RADICAL = ["La ecuación", "Al elevar al cuadrado", "Al comprobar"];
+
+      function ramaDelRadical(signo) {
+        const puntos = [];
+        for (let paso = 0; paso <= 60; paso += 1) {
+          const y = (signo * Math.sqrt(14) * paso) / 60;
+          puntos.push([(y * y - 7) / 2, y]);
+        }
+        return puntos;
+      }
+
+      function RotuloDelRadical({ t, x, y, menos }) {
+        return (
+          <Rotulo como="g" t={t}>
+            <text x={x} y={y} fontSize="17" textAnchor="start">
+              {cursiva("y")} = {menos ? MENOS : ""}
+            </text>
+            <Raiz x={x + (menos ? 52 : 39)} y={y} s={17} ancho={49}>
+              2{cursiva("x")} + 7
+            </Raiz>
+          </Rotulo>
+        );
+      }
+
+      function RadicalesDibujo({ e }) {
+        const v = { x0: -4.5, x1: 3.5, y0: -4, y1: 5.5, px: (x) => 24 + 45 * (x + 4.5), py: (y) => 302 - (250 * (y + 4)) / 9.5 };
+        const elevada = e.paso >= 1;
+        const comprobada = e.paso === 2;
+        const cortes = [{ x: 1, y: 3, rotulo: "(1; 3)", rx: 268, ry: 96, bien: true }];
+        if (elevada) {
+          cortes.push({ x: -3, y: -1, rotulo: "(" + MENOS + "3; " + MENOS + "1)", rx: 92, ry: 256, bien: false });
+        }
+        const lado = [
+          [
+            [palabra("la curva y la recta")],
+            [palabra("se cortan una vez:")],
+            [<>{cursiva("x")} = 1</>, true]
+          ],
+          [
+            [palabra("al elevar al cuadrado")],
+            [palabra("entra la otra rama:")],
+            [palabra("dos candidatos,")],
+            [
+              <>
+                {cursiva("x")} = 1{palabra(" y ")}
+                {cursiva("x")} = {MENOS}3
+              </>,
+              true
+            ]
+          ],
+          [
+            [<>{cursiva("x")} = 1</>, true],
+            [palabra("es solución")],
+            [""],
+            [<>{cursiva("x")} = {MENOS}3</>, true],
+            [palabra("candidato falso:")],
+            [palabra("corta la otra rama")]
+          ]
+        ][e.paso];
+
+        return (
+          <>
+            <Ejes t={0.1} x0={18} x1={392} y0={46} y1={306} ox={v.px(0)} oy={v.py(0)} />
+            <Halo t={0.5} dura={0.7} d={quebrada(ramaDelRadical(1), v)} grosor={2.4} />
+            <Trazo t={0.9} dura={0.6} d={quebrada(rectaEntre(1, 2, v.x0, v.x1), v)} strokeWidth="1.8" />
+            {elevada && <Velo t={1.2} d={quebrada(ramaDelRadical(-1), v)} strokeWidth="1.8" strokeOpacity="0.75" strokeDasharray="3 6" />}
+            {cortes.map((corte) => {
+              const cx = v.px(corte.x);
+              const cy = v.py(corte.y);
+              return (
+                <g key={corte.x}>
+                  <Punto t={1.5} cx={cx} cy={cy} r={comprobada && !corte.bien ? 5 : 6.5} />
+                  {comprobada && corte.bien && <Punto t={1.5} cx={cx} cy={cy} r="13" fillOpacity="0.26" />}
+                  {comprobada && !corte.bien && <Velo t={1.7} d={aspa(cx, cy, 9)} strokeWidth="2.6" />}
+                </g>
+              );
+            })}
+            <Trazo t={0.3} dura={0.3} d="M404 64H434" strokeWidth={3.4} />
+            <Trazo t={0.3} dura={0.3} d="M404 88H434" strokeWidth="1.8" />
+            {elevada && <Velo t={0.3} d="M404 112H434" strokeWidth="1.8" strokeDasharray="3 6" />}
+            <Letras>
+              <Rotulo como="g" t={0.1}>
+                <Raiz x={251} y={30} s={23} ancho={66}>
+                  2{cursiva("x")} + 7
+                </Raiz>
+                <text x={324} y={30} fontSize="23" textAnchor="start">
+                  = {cursiva("x")} + 2
+                </text>
+              </Rotulo>
+              <RotuloDelRadical t={0.3} x={442} y={70} />
+              <Rotulo t={0.3} x="442" y="94" fontSize="17" textAnchor="start">
+                {conY(rectaRotulo(1, 2))}
+              </Rotulo>
+              {elevada && <RotuloDelRadical t={0.3} x={442} y={118} menos />}
+              {cortes.map((corte) => (
+                <Rotulo key={corte.x} t={1.7} x={corte.rx} y={corte.ry} fontSize="16" fontWeight="700">
+                  {corte.rotulo}
+                </Rotulo>
+              ))}
+              {lado.map((linea, orden) =>
+                linea[0] === "" ? null : (
+                  <Rotulo key={orden} t={2 + 0.1 * orden} x="515" y={160 + 22 * orden} fontSize="16" fontWeight={linea[1] ? 700 : 400}>
+                    {linea[0]}
+                  </Rotulo>
+                )
+              )}
+            </Letras>
+          </>
+        );
+      }
+
       const sobreM = (m) => 386 + 18 * (m + 6);
       const VALORES_DE_M = [-6, -3, 0, 2, 6];
 
@@ -25945,6 +26162,103 @@ Enfoques NS</p>
           ]
         },
         {
+          clave: "radicales",
+          nombre: "Radicales",
+          inicial: { paso: 0 },
+          duracion: 2.6,
+          Dibujo: RadicalesDibujo,
+          descripcion: (e) =>
+            [
+              "La curva y igual a la raíz de 2 x más 7 y la recta y igual a x más 2. Se cortan en un solo punto, el (1; 3): x igual a 1 es la solución.",
+              "La misma curva y la misma recta y, a trazos, la otra rama, y igual a menos la raíz de 2 x más 7, que entra al elevar al cuadrado. La recta corta las dos ramas, en (1; 3) y en (menos 3; menos 1): son los dos candidatos.",
+              "Al comprobar, x igual a 1 es solución: es el corte con la curva y igual a la raíz de 2 x más 7. x igual a menos 3 es un candidato falso: es el corte con la otra rama, la de la raíz con el signo cambiado."
+            ][e.paso],
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "paso",
+              nombre: "el paso del método",
+              rotulo: "Paso",
+              opciones: PASOS_DEL_RADICAL.map((rotulo, orden) => ({ valor: orden, rotulo: rotulo }))
+            }
+          ],
+          vivo: (e) =>
+            [
+              [
+                "\\sqrt{2x+7}=x+2",
+                <>
+                  El radical ya está aislado. La curva <Mates tex="y=\sqrt{2x+7}" /> y la recta <Mates tex="y=x+2" /> se cortan
+                  una sola vez, en <Sujeta tex="x=1">.</Sujeta>
+                </>
+              ],
+              [
+                "\\begin{aligned}&2x+7=(x+2)^2\\\\\\iff{}&x^2+2x-3=0\\\\\\iff{}&(x-1)(x+3)=0\\end{aligned}",
+                <>
+                  Al elevar al cuadrado se pierde el signo: la ecuación vale también para la otra rama,{" "}
+                  <Sujeta tex="y=-\sqrt{2x+7}">.</Sujeta> Salen dos candidatos, <Mates tex="x=1" /> y{" "}
+                  <Sujeta tex="x=-3">.</Sujeta>
+                </>
+              ],
+              [
+                "\\begin{aligned}x=1:&\\quad\\sqrt9=3=1+2\\\\x=-3:&\\quad\\sqrt1=1\\neq-3+2\\end{aligned}",
+                <>
+                  En la ecuación de partida, <Mates tex="x=1" /> es solución, y <Sujeta tex="x=-3">,</Sujeta> un candidato
+                  falso: resuelve <Sujeta tex="-\sqrt{2x+7}=x+2">.</Sujeta>
+                </>
+              ]
+            ][e.paso],
+          pista: (
+            <>
+              Los pasos del método con el ejemplo de la unidad. Un candidato falso es el corte de la recta con la otra rama, la
+              de la raíz con el signo cambiado: por eso se comprueba cada candidato en la ecuación de partida.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "El método",
+              texto: (
+                <>
+                  Aísla un radical, eleva los dos miembros al cuadrado y repite mientras quede alguno. Las soluciones de lo que
+                  queda son los candidatos.
+                </>
+              )
+            },
+            {
+              nombre: "Comprobar cada candidato",
+              tex: "A^2=B^2\\iff A=B\\ \\text{ o }\\ A=-B",
+              texto: (
+                <>
+                  Al elevar se pierde el signo, y las soluciones de <Mates tex="A=-B" /> son candidatos falsos: en{" "}
+                  <Sujeta tex="\sqrt{2x+7}=x+2">,</Sujeta> el <Sujeta tex="x=-3">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Con una raíz cúbica",
+              tex: "A^3=B^3\\iff A=B",
+              texto: <>Al elevar al cubo no sale ningún candidato falso, y no hace falta comprobar.</>
+            },
+            {
+              nombre: "Con la calculadora",
+              texto: (
+                <>
+                  Los dos miembros, en el menú Graph, y sus cortes con G-Solv e INTSECT: un candidato falso no es un corte.
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              En <Mates tex="\sqrt{2x+7}=x+2" /> no valen los dos candidatos: con <Mates tex="x=-3" /> el segundo miembro vale{" "}
+              <Sujeta tex="-1">,</Sujeta> y un radical nunca es negativo.
+            </>,
+            <>
+              <Mates tex="(x+2)^2" /> es <Sujeta tex="x^2+4x+4">,</Sujeta> no <Sujeta tex="x^2+4">:</Sujeta> al elevar, el doble
+              producto no desaparece.
+            </>
+          ]
+        },
+        {
           clave: "sistemas",
           nombre: "Sistemas",
           inicial: { m: 1 },
@@ -26011,6 +26325,27 @@ Enfoques NS</p>
             </>
           ),
           fichas: [
+            {
+              nombre: "Gauss con la matriz",
+              tex: "\\left(\\begin{array}{rrr|r}1&3&-1&8\\\\0&-1&3&-7\\\\0&0&-1&2\\end{array}\\right)",
+              texto: (
+                <>
+                  Una fila por ecuación y, tras la raya, los términos independientes. Ceros debajo de la diagonal con operaciones de
+                  filas, como <Sujeta tex="F_2\leftarrow F_2-2F_1">,</Sujeta> y de abajo arriba: la del ejemplo da <Sujeta tex="z=-2">,</Sujeta>{" "}
+                  <Mates tex="y=1" /> y <Sujeta tex="x=3">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Una fila de ceros",
+              tex: "(0\\ \\ 0\\ \\ 0\\mid k)",
+              texto: (
+                <>
+                  Con <Sujeta tex="k\neq0">,</Sujeta> es <Sujeta tex="0=k">:</Sujeta> ninguna solución. Con <Sujeta tex="k=0">,</Sujeta> sobra, y queda
+                  un parámetro más; con dos filas así, dos parámetros, y las tres ecuaciones son el mismo plano.
+                </>
+              )
+            },
             {
               nombre: "Dos ecuaciones",
               tex: "a_1b_2-a_2b_1\\neq0",
