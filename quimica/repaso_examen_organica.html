@@ -3148,6 +3148,7 @@
       section.dia-de-clase[data-tono="granate"] { --apartado: #b4233a; --apartado-suave: #fdeef1; }
       section.dia-de-clase[data-tono="ambar"] { --apartado: #9a4e05; --apartado-suave: #fff5e5; }
       section.dia-de-clase[data-tono="rosa"] { --apartado: #d02670; --apartado-suave: #fdf0f7; }
+      section.dia-de-clase[data-tono="oliva"] { --apartado: #4d7c0f; --apartado-suave: #f1f7e7; }
 
       #contenido-unidad section.dia-de-clase > h3 {
         color: var(--apartado);
@@ -3495,6 +3496,13 @@
       --lienzo:
         radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
         linear-gradient(120deg, #9d174d 0%, #d02670 66%, #ec4899 100%);
+    }
+
+    .infografia-ib.tono-oliva {
+      --tono: #4d7c0f;
+      --lienzo:
+        radial-gradient(circle at 88% 12%, rgb(255 255 255 / 0.2), transparent 32%),
+        linear-gradient(120deg, #2b4508 0%, #4d7c0f 66%, #7fae3a 100%);
     }
 
     .infografia-ib .cabecera-infografia-ib {
@@ -3930,6 +3938,11 @@
     .resumen-ib.tono-rosa {
       --tono-suave: #fdf0f7;
       --tono-raya: #f5bfdc;
+    }
+
+    .resumen-ib.tono-oliva {
+      --tono-suave: #f3f8ea;
+      --tono-raya: #d3e4b8;
     }
 
     .resumen-ib button {
@@ -5020,9 +5033,9 @@ examen del jueves 12 de noviembre</p>
                 cantidades de sustancia (moles, átomos, masas y
                 volúmenes de gases). Las dos cosas están explicadas y
                 resueltas en los apuntes de clase de <a
-                href="unidad_00_la_clase.html#moles-átomos-masas-y-volúmenes-de-gases">«La
-                química del carbono»</a>: no dijo que entre, pero puede
-                ser parte de «lo que demos ahora». El test de
+                href="unidad_06_la_clase_cantidad_de_sustancia.html">«La
+                cantidad de sustancia»</a>: no dijo que entre, pero
+                puede ser parte de «lo que demos ahora». El test de
                 formulación del 17 de octubre, «Ejercicios-examen de
                 formulación», era la práctica del examen: nombrar
                 compuestos y escribir su fórmula, de los hidrocarburos a
@@ -30043,6 +30056,740 @@ examen del jueves 12 de noviembre</p>
       }
 
 
+
+      const TINTA_OLIVA_DEL_RESUMEN = "#2b4508";
+
+      const PROPANO_DEL_RESUMEN = [
+        ["C", "", -22, 0, 11],
+        ["C", "", 0, 0, 11],
+        ["C", "", 22, 0, 11],
+        ["H", "", -40, 0, 6.5],
+        ["H", "", -22, -18, 6.5],
+        ["H", "", -22, 18, 6.5],
+        ["H", "", 0, -18, 6.5],
+        ["H", "", 0, 18, 6.5],
+        ["H", "", 22, -18, 6.5],
+        ["H", "", 22, 18, 6.5],
+        ["H", "", 40, 0, 6.5]
+      ];
+
+      const redDelResumen = (particula) => {
+        const sitios = [];
+        for (let fila = 0; fila < 4; fila += 1) {
+          for (let columna = 0; columna < 6; columna += 1) {
+            sitios.push({ x: 236 + 34 * columna, y: 112 + 34 * fila, atomos: particula(fila, columna) });
+          }
+        }
+        return sitios;
+      };
+
+      const SUSTANCIAS_DE_LA_CANTIDAD = [
+        {
+          corto: "helio",
+          nombre: "El helio",
+          formula: ["He"],
+          tex: "\\mathrm{He}",
+          particula: "átomos",
+          tipo: "sustancia simple: átomos sueltos",
+          vivo: "Un elemento, con sus átomos sueltos: en el helio se cuentan átomos.",
+          sitios: [[214, 118], [318, 100], [430, 124], [244, 206], [356, 196], [452, 214]].map(([x, y]) => ({
+            x,
+            y,
+            atomos: [["He", "", 0, 0, 15]]
+          }))
+        },
+        {
+          corto: "hierro",
+          nombre: "El hierro",
+          formula: ["Fe"],
+          tex: "\\mathrm{Fe}",
+          particula: "átomos",
+          tipo: "sustancia simple: átomos unidos en la red de un metal",
+          vivo: "Un metal, con sus átomos juntos en una red: también se cuentan átomos.",
+          sitios: redDelResumen(() => [["Fe", "", 0, 0, 16]])
+        },
+        {
+          corto: "oxígeno",
+          nombre: "El oxígeno",
+          formula: ["O", "2"],
+          tex: "\\mathrm{O_2}",
+          particula: "moléculas",
+          tipo: "sustancia simple: moléculas de dos átomos iguales",
+          vivo: "Dos átomos por molécula, pero del mismo elemento: el oxígeno es una sustancia simple, no un compuesto.",
+          sitios: [[214, 118], [320, 104], [428, 126], [244, 206], [356, 198], [452, 212]].map(([x, y]) => ({
+            x,
+            y,
+            atomos: [["O", "", -12, 0, 12.5], ["O", "", 12, 0, 12.5]]
+          }))
+        },
+        {
+          corto: "propano",
+          nombre: "El propano",
+          formula: ["C", "3", "H", "8"],
+          tex: "\\mathrm{C_3H_8}",
+          particula: "moléculas",
+          tipo: "compuesto molecular: moléculas con átomos de dos elementos",
+          vivo: "Cada molécula lleva tres átomos de carbono y ocho de hidrógeno: se cuentan las moléculas o los átomos de cada elemento.",
+          sitios: [[228, 122], [412, 122], [320, 204]].map(([x, y]) => ({ x, y, atomos: PROPANO_DEL_RESUMEN }))
+        },
+        {
+          corto: "cloruro de sodio",
+          nombre: "El cloruro de sodio",
+          formula: ["NaCl"],
+          tex: "\\mathrm{NaCl}",
+          particula: "unidades fórmula",
+          tipo: "compuesto iónico: una red de iones; se cuenta la unidad fórmula",
+          vivo: "Iones de sodio y de cloruro en una red, sin moléculas: se cuenta su fórmula, NaCl, la unidad fórmula.",
+          sitios: redDelResumen((fila, columna) =>
+            (fila + columna) % 2 === 0 ? [["Cl", MENOS, 0, 0, 15.5]] : [["Na", "+", 0, 0, 12.5]]
+          )
+        }
+      ];
+
+      function ParticulasDibujo({ e }) {
+        const sustancia = SUSTANCIAS_DE_LA_CANTIDAD[e.s];
+        const ionica = sustancia.corto === "cloruro de sodio";
+        return (
+          <>
+            <Trazo t={0.1} dura={0.4} d={caja(150, 70, 340, 184, 18)} strokeWidth="2" strokeOpacity="0.8" />
+            {sustancia.sitios.map((sitio, orden) => (
+              <g key={e.s + "-" + orden}>
+                {sitio.atomos.map(([, , dx, dy, r], i) => (
+                  <Punto key={i} t={0.3 + 0.03 * orden} cx={sitio.x + dx} cy={sitio.y + dy} r={r} />
+                ))}
+              </g>
+            ))}
+            {ionica && (
+              <Trazo t={1.0} dura={0.3} d={caja(286, 160, 68, 38, 12)} strokeWidth="2.2" strokeDasharray="5 4" />
+            )}
+            <Letras>
+              <Rotulo t={0.1} x="320" y="46" fontSize="24">
+                {palabra(sustancia.nombre + ", ")}
+                <FormulaDeRotulo partes={sustancia.formula} />
+              </Rotulo>
+              {sustancia.sitios.map((sitio, orden) => (
+                <g key={"l" + e.s + "-" + orden}>
+                  {sitio.atomos.map(([simbolo, carga, dx, dy, r], i) => (
+                    <Rotulo
+                      key={i}
+                      t={0.4 + 0.03 * orden}
+                      x={sitio.x + dx}
+                      y={sitio.y + dy + (r > 12 ? 4 : r > 8 ? 4 : 3)}
+                      fontSize={carga && r < 14 ? "9.5" : r > 12 ? "12" : r > 8 ? "10" : "8"}
+                      fill={TINTA_OLIVA_DEL_RESUMEN}
+                      fontWeight="700"
+                    >
+                      {simbolo}
+                      {carga && <Sup>{carga}</Sup>}
+                    </Rotulo>
+                  ))}
+                </g>
+              ))}
+              {ionica && (
+                <Rotulo t={1.1} x="320" y="268" fontSize="14">
+                  {palabra("en el recuadro, una unidad fórmula: un ion de cada")}
+                </Rotulo>
+              )}
+              <Rotulo t={1.0} x="320" y="296" fontSize="16">
+                {palabra(sustancia.tipo)}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const AVOGADRO_DEL_RESUMEN = 6.02e23;
+      const CUENTAS_DEL_MOL = [
+        { rotulo: "moléculas de propano", veces: 1 },
+        { rotulo: "átomos de carbono", veces: 3 },
+        { rotulo: "átomos de hidrógeno", veces: 8 }
+      ];
+
+      function ElMolDibujo({ e }) {
+        const enteros = Math.floor(e.n);
+        const medio = e.n - enteros > 0.01;
+        const paquetes = Array.from({ length: enteros + (medio ? 1 : 0) }, (_, orden) => ({
+          ancho: orden < enteros ? 64 : 32
+        }));
+        const total = paquetes.reduce((suma, paquete) => suma + paquete.ancho, 0) + 12 * (paquetes.length - 1);
+        let x = 320 - total / 2;
+        const cajas = paquetes.map((paquete) => {
+          const una = { x, ancho: paquete.ancho };
+          x += paquete.ancho + 12;
+          return una;
+        });
+        return (
+          <>
+            {cajas.map((una, orden) => (
+              <Trazo key={e.n + "-" + orden} t={0.2 + 0.1 * orden} dura={0.4} d={caja(una.x, 76, una.ancho, 50, 10)} strokeWidth="2" />
+            ))}
+            {CUENTAS_DEL_MOL.map((cuenta, orden) => (
+              <Trazo key={"r" + orden} t={0.8 + 0.1 * orden} dura={0.3} d={"M346 " + (178 + 44 * orden) + "H420"} strokeWidth="1.8" />
+            ))}
+            {CUENTAS_DEL_MOL.map((cuenta, orden) => (
+              <Velo key={"p" + orden} t={1.0 + 0.1 * orden} d={puntaAbierta(420, 178 + 44 * orden, 1, 0, 8)} strokeWidth="1.8" />
+            ))}
+            <Letras>
+              <Rotulo t={0.05} x="320" y="44" fontSize="18" opacity="0.95">
+                {palabra("un mol: ")}6,02 × 10<Sup>23</Sup>
+                {palabra(" partículas, como una docena, pero enorme")}
+              </Rotulo>
+              {cajas.map((una, orden) => (
+                <Rotulo key={"c" + e.n + "-" + orden} t={0.3 + 0.1 * orden} x={una.x + una.ancho / 2} y="107" fontSize="14">
+                  {palabra(una.ancho > 40 ? "1 mol" : "½")}
+                </Rotulo>
+              ))}
+              <Rotulo t={0.6} x="320" y="148" fontSize="15" opacity="0.9">
+                {palabra(cifra(e.n, 1, true) + " mol de propano, ")}
+                <FormulaDeRotulo partes={["C", "3", "H", "8"]} />
+              </Rotulo>
+              {CUENTAS_DEL_MOL.map((cuenta, orden) => {
+                const N = cientifica(e.n * cuenta.veces * AVOGADRO_DEL_RESUMEN);
+                return (
+                  <g key={"t" + orden}>
+                    <Rotulo t={0.8 + 0.1 * orden} x="60" y={184 + 44 * orden} fontSize="16" textAnchor="start">
+                      {palabra(cuenta.rotulo)}
+                    </Rotulo>
+                    <Rotulo t={0.9 + 0.1 * orden} x="300" y={184 + 44 * orden} fontSize="17" textAnchor="end" fontWeight="700">
+                      {cifra(e.n * cuenta.veces, 1, true)}
+                      {palabra(" mol")}
+                    </Rotulo>
+                    <Rotulo t={1.1 + 0.1 * orden} x="440" y={184 + 44 * orden} fontSize="17" textAnchor="start" fontWeight="700">
+                      {N.mantisa} × 10<Sup>{String(N.exponente)}</Sup>
+                    </Rotulo>
+                  </g>
+                );
+              })}
+            </Letras>
+          </>
+        );
+      }
+
+      const MASAS_MOLARES_DEL_RESUMEN = [
+        { corto: "propano", nombre: "El propano", formula: ["C", "3", "H", "8"], tex: "\\mathrm{C_3H_8}", una: "una molécula", unas: "moléculas", partes: [["C", 3, 12.01], ["H", 8, 1.01]] },
+        { corto: "metano", nombre: "El metano", formula: ["CH", "4"], tex: "\\mathrm{CH_4}", una: "una molécula", unas: "moléculas", partes: [["C", 1, 12.01], ["H", 4, 1.01]] },
+        { corto: "cloruro de sodio", nombre: "El cloruro de sodio", formula: ["NaCl"], tex: "\\mathrm{NaCl}", una: "una unidad fórmula", unas: "unidades fórmula", partes: [["Na", 1, 22.99], ["Cl", 1, 35.45]] },
+        { corto: "hierro", nombre: "El hierro", formula: ["Fe"], tex: "\\mathrm{Fe}", una: "un átomo", unas: "átomos", partes: [["Fe", 1, 55.85]] }
+      ];
+      const masaMolarDelResumen = (sustancia) => sustancia.partes.reduce((suma, [, cuantos, masa]) => suma + cuantos * masa, 0);
+      const sumaDeLaMasaMolar = (sustancia) =>
+        sustancia.partes.map(([, cuantos, masa]) => (cuantos > 1 ? cuantos + "\\cdot" : "") + enTex(masa, 2, true)).join("+");
+
+      function MasaMolarDibujo({ e }) {
+        const sustancia = MASAS_MOLARES_DEL_RESUMEN[e.s];
+        const M = masaMolarDelResumen(sustancia);
+        const escala = 8;
+        const inicio = 320 - (M * escala) / 2;
+        const tramos = [];
+        let x = inicio;
+        sustancia.partes.forEach(([simbolo, cuantos, masa]) => {
+          for (let vez = 0; vez < cuantos; vez += 1) {
+            tramos.push({ simbolo, x, ancho: masa * escala, primero: vez === 0, cuantos });
+            x += masa * escala;
+          }
+        });
+        const grupos = sustancia.partes.map(([simbolo, cuantos, masa], orden) => {
+          const suyos = tramos.filter((tramo) => tramo.simbolo === simbolo);
+          return {
+            simbolo,
+            cuantos,
+            masa,
+            orden,
+            centro: (suyos[0].x + suyos[suyos.length - 1].x + suyos[suyos.length - 1].ancho) / 2
+          };
+        });
+        return (
+          <>
+            {tramos.map((tramo, orden) => (
+              <Barra
+                key={e.s + "-" + orden}
+                t={0.3 + 0.05 * orden}
+                x={n1(tramo.x + 1)}
+                y="128"
+                width={n1(Math.max(1, tramo.ancho - 2))}
+                height="44"
+                rx="3"
+                fillOpacity={tramo.simbolo === "H" ? 0.75 : 0.95}
+              />
+            ))}
+            <Trazo t={1.1} dura={0.3} d={"M" + n1(inicio) + " 186H" + n1(inicio + M * escala)} strokeWidth="1.6" />
+            <Velo t={1.2} d={"M" + n1(inicio) + " 180V192M" + n1(inicio + M * escala) + " 180V192"} strokeWidth="1.6" />
+            <Letras>
+              <Rotulo t={0.1} x="320" y="46" fontSize="24">
+                {palabra(sustancia.nombre + ", ")}
+                <FormulaDeRotulo partes={sustancia.formula} />
+              </Rotulo>
+              <Rotulo t={0.5} x="320" y="104" fontSize="16">
+                {palabra(sustancia.una + ": ")}
+                {cifra(M, 2, true)}
+                {palabra(" u")}
+              </Rotulo>
+              {tramos
+                .filter((tramo) => tramo.ancho > 26)
+                .map((tramo, orden) => (
+                  <Rotulo key={"s" + e.s + "-" + orden} t={0.6} x={n1(tramo.x + tramo.ancho / 2)} y="156" fontSize="15" fill={TINTA_OLIVA_DEL_RESUMEN} fontWeight="700">
+                    {tramo.simbolo}
+                  </Rotulo>
+                ))}
+              {grupos.map((grupo) => (
+                <Rotulo key={"g" + e.s + "-" + grupo.orden} t={0.9} x={n1(grupo.centro)} y={210 + 20 * grupo.orden} fontSize="14">
+                  {grupo.cuantos > 1 ? grupo.cuantos + POR : ""}
+                  {cifra(grupo.masa, 2, true)}
+                  {palabra(" (" + grupo.simbolo + ")")}
+                </Rotulo>
+              ))}
+              <Rotulo t={1.3} x="320" y="262" fontSize="18" fontWeight="700">
+                {cursiva("M")} = {cifra(M, 2, true)} g mol<Sup>{MENOS + "1"}</Sup>
+              </Rotulo>
+              <Rotulo t={1.4} x="320" y="298" fontSize="15" opacity="0.92">
+                {palabra("un mol, 6,02 × 10")}
+                <Sup>23</Sup>
+                {palabra(" " + sustancia.unas + ", pesa " + cifra(M, 2, true) + " g")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const MASA_DEL_METANO = 4.0;
+      const M_DEL_METANO = 12.01 + 4 * 1.01;
+      const PASOS_DEL_METANO = [
+        { arriba: "4,00 g", abajo: ["de CH", "4"], valor: MASA_DEL_METANO },
+        { arriba: null, abajo: ["de CH", "4"], valor: MASA_DEL_METANO / M_DEL_METANO, unidad: " mol" },
+        { arriba: null, abajo: ["de H", ""], valor: (4 * MASA_DEL_METANO) / M_DEL_METANO, unidad: " mol" },
+        { arriba: null, abajo: ["átomos de H", ""], valor: ((4 * MASA_DEL_METANO) / M_DEL_METANO) * AVOGADRO_DEL_RESUMEN, cientifica: true }
+      ];
+      const FACTORES_DEL_METANO = [
+        { arriba: "1 mol", abajo: "16,05 g" },
+        { arriba: "4 mol H", abajo: "1 mol" },
+        {
+          arriba: (
+            <tspan>
+              6,02 × 10<Sup>23</Sup>
+            </tspan>
+          ),
+          abajo: "1 mol H"
+        }
+      ];
+
+      function cadenaDelMetano(k) {
+        const tachar = (unidad) => "\\cancel{" + unidad + "}";
+        const gramos = "\\mathrm{g}\\text{ de }\\mathrm{CH_4}";
+        const moles = "\\mathrm{mol}\\text{ de }\\mathrm{CH_4}";
+        const molesH = "\\mathrm{mol}\\text{ de H}";
+        if (k === 1) {
+          return "4{,}00\\ " + gramos;
+        }
+        let tex = "4{,}00\\ " + tachar(gramos) + "\\cdot\\frac{1\\ " + (k > 2 ? tachar(moles) : moles) + "}{16{,}05\\ " + tachar(gramos) + "}";
+        if (k === 2) {
+          return tex + "=" + enTex(PASOS_DEL_METANO[1].valor, 4, true) + "\\ " + moles;
+        }
+        tex += "\\cdot\\frac{4\\ " + (k > 3 ? tachar(molesH) : molesH) + "}{1\\ " + tachar(moles) + "}";
+        if (k === 3) {
+          return tex + "=" + enTex(PASOS_DEL_METANO[2].valor, 4, true) + "\\ " + molesH;
+        }
+        return (
+          "\\begin{aligned}&" + tex + "\\\\[6pt]&\\quad\\cdot\\frac{6{,}02\\times10^{23}\\ \\text{átomos de H}}{1\\ " + tachar(molesH) +
+          "}=6{,}00\\times10^{23}\\ \\text{átomos de H}\\end{aligned}"
+        );
+      }
+
+      function FactoresDibujo({ e }) {
+        const xs = [16, 176, 336, 496];
+        const ancho = 128;
+        return (
+          <>
+            {xs.map((x, orden) => (
+              <Trazo
+                key={"c" + orden}
+                t={0.2 + 0.25 * orden}
+                dura={0.35}
+                d={caja(x, 118, ancho, 74, 12)}
+                strokeWidth={orden < e.k ? 2.2 : 1.4}
+                strokeOpacity={orden < e.k ? 1 : 0.35}
+              />
+            ))}
+            {FACTORES_DEL_METANO.map((factor, orden) => (
+              <g key={"f" + orden} opacity={orden + 1 < e.k ? 1 : 0.35}>
+                <Trazo t={0.4 + 0.25 * orden} dura={0.2} d={"M" + (xs[orden] + ancho + 4) + " 155H" + (xs[orden + 1] - 4)} strokeWidth="1.8" />
+                <Velo t={0.5 + 0.25 * orden} d={puntaAbierta(xs[orden + 1] - 4, 155, 1, 0, 7)} strokeWidth="1.8" />
+              </g>
+            ))}
+            <Letras>
+              <Rotulo t={0.05} x="320" y="44" fontSize="19">
+                {palabra("4,00 g de metano, ")}
+                <FormulaDeRotulo partes={["CH", "4"]} />
+                {palabra(": ¿cuántos átomos de hidrógeno?")}
+              </Rotulo>
+              {PASOS_DEL_METANO.map((paso, orden) => {
+                const N = paso.cientifica ? cientifica(paso.valor) : null;
+                return (
+                  <g key={"p" + orden} opacity={orden < e.k ? 1 : 0.35}>
+                    <Rotulo t={0.3 + 0.25 * orden} x={xs[orden] + ancho / 2} y="150" fontSize="17" fontWeight="700">
+                      {orden === 0 ? (
+                        palabra(paso.arriba)
+                      ) : N ? (
+                        <tspan>
+                          {N.mantisa} × 10<Sup>{String(N.exponente)}</Sup>
+                        </tspan>
+                      ) : (
+                        <tspan>
+                          {cifra(paso.valor, 4, true)}
+                          {palabra(paso.unidad)}
+                        </tspan>
+                      )}
+                    </Rotulo>
+                    <Rotulo t={0.35 + 0.25 * orden} x={xs[orden] + ancho / 2} y="176" fontSize="13" opacity="0.9">
+                      {palabra(paso.abajo[0])}
+                      {paso.abajo[1] && <Sub>{paso.abajo[1]}</Sub>}
+                    </Rotulo>
+                  </g>
+                );
+              })}
+              {FACTORES_DEL_METANO.map((factor, orden) => (
+                <g key={"q" + orden} opacity={orden + 1 < e.k ? 1 : 0.35}>
+                  <Quebrado x={n1((xs[orden] + ancho + xs[orden + 1]) / 2)} y={102} s={15} ancho={62} arriba={factor.arriba} abajo={factor.abajo} />
+                </g>
+              ))}
+              <Rotulo t={1.2} x="320" y="236" fontSize="15">
+                {palabra("cada factor vale uno: arriba y abajo dicen lo mismo, contado de dos maneras")}
+              </Rotulo>
+              <Rotulo t={1.3} x="320" y="272" fontSize="15" opacity="0.92">
+                {palabra("la unidad de abajo de cada uno tacha la de arriba del anterior")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const R_DE_LA_CLASE = 0.082;
+      const ESCALA_DEL_CILINDRO = 5.2;
+      const GAS_DEL_CILINDRO = [
+        [0.18, 0.2], [0.5, 0.12], [0.82, 0.24], [0.3, 0.46], [0.66, 0.4], [0.12, 0.7],
+        [0.46, 0.66], [0.86, 0.62], [0.26, 0.9], [0.6, 0.86], [0.9, 0.88], [0.4, 0.3]
+      ];
+      const volumenDelMol = (e) => (R_DE_LA_CLASE * (e.T + 273)) / e.p;
+
+      function UnMolDeGasDibujo({ e }) {
+        const V = volumenDelMol(e);
+        const fondo = 280;
+        const alto = V * ESCALA_DEL_CILINDRO;
+        const techo = fondo - alto;
+        const normales = fondo - 22.4 * ESCALA_DEL_CILINDRO;
+        return (
+          <>
+            <Trazo t={0.1} dura={0.5} d="M262 64V280H378V64" strokeWidth="2.4" />
+            <Barra t={0.5} x="265" y={n1(techo - 8)} width="110" height="8" rx="2" />
+            <Velo t={0.55} d={"M320 " + n1(techo - 8) + "V40"} strokeWidth="3" />
+            {GAS_DEL_CILINDRO.map(([fx, fy], orden) => (
+              <Punto key={orden} t={0.6 + 0.03 * orden} cx={n1(270 + fx * 100)} cy={n1(techo + 6 + fy * (alto - 12))} r="4" />
+            ))}
+            <Velo t={0.9} d={"M240 " + n1(normales) + "H400"} strokeWidth="1.6" strokeDasharray="5 5" strokeOpacity="0.85" />
+            <Letras>
+              <Rotulo t={0.05} x="320" y="28" fontSize="18">
+                {palabra("1 mol de gas")}
+              </Rotulo>
+              <Rotulo t={0.4} x="214" y="104" fontSize="17" textAnchor="end">
+                {cursiva("T")} = {cifra(e.T + 273, 0)} K
+              </Rotulo>
+              <Rotulo t={0.45} x="214" y="128" fontSize="14" textAnchor="end" opacity="0.9">
+                {palabra("(" + cifra(e.T, 0) + " °C)")}
+              </Rotulo>
+              <Rotulo t={0.5} x="214" y="232" fontSize="17" textAnchor="end">
+                {cursiva("p")} = {cifra(e.p, 2, true)} atm
+              </Rotulo>
+              <Rotulo t={0.7} x="410" y="240" fontSize="20" textAnchor="start" fontWeight="700">
+                {cursiva("V")} = {cifra(V, 1, true)} L
+              </Rotulo>
+              <Rotulo t={1.0} x="410" y={n1(normales + 5)} fontSize="13" textAnchor="start" opacity="0.92">
+                {palabra("C.N.: 22,4 L")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ESTACIONES_CANTIDAD = [
+        {
+          clave: "particulas",
+          nombre: "Las sustancias y sus partículas",
+          inicial: { s: 3 },
+          duracion: 1.5,
+          Dibujo: ParticulasDibujo,
+          descripcion: (e) => {
+            const sustancia = SUSTANCIAS_DE_LA_CANTIDAD[e.s];
+            return sustancia.nombre + ", dibujado por dentro: " + sustancia.tipo + ". " + sustancia.vivo;
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "s",
+              nombre: "la sustancia",
+              rotulo: "Sustancia",
+              opciones: SUSTANCIAS_DE_LA_CANTIDAD.map((sustancia, orden) => ({ valor: orden, rotulo: sustancia.corto }))
+            }
+          ],
+          vivo: (e) => {
+            const sustancia = SUSTANCIAS_DE_LA_CANTIDAD[e.s];
+            return [
+              "1\\ \\mathrm{mol}\\text{ de }" + sustancia.tex + "=6{,}02\\times10^{23}\\ \\text{" + sustancia.particula + "}",
+              <>{sustancia.vivo}</>
+            ];
+          },
+          pista: <>Elige una sustancia: simple o compuesta, y de átomos, de moléculas o de iones.</>,
+          fichas: [
+            {
+              nombre: "Simple o compuesta",
+              texto: "Simple, si es un elemento (hay 118, y no se descomponen); compuesta, si une varios elementos."
+            },
+            {
+              nombre: "Átomo y molécula",
+              texto: "El átomo, lo más pequeño de un elemento que sigue siendo ese elemento; la molécula, un grupo de átomos unidos por enlaces covalentes."
+            },
+            {
+              nombre: "La unidad fórmula",
+              texto: "Un compuesto iónico, como el cloruro de sodio, no tiene moléculas: se cuenta su fórmula, NaCl."
+            }
+          ],
+          ojo: [
+            "El O₂ tiene dos átomos y es una sustancia simple: los dos son del mismo elemento.",
+            "No toda sustancia es de moléculas: el hierro es de átomos, y el cloruro de sodio, de iones."
+          ]
+        },
+        {
+          clave: "mol",
+          nombre: "El mol",
+          inicial: { n: 1 },
+          duracion: 1.6,
+          Dibujo: ElMolDibujo,
+          descripcion: (e) => {
+            const cuentas = CUENTAS_DEL_MOL.map((cuenta) => {
+              const N = cientifica(e.n * cuenta.veces * AVOGADRO_DEL_RESUMEN);
+              return cifra(e.n * cuenta.veces, 1, true) + " moles de " + cuenta.rotulo + ", " + N.mantisa + " por diez a la " + N.exponente;
+            });
+            return (
+              "Un mol son 6,02 por diez a la 23 partículas. En " + cifra(e.n, 1, true) + " moles de propano, como paquetes: " +
+              cuentas.join("; ") + "."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "paso",
+              clave: "n",
+              nombre: "la cantidad de propano",
+              rotulo: "Propano",
+              valores: [0.5, 1, 1.5, 2, 2.5, 3],
+              escribe: (valor) => cifra(valor, 1, true) + " mol"
+            }
+          ],
+          vivo: (e) => [
+            "N=n\\,N_{\\mathrm{A}}=" + enTex(e.n, 1, true) + "\\ \\mathrm{mol}\\cdot6{,}02\\times10^{23}\\ \\mathrm{mol^{-1}}=" +
+              cientifica(e.n * AVOGADRO_DEL_RESUMEN).mantisa.split(",").join("{,}") + "\\times10^{" + cientifica(e.n * AVOGADRO_DEL_RESUMEN).exponente + "}\\ \\text{moléculas}",
+            <>Cada molécula lleva tres átomos de carbono y ocho de hidrógeno: {cifra(e.n, 1, true)} mol de propano llevan {cifra(3 * e.n, 1, true)} mol de átomos de carbono y {cifra(8 * e.n, 1, true)} de hidrógeno.</>
+          ],
+          pista: <>Cambia los moles de propano: las moléculas y los átomos crecen igual, cada uno por su subíndice.</>,
+          fichas: [
+            {
+              nombre: "El número de partículas",
+              tex: "N=n\\,N_{\\mathrm{A}}\\qquad n=\\frac{N}{N_{\\mathrm{A}}}"
+            },
+            {
+              nombre: "La constante de Avogadro",
+              tex: "N_{\\mathrm{A}}=6{,}02\\times10^{23}\\ \\mathrm{mol^{-1}}",
+              texto: "En clase, el número de Avogadro, 6,022 × 10²³, el de átomos que hay en 12,0 g de carbono 12."
+            },
+            {
+              nombre: "Los moles de átomos",
+              texto: "Un mol de C₃H₈ lleva 3 mol de átomos de carbono y 8 de hidrógeno: los subíndices cuentan lo mismo en un mol que en una molécula."
+            }
+          ],
+          ojo: [
+            "En 2,0 mol de NH₃ hay 6,0 mol de átomos de hidrógeno, no 2,0: cada molécula lleva tres.",
+            "En el IB, la constante de Avogadro lleva unidad, mol⁻¹; en clase, el número de Avogadro se escribe sin ella."
+          ]
+        },
+        {
+          clave: "masa-molar",
+          nombre: "La masa molar",
+          inicial: { s: 0 },
+          duracion: 1.6,
+          Dibujo: MasaMolarDibujo,
+          descripcion: (e) => {
+            const sustancia = MASAS_MOLARES_DEL_RESUMEN[e.s];
+            const M = masaMolarDelResumen(sustancia);
+            return (
+              sustancia.nombre + ": una barra con las masas atómicas de su fórmula, una detrás de otra, " +
+              sustancia.partes.map(([simbolo, cuantos, masa]) => cuantos + " de " + simbolo + " de " + cifra(masa, 2, true)).join(" y ") +
+              ". Suman " + cifra(M, 2, true) + ": " + sustancia.una + " pesa " + cifra(M, 2, true) + " u, y un mol, " + cifra(M, 2, true) + " g."
+            );
+          },
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "s",
+              nombre: "la sustancia",
+              rotulo: "Sustancia",
+              opciones: MASAS_MOLARES_DEL_RESUMEN.map((sustancia, orden) => ({ valor: orden, rotulo: sustancia.corto }))
+            }
+          ],
+          vivo: (e) => {
+            const sustancia = MASAS_MOLARES_DEL_RESUMEN[e.s];
+            const M = masaMolarDelResumen(sustancia);
+            const m = cientifica(M / AVOGADRO_DEL_RESUMEN);
+            return [
+              "M(" + sustancia.tex + ")=" + sumaDeLaMasaMolar(sustancia) + "=" + enTex(M, 2, true) + "\\ \\mathrm{g\\,mol^{-1}}",
+              "m=\\frac{M}{N_{\\mathrm{A}}}=\\frac{" + enTex(M, 2, true) + "\\ \\mathrm{g\\,mol^{-1}}}{6{,}02\\times10^{23}\\ \\mathrm{mol^{-1}}}=" +
+                m.mantisa.split(",").join("{,}") + "\\times10^{" + m.exponente + "}\\ \\mathrm{g}",
+              <>La masa de {sustancia.una}, en gramos, es la masa molar entre la constante de Avogadro.</>
+            ];
+          },
+          pista: <>Elige una sustancia: la barra suma las masas atómicas de su fórmula.</>,
+          fichas: [
+            {
+              nombre: "La masa molar",
+              texto: "La suma de las masas atómicas de la fórmula, cada una por su subíndice, en\u00a0g\u00a0mol⁻¹: un mol pesa en gramos lo que una partícula en u."
+            },
+            {
+              nombre: "De la masa a los moles",
+              tex: "n=\\frac{m}{M}"
+            },
+            {
+              nombre: "Una sola partícula",
+              tex: "m_{\\text{molécula}}=\\frac{M}{N_{\\mathrm{A}}}\\qquad 1\\ \\mathrm{g}=6{,}02\\times10^{23}\\ \\mathrm{u}"
+            }
+          ],
+          ojo: [
+            "La masa molar lleva su unidad: la del NaOH no es 40 g, sino 40\u00a0g\u00a0mol⁻¹.",
+            "La masa de una molécula de metano no es 16 g, que es la de un mol, sino 16 entre 6,02 × 10²³ gramos.",
+            "En el IB, Mr y Ar no tienen unidades; la masa molar es ese número en\u00a0g\u00a0mol⁻¹."
+          ]
+        },
+        {
+          clave: "factores",
+          nombre: "Los factores de conversión",
+          inicial: { k: 4 },
+          duracion: 1.8,
+          Dibujo: FactoresDibujo,
+          descripcion: (e) =>
+            "La cadena del metano en cuatro cajas: 4,00 gramos de metano; " + cifra(PASOS_DEL_METANO[1].valor, 4, true) +
+            " moles de metano; " + cifra(PASOS_DEL_METANO[2].valor, 4, true) + " moles de átomos de hidrógeno, y 6,00 por diez a la 23 átomos de hidrógeno. Entre caja y caja, su factor: un mol entre 16,05 gramos, cuatro moles de hidrógeno por mol de metano y la constante de Avogadro. Se ven los " +
+            e.k + " primeros pasos.",
+          mandos: () => [
+            {
+              tipo: "paso",
+              clave: "k",
+              nombre: "el paso de la cadena",
+              rotulo: "Paso",
+              valores: [1, 2, 3, 4],
+              escribe: (valor) => valor + " de 4"
+            }
+          ],
+          vivo: (e) => [
+            cadenaDelMetano(e.k),
+            <>
+              {e.k === 1
+                ? "El dato, con su unidad y su sustancia."
+                : e.k === 4
+                  ? "Solo queda la unidad que se busca, y la cuenta se hace de una vez."
+                  : "La unidad de abajo del factor tacha la de arriba del anterior."}
+            </>
+          ],
+          pista: <>Avanza la cadena paso a paso: cada factor tacha una unidad y deja la del paso siguiente.</>,
+          fichas: [
+            {
+              nombre: "Un factor",
+              tex: "\\frac{1\\ \\mathrm{mol}\\text{ de }\\mathrm{CH_4}}{16{,}05\\ \\mathrm{g}\\text{ de }\\mathrm{CH_4}}",
+              texto: "Una fracción que vale uno: arriba y abajo dicen lo mismo."
+            },
+            {
+              nombre: "Encadenarlos",
+              texto: "Cada factor se pone al derecho o al revés, para que tache la unidad que se tiene, y se sigue hasta la que se busca."
+            },
+            {
+              nombre: "De una vez",
+              texto: "La cuenta se hace entera y se redondea al final, no en cada paso."
+            }
+          ],
+          ojo: [
+            "De gramos a moles se divide entre la masa molar: el factor lleva los gramos abajo.",
+            "De gramos a unidades de masa atómica se multiplica por la constante de Avogadro: un gramo son 6,02 × 10²³ u."
+          ]
+        },
+        {
+          clave: "gases",
+          nombre: "Los gases",
+          inicial: { T: 0, p: 1 },
+          duracion: 1.4,
+          Dibujo: UnMolDeGasDibujo,
+          descripcion: (e) =>
+            "Un cilindro con un émbolo y un mol de gas dentro, a " + cifra(e.T + 273, 0) + " kelvin y " + cifra(e.p, 2, true) +
+            " atmósferas: ocupa " + cifra(volumenDelMol(e), 1, true) + " litros. Una raya a trazos marca los 22,4 litros de las condiciones normales.",
+          mandos: () => [
+            {
+              tipo: "barra",
+              clave: "T",
+              nombre: "la temperatura",
+              rotulo: "Temperatura",
+              min: -73,
+              max: 127,
+              salto: 1,
+              escribe: (valor) => cifra(valor, 0) + " °C"
+            },
+            {
+              tipo: "barra",
+              clave: "p",
+              nombre: "la presión",
+              rotulo: "Presión",
+              min: 0.8,
+              max: 2,
+              salto: 0.05,
+              escribe: (valor) => cifra(valor, 2, true) + " atm"
+            }
+          ],
+          vivo: (e) => [
+            "V=\\frac{nRT}{p}=\\frac{1\\cdot0{,}082\\cdot" + cifra(e.T + 273, 0) + "}{" + enTex(e.p, 2, true) + "}=" +
+              enTex(volumenDelMol(e), 1, true) + "\\ \\mathrm{L}",
+            <>
+              {e.T === 0 && Math.abs(e.p - 1) < 1e-9
+                ? "En condiciones normales, 0 °C y 1 atm, un mol de cualquier gas ocupa 22,4 L: el volumen molar."
+                : "Con más temperatura, más volumen; con más presión, menos. A 0 °C y 1 atm vuelve a los 22,4 L."}
+            </>
+          ],
+          pista: <>Cambia la temperatura y la presión: el émbolo sube o baja, y el volumen sale de pV\u00a0=\u00a0nRT.</>,
+          fichas: [
+            {
+              nombre: "La ecuación de los gases",
+              tex: "pV=nRT\\qquad R=0{,}082\\ \\mathrm{atm\\,L\\,mol^{-1}\\,K^{-1}}"
+            },
+            {
+              nombre: "Las condiciones normales",
+              texto: "En clase, 0 °C y 1 atm: 22,4 L por mol. En el IB, 273,15 K y 100 kPa: 22,7\u00a0dm³\u00a0mol⁻¹."
+            },
+            {
+              nombre: "Las unidades",
+              texto: "Con R = 0,082, atmósferas, litros y kelvin; con la del cuadernillo, 8,31\u00a0J\u00a0K⁻¹\u00a0mol⁻¹, pascales, metros cúbicos y kelvin."
+            }
+          ],
+          ojo: [
+            "Los 22,4 L por mol son solo de las condiciones normales; a otra presión o temperatura, V\u00a0=\u00a0nRT/p.",
+            "La temperatura, en kelvin: 0 °C son 273 K, no 0."
+          ]
+        }
+      ];
+
+      function CantidadDeSustanciaResumen({ configuracion, alPreparar }) {
+        return (
+          <ResumenIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="oliva"
+            titulo="La cantidad de sustancia, de un vistazo"
+            estaciones={ESTACIONES_CANTIDAD}
+          />
+        );
+      }
+
+
       const ESTACIONES_ORGANICA = [
         estacionDe(ESTACIONES_CLASE, "carbono"),
         estacionDe(ESTACIONES_CLASIFICACION, "series"),
@@ -30070,6 +30817,7 @@ examen del jueves 12 de noviembre</p>
         "resumen-materia-y-formulacion": MateriaYFormulacionResumen,
         "resumen-la-clase": LaClaseResumen,
         "resumen-el-laboratorio": ElLaboratorioResumen,
+        "resumen-cantidad-de-sustancia": CantidadDeSustanciaResumen,
         "resumen-repaso-organica": RepasoOrganicaResumen
       };
     })();
@@ -33689,6 +34437,405 @@ examen del jueves 12 de noviembre</p>
         );
       }
 
+
+      const AVOGADRO_DE_LAS_CADENAS = 6.02e23;
+      const SUSTANCIAS_DE_LAS_CADENAS = [
+        {
+          clave: "propano",
+          nombre: "propano",
+          tex: "\\mathrm{C_3H_8}",
+          simbolo: "C_3H_8",
+          particulas: "moléculas",
+          elementos: [
+            { simbolo: "C", nombre: "carbono", cuantos: 3, masa: 12.01 },
+            { simbolo: "H", nombre: "hidrógeno", cuantos: 8, masa: 1.01 }
+          ]
+        },
+        {
+          clave: "metano",
+          nombre: "metano",
+          tex: "\\mathrm{CH_4}",
+          simbolo: "CH_4",
+          particulas: "moléculas",
+          elementos: [
+            { simbolo: "C", nombre: "carbono", cuantos: 1, masa: 12.01 },
+            { simbolo: "H", nombre: "hidrógeno", cuantos: 4, masa: 1.01 }
+          ]
+        },
+        {
+          clave: "cloruro",
+          nombre: "cloruro de sodio",
+          tex: "\\mathrm{NaCl}",
+          simbolo: "NaCl",
+          particulas: "unidades fórmula",
+          elementos: [
+            { simbolo: "Na", nombre: "sodio", cuantos: 1, masa: 22.99 },
+            { simbolo: "Cl", nombre: "cloro", cuantos: 1, masa: 35.45 }
+          ]
+        },
+        { clave: "hierro", nombre: "hierro", tex: "\\mathrm{Fe}", simbolo: "Fe", particulas: "átomos", masa: 55.85, elementos: [] },
+        { clave: "helio", nombre: "helio", tex: "\\mathrm{He}", simbolo: "He", particulas: "átomos", masa: 4.0, elementos: [] }
+      ];
+      const CADENAS_DE_PARTIDA = { sustancia: "propano", masa: 11, busca: "particulas" };
+
+      function masaMolarDeLaCadena(sustancia) {
+        if (!sustancia.elementos.length) {
+          return sustancia.masa;
+        }
+        return sustancia.elementos.reduce((suma, elemento) => suma + elemento.cuantos * elemento.masa, 0);
+      }
+
+      function significativasDeLaCadena(valor, cifras) {
+        let exponente = Math.floor(Math.log10(Math.abs(valor)));
+        if (Math.abs(Number(valor.toPrecision(cifras))) >= Math.pow(10, exponente + 1)) {
+          exponente += 1;
+        }
+        return valor.toFixed(Math.max(0, cifras - 1 - exponente)).replace(".", ",");
+      }
+
+      function cientificaDeLaCadena(valor, cifras) {
+        const [mantisa, exponente] = valor.toExponential(cifras - 1).split("e");
+        return { mantisa: mantisa.replace(".", ","), exponente: Number(exponente) };
+      }
+
+      const enTexDeLaCadena = (texto) => texto.replace(/[.,]/, "{,}");
+      const cientificaEnTex = (valor, cifras) => {
+        const numero = cientificaDeLaCadena(valor, cifras);
+        return enTexDeLaCadena(numero.mantisa) + "\\times10^{" + numero.exponente + "}";
+      };
+
+      function busquedasDeLaCadena(sustancia) {
+        if (!sustancia.elementos.length) {
+          return [
+            { clave: "moles", rotulo: "los moles de átomos" },
+            { clave: "particulas", rotulo: "los átomos" }
+          ];
+        }
+        const lista = [
+          { clave: "moles", rotulo: "los moles" },
+          { clave: "particulas", rotulo: "las " + sustancia.particulas }
+        ];
+        sustancia.elementos.forEach((elemento) => {
+          lista.push({ clave: "atomos-" + elemento.simbolo, rotulo: "los átomos de " + elemento.simbolo });
+        });
+        sustancia.elementos.forEach((elemento) => {
+          lista.push({ clave: "masa-" + elemento.simbolo, rotulo: "la masa de " + elemento.simbolo });
+        });
+        return lista;
+      }
+
+      function factoresDeLaCadena(sustancia, masa, busca) {
+        const M = masaMolarDeLaCadena(sustancia);
+        const n = masa / M;
+        const deLaSustancia = "\\text{ de }" + sustancia.tex;
+        const tachar = (unidad) => "\\cancel{" + unidad + "}";
+        const gramos = "\\mathrm{g}" + deLaSustancia;
+        const moles = "\\mathrm{mol}" + deLaSustancia;
+        const dato = enTexDeLaCadena(masa.toFixed(1)) + "\\ " + tachar(gramos);
+        const aMoles = (tachado) =>
+          "\\frac{1\\ " + (tachado ? tachar(moles) : moles) + "}{" + enTexDeLaCadena(M.toFixed(2)) + "\\ " + tachar(gramos) + "}";
+        if (busca === "moles") {
+          return {
+            tex: dato + "\\cdot" + aMoles(false) + "=" + enTexDeLaCadena(significativasDeLaCadena(n, 4)) + "\\ " + moles,
+            valor: n
+          };
+        }
+        const nombreDe = sustancia.elementos.length ? sustancia.particulas : "átomos";
+        if (busca === "particulas") {
+          const N = n * AVOGADRO_DE_LAS_CADENAS;
+          return {
+            tex:
+              dato + "\\cdot" + aMoles(true) + "\\cdot\\frac{6{,}02\\times10^{23}\\ \\text{" + nombreDe + "}}{1\\ " + tachar(moles) + "}=" +
+              cientificaEnTex(N, 3) + "\\ \\text{" + nombreDe + "}",
+            valor: N
+          };
+        }
+        const [tipo, simbolo] = busca.split("-");
+        const elemento = sustancia.elementos.find((uno) => uno.simbolo === simbolo);
+        const molesDelElemento = "\\mathrm{mol}\\text{ de " + simbolo + "}";
+        const aElemento =
+          "\\frac{" + elemento.cuantos + "\\ " + tachar(molesDelElemento) + "}{1\\ " + tachar(moles) + "}";
+        const nElemento = elemento.cuantos * n;
+        const ultimo =
+          tipo === "atomos"
+            ? "\\frac{6{,}02\\times10^{23}\\ \\text{átomos de " + simbolo + "}}{1\\ " + tachar(molesDelElemento) + "}"
+            : "\\frac{" + enTexDeLaCadena(elemento.masa.toFixed(2)) + "\\ \\mathrm{g}\\text{ de " + simbolo + "}}{1\\ " + tachar(molesDelElemento) + "}";
+        const resultado =
+          tipo === "atomos"
+            ? cientificaEnTex(nElemento * AVOGADRO_DE_LAS_CADENAS, 3) + "\\ \\text{átomos de " + simbolo + "}"
+            : enTexDeLaCadena(significativasDeLaCadena(nElemento * elemento.masa, 3)) + "\\ \\mathrm{g}\\text{ de " + simbolo + "}";
+        return {
+          tex:
+            "\\begin{aligned}&" + dato + "\\cdot" + aMoles(true) + "\\cdot" + aElemento + "\\\\[6pt]&\\quad\\cdot" + ultimo + "=" +
+            resultado + "\\end{aligned}",
+          valor: tipo === "atomos" ? nElemento * AVOGADRO_DE_LAS_CADENAS : nElemento * elemento.masa
+        };
+      }
+
+      function CajaDeLaCadena({ x, y, ancho, alto, rotulo, valor, encendida }) {
+        return (
+          <g>
+            <rect
+              x={x}
+              y={y}
+              width={ancho}
+              height={alto}
+              rx="10"
+              fill={encendida ? "#eef4ff" : "#ffffff"}
+              stroke={encendida ? COLORES_IB.azul : "#cbd5e1"}
+              strokeWidth={encendida ? 2.4 : 1.5}
+            />
+            <text x={x + ancho / 2} y={y + 22} fontSize="13.5" textAnchor="middle" fill="var(--texto-suave)">
+              {rotulo}
+            </text>
+            <text x={x + ancho / 2} y={y + alto - 13} fontSize="18" fontWeight="700" textAnchor="middle" fill="var(--texto)">
+              {valor}
+            </text>
+          </g>
+        );
+      }
+
+      function CientificaDeLaCadena({ valor }) {
+        const numero = cientificaDeLaCadena(valor, 3);
+        return (
+          <>
+            {numero.mantisa + " × 10"}
+            <tspan dy="-0.5em" fontSize="0.68em">
+              {String(numero.exponente).replace("-", "−")}
+            </tspan>
+          </>
+        );
+      }
+
+      function FlechaDeLaCadena({ x1, y1, x2, y2, encendida }) {
+        const angulo = Math.atan2(y2 - y1, x2 - x1);
+        const punta = (giro) =>
+          (x2 - 9 * Math.cos(angulo + giro)).toFixed(1) + " " + (y2 - 9 * Math.sin(angulo + giro)).toFixed(1);
+        return (
+          <path
+            d={"M" + x1 + " " + y1 + "L" + x2 + " " + y2 + "M" + punta(0.45) + "L" + x2 + " " + y2 + "L" + punta(-0.45)}
+            fill="none"
+            stroke={encendida ? COLORES_IB.azul : "#94a3b8"}
+            strokeWidth={encendida ? 2.4 : 1.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        );
+      }
+
+      function DosCadenasInteractivo({ configuracion, alPreparar }) {
+        const [clave, setClave] = React.useState(CADENAS_DE_PARTIDA.sustancia);
+        const [masa, setMasa] = React.useState(CADENAS_DE_PARTIDA.masa);
+        const [busca, setBusca] = React.useState(CADENAS_DE_PARTIDA.busca);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const sustancia = SUSTANCIAS_DE_LAS_CADENAS.find((una) => una.clave === clave);
+        const compuesto = sustancia.elementos.length > 0;
+        const busquedas = busquedasDeLaCadena(sustancia);
+        const elegirSustancia = (nueva) => {
+          setClave(nueva);
+          const otra = SUSTANCIAS_DE_LAS_CADENAS.find((una) => una.clave === nueva);
+          if (!busquedasDeLaCadena(otra).some((una) => una.clave === busca)) {
+            setBusca("particulas");
+          }
+        };
+        const M = masaMolarDeLaCadena(sustancia);
+        const n = masa / M;
+        const N = n * AVOGADRO_DE_LAS_CADENAS;
+        const cuenta = factoresDeLaCadena(sustancia, masa, busca);
+        const [tipo, simbolo] = busca.split("-");
+        const masaEscrita = masa.toFixed(1).replace(".", ",") + " g";
+        const molesDe = compuesto ? (sustancia.particulas === "moléculas" ? "moles de moléculas" : "moles de unidades fórmula") : "moles de átomos";
+
+        const izquierda = { x: 16, ancho: 214, alto: 58 };
+        const filas = sustancia.elementos.map((elemento, orden) => {
+          const y = orden === 0 ? 26 : 176;
+          const nElemento = elemento.cuantos * n;
+          return {
+            elemento,
+            y,
+            nElemento,
+            atomos: nElemento * AVOGADRO_DE_LAS_CADENAS,
+            masa: nElemento * elemento.masa
+          };
+        });
+        const descripcion =
+          masaEscrita.replace(" g", " gramos") + " de " + sustancia.nombre + ": " + significativasDeLaCadena(n, 4) + " " +
+          molesDe + " y " + cientificaDeLaCadena(N, 3).mantisa + " por diez a la " + cientificaDeLaCadena(N, 3).exponente + " " +
+          (compuesto ? sustancia.particulas : "átomos") +
+          (compuesto
+            ? ". " + filas
+                .map(
+                  (fila) =>
+                    "De " + fila.elemento.nombre + ", " + fila.elemento.cuantos + " por cada una: " +
+                    significativasDeLaCadena(fila.nElemento, 4) + " moles de átomos, " + cientificaDeLaCadena(fila.atomos, 3).mantisa +
+                    " por diez a la " + cientificaDeLaCadena(fila.atomos, 3).exponente + " átomos y " +
+                    significativasDeLaCadena(fila.masa, 3) + " gramos"
+                )
+                .join(". ") + "."
+            : ". Un elemento: su masa atómica hace de masa molar.");
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Las dos cadenas"}</p>
+            <p className="instruccion-interactivo">
+              Elige una sustancia, su masa y lo que buscas. A la izquierda va la cadena de la clase: los gramos, los
+              moles y las partículas. En un compuesto, a la derecha, su fórmula la une con la de cada elemento: sus moles
+              de átomos, sus átomos y su masa. Debajo, la misma cuenta con factores de conversión, con cada unidad de en
+              medio tachada.
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <p>La sustancia</p>
+                <div className="fichas-interactivo" role="group" aria-label="Sustancia">
+                  {SUSTANCIAS_DE_LAS_CADENAS.map((una) => (
+                    <button key={una.clave} type="button" aria-pressed={clave === una.clave} onClick={() => elegirSustancia(una.clave)}>
+                      {una.nombre}, <TexEnLineaIB tex={una.tex} />
+                    </button>
+                  ))}
+                </div>
+                <label className="control-rango">
+                  <span>La masa de {sustancia.nombre}</span>
+                  <output>{masaEscrita}</output>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="60"
+                    step="0.5"
+                    value={masa}
+                    aria-valuetext={masaEscrita.replace(" g", " gramos")}
+                    onChange={(evento) => setMasa(Number(evento.target.value))}
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <p>Lo que buscas</p>
+                <div className="fichas-interactivo" role="group" aria-label="Lo que se busca">
+                  {busquedas.map((una) => (
+                    <button key={una.clave} type="button" aria-pressed={busca === una.clave} onClick={() => setBusca(una.clave)}>
+                      {una.rotulo}
+                    </button>
+                  ))}
+                </div>
+                <p aria-live="polite">
+                  <strong>{masaEscrita}</strong> de {sustancia.nombre} son <strong>{significativasDeLaCadena(n, 4)} mol</strong>
+                  {compuesto
+                    ? ", con " + filas.map((fila) => significativasDeLaCadena(fila.nElemento, 4) + " mol de átomos de " + fila.elemento.nombre).join(" y ")
+                    : " de átomos"}
+                  . La masa molar, {M.toFixed(2).replace(".", ",") + " g mol⁻¹"}, {compuesto ? "es la suma de las masas atómicas de la fórmula" : "es su masa atómica"}.
+                </p>
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg className="grafica-ib" viewBox="0 0 640 300" role="img" aria-label={descripcion}>
+                <CajaDeLaCadena
+                  x={izquierda.x}
+                  y={14}
+                  ancho={izquierda.ancho}
+                  alto={izquierda.alto}
+                  rotulo={"gramos de " + sustancia.nombre}
+                  valor={masaEscrita}
+                  encendida
+                />
+                <FlechaDeLaCadena x1={123} y1={74} x2={123} y2={112} encendida />
+                <text x="134" y="99" fontSize="14" fill="var(--texto-suave)">
+                  {"÷ " + M.toFixed(2).replace(".", ",") + (compuesto ? " (M)" : " (masa atómica)")}
+                </text>
+                <CajaDeLaCadena
+                  x={izquierda.x}
+                  y={114}
+                  ancho={izquierda.ancho}
+                  alto={izquierda.alto}
+                  rotulo={molesDe}
+                  valor={significativasDeLaCadena(n, 4) + " mol"}
+                  encendida
+                />
+                <FlechaDeLaCadena x1={123} y1={174} x2={123} y2={212} encendida={busca === "particulas"} />
+                <text x="134" y="199" fontSize="14" fill="var(--texto-suave)">
+                  × N<tspan dy="0.3em" fontSize="0.7em">A</tspan>
+                </text>
+                <CajaDeLaCadena
+                  x={izquierda.x}
+                  y={214}
+                  ancho={izquierda.ancho}
+                  alto={izquierda.alto}
+                  rotulo={compuesto ? sustancia.particulas : "átomos"}
+                  valor={<CientificaDeLaCadena valor={N} />}
+                  encendida={busca === "particulas"}
+                />
+                {compuesto ? (
+                  filas.map((fila) => {
+                    const suya = simbolo === fila.elemento.simbolo;
+                    return (
+                      <g key={fila.elemento.simbolo}>
+                        <FlechaDeLaCadena x1={232} y1={143} x2={300} y2={fila.y + 29} encendida={suya} />
+                        <text x={262} y={fila.y === 26 ? 92 : 192} fontSize="14" fontWeight="700" textAnchor="middle" fill={suya ? COLORES_IB.azul : "var(--texto-suave)"}>
+                          {"× " + fila.elemento.cuantos}
+                        </text>
+                        <CajaDeLaCadena
+                          x={302}
+                          y={fila.y}
+                          ancho={156}
+                          alto={58}
+                          rotulo={"moles de átomos de " + fila.elemento.simbolo}
+                          valor={significativasDeLaCadena(fila.nElemento, 4) + " mol"}
+                          encendida={suya}
+                        />
+                        <FlechaDeLaCadena x1={460} y1={fila.y + 29} x2={478} y2={fila.y + 29} encendida={suya && tipo === "atomos"} />
+                        <CajaDeLaCadena
+                          x={480}
+                          y={fila.y}
+                          ancho={146}
+                          alto={58}
+                          rotulo={"átomos de " + fila.elemento.simbolo}
+                          valor={<CientificaDeLaCadena valor={fila.atomos} />}
+                          encendida={suya && tipo === "atomos"}
+                        />
+                        <text
+                          x={380}
+                          y={fila.y + 82}
+                          fontSize="14"
+                          textAnchor="middle"
+                          fontWeight={suya && tipo === "masa" ? "700" : "400"}
+                          fill={suya && tipo === "masa" ? COLORES_IB.azul : "var(--texto-suave)"}
+                        >
+                          {"× " + fila.elemento.masa.toFixed(2).replace(".", ",") + " g: " + significativasDeLaCadena(fila.masa, 3) + " g de " + fila.elemento.nombre}
+                        </text>
+                      </g>
+                    );
+                  })
+                ) : (
+                  <g>
+                    <text x="440" y="120" fontSize="15" textAnchor="middle" fill="var(--texto)">
+                      {"Un elemento: sus partículas son átomos,"}
+                    </text>
+                    <text x="440" y="144" fontSize="15" textAnchor="middle" fill="var(--texto)">
+                      {"y su masa atómica, " + M.toFixed(2).replace(".", ",") + ", hace de masa molar."}
+                    </text>
+                    <text x="440" y="178" fontSize="14" textAnchor="middle" fill="var(--texto-suave)">
+                      {"Un mol de " + sustancia.nombre + ": " + M.toFixed(2).replace(".", ",") + " g"}
+                    </text>
+                  </g>
+                )}
+              </svg>
+            </div>
+
+            <FormulaVivaIB tex={cuenta.tex} />
+          </div>
+        );
+      }
+
       const COMPONENTES = {
         ejemplo: EjemploInteractivo,
         "relleno-de-orbitales": RellenoDeOrbitalesInteractivo,
@@ -33699,7 +34846,8 @@ examen del jueves 12 de noviembre</p>
         "constructor-de-nombres": ConstructorDeNombresInteractivo,
         "formulador-inorganico": FormuladorInorganicoInteractivo,
         "molecula-en-el-espejo": MoleculaEnElEspejoInteractivo,
-        "exactitud-y-precision": ExactitudYPrecisionInteractivo
+        "exactitud-y-precision": ExactitudYPrecisionInteractivo,
+        "dos-cadenas": DosCadenasInteractivo
       };
 
       Object.assign(COMPONENTES, window.InfografiasIB || {});
