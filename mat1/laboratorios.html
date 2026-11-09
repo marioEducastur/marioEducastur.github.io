@@ -19257,6 +19257,10 @@ void main() {
         const pi = cursiva("π");
         const marcas = [1, 2, 3, 4, 5, 6];
         const salida = (k) => 4.4 + 0.5 * (k - 1);
+        const oro = "#FFDA7A";
+        const oroOscuro = "#EE8F33";
+        const crema = "#FFF6DC";
+        const oroDelArco = (k) => (k % 2 ? oro : oroOscuro);
 
         return (
           <Infografia
@@ -19289,11 +19293,11 @@ void main() {
                 <Rotulo t={1.9} x={cx + R + 18} y={cy - R / 2 + 8} fontSize="22">
                   {r}
                 </Rotulo>
-                <Rotulo t={3.6} x={punto(0.5, 0.56 * R)[0] + 6} y={punto(0.5, 0.56 * R)[1] + 7} fontSize="17">
+                <Rotulo t={3.6} x={punto(0.5, 0.56 * R)[0] + 6} y={punto(0.5, 0.56 * R)[1] + 7} fontSize="17" fill="#FFE08A">
                   1 rad
                 </Rotulo>
                 {marcas.map((k) => (
-                  <Rotulo key={k} t={salida(k) + 0.3} x={punto(k, R + 20)[0]} y={punto(k, R + 20)[1] + 6} fontSize="16">
+                  <Rotulo key={k} t={salida(k) + 0.3} x={punto(k, R + 20)[0]} y={punto(k, R + 20)[1] + 6} fontSize="16" fill="#FFD873">
                     {String(k)}
                   </Rotulo>
                 ))}
@@ -19319,25 +19323,32 @@ void main() {
           >
             <Halo t={0.2} dura={0.9} d={circulo} grosor={2} />
             <Trazo t={1} dura={0.35} d={"M" + cx + " " + cy + "H" + (cx + R)} strokeWidth="2.2" />
-            <Trazo t={1.6} dura={0.35} d={"M" + (cx + R) + " " + cy + "V" + (cy - R)} strokeOpacity="0.55" strokeWidth="2.2" strokeDasharray="5 6" />
+            <Trazo t={1.6} dura={0.35} d={"M" + (cx + R) + " " + cy + "V" + (cy - R)} stroke={oro} strokeOpacity="0.9" strokeWidth="2.2" strokeDasharray="5 6" />
             <Velo
               t={3.1}
               d={"M" + cx + " " + cy + "L" + (cx + R) + " " + cy + arcoDe(0, 1, R).slice(arcoDe(0, 1, R).indexOf("A")) + "Z"}
-              fill="#fff"
-              fillOpacity="0.18"
+              fill="#FFF1C9"
+              fillOpacity="0.2"
               stroke="none"
             />
-            <Halo t={2.3} dura={0.8} d={arcoDe(0, 1, R)} grosor={3.4} />
+            <g stroke={oroDelArco(1)}>
+              <Halo t={2.3} dura={0.8} d={arcoDe(0, 1, R)} grosor={3.4} />
+            </g>
+            {marcas.slice(1).map((k) => (
+              <g key={k} stroke={oroDelArco(k)}>
+                <Halo t={salida(k) - 0.45} dura={0.45} d={arcoDe(k - 1, k, R)} grosor={3.4} />
+              </g>
+            ))}
             <Trazo t={3.1} dura={0.35} d={"M" + cx + " " + cy + "L" + n1(bx) + " " + n1(by)} strokeWidth="2.2" />
             {marcas.map((k) => {
               const [x1, y1] = punto(k, R - 7);
               const [x2, y2] = punto(k, R + 7);
-              return <Trazo key={k} t={salida(k)} dura={0.15} d={"M" + n1(x1) + " " + n1(y1) + "L" + n1(x2) + " " + n1(y2)} strokeWidth="2" />;
+              return <Trazo key={k} t={salida(k)} dura={0.15} d={"M" + n1(x1) + " " + n1(y1) + "L" + n1(x2) + " " + n1(y2)} stroke={crema} strokeWidth="2" />;
             })}
             {marcas.slice(1).map((k) => (
               <Luz key={k} t={salida(k) - 0.45} dura={0.45} d={arcoDe(k - 1, k, R)} />
             ))}
-            <Trazo t={7.2} dura={0.3} d={arcoDe(6, 2 * Math.PI, R)} strokeWidth="4" strokeOpacity="0.5" />
+            <Trazo t={7.2} dura={0.3} d={arcoDe(6, 2 * Math.PI, R)} strokeWidth="4" strokeOpacity="0.8" />
             <Punto t={0.9} cx={cx} cy={cy} r="3.6" />
           </Infografia>
         );
