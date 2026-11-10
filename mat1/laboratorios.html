@@ -10518,6 +10518,7 @@ teoría que lo acompaña.</p>
         if (ampliacion.tarjeta) {
           ampliacion.tarjeta.style.paddingTop = "";
         }
+        devolverLosDibujos();
       }
       function mostrar(visibles) {
         var a = ampliacion;
@@ -10617,6 +10618,9 @@ teoría que lo acompaña.</p>
       function cabe() {
         var a = ampliacion;
         partirLoImprescindible();
+        if (a.encoger && !a.soloAncho) {
+          encajarLosDibujos();
+        }
         var estilo = window.getComputedStyle(a.tarjeta);
         var alto = a.tarjeta.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
         var arriba = a.primero.getBoundingClientRect().top;
@@ -11008,6 +11012,9 @@ teoría que lo acompaña.</p>
           a.zoomPuesto = parte.zoom;
           ponerZoom(parte.zoom);
           marcarLoImprescindible();
+          if (parte.encoge) {
+            encajarLosDibujos();
+          }
           if (parte.desplaza) {
             var hueco = a.tarjeta.getBoundingClientRect().bottom - a.ultimo.getBoundingClientRect().bottom + 1;
             if (hueco > 0) {
@@ -11027,6 +11034,9 @@ teoría que lo acompaña.</p>
           ponerZoom(parte.zoom);
           partirLoImprescindible();
           marcarLoImprescindible();
+          if (parte.encoge) {
+            encajarLosDibujos();
+          }
           a.tarjeta.scrollTop = 0;
           rotular();
           return;
@@ -11356,6 +11366,15 @@ teoría que lo acompaña.</p>
         a.tarjeta.classList.remove("ampliar-partible");
         parte.imprescindibles = [];
         parte.desplaza = false;
+        parte.encoge = false;
+        if (!zoom) {
+          zoom = letraConLosDibujosEncogidos(function () {
+            return mayorZoom(1, a.objetivo);
+          });
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          parte.encoge = !!zoom;
+        }
         if (!zoom) {
           zoom = letraSiNoCabe();
           ponerZoom(zoom);
@@ -11545,23 +11564,36 @@ teoría que lo acompaña.</p>
           mostrar(parte.visibles);
           return [parte];
         }
+        var cabeJunto = function (grupo, letra) {
+          mostrar(base.concat(elementosDelGrupo(grupo)));
+          a.partible = false;
+          a.tarjeta.classList.remove("ampliar-partible");
+          ponerZoom(letra || a.objetivo);
+          return cabe();
+        };
+        var letraDe = function (grupo) {
+          mostrar(base.concat(elementosDelGrupo(grupo)));
+          var letra = medir();
+          grupo.partible = a.partible;
+          if (!letra) {
+            letra = letraConLosDibujosEncogidos(medir);
+            grupo.encoge = !!letra;
+            grupo.partible = a.partible;
+          }
+          return letra;
+        };
         var reparto = repartirElPaso(
           tramos,
           parte.desplaza ? 0 : parte.zoom,
-          function (grupo, letra) {
-            mostrar(base.concat(elementosDelGrupo(grupo)));
-            a.partible = false;
-            a.tarjeta.classList.remove("ampliar-partible");
-            ponerZoom(letra || a.objetivo);
-            return cabe();
-          },
-          function (grupo) {
-            mostrar(base.concat(elementosDelGrupo(grupo)));
-            var letra = medir();
-            grupo.partible = a.partible;
-            return letra;
-          }
+          cabeJunto,
+          letraDe
         );
+        if (!reparto && parte.desplaza) {
+          var conElCierreAparte = tramosDelPaso(pasos, true);
+          if (conElCierreAparte.length > tramos.length) {
+            reparto = repartirElPaso(conElCierreAparte, 0, cabeJunto, letraDe);
+          }
+        }
         if (!reparto) {
           limpiarLosTramos(pasos);
           mostrar(parte.visibles);
@@ -11577,6 +11609,7 @@ teoría que lo acompaña.</p>
           trozo.partible = !!grupo.partible;
           trozo.imprescindibles = [];
           trozo.desplaza = false;
+          trozo.encoge = !!grupo.encoge;
           trozo.trozo = k;
           trozo.trozos = reparto.pantallas.length;
           return trozo;
@@ -11603,7 +11636,7 @@ teoría que lo acompaña.</p>
         }
         return base;
       }
-      function tramosDelPaso(pasos) {
+      function tramosDelPaso(pasos, cierreAparte) {
         limpiarLosTramos(pasos);
         var lista = pasos.querySelector(":scope > ol.lista-solucion-ejercicio");
         var caja = lista && lista.children.length === 1 ? lista.children[0] : pasos;
@@ -11612,14 +11645,18 @@ teoría que lo acompaña.</p>
           envolverLasRachas(pasos);
           Array.prototype.forEach.call(pasos.children, function (hijo) {
             if (hijo !== lista) {
-              atomos.push({ pieza: hijo, fija: true });
+              atomos.push(llevaDibujo(hijo) ? { pieza: hijo, dibujo: true } : { pieza: hijo, fija: true });
             }
           });
         }
         envolverLasRachas(caja);
         Array.prototype.forEach.call(caja.children, function (pieza) {
-          if (pieza.matches(".sol-letra, figure") || (pieza.matches("p") && pieza.querySelector("img") && !texto(pieza))) {
+          if (pieza.matches(".sol-letra")) {
             atomos.push({ pieza: pieza, fija: true });
+            return;
+          }
+          if (pieza.matches("figure") || (pieza.matches("p") && pieza.querySelector("img") && !texto(pieza))) {
+            atomos.push({ pieza: pieza, dibujo: true });
             return;
           }
           var formula = pieza.matches(".math.display")
@@ -11633,13 +11670,20 @@ teoría que lo acompaña.</p>
             });
             return;
           }
-          atomos.push({ pieza: pieza, cuenta: pieza.matches(".math.display") || !!pieza.querySelector(".math.display") });
+          atomos.push({
+            pieza: pieza,
+            cuenta: pieza.matches(".math.display") || !!pieza.querySelector(".math.display"),
+            dibujo: llevaDibujo(pieza)
+          });
         });
         atomos.forEach(function (atomo, i) {
           var siguiente = atomos[i + 1];
-          atomo.anuncia = !!siguiente && !atomo.cuenta && !atomo.fija && anunciaLaCuenta(atomo.pieza, siguiente);
+          atomo.anuncia = !!siguiente && !atomo.cuenta && !atomo.fija && !atomo.dibujo && anunciaLaCuenta(atomo.pieza, siguiente);
         });
-        return unirLosAtomos(atomos);
+        return unirLosAtomos(atomos, cierreAparte);
+      }
+      function llevaDibujo(pieza) {
+        return pieza.matches("figure") || !!pieza.querySelector("img, figure");
       }
       function envolverLasRachas(caja) {
         var racha = null;
@@ -11670,7 +11714,7 @@ teoría que lo acompaña.</p>
         }
         return final === ":" || (!!siguiente.cuenta && pieza.matches("p, .tramo-ampliado") && ".!?…".indexOf(final) === -1);
       }
-      function unirLosAtomos(atomos) {
+      function unirLosAtomos(atomos, cierreAparte) {
         var ultima = -1;
         atomos.forEach(function (atomo, i) {
           if (atomo.cuenta) {
@@ -11680,7 +11724,8 @@ teoría que lo acompaña.</p>
         var tramos = [];
         var juntar = false;
         atomos.forEach(function (atomo, i) {
-          if (tramos.length && (juntar || (ultima !== -1 && i > ultima))) {
+          var cierre = ultima !== -1 && i > ultima && !atomo.dibujo && !(cierreAparte && i === ultima + 1);
+          if (tramos.length && (juntar || cierre)) {
             tramos[tramos.length - 1].push(atomo);
           } else {
             tramos.push([atomo]);
@@ -11723,6 +11768,87 @@ teoría que lo acompaña.</p>
           }
         }
         return { pantallas: pantallas, letra: letra };
+      }
+      var MENOR_DIBUJO = 0.6;
+      function dibujosDelPaso() {
+        return Array.prototype.filter.call(ampliacion.tarjeta.querySelectorAll(".sol-pasos img"), visible);
+      }
+      function letraConLosDibujosEncogidos(medir) {
+        var a = ampliacion;
+        if (!dibujosDelPaso().length) {
+          return 0;
+        }
+        a.encoger = true;
+        try {
+          return medir();
+        } finally {
+          a.encoger = false;
+          devolverLosDibujos();
+        }
+      }
+      function sobraALoAlto() {
+        var a = ampliacion;
+        var estilo = window.getComputedStyle(a.tarjeta);
+        var alto = a.tarjeta.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
+        var arriba = a.primero.getBoundingClientRect().top;
+        if (a.subido === a.primero) {
+          arriba = Math.max(arriba, a.tarjeta.getBoundingClientRect().top + parseFloat(estilo.paddingTop) - a.tarjeta.scrollTop);
+        }
+        return a.ultimo.getBoundingClientRect().bottom - arriba - alto;
+      }
+      function escalaDelDibujo(escala, alto, sobra) {
+        if (!(alto > 0)) {
+          return escala;
+        }
+        return Math.min(1, Math.max(MENOR_DIBUJO, (escala * (alto - sobra)) / alto));
+      }
+      function encajarLosDibujos() {
+        devolverLosDibujos();
+        var dibujos = dibujosDelPaso();
+        var anchos = dibujos.map(function (dibujo) {
+          return dibujo.getBoundingClientRect().width;
+        });
+        var escala = 1;
+        for (var vuelta = 0; vuelta < 4 && dibujos.length; vuelta++) {
+          var sobra = sobraALoAlto();
+          if (sobra <= 0.5 || escala <= MENOR_DIBUJO) {
+            return;
+          }
+          var alto = dibujos.reduce(function (suma, dibujo) {
+            return suma + dibujo.getBoundingClientRect().height;
+          }, 0);
+          escala = escalaDelDibujo(escala, alto, sobra);
+          dibujos.forEach(function (dibujo, k) {
+            ponerAnchoDelDibujo(dibujo, anchos[k] * escala);
+          });
+        }
+      }
+      function ponerAnchoDelDibujo(dibujo, ancho) {
+        var a = ampliacion;
+        var guardado = a.encogidos.some(function (par) {
+          return par[0] === dibujo;
+        });
+        if (!guardado) {
+          a.encogidos.push([dibujo, dibujo.getAttribute("style")]);
+        }
+        dibujo.style.width = Math.floor(ancho) + "px";
+        dibujo.style.display = "block";
+        dibujo.style.marginLeft = "auto";
+        dibujo.style.marginRight = "auto";
+      }
+      function devolverLosDibujos() {
+        var a = ampliacion;
+        if (!a || !a.encogidos) {
+          return;
+        }
+        a.encogidos.forEach(function (par) {
+          if (par[1] === null) {
+            par[0].removeAttribute("style");
+          } else {
+            par[0].setAttribute("style", par[1]);
+          }
+        });
+        a.encogidos = [];
       }
       function filasDeLaCadena(tex) {
         var limpio = (tex || "").trim();
@@ -11924,6 +12050,11 @@ teoría que lo acompaña.</p>
           var visibles = grupos.length > 1 ? visiblesDelGrupo(ejercicio, suyos) : [ejercicio];
           mostrar(visibles);
           var zoom = letraDeResuelto();
+          var encoge = false;
+          if (!zoom) {
+            zoom = letraConLosDibujosEncogidos(letraDeResuelto);
+            encoge = !!zoom;
+          }
           var parte = {
             tipo: "resuelto",
             ejercicio: ejercicio,
@@ -11932,7 +12063,8 @@ teoría que lo acompaña.</p>
             visibles: visibles,
             zoom: zoom || 1,
             desplaza: false,
-            partible: a.partible
+            partible: a.partible,
+            encoge: encoge
           };
           if (!zoom) {
             parte.zoom = letraSiNoCabe();
@@ -12053,7 +12185,9 @@ teoría que lo acompaña.</p>
           estirado: null,
           subido: null,
           entrada: null,
-          soloAncho: false
+          soloAncho: false,
+          encoger: false,
+          encogidos: []
         };
         var abrir = extra && extra.abrir ? Array.prototype.slice.call(extra.abrir) : [];
         if (abrir.length) {
