@@ -9784,9 +9784,10 @@ Apuntes de clase, explicados y resueltos</p>
                 data-number="6">
                 <h2 class="solo-web" data-number="6"><span
                 class="header-section-number">6</span> Lo esencial</h2>
-                <p>Un repaso de toda la página en seis estaciones: el
+                <p>Un repaso de toda la página en siete estaciones: el
                 MRU y los encuentros, el MRUA, las frenadas, la caída
-                libre, el tiro horizontal y la rampa.</p>
+                libre, el tiro horizontal, el tiro parabólico y la
+                rampa.</p>
                 <div id="resumen-de-la-unidad"
                 class="interactivo bloque-didactico"
                 data-componente="resumen-los-movimientos"
@@ -9795,8 +9796,8 @@ Apuntes de clase, explicados y resueltos</p>
                 <p><strong>Lo que hay que saberse.</strong> Un
                 movimiento rectilíneo con aceleración constante se
                 resuelve con tres ecuaciones, y uno en dos dimensiones,
-                como el tiro horizontal, con un movimiento así por cada
-                eje.</p>
+                como el tiro horizontal o el parabólico, con un
+                movimiento así por cada eje.</p>
                 <ul>
                 <li><strong>El MRU y los encuentros.</strong> <span
                 class="formula-con-signo"><span
@@ -9843,6 +9844,21 @@ Apuntes de clase, explicados y resueltos</p>
                 class="math inline">\(y=h-4{,}9\,t^{2}\)</span>;</span>
                 el tiempo de vuelo solo depende de la altura, y la
                 velocidad al llegar es un vector.</li>
+                <li><strong>El tiro parabólico.</strong> Se descompone
+                la velocidad inicial, <span
+                class="math inline">\(v_{0x}=v_0\cos\alpha\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(v_{0y}=v_0\operatorname{sen}\alpha\)</span>:</span>
+                un MRU en horizontal y un MRUA en vertical, <span
+                class="math inline">\(x=v_{0x}\,t\)</span> e <span
+                class="formula-con-signo"><span
+                class="math inline">\(y=h+v_{0y}\,t-4{,}9\,t^{2}\)</span>.</span>
+                En lo más alto, <span
+                class="math inline">\(v_y=0\)</span> y la velocidad es
+                <span class="formula-con-signo"><span
+                class="math inline">\(v_{0x}\)</span>,</span>
+                horizontal; desde el suelo, tarda lo mismo en subir que
+                en bajar, y llega como salió.</li>
                 <li><strong>La rampa.</strong> Pregunta de
                 investigación, variables e hipótesis; una tabla con la
                 magnitud y la unidad en la cabecera; y la linealización,
@@ -16728,7 +16744,59 @@ Apuntes de clase, explicados y resueltos</p>
         return estacion;
       }
 
+      window.KitResumenesIB = {
+        piezas: piezas,
+        MENOS: MENOS,
+        FINO: FINO,
+        cifra: cifra,
+        enTex: enTex,
+        conParentesis: conParentesis,
+        exacto: exacto,
+        igual: igual,
+        igualRotulo: igualRotulo,
+        Formula: Formula,
+        Letras: Letras,
+        Toca: Toca,
+        dondeToca: dondeToca,
+        Arrastre: Arrastre,
+        Zona: Zona,
+        PasoIB: PasoIB,
+        BarraIB: BarraIB,
+        OpcionesIB: OpcionesIB,
+        MANDOS: MANDOS,
+        FichaIB: FichaIB,
+        ICONOS: ICONOS,
+        Icono: Icono,
+        ALTO: ALTO,
+        RITMO: RITMO,
+        LETRAS_DE_UNA_CORTA: LETRAS_DE_UNA_CORTA,
+        ResumenIB: ResumenIB,
+        estacionDe: estacionDe,
+      };
 
+
+
+
+      window.ResumenesIB = {
+      };
+    })();
+  </script>
+
+  <script type="text/babel" data-presets="env,react">
+    (() => {
+      if (!window.React || !window.KitResumenesIB || !window.ResumenesIB) {
+        return;
+      }
+
+      const kit = window.KitResumenesIB;
+      const {
+        piezas, MENOS, FINO, cifra, enTex, conParentesis, exacto, igual,
+        igualRotulo, Formula, Letras, Toca, dondeToca, Arrastre, Zona, PasoIB,
+        BarraIB, OpcionesIB, MANDOS, FichaIB, ICONOS, Icono, ALTO, RITMO,
+        LETRAS_DE_UNA_CORTA, ResumenIB, estacionDe
+      } = kit;
+      const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React;
+      const { Trazo, Velo, Punto, Barra, Rotulo, Halo, cursiva, palabra, POR, HUECO, Sub, Sup, Quebrado, Raiz, Mates, caja, abanico, n1 } = piezas;
 
 
       const TINTA_DE_LOS_MOVIMIENTOS = "#6b1626";
@@ -18389,6 +18457,405 @@ Apuntes de clase, explicados y resueltos</p>
       }
 
 
+      const V0_DEL_PARABOLICO = 22;
+      const ANGULOS_DEL_PARABOLICO = [20, 38, 55, 75];
+      const ALTURAS_DEL_PARABOLICO = [0, 10];
+
+      function salidaDelParabolico(alfa, h) {
+        const radianes = (alfa * Math.PI) / 180;
+        const v0x = V0_DEL_PARABOLICO * Math.cos(radianes);
+        const v0y = V0_DEL_PARABOLICO * Math.sin(radianes);
+        const vuelo = h > 0 ? (v0y + Math.sqrt(v0y * v0y + 19.6 * h)) / 9.8 : v0y / 4.9;
+        return {
+          v0x: v0x,
+          v0y: v0y,
+          vuelo: vuelo,
+          subida: v0y / 9.8,
+          altura: h + (v0y * v0y) / 19.6,
+          alcance: v0x * vuelo,
+          vyLlegada: v0y - 9.8 * vuelo
+        };
+      }
+
+      const INSTANTES_DEL_PARABOLICO = {};
+      function instantesDelParabolico(alfa, h) {
+        const clave = alfa + "/" + h;
+        if (!INSTANTES_DEL_PARABOLICO[clave]) {
+          const salida = salidaDelParabolico(alfa, h);
+          const lista = [];
+          for (let orden = 0; orden / 10 < salida.vuelo - 1e-9; orden += 1) {
+            lista.push({ t: orden / 10, cual: orden === 0 ? "salida" : "" });
+          }
+          lista.push({ t: salida.subida, cual: "arriba" });
+          lista.sort((uno, otro) => uno.t - otro.t);
+          lista.push({ t: salida.vuelo, cual: "llegada" });
+          INSTANTES_DEL_PARABOLICO[clave] = lista;
+        }
+        return INSTANTES_DEL_PARABOLICO[clave];
+      }
+
+      const instanteDelParabolico = (instante) =>
+        instante.cual === "arriba" || instante.cual === "llegada" ? sigDeLosMovimientos(instante.t, 3) : cortoDeLosMovimientos(instante.t, 2);
+
+      function parecidoDelParabolico(e, alfa, h) {
+        const antes = instantesDelParabolico(e.alfa, e.h)[e.k] || instantesDelParabolico(e.alfa, e.h)[0];
+        const lista = instantesDelParabolico(alfa, h);
+        if (antes.cual) {
+          return lista.findIndex((uno) => uno.cual === antes.cual);
+        }
+        const mismo = lista.findIndex((uno) => !uno.cual && Math.abs(uno.t - antes.t) < 1e-9);
+        return mismo >= 0 ? mismo : lista.length - 1;
+      }
+
+      const CIFRAS_DEL_PARABOLICO = {};
+      function cifrasDelParabolico(alfa, h) {
+        const clave = alfa + "/" + h;
+        if (!CIFRAS_DEL_PARABOLICO[clave]) {
+          const s = salidaDelParabolico(alfa, h);
+          const cuadra = (calculado, escrito) => fijoDeLosMovimientos(calculado, decimalesEscritosDeLosMovimientos(escrito)) === escrito;
+          const angulo = (vy, vx) => fijoDeLosMovimientos(gradosDeLosMovimientos(Math.atan2(Math.abs(vy), vx)), 1);
+          const intermedios = instantesDelParabolico(alfa, h).filter((uno) => !uno.cual);
+          let halladas = null;
+          for (let cifras = 4; cifras < 8 && !halladas; cifras += 1) {
+            const vx = valorDeLosMovimientos(sigDeLosMovimientos(s.v0x, cifras));
+            const vy0 = valorDeLosMovimientos(sigDeLosMovimientos(s.v0y, cifras));
+            const tv = valorDeLosMovimientos(sigDeLosMovimientos(s.vuelo, cifras));
+            const vuelo = h > 0 ? (vy0 + Math.sqrt(vy0 * vy0 + 19.6 * h)) / 9.8 : vy0 / 4.9;
+            if (
+              cuadra(vuelo, sigDeLosMovimientos(s.vuelo, 3)) &&
+              cuadra(vx * tv, sigDeLosMovimientos(s.alcance, 3)) &&
+              cuadra(vy0 / 9.8, sigDeLosMovimientos(s.subida, 3)) &&
+              cuadra(h + (vy0 * vy0) / 19.6, sigDeLosMovimientos(s.altura, 3)) &&
+              intermedios.every((uno) => cuadra(vy0 - 9.8 * uno.t, sigDeLosMovimientos(s.v0y - 9.8 * uno.t, 3)))
+            ) {
+              for (let llegada = 4; llegada <= cifras && !halladas; llegada += 1) {
+                const vista = sigDeLosMovimientos(s.vyLlegada, llegada);
+                const vyl = valorDeLosMovimientos(vista);
+                if (
+                  cuadra(vy0 - 9.8 * tv, vista) &&
+                  cuadra(Math.hypot(vx, vyl), sigDeLosMovimientos(Math.hypot(s.v0x, s.vyLlegada), 3)) &&
+                  angulo(vyl, vx) === angulo(s.vyLlegada, s.v0x)
+                ) {
+                  halladas = { operandos: cifras, llegada: llegada };
+                }
+              }
+            }
+          }
+          CIFRAS_DEL_PARABOLICO[clave] = halladas || { operandos: 7, llegada: 7 };
+        }
+        return CIFRAS_DEL_PARABOLICO[clave];
+      }
+
+      function parabolicoDeLosMovimientos(e) {
+        const salida = salidaDelParabolico(e.alfa, e.h);
+        const instantes = instantesDelParabolico(e.alfa, e.h);
+        const instante = instantes[Math.min(Math.max(0, e.k), instantes.length - 1)];
+        const t = instante.t;
+        const arriba = instante.cual === "arriba";
+        const llegada = instante.cual === "llegada";
+        return Object.assign({}, salida, {
+          instantes: instantes,
+          instante: instante,
+          cual: instante.cual,
+          t: t,
+          x: salida.v0x * t,
+          y: llegada ? 0 : arriba ? salida.altura : e.h + salida.v0y * t - 4.9 * t * t,
+          vy: arriba ? 0 : llegada ? salida.vyLlegada : salida.v0y - 9.8 * t,
+          cifras: cifrasDelParabolico(e.alfa, e.h)
+        });
+      }
+
+      function ParabolicoDibujo({ e, poner }) {
+        const datos = parabolicoDeLosMovimientos(e);
+        const k = 7.4;
+        const kv = 2;
+        const suelo = 262;
+        const Px = (x) => 80 + x * k;
+        const Py = (y) => suelo - y * k;
+        const lo = (instante) => ({
+          x: Px(datos.v0x * instante),
+          y: Py(Math.max(0, e.h + datos.v0y * instante - 4.9 * instante * instante))
+        });
+        const puntos = [];
+        for (let orden = 0; orden <= 60; orden += 1) {
+          puntos.push(lo((datos.vuelo * orden) / 60));
+        }
+        const fotos = [];
+        for (let orden = 0; orden * 0.2 <= datos.vuelo + 1e-9; orden += 1) {
+          fotos.push(orden * 0.2);
+        }
+        const salida = Py(e.h);
+        const cuerpo = { x: Px(datos.x), y: Py(datos.y) };
+        const finX = { x: cuerpo.x + kv * datos.v0x, y: cuerpo.y };
+        const finV = { x: finX.x, y: cuerpo.y - kv * datos.vy };
+        const cima = { x: Px(datos.v0x * datos.subida), y: Py(datos.altura) };
+        const hayVy = Math.abs(datos.vy) * kv > 2;
+        const arco = datos.cual === "salida" ? kv * V0_DEL_PARABOLICO + 22 : 24;
+        const radio = arco + 12;
+        const radianes = (e.alfa * Math.PI) / 180;
+        const vuela = datos.cual !== "salida" && datos.cual !== "llegada";
+        const bajando = vuela && hayVy && datos.vy < 0;
+        const phi = Math.atan2(Math.abs(datos.vy), datos.v0x);
+        const cuna = (phi + Math.PI / 2) / 2;
+        const verV = !bajando || phi < (55 * Math.PI) / 180;
+        const medio = { x: (cuerpo.x + finV.x) / 2, y: (cuerpo.y + finV.y) / 2 };
+        const estado =
+          datos.cual === "salida"
+            ? "sale a " + e.alfa + "° sobre la horizontal"
+            : datos.cual === "arriba"
+              ? "en lo más alto, la velocidad es horizontal"
+              : datos.cual === "llegada"
+                ? "al llegar al suelo"
+                : datos.vy > 0
+                  ? "sube, y cada vez más despacio"
+                  : "baja, y cada vez más deprisa";
+        return (
+          <>
+            {e.h > 0 ? (
+              <>
+                <Velo t={0.1} como="rect" x="44" y={n1(salida)} width="36" height={n1(suelo - salida)} fill="#fff" fillOpacity="0.13" stroke="none" />
+                <Trazo t={0.1} dura={0.4} d={"M44 " + n1(salida) + "H80V" + suelo} strokeWidth="1.8" />
+                <Velo t={0.2} d={"M30 " + n1(salida) + "V" + suelo + "M26 " + n1(salida) + "H34M26 " + suelo + "H34"} strokeWidth="1.2" strokeOpacity="0.8" />
+                <Velo t={0.8} d={"M80 " + n1(salida) + "H" + n1(80 + arco + 14)} strokeWidth="1.1" strokeOpacity="0.7" />
+              </>
+            ) : null}
+            <Trazo t={0.15} dura={0.4} d={"M24 " + suelo + "H624"} strokeWidth="2" />
+            <Velo t={0.3} d={caminoDeLosMovimientos(puntos)} strokeWidth="1.6" strokeDasharray="5 5" strokeOpacity="0.6" />
+            <Trazo
+              t={0.3}
+              dura={0.3}
+              {...abanico(fotos.map((instante) => [lo(instante).x, suelo - 4, lo(instante).x, suelo + 4]))}
+              strokeWidth="1.4"
+            />
+            {fotos.map((instante, orden) => (
+              <g key={"f" + orden}>
+                <Velo t={0.4 + 0.03 * orden} como="circle" cx={n1(lo(instante).x)} cy={n1(lo(instante).y)} r="3.4" fill="#fff" fillOpacity="0.7" stroke="none" />
+                <Velo t={0.4 + 0.03 * orden} como="circle" cx="62" cy={n1(lo(instante).y)} r="2.8" fill="#fff" fillOpacity="0.55" stroke="none" />
+              </g>
+            ))}
+            <Velo
+              t={0.8}
+              d={
+                "M" + n1(80 + arco) + " " + n1(salida) + "A" + arco + " " + arco + " 0 0 0 " + n1(80 + arco * Math.cos(radianes)) + " " +
+                n1(salida - arco * Math.sin(radianes))
+              }
+              strokeWidth="1.4"
+            />
+            <Velo t={0.85} d={"M" + n1(cima.x) + " " + suelo + "V" + n1(cima.y)} strokeWidth="1.2" strokeDasharray="3 4" strokeOpacity="0.75" />
+            <Velo
+              t={0.9}
+              d={
+                "M80 " + n1(suelo + 22) + "H" + n1(Px(datos.alcance)) + "M80 " + n1(suelo + 17) + "V" + n1(suelo + 27) + "M" + n1(Px(datos.alcance)) + " " +
+                n1(suelo + 17) + "V" + n1(suelo + 27)
+              }
+              strokeWidth="1.2"
+              strokeOpacity="0.85"
+            />
+            <Velo t={1.0} d={"M62 " + n1(cuerpo.y) + "H" + n1(cuerpo.x)} strokeWidth="1.1" strokeDasharray="3 4" strokeOpacity="0.7" />
+            <Punto t={1.0} cx="62" cy={n1(cuerpo.y)} r="5" />
+            {hayVy ? <FlechaDeLosMovimientos t={1.1} x1={cuerpo.x} y1={cuerpo.y} x2={finX.x} y2={finX.y} grosor={1.8} punta={9} raya="5 4" /> : null}
+            {hayVy ? <FlechaDeLosMovimientos t={1.15} x1={finX.x} y1={finX.y} x2={finV.x} y2={finV.y} grosor={1.8} punta={9} raya="5 4" /> : null}
+            <FlechaDeLosMovimientos t={1.2} x1={cuerpo.x} y1={cuerpo.y} x2={finV.x} y2={finV.y} grosor={3} punta={12} halo />
+            {vuela ? (
+              <FlechaDeLosMovimientos t={1.25} x1={cuerpo.x} y1={cuerpo.y + 9} x2={cuerpo.x} y2={cuerpo.y + 38} grosor={1.8} punta={9} opacidad={0.85} />
+            ) : null}
+            <Punto t={1.0} cx={n1(cuerpo.x)} cy={n1(cuerpo.y)} r="7" />
+            <Letras>
+              {e.h > 0 ? (
+                <Rotulo t={0.2} x="22" y={n1((salida + suelo) / 2 + 5)} fontSize="15" textAnchor="end">
+                  {cursiva("h")}
+                </Rotulo>
+              ) : null}
+              <Rotulo t={0.85} x={n1(80 + radio * Math.cos(radianes / 2))} y={n1(salida - radio * Math.sin(radianes / 2) + 5)} fontSize="13">
+                {cursiva("α")}
+              </Rotulo>
+              {suelo - cima.y >= 64 ? (
+                <Rotulo t={0.9} x={n1(cima.x + 6)} y={n1(suelo - 10)} fontSize="13" textAnchor="start">
+                  {cursiva("H")}
+                </Rotulo>
+              ) : null}
+              <Rotulo t={0.95} x={n1(Px(datos.alcance / 2))} y={n1(suelo + 40)} fontSize="13">
+                {sigDeLosMovimientos(datos.alcance, 3)} m
+              </Rotulo>
+              {hayVy ? (
+                <Rotulo t={1.15} x={n1(Math.max((cuerpo.x + finX.x) / 2, cuerpo.x + 12))} y={n1(cuerpo.y + (datos.vy > 0 ? 16 : -9))} fontSize="13">
+                  {subDeLosMovimientos("v", "x")}
+                </Rotulo>
+              ) : null}
+              {hayVy ? (
+                <Rotulo
+                  t={1.2}
+                  x={n1(finX.x > 600 ? finX.x - 6 : finX.x + 6)}
+                  y={n1((finX.y + finV.y) / 2 + 4)}
+                  fontSize="13"
+                  textAnchor={finX.x > 600 ? "end" : "start"}
+                >
+                  {subDeLosMovimientos("v", "y")}
+                </Rotulo>
+              ) : null}
+              {vuela ? (
+                <Rotulo t={1.3} x={n1(cuerpo.x - 8)} y={n1(cuerpo.y + 34)} fontSize="13" textAnchor="end">
+                  {cursiva("g")}
+                </Rotulo>
+              ) : null}
+              <Rotulo t={1.4} x="628" y="28" fontSize="15" textAnchor="end">
+                {cursiva("α")} = {e.alfa}°{HUECO}
+                {cursiva("t")} = {instanteDelParabolico(datos.instante)} s
+              </Rotulo>
+              <Rotulo t={1.45} x="628" y="54" fontSize="15" textAnchor="end">
+                {cursiva("x")} = {datos.cual === "salida" ? "0" : sigDeLosMovimientos(datos.x, 3)} m{HUECO}
+                {cursiva("y")} = {datos.cual === "salida" ? String(e.h) : datos.cual === "llegada" ? "0" : sigDeLosMovimientos(datos.y, 3)} m
+              </Rotulo>
+              <Rotulo t={1.5} x="628" y="80" fontSize="15" textAnchor="end">
+                {subDeLosMovimientos("v", "x")} = {sigDeLosMovimientos(datos.v0x, 3)} {unidadDeLosMovimientos("m s", 1)}
+              </Rotulo>
+              <Rotulo t={1.55} x="628" y="106" fontSize="15" textAnchor="end">
+                {subDeLosMovimientos("v", "y")} = {datos.cual === "arriba" ? "0" : sigDeLosMovimientos(datos.vy, 3)}
+                {datos.cual === "arriba" ? null : <> {unidadDeLosMovimientos("m s", 1)}</>}
+              </Rotulo>
+              <Rotulo t={1.6} x="628" y="132" fontSize="13" textAnchor="end">
+                {palabra(estado)}
+              </Rotulo>
+              <Rotulo t={1.65} x="628" y="158" fontSize="15" textAnchor="end">
+                {cursiva("H")} = {sigDeLosMovimientos(datos.altura, 3)} m
+              </Rotulo>
+              {verV ? (
+                <VectorDeLosMovimientos
+                  t={1.3}
+                  x={!hayVy ? medio.x : bajando ? cuerpo.x + 26 * Math.cos(cuna) : medio.x - 12}
+                  y={!hayVy ? cuerpo.y - 14 : bajando ? cuerpo.y + 26 * Math.sin(cuna) : medio.y + (datos.vy > 0 ? -10 : 12)}
+                  s={17}
+                  letra="v"
+                />
+              ) : null}
+            </Letras>
+            <Arrastre
+              alMover={(lugar) => {
+                const instante = (lugar.x - 80) / (k * datos.v0x);
+                let mejor = 0;
+                datos.instantes.forEach((uno, orden) => {
+                  if (Math.abs(uno.t - instante) < Math.abs(datos.instantes[mejor].t - instante)) {
+                    mejor = orden;
+                  }
+                });
+                if (mejor !== e.k) {
+                  poner({ k: mejor });
+                }
+              }}
+            >
+              <Zona x="80" y="14" width="540" height="262" />
+            </Arrastre>
+          </>
+        );
+      }
+
+      function descripcionDelParabolico(e) {
+        const datos = parabolicoDeLosMovimientos(e);
+        return (
+          "Un balón sale " + (e.h > 0 ? "desde " + e.h + " m de altura" : "del suelo") + " a 22 metros por segundo, formando " + e.alfa +
+          " grados con la horizontal. Su velocidad se descompone en " + sigDeLosMovimientos(datos.v0x, 3) + " metros por segundo en horizontal, " +
+          "que no cambian, y " + sigDeLosMovimientos(datos.v0y, 3) + " hacia arriba, que cambian como en un lanzamiento vertical: una foto cada " +
+          "0,2 s deja las posiciones igual de separadas en horizontal, y a la misma altura que las de un cuerpo lanzado hacia arriba a la vez con " +
+          "esa velocidad, dibujado a la izquierda. Sube " + sigDeLosMovimientos(datos.subida, 3) + " s, hasta " + sigDeLosMovimientos(datos.altura, 3) +
+          " m, donde la velocidad es horizontal, y llega al suelo a los " + sigDeLosMovimientos(datos.vuelo, 3) + " s, a " +
+          sigDeLosMovimientos(datos.alcance, 3) + " m. En t = " + instanteDelParabolico(datos.instante) + " s, " +
+          (datos.cual === "arriba"
+            ? "en lo más alto, la componente vertical de la velocidad es cero."
+            : "la componente vertical de la velocidad vale " + sigDeLosMovimientos(datos.vy, 3) + " metros por segundo.")
+        );
+      }
+
+      const mandosDelParabolico = (e) => {
+        const instantes = instantesDelParabolico(e.alfa, e.h);
+        return [
+          {
+            tipo: "paso",
+            clave: "alfa",
+            nombre: "el ángulo de salida",
+            rotulo: "Ángulo",
+            valores: ANGULOS_DEL_PARABOLICO,
+            escribe: (valor) => valor + "°",
+            cambios: (valor) => ({ k: parecidoDelParabolico(e, valor, e.h) })
+          },
+          {
+            tipo: "paso",
+            clave: "h",
+            nombre: "la altura de salida",
+            rotulo: "Altura",
+            valores: ALTURAS_DEL_PARABOLICO,
+            escribe: (valor) => valor + " m",
+            cambios: (valor) => ({ k: parecidoDelParabolico(e, e.alfa, valor) })
+          },
+          {
+            tipo: "barra",
+            clave: "k",
+            nombre: "el instante",
+            rotulo: "Instante",
+            min: 0,
+            max: instantes.length - 1,
+            salto: 1,
+            escribe: (valor) => instanteDelParabolico(instantes[Math.min(Math.max(0, valor), instantes.length - 1)]) + " s"
+          }
+        ];
+      };
+
+      function vivoDelParabolico(e) {
+        const datos = parabolicoDeLosMovimientos(e);
+        const c = datos.cifras.operandos;
+        const vx = texDeLosMovimientos(sigDeLosMovimientos(datos.v0x, c));
+        const vy0 = texDeLosMovimientos(sigDeLosMovimientos(datos.v0y, c));
+        const vueloLargo = texDeLosMovimientos(sigDeLosMovimientos(datos.vuelo, c));
+        const tres = (valor) => texDeLosMovimientos(sigDeLosMovimientos(valor, 3));
+        const desde = e.h > 0 ? e.h + "+" : "";
+        const lista = [
+          "\\begin{aligned}v_{0x}&=22\\cos" + e.alfa + "^{\\circ}=" + vx + "\\ \\mathrm{m\\,s^{-1}}\\\\[6pt]v_{0y}&=22\\operatorname{sen}" + e.alfa +
+            "^{\\circ}=" + vy0 + "\\ \\mathrm{m\\,s^{-1}}\\\\[6pt]x&=" + vx + "\\,t\\qquad y=" + desde + vy0 + "\\,t-4{,}9\\,t^{2}\\end{aligned}",
+          (e.h > 0
+            ? "\\begin{aligned}4{,}9\\,t^{2}-" + vy0 + "\\,t-" + e.h + "&=0\\\\[6pt]t&=\\frac{" + vy0 + "+\\sqrt{" + vy0 + "^{2}+4\\cdot4{,}9\\cdot" + e.h +
+              "}}{2\\cdot4{,}9}=" + tres(datos.vuelo) + "\\ \\mathrm{s}"
+            : "\\begin{aligned}t\\,(" + vy0 + "-4{,}9\\,t)&=0\\\\[6pt]t&=\\frac{" + vy0 + "}{4{,}9}=" + tres(datos.vuelo) + "\\ \\mathrm{s}") +
+            "\\\\[6pt]x&=" + vx + "\\cdot" + vueloLargo + "=" + tres(datos.alcance) + "\\ \\mathrm{m}\\end{aligned}",
+          "\\begin{aligned}v_y=0\\ \\Rightarrow\\ t&=\\frac{" + vy0 + "}{9{,}8}=" + tres(datos.subida) + "\\ \\mathrm{s}\\\\[6pt]H&=" + desde + "\\frac{" + vy0 +
+            "^{2}}{19{,}6}=" + tres(datos.altura) + "\\ \\mathrm{m}\\end{aligned}"
+        ];
+        if (datos.cual === "salida") {
+          lista.push("\\vec{v}(0)=(" + vx + "\\,\\vec{\\imath}+" + vy0 + "\\,\\vec{\\jmath})\\ \\mathrm{m\\,s^{-1}}");
+        } else if (datos.cual === "arriba") {
+          lista.push("v_y=0\\qquad v=v_{0x}=" + tres(datos.v0x) + "\\ \\mathrm{m\\,s^{-1}}");
+        } else if (datos.cual === "llegada") {
+          const vyl = texDeLosMovimientos(sigDeLosMovimientos(datos.vy, datos.cifras.llegada));
+          const modulo = texDeLosMovimientos(sigDeLosMovimientos(Math.abs(datos.vy), datos.cifras.llegada));
+          lista.push(
+            "\\begin{aligned}v_y&=" + vy0 + "-9{,}8\\cdot" + vueloLargo + "=" + vyl + "\\ \\mathrm{m\\,s^{-1}}\\\\[6pt]v&=\\sqrt{" + vx + "^{2}+" + modulo +
+              "^{2}}=" + tres(Math.hypot(datos.v0x, datos.vy)) + "\\ \\mathrm{m\\,s^{-1}}\\\\[6pt]\\tan\\varphi&=\\frac{" + modulo + "}{" + vx +
+              "}\\ \\Rightarrow\\ \\varphi=" + texDeLosMovimientos(fijoDeLosMovimientos(gradosDeLosMovimientos(Math.atan2(Math.abs(datos.vy), datos.v0x)), 1)) +
+              "^{\\circ}\\end{aligned}"
+          );
+        } else {
+          lista.push(
+            "\\begin{aligned}v_x&=" + vx + "\\ \\mathrm{m\\,s^{-1}}\\\\[6pt]v_y&=" + vy0 + "-9{,}8\\cdot" + texDeLosMovimientos(cortoDeLosMovimientos(datos.t, 2)) +
+              "=" + tres(datos.vy) + "\\ \\mathrm{m\\,s^{-1}}\\end{aligned}"
+          );
+        }
+        lista.push(
+          datos.cual === "arriba" ? (
+            <>
+              En lo más alto, <Mates tex="v_y=0" />: la velocidad no es cero, es <Mates tex="v_{0x}" />, horizontal. Y la aceleración sigue siendo{" "}
+              <Mates tex="g" />, hacia abajo.
+            </>
+          ) : (
+            <>
+              {e.h > 0
+                ? "Desde " + e.h + " m tarda más en bajar que en subir, y llega más deprisa y con más ángulo que al salir."
+                : "Desde el suelo tarda lo mismo en subir que en bajar, y llega como salió: a 22 m s⁻¹ y " + e.alfa + "° por debajo de la horizontal."}{" "}
+              Mientras vuela, <Mates tex="v_x" /> no cambia, y <Mates tex="v_y" /> baja 9,8 m s⁻¹ cada segundo.
+            </>
+          )
+        );
+        return lista;
+      }
+
+
       const LONGITUD_DE_LA_RAMPA = 0.79;
       const FILAS_DE_LA_RAMPA = [
         { angulo: 1, tiempos: ["13,43", "16,35", "13,48"] },
@@ -18885,6 +19352,67 @@ Apuntes de clase, explicados y resueltos</p>
           ]
         },
         {
+          clave: "parabolico",
+          nombre: "El tiro parabólico",
+          inicial: { alfa: 38, h: 0, k: instantesDelParabolico(38, 0).findIndex((uno) => uno.cual === "arriba") },
+          duracion: 2,
+          Dibujo: ParabolicoDibujo,
+          descripcion: descripcionDelParabolico,
+          mandos: mandosDelParabolico,
+          vivo: vivoDelParabolico,
+          pista: (
+            <>
+              Mueve el instante o arrastra el balón: la componente horizontal no cambia, y el balón está siempre a la misma altura que el cuerpo
+              lanzado hacia arriba a la vez, a la izquierda. En lo más alto, la velocidad es horizontal.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "Descomponer la velocidad inicial",
+              tex: "v_{0x}=v_0\\cos\\alpha\\qquad v_{0y}=v_0\\operatorname{sen}\\alpha",
+              texto: "Como cualquier vector, con el ángulo α que forma con la horizontal. Si sale hacia abajo, la componente vertical es negativa; con α = 0, es el tiro horizontal."
+            },
+            {
+              nombre: "Dos movimientos a la vez",
+              tex: "x=v_{0x}\\,t\\qquad y=h+v_{0y}\\,t-4{,}9\\,t^{2}",
+              texto: "En horizontal, un MRU; en vertical, un MRUA, el de un cuerpo lanzado hacia arriba con la componente vertical. El mismo reloj para los dos."
+            },
+            {
+              nombre: "La velocidad",
+              tex: "v_x=v_{0x}\\qquad v_y=v_{0y}-9{,}8\\,t",
+              texto: "La componente horizontal no cambia. La vertical disminuye mientras sube, se anula en lo más alto y crece hacia abajo mientras cae."
+            },
+            {
+              nombre: "Tiempo de vuelo y alcance",
+              tex: "y=0\\qquad x=v_{0x}\\,t",
+              texto: "Desde el suelo, se saca t factor común: la raíz t = 0 es la salida, y la otra, la llegada. Desde una altura, es una ecuación de segundo grado, y vale la raíz positiva. El alcance, con el tiempo de vuelo sin redondear."
+            },
+            {
+              nombre: "Altura máxima",
+              tex: "v_y=0\\ \\Rightarrow\\ t=\\frac{v_{0y}}{9{,}8}\\qquad H=h+\\frac{v_{0y}^{2}}{2\\cdot9{,}8}",
+              texto: "Allí la velocidad es horizontal: vale lo que su componente horizontal. Desde el suelo, la trayectoria es simétrica: tarda lo mismo en subir que en bajar."
+            },
+            {
+              nombre: "Resolver un tiro parabólico",
+              texto: "Se descompone la velocidad inicial; se escriben las ecuaciones de cada eje, con el mismo reloj; el tiempo de vuelo, con y = 0; el alcance; si sube, la altura máxima, donde la componente vertical es cero; y la velocidad al llegar: sus componentes, su módulo y el ángulo φ que forma con la horizontal."
+            }
+          ],
+          ojo: [
+            <>
+              Decir que en lo más alto la velocidad es cero: lo es <Mates tex="v_y" />; la velocidad es <Mates tex="v_{0x}" />, horizontal.
+            </>,
+            <>
+              Sacar el tiempo de subida como el de una caída, <Mates tex="t=\sqrt{v_{0y}/4{,}9}" />: sale de <Mates tex="v_y=0" />, y es{" "}
+              <Mates tex="t=v_{0y}/9{,}8" />.
+            </>,
+            <>
+              Olvidar la <Mates tex="t" /> del término de la velocidad, «<Mates tex="y=h+v_{0y}-4{,}9\,t^{2}" />»: ese término es una distancia,{" "}
+              <Mates tex="v_{0y}\,t" />.
+            </>,
+            "Recortar las componentes antes de seguir: el error crece al multiplicar por el tiempo, y las cuentas de en medio van sin redondear."
+          ]
+        },
+        {
           clave: "rampa",
           nombre: "La rampa",
           inicial: { fila: 6.4, recta: "ajuste" },
@@ -18943,8 +19471,8 @@ Apuntes de clase, explicados y resueltos</p>
         );
       }
 
-
       window.ResumenesIB = {
+        ...window.ResumenesIB,
         "resumen-los-movimientos": LosMovimientosResumen,
       };
     })();
