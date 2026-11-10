@@ -5301,10 +5301,10 @@
     }
 
     @media screen and (min-width: 42.0625rem) {
-      html.modo-clase:not(.ampliando) .sol-chip,
-      html.modo-clase:not(.ampliando) .sol-resultado,
-      html.modo-clase:not(.ampliando) .sol-pasos,
-      html.modo-clase:not(.ampliando) .sol-abiertos {
+      html.modo-clase:not(.ampliando):not(.letra-libre) .sol-chip,
+      html.modo-clase:not(.ampliando):not(.letra-libre) .sol-resultado,
+      html.modo-clase:not(.ampliando):not(.letra-libre) .sol-pasos,
+      html.modo-clase:not(.ampliando):not(.letra-libre) .sol-abiertos {
         display: none !important;
       }
     }
@@ -6741,6 +6741,311 @@
 
     .grupo-poster-esencial .tapa-ficha-esencial {
       color: rgb(255 255 255 / 0.88);
+    }
+
+    html {
+      --u: calc(1rem / var(--escala, 1));
+    }
+
+    html.modo-clase.letra-libre {
+      --ancho: calc(104 * var(--u));
+      scroll-padding-top: var(--u);
+    }
+
+    html.letra-libre .indice-unidad,
+    html.letra-libre .menu-subapartados {
+      display: none !important;
+    }
+
+    html.letra-libre .cabecera-portal {
+      right: calc(max(0px, (100vw - var(--ancho)) / 2) + clamp(calc(0.9 * var(--u)), 3vw, calc(2 * var(--u))));
+    }
+
+    html.letra-libre .infografia .cabecera-infografia,
+    html.letra-libre .solucion-grafica .sg-cinta {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "icono rotulo accion"
+        "titulo titulo titulo";
+    }
+
+    html.letra-libre .rotulo-infografia,
+    html.letra-libre .solucion-grafica .sg-rotulo {
+      justify-self: start;
+    }
+
+    html.letra-libre .cabecera-interior {
+      padding: calc(0.22 * var(--u)) calc(0.6 * var(--u));
+    }
+
+    html.letra-libre .interruptor-clase {
+      gap: calc(0.5 * var(--u));
+      min-height: calc(2.75 * var(--u));
+      padding: calc(0.32 * var(--u)) calc(0.7 * var(--u));
+      font-size: calc(0.95 * var(--u));
+    }
+
+    html.letra-libre .barra-clase {
+      right: var(--u);
+      bottom: var(--u);
+      gap: calc(0.3 * var(--u));
+      padding: calc(0.35 * var(--u));
+      font-size: calc(1.1 * var(--u));
+    }
+
+    html.letra-libre .barra-clase button {
+      width: calc(2.7 * var(--u));
+      height: calc(2.7 * var(--u));
+      min-height: calc(2.75 * var(--u));
+    }
+
+    html.letra-libre .barra-clase button::before {
+      width: calc(1.2 * var(--u));
+      height: calc(1.2 * var(--u));
+    }
+
+    html.letra-libre .barra-clase :is([data-accion="ampliar"], [data-accion="resultados"], [data-accion="anterior"], [data-accion="siguiente"], .posicion-clase) {
+      display: none;
+    }
+
+    .barra-clase .indice-clase,
+    .barra-clase .letra-clase {
+      display: none;
+    }
+
+    html.letra-libre .barra-clase .indice-clase {
+      --icono: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h16'/%3E%3C/svg%3E");
+      display: grid;
+      margin-right: calc(0.6 * var(--u));
+    }
+
+    html.letra-libre .barra-clase .letra-clase {
+      display: flex;
+      gap: calc(0.3 * var(--u));
+      align-items: center;
+    }
+
+    html.letra-libre .letra-clase button::before {
+      display: none;
+    }
+
+    html.letra-libre .letra-clase button {
+      font: 700 var(--u) / 1 -apple-system, "Segoe UI", sans-serif;
+    }
+
+    html.letra-libre .letra-clase .letra-mas {
+      font-size: calc(1.55 * var(--u));
+    }
+
+    html.letra-libre .letra-clase input[type="range"] {
+      width: calc(12 * var(--u));
+      margin: 0 calc(0.3 * var(--u));
+      accent-color: var(--acento);
+    }
+
+    html.letra-libre .letra-clase .letra-valor {
+      min-width: calc(3.6 * var(--u));
+      color: var(--acento-oscuro);
+      font-size: var(--u);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    html.letra-libre .ampliable {
+      cursor: auto;
+    }
+
+    html.letra-libre .sol-ico {
+      width: clamp(44px, 2.1rem, 56px);
+      height: clamp(44px, 2.1rem, 56px);
+    }
+
+    html.letra-libre .sol-ico svg {
+      width: clamp(24px, 1.15rem, 30px);
+      height: clamp(24px, 1.15rem, 30px);
+    }
+
+    html.letra-libre .sol-pasos {
+      overflow-x: auto;
+    }
+
+    html.letra-libre .sol-pasos .katex {
+      position: relative;
+    }
+
+    html.letra-libre #contenido-unidad table :is(td, th) {
+      padding: 0.42em 0.53em;
+    }
+
+    .velo-indice,
+    .cajon-indice {
+      display: none;
+    }
+
+    html.letra-libre .velo-indice {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: block;
+      background: rgb(15 23 42 / 0.32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+
+    html.letra-libre .velo-indice.abierto {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    html.letra-libre .cajon-indice {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 95;
+      display: flex;
+      flex-direction: column;
+      width: min(calc(25.6 * var(--u)), 86vw);
+      background: #ffffff;
+      box-shadow: 8px 0 32px rgb(15 23 42 / 0.22);
+      transform: translateX(-104%);
+      visibility: hidden;
+      transition: transform 220ms ease, visibility 0s linear 220ms;
+      font: var(--u) / 1.3 -apple-system, "Segoe UI", sans-serif;
+    }
+
+    html.letra-libre .cajon-indice.abierto {
+      transform: none;
+      visibility: visible;
+      transition: transform 220ms ease;
+    }
+
+    .cajon-cabeza {
+      display: flex;
+      gap: calc(0.6 * var(--u));
+      align-items: center;
+      justify-content: space-between;
+      min-height: calc(3.75 * var(--u));
+      padding: calc(0.5 * var(--u)) calc(0.6 * var(--u)) calc(0.5 * var(--u)) calc(1.4 * var(--u));
+      color: var(--acento-oscuro);
+      border-bottom: 1px solid var(--borde);
+      font-size: calc(1.25 * var(--u));
+      font-weight: 800;
+    }
+
+    .cajon-cabeza small {
+      display: block;
+      margin-top: calc(0.12 * var(--u));
+      color: var(--texto-suave);
+      font-size: calc(0.8 * var(--u));
+      font-weight: 600;
+    }
+
+    .cajon-cabeza button,
+    .cajon-indice .flecha-indice {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: calc(2.75 * var(--u));
+      height: calc(2.75 * var(--u));
+      min-height: 0;
+      padding: 0;
+      color: var(--acento-oscuro);
+      background: #ffffff;
+      border: 1px solid var(--borde);
+      border-radius: 50%;
+      box-shadow: none;
+      font: 700 calc(1.4 * var(--u)) / 1 -apple-system, "Segoe UI", sans-serif;
+    }
+
+    .cajon-cuerpo {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: calc(0.5 * var(--u)) 0 calc(1.1 * var(--u));
+    }
+
+    .cajon-indice ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .cajon-indice .apartado-indice {
+      margin: 2px 0;
+    }
+
+    .cajon-indice .fila-indice {
+      display: flex;
+      gap: calc(0.4 * var(--u));
+      align-items: center;
+      padding-right: calc(0.6 * var(--u));
+      border-left: calc(0.3 * var(--u)) solid var(--apartado, var(--acento));
+    }
+
+    .cajon-indice .fila-indice > a {
+      flex: 1;
+      padding: calc(0.75 * var(--u)) calc(0.6 * var(--u)) calc(0.75 * var(--u)) var(--u);
+      color: var(--texto);
+      font-size: calc(1.125 * var(--u));
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .cajon-indice .num {
+      margin-right: calc(0.4 * var(--u));
+      color: var(--apartado, var(--acento));
+      font-weight: 800;
+    }
+
+    .cajon-indice .actual > .fila-indice {
+      background: var(--apartado-suave, var(--acento-suave));
+    }
+
+    .cajon-indice .flecha-indice {
+      width: calc(2.4 * var(--u));
+      height: calc(2.4 * var(--u));
+      color: var(--apartado, var(--acento));
+      font-size: var(--u);
+      transition: transform 160ms ease;
+    }
+
+    .cajon-indice .abierto > .fila-indice .flecha-indice {
+      transform: rotate(180deg);
+    }
+
+    .cajon-indice .subs-indice {
+      display: none;
+      padding: 2px 0 calc(0.5 * var(--u));
+    }
+
+    .cajon-indice .abierto > .subs-indice {
+      display: block;
+    }
+
+    .cajon-indice .subs-indice a {
+      display: block;
+      margin-right: calc(0.75 * var(--u));
+      padding: calc(0.62 * var(--u)) var(--u) calc(0.62 * var(--u)) calc(2.9 * var(--u));
+      color: var(--texto);
+      border-radius: 0 calc(0.6 * var(--u)) calc(0.6 * var(--u)) 0;
+      font-size: calc(1.03 * var(--u));
+      font-weight: 550;
+      text-decoration: none;
+    }
+
+    .cajon-indice .subs-indice a.actual {
+      color: var(--apartado, var(--acento-oscuro));
+      background: var(--apartado-suave, var(--acento-suave));
+      font-weight: 750;
+    }
+
+    @media print {
+      .velo-indice,
+      .cajon-indice {
+        display: none !important;
+      }
     }
   </style>
 
@@ -8635,6 +8940,9 @@ teoría que lo acompaña.</p>
       var htmlRaiz = document.documentElement;
       var CLASE_ANCHA = window.matchMedia ? window.matchMedia("(min-width: 42.0625rem)") : null;
       function mandaLaClase() {
+        if (htmlRaiz.classList.contains("letra-libre") && !htmlRaiz.classList.contains("ampliando")) {
+          return false;
+        }
         return (
           htmlRaiz.classList.contains("modo-clase") &&
           (htmlRaiz.classList.contains("ampliando") || !CLASE_ANCHA || CLASE_ANCHA.matches)
@@ -8900,6 +9208,7 @@ teoría que lo acompaña.</p>
           });
         });
       }
+      document.addEventListener("letra-clase", encogerLasAbiertas);
 
 
       function texDe(formula) {
@@ -9326,6 +9635,7 @@ teoría que lo acompaña.</p>
         Promise.resolve().then(function () {
           ajustarLasCajas(caja);
         });
+        caja.dispatchEvent(new CustomEvent("sol-abierta", { bubbles: true }));
       }
       function avisarALaClase(b, que) {
         b.dispatchEvent(new CustomEvent("sol-clase", { bubbles: true, detail: { que: que, boton: b } }));
@@ -9946,6 +10256,9 @@ teoría que lo acompaña.</p>
         }
         raiz.classList.toggle("modo-clase", encendido);
         interruptor.setAttribute("aria-checked", encendido ? "true" : "false");
+        if (window.letraClase) {
+          window.letraClase.aplicar(encendido);
+        }
         if (ancla && visible(ancla.elemento)) {
           var desfase = ancla.fraccion === undefined
             ? ancla.desfase
@@ -9995,6 +10308,9 @@ teoría que lo acompaña.</p>
         }
         if (ampliacion) {
           teclaAmpliada(evento);
+          return;
+        }
+        if (raiz.classList.contains("letra-libre") && evento.key !== "Escape") {
           return;
         }
         switch (evento.key) {
@@ -11894,7 +12210,7 @@ teoría que lo acompaña.</p>
 
       contenido.addEventListener("click", function (evento) {
         var origen = evento.target;
-        if (!activo() || ampliacion || !origen.closest) {
+        if (!activo() || ampliacion || !origen.closest || raiz.classList.contains("letra-libre")) {
           return;
         }
         if (origen.closest("a, button, input, select, textarea, label, summary, .interactivo")) {
@@ -12071,6 +12387,474 @@ teoría que lo acompaña.</p>
       if (new URLSearchParams(window.location.search).has("clase")) {
         poner(true);
       }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var raiz = document.documentElement;
+      var contenido = document.getElementById("contenido-unidad");
+      var barra = document.querySelector(".barra-clase");
+      if (!contenido || !barra) {
+        return;
+      }
+      var CLAVE = "modo-clase-letra";
+      var CLAVE_TAMANO = "modo-clase-letra-tamano";
+      var LETRA_POR_DEFECTO = true;
+      var MINIMO = 100;
+      var MAXIMO = 210;
+      var PASO = 5;
+      var DEFECTO_MAXIMO = 190;
+      var LETRA_OBJETIVO = 0.046;
+      var TOPE_FORMULA = 60;
+      var TOPE_TABLA = 50;
+
+      function leer(clave) {
+        try {
+          return window.localStorage.getItem(clave);
+        } catch (e) {
+          return null;
+        }
+      }
+      function guardar(clave, valor) {
+        try {
+          window.localStorage.setItem(clave, valor);
+        } catch (e) {}
+      }
+      var pedido = new URLSearchParams(window.location.search).get("letra");
+      if (pedido !== null) {
+        guardar(CLAVE, pedido === "no" ? "no" : "si");
+      }
+      var conLetra = pedido !== null
+        ? pedido !== "no"
+        : leer(CLAVE) ? leer(CLAVE) === "si" : LETRA_POR_DEFECTO;
+      if (!conLetra) {
+        return;
+      }
+
+      var BASE = parseFloat(window.getComputedStyle(raiz).fontSize) || 16;
+      function redondear(p) {
+        return Math.round(p / PASO) * PASO;
+      }
+      function acotar(p) {
+        return Math.min(Math.max(redondear(p), MINIMO), MAXIMO);
+      }
+      function porDefecto() {
+        var p = (100 * LETRA_OBJETIVO * window.innerHeight) / (1.42 * BASE);
+        return Math.min(acotar(p), DEFECTO_MAXIMO);
+      }
+      var tamano = parseFloat(leer(CLAVE_TAMANO)) ? acotar(parseFloat(leer(CLAVE_TAMANO))) : porDefecto();
+
+      function visible(e) {
+        return e.getClientRects().length > 0;
+      }
+
+      var grupo = document.createElement("span");
+      grupo.className = "letra-clase";
+      grupo.innerHTML =
+        '<button type="button" class="letra-menos" aria-label="Letra más pequeña" title="Letra más pequeña">A</button>' +
+        '<input type="range" min="' + MINIMO + '" max="' + MAXIMO + '" step="' + PASO + '" aria-label="Tamaño de la letra">' +
+        '<button type="button" class="letra-mas" aria-label="Letra más grande" title="Letra más grande">A</button>' +
+        '<span class="letra-valor" aria-live="polite"></span>';
+      barra.appendChild(grupo);
+      var deslizador = grupo.querySelector("input");
+      var valor = grupo.querySelector(".letra-valor");
+      function rotular(p) {
+        deslizador.value = String(p);
+        valor.textContent = p + " %";
+      }
+      rotular(tamano);
+
+      var ESTABLES =
+        "h2, h3, h4, h5, .bloque-didactico, figure, table, .fichas, .interactivo, " +
+        "section > p, li, .math.display";
+      function anclar() {
+        var lista = contenido.querySelectorAll(ESTABLES);
+        var mejor = null;
+        for (var i = 0; i < lista.length; i++) {
+          var e = lista[i];
+          if (!visible(e)) {
+            continue;
+          }
+          var r = e.getBoundingClientRect();
+          if (r.bottom <= 2 || r.height === 0) {
+            continue;
+          }
+          if (!mejor || mejor.elemento.contains(e)) {
+            mejor = { elemento: e, fraccion: -r.top / r.height, debajo: r.top };
+            if (r.top >= 0) {
+              break;
+            }
+            continue;
+          }
+          break;
+        }
+        return mejor;
+      }
+      function volver(ancla, factor) {
+        if (!ancla || !visible(ancla.elemento)) {
+          return;
+        }
+        var r = ancla.elemento.getBoundingClientRect();
+        var y = ancla.fraccion > 0 ? r.top + ancla.fraccion * r.height : r.top - ancla.debajo * factor;
+        window.scrollTo({ top: Math.max(0, window.scrollY + y), left: 0, behavior: "instant" });
+      }
+
+      var encogidas = [];
+      function soltarEncogidas() {
+        encogidas.forEach(function (e) {
+          e.style.fontSize = "";
+        });
+        encogidas = [];
+      }
+      function ajustarAnchos() {
+        soltarEncogidas();
+        var formulas = [];
+        contenido.querySelectorAll(".math.display").forEach(function (m) {
+          if (m.closest(".interactivo, .sol-pasos, .sol-resultado, .sol-chip") || !visible(m)) {
+            return;
+          }
+          var dentro = m.querySelector(":scope > .katex-display") || m.firstElementChild;
+          if (dentro && m.scrollWidth > m.clientWidth + 1) {
+            formulas.push([dentro, m.clientWidth, m.scrollWidth]);
+          }
+        });
+        formulas.forEach(function (x) {
+          x[0].style.fontSize = Math.max(TOPE_FORMULA, Math.floor((99 * x[1]) / x[2])) + "%";
+          encogidas.push(x[0]);
+        });
+        encogerTablas(contenido);
+      }
+      function huecoDe(caja) {
+        var estilo = window.getComputedStyle(caja);
+        return caja.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+      }
+      function encogerTablas(dentroDe) {
+        dentroDe.querySelectorAll("table").forEach(function (t) {
+          if (t.closest(".interactivo") || !visible(t)) {
+            return;
+          }
+          var p = parseFloat(t.style.fontSize) || 100;
+          for (var vuelta = 0; vuelta < 5; vuelta++) {
+            var caja = huecoDe(t.parentElement);
+            var ancho = t.getBoundingClientRect().width;
+            if (ancho <= caja + 1 || p <= TOPE_TABLA) {
+              break;
+            }
+            p = Math.max(TOPE_TABLA, Math.floor((p * 0.99 * caja) / ancho));
+            t.style.fontSize = p + "%";
+          }
+          if (p < 100 && encogidas.indexOf(t) === -1) {
+            encogidas.push(t);
+          }
+        });
+      }
+      contenido.addEventListener("sol-abierta", function (evento) {
+        if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
+          encogerTablas(evento.target);
+        }
+      });
+
+      var puesto = 100;
+      function ponerTamano(p, conAncla) {
+        p = acotar(p);
+        var ancla = conAncla ? anclar() : null;
+        var antes = puesto;
+        raiz.style.setProperty("--escala", String(p / 100));
+        raiz.style.fontSize = p + "%";
+        puesto = p;
+        tamano = p;
+        rotular(p);
+        raiz.classList.toggle("letra-recolocada");
+        document.dispatchEvent(new CustomEvent("letra-clase"));
+        ajustarAnchos();
+        volver(ancla, p / antes);
+        Promise.resolve().then(function () {
+          volver(ancla, 1);
+        });
+      }
+      function quitarTamano() {
+        soltarEncogidas();
+        raiz.style.removeProperty("--escala");
+        raiz.style.fontSize = "";
+        puesto = 100;
+      }
+      deslizador.addEventListener("input", function () {
+        valor.textContent = deslizador.value + " %";
+      });
+      deslizador.addEventListener("change", function () {
+        ponerTamano(parseFloat(deslizador.value), true);
+        guardar(CLAVE_TAMANO, String(tamano));
+        deslizador.blur();
+      });
+      grupo.querySelector(".letra-menos").addEventListener("click", function (evento) {
+        ponerTamano(tamano - 10, true);
+        guardar(CLAVE_TAMANO, String(tamano));
+        evento.currentTarget.blur();
+      });
+      grupo.querySelector(".letra-mas").addEventListener("click", function (evento) {
+        ponerTamano(tamano + 10, true);
+        guardar(CLAVE_TAMANO, String(tamano));
+        evento.currentTarget.blur();
+      });
+
+      function limpio(t) {
+        return t.replace(/\s+/g, " ").trim();
+      }
+      function numeroDe(a) {
+        var n = a.querySelector(".toc-section-number");
+        return n ? limpio(n.textContent) : "";
+      }
+      function nombreDe(a) {
+        var n = numeroDe(a);
+        var t = limpio(a.textContent);
+        return n && t.indexOf(n) === 0 ? limpio(t.slice(n.length)) : t;
+      }
+      var apartados = Array.prototype.map.call(document.querySelectorAll("#TOC > ul > li"), function (li) {
+        var a = li.querySelector(":scope > a");
+        var estilo = window.getComputedStyle(li);
+        return {
+          href: a.getAttribute("href"),
+          numero: numeroDe(a),
+          nombre: nombreDe(a),
+          color: limpio(estilo.getPropertyValue("--apartado")),
+          suave: limpio(estilo.getPropertyValue("--apartado-suave")),
+          subs: Array.prototype.map.call(li.querySelectorAll(":scope > ul > li > a"), function (s) {
+            return { href: s.getAttribute("href"), numero: numeroDe(s), nombre: nombreDe(s) };
+          })
+        };
+      });
+      function destinoDe(href) {
+        return href && href.charAt(0) === "#" ? document.getElementById(decodeURIComponent(href.slice(1))) : null;
+      }
+      function enCurso() {
+        var linea = window.innerHeight / 8;
+        var ap = 0;
+        var sub = -1;
+        apartados.forEach(function (a, i) {
+          var s = destinoDe(a.href);
+          if (s && visible(s) && s.getBoundingClientRect().top <= linea) {
+            ap = i;
+          }
+        });
+        if (apartados[ap]) {
+          apartados[ap].subs.forEach(function (s, j) {
+            var sec = destinoDe(s.href);
+            if (sec && visible(sec) && sec.getBoundingClientRect().top <= linea) {
+              sub = j;
+            }
+          });
+        }
+        return { ap: ap, sub: sub };
+      }
+      function enlace(datos, clase) {
+        var a = document.createElement("a");
+        a.href = datos.href;
+        if (clase) {
+          a.className = clase;
+        }
+        var numero = document.createElement("span");
+        numero.className = "num";
+        numero.textContent = datos.numero ? datos.numero + "." : "";
+        a.appendChild(numero);
+        a.appendChild(document.createTextNode(datos.nombre));
+        return a;
+      }
+      var velo = document.createElement("div");
+      velo.className = "velo-indice";
+      var cajon = document.createElement("aside");
+      cajon.className = "cajon-indice";
+      cajon.setAttribute("aria-label", "Índice");
+      cajon.setAttribute("aria-hidden", "true");
+      var cabeza = document.createElement("div");
+      cabeza.className = "cajon-cabeza";
+      var titulo = document.createElement("div");
+      titulo.textContent = "Índice";
+      var unidad = document.createElement("small");
+      unidad.textContent = limpio((document.querySelector("h1") || { textContent: "" }).textContent);
+      titulo.appendChild(unidad);
+      var cerrar = document.createElement("button");
+      cerrar.type = "button";
+      cerrar.setAttribute("aria-label", "Cerrar el índice");
+      cerrar.textContent = "×";
+      cabeza.appendChild(titulo);
+      cabeza.appendChild(cerrar);
+      var cuerpo = document.createElement("div");
+      cuerpo.className = "cajon-cuerpo";
+      var lista = document.createElement("ol");
+      apartados.forEach(function (datos) {
+        var li = document.createElement("li");
+        li.className = "apartado-indice";
+        if (datos.color) {
+          li.style.setProperty("--apartado", datos.color);
+        }
+        if (datos.suave) {
+          li.style.setProperty("--apartado-suave", datos.suave);
+        }
+        var fila = document.createElement("div");
+        fila.className = "fila-indice";
+        fila.appendChild(enlace(datos));
+        if (datos.subs.length) {
+          var flecha = document.createElement("button");
+          flecha.type = "button";
+          flecha.className = "flecha-indice";
+          flecha.setAttribute("aria-label", "Subapartados de «" + datos.numero + " " + datos.nombre + "»");
+          flecha.setAttribute("aria-expanded", "false");
+          flecha.textContent = "▾";
+          fila.appendChild(flecha);
+        }
+        li.appendChild(fila);
+        if (datos.subs.length) {
+          var subs = document.createElement("ol");
+          subs.className = "subs-indice";
+          datos.subs.forEach(function (s) {
+            var item = document.createElement("li");
+            item.appendChild(enlace(s));
+            subs.appendChild(item);
+          });
+          li.appendChild(subs);
+        }
+        lista.appendChild(li);
+      });
+      cuerpo.appendChild(lista);
+      cajon.appendChild(cabeza);
+      cajon.appendChild(cuerpo);
+      document.body.appendChild(velo);
+      document.body.appendChild(cajon);
+
+      var boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = "indice-clase";
+      boton.setAttribute("data-accion", "indice");
+      boton.setAttribute("aria-label", "Índice");
+      boton.setAttribute("title", "Índice");
+      boton.setAttribute("aria-expanded", "false");
+      barra.insertBefore(boton, barra.firstChild);
+
+      function desplegar(li, abierto) {
+        li.classList.toggle("abierto", abierto);
+        var f = li.querySelector(".flecha-indice");
+        if (f) {
+          f.setAttribute("aria-expanded", abierto ? "true" : "false");
+        }
+      }
+      function abrirIndice(conTeclado) {
+        var c = enCurso();
+        Array.prototype.forEach.call(lista.children, function (li, i) {
+          li.classList.toggle("actual", i === c.ap);
+          desplegar(li, i === c.ap);
+          Array.prototype.forEach.call(li.querySelectorAll(".subs-indice a"), function (a, j) {
+            a.classList.toggle("actual", i === c.ap && j === c.sub);
+          });
+        });
+        cajon.classList.add("abierto");
+        velo.classList.add("abierto");
+        cajon.setAttribute("aria-hidden", "false");
+        boton.setAttribute("aria-expanded", "true");
+        var actual = lista.querySelector(".actual");
+        if (actual) {
+          cuerpo.scrollTop = Math.max(0, actual.offsetTop - 12);
+        }
+        if (conTeclado) {
+          cerrar.focus({ preventScroll: true });
+        }
+      }
+      function cerrarIndice() {
+        if (!cajon.classList.contains("abierto")) {
+          return;
+        }
+        cajon.classList.remove("abierto");
+        velo.classList.remove("abierto");
+        cajon.setAttribute("aria-hidden", "true");
+        boton.setAttribute("aria-expanded", "false");
+      }
+      boton.addEventListener("click", function (evento) {
+        if (cajon.classList.contains("abierto")) {
+          cerrarIndice();
+        } else {
+          abrirIndice(evento.detail === 0);
+        }
+        boton.blur();
+      });
+      cerrar.addEventListener("click", cerrarIndice);
+      velo.addEventListener("click", cerrarIndice);
+      lista.addEventListener("click", function (evento) {
+        var f = evento.target.closest(".flecha-indice");
+        if (f) {
+          var li = f.closest(".apartado-indice");
+          desplegar(li, !li.classList.contains("abierto"));
+          return;
+        }
+        var a = evento.target.closest("a");
+        if (!a) {
+          return;
+        }
+        var destino = destinoDe(a.getAttribute("href"));
+        cerrarIndice();
+        if (!destino || !visible(destino)) {
+          return;
+        }
+        evento.preventDefault();
+        var u = parseFloat(window.getComputedStyle(raiz).fontSize) / (puesto / 100);
+        window.scrollTo({ top: Math.max(0, window.scrollY + destino.getBoundingClientRect().top - u), left: 0, behavior: "instant" });
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, "", a.getAttribute("href"));
+        }
+      });
+      window.addEventListener(
+        "keydown",
+        function (evento) {
+          if (evento.key === "Escape" && cajon.classList.contains("abierto")) {
+            evento.stopImmediatePropagation();
+            evento.preventDefault();
+            cerrarIndice();
+          }
+        },
+        true
+      );
+
+      function aplicar(encendido) {
+        if (encendido) {
+          raiz.classList.add("letra-libre");
+          ponerTamano(tamano, false);
+        } else {
+          cerrarIndice();
+          raiz.classList.remove("letra-libre");
+          quitarTamano();
+        }
+      }
+      window.letraClase = { aplicar: aplicar, poner: ponerTamano, abrirIndice: abrirIndice, cerrarIndice: cerrarIndice };
+      function reajustar() {
+        if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
+          ajustarAnchos();
+        }
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(reajustar);
+      }
+      window.addEventListener("load", reajustar);
+      var anchoVisto = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth !== anchoVisto) {
+          anchoVisto = window.innerWidth;
+          reajustar();
+        }
+      });
+      if (raiz.classList.contains("modo-clase")) {
+        var ancla = anclar();
+        aplicar(true);
+        volver(ancla, tamano / 100);
+      }
+      window.addEventListener("beforeprint", function () {
+        if (raiz.classList.contains("letra-libre")) {
+          quitarTamano();
+        }
+      });
+      window.addEventListener("afterprint", function () {
+        if (raiz.classList.contains("letra-libre")) {
+          ponerTamano(tamano, false);
+        }
+      });
     });
   </script>
 
