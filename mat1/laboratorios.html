@@ -7255,6 +7255,9 @@ teoría que lo acompaña.</p>
           <li><a href="#la-circunferencia-goniométrica"
           id="toc-la-circunferencia-goniométrica">La circunferencia
           goniométrica</a></li>
+          <li><a href="#las-seis-razones-en-la-circunferencia"
+          id="toc-las-seis-razones-en-la-circunferencia">Las seis
+          razones en la circunferencia</a></li>
           <li><a href="#reducir-al-primer-cuadrante"
           id="toc-reducir-al-primer-cuadrante">Reducir al primer
           cuadrante</a></li>
@@ -8152,6 +8155,44 @@ teoría que lo acompaña.</p>
                 signos cambian de un cuadrante a otro.</p>
                 </div>
                 </section>
+                <section id="las-seis-razones-en-la-circunferencia"
+                class="level3 unnumbered">
+                <h3 class="unnumbered">Las seis razones en la
+                circunferencia</h3>
+                <p><a href="unidad_03_trigonometria.html#seis-razones"
+                class="enlace-apuntes">En los apuntes: 2. Razones
+                trigonométricas de un ángulo cualquiera · La
+                circunferencia goniométrica</a></p>
+                <div id="u03-seis-razones"
+                class="interactivo bloque-didactico"
+                data-componente="seis-razones"
+                data-titulo="Las seis razones en la circunferencia"
+                data-angulo="30">
+                <p><span class="etiqueta-bloque">Explora</span></p>
+                <p><strong>Las seis razones se pueden medir en la
+                circunferencia de radio 1.</strong> El seno y el coseno
+                son las coordenadas del punto. El lado del ángulo,
+                prolongado, corta la recta <span
+                class="math inline">\(x=1\)</span> a la altura de la
+                tangente y la recta <span
+                class="math inline">\(y=1\)</span> a la distancia de la
+                cotangente; del centro a esos cortes miden la secante y
+                la cosecante. Cada medida sale de dos triángulos
+                semejantes: el de catetos <span
+                class="math inline">\(\cos\alpha\)</span> y <span
+                class="math inline">\(\operatorname{sen}\alpha\)</span>
+                y el de catetos <span class="math inline">\(1\)</span> y
+                <span class="formula-con-signo"><span
+                class="math inline">\(\operatorname{tg}\alpha\)</span>,</span>
+                por ejemplo, dan <span class="formula-con-signo"><span
+                class="math inline">\(\operatorname{tg}\alpha=\frac{\operatorname{sen}\alpha}{\cos\alpha}\)</span>.</span>
+                Con <span class="formula-con-signo"><span
+                class="math inline">\(30^\circ\)</span>,</span> la
+                cosecante mide <span class="math inline">\(2\)</span> y
+                la cotangente, <span class="formula-con-signo"><span
+                class="math inline">\(\sqrt3\)</span>.</span></p>
+                </div>
+                </section>
                 <section id="reducir-al-primer-cuadrante"
                 class="level3 unnumbered">
                 <h3 class="unnumbered">Reducir al primer cuadrante</h3>
@@ -8175,10 +8216,11 @@ teoría que lo acompaña.</p>
                 <span class="formula-con-signo"><span
                 class="math inline">\(240^\circ=180^\circ+60^\circ\)</span>:</span>
                 tiene las dos coordenadas cambiadas de signo, y <span
-                class="formula-con-signo"><span
-                class="math inline">\(\cos240^\circ=-\cos60^\circ=-\frac12\)</span>.</span>
-                Para <span class="math inline">\(1110^\circ\)</span> se
-                quitan antes tres vueltas y queda <span
+                class="math display">\[
+                \cos240^\circ=-\cos60^\circ=-\frac12
+                \]</span></p>
+                <p>Para <span class="math inline">\(1110^\circ\)</span>
+                se quitan antes tres vueltas y queda <span
                 class="formula-con-signo"><span
                 class="math inline">\(30^\circ\)</span>.</span></p>
                 </div>
@@ -21438,6 +21480,1917 @@ void main() {
         );
       }
 
+
+      const piezaDeLaboratorio = (nombre) => (window.PiezasDeLaboratorio || {})[nombre];
+      function MatematicaEnLinea(props) {
+        const Pieza = piezaDeLaboratorio("MatematicaEnLinea");
+        return Pieza ? <Pieza {...props} /> : <span>{props.tex}</span>;
+      }
+      function FormulaViva(props) {
+        const Pieza = piezaDeLaboratorio("FormulaViva");
+        return Pieza ? <Pieza {...props} /> : <p className="formula-viva">{props.tex}</p>;
+      }
+      const decimalTrigo = (valor, cifras) => piezaDeLaboratorio("decimalTrigo")(valor, cifras);
+      const texDecimal = (valor, cifras) => piezaDeLaboratorio("texDecimal")(valor, cifras);
+      const valoresExactos = () => piezaDeLaboratorio("VALORES_EXACTOS") || [];
+
+
+      function usePantallaEstrecha() {
+        const consulta = window.matchMedia ? window.matchMedia("(max-width: 40rem)") : null;
+        const [estrecha, setEstrecha] = React.useState(Boolean(consulta && consulta.matches));
+        React.useEffect(() => {
+          if (!consulta) {
+            return undefined;
+          }
+          const cambio = () => setEstrecha(consulta.matches);
+          if (consulta.addEventListener) {
+            consulta.addEventListener("change", cambio);
+            return () => consulta.removeEventListener("change", cambio);
+          }
+          consulta.addListener(cambio);
+          return () => consulta.removeListener(cambio);
+        }, []);
+        return estrecha;
+      }
+
+      const MULTIPLOS_ONDA = [1, 2, 3, 0.5];
+      const CUENTA_SOLUCIONES = ["Ninguna solución", "Una solución", "Dos soluciones", "Tres soluciones", "Cuatro soluciones", "Cinco soluciones", "Seis soluciones"];
+
+      function OndaRectaInteractivo({ configuracion, alPreparar }) {
+        const miembros = configuracion.modo === "miembros";
+        const [razon, setRazon] = React.useState(["sen", "cos"].includes(configuracion.razon) ? configuracion.razon : "cos");
+        const [valor, setValor] = React.useState(Number.isFinite(Number(configuracion.valor)) ? Number(configuracion.valor) : Math.sqrt(3) / 2);
+        const [multiplo, setMultiplo] = React.useState(
+          MULTIPLOS_ONDA.includes(Number(configuracion.multiplo)) ? Number(configuracion.multiplo) : 2
+        );
+        const [ecuacion, setEcuacion] = React.useState(configuracion.ecuacion === "cuadrado" ? "cuadrado" : "dividir");
+        const [paso, setPaso] = React.useState(false);
+        const estrecha = usePantallaEstrecha();
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const rad = (g) => (g * Math.PI) / 180;
+        const redondea = (g) => (Math.abs(g - Math.round(g)) < 0.01 ? Math.round(g) : Math.round(g * 100) / 100);
+        const textoGrado = (g) => String(redondea(g)).replace(".", "{,}") + "^\\circ";
+        const rotuloGrado = (g) => String(redondea(g)).replace(".", ",") + "°";
+        const argumentoTex = (m) => (m === 1 ? "x" : m === 0.5 ? "\\frac{x}{2}" : m + "x");
+
+        const cx = 104;
+        const R = 76;
+        const x0 = estrecha ? 34 : 214;
+        const x1 = estrecha ? 446 : 648;
+        const unidad = miembros ? (estrecha ? 44 : 50) : R;
+        const cy = miembros && estrecha ? 244 : 170;
+        const letra = estrecha ? 16 : 13;
+        const letraEje = estrecha ? 15 : 12;
+        const X = (g) => x0 + (g * (x1 - x0)) / 720;
+        const Y = (v) => cy - unidad * v;
+        const onda = (fn) => {
+          let d = "";
+          for (let i = 0; i <= 480; i++) {
+            const g = (720 * i) / 480;
+            d += (i ? "L" : "M") + X(g).toFixed(1) + " " + Y(fn(g)).toFixed(1);
+          }
+          return d;
+        };
+        const alto = miembros ? (estrecha ? 132 : 148) : R + 24;
+        const fondo = (
+          <g>
+            <rect x={X(0)} y={cy - alto} width={X(360) - X(0)} height={2 * alto} fill="#eef3fb" stroke="none" />
+            <text x={(X(0) + X(360)) / 2} y={cy - alto - 7} fontSize={letraEje} textAnchor="middle" fill="var(--texto-suave)">
+              primera vuelta, de 0° a 360°
+            </text>
+            <line x1={x0 - 6} y1={cy} x2={x1 + 8} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.3" />
+            {[180, 360, 540, 720].map((g) => (
+              <g key={g}>
+                <line x1={X(g)} y1={cy - 5} x2={X(g)} y2={cy + 5} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                <text x={X(g)} y={cy + (estrecha ? 23 : 20)} fontSize={letraEje} textAnchor="middle" fill="var(--texto-suave)" stroke="#ffffff" strokeWidth="3" paintOrder="stroke">
+                  {g}°
+                </text>
+              </g>
+            ))}
+          </g>
+        );
+
+        if (miembros) {
+          const dividir = ecuacion === "dividir";
+          const azul = "#1d4ed8";
+          const naranja = "#c2410c";
+          const curvas = dividir
+            ? paso
+              ? [
+                  { fn: (g) => 2 * Math.sin(rad(g)), color: azul, tex: "y = 2 sen x" },
+                  { fn: () => 1, color: naranja, tex: "y = 1" }
+                ]
+              : [
+                  { fn: (g) => Math.sin(rad(2 * g)), color: azul, tex: "y = sen 2x" },
+                  { fn: (g) => Math.cos(rad(g)), color: naranja, tex: "y = cos x" }
+                ]
+            : [
+                { fn: (g) => Math.cos(rad(g)), color: azul, tex: "y = cos x" },
+                { fn: (g) => 1 - Math.sqrt(3) * Math.sin(rad(g)), color: naranja, tex: "y = 1 − √3 sen x" }
+              ].concat(paso ? [{ fn: (g) => Math.sqrt(3) * Math.sin(rad(g)) - 1, color: naranja, tex: "y = √3 sen x − 1", trazos: true }] : []);
+          const buenos = dividir ? (paso ? [30, 150] : [30, 90, 150, 270]) : [0, 120];
+          const malos = paso ? (dividir ? [90, 270] : [60, 180]) : [];
+          const altura = (g) => (dividir ? (paso ? 1 : Math.cos(rad(g))) : Math.cos(rad(g)));
+          const conVuelta = (lista) => lista.concat(lista.map((g) => g + 360)).filter((g) => g < 720);
+          const enunciadoTex = dividir ? "\\operatorname{sen}2x=\\cos x" : "\\sqrt3\\operatorname{sen}x+\\cos x=1";
+
+          return (
+            <div className="componente-interactivo">
+              <p className="titulo-interactivo">{configuracion.titulo || "Lo que se pierde y lo que sobra"}</p>
+              <p className="instruccion-interactivo">
+                Los dos miembros de la ecuación son dos curvas, y las soluciones son sus cortes. Prueba el paso de cada
+                ecuación y mira qué cortes cambian.
+              </p>
+
+              <div className="panel-control">
+                <div className="fichas-interactivo">
+                  {[
+                    ["dividir", "\\operatorname{sen}2x=\\cos x"],
+                    ["cuadrado", "\\sqrt3\\operatorname{sen}x+\\cos x=1"]
+                  ].map(([clave, tex]) => (
+                    <button
+                      key={clave}
+                      type="button"
+                      aria-pressed={ecuacion === clave}
+                      onClick={() => {
+                        setEcuacion(clave);
+                        setPaso(false);
+                      }}
+                    >
+                      <MatematicaEnLinea tex={tex} />
+                    </button>
+                  ))}
+                </div>
+                <div className="fichas-interactivo">
+                  <button type="button" aria-pressed={paso} onClick={() => setPaso(!paso)}>
+                    {dividir ? (
+                      <span>
+                        Dividir entre <MatematicaEnLinea tex="\cos x" />
+                      </span>
+                    ) : (
+                      "Elevar al cuadrado"
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="zona-grafica">
+                <svg
+                  viewBox={estrecha ? "0 0 480 " + (cy + alto + 12) : "0 0 680 330"}
+                  role="img"
+                  style={{ display: "block", margin: "0 auto" }}
+                  aria-label={
+                    "Las curvas de los dos miembros. Soluciones entre 0 y 360 grados: " +
+                    buenos.join(", ") +
+                    (malos.length ? (dividir ? ". Se pierden " : ". Sobran ") + malos.join(" y ") + " grados." : " grados.")
+                  }
+                >
+                  {fondo}
+                  {curvas.map((curva, i) => (
+                    <g key={i}>
+                      <line x1="16" y1={(estrecha ? 22 : 70) + (estrecha ? 28 : 32) * i} x2="44" y2={(estrecha ? 22 : 70) + (estrecha ? 28 : 32) * i} stroke={curva.color} strokeWidth="3" strokeDasharray={curva.trazos ? "7 5" : undefined} />
+                      <text x="52" y={(estrecha ? 27 : 75) + (estrecha ? 28 : 32) * i} fontSize={estrecha ? 16 : 15} fontWeight="700" fill={curva.color}>
+                        {curva.tex}
+                      </text>
+                      <path d={onda(curva.fn)} fill="none" stroke={curva.color} strokeWidth="2.6" strokeDasharray={curva.trazos ? "8 6" : undefined} />
+                    </g>
+                  ))}
+                  {[["bueno", "solución"]].concat(paso ? [["malo", dividir ? "se pierde" : "no vale"]] : []).map(([tipo, texto], i) => {
+                    const y = estrecha ? 22 + 28 * i : 84 + 32 * curvas.length + 32 * i;
+                    const x = estrecha ? 314 : 30;
+                    return (
+                      <g key={tipo}>
+                        {tipo === "bueno" ? (
+                          <circle cx={x} cy={y} r="6" fill="#047857" />
+                        ) : (
+                          <g>
+                            <circle cx={x} cy={y} r="7" fill="#ffffff" stroke="#b91c1c" strokeWidth="2.4" />
+                            <line x1={x - 5} y1={y - 5} x2={x + 5} y2={y + 5} stroke="#b91c1c" strokeWidth="2" />
+                          </g>
+                        )}
+                        <text x={x + 22} y={y + 5} fontSize={estrecha ? 16 : 15} fontWeight="700" fill={tipo === "bueno" ? "#047857" : "#b91c1c"}>
+                          {texto}
+                        </text>
+                      </g>
+                    );
+                  })}
+                  {conVuelta(buenos).map((g) => (
+                    <circle key={"b" + g} cx={X(g)} cy={Y(altura(g))} r="6" fill="#047857" opacity={g < 360 ? 1 : 0.45} />
+                  ))}
+                  {buenos.map((g, i) => (
+                    <text key={"tb" + g} x={X(g) + (g === 0 ? 8 : 0)} y={Y(altura(g)) + (i % 2 ? 26 : -13)} fontSize={letra} fontWeight="700" textAnchor="middle" fill="#047857" stroke="#ffffff" strokeWidth="4" paintOrder="stroke">
+                      {g}°
+                    </text>
+                  ))}
+                  {conVuelta(malos).map((g) => (
+                    <g key={"m" + g} opacity={g < 360 ? 1 : 0.45}>
+                      <circle cx={X(g)} cy={Y(dividir ? 0 : Math.cos(rad(g)))} r="7" fill="#ffffff" stroke="#b91c1c" strokeWidth="2.4" />
+                      <line x1={X(g) - 5} y1={Y(dividir ? 0 : Math.cos(rad(g))) - 5} x2={X(g) + 5} y2={Y(dividir ? 0 : Math.cos(rad(g))) + 5} stroke="#b91c1c" strokeWidth="2" />
+                    </g>
+                  ))}
+                  {malos.map((g, i) => (
+                    <text key={"tm" + g} x={X(g)} y={Y(dividir ? 0 : Math.cos(rad(g))) + (i % 2 ? 30 : -15)} fontSize={letra} fontWeight="700" textAnchor="middle" fill="#b91c1c" stroke="#ffffff" strokeWidth="4" paintOrder="stroke">
+                      {g}°
+                    </text>
+                  ))}
+                </svg>
+              </div>
+
+              <div className={"veredicto-interactivo" + (paso ? " es-fallo" : "")} aria-live="polite">
+                {dividir && !paso && (
+                  <div>
+                    <strong>Cuatro soluciones en cada vuelta</strong>
+                    <FormulaViva tex={enunciadoTex + "\\iff\\cos x\\left(2\\operatorname{sen}x-1\\right)=0"} />
+                    <p>
+                      Las curvas se cortan en 30°, 90°, 150° y 270°: <MatematicaEnLinea tex="\cos x=0" /> da 90° y 270°, y{" "}
+                      <MatematicaEnLinea tex="\operatorname{sen}x=\frac12" /> da 30° y 150°.
+                    </p>
+                  </div>
+                )}
+                {dividir && paso && (
+                  <div>
+                    <strong>Al dividir se pierden dos soluciones en cada vuelta</strong>
+                    <FormulaViva tex="2\operatorname{sen}x\cos x=\cos x\ \xrightarrow{\ :\cos x\ }\ 2\operatorname{sen}x=1" />
+                    <p>
+                      Quedan 30° y 150°. Se pierden 90° y 270°, donde <MatematicaEnLinea tex="\cos x" /> vale 0: allí los dos
+                      miembros valían 0, y eran soluciones. Por eso no se divide entre una razón, sino que se saca factor común.
+                    </p>
+                  </div>
+                )}
+                {!dividir && !paso && (
+                  <div>
+                    <strong>Dos soluciones en cada vuelta</strong>
+                    <FormulaViva tex={enunciadoTex + "\\iff\\cos x=1-\\sqrt3\\operatorname{sen}x"} />
+                    <p>Las curvas de los dos miembros se cortan en 0° y en 120°.</p>
+                  </div>
+                )}
+                {!dividir && paso && (
+                  <div>
+                    <strong>Al elevar al cuadrado sobran dos soluciones en cada vuelta</strong>
+                    <FormulaViva tex="\cos^2x=\left(1-\sqrt3\operatorname{sen}x\right)^2" />
+                    <p>
+                      La ecuación nueva también se cumple donde <MatematicaEnLinea tex="\cos x" /> es el opuesto de{" "}
+                      <MatematicaEnLinea tex="1-\sqrt3\operatorname{sen}x" />, porque los opuestos tienen el mismo cuadrado: son
+                      los cortes con la curva a trazos, 60° y 180°, que no son soluciones. Por eso, tras elevar al cuadrado, se
+                      comprueba cada solución en la ecuación de partida.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        const exacto = valoresExactos().find((e) => Math.abs(e.v - valor) < 0.002);
+        const k = exacto ? exacto.v : valor;
+        let base = [];
+        if (razon === "sen") {
+          const a = (Math.asin(Math.max(-1, Math.min(1, k))) * 180) / Math.PI;
+          base = [(a + 360) % 360, (180 - a + 360) % 360];
+        } else {
+          const a = (Math.acos(Math.max(-1, Math.min(1, k))) * 180) / Math.PI;
+          base = [a, (360 - a) % 360];
+        }
+        base = Array.from(new Set(base.map(redondea))).sort((p, q) => p - q);
+        const todas = [];
+        base.forEach((angulo) => {
+          for (let j = -1; j <= 6; j++) {
+            const x = (angulo + 360 * j) / multiplo;
+            if (x > -1e-9 && x < 720 - 1e-9) {
+              todas.push(redondea(x));
+            }
+          }
+        });
+        const cortes = Array.from(new Set(todas)).sort((p, q) => p - q);
+        const enLaVuelta = cortes.filter((x) => x < 360 - 1e-9);
+        const juntas = base.length === 2 && Math.abs(base[1] - base[0] - 180) < 0.01;
+        const generales = (juntas ? [base[0]] : base).map((angulo) => {
+          const primero = angulo / multiplo;
+          const salto = textoGrado((juntas ? 180 : 360) / multiplo) + "\\cdot k";
+          return "x=" + (Math.abs(primero) < 1e-9 ? salto : textoGrado(primero) + "+" + salto);
+        });
+        const nombreTex = razon === "sen" ? "\\operatorname{sen}" : "\\cos";
+        const ecuacionTex = nombreTex + " " + argumentoTex(multiplo) + (exacto ? "=" : "\\approx") + (exacto ? exacto.tex : texDecimal(valor, 2));
+        const f = (g) => (razon === "sen" ? Math.sin(rad(multiplo * g)) : Math.cos(rad(multiplo * g)));
+        const debajo = k > 0.55;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "La onda y la recta"}</p>
+            <p className="instruccion-interactivo">
+              El valor de la razón, dibujado según el ángulo, es la onda, y la recta la corta en las soluciones. Cambia la
+              razón, el argumento y la altura de la recta, y cuenta los cortes de la primera vuelta.
+            </p>
+
+            <div className="panel-control">
+              <div className="fichas-interactivo">
+                {["sen", "cos"].map((nombre) => (
+                  <button key={nombre} type="button" aria-pressed={razon === nombre} onClick={() => setRazon(nombre)}>
+                    {nombre === "sen" ? "seno" : "coseno"}
+                  </button>
+                ))}
+              </div>
+              <div className="fichas-interactivo">
+                {MULTIPLOS_ONDA.map((m) => (
+                  <button key={m} type="button" aria-pressed={multiplo === m} onClick={() => setMultiplo(m)}>
+                    <MatematicaEnLinea tex={nombreTex + " " + argumentoTex(m)} />
+                  </button>
+                ))}
+              </div>
+              <label className="control-rango">
+                <span>Altura de la recta</span>
+                <output>{decimalTrigo(k, 2)}</output>
+                <input type="range" min="-1" max="1" step="0.01" value={valor} onChange={(evento) => setValor(Number(evento.target.value))} />
+              </label>
+              <div className="fichas-interactivo">
+                {valoresExactos().map((e) => (
+                  <button key={e.tex} type="button" aria-pressed={Boolean(exacto) && exacto.tex === e.tex} onClick={() => setValor(e.v)}>
+                    <MatematicaEnLinea tex={e.tex} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                viewBox={estrecha ? "0 50 480 262" : "0 48 680 260"}
+                role="img"
+                style={{ display: "block", margin: "0 auto" }}
+                aria-label={
+                  "La onda de " + (razon === "sen" ? "seno" : "coseno") + " y la recta de altura " + decimalTrigo(k, 2) + ": " +
+                  enLaVuelta.length + " cortes entre 0 y 360 grados" +
+                  (enLaVuelta.length ? ", en " + enLaVuelta.map((x) => String(x).replace(".", ",")).join(", ") + " grados." : ".")
+                }
+              >
+                {fondo}
+                {!estrecha && (
+                  <g>
+                    <line x1={cx - R - 18} y1={cy} x2={cx + R + 18} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                    <line x1={cx} y1={cy + R + 18} x2={cx} y2={cy - R - 18} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                    <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
+                    {razon === "cos" && (
+                      <line x1={cx + R * k} y1={cy - R - 16} x2={cx + R * k} y2={cy + R + 16} stroke="#1d4ed8" strokeWidth="2" strokeDasharray="7 5" />
+                    )}
+                    {base.map((angulo) => (
+                      <g key={angulo}>
+                        <line x1={cx} y1={cy} x2={cx + R * Math.cos(rad(angulo))} y2={cy - R * Math.sin(rad(angulo))} stroke="#047857" strokeWidth="2.4" />
+                        <circle cx={cx + R * Math.cos(rad(angulo))} cy={cy - R * Math.sin(rad(angulo))} r="6.5" fill="#047857" />
+                      </g>
+                    ))}
+                    <text x={cx} y={cy + R + 36} fontSize="13" textAnchor="middle" fill="var(--texto-suave)">
+                      {"ángulos de " + (multiplo === 1 ? "x" : multiplo === 0.5 ? "x/2" : multiplo + "x") + ":"}
+                    </text>
+                    <text x={cx} y={cy + R + 53} fontSize="13" fontWeight="700" textAnchor="middle" fill="#047857">
+                      {base.map(rotuloGrado).join(" y ")}
+                    </text>
+                  </g>
+                )}
+                <line
+                  x1={razon === "sen" && !estrecha ? cx - R - 18 : x0 - 6}
+                  y1={Y(k)}
+                  x2={x1 + 8}
+                  y2={Y(k)}
+                  stroke="#1d4ed8"
+                  strokeWidth="2"
+                  strokeDasharray="7 5"
+                />
+                {estrecha && (
+                  <text x={(x0 + x1) / 2} y={cy + R + 44} fontSize="15" textAnchor="middle" fill="var(--texto-suave)">
+                    {"ángulos de " + (multiplo === 1 ? "x" : multiplo === 0.5 ? "x/2" : multiplo + "x") + ": " + base.map(rotuloGrado).join(" y ")}
+                  </text>
+                )}
+                <path d={onda(f)} fill="none" stroke="#b4233a" strokeWidth="2.6" />
+                {cortes.map((x) => (
+                  <circle key={x} cx={X(x)} cy={Y(k)} r="5.5" fill="#047857" opacity={x < 360 - 1e-9 ? 1 : 0.45} />
+                ))}
+                {enLaVuelta.map((x, i) => (
+                  <text
+                    key={x}
+                    x={X(x)}
+                    y={Y(k) + (debajo ? (estrecha ? 24 : 22) : estrecha ? -13 : -12) + (i % 2 ? (debajo ? 1 : -1) * (estrecha ? 18 : 15) : 0)}
+                    fontSize={letra}
+                    fontWeight="700"
+                    textAnchor="middle"
+                    fill="#047857"
+                    stroke="#ffffff"
+                    strokeWidth="4"
+                    paintOrder="stroke"
+                  >
+                    {rotuloGrado(x)}
+                  </text>
+                ))}
+              </svg>
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>{CUENTA_SOLUCIONES[enLaVuelta.length] + " entre 0° y 360°"}</strong>
+              <FormulaViva tex={ecuacionTex} />
+              <p>
+                {enLaVuelta.length ? (
+                  <span>
+                    En la primera vuelta: <MatematicaEnLinea tex={"x=" + enLaVuelta.map(textoGrado).join(",\\ ")} />. Todas:{" "}
+                    <MatematicaEnLinea tex={generales.join(",\\quad ")} />, con <MatematicaEnLinea tex="k\in\mathbb{Z}" />.
+                  </span>
+                ) : (
+                  <span>
+                    En la primera vuelta no hay ninguna; todas: <MatematicaEnLinea tex={generales.join(",\\quad ")} />, con{" "}
+                    <MatematicaEnLinea tex="k\in\mathbb{Z}" />.
+                  </span>
+                )}
+              </p>
+              <p>
+                {multiplo === 1
+                  ? "Cada vuelta del punto dibuja una onda entera: la recta la corta dos veces, o una si solo la toca."
+                  : multiplo === 0.5
+                    ? "Con x/2 la onda se estira: mientras x da una vuelta, x/2 solo da media, de 0° a 180°."
+                    : "Con " + multiplo + "x la onda se comprime: mientras x da una vuelta, " + multiplo + "x da " + (multiplo === 2 ? "dos" : "tres") +
+                      ", y caben " + (multiplo === 2 ? "el doble" : "el triple") + " de cortes. Por eso, al despejar x, se dividen también las vueltas."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+
+      const ELEMENTOS_TRIANGULO = [
+        { clave: "a", tex: "a" },
+        { clave: "b", tex: "b" },
+        { clave: "c", tex: "c" },
+        { clave: "A", tex: "\\hat A" },
+        { clave: "B", tex: "\\hat B" },
+        { clave: "C", tex: "\\hat C" }
+      ];
+
+      const CASOS_TRIANGULO = {
+        LAA: "LAA: un lado y dos ángulos",
+        LAL: "LAL: dos lados y el ángulo que forman",
+        LLL: "LLL: los tres lados",
+        LLA: "LLA: dos lados y un ángulo que no forman, el caso ambiguo",
+        AAA: "Los tres ángulos"
+      };
+
+      function sinCerosTex(texto) {
+        if (texto.indexOf("{,}") < 0) {
+          return texto;
+        }
+        let corto = texto;
+        while (corto.endsWith("0")) {
+          corto = corto.slice(0, -1);
+        }
+        return corto.endsWith("{,}") ? corto.slice(0, -3) : corto;
+      }
+
+      function igualTex(x, cifras) {
+        const redondo = Number(x.toFixed(cifras || 2));
+        return Math.abs(x - redondo) < 1e-9 ? "=" + sinCerosTex(texDecimal(redondo, cifras || 2)) : "\\approx" + texDecimal(x, cifras || 2);
+      }
+
+      function resolverTriangulo(datos) {
+        const lados = ["a", "b", "c"].filter((l) => datos[l] !== undefined);
+        const angulos = ["A", "B", "C"].filter((g) => datos[g] !== undefined);
+        const opuesto = { a: "A", b: "B", c: "C", A: "a", B: "b", C: "c" };
+        const seno = (g) => Math.sin((g * Math.PI) / 180);
+        const coseno = (g) => Math.cos((g * Math.PI) / 180);
+        const grados = (r) => (r * 180) / Math.PI;
+        const dato = (x) => sinCerosTex(texDecimal(x, 2));
+        const igual = igualTex;
+        const gr = (x) => dato(x) + "^\\circ";
+        const texDe = { a: "a", b: "b", c: "c", A: "\\hat A", B: "\\hat B", C: "\\hat C" };
+        const sen = "\\operatorname{sen}";
+        const pasos = [];
+        const sol = Object.assign({}, datos);
+        if (lados.length + angulos.length < 3) {
+          return { caso: null, motivo: "Elige tres datos.", pasos };
+        }
+        if (angulos.length === 3) {
+          return { caso: "AAA", ninguno: true, motivo: "Con los tres ángulos hay infinitos triángulos, todos semejantes: hace falta un lado.", pasos };
+        }
+
+        if (angulos.length === 2) {
+          const [g1, g2] = angulos;
+          const g3 = ["A", "B", "C"].find((g) => !angulos.includes(g));
+          if (datos[g1] + datos[g2] >= 180) {
+            return { caso: "LAA", ninguno: true, motivo: "Los dos ángulos suman 180° o más: no hay triángulo.", pasos };
+          }
+          sol[g3] = 180 - datos[g1] - datos[g2];
+          pasos.push({ texto: "El tercer ángulo, porque suman 180°:", tex: texDe[g3] + "=180^\\circ-" + gr(datos[g1]) + "-" + gr(datos[g2]) + "=" + gr(sol[g3]) });
+          const l = lados[0];
+          const gl = opuesto[l];
+          ["a", "b", "c"]
+            .filter((x) => x !== l)
+            .forEach((x) => {
+              sol[x] = (datos[l] * seno(sol[opuesto[x]])) / seno(sol[gl]);
+              pasos.push({
+                texto: "El lado " + x + ", con el teorema del seno:",
+                tex: x + "=\\frac{" + dato(datos[l]) + sen + gr(sol[opuesto[x]]) + "}{" + sen + gr(sol[gl]) + "}" + igual(sol[x])
+              });
+            });
+          return { caso: "LAA", pasos, soluciones: [sol] };
+        }
+
+        if (lados.length === 3) {
+          const mayor = ["a", "b", "c"].reduce((m, x) => (datos[x] > datos[m] ? x : m), "a");
+          const [p, q] = ["a", "b", "c"].filter((x) => x !== mayor);
+          if (datos[mayor] >= datos[p] + datos[q]) {
+            return { caso: "LLL", ninguno: true, motivo: "El lado mayor mide lo mismo que la suma de los otros dos, o más: no hay triángulo.", pasos };
+          }
+          const G = opuesto[mayor];
+          const cosG = (datos[p] ** 2 + datos[q] ** 2 - datos[mayor] ** 2) / (2 * datos[p] * datos[q]);
+          sol[G] = grados(Math.acos(cosG));
+          pasos.push({
+            texto: "Primero el ángulo mayor, el opuesto al lado mayor, con el teorema del coseno" + (cosG < -1e-9 ? " (su coseno es negativo: es obtuso):" : ":"),
+            tex:
+              "\\cos" + texDe[G] + "=\\frac{" + dato(datos[p]) + "^2+" + dato(datos[q]) + "^2-" + dato(datos[mayor]) + "^2}{2\\cdot" + dato(datos[p]) + "\\cdot" +
+              dato(datos[q]) + "}" + igual(cosG, 3) + "\\ \\Longrightarrow\\ " + texDe[G] + igual(sol[G]) + "^\\circ"
+          });
+          const menor = datos[p] <= datos[q] ? p : q;
+          const resto = menor === p ? q : p;
+          const Gm = opuesto[menor];
+          const senGm = (datos[menor] * seno(sol[G])) / datos[mayor];
+          sol[Gm] = grados(Math.asin(Math.min(1, senGm)));
+          pasos.push({
+            texto: "El menor, con el teorema del seno, porque ya no puede ser obtuso:",
+            tex: sen + texDe[Gm] + "=\\frac{" + dato(datos[menor]) + sen + texDe[G] + "}{" + dato(datos[mayor]) + "}" + igual(senGm, 3) + "\\ \\Longrightarrow\\ " + texDe[Gm] + igual(sol[Gm]) + "^\\circ"
+          });
+          const Gr = opuesto[resto];
+          sol[Gr] = 180 - sol[G] - sol[Gm];
+          pasos.push({ texto: "El último, por la suma:", tex: texDe[Gr] + "=180^\\circ-" + texDe[G] + "-" + texDe[Gm] + igual(sol[Gr]) + "^\\circ" });
+          return { caso: "LLL", pasos, soluciones: [sol] };
+        }
+
+        const g = angulos[0];
+        const lg = opuesto[g];
+        if (!lados.includes(lg)) {
+          const [l1, l2] = lados;
+          const cuadrado = datos[l1] ** 2 + datos[l2] ** 2 - 2 * datos[l1] * datos[l2] * coseno(datos[g]);
+          sol[lg] = Math.sqrt(cuadrado);
+          pasos.push({
+            texto: "El tercer lado, con el teorema del coseno:",
+            tex:
+              lg + "^2=" + dato(datos[l1]) + "^2+" + dato(datos[l2]) + "^2-2\\cdot" + dato(datos[l1]) + "\\cdot" + dato(datos[l2]) + "\\cos" + gr(datos[g]) +
+              igual(cuadrado) + "\\ \\Longrightarrow\\ " + lg + igual(sol[lg])
+          });
+          const menor = datos[l1] <= datos[l2] ? l1 : l2;
+          const otro = menor === l1 ? l2 : l1;
+          const Gm = opuesto[menor];
+          const senGm = (datos[menor] * seno(datos[g])) / sol[lg];
+          sol[Gm] = grados(Math.asin(Math.min(1, senGm)));
+          pasos.push({
+            texto: "El menor de los otros dos ángulos, el opuesto al lado menor, con el teorema del seno:",
+            tex: sen + texDe[Gm] + "=\\frac{" + dato(datos[menor]) + sen + gr(datos[g]) + "}{" + lg + "}" + igual(senGm, 3) + "\\ \\Longrightarrow\\ " + texDe[Gm] + igual(sol[Gm]) + "^\\circ"
+          });
+          const Go = opuesto[otro];
+          sol[Go] = 180 - datos[g] - sol[Gm];
+          pasos.push({ texto: "El otro, por la suma:", tex: texDe[Go] + "=180^\\circ-" + gr(datos[g]) + "-" + texDe[Gm] + igual(sol[Go]) + "^\\circ" });
+          return { caso: "LAL", pasos, soluciones: [sol] };
+        }
+
+        const lo = lados.find((l) => l !== lg);
+        const Go = opuesto[lo];
+        const Gt = ["A", "B", "C"].find((t) => t !== g && t !== Go);
+        const lt = opuesto[Gt];
+        const senGo = (datos[lo] * seno(datos[g])) / datos[lg];
+        pasos.push({
+          texto: "Con el teorema del seno, el seno del ángulo opuesto al otro lado conocido:",
+          tex: sen + texDe[Go] + "=\\frac{" + dato(datos[lo]) + sen + gr(datos[g]) + "}{" + dato(datos[lg]) + "}" + igual(senGo, 3)
+        });
+        const marco = [g, Go, Gt];
+        if (senGo > 1 + 1e-9) {
+          return { caso: "LLA", ninguno: true, motivo: "El seno sale mayor que 1: no hay triángulo.", pasos, marco };
+        }
+        const agudo = Math.abs(senGo - 1) < 1e-9 ? 90 : grados(Math.asin(senGo));
+        const candidatos = Math.abs(senGo - 1) < 1e-9 ? [agudo] : [agudo, 180 - agudo];
+        const validos = candidatos.filter((x) => datos[g] + x < 180 - 1e-9);
+        if (!validos.length) {
+          return { caso: "LLA", ninguno: true, motivo: "Ninguno de los dos ángulos cabe con el ángulo dado: no hay triángulo.", pasos, marco };
+        }
+        pasos.push({
+          texto:
+            candidatos.length === 1
+              ? "El seno vale 1: hay un solo triángulo, rectángulo."
+              : validos.length === 2
+                ? "Hay dos ángulos posibles y los dos caben con el ángulo dado, porque el lado opuesto a él es el menor: dos triángulos."
+                : "Hay dos ángulos posibles, pero el obtuso no cabe con el ángulo dado: un solo triángulo.",
+          tex: validos.map((x) => texDe[Go] + igual(x) + "^\\circ").join("\\ \\text{o}\\ ")
+        });
+        const soluciones = validos.map((x, i) => {
+          const s = Object.assign({}, datos);
+          s[Go] = x;
+          s[Gt] = 180 - datos[g] - x;
+          s[lt] = (datos[lg] * seno(s[Gt])) / seno(datos[g]);
+          pasos.push({
+            texto: validos.length === 2 ? (i === 0 ? "El primer triángulo:" : "El segundo:") : "Lo que falta, con la suma y con el teorema del seno:",
+            tex: texDe[Gt] + igual(s[Gt]) + "^\\circ\\quad\\text{y}\\quad " + lt + "=\\frac{" + dato(datos[lg]) + sen + texDe[Gt] + "}{" + sen + gr(datos[g]) + "}" + igual(s[lt])
+          });
+          return s;
+        });
+        return { caso: "LLA", pasos, soluciones, marco };
+      }
+
+      function QueTeoremaInteractivo({ configuracion, alPreparar }) {
+        const [elegidos, setElegidos] = React.useState(["b", "c", "A"]);
+        const [valores, setValores] = React.useState({ a: 7, b: 5, c: 8, A: 60, B: 40, C: 80 });
+        const estrecha = usePantallaEstrecha();
+        const anchoLienzo = estrecha ? 440 : 680;
+        const letra = estrecha ? 21 : 17;
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const alternar = (clave) => {
+          if (elegidos.includes(clave)) {
+            setElegidos(elegidos.filter((x) => x !== clave));
+          } else {
+            setElegidos((elegidos.length >= 3 ? elegidos.slice(1) : elegidos).concat(clave));
+          }
+        };
+        const datos = {};
+        elegidos.forEach((clave) => {
+          datos[clave] = valores[clave];
+        });
+        const resultado = resolverTriangulo(datos);
+        const soluciones = resultado.soluciones || [];
+        const texDe = { a: "a", b: "b", c: "c", A: "\\hat A", B: "\\hat B", C: "\\hat C" };
+        const conocido = (clave) => elegidos.includes(clave);
+        const rojo = "#b4233a";
+        const oscuro = "#1e293b";
+
+        const [P, Q, Rv] = resultado.marco || ["A", "B", "C"];
+        const puntos = soluciones.map((s) => {
+          const angulo = (s[P] * Math.PI) / 180;
+          const lado = (v) => s[v.toLowerCase()];
+          const pts = {};
+          pts[P] = [0, 0];
+          pts[Q] = [lado(Rv), 0];
+          pts[Rv] = [lado(Q) * Math.cos(angulo), lado(Q) * Math.sin(angulo)];
+          return pts;
+        });
+        let dibujo = null;
+        if (puntos.length) {
+          const todos = [];
+          puntos.forEach((pts) => ["A", "B", "C"].forEach((v) => todos.push(pts[v])));
+          const minX = Math.min(...todos.map((p) => p[0]));
+          const maxX = Math.max(...todos.map((p) => p[0]));
+          const maxY = Math.max(...todos.map((p) => p[1]));
+          const escala = Math.min((estrecha ? 350 : 520) / Math.max(maxX - minX, 0.01), 190 / Math.max(maxY, 0.01));
+          const izquierda = anchoLienzo / 2 - ((maxX - minX) * escala) / 2;
+          const pantalla = (p) => [izquierda + (p[0] - minX) * escala, 236 - p[1] * escala];
+          const unitario = (v) => {
+            const largo = Math.hypot(v[0], v[1]) || 1;
+            return [v[0] / largo, v[1] / largo];
+          };
+          dibujo = puntos.map((pts, i) => {
+            const V = {};
+            ["A", "B", "C"].forEach((v) => {
+              V[v] = pantalla(pts[v]);
+            });
+            const centro = [(V.A[0] + V.B[0] + V.C[0]) / 3, (V.A[1] + V.B[1] + V.C[1]) / 3];
+            const fuera = (p, d) => {
+              const u = unitario([p[0] - centro[0], p[1] - centro[1]]);
+              return [p[0] + d * u[0], p[1] + d * u[1]];
+            };
+            const extremos = { a: ["B", "C"], b: ["A", "C"], c: ["A", "B"] };
+            const segunda = i === 1;
+            const arco = (v) => {
+              const [u1, u2] = ["A", "B", "C"].filter((w) => w !== v);
+              const d1 = unitario([V[u1][0] - V[v][0], V[u1][1] - V[v][1]]);
+              const d2 = unitario([V[u2][0] - V[v][0], V[u2][1] - V[v][1]]);
+              const r = estrecha ? 26 : 24;
+              const cruz = d1[0] * d2[1] - d1[1] * d2[0];
+              return (
+                "M" + (V[v][0] + r * d1[0]).toFixed(1) + " " + (V[v][1] + r * d1[1]).toFixed(1) +
+                "A" + r + " " + r + " 0 0 " + (cruz > 0 ? 1 : 0) + " " +
+                (V[v][0] + r * d2[0]).toFixed(1) + " " + (V[v][1] + r * d2[1]).toFixed(1)
+              );
+            };
+            return (
+              <g key={i} opacity={segunda ? 0.8 : 1}>
+                {["a", "b", "c"].map((l) => {
+                  const [p, q] = extremos[l];
+                  return (
+                    <line
+                      key={l}
+                      x1={V[p][0]}
+                      y1={V[p][1]}
+                      x2={V[q][0]}
+                      y2={V[q][1]}
+                      stroke={conocido(l) ? rojo : oscuro}
+                      strokeWidth={conocido(l) ? 4.5 : 2}
+                      strokeDasharray={segunda && !conocido(l) ? "8 6" : undefined}
+                    />
+                  );
+                })}
+                {["A", "B", "C"].filter(conocido).map((v) => (
+                  <path key={"arco" + v} d={arco(v)} fill="none" stroke={rojo} strokeWidth="3" />
+                ))}
+                {["A", "B", "C"].map((v) => (
+                  <circle key={v} cx={V[v][0]} cy={V[v][1]} r="3.5" fill={oscuro} />
+                ))}
+                {!segunda &&
+                  ["A", "B", "C"].map((v) => {
+                    const [x, y] = fuera(V[v], estrecha ? 21 : 18);
+                    return (
+                      <text key={"r" + v} x={x} y={y + 6} fontSize={letra} fontStyle="italic" textAnchor="middle" fill={oscuro}>
+                        {v}
+                      </text>
+                    );
+                  })}
+                {!segunda &&
+                  ["a", "b", "c"].map((l) => {
+                    const [p, q] = extremos[l];
+                    const [x, y] = fuera([(V[p][0] + V[q][0]) / 2, (V[p][1] + V[q][1]) / 2], estrecha ? 18 : 15);
+                    return (
+                      <text key={"l" + l} x={x} y={y + 6} fontSize={letra} fontStyle="italic" fontWeight={conocido(l) ? "700" : "400"} textAnchor="middle" fill={conocido(l) ? rojo : oscuro}>
+                        {l}
+                      </text>
+                    );
+                  })}
+                {segunda && (
+                  <text x={fuera(V[Q], estrecha ? 21 : 18)[0]} y={fuera(V[Q], estrecha ? 21 : 18)[1] + 6} fontSize={letra} fontStyle="italic" textAnchor="middle" fill={oscuro}>
+                    {Q + "′"}
+                  </text>
+                )}
+              </g>
+            );
+          });
+        }
+
+        const resumen = (s) =>
+          ["a", "b", "c", "A", "B", "C"]
+            .filter((x) => !conocido(x))
+            .map((x) => texDe[x] + igualTex(s[x]) + (x === x.toUpperCase() ? "^\\circ" : ""))
+            .join(",\\ ");
+        const valorVisible = (clave) => {
+          const v = valores[clave];
+          return clave === clave.toLowerCase() ? (Number.isInteger(v) ? String(v) : decimalTrigo(v, 1)) + " cm" : v + "°";
+        };
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "¿Qué teorema uso?"}</p>
+            <p className="instruccion-interactivo">
+              Elige los tres datos que conoces y dales valor: el laboratorio dice qué caso es, si hay triángulo, y lo resuelve
+              paso a paso.
+            </p>
+
+            <div className="panel-control">
+              <div className="fichas-interactivo">
+                {ELEMENTOS_TRIANGULO.map((e) => (
+                  <button key={e.clave} type="button" aria-pressed={conocido(e.clave)} onClick={() => alternar(e.clave)}>
+                    <MatematicaEnLinea tex={e.tex} />
+                  </button>
+                ))}
+              </div>
+              {ELEMENTOS_TRIANGULO.filter((e) => conocido(e.clave)).map((e) => {
+                const lado = e.clave === e.clave.toLowerCase();
+                return (
+                  <label key={e.clave} className="control-rango">
+                    <span>
+                      <MatematicaEnLinea tex={e.tex} />
+                    </span>
+                    <output>{valorVisible(e.clave)}</output>
+                    <input
+                      type="range"
+                      min={lado ? 1 : 5}
+                      max={lado ? 20 : 175}
+                      step={lado ? 0.5 : 1}
+                      value={valores[e.clave]}
+                      onChange={(evento) => setValores(Object.assign({}, valores, { [e.clave]: Number(evento.target.value) }))}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                viewBox={estrecha ? "0 0 440 280" : "0 0 680 270"}
+                role="img"
+                style={{ display: "block", margin: "0 auto" }}
+                aria-label={
+                  soluciones.length === 2
+                    ? "Los dos triángulos que salen con esos datos; el segundo, a trazos."
+                    : soluciones.length === 1
+                      ? "El triángulo que sale con esos datos, con los datos en rojo."
+                      : resultado.caso
+                        ? "Con esos datos no hay triángulo."
+                        : "Faltan datos para dibujar el triángulo."
+                }
+              >
+                {dibujo || (
+                  <text x={anchoLienzo / 2} y="140" fontSize={estrecha ? 21 : 18} textAnchor="middle" fill={resultado.caso ? "#b91c1c" : "var(--texto-suave)"}>
+                    {resultado.caso ? "No hay triángulo con esos datos" : "Elige tres datos"}
+                  </text>
+                )}
+              </svg>
+            </div>
+
+            <div className={"veredicto-interactivo" + (resultado.ninguno ? " es-fallo" : "")} aria-live="polite">
+              <strong>{resultado.caso ? CASOS_TRIANGULO[resultado.caso] : "Faltan datos"}</strong>
+              {resultado.pasos.map((paso, i) => (
+                <div key={i}>
+                  <p>{paso.texto}</p>
+                  <FormulaViva tex={paso.tex} />
+                </div>
+              ))}
+              {resultado.motivo && <p>{resultado.motivo}</p>}
+              {soluciones.length > 0 && (
+                <p>
+                  {soluciones.length === 2 ? "Los dos triángulos: " : "El triángulo: "}
+                  {soluciones.map((s, i) => (
+                    <span key={i}>
+                      {i ? "; y " : ""}
+                      <MatematicaEnLinea tex={resumen(s)} />
+                    </span>
+                  ))}
+                  .
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+
+      function DobleNoDobleInteractivo({ configuracion, alPreparar }) {
+        const [angulo, setAngulo] = React.useState(Number.isFinite(Number(configuracion.angulo)) ? Number(configuracion.angulo) : 30);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const rad = (g) => (g * Math.PI) / 180;
+        const limpio = (x) => (Math.abs(x) < 1e-9 ? 0 : x);
+        const s = limpio(Math.sin(rad(angulo)));
+        const c = limpio(Math.cos(rad(angulo)));
+        const doble = limpio(Math.sin(rad(2 * angulo)));
+        const dosVeces = 2 * s;
+        const num = (x) => sinCerosTex(texDecimal(x, 3));
+        const entre = (x) => (x < 0 ? "\\left(" + num(x) + "\\right)" : num(x));
+        const pasa = Math.abs(dosVeces) > 1 + 1e-9;
+        const iguales = Math.abs(doble - dosVeces) < 1e-9;
+
+        const cx = 118;
+        const cy = 170;
+        const R = 66;
+        const Y = (v) => cy - R * v;
+        const punto = (g) => [cx + R * Math.cos(rad(g)), cy - R * Math.sin(rad(g))];
+        const [px, py] = punto(angulo);
+        const [qx, qy] = punto(2 * angulo);
+        const fuera = (g, d) => [cx + (R + d) * Math.cos(rad(g)), cy - (R + d) * Math.sin(rad(g)) + 6];
+        const azul = "#1d4ed8";
+        const verde = "#047857";
+        const rojo = "#b91c1c";
+        const x1 = 268;
+        const x2 = 378;
+        const rotuloValor = (x, v) => {
+          const cerca = Math.abs(v) > 0.6 && Math.abs(v) <= 1.05;
+          const y = Math.max(18, Math.min(334, v >= 0 ? (cerca ? Y(1) : Y(v)) - 8 : (cerca ? Y(-1) : Y(v)) + 22));
+          return (
+            <text x={x + 23} y={y} fontSize="18" fontWeight="700" textAnchor="middle" fill="var(--texto-suave)">
+              {decimalTrigo(v, 2).replace(",00", "")}
+            </text>
+          );
+        };
+        const tramo = (x, desde, hasta, color) => (
+          <rect x={x} y={Math.min(Y(desde), Y(hasta))} width="46" height={Math.max(Math.abs(Y(desde) - Y(hasta)), 0.8)} fill={color} />
+        );
+        const tope = Math.sign(dosVeces) * Math.min(Math.abs(dosVeces), 1);
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "El doble no es el doble"}</p>
+            <p className="instruccion-interactivo">
+              Mueve el ángulo. La barra verde es la altura del punto del ángulo 2α, su seno; la azul, el doble de la altura
+              del punto de α.
+            </p>
+
+            <div className="panel-control">
+              <label className="control-rango">
+                <span>Ángulo α</span>
+                <output>{angulo}°</output>
+                <input type="range" min="0" max="360" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
+              </label>
+              <div className="fichas-interactivo">
+                {[30, 45, 60, 90, 135, 210].map((g) => (
+                  <button key={g} type="button" aria-pressed={angulo === g} onClick={() => setAngulo(g)}>
+                    {g}°
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-mediana"
+                viewBox="0 0 480 340"
+                role="img"
+                aria-label={
+                  "Con alfa igual a " + angulo + " grados, el seno de 2 alfa vale " + decimalTrigo(doble, 2) + " y el doble del seno de alfa, " +
+                  decimalTrigo(dosVeces, 2) + (pasa ? ", que pasa de 1." : ".")
+                }
+              >
+                <line x1={cx - R - 16} y1={cy} x2={cx + R + 16} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                <line x1={cx} y1={cy + R + 16} x2={cx} y2={cy - R - 16} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
+                {[1, -1].map((v) => (
+                  <g key={v}>
+                    <line x1={cx} y1={Y(v)} x2="470" y2={Y(v)} stroke="var(--texto-suave)" strokeWidth="1.2" strokeDasharray="5 5" />
+                    <text x="236" y={Y(v) + (v > 0 ? -6 : 18)} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
+                      {v > 0 ? "1" : "−1"}
+                    </text>
+                  </g>
+                ))}
+                <line x1={x1 - 8} y1={cy} x2={x2 + 54} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.4" />
+                <line x1={qx} y1={qy} x2={x1} y2={qy} stroke={verde} strokeWidth="1.6" strokeDasharray="3 4" />
+                <line x1={px} y1={py} x2={x2} y2={py} stroke={azul} strokeWidth="1.6" strokeDasharray="3 4" />
+                <line x1={cx} y1={cy} x2={qx} y2={qy} stroke={verde} strokeWidth="2.4" />
+                <line x1={cx} y1={cy} x2={px} y2={py} stroke={azul} strokeWidth="2.4" />
+                <circle cx={qx} cy={qy} r="6.5" fill={verde} />
+                <circle cx={px} cy={py} r="6.5" fill={azul} />
+                <text x={fuera(angulo, 18)[0]} y={fuera(angulo, 18)[1]} fontSize="19" fontWeight="700" fontStyle="italic" textAnchor="middle" fill={azul}>
+                  α
+                </text>
+                <text x={fuera(2 * angulo, 22)[0]} y={fuera(2 * angulo, 22)[1]} fontSize="19" fontWeight="700" fontStyle="italic" textAnchor="middle" fill={verde}>
+                  2α
+                </text>
+                {tramo(x1, 0, doble, verde)}
+                {tramo(x2, 0, tope, azul)}
+                {pasa && tramo(x2, tope, dosVeces, rojo)}
+                {Math.abs(s) > 1e-9 && <line x1={x2} y1={py} x2={x2 + 46} y2={py} stroke="#ffffff" strokeWidth="2.4" />}
+                {rotuloValor(x1, doble)}
+                {rotuloValor(x2, dosVeces)}
+                <text x={x1 + 23} y={doble < 0 ? cy - 10 : cy + 22} fontSize="18" fontWeight="700" textAnchor="middle" fill={verde}>
+                  sen 2α
+                </text>
+                <text x={x2 + 23} y={dosVeces < 0 ? cy - 10 : cy + 22} fontSize="18" fontWeight="700" textAnchor="middle" fill={pasa ? rojo : azul}>
+                  2 sen α
+                </text>
+              </svg>
+            </div>
+
+            <div className={"veredicto-interactivo" + (pasa ? " es-fallo" : "")} aria-live="polite">
+              <strong>
+                {pasa ? "2 sen α pasa de 1, y ningún seno pasa de 1" : iguales ? "Aquí coinciden, porque sen α = 0" : "sen 2α y 2 sen α no valen lo mismo"}
+              </strong>
+              <FormulaViva tex={"\\operatorname{sen}2\\alpha=2\\operatorname{sen}\\alpha\\cos\\alpha=2\\cdot" + entre(s) + "\\cdot" + entre(c) + igualTex(doble, 3)} />
+              <FormulaViva tex={"2\\operatorname{sen}\\alpha=2\\cdot" + entre(s) + igualTex(dosVeces, 3)} />
+              <p>
+                El seno de 2α es 2 sen α multiplicado por cos α, que está entre −1 y 1: solo valen lo mismo cuando sen α = 0,
+                en 0° y en 180°.
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+
+      function AlcanceBalonInteractivo({ configuracion, alPreparar }) {
+        const v = Number(configuracion.velocidad) || 20;
+        const g = 9.8;
+        const [angulo, setAngulo] = React.useState(Number(configuracion.angulo) || 20);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const rad = (x) => (x * Math.PI) / 180;
+        const alcance = (a) => (v * v * Math.sin(rad(2 * a))) / g;
+        const altura = (a) => (v * v * Math.sin(rad(a)) ** 2) / (2 * g);
+        const lejos = (v * v) / g;
+        const techo = (v * v) / (2 * g);
+        const x0 = 36;
+        const suelo = 262;
+        const escala = Math.min(414 / lejos, 206 / techo);
+        const X = (x) => x0 + x * escala;
+        const Y = (y) => suelo - y * escala;
+        const camino = (a) => {
+          const d = alcance(a);
+          let trazo = "";
+          for (let i = 0; i <= 90; i++) {
+            const x = (d * i) / 90;
+            const y = x * Math.tan(rad(a)) - (g * x * x) / (2 * v * v * Math.cos(rad(a)) ** 2);
+            trazo += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(Math.max(0, y)).toFixed(1);
+          }
+          return trazo;
+        };
+        const arco = (a, r) =>
+          "M" + (X(0) + r) + " " + suelo + "A" + r + " " + r + " 0 0 0 " + (X(0) + r * Math.cos(rad(a))).toFixed(1) + " " + (suelo - r * Math.sin(rad(a))).toFixed(1);
+        const otro = 90 - angulo;
+        const solo = angulo === 45;
+        const d = alcance(angulo);
+        const metros = (x) => decimalTrigo(x, 1) + " m";
+        const azul = "#1d4ed8";
+        const naranja = "#c2410c";
+        const cercaDelMaximo = Math.abs(d - lejos) < 4;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Hasta dónde llega"}</p>
+            <p className="instruccion-interactivo">
+              El balón sale del suelo a {String(v).replace(".", ",")} m/s. Cambia el ángulo: la línea continua es su
+              trayectoria; la de trazos, la del ángulo complementario; la gris, la de 45°.
+            </p>
+
+            <div className="panel-control">
+              <label className="control-rango">
+                <span>Ángulo de lanzamiento</span>
+                <output>{angulo}°</output>
+                <input type="range" min="5" max="85" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
+              </label>
+              <div className="fichas-interactivo">
+                {[20, 30, 45, 60, 70].map((a) => (
+                  <button key={a} type="button" aria-pressed={angulo === a} onClick={() => setAngulo(a)}>
+                    {a}°
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-mediana"
+                viewBox="0 0 480 300"
+                role="img"
+                aria-label={
+                  solo
+                    ? "A 45 grados el balón llega lo más lejos, a " + metros(d) + "."
+                    : "A " + angulo + " y a " + otro + " grados el balón cae en el mismo sitio, a " + metros(d) + "; a 45 grados llegaría a " + metros(lejos) + "."
+                }
+              >
+                <line x1="16" y1={suelo} x2="470" y2={suelo} stroke="#1e293b" strokeWidth="2" />
+                {!solo && <path d={camino(45)} fill="none" stroke="var(--texto-suave)" strokeWidth="1.8" strokeDasharray="4 5" opacity="0.7" />}
+                {!solo && <path d={camino(otro)} fill="none" stroke={naranja} strokeWidth="2.6" strokeDasharray="9 6" />}
+                <path d={camino(angulo)} fill="none" stroke={azul} strokeWidth="3" />
+                <path d={arco(angulo, 34)} fill="none" stroke={azul} strokeWidth="2.2" />
+                {!solo && <path d={arco(otro, 52)} fill="none" stroke={naranja} strokeWidth="2.2" />}
+                <text x={X(d / 2)} y={Y(altura(angulo)) - 9} fontSize="17" fontWeight="700" textAnchor="middle" fill={azul}>
+                  {angulo}°
+                </text>
+                {!solo && (
+                  <text x={X(d / 2)} y={Y(altura(otro)) - 9} fontSize="17" fontWeight="700" textAnchor="middle" fill={naranja}>
+                    {otro}°
+                  </text>
+                )}
+                <circle cx={X(0)} cy={suelo} r="6" fill="#1e293b" />
+                <circle cx={X(d)} cy={suelo} r="6.5" fill={azul} />
+                <text x={X(d)} y={suelo + 24} fontSize="18" fontWeight="700" textAnchor="middle" fill={azul}>
+                  {metros(d)}
+                </text>
+                {!solo && !cercaDelMaximo && (
+                  <text x={X(lejos)} y={suelo + 24} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                    {metros(lejos)}
+                  </text>
+                )}
+              </svg>
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>{solo ? "A 45° llega lo más lejos: " + metros(d) : "A " + angulo + "° y a " + otro + "° cae en el mismo sitio: " + metros(d)}</strong>
+              <FormulaViva
+                tex={
+                  "d=\\frac{v^2\\operatorname{sen}2\\alpha}{g}=\\frac{" + String(v).replace(".", "{,}") + "^2\\operatorname{sen}" + 2 * angulo +
+                  "^\\circ}{9{,}8}" + (solo ? "=" : "\\approx") + texDecimal(d, 1) + "\\text{ m}"
+                }
+              />
+              <p>
+                {solo
+                  ? "Con 45°, el ángulo 2α es 90°, y sen 90° = 1 es lo más que vale un seno."
+                  : "Los ángulos 2α de los dos lanzamientos, " + 2 * angulo + "° y " + 2 * otro + "°, son suplementarios y tienen el mismo seno. A 45° llegaría a " + metros(lejos) + "."}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+
+      function AreaAnguloInteractivo({ configuracion, alPreparar }) {
+        const b = Number(configuracion.b) || 6;
+        const c = Number(configuracion.c) || 10;
+        const [angulo, setAngulo] = React.useState(Number(configuracion.angulo) || 30);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const rad = (x) => (x * Math.PI) / 180;
+        const S = (a) => 0.5 * b * c * Math.sin(rad(a));
+        const mayor = 0.5 * b * c;
+        const gemelo = 180 - angulo;
+        const recto = angulo === 90;
+        const u = 400 / (b + c);
+        const Ax = 40 + b * u;
+        const base = 192;
+        const Bx = Ax + c * u;
+        const C = [Ax + b * u * Math.cos(rad(angulo)), base - b * u * Math.sin(rad(angulo))];
+        const Cg = [Ax - b * u * Math.cos(rad(angulo)), C[1]];
+        const yG = 366;
+        const altoG = 110;
+        const G = (a) => 40 + (a * 400) / 180;
+        const SY = (s) => yG - (altoG * s) / mayor;
+        let curva = "";
+        for (let i = 0; i <= 90; i++) {
+          const a = i * 2;
+          curva += (i ? "L" : "M") + G(a).toFixed(1) + " " + SY(S(a)).toFixed(1);
+        }
+        const verde = "#047857";
+        const area = (x) => decimalTrigo(x, 2).replace(",00", "") + " cm²";
+        const fuera = C[0] < Ax - 1 || C[0] > Bx + 1;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "El área y el ángulo"}</p>
+            <p className="instruccion-interactivo">
+              Los lados miden {String(b).replace(".", ",")} cm y {String(c).replace(".", ",")} cm. Abre o cierra el ángulo que
+              forman y mira cómo cambia el área.
+            </p>
+
+            <div className="panel-control">
+              <label className="control-rango">
+                <span>
+                  Ángulo <MatematicaEnLinea tex="\hat A" />
+                </span>
+                <output>{angulo}°</output>
+                <input type="range" min="1" max="179" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
+              </label>
+              <div className="fichas-interactivo">
+                {[30, 60, 90, 120, 150].map((a) => (
+                  <button key={a} type="button" aria-pressed={angulo === a} onClick={() => setAngulo(a)}>
+                    {a}°
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-mediana"
+                viewBox="0 0 480 394"
+                role="img"
+                aria-label={
+                  "Con un ángulo de " + angulo + " grados el área es " + area(S(angulo)) +
+                  (recto ? ", la mayor posible." : "; con " + gemelo + " grados, la misma.")
+                }
+              >
+                {!recto && (
+                  <path
+                    d={"M" + Ax + " " + base + "L" + Cg[0].toFixed(1) + " " + Cg[1].toFixed(1) + "L" + Bx + " " + base}
+                    fill="none"
+                    stroke="var(--texto-suave)"
+                    strokeWidth="1.8"
+                    strokeDasharray="7 5"
+                  />
+                )}
+                <path
+                  d={"M" + Ax + " " + base + "L" + C[0].toFixed(1) + " " + C[1].toFixed(1) + "L" + Bx + " " + base + "Z"}
+                  fill="rgba(4, 120, 87, 0.12)"
+                  stroke="#1e293b"
+                  strokeWidth="2.2"
+                />
+                {fuera && <line x1={Ax} y1={base} x2={C[0]} y2={base} stroke="#1e293b" strokeWidth="1.2" strokeDasharray="4 4" />}
+                <line x1={C[0]} y1={C[1]} x2={C[0]} y2={base} stroke={verde} strokeWidth="2" strokeDasharray="4 4" />
+                <text x={C[0] + (C[0] < Ax ? -8 : 8)} y={(C[1] + base) / 2 + 6} fontSize="18" fontWeight="700" textAnchor={C[0] < Ax ? "end" : "start"} fill={verde}>
+                  h
+                </text>
+                <path
+                  d={"M" + (Ax + 26) + " " + base + "A26 26 0 0 0 " + (Ax + 26 * Math.cos(rad(angulo))).toFixed(1) + " " + (base - 26 * Math.sin(rad(angulo))).toFixed(1)}
+                  fill="none"
+                  stroke="#b4233a"
+                  strokeWidth="2.4"
+                />
+                <text x={Ax - 6} y={base + 22} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">A</text>
+                <text x={Bx + 4} y={base + 22} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">B</text>
+                <text x={C[0]} y={C[1] - 10} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">C</text>
+                {!recto && (
+                  <text x={Cg[0]} y={Cg[1] - 10} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
+                    {"con " + gemelo + "°"}
+                  </text>
+                )}
+                <text x={(Ax + Bx) / 2} y={base + 22} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
+                  {"c = " + String(c).replace(".", ",") + " cm"}
+                </text>
+                <line x1="40" y1={yG} x2="446" y2={yG} stroke="var(--texto-suave)" strokeWidth="1.3" />
+                {[0, 90, 180].map((a) => (
+                  <g key={a}>
+                    <line x1={G(a)} y1={yG - 4} x2={G(a)} y2={yG + 4} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                    <text x={G(a)} y={yG + 22} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                      {a}°
+                    </text>
+                  </g>
+                ))}
+                <path d={curva} fill="none" stroke={verde} strokeWidth="2.6" />
+                <text x={G(90)} y={SY(mayor) - 10} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
+                  {"la mayor: " + area(mayor)}
+                </text>
+                {!recto && <line x1={G(angulo)} y1={SY(S(angulo))} x2={G(gemelo)} y2={SY(S(angulo))} stroke={verde} strokeWidth="1.6" strokeDasharray="4 4" />}
+                {!recto && <circle cx={G(gemelo)} cy={SY(S(angulo))} r="5.5" fill="#ffffff" stroke={verde} strokeWidth="2.4" />}
+                <circle cx={G(angulo)} cy={SY(S(angulo))} r="6.5" fill={verde} />
+              </svg>
+            </div>
+
+            <div className="veredicto-interactivo" aria-live="polite">
+              <strong>
+                {recto ? "Con 90° el área es la mayor: " + area(mayor) : "Con " + angulo + "° y con " + gemelo + "°, la misma área: " + area(S(angulo))}
+              </strong>
+              <FormulaViva
+                tex={
+                  "S=\\frac12\\cdot" + String(b).replace(".", "{,}") + "\\cdot" + String(c).replace(".", "{,}") + "\\operatorname{sen}" + angulo + "^\\circ" +
+                  igualTex(S(angulo), 2) + "\\text{ cm}^2"
+                }
+              />
+              <p>
+                La altura del triángulo es <MatematicaEnLinea tex="h=b\operatorname{sen}\hat A" />, y un ángulo y su suplementario
+                tienen el mismo seno: los dos triángulos tienen la misma base y la misma altura. La mayor altura, y la mayor área,
+                con 90°.
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+
+      const RAZONES_ESCRITAS_TRIGO = [
+        "cos-315", "cos30", "cos45", "cos60", "cos120", "cos135", "cos150", "cos210", "cos225", "cos240", "cos300", "cos315",
+        "cos330", "cos480", "cos855", "cos930", "sen-315", "sen-240", "sen-150", "sen30", "sen45", "sen60", "sen120",
+        "sen135", "sen150", "sen210", "sen225", "sen240", "sen315", "sen330", "sen510", "sen1110", "tg-600", "tg30", "tg45",
+        "tg60", "tg120", "tg135", "tg210", "tg240", "tg300", "tg495"
+      ];
+      const ANGULOS_ESCRITOS_TRIGO = RAZONES_ESCRITAS_TRIGO.map((t) => Number(t.replace(/^[a-z]+/, "")));
+      const VALORES_DEL_RETO = {
+        sen: { 30: { v: 0.5, tex: "\\frac12" }, 45: { v: Math.SQRT2 / 2, tex: "\\frac{\\sqrt2}{2}" }, 60: { v: Math.sqrt(3) / 2, tex: "\\frac{\\sqrt3}{2}" } },
+        cos: { 30: { v: Math.sqrt(3) / 2, tex: "\\frac{\\sqrt3}{2}" }, 45: { v: Math.SQRT2 / 2, tex: "\\frac{\\sqrt2}{2}" }, 60: { v: 0.5, tex: "\\frac12" } },
+        tg: { 30: { v: Math.sqrt(3) / 3, tex: "\\frac{\\sqrt3}{3}" }, 45: { v: 1, tex: "1" }, 60: { v: Math.sqrt(3), tex: "\\sqrt3" } }
+      };
+      const NOMBRE_TEX_RETO = { sen: "\\operatorname{sen}", cos: "\\cos", tg: "\\operatorname{tg}" };
+
+      function nuevoRetoNotable(modo, anterior) {
+        const azar = (n) => Math.floor(Math.random() * n);
+        for (let intento = 0; intento < 200; intento++) {
+          const beta = [30, 45, 60][azar(3)];
+          const cuadrante = 1 + azar(4);
+          const primera = [beta, 180 - beta, 180 + beta, 360 - beta][cuadrante - 1];
+          const vueltas = [-2, -1, -1, 0, 0, 0, 1, 1, 2][azar(9)];
+          const angulo = primera + 360 * vueltas;
+          const razon = ["sen", "cos", "tg"][azar(3)];
+          if (cuadrante === 1 && vueltas === 0) {
+            continue;
+          }
+          if (RAZONES_ESCRITAS_TRIGO.indexOf(razon + angulo) >= 0) {
+            continue;
+          }
+          if ((angulo < 0 || angulo >= 360) && ANGULOS_ESCRITOS_TRIGO.indexOf(angulo) >= 0) {
+            continue;
+          }
+          if (anterior && anterior.angulo === angulo && anterior.razon === razon) {
+            continue;
+          }
+          const positivo = { sen: cuadrante <= 2, cos: cuadrante === 1 || cuadrante === 4, tg: cuadrante === 1 || cuadrante === 3 }[razon];
+          const signo = positivo ? 1 : -1;
+          const valor = VALORES_DEL_RETO[razon][beta];
+          const otraBeta = beta === 45 ? [30, 60][azar(2)] : 90 - beta;
+          const otro = VALORES_DEL_RETO[razon][otraBeta];
+          const conSigno = (s, dato) => ({ tex: (s < 0 ? "-" : "") + dato.tex, v: s * dato.v });
+          const opciones = [conSigno(signo, valor), conSigno(-signo, valor), conSigno(signo, otro)];
+          for (let i = opciones.length - 1; i > 0; i--) {
+            const j = azar(i + 1);
+            const t = opciones[i];
+            opciones[i] = opciones[j];
+            opciones[j] = t;
+          }
+          const radianes = modo === "radianes" || (modo === "mezcla" && Math.random() < 0.45);
+          return { beta, cuadrante, primera, vueltas, angulo, razon, signo, valor, radianes, opciones, correcta: conSigno(signo, valor) };
+        }
+        return null;
+      }
+
+      function RetoNotablesInteractivo({ configuracion, alPreparar }) {
+        const [modo, setModo] = React.useState(["grados", "radianes", "mezcla"].includes(configuracion.modo) ? configuracion.modo : "mezcla");
+        const [reto, setReto] = React.useState(() => nuevoRetoNotable(["grados", "radianes", "mezcla"].includes(configuracion.modo) ? configuracion.modo : "mezcla", null));
+        const [elegida, setElegida] = React.useState(null);
+        const [cuenta, setCuenta] = React.useState({ bien: 0, total: 0 });
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex || !reto) {
+          return null;
+        }
+
+        const mcd = (p, q) => (q ? mcd(q, p % q) : p);
+        const enRadianes = (g) => {
+          const m = mcd(Math.abs(g), 180);
+          const n = Math.abs(g) / m;
+          const d = 180 / m;
+          const cuerpo = (n === 1 ? "" : n) + "\\pi";
+          return d === 1 ? cuerpo : "\\frac{" + cuerpo + "}{" + d + "}";
+        };
+        const anguloTex = (g, radianes) => {
+          const cuerpo = radianes ? enRadianes(g) : Math.abs(g) + "^\\circ";
+          return g < 0 ? "\\left(-" + cuerpo + "\\right)" : cuerpo;
+        };
+        const nombre = NOMBRE_TEX_RETO[reto.razon];
+        const respondida = elegida !== null;
+        const acierto = respondida && Math.abs(reto.opciones[elegida].v - reto.correcta.v) < 1e-9;
+        const otro = (nuevoModo) => {
+          setReto(nuevoRetoNotable(nuevoModo || modo, reto));
+          setElegida(null);
+        };
+        const responder = (i) => {
+          if (respondida) {
+            return;
+          }
+          setElegida(i);
+          const bien = Math.abs(reto.opciones[i].v - reto.correcta.v) < 1e-9;
+          setCuenta({ bien: cuenta.bien + (bien ? 1 : 0), total: cuenta.total + 1 });
+        };
+
+        const pasos = [];
+        if (reto.radianes) {
+          pasos.push(anguloTex(reto.angulo, true).replace("\\left(", "").replace("\\right)", "") + "=" + reto.angulo + "^\\circ");
+        }
+        if (reto.vueltas > 0) {
+          pasos.push(reto.angulo + "^\\circ=" + (reto.vueltas === 1 ? "" : reto.vueltas + "\\cdot") + "360^\\circ+" + reto.primera + "^\\circ");
+        } else if (reto.vueltas < 0) {
+          pasos.push(reto.angulo + "^\\circ+" + (reto.vueltas === -1 ? "" : -reto.vueltas + "\\cdot") + "360^\\circ=" + reto.primera + "^\\circ");
+        }
+        const formaPrimera = [reto.beta + "^\\circ", "180^\\circ-" + reto.beta + "^\\circ", "180^\\circ+" + reto.beta + "^\\circ", "360^\\circ-" + reto.beta + "^\\circ"][
+          reto.cuadrante - 1
+        ];
+        pasos.push(
+          reto.cuadrante === 1
+            ? nombre + reto.primera + "^\\circ=" + reto.correcta.tex
+            : nombre + reto.primera + "^\\circ=" + nombre + "\\left(" + formaPrimera + "\\right)=" + (reto.signo < 0 ? "-" : "") + nombre + reto.beta + "^\\circ=" + reto.correcta.tex
+        );
+        const nombreRazon = { sen: "el seno", cos: "el coseno", tg: "la tangente" }[reto.razon];
+
+        const cx = 130;
+        const cy = 128;
+        const R = 92;
+        const rad = (g) => (g * Math.PI) / 180;
+        const P = [cx + R * Math.cos(rad(reto.primera)), cy - R * Math.sin(rad(reto.primera))];
+        const ejeX = reto.cuadrante === 1 || reto.cuadrante === 4 ? 0 : 180;
+        const desde = ejeX === 0 ? (reto.cuadrante === 1 ? 0 : -reto.beta) : reto.cuadrante === 2 ? 180 - reto.beta : 180;
+        const r0 = 30;
+        const arcoAgudo =
+          "M" + (cx + r0 * Math.cos(rad(desde))).toFixed(1) + " " + (cy - r0 * Math.sin(rad(desde))).toFixed(1) +
+          "A" + r0 + " " + r0 + " 0 0 0 " + (cx + r0 * Math.cos(rad(desde + reto.beta))).toFixed(1) + " " + (cy - r0 * Math.sin(rad(desde + reto.beta))).toFixed(1);
+        const medio = desde + reto.beta / 2;
+        const colorSigno = reto.signo > 0 ? "#047857" : "#b91c1c";
+        const colorDe = (valor) => (valor > 0 ? "#047857" : "#b91c1c");
+        const gruesoSeno = reto.razon === "cos" ? 2.5 : 5;
+        const gruesoCoseno = reto.razon === "sen" ? 2.5 : 5;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Reto de los notables"}</p>
+            <p className="instruccion-interactivo">
+              Sin calculadora: elige el valor. Después, la circunferencia enseña de dónde sale.
+            </p>
+
+            <div className="panel-control">
+              <div className="fichas-interactivo">
+                {[
+                  ["grados", "En grados"],
+                  ["radianes", "En radianes"],
+                  ["mezcla", "Las dos"]
+                ].map(([clave, texto]) => (
+                  <button
+                    key={clave}
+                    type="button"
+                    aria-pressed={modo === clave}
+                    onClick={() => {
+                      setModo(clave);
+                      otro(clave);
+                    }}
+                  >
+                    {texto}
+                  </button>
+                ))}
+              </div>
+              <FormulaViva tex={nombre + anguloTex(reto.angulo, reto.radianes) + "=\\ ?"} />
+              <div className="fichas-interactivo">
+                {reto.opciones.map((opcion, i) => (
+                  <button key={i} type="button" aria-pressed={elegida === i} disabled={respondida && elegida !== i} onClick={() => responder(i)}>
+                    <MatematicaEnLinea tex={opcion.tex.replace("\\frac", "\\dfrac")} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-mediana"
+                viewBox="0 0 480 256"
+                role="img"
+                aria-label={
+                  respondida
+                    ? "El ángulo " + reto.primera + " grados, en el cuadrante " + reto.cuadrante + ", con su ángulo agudo de " + reto.beta + " grados."
+                    : "La circunferencia, a la espera de la respuesta."
+                }
+              >
+                <line x1={cx - R - 18} y1={cy} x2={cx + R + 18} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                <line x1={cx} y1={cy + R + 18} x2={cx} y2={cy - R - 18} stroke="var(--texto-suave)" strokeWidth="1.2" />
+                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
+                {!respondida &&
+                  ["1.º", "2.º", "3.º", "4.º"].map((t, i) => (
+                    <text
+                      key={t}
+                      x={cx + (i === 0 || i === 3 ? 1 : -1) * 0.55 * R}
+                      y={cy + (i < 2 ? -1 : 1) * 0.55 * R + 6}
+                      fontSize="17"
+                      textAnchor="middle"
+                      fill="var(--texto-suave)"
+                    >
+                      {t}
+                    </text>
+                  ))}
+                {respondida && (
+                  <g>
+                    <line x1={cx} y1={cy} x2={P[0]} y2={cy} stroke={colorDe(Math.cos(rad(reto.primera)))} strokeWidth={gruesoCoseno} />
+                    <line x1={P[0]} y1={cy} x2={P[0]} y2={P[1]} stroke={colorDe(Math.sin(rad(reto.primera)))} strokeWidth={gruesoSeno} />
+                    <line x1={cx} y1={cy} x2={P[0]} y2={P[1]} stroke="#1d4ed8" strokeWidth="2.6" />
+                    <path d={arcoAgudo} fill="none" stroke="#b4233a" strokeWidth="2.6" />
+                    <circle cx={P[0]} cy={P[1]} r="7" fill="#1d4ed8" />
+                    <text x={cx + 48 * Math.cos(rad(medio))} y={cy - 48 * Math.sin(rad(medio)) + 6} fontSize="17" fontWeight="700" textAnchor="middle" fill="#b4233a">
+                      {reto.beta}°
+                    </text>
+                    <text x={P[0] + (P[0] > cx ? 12 : -12)} y={P[1] + (P[1] < cy ? -8 : 20)} fontSize="17" fontWeight="700" textAnchor={P[0] > cx ? "start" : "end"} fill="#1d4ed8">
+                      {reto.primera}°
+                    </text>
+                    <text x="262" y="60" fontSize="18" fontWeight="700" fill="#1e293b">
+                      {reto.cuadrante + ".º cuadrante"}
+                    </text>
+                    <text x="262" y="88" fontSize="17" fill={colorSigno}>
+                      {nombreRazon + ", " + (reto.signo > 0 ? "positiv" : "negativ") + (reto.razon === "tg" ? "a" : "o")}
+                    </text>
+                    <text x="262" y="116" fontSize="17" fill="#b4233a">
+                      {"ángulo agudo: " + reto.beta + "°"}
+                    </text>
+                  </g>
+                )}
+              </svg>
+            </div>
+
+            {respondida && (
+              <div className={"veredicto-interactivo" + (acierto ? "" : " es-fallo")} aria-live="polite">
+                <strong>{acierto ? "Bien" : "No es ese"}</strong>
+                {!acierto && (
+                  <p>
+                    Vale <MatematicaEnLinea tex={reto.correcta.tex.replace("\\frac", "\\dfrac")} />.
+                  </p>
+                )}
+                {pasos.map((paso, i) => (
+                  <FormulaViva key={i} tex={paso} />
+                ))}
+                <p>
+                  {"Aciertos: " + cuenta.bien + " de " + cuenta.total + "."}
+                </p>
+              </div>
+            )}
+
+            <div className="opciones-interactivo">
+              <button type="button" onClick={() => otro()}>
+                Otro ángulo
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+
+      const COLORES_SEIS = { sen: "#dc2626", cos: "#2563eb", tg: "#16a34a", cosec: "#d97706", sec: "#9333ea", cotg: "#0891b2" };
+      const NOMBRES_SEIS = { sen: "seno", cos: "coseno", tg: "tangente", cosec: "cosecante", sec: "secante", cotg: "cotangente" };
+      const TEX_SEIS = { sen: "\\operatorname{sen}", cos: "\\cos", tg: "\\operatorname{tg}", cosec: "\\operatorname{cosec}", sec: "\\sec", cotg: "\\operatorname{cotg}" };
+      const ORDEN_SEIS = ["sen", "cos", "tg", "cosec", "sec", "cotg"];
+
+      function exactasSeis(angulo) {
+        const a = ((angulo % 360) + 360) % 360;
+        const beta = a <= 90 ? a : a <= 180 ? 180 - a : a <= 270 ? a - 180 : 360 - a;
+        const tabla = {
+          0: { sen: "0", cos: "1", tg: "0", cosec: null, sec: "1", cotg: null },
+          30: { sen: "\\frac12", cos: "\\frac{\\sqrt3}{2}", tg: "\\frac{\\sqrt3}{3}", cosec: "2", sec: "\\frac{2\\sqrt3}{3}", cotg: "\\sqrt3" },
+          45: { sen: "\\frac{\\sqrt2}{2}", cos: "\\frac{\\sqrt2}{2}", tg: "1", cosec: "\\sqrt2", sec: "\\sqrt2", cotg: "1" },
+          60: { sen: "\\frac{\\sqrt3}{2}", cos: "\\frac12", tg: "\\sqrt3", cosec: "\\frac{2\\sqrt3}{3}", sec: "2", cotg: "\\frac{\\sqrt3}{3}" },
+          90: { sen: "1", cos: "0", tg: null, cosec: "1", sec: null, cotg: "0" }
+        };
+        if (!tabla[beta]) {
+          return null;
+        }
+        const s = Math.sin((a * Math.PI) / 180);
+        const c = Math.cos((a * Math.PI) / 180);
+        const signo = { sen: s, cos: c, tg: s * c, cosec: s, sec: c, cotg: s * c };
+        const salida = {};
+        ORDEN_SEIS.forEach((k) => {
+          const v = tabla[beta][k];
+          salida[k] = v === null ? null : v === "0" ? "0" : (signo[k] < -1e-9 ? "-" : "") + v;
+        });
+        return salida;
+      }
+
+      function SeisRazonesInteractivo({ configuracion, alPreparar }) {
+        const [angulo, setAngulo] = React.useState(Number.isFinite(Number(configuracion.angulo)) ? Number(configuracion.angulo) : 30);
+        const [elegida, setElegida] = React.useState("seis");
+        const estrecha = usePantallaEstrecha();
+        const lienzo = React.useRef(null);
+        const arrastre = React.useRef(false);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const ox = 200;
+        const oy = 330;
+        const R = 160;
+        const X = (x) => ox + R * x;
+        const Y = (y) => oy - R * y;
+        const r = (angulo * Math.PI) / 180;
+        const limpio = (v) => (Math.abs(v) < 1e-9 ? 0 : v);
+        const c = limpio(Math.cos(r));
+        const s = limpio(Math.sin(r));
+        const hayTg = Math.abs(c) > 1e-9;
+        const hayCotg = Math.abs(s) > 1e-9;
+        const valor = { sen: s, cos: c, tg: hayTg ? s / c : null, cosec: hayCotg ? 1 / s : null, sec: hayTg ? 1 / c : null, cotg: hayCotg ? c / s : null };
+        const exactas = exactasSeis(angulo);
+        const valorTex = (k) => {
+          if (valor[k] === null) {
+            return null;
+          }
+          if (exactas && exactas[k] !== null) {
+            return exactas[k] + (exactas[k].indexOf("\\sqrt") >= 0 ? "\\approx" + texDecimal(valor[k], 3) : "");
+          }
+          return "\\approx" + texDecimal(valor[k], 3);
+        };
+        const igualTexto = (k) => {
+          const t = valorTex(k);
+          return t === null ? null : t.indexOf("\\approx") === 0 ? t : "=" + t;
+        };
+
+        const P = [X(c), Y(s)];
+        const A = [X(c), oy];
+        const B = [X(1), oy];
+        const D = [ox, Y(1)];
+        const T = hayTg ? [X(1), Y(s / c)] : null;
+        const C = hayCotg ? [X(c / s), Y(1)] : null;
+        const n = [s, c];
+        const corre = (p, d) => [p[0] + n[0] * d, p[1] + n[1] * d];
+        const dentro = (p) => p && p[0] > 8 && p[0] < 592 && p[1] > 8 && p[1] < 512;
+        const linea = (p, q, color, ancho, extra) => (
+          <line x1={p[0]} y1={p[1]} x2={q[0]} y2={q[1]} stroke={color} strokeWidth={ancho} strokeLinecap="round" {...(extra || {})} />
+        );
+        const triangulo = (a, b, cc, color, opacidad) => (
+          <path d={"M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1] + "L" + cc[0] + " " + cc[1] + "Z"} fill={color} fillOpacity={opacidad} stroke={color} strokeOpacity="0.5" strokeWidth="1.2" />
+        );
+        const letra = estrecha ? 21 : 17;
+        const rotulo = (x, y, texto, color, ancla) => (
+          <text x={x} y={y} fontSize={letra + 1} fontWeight="700" textAnchor={ancla || "middle"} fill={color} stroke="#ffffff" strokeWidth="4" paintOrder="stroke">
+            {texto}
+          </text>
+        );
+        const ve = (k) => elegida === "seis" || elegida === k;
+        const mitad = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+        const lejos = 4;
+        const recta = [
+          [ox - R * lejos * c, oy + R * lejos * s],
+          [ox + R * lejos * c, oy - R * lejos * s]
+        ];
+        const arcoAngulo = () => {
+          const g = ((angulo % 360) + 360) % 360;
+          if (g < 1) {
+            return null;
+          }
+          const fin = [ox + 30 * Math.cos(r), oy - 30 * Math.sin(r)];
+          return <path d={"M" + (ox + 30) + " " + oy + "A30 30 0 " + (g > 180 ? 1 : 0) + " 0 " + fin[0].toFixed(1) + " " + fin[1].toFixed(1)} fill="none" stroke="#0f172a" strokeWidth="2" />;
+        };
+
+        const anguloDe = (evento) => {
+          const svg = lienzo.current;
+          if (!svg || !svg.getScreenCTM()) {
+            return angulo;
+          }
+          const punto = svg.createSVGPoint();
+          punto.x = evento.clientX;
+          punto.y = evento.clientY;
+          const p = punto.matrixTransform(svg.getScreenCTM().inverse());
+          let g = Math.round((Math.atan2(oy - p.y, p.x - ox) * 180) / Math.PI);
+          if (g < 0) {
+            g += 360;
+          }
+          const notable = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330, 360].find((m) => Math.abs(g - m) <= 2);
+          return notable === undefined ? g : notable % 360;
+        };
+        const empieza = (evento) => {
+          arrastre.current = true;
+          try {
+            evento.currentTarget.setPointerCapture(evento.pointerId);
+          } catch (error) {
+          }
+          setAngulo(anguloDe(evento));
+        };
+        const mueve = (evento) => {
+          if (arrastre.current) {
+            setAngulo(anguloDe(evento));
+          }
+        };
+        const suelta = () => {
+          arrastre.current = false;
+        };
+
+        const parejas = {
+          tg: { grande: [1, Math.abs(valor.tg || 0), Math.abs(valor.sec || 0)], nombres: ["1", "tg α", "sec α"], colores: ["#0f172a", COLORES_SEIS.tg, COLORES_SEIS.sec], letras: "OBT" },
+          sec: { grande: [1, Math.abs(valor.tg || 0), Math.abs(valor.sec || 0)], nombres: ["1", "tg α", "sec α"], colores: ["#0f172a", COLORES_SEIS.tg, COLORES_SEIS.sec], letras: "OBT" },
+          cotg: { grande: [Math.abs(valor.cotg || 0), 1, Math.abs(valor.cosec || 0)], nombres: ["cotg α", "1", "cosec α"], colores: [COLORES_SEIS.cotg, "#0f172a", COLORES_SEIS.cosec], letras: "CDO" },
+          cosec: { grande: [Math.abs(valor.cotg || 0), 1, Math.abs(valor.cosec || 0)], nombres: ["cotg α", "1", "cosec α"], colores: [COLORES_SEIS.cotg, "#0f172a", COLORES_SEIS.cosec], letras: "CDO" }
+        };
+        const existe = elegida === "seis" || valor[elegida] !== null;
+        const pareja = parejas[elegida];
+        let aparte = null;
+        if (elegida !== "seis" && existe && Math.abs(c) > 1e-9 && Math.abs(s) > 1e-9) {
+          const pequeno = [Math.abs(c), Math.abs(s), 1];
+          const grande = pareja ? pareja.grande : null;
+          const anchoMax = Math.max(pequeno[0], grande ? grande[0] : 0);
+          const altoMax = Math.max(pequeno[1], grande ? grande[1] : 0);
+          const escala = Math.min((pareja ? 200 : 300) / anchoMax, 150 / altoMax, 210);
+          const dibuja = (x0, catetos, nombres, colores, titulo) => {
+            const [ad, op] = catetos;
+            const a0 = [x0, 170];
+            const b0 = [x0 + ad * escala, 170];
+            const c0 = [x0 + ad * escala, 170 - op * escala];
+            return (
+              <g>
+                <path d={"M" + a0[0] + " " + a0[1] + "L" + b0[0] + " " + b0[1] + "L" + c0[0] + " " + c0[1] + "Z"} fill="#eef3fb" stroke="none" />
+                {linea(a0, b0, colores[0], 5)}
+                {linea(b0, c0, colores[1], 5)}
+                {linea(a0, c0, colores[2], 5)}
+                <path d={"M" + (b0[0] - 12) + " 170v-12h12"} fill="none" stroke="#0f172a" strokeWidth="1.4" />
+                <path
+                  d={"M" + (a0[0] + 26) + " 170A26 26 0 0 0 " + (a0[0] + 26 * Math.cos(Math.atan2(op, ad))).toFixed(1) + " " + (170 - 26 * Math.sin(Math.atan2(op, ad))).toFixed(1)}
+                  fill="none"
+                  stroke="#0f172a"
+                  strokeWidth="1.8"
+                />
+                <text x={a0[0] + 34} y="164" fontSize="16" fontStyle="italic" fill="#0f172a">α</text>
+                <text x={(a0[0] + b0[0]) / 2} y="194" fontSize="17" fontWeight="700" textAnchor="middle" fill={colores[0]}>{nombres[0]}</text>
+                <text x={b0[0] + 8} y={(b0[1] + c0[1]) / 2 + 6} fontSize="17" fontWeight="700" fill={colores[1]}>{nombres[1]}</text>
+                <text x={(a0[0] + c0[0]) / 2 - 8} y={(a0[1] + c0[1]) / 2 - 6} fontSize="17" fontWeight="700" textAnchor="end" fill={colores[2]}>{nombres[2]}</text>
+                <text x={x0} y={Math.max(16, c0[1] - 14)} fontSize="15" fontWeight="700" fill="var(--texto-suave)">{titulo}</text>
+              </g>
+            );
+          };
+          aparte = (
+            <svg viewBox="0 0 560 200" role="img" style={{ display: "block", width: "100%", maxWidth: "34rem", margin: "0.6rem auto 0" }} aria-label="Los dos triángulos semejantes, dibujados aparte.">
+              {dibuja(20, pequeno, ["cos α", "sen α", "1"], [COLORES_SEIS.cos, COLORES_SEIS.sen, "#0f172a"], "OAP")}
+              {pareja && dibuja(300, grande, pareja.nombres, pareja.colores, pareja.letras)}
+            </svg>
+          );
+        }
+
+        const formulas = {
+          sen: ["\\operatorname{sen}\\alpha=\\frac{AP}{OP}=\\frac{AP}{1}=AP"],
+          cos: ["\\cos\\alpha=\\frac{OA}{OP}=\\frac{OA}{1}=OA"],
+          tg: ["\\frac{BT}{OB}=\\frac{AP}{OA}\\ \\Longrightarrow\\ \\frac{\\operatorname{tg}\\alpha}{1}=\\frac{\\operatorname{sen}\\alpha}{\\cos\\alpha}"],
+          sec: ["\\frac{OT}{OB}=\\frac{OP}{OA}\\ \\Longrightarrow\\ \\frac{\\sec\\alpha}{1}=\\frac{1}{\\cos\\alpha}", "1+\\operatorname{tg}^2\\alpha=\\sec^2\\alpha"],
+          cotg: ["\\frac{DC}{OD}=\\frac{OA}{AP}\\ \\Longrightarrow\\ \\frac{\\operatorname{cotg}\\alpha}{1}=\\frac{\\cos\\alpha}{\\operatorname{sen}\\alpha}"],
+          cosec: ["\\frac{OC}{OD}=\\frac{OP}{AP}\\ \\Longrightarrow\\ \\frac{\\operatorname{cosec}\\alpha}{1}=\\frac{1}{\\operatorname{sen}\\alpha}", "1+\\operatorname{cotg}^2\\alpha=\\operatorname{cosec}^2\\alpha"]
+        };
+        const explicacion = {
+          sen: "El triángulo OAP es rectángulo y su hipotenusa, el radio, mide 1: el seno es su cateto vertical, la altura del punto.",
+          cos: "El triángulo OAP es rectángulo y su hipotenusa, el radio, mide 1: el coseno es su cateto horizontal, la abscisa del punto.",
+          tg: "OAP y OBT son rectángulos y tienen el mismo ángulo α: son semejantes, y como OB mide 1, la tangente es lo que mide BT.",
+          sec: "Los mismos triángulos, OAP y OBT: como OB mide 1, la secante es lo que mide OT, del centro al corte con x = 1. Y en OBT, por Pitágoras, sale la relación de 1.2.",
+          cotg: "OAP y CDO son rectángulos y tienen el mismo ángulo α (en C, porque la recta y = 1 es paralela al eje): son semejantes, y como OD mide 1, la cotangente es lo que mide DC.",
+          cosec: "Los mismos triángulos, OAP y CDO: como OD mide 1, la cosecante es lo que mide OC, del centro al corte con y = 1. Y en CDO, por Pitágoras, sale la relación de 1.2."
+        };
+        const noExiste = {
+          tg: "El lado del ángulo es paralelo a la recta x = 1 y no la corta: la tangente no existe.",
+          sec: "El lado del ángulo es paralelo a la recta x = 1 y no la corta: la secante no existe.",
+          cotg: "El lado del ángulo es paralelo a la recta y = 1 y no la corta: la cotangente no existe.",
+          cosec: "El lado del ángulo es paralelo a la recta y = 1 y no la corta: la cosecante no existe."
+        };
+        const sentido = {
+          sen: "Con el punto por debajo del eje, la altura va hacia abajo: el seno es negativo.",
+          cos: "Con el punto a la izquierda del eje, la abscisa va hacia la izquierda: el coseno es negativo.",
+          tg: "El corte con x = 1 queda por debajo del eje: la tangente es negativa.",
+          sec: "El corte con x = 1 queda del otro lado del centro, en la prolongación hacia atrás: la secante es negativa.",
+          cotg: "El corte con y = 1 queda a la izquierda del eje: la cotangente es negativa.",
+          cosec: "El corte con y = 1 queda del otro lado del centro, en la prolongación hacia atrás: la cosecante es negativa."
+        };
+        const gradoTex = angulo + "^\\circ";
+        const fuera = (k) => (k === "tg" || k === "sec" ? T && !dentro(T) : k === "cotg" || k === "cosec" ? C && !dentro(C) : false);
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">{configuracion.titulo || "Las seis razones en la circunferencia"}</p>
+            <p className="instruccion-interactivo">
+              Mueve el punto con el dedo, con el deslizador o con las fichas. Elige una razón: se pinta el segmento que la
+              mide y los dos triángulos semejantes que lo justifican.
+            </p>
+
+            <div className="panel-control">
+              <div className="fichas-interactivo">
+                {ORDEN_SEIS.map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    aria-pressed={elegida === k}
+                    onClick={() => setElegida(k)}
+                    style={{ borderColor: COLORES_SEIS[k], color: elegida === k ? "#ffffff" : COLORES_SEIS[k], background: elegida === k ? COLORES_SEIS[k] : "#ffffff" }}
+                  >
+                    {NOMBRES_SEIS[k]}
+                  </button>
+                ))}
+                <button type="button" aria-pressed={elegida === "seis"} onClick={() => setElegida("seis")}>
+                  Las seis
+                </button>
+              </div>
+              <label className="control-rango">
+                <span>
+                  Ángulo <MatematicaEnLinea tex="\alpha" />
+                </span>
+                <output>{angulo}°</output>
+                <input type="range" min="0" max="359" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
+              </label>
+              <div className="fichas-interactivo">
+                {[30, 45, 60, 135, 210, 300].map((g) => (
+                  <button key={g} type="button" aria-pressed={angulo === g} onClick={() => setAngulo(g)}>
+                    {g}°
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                ref={lienzo}
+                viewBox="0 0 600 520"
+                role="img"
+                style={{ display: "block", margin: "0 auto", maxWidth: "40rem" }}
+                aria-label={
+                  "Circunferencia de radio 1 con un ángulo de " + angulo + " grados" +
+                  (elegida === "seis" ? " y las seis razones como segmentos." : ": " + NOMBRES_SEIS[elegida] + (valor[elegida] === null ? ", que no existe." : ", " + decimalTrigo(valor[elegida], 3) + "."))
+                }
+              >
+                {linea([20, oy], [585, oy], "#94a3b8", 1.3)}
+                {linea([ox, 512], [ox, 10], "#94a3b8", 1.3)}
+                <circle cx={ox} cy={oy} r={R} fill="none" stroke="#1e293b" strokeWidth="2.2" />
+                {linea([B[0], 512], [B[0], 10], "#64748b", 1.5, { strokeDasharray: "6 6" })}
+                {linea([20, D[1]], [585, D[1]], "#64748b", 1.5, { strokeDasharray: "6 6" })}
+                <text x={B[0] + 6} y="26" fontSize="15" fill="#64748b">x = 1</text>
+                <text x="585" y={D[1] - 8} fontSize="15" textAnchor="end" fill="#64748b">y = 1</text>
+                {linea(recta[0], recta[1], "#94a3b8", 1.4, { strokeDasharray: "3 5" })}
+                {(elegida === "sen" || elegida === "cos") && triangulo([ox, oy], A, P, COLORES_SEIS[elegida], 0.14)}
+                {(elegida === "tg" || elegida === "sec") && T && triangulo([ox, oy], B, T, COLORES_SEIS[elegida], 0.16)}
+                {(elegida === "cotg" || elegida === "cosec") && C && triangulo([ox, oy], D, C, COLORES_SEIS[elegida], 0.16)}
+                {elegida !== "seis" && elegida !== "sen" && elegida !== "cos" && existe && triangulo([ox, oy], A, P, "#64748b", 0.12)}
+                {ve("cos") && Math.abs(c) > 1e-9 && linea([ox, oy], A, COLORES_SEIS.cos, 7)}
+                {ve("sen") && Math.abs(s) > 1e-9 && linea(A, P, COLORES_SEIS.sen, 7)}
+                {ve("tg") && T && linea(B, T, COLORES_SEIS.tg, 7)}
+                {ve("cotg") && C && linea(D, C, COLORES_SEIS.cotg, 7)}
+                {ve("sec") && T && linea(corre([ox, oy], -9), corre(T, -9), COLORES_SEIS.sec, 7)}
+                {ve("cosec") && C && linea(corre([ox, oy], 9), corre(C, 9), COLORES_SEIS.cosec, 7)}
+                {linea([ox, oy], P, "#0f172a", 2.6)}
+                {arcoAngulo()}
+                {[
+                  [[ox, oy], "O", -14, 20],
+                  [A, "A", c >= 0 ? 0 : 0, s >= 0 ? 22 : -10],
+                  [B, "B", 12, 22],
+                  [D, "D", -14, -8]
+                ].map(([p, t, dx, dy]) => (
+                  <g key={t}>
+                    <circle cx={p[0]} cy={p[1]} r="4" fill="#0f172a" />
+                    <text x={p[0] + dx} y={p[1] + dy} fontSize="16" fontWeight="600" textAnchor="middle" fill="#0f172a">{t}</text>
+                  </g>
+                ))}
+                {T && dentro(T) && Math.abs(T[1] - B[1]) > 12 && (
+                  <g>
+                    <circle cx={T[0]} cy={T[1]} r="4" fill="#0f172a" />
+                    <text x={T[0] + 14} y={T[1] + (T[1] < oy ? -6 : 18)} fontSize="16" fontWeight="600" fill="#0f172a">T</text>
+                  </g>
+                )}
+                {C && dentro(C) && Math.abs(C[0] - D[0]) > 12 && (
+                  <g>
+                    <circle cx={C[0]} cy={C[1]} r="4" fill="#0f172a" />
+                    <text x={C[0]} y={C[1] - 12} fontSize="16" fontWeight="600" textAnchor="middle" fill="#0f172a">C</text>
+                  </g>
+                )}
+                {ve("cos") && Math.abs(c) > 1e-9 && rotulo((ox + A[0]) / 2, oy + (s >= 0 ? 28 : -14), "cos α", COLORES_SEIS.cos)}
+                {ve("sen") && Math.abs(s) > 1e-9 && rotulo(A[0] + (c >= 0 ? -10 : 10), oy + (s >= 0 ? -14 : 28), "sen α", COLORES_SEIS.sen, c >= 0 ? "end" : "start")}
+                {ve("tg") && T && dentro(mitad(B, T)) && rotulo(B[0] + 12, Math.max(24, Math.min(450, mitad(B, T)[1] + 6)), "tg α", COLORES_SEIS.tg, "start")}
+                {ve("cotg") && C && dentro(mitad(D, C)) && rotulo(Math.max(40, Math.min(560, mitad(D, C)[0])), D[1] - 12, "cotg α", COLORES_SEIS.cotg)}
+                {ve("sec") && T && dentro(corre(mitad([ox, oy], T), -34)) && rotulo(corre(mitad([ox, oy], T), -34)[0], corre(mitad([ox, oy], T), -34)[1] + 6, "sec α", COLORES_SEIS.sec)}
+                {ve("cosec") && C && (() => {
+                  const sitio = corre([ox + 0.8 * (C[0] - ox), oy + 0.8 * (C[1] - oy)], 34);
+                  return dentro(sitio) ? rotulo(sitio[0], sitio[1] + 6, "cosec α", COLORES_SEIS.cosec) : null;
+                })()}
+                <circle cx={P[0]} cy={P[1]} r="8" fill="#0f172a" />
+                <text x={P[0] + 14 * Math.cos(r) - 26 * n[0]} y={P[1] - 14 * Math.sin(r) - 26 * n[1] + 6} fontSize="16" fontWeight="600" textAnchor="middle" fill="#0f172a">P</text>
+                <circle
+                  cx={P[0]}
+                  cy={P[1]}
+                  r="26"
+                  fill="#ffffff"
+                  fillOpacity="0.001"
+                  style={{ cursor: "grab", touchAction: "none" }}
+                  onPointerDown={empieza}
+                  onPointerMove={mueve}
+                  onPointerUp={suelta}
+                  onPointerCancel={suelta}
+                />
+              </svg>
+            </div>
+
+            <div className={"veredicto-interactivo" + (existe ? "" : " es-fallo")} aria-live="polite">
+              {elegida === "seis" ? (
+                <div>
+                  <strong>{"Las seis razones de " + angulo + "°"}</strong>
+                  <div className="fichas-interactivo">
+                    {ORDEN_SEIS.map((k) => (
+                      <span key={k} style={{ display: "inline-block", padding: "0.2rem 0.6rem", borderLeft: "5px solid " + COLORES_SEIS[k] }}>
+                        {valor[k] === null ? (
+                          <span>
+                            <MatematicaEnLinea tex={TEX_SEIS[k] + gradoTex} /> no existe
+                          </span>
+                        ) : (
+                          <MatematicaEnLinea tex={TEX_SEIS[k] + gradoTex + igualTexto(k)} />
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                  <p>
+                    El lado del ángulo, prolongado, corta las rectas x = 1 e y = 1: en esos cortes salen la tangente, la
+                    secante, la cotangente y la cosecante. Elige una razón para ver por qué mide eso.
+                  </p>
+                </div>
+              ) : !existe ? (
+                <div>
+                  <strong>{"La " + NOMBRES_SEIS[elegida] + " de " + angulo + "° no existe"}</strong>
+                  <p>{noExiste[elegida]}</p>
+                </div>
+              ) : (
+                <div>
+                  <strong>
+                    {"La " + NOMBRES_SEIS[elegida] + ": " + (elegida === "sen" || elegida === "cos" ? "un cateto de OAP" : elegida === "tg" || elegida === "sec" ? "OAP y OBT son semejantes" : "OAP y CDO son semejantes")}
+                  </strong>
+                  {formulas[elegida].map((f, i) => (
+                    <FormulaViva key={i} tex={f} />
+                  ))}
+                  <p>{explicacion[elegida]}</p>
+                  {aparte}
+                  <p>
+                    <MatematicaEnLinea tex={TEX_SEIS[elegida] + gradoTex + igualTexto(elegida)} />
+                    {valor[elegida] < -1e-9 ? ". " + sentido[elegida] : "."}
+                    {fuera(elegida) ? " El corte queda fuera del dibujo." : ""}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       window.Infografias = {
         "infografia-doble-observacion": DobleObservacionInfografia,
         "infografia-dividir-vueltas": DividirVueltasInfografia,
@@ -21458,6 +23411,16 @@ void main() {
         "infografia-parabola-signo": ParabolaSignoInfografia,
         "infografia-intervalos": UnionInterseccionInfografia,
         "infografia-distancia": DistanciaValorAbsolutoInfografia
+      };
+
+      window.LaboratoriosDeTrigonometria = {
+        "onda-recta": OndaRectaInteractivo,
+        "que-teorema": QueTeoremaInteractivo,
+        "doble-no-doble": DobleNoDobleInteractivo,
+        "alcance-balon": AlcanceBalonInteractivo,
+        "area-angulo": AreaAnguloInteractivo,
+        "reto-notables": RetoNotablesInteractivo,
+        "seis-razones": SeisRazonesInteractivo
       };
     })();
   </script>
@@ -36497,433 +38460,6 @@ void main() {
       }
 
 
-      function usePantallaEstrecha() {
-        const consulta = window.matchMedia ? window.matchMedia("(max-width: 40rem)") : null;
-        const [estrecha, setEstrecha] = React.useState(Boolean(consulta && consulta.matches));
-        React.useEffect(() => {
-          if (!consulta) {
-            return undefined;
-          }
-          const cambio = () => setEstrecha(consulta.matches);
-          if (consulta.addEventListener) {
-            consulta.addEventListener("change", cambio);
-            return () => consulta.removeEventListener("change", cambio);
-          }
-          consulta.addListener(cambio);
-          return () => consulta.removeListener(cambio);
-        }, []);
-        return estrecha;
-      }
-
-      const MULTIPLOS_ONDA = [1, 2, 3, 0.5];
-      const CUENTA_SOLUCIONES = ["Ninguna solución", "Una solución", "Dos soluciones", "Tres soluciones", "Cuatro soluciones", "Cinco soluciones", "Seis soluciones"];
-
-      function OndaRectaInteractivo({ configuracion, alPreparar }) {
-        const miembros = configuracion.modo === "miembros";
-        const [razon, setRazon] = React.useState(["sen", "cos"].includes(configuracion.razon) ? configuracion.razon : "cos");
-        const [valor, setValor] = React.useState(Number.isFinite(Number(configuracion.valor)) ? Number(configuracion.valor) : Math.sqrt(3) / 2);
-        const [multiplo, setMultiplo] = React.useState(
-          MULTIPLOS_ONDA.includes(Number(configuracion.multiplo)) ? Number(configuracion.multiplo) : 2
-        );
-        const [ecuacion, setEcuacion] = React.useState(configuracion.ecuacion === "cuadrado" ? "cuadrado" : "dividir");
-        const [paso, setPaso] = React.useState(false);
-        const estrecha = usePantallaEstrecha();
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex) {
-          return null;
-        }
-
-        const rad = (g) => (g * Math.PI) / 180;
-        const redondea = (g) => (Math.abs(g - Math.round(g)) < 0.01 ? Math.round(g) : Math.round(g * 100) / 100);
-        const textoGrado = (g) => String(redondea(g)).replace(".", "{,}") + "^\\circ";
-        const rotuloGrado = (g) => String(redondea(g)).replace(".", ",") + "°";
-        const argumentoTex = (m) => (m === 1 ? "x" : m === 0.5 ? "\\frac{x}{2}" : m + "x");
-
-        const cx = 104;
-        const R = 76;
-        const x0 = estrecha ? 34 : 214;
-        const x1 = estrecha ? 446 : 648;
-        const unidad = miembros ? (estrecha ? 44 : 50) : R;
-        const cy = miembros && estrecha ? 244 : 170;
-        const letra = estrecha ? 16 : 13;
-        const letraEje = estrecha ? 15 : 12;
-        const X = (g) => x0 + (g * (x1 - x0)) / 720;
-        const Y = (v) => cy - unidad * v;
-        const onda = (fn) => {
-          let d = "";
-          for (let i = 0; i <= 480; i++) {
-            const g = (720 * i) / 480;
-            d += (i ? "L" : "M") + X(g).toFixed(1) + " " + Y(fn(g)).toFixed(1);
-          }
-          return d;
-        };
-        const alto = miembros ? (estrecha ? 132 : 148) : R + 24;
-        const fondo = (
-          <g>
-            <rect x={X(0)} y={cy - alto} width={X(360) - X(0)} height={2 * alto} fill="#eef3fb" stroke="none" />
-            <text x={(X(0) + X(360)) / 2} y={cy - alto - 7} fontSize={letraEje} textAnchor="middle" fill="var(--texto-suave)">
-              primera vuelta, de 0° a 360°
-            </text>
-            <line x1={x0 - 6} y1={cy} x2={x1 + 8} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.3" />
-            {[180, 360, 540, 720].map((g) => (
-              <g key={g}>
-                <line x1={X(g)} y1={cy - 5} x2={X(g)} y2={cy + 5} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                <text x={X(g)} y={cy + (estrecha ? 23 : 20)} fontSize={letraEje} textAnchor="middle" fill="var(--texto-suave)" stroke="#ffffff" strokeWidth="3" paintOrder="stroke">
-                  {g}°
-                </text>
-              </g>
-            ))}
-          </g>
-        );
-
-        if (miembros) {
-          const dividir = ecuacion === "dividir";
-          const azul = "#1d4ed8";
-          const naranja = "#c2410c";
-          const curvas = dividir
-            ? paso
-              ? [
-                  { fn: (g) => 2 * Math.sin(rad(g)), color: azul, tex: "y = 2 sen x" },
-                  { fn: () => 1, color: naranja, tex: "y = 1" }
-                ]
-              : [
-                  { fn: (g) => Math.sin(rad(2 * g)), color: azul, tex: "y = sen 2x" },
-                  { fn: (g) => Math.cos(rad(g)), color: naranja, tex: "y = cos x" }
-                ]
-            : [
-                { fn: (g) => Math.cos(rad(g)), color: azul, tex: "y = cos x" },
-                { fn: (g) => 1 - Math.sqrt(3) * Math.sin(rad(g)), color: naranja, tex: "y = 1 − √3 sen x" }
-              ].concat(paso ? [{ fn: (g) => Math.sqrt(3) * Math.sin(rad(g)) - 1, color: naranja, tex: "y = √3 sen x − 1", trazos: true }] : []);
-          const buenos = dividir ? (paso ? [30, 150] : [30, 90, 150, 270]) : [0, 120];
-          const malos = paso ? (dividir ? [90, 270] : [60, 180]) : [];
-          const altura = (g) => (dividir ? (paso ? 1 : Math.cos(rad(g))) : Math.cos(rad(g)));
-          const conVuelta = (lista) => lista.concat(lista.map((g) => g + 360)).filter((g) => g < 720);
-          const enunciadoTex = dividir ? "\\operatorname{sen}2x=\\cos x" : "\\sqrt3\\operatorname{sen}x+\\cos x=1";
-
-          return (
-            <div className="componente-interactivo">
-              <p className="titulo-interactivo">{configuracion.titulo || "Lo que se pierde y lo que sobra"}</p>
-              <p className="instruccion-interactivo">
-                Los dos miembros de la ecuación son dos curvas, y las soluciones son sus cortes. Prueba el paso de cada
-                ecuación y mira qué cortes cambian.
-              </p>
-
-              <div className="panel-control">
-                <div className="fichas-interactivo">
-                  {[
-                    ["dividir", "\\operatorname{sen}2x=\\cos x"],
-                    ["cuadrado", "\\sqrt3\\operatorname{sen}x+\\cos x=1"]
-                  ].map(([clave, tex]) => (
-                    <button
-                      key={clave}
-                      type="button"
-                      aria-pressed={ecuacion === clave}
-                      onClick={() => {
-                        setEcuacion(clave);
-                        setPaso(false);
-                      }}
-                    >
-                      <MatematicaEnLinea tex={tex} />
-                    </button>
-                  ))}
-                </div>
-                <div className="fichas-interactivo">
-                  <button type="button" aria-pressed={paso} onClick={() => setPaso(!paso)}>
-                    {dividir ? (
-                      <span>
-                        Dividir entre <MatematicaEnLinea tex="\cos x" />
-                      </span>
-                    ) : (
-                      "Elevar al cuadrado"
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="zona-grafica">
-                <svg
-                  viewBox={estrecha ? "0 0 480 " + (cy + alto + 12) : "0 0 680 330"}
-                  role="img"
-                  style={{ display: "block", margin: "0 auto" }}
-                  aria-label={
-                    "Las curvas de los dos miembros. Soluciones entre 0 y 360 grados: " +
-                    buenos.join(", ") +
-                    (malos.length ? (dividir ? ". Se pierden " : ". Sobran ") + malos.join(" y ") + " grados." : " grados.")
-                  }
-                >
-                  {fondo}
-                  {curvas.map((curva, i) => (
-                    <g key={i}>
-                      <line x1="16" y1={(estrecha ? 22 : 70) + (estrecha ? 28 : 32) * i} x2="44" y2={(estrecha ? 22 : 70) + (estrecha ? 28 : 32) * i} stroke={curva.color} strokeWidth="3" strokeDasharray={curva.trazos ? "7 5" : undefined} />
-                      <text x="52" y={(estrecha ? 27 : 75) + (estrecha ? 28 : 32) * i} fontSize={estrecha ? 16 : 15} fontWeight="700" fill={curva.color}>
-                        {curva.tex}
-                      </text>
-                      <path d={onda(curva.fn)} fill="none" stroke={curva.color} strokeWidth="2.6" strokeDasharray={curva.trazos ? "8 6" : undefined} />
-                    </g>
-                  ))}
-                  {[["bueno", "solución"]].concat(paso ? [["malo", dividir ? "se pierde" : "no vale"]] : []).map(([tipo, texto], i) => {
-                    const y = estrecha ? 22 + 28 * i : 84 + 32 * curvas.length + 32 * i;
-                    const x = estrecha ? 314 : 30;
-                    return (
-                      <g key={tipo}>
-                        {tipo === "bueno" ? (
-                          <circle cx={x} cy={y} r="6" fill="#047857" />
-                        ) : (
-                          <g>
-                            <circle cx={x} cy={y} r="7" fill="#ffffff" stroke="#b91c1c" strokeWidth="2.4" />
-                            <line x1={x - 5} y1={y - 5} x2={x + 5} y2={y + 5} stroke="#b91c1c" strokeWidth="2" />
-                          </g>
-                        )}
-                        <text x={x + 22} y={y + 5} fontSize={estrecha ? 16 : 15} fontWeight="700" fill={tipo === "bueno" ? "#047857" : "#b91c1c"}>
-                          {texto}
-                        </text>
-                      </g>
-                    );
-                  })}
-                  {conVuelta(buenos).map((g) => (
-                    <circle key={"b" + g} cx={X(g)} cy={Y(altura(g))} r="6" fill="#047857" opacity={g < 360 ? 1 : 0.45} />
-                  ))}
-                  {buenos.map((g, i) => (
-                    <text key={"tb" + g} x={X(g) + (g === 0 ? 8 : 0)} y={Y(altura(g)) + (i % 2 ? 26 : -13)} fontSize={letra} fontWeight="700" textAnchor="middle" fill="#047857" stroke="#ffffff" strokeWidth="4" paintOrder="stroke">
-                      {g}°
-                    </text>
-                  ))}
-                  {conVuelta(malos).map((g) => (
-                    <g key={"m" + g} opacity={g < 360 ? 1 : 0.45}>
-                      <circle cx={X(g)} cy={Y(dividir ? 0 : Math.cos(rad(g)))} r="7" fill="#ffffff" stroke="#b91c1c" strokeWidth="2.4" />
-                      <line x1={X(g) - 5} y1={Y(dividir ? 0 : Math.cos(rad(g))) - 5} x2={X(g) + 5} y2={Y(dividir ? 0 : Math.cos(rad(g))) + 5} stroke="#b91c1c" strokeWidth="2" />
-                    </g>
-                  ))}
-                  {malos.map((g, i) => (
-                    <text key={"tm" + g} x={X(g)} y={Y(dividir ? 0 : Math.cos(rad(g))) + (i % 2 ? 30 : -15)} fontSize={letra} fontWeight="700" textAnchor="middle" fill="#b91c1c" stroke="#ffffff" strokeWidth="4" paintOrder="stroke">
-                      {g}°
-                    </text>
-                  ))}
-                </svg>
-              </div>
-
-              <div className={"veredicto-interactivo" + (paso ? " es-fallo" : "")} aria-live="polite">
-                {dividir && !paso && (
-                  <div>
-                    <strong>Cuatro soluciones en cada vuelta</strong>
-                    <FormulaViva tex={enunciadoTex + "\\iff\\cos x\\left(2\\operatorname{sen}x-1\\right)=0"} />
-                    <p>
-                      Las curvas se cortan en 30°, 90°, 150° y 270°: <MatematicaEnLinea tex="\cos x=0" /> da 90° y 270°, y{" "}
-                      <MatematicaEnLinea tex="\operatorname{sen}x=\frac12" /> da 30° y 150°.
-                    </p>
-                  </div>
-                )}
-                {dividir && paso && (
-                  <div>
-                    <strong>Al dividir se pierden dos soluciones en cada vuelta</strong>
-                    <FormulaViva tex="2\operatorname{sen}x\cos x=\cos x\ \xrightarrow{\ :\cos x\ }\ 2\operatorname{sen}x=1" />
-                    <p>
-                      Quedan 30° y 150°. Se pierden 90° y 270°, donde <MatematicaEnLinea tex="\cos x" /> vale 0: allí los dos
-                      miembros valían 0, y eran soluciones. Por eso no se divide entre una razón, sino que se saca factor común.
-                    </p>
-                  </div>
-                )}
-                {!dividir && !paso && (
-                  <div>
-                    <strong>Dos soluciones en cada vuelta</strong>
-                    <FormulaViva tex={enunciadoTex + "\\iff\\cos x=1-\\sqrt3\\operatorname{sen}x"} />
-                    <p>Las curvas de los dos miembros se cortan en 0° y en 120°.</p>
-                  </div>
-                )}
-                {!dividir && paso && (
-                  <div>
-                    <strong>Al elevar al cuadrado sobran dos soluciones en cada vuelta</strong>
-                    <FormulaViva tex="\cos^2x=\left(1-\sqrt3\operatorname{sen}x\right)^2" />
-                    <p>
-                      La ecuación nueva también se cumple donde <MatematicaEnLinea tex="\cos x" /> es el opuesto de{" "}
-                      <MatematicaEnLinea tex="1-\sqrt3\operatorname{sen}x" />, porque los opuestos tienen el mismo cuadrado: son
-                      los cortes con la curva a trazos, 60° y 180°, que no son soluciones. Por eso, tras elevar al cuadrado, se
-                      comprueba cada solución en la ecuación de partida.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        }
-
-        const exacto = VALORES_EXACTOS.find((e) => Math.abs(e.v - valor) < 0.002);
-        const k = exacto ? exacto.v : valor;
-        let base = [];
-        if (razon === "sen") {
-          const a = (Math.asin(Math.max(-1, Math.min(1, k))) * 180) / Math.PI;
-          base = [(a + 360) % 360, (180 - a + 360) % 360];
-        } else {
-          const a = (Math.acos(Math.max(-1, Math.min(1, k))) * 180) / Math.PI;
-          base = [a, (360 - a) % 360];
-        }
-        base = Array.from(new Set(base.map(redondea))).sort((p, q) => p - q);
-        const todas = [];
-        base.forEach((angulo) => {
-          for (let j = -1; j <= 6; j++) {
-            const x = (angulo + 360 * j) / multiplo;
-            if (x > -1e-9 && x < 720 - 1e-9) {
-              todas.push(redondea(x));
-            }
-          }
-        });
-        const cortes = Array.from(new Set(todas)).sort((p, q) => p - q);
-        const enLaVuelta = cortes.filter((x) => x < 360 - 1e-9);
-        const juntas = base.length === 2 && Math.abs(base[1] - base[0] - 180) < 0.01;
-        const generales = (juntas ? [base[0]] : base).map((angulo) => {
-          const primero = angulo / multiplo;
-          const salto = textoGrado((juntas ? 180 : 360) / multiplo) + "\\cdot k";
-          return "x=" + (Math.abs(primero) < 1e-9 ? salto : textoGrado(primero) + "+" + salto);
-        });
-        const nombreTex = razon === "sen" ? "\\operatorname{sen}" : "\\cos";
-        const ecuacionTex = nombreTex + " " + argumentoTex(multiplo) + (exacto ? "=" : "\\approx") + (exacto ? exacto.tex : texDecimal(valor, 2));
-        const f = (g) => (razon === "sen" ? Math.sin(rad(multiplo * g)) : Math.cos(rad(multiplo * g)));
-        const debajo = k > 0.55;
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "La onda y la recta"}</p>
-            <p className="instruccion-interactivo">
-              El valor de la razón, dibujado según el ángulo, es la onda, y la recta la corta en las soluciones. Cambia la
-              razón, el argumento y la altura de la recta, y cuenta los cortes de la primera vuelta.
-            </p>
-
-            <div className="panel-control">
-              <div className="fichas-interactivo">
-                {["sen", "cos"].map((nombre) => (
-                  <button key={nombre} type="button" aria-pressed={razon === nombre} onClick={() => setRazon(nombre)}>
-                    {nombre === "sen" ? "seno" : "coseno"}
-                  </button>
-                ))}
-              </div>
-              <div className="fichas-interactivo">
-                {MULTIPLOS_ONDA.map((m) => (
-                  <button key={m} type="button" aria-pressed={multiplo === m} onClick={() => setMultiplo(m)}>
-                    <MatematicaEnLinea tex={nombreTex + " " + argumentoTex(m)} />
-                  </button>
-                ))}
-              </div>
-              <label className="control-rango">
-                <span>Altura de la recta</span>
-                <output>{decimalTrigo(k, 2)}</output>
-                <input type="range" min="-1" max="1" step="0.01" value={valor} onChange={(evento) => setValor(Number(evento.target.value))} />
-              </label>
-              <div className="fichas-interactivo">
-                {VALORES_EXACTOS.map((e) => (
-                  <button key={e.tex} type="button" aria-pressed={Boolean(exacto) && exacto.tex === e.tex} onClick={() => setValor(e.v)}>
-                    <MatematicaEnLinea tex={e.tex} />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                viewBox={estrecha ? "0 50 480 262" : "0 48 680 260"}
-                role="img"
-                style={{ display: "block", margin: "0 auto" }}
-                aria-label={
-                  "La onda de " + (razon === "sen" ? "seno" : "coseno") + " y la recta de altura " + decimalTrigo(k, 2) + ": " +
-                  enLaVuelta.length + " cortes entre 0 y 360 grados" +
-                  (enLaVuelta.length ? ", en " + enLaVuelta.map((x) => String(x).replace(".", ",")).join(", ") + " grados." : ".")
-                }
-              >
-                {fondo}
-                {!estrecha && (
-                  <g>
-                    <line x1={cx - R - 18} y1={cy} x2={cx + R + 18} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                    <line x1={cx} y1={cy + R + 18} x2={cx} y2={cy - R - 18} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                    <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
-                    {razon === "cos" && (
-                      <line x1={cx + R * k} y1={cy - R - 16} x2={cx + R * k} y2={cy + R + 16} stroke="#1d4ed8" strokeWidth="2" strokeDasharray="7 5" />
-                    )}
-                    {base.map((angulo) => (
-                      <g key={angulo}>
-                        <line x1={cx} y1={cy} x2={cx + R * Math.cos(rad(angulo))} y2={cy - R * Math.sin(rad(angulo))} stroke="#047857" strokeWidth="2.4" />
-                        <circle cx={cx + R * Math.cos(rad(angulo))} cy={cy - R * Math.sin(rad(angulo))} r="6.5" fill="#047857" />
-                      </g>
-                    ))}
-                    <text x={cx} y={cy + R + 36} fontSize="13" textAnchor="middle" fill="var(--texto-suave)">
-                      {"ángulos de " + (multiplo === 1 ? "x" : multiplo === 0.5 ? "x/2" : multiplo + "x") + ":"}
-                    </text>
-                    <text x={cx} y={cy + R + 53} fontSize="13" fontWeight="700" textAnchor="middle" fill="#047857">
-                      {base.map(rotuloGrado).join(" y ")}
-                    </text>
-                  </g>
-                )}
-                <line
-                  x1={razon === "sen" && !estrecha ? cx - R - 18 : x0 - 6}
-                  y1={Y(k)}
-                  x2={x1 + 8}
-                  y2={Y(k)}
-                  stroke="#1d4ed8"
-                  strokeWidth="2"
-                  strokeDasharray="7 5"
-                />
-                {estrecha && (
-                  <text x={(x0 + x1) / 2} y={cy + R + 44} fontSize="15" textAnchor="middle" fill="var(--texto-suave)">
-                    {"ángulos de " + (multiplo === 1 ? "x" : multiplo === 0.5 ? "x/2" : multiplo + "x") + ": " + base.map(rotuloGrado).join(" y ")}
-                  </text>
-                )}
-                <path d={onda(f)} fill="none" stroke="#b4233a" strokeWidth="2.6" />
-                {cortes.map((x) => (
-                  <circle key={x} cx={X(x)} cy={Y(k)} r="5.5" fill="#047857" opacity={x < 360 - 1e-9 ? 1 : 0.45} />
-                ))}
-                {enLaVuelta.map((x, i) => (
-                  <text
-                    key={x}
-                    x={X(x)}
-                    y={Y(k) + (debajo ? (estrecha ? 24 : 22) : estrecha ? -13 : -12) + (i % 2 ? (debajo ? 1 : -1) * (estrecha ? 18 : 15) : 0)}
-                    fontSize={letra}
-                    fontWeight="700"
-                    textAnchor="middle"
-                    fill="#047857"
-                    stroke="#ffffff"
-                    strokeWidth="4"
-                    paintOrder="stroke"
-                  >
-                    {rotuloGrado(x)}
-                  </text>
-                ))}
-              </svg>
-            </div>
-
-            <div className="veredicto-interactivo" aria-live="polite">
-              <strong>{CUENTA_SOLUCIONES[enLaVuelta.length] + " entre 0° y 360°"}</strong>
-              <FormulaViva tex={ecuacionTex} />
-              <p>
-                {enLaVuelta.length ? (
-                  <span>
-                    En la primera vuelta: <MatematicaEnLinea tex={"x=" + enLaVuelta.map(textoGrado).join(",\\ ")} />. Todas:{" "}
-                    <MatematicaEnLinea tex={generales.join(",\\quad ")} />, con <MatematicaEnLinea tex="k\in\mathbb{Z}" />.
-                  </span>
-                ) : (
-                  <span>
-                    En la primera vuelta no hay ninguna; todas: <MatematicaEnLinea tex={generales.join(",\\quad ")} />, con{" "}
-                    <MatematicaEnLinea tex="k\in\mathbb{Z}" />.
-                  </span>
-                )}
-              </p>
-              <p>
-                {multiplo === 1
-                  ? "Cada vuelta del punto dibuja una onda entera: la recta la corta dos veces, o una si solo la toca."
-                  : multiplo === 0.5
-                    ? "Con x/2 la onda se estira: mientras x da una vuelta, x/2 solo da media, de 0° a 180°."
-                    : "Con " + multiplo + "x la onda se comprime: mientras x da una vuelta, " + multiplo + "x da " + (multiplo === 2 ? "dos" : "tres") +
-                      ", y caben " + (multiplo === 2 ? "el doble" : "el triple") + " de cortes. Por eso, al despejar x, se dividen también las vueltas."}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-
       function TrianguloAmbiguoInteractivo({ configuracion, alPreparar }) {
         const b = Number(configuracion.lado) || 10;
         const [angulo, setAngulo] = React.useState(Number(configuracion.angulo) || 35);
@@ -37085,1080 +38621,6 @@ void main() {
                   ))}
                 </p>
               )}
-            </div>
-          </div>
-        );
-      }
-
-
-      const ELEMENTOS_TRIANGULO = [
-        { clave: "a", tex: "a" },
-        { clave: "b", tex: "b" },
-        { clave: "c", tex: "c" },
-        { clave: "A", tex: "\\hat A" },
-        { clave: "B", tex: "\\hat B" },
-        { clave: "C", tex: "\\hat C" }
-      ];
-
-      const CASOS_TRIANGULO = {
-        LAA: "LAA: un lado y dos ángulos",
-        LAL: "LAL: dos lados y el ángulo que forman",
-        LLL: "LLL: los tres lados",
-        LLA: "LLA: dos lados y un ángulo que no forman, el caso ambiguo",
-        AAA: "Los tres ángulos"
-      };
-
-      function sinCerosTex(texto) {
-        if (texto.indexOf("{,}") < 0) {
-          return texto;
-        }
-        let corto = texto;
-        while (corto.endsWith("0")) {
-          corto = corto.slice(0, -1);
-        }
-        return corto.endsWith("{,}") ? corto.slice(0, -3) : corto;
-      }
-
-      function igualTex(x, cifras) {
-        const redondo = Number(x.toFixed(cifras || 2));
-        return Math.abs(x - redondo) < 1e-9 ? "=" + sinCerosTex(texDecimal(redondo, cifras || 2)) : "\\approx" + texDecimal(x, cifras || 2);
-      }
-
-      function resolverTriangulo(datos) {
-        const lados = ["a", "b", "c"].filter((l) => datos[l] !== undefined);
-        const angulos = ["A", "B", "C"].filter((g) => datos[g] !== undefined);
-        const opuesto = { a: "A", b: "B", c: "C", A: "a", B: "b", C: "c" };
-        const seno = (g) => Math.sin((g * Math.PI) / 180);
-        const coseno = (g) => Math.cos((g * Math.PI) / 180);
-        const grados = (r) => (r * 180) / Math.PI;
-        const dato = (x) => sinCerosTex(texDecimal(x, 2));
-        const igual = igualTex;
-        const gr = (x) => dato(x) + "^\\circ";
-        const texDe = { a: "a", b: "b", c: "c", A: "\\hat A", B: "\\hat B", C: "\\hat C" };
-        const sen = "\\operatorname{sen}";
-        const pasos = [];
-        const sol = Object.assign({}, datos);
-        if (lados.length + angulos.length < 3) {
-          return { caso: null, motivo: "Elige tres datos.", pasos };
-        }
-        if (angulos.length === 3) {
-          return { caso: "AAA", ninguno: true, motivo: "Con los tres ángulos hay infinitos triángulos, todos semejantes: hace falta un lado.", pasos };
-        }
-
-        if (angulos.length === 2) {
-          const [g1, g2] = angulos;
-          const g3 = ["A", "B", "C"].find((g) => !angulos.includes(g));
-          if (datos[g1] + datos[g2] >= 180) {
-            return { caso: "LAA", ninguno: true, motivo: "Los dos ángulos suman 180° o más: no hay triángulo.", pasos };
-          }
-          sol[g3] = 180 - datos[g1] - datos[g2];
-          pasos.push({ texto: "El tercer ángulo, porque suman 180°:", tex: texDe[g3] + "=180^\\circ-" + gr(datos[g1]) + "-" + gr(datos[g2]) + "=" + gr(sol[g3]) });
-          const l = lados[0];
-          const gl = opuesto[l];
-          ["a", "b", "c"]
-            .filter((x) => x !== l)
-            .forEach((x) => {
-              sol[x] = (datos[l] * seno(sol[opuesto[x]])) / seno(sol[gl]);
-              pasos.push({
-                texto: "El lado " + x + ", con el teorema del seno:",
-                tex: x + "=\\frac{" + dato(datos[l]) + sen + gr(sol[opuesto[x]]) + "}{" + sen + gr(sol[gl]) + "}" + igual(sol[x])
-              });
-            });
-          return { caso: "LAA", pasos, soluciones: [sol] };
-        }
-
-        if (lados.length === 3) {
-          const mayor = ["a", "b", "c"].reduce((m, x) => (datos[x] > datos[m] ? x : m), "a");
-          const [p, q] = ["a", "b", "c"].filter((x) => x !== mayor);
-          if (datos[mayor] >= datos[p] + datos[q]) {
-            return { caso: "LLL", ninguno: true, motivo: "El lado mayor mide lo mismo que la suma de los otros dos, o más: no hay triángulo.", pasos };
-          }
-          const G = opuesto[mayor];
-          const cosG = (datos[p] ** 2 + datos[q] ** 2 - datos[mayor] ** 2) / (2 * datos[p] * datos[q]);
-          sol[G] = grados(Math.acos(cosG));
-          pasos.push({
-            texto: "Primero el ángulo mayor, el opuesto al lado mayor, con el teorema del coseno" + (cosG < -1e-9 ? " (su coseno es negativo: es obtuso):" : ":"),
-            tex:
-              "\\cos" + texDe[G] + "=\\frac{" + dato(datos[p]) + "^2+" + dato(datos[q]) + "^2-" + dato(datos[mayor]) + "^2}{2\\cdot" + dato(datos[p]) + "\\cdot" +
-              dato(datos[q]) + "}" + igual(cosG, 3) + "\\ \\Longrightarrow\\ " + texDe[G] + igual(sol[G]) + "^\\circ"
-          });
-          const menor = datos[p] <= datos[q] ? p : q;
-          const resto = menor === p ? q : p;
-          const Gm = opuesto[menor];
-          const senGm = (datos[menor] * seno(sol[G])) / datos[mayor];
-          sol[Gm] = grados(Math.asin(Math.min(1, senGm)));
-          pasos.push({
-            texto: "El menor, con el teorema del seno, porque ya no puede ser obtuso:",
-            tex: sen + texDe[Gm] + "=\\frac{" + dato(datos[menor]) + sen + texDe[G] + "}{" + dato(datos[mayor]) + "}" + igual(senGm, 3) + "\\ \\Longrightarrow\\ " + texDe[Gm] + igual(sol[Gm]) + "^\\circ"
-          });
-          const Gr = opuesto[resto];
-          sol[Gr] = 180 - sol[G] - sol[Gm];
-          pasos.push({ texto: "El último, por la suma:", tex: texDe[Gr] + "=180^\\circ-" + texDe[G] + "-" + texDe[Gm] + igual(sol[Gr]) + "^\\circ" });
-          return { caso: "LLL", pasos, soluciones: [sol] };
-        }
-
-        const g = angulos[0];
-        const lg = opuesto[g];
-        if (!lados.includes(lg)) {
-          const [l1, l2] = lados;
-          const cuadrado = datos[l1] ** 2 + datos[l2] ** 2 - 2 * datos[l1] * datos[l2] * coseno(datos[g]);
-          sol[lg] = Math.sqrt(cuadrado);
-          pasos.push({
-            texto: "El tercer lado, con el teorema del coseno:",
-            tex:
-              lg + "^2=" + dato(datos[l1]) + "^2+" + dato(datos[l2]) + "^2-2\\cdot" + dato(datos[l1]) + "\\cdot" + dato(datos[l2]) + "\\cos" + gr(datos[g]) +
-              igual(cuadrado) + "\\ \\Longrightarrow\\ " + lg + igual(sol[lg])
-          });
-          const menor = datos[l1] <= datos[l2] ? l1 : l2;
-          const otro = menor === l1 ? l2 : l1;
-          const Gm = opuesto[menor];
-          const senGm = (datos[menor] * seno(datos[g])) / sol[lg];
-          sol[Gm] = grados(Math.asin(Math.min(1, senGm)));
-          pasos.push({
-            texto: "El menor de los otros dos ángulos, el opuesto al lado menor, con el teorema del seno:",
-            tex: sen + texDe[Gm] + "=\\frac{" + dato(datos[menor]) + sen + gr(datos[g]) + "}{" + lg + "}" + igual(senGm, 3) + "\\ \\Longrightarrow\\ " + texDe[Gm] + igual(sol[Gm]) + "^\\circ"
-          });
-          const Go = opuesto[otro];
-          sol[Go] = 180 - datos[g] - sol[Gm];
-          pasos.push({ texto: "El otro, por la suma:", tex: texDe[Go] + "=180^\\circ-" + gr(datos[g]) + "-" + texDe[Gm] + igual(sol[Go]) + "^\\circ" });
-          return { caso: "LAL", pasos, soluciones: [sol] };
-        }
-
-        const lo = lados.find((l) => l !== lg);
-        const Go = opuesto[lo];
-        const Gt = ["A", "B", "C"].find((t) => t !== g && t !== Go);
-        const lt = opuesto[Gt];
-        const senGo = (datos[lo] * seno(datos[g])) / datos[lg];
-        pasos.push({
-          texto: "Con el teorema del seno, el seno del ángulo opuesto al otro lado conocido:",
-          tex: sen + texDe[Go] + "=\\frac{" + dato(datos[lo]) + sen + gr(datos[g]) + "}{" + dato(datos[lg]) + "}" + igual(senGo, 3)
-        });
-        const marco = [g, Go, Gt];
-        if (senGo > 1 + 1e-9) {
-          return { caso: "LLA", ninguno: true, motivo: "El seno sale mayor que 1: no hay triángulo.", pasos, marco };
-        }
-        const agudo = Math.abs(senGo - 1) < 1e-9 ? 90 : grados(Math.asin(senGo));
-        const candidatos = Math.abs(senGo - 1) < 1e-9 ? [agudo] : [agudo, 180 - agudo];
-        const validos = candidatos.filter((x) => datos[g] + x < 180 - 1e-9);
-        if (!validos.length) {
-          return { caso: "LLA", ninguno: true, motivo: "Ninguno de los dos ángulos cabe con el ángulo dado: no hay triángulo.", pasos, marco };
-        }
-        pasos.push({
-          texto:
-            candidatos.length === 1
-              ? "El seno vale 1: hay un solo triángulo, rectángulo."
-              : validos.length === 2
-                ? "Hay dos ángulos posibles y los dos caben con el ángulo dado, porque el lado opuesto a él es el menor: dos triángulos."
-                : "Hay dos ángulos posibles, pero el obtuso no cabe con el ángulo dado: un solo triángulo.",
-          tex: validos.map((x) => texDe[Go] + igual(x) + "^\\circ").join("\\ \\text{o}\\ ")
-        });
-        const soluciones = validos.map((x, i) => {
-          const s = Object.assign({}, datos);
-          s[Go] = x;
-          s[Gt] = 180 - datos[g] - x;
-          s[lt] = (datos[lg] * seno(s[Gt])) / seno(datos[g]);
-          pasos.push({
-            texto: validos.length === 2 ? (i === 0 ? "El primer triángulo:" : "El segundo:") : "Lo que falta, con la suma y con el teorema del seno:",
-            tex: texDe[Gt] + igual(s[Gt]) + "^\\circ\\quad\\text{y}\\quad " + lt + "=\\frac{" + dato(datos[lg]) + sen + texDe[Gt] + "}{" + sen + gr(datos[g]) + "}" + igual(s[lt])
-          });
-          return s;
-        });
-        return { caso: "LLA", pasos, soluciones, marco };
-      }
-
-      function QueTeoremaInteractivo({ configuracion, alPreparar }) {
-        const [elegidos, setElegidos] = React.useState(["b", "c", "A"]);
-        const [valores, setValores] = React.useState({ a: 7, b: 5, c: 8, A: 60, B: 40, C: 80 });
-        const estrecha = usePantallaEstrecha();
-        const anchoLienzo = estrecha ? 440 : 680;
-        const letra = estrecha ? 21 : 17;
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex) {
-          return null;
-        }
-
-        const alternar = (clave) => {
-          if (elegidos.includes(clave)) {
-            setElegidos(elegidos.filter((x) => x !== clave));
-          } else {
-            setElegidos((elegidos.length >= 3 ? elegidos.slice(1) : elegidos).concat(clave));
-          }
-        };
-        const datos = {};
-        elegidos.forEach((clave) => {
-          datos[clave] = valores[clave];
-        });
-        const resultado = resolverTriangulo(datos);
-        const soluciones = resultado.soluciones || [];
-        const texDe = { a: "a", b: "b", c: "c", A: "\\hat A", B: "\\hat B", C: "\\hat C" };
-        const conocido = (clave) => elegidos.includes(clave);
-        const rojo = "#b4233a";
-        const oscuro = "#1e293b";
-
-        const [P, Q, Rv] = resultado.marco || ["A", "B", "C"];
-        const puntos = soluciones.map((s) => {
-          const angulo = (s[P] * Math.PI) / 180;
-          const lado = (v) => s[v.toLowerCase()];
-          const pts = {};
-          pts[P] = [0, 0];
-          pts[Q] = [lado(Rv), 0];
-          pts[Rv] = [lado(Q) * Math.cos(angulo), lado(Q) * Math.sin(angulo)];
-          return pts;
-        });
-        let dibujo = null;
-        if (puntos.length) {
-          const todos = [];
-          puntos.forEach((pts) => ["A", "B", "C"].forEach((v) => todos.push(pts[v])));
-          const minX = Math.min(...todos.map((p) => p[0]));
-          const maxX = Math.max(...todos.map((p) => p[0]));
-          const maxY = Math.max(...todos.map((p) => p[1]));
-          const escala = Math.min((estrecha ? 350 : 520) / Math.max(maxX - minX, 0.01), 190 / Math.max(maxY, 0.01));
-          const izquierda = anchoLienzo / 2 - ((maxX - minX) * escala) / 2;
-          const pantalla = (p) => [izquierda + (p[0] - minX) * escala, 236 - p[1] * escala];
-          const unitario = (v) => {
-            const largo = Math.hypot(v[0], v[1]) || 1;
-            return [v[0] / largo, v[1] / largo];
-          };
-          dibujo = puntos.map((pts, i) => {
-            const V = {};
-            ["A", "B", "C"].forEach((v) => {
-              V[v] = pantalla(pts[v]);
-            });
-            const centro = [(V.A[0] + V.B[0] + V.C[0]) / 3, (V.A[1] + V.B[1] + V.C[1]) / 3];
-            const fuera = (p, d) => {
-              const u = unitario([p[0] - centro[0], p[1] - centro[1]]);
-              return [p[0] + d * u[0], p[1] + d * u[1]];
-            };
-            const extremos = { a: ["B", "C"], b: ["A", "C"], c: ["A", "B"] };
-            const segunda = i === 1;
-            const arco = (v) => {
-              const [u1, u2] = ["A", "B", "C"].filter((w) => w !== v);
-              const d1 = unitario([V[u1][0] - V[v][0], V[u1][1] - V[v][1]]);
-              const d2 = unitario([V[u2][0] - V[v][0], V[u2][1] - V[v][1]]);
-              const r = estrecha ? 26 : 24;
-              const cruz = d1[0] * d2[1] - d1[1] * d2[0];
-              return (
-                "M" + (V[v][0] + r * d1[0]).toFixed(1) + " " + (V[v][1] + r * d1[1]).toFixed(1) +
-                "A" + r + " " + r + " 0 0 " + (cruz > 0 ? 1 : 0) + " " +
-                (V[v][0] + r * d2[0]).toFixed(1) + " " + (V[v][1] + r * d2[1]).toFixed(1)
-              );
-            };
-            return (
-              <g key={i} opacity={segunda ? 0.8 : 1}>
-                {["a", "b", "c"].map((l) => {
-                  const [p, q] = extremos[l];
-                  return (
-                    <line
-                      key={l}
-                      x1={V[p][0]}
-                      y1={V[p][1]}
-                      x2={V[q][0]}
-                      y2={V[q][1]}
-                      stroke={conocido(l) ? rojo : oscuro}
-                      strokeWidth={conocido(l) ? 4.5 : 2}
-                      strokeDasharray={segunda && !conocido(l) ? "8 6" : undefined}
-                    />
-                  );
-                })}
-                {["A", "B", "C"].filter(conocido).map((v) => (
-                  <path key={"arco" + v} d={arco(v)} fill="none" stroke={rojo} strokeWidth="3" />
-                ))}
-                {["A", "B", "C"].map((v) => (
-                  <circle key={v} cx={V[v][0]} cy={V[v][1]} r="3.5" fill={oscuro} />
-                ))}
-                {!segunda &&
-                  ["A", "B", "C"].map((v) => {
-                    const [x, y] = fuera(V[v], estrecha ? 21 : 18);
-                    return (
-                      <text key={"r" + v} x={x} y={y + 6} fontSize={letra} fontStyle="italic" textAnchor="middle" fill={oscuro}>
-                        {v}
-                      </text>
-                    );
-                  })}
-                {!segunda &&
-                  ["a", "b", "c"].map((l) => {
-                    const [p, q] = extremos[l];
-                    const [x, y] = fuera([(V[p][0] + V[q][0]) / 2, (V[p][1] + V[q][1]) / 2], estrecha ? 18 : 15);
-                    return (
-                      <text key={"l" + l} x={x} y={y + 6} fontSize={letra} fontStyle="italic" fontWeight={conocido(l) ? "700" : "400"} textAnchor="middle" fill={conocido(l) ? rojo : oscuro}>
-                        {l}
-                      </text>
-                    );
-                  })}
-                {segunda && (
-                  <text x={fuera(V[Q], estrecha ? 21 : 18)[0]} y={fuera(V[Q], estrecha ? 21 : 18)[1] + 6} fontSize={letra} fontStyle="italic" textAnchor="middle" fill={oscuro}>
-                    {Q + "′"}
-                  </text>
-                )}
-              </g>
-            );
-          });
-        }
-
-        const resumen = (s) =>
-          ["a", "b", "c", "A", "B", "C"]
-            .filter((x) => !conocido(x))
-            .map((x) => texDe[x] + igualTex(s[x]) + (x === x.toUpperCase() ? "^\\circ" : ""))
-            .join(",\\ ");
-        const valorVisible = (clave) => {
-          const v = valores[clave];
-          return clave === clave.toLowerCase() ? (Number.isInteger(v) ? String(v) : decimalTrigo(v, 1)) + " cm" : v + "°";
-        };
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "¿Qué teorema uso?"}</p>
-            <p className="instruccion-interactivo">
-              Elige los tres datos que conoces y dales valor: el laboratorio dice qué caso es, si hay triángulo, y lo resuelve
-              paso a paso.
-            </p>
-
-            <div className="panel-control">
-              <div className="fichas-interactivo">
-                {ELEMENTOS_TRIANGULO.map((e) => (
-                  <button key={e.clave} type="button" aria-pressed={conocido(e.clave)} onClick={() => alternar(e.clave)}>
-                    <MatematicaEnLinea tex={e.tex} />
-                  </button>
-                ))}
-              </div>
-              {ELEMENTOS_TRIANGULO.filter((e) => conocido(e.clave)).map((e) => {
-                const lado = e.clave === e.clave.toLowerCase();
-                return (
-                  <label key={e.clave} className="control-rango">
-                    <span>
-                      <MatematicaEnLinea tex={e.tex} />
-                    </span>
-                    <output>{valorVisible(e.clave)}</output>
-                    <input
-                      type="range"
-                      min={lado ? 1 : 5}
-                      max={lado ? 20 : 175}
-                      step={lado ? 0.5 : 1}
-                      value={valores[e.clave]}
-                      onChange={(evento) => setValores(Object.assign({}, valores, { [e.clave]: Number(evento.target.value) }))}
-                    />
-                  </label>
-                );
-              })}
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                viewBox={estrecha ? "0 0 440 280" : "0 0 680 270"}
-                role="img"
-                style={{ display: "block", margin: "0 auto" }}
-                aria-label={
-                  soluciones.length === 2
-                    ? "Los dos triángulos que salen con esos datos; el segundo, a trazos."
-                    : soluciones.length === 1
-                      ? "El triángulo que sale con esos datos, con los datos en rojo."
-                      : resultado.caso
-                        ? "Con esos datos no hay triángulo."
-                        : "Faltan datos para dibujar el triángulo."
-                }
-              >
-                {dibujo || (
-                  <text x={anchoLienzo / 2} y="140" fontSize={estrecha ? 21 : 18} textAnchor="middle" fill={resultado.caso ? "#b91c1c" : "var(--texto-suave)"}>
-                    {resultado.caso ? "No hay triángulo con esos datos" : "Elige tres datos"}
-                  </text>
-                )}
-              </svg>
-            </div>
-
-            <div className={"veredicto-interactivo" + (resultado.ninguno ? " es-fallo" : "")} aria-live="polite">
-              <strong>{resultado.caso ? CASOS_TRIANGULO[resultado.caso] : "Faltan datos"}</strong>
-              {resultado.pasos.map((paso, i) => (
-                <div key={i}>
-                  <p>{paso.texto}</p>
-                  <FormulaViva tex={paso.tex} />
-                </div>
-              ))}
-              {resultado.motivo && <p>{resultado.motivo}</p>}
-              {soluciones.length > 0 && (
-                <p>
-                  {soluciones.length === 2 ? "Los dos triángulos: " : "El triángulo: "}
-                  {soluciones.map((s, i) => (
-                    <span key={i}>
-                      {i ? "; y " : ""}
-                      <MatematicaEnLinea tex={resumen(s)} />
-                    </span>
-                  ))}
-                  .
-                </p>
-              )}
-            </div>
-          </div>
-        );
-      }
-
-
-      function DobleNoDobleInteractivo({ configuracion, alPreparar }) {
-        const [angulo, setAngulo] = React.useState(Number.isFinite(Number(configuracion.angulo)) ? Number(configuracion.angulo) : 30);
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex) {
-          return null;
-        }
-
-        const rad = (g) => (g * Math.PI) / 180;
-        const limpio = (x) => (Math.abs(x) < 1e-9 ? 0 : x);
-        const s = limpio(Math.sin(rad(angulo)));
-        const c = limpio(Math.cos(rad(angulo)));
-        const doble = limpio(Math.sin(rad(2 * angulo)));
-        const dosVeces = 2 * s;
-        const num = (x) => sinCerosTex(texDecimal(x, 3));
-        const entre = (x) => (x < 0 ? "\\left(" + num(x) + "\\right)" : num(x));
-        const pasa = Math.abs(dosVeces) > 1 + 1e-9;
-        const iguales = Math.abs(doble - dosVeces) < 1e-9;
-
-        const cx = 118;
-        const cy = 170;
-        const R = 66;
-        const Y = (v) => cy - R * v;
-        const punto = (g) => [cx + R * Math.cos(rad(g)), cy - R * Math.sin(rad(g))];
-        const [px, py] = punto(angulo);
-        const [qx, qy] = punto(2 * angulo);
-        const fuera = (g, d) => [cx + (R + d) * Math.cos(rad(g)), cy - (R + d) * Math.sin(rad(g)) + 6];
-        const azul = "#1d4ed8";
-        const verde = "#047857";
-        const rojo = "#b91c1c";
-        const x1 = 268;
-        const x2 = 378;
-        const rotuloValor = (x, v) => {
-          const cerca = Math.abs(v) > 0.6 && Math.abs(v) <= 1.05;
-          const y = Math.max(18, Math.min(334, v >= 0 ? (cerca ? Y(1) : Y(v)) - 8 : (cerca ? Y(-1) : Y(v)) + 22));
-          return (
-            <text x={x + 23} y={y} fontSize="18" fontWeight="700" textAnchor="middle" fill="var(--texto-suave)">
-              {decimalTrigo(v, 2).replace(",00", "")}
-            </text>
-          );
-        };
-        const tramo = (x, desde, hasta, color) => (
-          <rect x={x} y={Math.min(Y(desde), Y(hasta))} width="46" height={Math.max(Math.abs(Y(desde) - Y(hasta)), 0.8)} fill={color} />
-        );
-        const tope = Math.sign(dosVeces) * Math.min(Math.abs(dosVeces), 1);
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "El doble no es el doble"}</p>
-            <p className="instruccion-interactivo">
-              Mueve el ángulo. La barra verde es la altura del punto del ángulo 2α, su seno; la azul, el doble de la altura
-              del punto de α.
-            </p>
-
-            <div className="panel-control">
-              <label className="control-rango">
-                <span>Ángulo α</span>
-                <output>{angulo}°</output>
-                <input type="range" min="0" max="360" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
-              </label>
-              <div className="fichas-interactivo">
-                {[30, 45, 60, 90, 135, 210].map((g) => (
-                  <button key={g} type="button" aria-pressed={angulo === g} onClick={() => setAngulo(g)}>
-                    {g}°
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                className="grafica-mediana"
-                viewBox="0 0 480 340"
-                role="img"
-                aria-label={
-                  "Con alfa igual a " + angulo + " grados, el seno de 2 alfa vale " + decimalTrigo(doble, 2) + " y el doble del seno de alfa, " +
-                  decimalTrigo(dosVeces, 2) + (pasa ? ", que pasa de 1." : ".")
-                }
-              >
-                <line x1={cx - R - 16} y1={cy} x2={cx + R + 16} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                <line x1={cx} y1={cy + R + 16} x2={cx} y2={cy - R - 16} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
-                {[1, -1].map((v) => (
-                  <g key={v}>
-                    <line x1={cx} y1={Y(v)} x2="470" y2={Y(v)} stroke="var(--texto-suave)" strokeWidth="1.2" strokeDasharray="5 5" />
-                    <text x="236" y={Y(v) + (v > 0 ? -6 : 18)} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
-                      {v > 0 ? "1" : "−1"}
-                    </text>
-                  </g>
-                ))}
-                <line x1={x1 - 8} y1={cy} x2={x2 + 54} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.4" />
-                <line x1={qx} y1={qy} x2={x1} y2={qy} stroke={verde} strokeWidth="1.6" strokeDasharray="3 4" />
-                <line x1={px} y1={py} x2={x2} y2={py} stroke={azul} strokeWidth="1.6" strokeDasharray="3 4" />
-                <line x1={cx} y1={cy} x2={qx} y2={qy} stroke={verde} strokeWidth="2.4" />
-                <line x1={cx} y1={cy} x2={px} y2={py} stroke={azul} strokeWidth="2.4" />
-                <circle cx={qx} cy={qy} r="6.5" fill={verde} />
-                <circle cx={px} cy={py} r="6.5" fill={azul} />
-                <text x={fuera(angulo, 18)[0]} y={fuera(angulo, 18)[1]} fontSize="19" fontWeight="700" fontStyle="italic" textAnchor="middle" fill={azul}>
-                  α
-                </text>
-                <text x={fuera(2 * angulo, 22)[0]} y={fuera(2 * angulo, 22)[1]} fontSize="19" fontWeight="700" fontStyle="italic" textAnchor="middle" fill={verde}>
-                  2α
-                </text>
-                {tramo(x1, 0, doble, verde)}
-                {tramo(x2, 0, tope, azul)}
-                {pasa && tramo(x2, tope, dosVeces, rojo)}
-                {Math.abs(s) > 1e-9 && <line x1={x2} y1={py} x2={x2 + 46} y2={py} stroke="#ffffff" strokeWidth="2.4" />}
-                {rotuloValor(x1, doble)}
-                {rotuloValor(x2, dosVeces)}
-                <text x={x1 + 23} y={doble < 0 ? cy - 10 : cy + 22} fontSize="18" fontWeight="700" textAnchor="middle" fill={verde}>
-                  sen 2α
-                </text>
-                <text x={x2 + 23} y={dosVeces < 0 ? cy - 10 : cy + 22} fontSize="18" fontWeight="700" textAnchor="middle" fill={pasa ? rojo : azul}>
-                  2 sen α
-                </text>
-              </svg>
-            </div>
-
-            <div className={"veredicto-interactivo" + (pasa ? " es-fallo" : "")} aria-live="polite">
-              <strong>
-                {pasa ? "2 sen α pasa de 1, y ningún seno pasa de 1" : iguales ? "Aquí coinciden, porque sen α = 0" : "sen 2α y 2 sen α no valen lo mismo"}
-              </strong>
-              <FormulaViva tex={"\\operatorname{sen}2\\alpha=2\\operatorname{sen}\\alpha\\cos\\alpha=2\\cdot" + entre(s) + "\\cdot" + entre(c) + igualTex(doble, 3)} />
-              <FormulaViva tex={"2\\operatorname{sen}\\alpha=2\\cdot" + entre(s) + igualTex(dosVeces, 3)} />
-              <p>
-                El seno de 2α es 2 sen α multiplicado por cos α, que está entre −1 y 1: solo valen lo mismo cuando sen α = 0,
-                en 0° y en 180°.
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-
-      function AlcanceBalonInteractivo({ configuracion, alPreparar }) {
-        const v = Number(configuracion.velocidad) || 20;
-        const g = 9.8;
-        const [angulo, setAngulo] = React.useState(Number(configuracion.angulo) || 20);
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex) {
-          return null;
-        }
-
-        const rad = (x) => (x * Math.PI) / 180;
-        const alcance = (a) => (v * v * Math.sin(rad(2 * a))) / g;
-        const altura = (a) => (v * v * Math.sin(rad(a)) ** 2) / (2 * g);
-        const lejos = (v * v) / g;
-        const techo = (v * v) / (2 * g);
-        const x0 = 36;
-        const suelo = 262;
-        const escala = Math.min(414 / lejos, 206 / techo);
-        const X = (x) => x0 + x * escala;
-        const Y = (y) => suelo - y * escala;
-        const camino = (a) => {
-          const d = alcance(a);
-          let trazo = "";
-          for (let i = 0; i <= 90; i++) {
-            const x = (d * i) / 90;
-            const y = x * Math.tan(rad(a)) - (g * x * x) / (2 * v * v * Math.cos(rad(a)) ** 2);
-            trazo += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(Math.max(0, y)).toFixed(1);
-          }
-          return trazo;
-        };
-        const arco = (a, r) =>
-          "M" + (X(0) + r) + " " + suelo + "A" + r + " " + r + " 0 0 0 " + (X(0) + r * Math.cos(rad(a))).toFixed(1) + " " + (suelo - r * Math.sin(rad(a))).toFixed(1);
-        const otro = 90 - angulo;
-        const solo = angulo === 45;
-        const d = alcance(angulo);
-        const metros = (x) => decimalTrigo(x, 1) + " m";
-        const azul = "#1d4ed8";
-        const naranja = "#c2410c";
-        const cercaDelMaximo = Math.abs(d - lejos) < 4;
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "Hasta dónde llega"}</p>
-            <p className="instruccion-interactivo">
-              El balón sale del suelo a {String(v).replace(".", ",")} m/s. Cambia el ángulo: la línea continua es su
-              trayectoria; la de trazos, la del ángulo complementario; la gris, la de 45°.
-            </p>
-
-            <div className="panel-control">
-              <label className="control-rango">
-                <span>Ángulo de lanzamiento</span>
-                <output>{angulo}°</output>
-                <input type="range" min="5" max="85" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
-              </label>
-              <div className="fichas-interactivo">
-                {[20, 30, 45, 60, 70].map((a) => (
-                  <button key={a} type="button" aria-pressed={angulo === a} onClick={() => setAngulo(a)}>
-                    {a}°
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                className="grafica-mediana"
-                viewBox="0 0 480 300"
-                role="img"
-                aria-label={
-                  solo
-                    ? "A 45 grados el balón llega lo más lejos, a " + metros(d) + "."
-                    : "A " + angulo + " y a " + otro + " grados el balón cae en el mismo sitio, a " + metros(d) + "; a 45 grados llegaría a " + metros(lejos) + "."
-                }
-              >
-                <line x1="16" y1={suelo} x2="470" y2={suelo} stroke="#1e293b" strokeWidth="2" />
-                {!solo && <path d={camino(45)} fill="none" stroke="var(--texto-suave)" strokeWidth="1.8" strokeDasharray="4 5" opacity="0.7" />}
-                {!solo && <path d={camino(otro)} fill="none" stroke={naranja} strokeWidth="2.6" strokeDasharray="9 6" />}
-                <path d={camino(angulo)} fill="none" stroke={azul} strokeWidth="3" />
-                <path d={arco(angulo, 34)} fill="none" stroke={azul} strokeWidth="2.2" />
-                {!solo && <path d={arco(otro, 52)} fill="none" stroke={naranja} strokeWidth="2.2" />}
-                <text x={X(d / 2)} y={Y(altura(angulo)) - 9} fontSize="17" fontWeight="700" textAnchor="middle" fill={azul}>
-                  {angulo}°
-                </text>
-                {!solo && (
-                  <text x={X(d / 2)} y={Y(altura(otro)) - 9} fontSize="17" fontWeight="700" textAnchor="middle" fill={naranja}>
-                    {otro}°
-                  </text>
-                )}
-                <circle cx={X(0)} cy={suelo} r="6" fill="#1e293b" />
-                <circle cx={X(d)} cy={suelo} r="6.5" fill={azul} />
-                <text x={X(d)} y={suelo + 24} fontSize="18" fontWeight="700" textAnchor="middle" fill={azul}>
-                  {metros(d)}
-                </text>
-                {!solo && !cercaDelMaximo && (
-                  <text x={X(lejos)} y={suelo + 24} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
-                    {metros(lejos)}
-                  </text>
-                )}
-              </svg>
-            </div>
-
-            <div className="veredicto-interactivo" aria-live="polite">
-              <strong>{solo ? "A 45° llega lo más lejos: " + metros(d) : "A " + angulo + "° y a " + otro + "° cae en el mismo sitio: " + metros(d)}</strong>
-              <FormulaViva
-                tex={
-                  "d=\\frac{v^2\\operatorname{sen}2\\alpha}{g}=\\frac{" + String(v).replace(".", "{,}") + "^2\\operatorname{sen}" + 2 * angulo +
-                  "^\\circ}{9{,}8}" + (solo ? "=" : "\\approx") + texDecimal(d, 1) + "\\text{ m}"
-                }
-              />
-              <p>
-                {solo
-                  ? "Con 45°, el ángulo 2α es 90°, y sen 90° = 1 es lo más que vale un seno."
-                  : "Los ángulos 2α de los dos lanzamientos, " + 2 * angulo + "° y " + 2 * otro + "°, son suplementarios y tienen el mismo seno. A 45° llegaría a " + metros(lejos) + "."}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-
-      function AreaAnguloInteractivo({ configuracion, alPreparar }) {
-        const b = Number(configuracion.b) || 6;
-        const c = Number(configuracion.c) || 10;
-        const [angulo, setAngulo] = React.useState(Number(configuracion.angulo) || 30);
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex) {
-          return null;
-        }
-
-        const rad = (x) => (x * Math.PI) / 180;
-        const S = (a) => 0.5 * b * c * Math.sin(rad(a));
-        const mayor = 0.5 * b * c;
-        const gemelo = 180 - angulo;
-        const recto = angulo === 90;
-        const u = 400 / (b + c);
-        const Ax = 40 + b * u;
-        const base = 192;
-        const Bx = Ax + c * u;
-        const C = [Ax + b * u * Math.cos(rad(angulo)), base - b * u * Math.sin(rad(angulo))];
-        const Cg = [Ax - b * u * Math.cos(rad(angulo)), C[1]];
-        const yG = 366;
-        const altoG = 110;
-        const G = (a) => 40 + (a * 400) / 180;
-        const SY = (s) => yG - (altoG * s) / mayor;
-        let curva = "";
-        for (let i = 0; i <= 90; i++) {
-          const a = i * 2;
-          curva += (i ? "L" : "M") + G(a).toFixed(1) + " " + SY(S(a)).toFixed(1);
-        }
-        const verde = "#047857";
-        const area = (x) => decimalTrigo(x, 2).replace(",00", "") + " cm²";
-        const fuera = C[0] < Ax - 1 || C[0] > Bx + 1;
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "El área y el ángulo"}</p>
-            <p className="instruccion-interactivo">
-              Los lados miden {String(b).replace(".", ",")} cm y {String(c).replace(".", ",")} cm. Abre o cierra el ángulo que
-              forman y mira cómo cambia el área.
-            </p>
-
-            <div className="panel-control">
-              <label className="control-rango">
-                <span>
-                  Ángulo <MatematicaEnLinea tex="\hat A" />
-                </span>
-                <output>{angulo}°</output>
-                <input type="range" min="1" max="179" step="1" value={angulo} onChange={(evento) => setAngulo(Number(evento.target.value))} />
-              </label>
-              <div className="fichas-interactivo">
-                {[30, 60, 90, 120, 150].map((a) => (
-                  <button key={a} type="button" aria-pressed={angulo === a} onClick={() => setAngulo(a)}>
-                    {a}°
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                className="grafica-mediana"
-                viewBox="0 0 480 394"
-                role="img"
-                aria-label={
-                  "Con un ángulo de " + angulo + " grados el área es " + area(S(angulo)) +
-                  (recto ? ", la mayor posible." : "; con " + gemelo + " grados, la misma.")
-                }
-              >
-                {!recto && (
-                  <path
-                    d={"M" + Ax + " " + base + "L" + Cg[0].toFixed(1) + " " + Cg[1].toFixed(1) + "L" + Bx + " " + base}
-                    fill="none"
-                    stroke="var(--texto-suave)"
-                    strokeWidth="1.8"
-                    strokeDasharray="7 5"
-                  />
-                )}
-                <path
-                  d={"M" + Ax + " " + base + "L" + C[0].toFixed(1) + " " + C[1].toFixed(1) + "L" + Bx + " " + base + "Z"}
-                  fill="rgba(4, 120, 87, 0.12)"
-                  stroke="#1e293b"
-                  strokeWidth="2.2"
-                />
-                {fuera && <line x1={Ax} y1={base} x2={C[0]} y2={base} stroke="#1e293b" strokeWidth="1.2" strokeDasharray="4 4" />}
-                <line x1={C[0]} y1={C[1]} x2={C[0]} y2={base} stroke={verde} strokeWidth="2" strokeDasharray="4 4" />
-                <text x={C[0] + (C[0] < Ax ? -8 : 8)} y={(C[1] + base) / 2 + 6} fontSize="18" fontWeight="700" textAnchor={C[0] < Ax ? "end" : "start"} fill={verde}>
-                  h
-                </text>
-                <path
-                  d={"M" + (Ax + 26) + " " + base + "A26 26 0 0 0 " + (Ax + 26 * Math.cos(rad(angulo))).toFixed(1) + " " + (base - 26 * Math.sin(rad(angulo))).toFixed(1)}
-                  fill="none"
-                  stroke="#b4233a"
-                  strokeWidth="2.4"
-                />
-                <text x={Ax - 6} y={base + 22} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">A</text>
-                <text x={Bx + 4} y={base + 22} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">B</text>
-                <text x={C[0]} y={C[1] - 10} fontSize="18" fontStyle="italic" textAnchor="middle" fill="#1e293b">C</text>
-                {!recto && (
-                  <text x={Cg[0]} y={Cg[1] - 10} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
-                    {"con " + gemelo + "°"}
-                  </text>
-                )}
-                <text x={(Ax + Bx) / 2} y={base + 22} fontSize="17" textAnchor="middle" fill="var(--texto-suave)">
-                  {"c = " + String(c).replace(".", ",") + " cm"}
-                </text>
-                <line x1="40" y1={yG} x2="446" y2={yG} stroke="var(--texto-suave)" strokeWidth="1.3" />
-                {[0, 90, 180].map((a) => (
-                  <g key={a}>
-                    <line x1={G(a)} y1={yG - 4} x2={G(a)} y2={yG + 4} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                    <text x={G(a)} y={yG + 22} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
-                      {a}°
-                    </text>
-                  </g>
-                ))}
-                <path d={curva} fill="none" stroke={verde} strokeWidth="2.6" />
-                <text x={G(90)} y={SY(mayor) - 10} fontSize="16" textAnchor="middle" fill="var(--texto-suave)">
-                  {"la mayor: " + area(mayor)}
-                </text>
-                {!recto && <line x1={G(angulo)} y1={SY(S(angulo))} x2={G(gemelo)} y2={SY(S(angulo))} stroke={verde} strokeWidth="1.6" strokeDasharray="4 4" />}
-                {!recto && <circle cx={G(gemelo)} cy={SY(S(angulo))} r="5.5" fill="#ffffff" stroke={verde} strokeWidth="2.4" />}
-                <circle cx={G(angulo)} cy={SY(S(angulo))} r="6.5" fill={verde} />
-              </svg>
-            </div>
-
-            <div className="veredicto-interactivo" aria-live="polite">
-              <strong>
-                {recto ? "Con 90° el área es la mayor: " + area(mayor) : "Con " + angulo + "° y con " + gemelo + "°, la misma área: " + area(S(angulo))}
-              </strong>
-              <FormulaViva
-                tex={
-                  "S=\\frac12\\cdot" + String(b).replace(".", "{,}") + "\\cdot" + String(c).replace(".", "{,}") + "\\operatorname{sen}" + angulo + "^\\circ" +
-                  igualTex(S(angulo), 2) + "\\text{ cm}^2"
-                }
-              />
-              <p>
-                La altura del triángulo es <MatematicaEnLinea tex="h=b\operatorname{sen}\hat A" />, y un ángulo y su suplementario
-                tienen el mismo seno: los dos triángulos tienen la misma base y la misma altura. La mayor altura, y la mayor área,
-                con 90°.
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-
-      const RAZONES_ESCRITAS_TRIGO = [
-        "cos-315", "cos30", "cos45", "cos60", "cos120", "cos135", "cos150", "cos210", "cos225", "cos240", "cos300", "cos315",
-        "cos330", "cos480", "cos855", "cos930", "sen-315", "sen-240", "sen-150", "sen30", "sen45", "sen60", "sen120",
-        "sen135", "sen150", "sen210", "sen225", "sen240", "sen315", "sen330", "sen510", "sen1110", "tg-600", "tg30", "tg45",
-        "tg60", "tg120", "tg135", "tg210", "tg240", "tg300", "tg495"
-      ];
-      const ANGULOS_ESCRITOS_TRIGO = RAZONES_ESCRITAS_TRIGO.map((t) => Number(t.replace(/^[a-z]+/, "")));
-      const VALORES_DEL_RETO = {
-        sen: { 30: { v: 0.5, tex: "\\frac12" }, 45: { v: Math.SQRT2 / 2, tex: "\\frac{\\sqrt2}{2}" }, 60: { v: Math.sqrt(3) / 2, tex: "\\frac{\\sqrt3}{2}" } },
-        cos: { 30: { v: Math.sqrt(3) / 2, tex: "\\frac{\\sqrt3}{2}" }, 45: { v: Math.SQRT2 / 2, tex: "\\frac{\\sqrt2}{2}" }, 60: { v: 0.5, tex: "\\frac12" } },
-        tg: { 30: { v: Math.sqrt(3) / 3, tex: "\\frac{\\sqrt3}{3}" }, 45: { v: 1, tex: "1" }, 60: { v: Math.sqrt(3), tex: "\\sqrt3" } }
-      };
-      const NOMBRE_TEX_RETO = { sen: "\\operatorname{sen}", cos: "\\cos", tg: "\\operatorname{tg}" };
-
-      function nuevoRetoNotable(modo, anterior) {
-        const azar = (n) => Math.floor(Math.random() * n);
-        for (let intento = 0; intento < 200; intento++) {
-          const beta = [30, 45, 60][azar(3)];
-          const cuadrante = 1 + azar(4);
-          const primera = [beta, 180 - beta, 180 + beta, 360 - beta][cuadrante - 1];
-          const vueltas = [-2, -1, -1, 0, 0, 0, 1, 1, 2][azar(9)];
-          const angulo = primera + 360 * vueltas;
-          const razon = ["sen", "cos", "tg"][azar(3)];
-          if (cuadrante === 1 && vueltas === 0) {
-            continue;
-          }
-          if (RAZONES_ESCRITAS_TRIGO.indexOf(razon + angulo) >= 0) {
-            continue;
-          }
-          if ((angulo < 0 || angulo >= 360) && ANGULOS_ESCRITOS_TRIGO.indexOf(angulo) >= 0) {
-            continue;
-          }
-          if (anterior && anterior.angulo === angulo && anterior.razon === razon) {
-            continue;
-          }
-          const positivo = { sen: cuadrante <= 2, cos: cuadrante === 1 || cuadrante === 4, tg: cuadrante === 1 || cuadrante === 3 }[razon];
-          const signo = positivo ? 1 : -1;
-          const valor = VALORES_DEL_RETO[razon][beta];
-          const otraBeta = beta === 45 ? [30, 60][azar(2)] : 90 - beta;
-          const otro = VALORES_DEL_RETO[razon][otraBeta];
-          const conSigno = (s, dato) => ({ tex: (s < 0 ? "-" : "") + dato.tex, v: s * dato.v });
-          const opciones = [conSigno(signo, valor), conSigno(-signo, valor), conSigno(signo, otro)];
-          for (let i = opciones.length - 1; i > 0; i--) {
-            const j = azar(i + 1);
-            const t = opciones[i];
-            opciones[i] = opciones[j];
-            opciones[j] = t;
-          }
-          const radianes = modo === "radianes" || (modo === "mezcla" && Math.random() < 0.45);
-          return { beta, cuadrante, primera, vueltas, angulo, razon, signo, valor, radianes, opciones, correcta: conSigno(signo, valor) };
-        }
-        return null;
-      }
-
-      function RetoNotablesInteractivo({ configuracion, alPreparar }) {
-        const [modo, setModo] = React.useState(["grados", "radianes", "mezcla"].includes(configuracion.modo) ? configuracion.modo : "mezcla");
-        const [reto, setReto] = React.useState(() => nuevoRetoNotable(["grados", "radianes", "mezcla"].includes(configuracion.modo) ? configuracion.modo : "mezcla", null));
-        const [elegida, setElegida] = React.useState(null);
-        const [cuenta, setCuenta] = React.useState({ bien: 0, total: 0 });
-
-        React.useEffect(() => {
-          if (window.katex) {
-            alPreparar();
-          }
-        }, [alPreparar]);
-
-        if (!window.katex || !reto) {
-          return null;
-        }
-
-        const mcd = (p, q) => (q ? mcd(q, p % q) : p);
-        const enRadianes = (g) => {
-          const m = mcd(Math.abs(g), 180);
-          const n = Math.abs(g) / m;
-          const d = 180 / m;
-          const cuerpo = (n === 1 ? "" : n) + "\\pi";
-          return d === 1 ? cuerpo : "\\frac{" + cuerpo + "}{" + d + "}";
-        };
-        const anguloTex = (g, radianes) => {
-          const cuerpo = radianes ? enRadianes(g) : Math.abs(g) + "^\\circ";
-          return g < 0 ? "\\left(-" + cuerpo + "\\right)" : cuerpo;
-        };
-        const nombre = NOMBRE_TEX_RETO[reto.razon];
-        const respondida = elegida !== null;
-        const acierto = respondida && Math.abs(reto.opciones[elegida].v - reto.correcta.v) < 1e-9;
-        const otro = (nuevoModo) => {
-          setReto(nuevoRetoNotable(nuevoModo || modo, reto));
-          setElegida(null);
-        };
-        const responder = (i) => {
-          if (respondida) {
-            return;
-          }
-          setElegida(i);
-          const bien = Math.abs(reto.opciones[i].v - reto.correcta.v) < 1e-9;
-          setCuenta({ bien: cuenta.bien + (bien ? 1 : 0), total: cuenta.total + 1 });
-        };
-
-        const pasos = [];
-        if (reto.radianes) {
-          pasos.push(anguloTex(reto.angulo, true).replace("\\left(", "").replace("\\right)", "") + "=" + reto.angulo + "^\\circ");
-        }
-        if (reto.vueltas > 0) {
-          pasos.push(reto.angulo + "^\\circ=" + (reto.vueltas === 1 ? "" : reto.vueltas + "\\cdot") + "360^\\circ+" + reto.primera + "^\\circ");
-        } else if (reto.vueltas < 0) {
-          pasos.push(reto.angulo + "^\\circ+" + (reto.vueltas === -1 ? "" : -reto.vueltas + "\\cdot") + "360^\\circ=" + reto.primera + "^\\circ");
-        }
-        const formaPrimera = [reto.beta + "^\\circ", "180^\\circ-" + reto.beta + "^\\circ", "180^\\circ+" + reto.beta + "^\\circ", "360^\\circ-" + reto.beta + "^\\circ"][
-          reto.cuadrante - 1
-        ];
-        pasos.push(
-          reto.cuadrante === 1
-            ? nombre + reto.primera + "^\\circ=" + reto.correcta.tex
-            : nombre + reto.primera + "^\\circ=" + nombre + "\\left(" + formaPrimera + "\\right)=" + (reto.signo < 0 ? "-" : "") + nombre + reto.beta + "^\\circ=" + reto.correcta.tex
-        );
-        const nombreRazon = { sen: "el seno", cos: "el coseno", tg: "la tangente" }[reto.razon];
-
-        const cx = 130;
-        const cy = 128;
-        const R = 92;
-        const rad = (g) => (g * Math.PI) / 180;
-        const P = [cx + R * Math.cos(rad(reto.primera)), cy - R * Math.sin(rad(reto.primera))];
-        const ejeX = reto.cuadrante === 1 || reto.cuadrante === 4 ? 0 : 180;
-        const desde = ejeX === 0 ? (reto.cuadrante === 1 ? 0 : -reto.beta) : reto.cuadrante === 2 ? 180 - reto.beta : 180;
-        const r0 = 30;
-        const arcoAgudo =
-          "M" + (cx + r0 * Math.cos(rad(desde))).toFixed(1) + " " + (cy - r0 * Math.sin(rad(desde))).toFixed(1) +
-          "A" + r0 + " " + r0 + " 0 0 0 " + (cx + r0 * Math.cos(rad(desde + reto.beta))).toFixed(1) + " " + (cy - r0 * Math.sin(rad(desde + reto.beta))).toFixed(1);
-        const medio = desde + reto.beta / 2;
-        const colorSigno = reto.signo > 0 ? "#047857" : "#b91c1c";
-        const colorDe = (valor) => (valor > 0 ? "#047857" : "#b91c1c");
-        const gruesoSeno = reto.razon === "cos" ? 2.5 : 5;
-        const gruesoCoseno = reto.razon === "sen" ? 2.5 : 5;
-
-        return (
-          <div className="componente-interactivo">
-            <p className="titulo-interactivo">{configuracion.titulo || "Reto de los notables"}</p>
-            <p className="instruccion-interactivo">
-              Sin calculadora: elige el valor. Después, la circunferencia enseña de dónde sale.
-            </p>
-
-            <div className="panel-control">
-              <div className="fichas-interactivo">
-                {[
-                  ["grados", "En grados"],
-                  ["radianes", "En radianes"],
-                  ["mezcla", "Las dos"]
-                ].map(([clave, texto]) => (
-                  <button
-                    key={clave}
-                    type="button"
-                    aria-pressed={modo === clave}
-                    onClick={() => {
-                      setModo(clave);
-                      otro(clave);
-                    }}
-                  >
-                    {texto}
-                  </button>
-                ))}
-              </div>
-              <FormulaViva tex={nombre + anguloTex(reto.angulo, reto.radianes) + "=\\ ?"} />
-              <div className="fichas-interactivo">
-                {reto.opciones.map((opcion, i) => (
-                  <button key={i} type="button" aria-pressed={elegida === i} disabled={respondida && elegida !== i} onClick={() => responder(i)}>
-                    <MatematicaEnLinea tex={opcion.tex.replace("\\frac", "\\dfrac")} />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="zona-grafica">
-              <svg
-                className="grafica-mediana"
-                viewBox="0 0 480 256"
-                role="img"
-                aria-label={
-                  respondida
-                    ? "El ángulo " + reto.primera + " grados, en el cuadrante " + reto.cuadrante + ", con su ángulo agudo de " + reto.beta + " grados."
-                    : "La circunferencia, a la espera de la respuesta."
-                }
-              >
-                <line x1={cx - R - 18} y1={cy} x2={cx + R + 18} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                <line x1={cx} y1={cy + R + 18} x2={cx} y2={cy - R - 18} stroke="var(--texto-suave)" strokeWidth="1.2" />
-                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2" />
-                {!respondida &&
-                  ["1.º", "2.º", "3.º", "4.º"].map((t, i) => (
-                    <text
-                      key={t}
-                      x={cx + (i === 0 || i === 3 ? 1 : -1) * 0.55 * R}
-                      y={cy + (i < 2 ? -1 : 1) * 0.55 * R + 6}
-                      fontSize="17"
-                      textAnchor="middle"
-                      fill="var(--texto-suave)"
-                    >
-                      {t}
-                    </text>
-                  ))}
-                {respondida && (
-                  <g>
-                    <line x1={cx} y1={cy} x2={P[0]} y2={cy} stroke={colorDe(Math.cos(rad(reto.primera)))} strokeWidth={gruesoCoseno} />
-                    <line x1={P[0]} y1={cy} x2={P[0]} y2={P[1]} stroke={colorDe(Math.sin(rad(reto.primera)))} strokeWidth={gruesoSeno} />
-                    <line x1={cx} y1={cy} x2={P[0]} y2={P[1]} stroke="#1d4ed8" strokeWidth="2.6" />
-                    <path d={arcoAgudo} fill="none" stroke="#b4233a" strokeWidth="2.6" />
-                    <circle cx={P[0]} cy={P[1]} r="7" fill="#1d4ed8" />
-                    <text x={cx + 48 * Math.cos(rad(medio))} y={cy - 48 * Math.sin(rad(medio)) + 6} fontSize="17" fontWeight="700" textAnchor="middle" fill="#b4233a">
-                      {reto.beta}°
-                    </text>
-                    <text x={P[0] + (P[0] > cx ? 12 : -12)} y={P[1] + (P[1] < cy ? -8 : 20)} fontSize="17" fontWeight="700" textAnchor={P[0] > cx ? "start" : "end"} fill="#1d4ed8">
-                      {reto.primera}°
-                    </text>
-                    <text x="262" y="60" fontSize="18" fontWeight="700" fill="#1e293b">
-                      {reto.cuadrante + ".º cuadrante"}
-                    </text>
-                    <text x="262" y="88" fontSize="17" fill={colorSigno}>
-                      {nombreRazon + ", " + (reto.signo > 0 ? "positiv" : "negativ") + (reto.razon === "tg" ? "a" : "o")}
-                    </text>
-                    <text x="262" y="116" fontSize="17" fill="#b4233a">
-                      {"ángulo agudo: " + reto.beta + "°"}
-                    </text>
-                  </g>
-                )}
-              </svg>
-            </div>
-
-            {respondida && (
-              <div className={"veredicto-interactivo" + (acierto ? "" : " es-fallo")} aria-live="polite">
-                <strong>{acierto ? "Bien" : "No es ese"}</strong>
-                {!acierto && (
-                  <p>
-                    Vale <MatematicaEnLinea tex={reto.correcta.tex.replace("\\frac", "\\dfrac")} />.
-                  </p>
-                )}
-                {pasos.map((paso, i) => (
-                  <FormulaViva key={i} tex={paso} />
-                ))}
-                <p>
-                  {"Aciertos: " + cuenta.bien + " de " + cuenta.total + "."}
-                </p>
-              </div>
-            )}
-
-            <div className="opciones-interactivo">
-              <button type="button" onClick={() => otro()}>
-                Otro ángulo
-              </button>
             </div>
           </div>
         );
@@ -40167,15 +40629,11 @@ void main() {
         );
       }
 
+      window.PiezasDeLaboratorio = { MatematicaEnLinea, FormulaViva, decimalTrigo, texDecimal, VALORES_EXACTOS };
+
       const COMPONENTES = {
         "triangulo-ambiguo": TrianguloAmbiguoInteractivo,
-        "que-teorema": QueTeoremaInteractivo,
-        "doble-no-doble": DobleNoDobleInteractivo,
-        "alcance-balon": AlcanceBalonInteractivo,
-        "area-angulo": AreaAnguloInteractivo,
-        "reto-notables": RetoNotablesInteractivo,
         "soluciones-ecuacion": SolucionesEcuacionInteractivo,
-        "onda-recta": OndaRectaInteractivo,
         "razones-semejanza": RazonesSemejanzaInteractivo,
         "circunferencia-goniometrica": CircunferenciaGoniometricaInteractivo,
         ejemplo: EjemploInteractivo,
@@ -40212,6 +40670,7 @@ void main() {
       };
 
       Object.assign(COMPONENTES, window.Infografias || {});
+      Object.assign(COMPONENTES, window.LaboratoriosDeTrigonometria || {});
       Object.assign(COMPONENTES, window.Resumenes || {});
 
       document
