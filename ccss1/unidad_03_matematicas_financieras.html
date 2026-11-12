@@ -7695,9 +7695,10 @@ Bachillerato</p>
                 class="formula-con-signo"><span
                 class="math inline">\(r=0{,}8\)</span>:</span></p>
                 <p><span class="math display">\[
-                10\,000,\ 8000,\ 6400,\ 5120,\ \ldots
-                \qquad
-                a_n=10\,000\cdot0{,}8^{\,n-1}
+                \begin{aligned}
+                &amp;10\,000,\ 8000,\ 6400,\ 5120,\ \ldots\\
+                &amp;a_n=10\,000\cdot0{,}8^{\,n-1}
+                \end{aligned}
                 \]</span></p>
                 <p>Con una razón mayor que <span
                 class="math inline">\(1\)</span> la progresión crece: en
@@ -15291,6 +15292,11 @@ Bachillerato</p>
         });
       }
       contenido.addEventListener("sol-abierta", function (evento) {
+        if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
+          encogerTablas(evento.target);
+        }
+      });
+      contenido.addEventListener("interactivo-preparado", function (evento) {
         if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
           encogerTablas(evento.target);
         }
@@ -43087,7 +43093,10 @@ void main() {
             respaldo.removeAttribute("id");
           }
 
-          const preparado = () => anfitrion.classList.add("is-enhanced");
+          const preparado = () => {
+            anfitrion.classList.add("is-enhanced");
+            anfitrion.dispatchEvent(new CustomEvent("interactivo-preparado", { bubbles: true }));
+          };
           const fallo = () => anfitrion.classList.remove("is-enhanced");
 
           try {

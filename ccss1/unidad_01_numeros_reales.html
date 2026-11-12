@@ -15989,6 +15989,11 @@ Bachillerato</p>
           encogerTablas(evento.target);
         }
       });
+      contenido.addEventListener("interactivo-preparado", function (evento) {
+        if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
+          encogerTablas(evento.target);
+        }
+      });
 
       var puesto = 100;
       function ponerTamano(p, conAncla) {
@@ -43781,7 +43786,10 @@ void main() {
             respaldo.removeAttribute("id");
           }
 
-          const preparado = () => anfitrion.classList.add("is-enhanced");
+          const preparado = () => {
+            anfitrion.classList.add("is-enhanced");
+            anfitrion.dispatchEvent(new CustomEvent("interactivo-preparado", { bubbles: true }));
+          };
           const fallo = () => anfitrion.classList.remove("is-enhanced");
 
           try {
