@@ -13753,6 +13753,96 @@ Guía de estudio del capítulo A.1 del libro de Oxford</p>
         };
       }
 
+      function movimientoCircular(datos) {
+        var R = datos.radio;
+        var omega;
+        if (datos.modo === "angulo") {
+          omega = datos.tiempo > 0 ? (datos.angulo * Math.PI) / 180 / datos.tiempo : 0;
+        } else if (datos.modo === "rpm") {
+          omega = (datos.rpm * 2 * Math.PI) / 60;
+        } else if (datos.modo === "periodo") {
+          omega = datos.periodo > 0 ? (2 * Math.PI) / datos.periodo : 0;
+        } else {
+          omega = R > 0 ? deKmhAMs(datos.kmh) / R : 0;
+        }
+        omega = Math.max(0, omega);
+        var gira = omega > 0;
+        return {
+          gira: gira,
+          omega: omega,
+          rpm: (omega * 60) / (2 * Math.PI),
+          periodo: gira ? (2 * Math.PI) / omega : Infinity,
+          frecuencia: omega / (2 * Math.PI),
+          v: omega * R,
+          v2: datos.r2 > 0 ? omega * datos.r2 : null,
+          aN: omega * omega * R,
+          duracion: gira ? (datos.modo === "angulo" ? datos.tiempo : (2 * Math.PI) / omega) : 0
+        };
+      }
+
+      function puntoDelCirculo(movimiento, radio, t) {
+        var theta = movimiento.omega * t;
+        var c = Math.cos(theta);
+        var s = Math.sin(theta);
+        return {
+          theta: theta,
+          vueltas: theta / (2 * Math.PI),
+          x: sinRuido(radio * c, radio),
+          y: sinRuido(radio * s, radio),
+          arco: radio * theta,
+          vx: sinRuido(-movimiento.v * s, movimiento.v),
+          vy: sinRuido(movimiento.v * c, movimiento.v),
+          ax: sinRuido(-movimiento.aN * c, movimiento.aN),
+          ay: sinRuido(-movimiento.aN * s, movimiento.aN)
+        };
+      }
+
+      function cruceDelRio(datos) {
+        var cruza = datos.vb > 0 && datos.ancho > 0;
+        var vc = Math.max(0, datos.vc);
+        var t = cruza ? datos.ancho / datos.vb : Infinity;
+        var v = Math.sqrt(datos.vb * datos.vb + vc * vc);
+        return {
+          cruza: cruza,
+          tiempo: t,
+          deriva: cruza ? vc * t : Infinity,
+          v: v,
+          angulo: (Math.atan2(Math.max(0, datos.vb), vc) * 180) / Math.PI,
+          distancia: cruza ? v * t : Infinity
+        };
+      }
+
+      function circularAcelerado(datos) {
+        var aRad = datos.unidad === "rpm" ? (2 * Math.PI) / 60 : 1;
+        var w0 = Math.max(0, datos.w0) * aRad;
+        var w1 = Math.max(0, datos.w1) * aRad;
+        var t = datos.tiempo > 0 ? datos.tiempo : 0;
+        var alfa = t > 0 ? (w1 - w0) / t : 0;
+        var tau = Math.min(Math.max(datos.instante || 0, 0), t);
+        var w = w0 + alfa * tau;
+        var R = Math.max(0, datos.radio);
+        var aT = alfa * R;
+        var aN = w * w * R;
+        var limpio = function (x) {
+          return Number(x.toPrecision(12));
+        };
+        return {
+          valido: t > 0,
+          omega0: limpio(w0),
+          omega1: limpio(w1),
+          alfa: limpio(alfa),
+          theta: limpio(((w0 + w1) / 2) * t),
+          vueltas: limpio(((w0 + w1) / 2) * t / (2 * Math.PI)),
+          instante: tau,
+          omega: limpio(w),
+          thetaHasta: limpio(w0 * tau + 0.5 * alfa * tau * tau),
+          v: limpio(w * R),
+          aT: limpio(aT),
+          aN: limpio(aN),
+          a: limpio(Math.sqrt(aT * aT + aN * aN))
+        };
+      }
+
       raiz.ModelosIB = {
         leerNumero: leerNumero,
         redondearCifras: redondearCifras,
@@ -13807,7 +13897,11 @@ Guía de estudio del capítulo A.1 del libro de Oxford</p>
         fallosDeUnaRecta: fallosDeUnaRecta,
         rectasExtremas: rectasExtremas,
         caidaConFotopuerta: caidaConFotopuerta,
-        MOVIMIENTOS: MOVIMIENTOS
+        MOVIMIENTOS: MOVIMIENTOS,
+        movimientoCircular: movimientoCircular,
+        puntoDelCirculo: puntoDelCirculo,
+        cruceDelRio: cruceDelRio,
+        circularAcelerado: circularAcelerado
       };
     })(typeof window !== "undefined" ? window : globalThis);
   </script>
@@ -18823,6 +18917,12 @@ Guía de estudio del capítulo A.1 del libro de Oxford</p>
         deEnMedioTexIB, cuadraIB, cifrasDeEnMedioIB, mayusculaIB, enPalabrasIB,
         CasosIB, posicionTexIB
       } = kit;
+
+
+
+
+
+
 
 
 
