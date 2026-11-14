@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070f">
+<title>Mide el Alarcos · Arcademia</title>
+<meta name="description" content="Simulador de trigonometría: la altura del IES Emilio Alarcos medida con dos ángulos y la distancia entre dos observadores.">
+<meta name="author" content="Mario Rodríguez Boya">
+<meta name="copyright" content="© 2026 Mario Rodríguez Boya. Todos los derechos reservados.">
+<!--
+  Simulador: Mide el Alarcos — la altura del instituto por doble observación
+  Autor: Mario Rodríguez Boya (© 2026).
+  Todos los derechos reservados: no se permite reproducirlo, distribuirlo
+  ni transformarlo sin autorización expresa del autor.
+  Curso: 4.º ESO y 1.º Bachillerato
+  Tema: Trigonometría — resolución de triángulos rectángulos; altura de un
+  edificio cuyo pie no se puede alcanzar, por doble observación (sistema de
+  dos ecuaciones con tangentes); errores de medida.
+  Apuntes («Aprende esto en…»): Matemáticas I, unidad 3 (Trigonometría),
+  apartado «Triángulos rectángulos. Alturas y distancias».
+  Origen: la app web del profesor para medir el instituto (un lienzo de
+  800 px), rehecha para Arcademia el 2026-11-14 con otro aspecto: la misma
+  situación (edificio de 15 m, escaleras que impiden llegar a la fachada,
+  dos observadores con el móvil en la mano), los mismos mandos y la misma
+  resolución.
+  Estructura: el bloque «logica» (entre las marcas @@LOGICA) es lógica pura
+  sin DOM, que jsc ejecuta tal cual en la batería de verificación; el bloque
+  «interfaz» dibuja la escena en SVG y lleva mandos, móviles y resolución.
+  Dependencias: KaTeX 0.16.8 (jsDelivr) para las fórmulas; lo demás es SVG,
+  CSS y JavaScript nativos, sin webfonts.
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script id="katex-js" src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" defer></script>
+<style>
+:root{
+  color-scheme: dark;
+  --fondo:#05070f;
+  --tinta:#f2f4ff; --tinta-2:#b8c0de; --tinta-3:#8b95bb;
+  --borde: rgb(255 255 255 / .10);
+  --borde-2: rgb(255 255 255 / .18);
+  --a:#b49cff; --a-2:#7c5cff;
+  --b:#ffad6b; --b-2:#ff7a1a;
+  --h:#45dcff; --ok:#43e6a5; --mal:#ff7f9b; --oro:#ffd166;
+  --curva: cubic-bezier(.22,1,.36,1);
+  --muelle: cubic-bezier(.34,1.56,.64,1);
+  --fuente: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-titulo: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-num: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Roboto, sans-serif;
+  --alto-escena: clamp(440px, calc(100svh - var(--alto-cabecera, 240px) - 28px), 780px);
+}
+*{ box-sizing: border-box; }
+[hidden]{ display: none !important; }
+html{ -webkit-text-size-adjust: 100%; }
+body{
+  margin: 0; min-height: 100svh; background: var(--fondo); color: var(--tinta);
+  font: 15px/1.5 var(--fuente); -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a{ color: inherit; }
+:focus-visible{ outline: 2px solid #fff; outline-offset: 3px; }
+.sr-only{ position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.saltar{ position: absolute; left: 12px; top: -60px; z-index: 50; padding: 10px 14px; border-radius: 12px; background: #fff; color: #0b1020; font-weight: 700; text-decoration: none; }
+.saltar:focus{ top: 12px; }
+
+/* ---------- Fondo de la página: auroras suaves y grano ---------- */
+.fondo{ position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  background:
+    radial-gradient(1100px 680px at 8% -12%, #18205a 0%, transparent 62%),
+    radial-gradient(900px 620px at 108% 112%, #2d1538 0%, transparent 58%),
+    linear-gradient(180deg, #070a19, #05060d 70%); }
+.aurora{ position: absolute; width: 72vmax; height: 72vmax; border-radius: 50%; will-change: transform; }
+.aurora.a1{ left: -22vmax; top: -34vmax; background: radial-gradient(closest-side, rgb(124 92 255 / .30), transparent); }
+.aurora.a2{ right: -26vmax; bottom: -38vmax; background: radial-gradient(closest-side, rgb(255 122 26 / .20), transparent); }
+.aurora.a3{ left: 30vmax; top: 20vmax; width: 50vmax; height: 50vmax; background: radial-gradient(closest-side, rgb(69 220 255 / .10), transparent); }
+.grano{ position: absolute; inset: 0; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@keyframes deriva1{ to{ transform: translate(8vmax, 6vmax) scale(1.08); } }
+@keyframes deriva2{ to{ transform: translate(-7vmax, -5vmax) scale(1.1); } }
+
+/* ---------- Cabecera ---------- */
+.cabecera{ max-width: 1680px; margin: 0 auto; padding: 16px 22px 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.volver{ display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px; font-weight: 650; font-size: 13.5px; text-decoration: none; color: var(--tinta-2); background: rgb(255 255 255 / .05); border: 1px solid var(--borde); transition: color .2s, background .2s; }
+.volver:hover{ color: var(--tinta); background: rgb(255 255 255 / .09); }
+.titular{ min-width: 0; }
+.antetitulo{ margin: 14px 0 6px; font: 700 11.5px/1 var(--fuente); letter-spacing: .16em; text-transform: uppercase; color: var(--tinta-3); }
+.antetitulo b{ color: var(--h); font-weight: 700; }
+h1{ margin: 0; font: 800 clamp(32px, 4.4vw, 56px)/1.02 var(--fuente-titulo); letter-spacing: -.035em; }
+h1 .palabra{ display: inline-block; animation: subir .9s var(--curva) both; animation-delay: calc(var(--i) * 90ms + 120ms); }
+h1 .degradado{ background: linear-gradient(100deg, #c9b8ff 0%, #ff9fd0 48%, #ffb36b 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.subtitulo{ margin: 10px 0 0; max-width: 62ch; color: var(--tinta-2); font-size: 15.5px; animation: subir .9s var(--curva) .45s both; }
+.chips{ display: flex; gap: 8px; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; animation: subir .9s var(--curva) .55s both; }
+.chips li{ padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 650; color: var(--tinta-2); background: rgb(255 255 255 / .05); border: 1px solid var(--borde); }
+@keyframes subir{ from{ opacity: 0; transform: translateY(.45em); filter: blur(6px); } to{ opacity: 1; transform: none; filter: none; } }
+
+/* ---------- Disposición ---------- */
+.app{ max-width: 1680px; margin: 0 auto; padding: 10px 22px 18px; display: grid; grid-template-columns: minmax(0, 1fr) 384px; gap: 18px; align-items: start; }
+.escena{
+  position: relative; height: var(--alto-escena); border-radius: 30px; overflow: hidden; isolation: isolate; min-width: 0;
+  background: #2f8cf0; touch-action: pan-y;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .12), 0 40px 90px -30px rgb(40 70 200 / .55), 0 14px 34px -14px rgb(0 0 0 / .7);
+  animation: aparecer 1s var(--curva) both;
+}
+.escena::after{ content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 4;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), inset 0 0 0 1px rgb(255 255 255 / .07), inset 0 -60px 80px -60px rgb(0 0 0 / .35); }
+@keyframes aparecer{ from{ opacity: 0; transform: translateY(14px) scale(.985); } to{ opacity: 1; transform: none; } }
+#lienzo{ position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+#lienzo text{ font-family: var(--fuente); }
+.panel{ display: flex; flex-direction: column; gap: 14px; min-width: 0; max-height: var(--alto-escena); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / .2) transparent; padding: 2px 4px 2px 2px; }
+.vista{ display: flex; flex-direction: column; gap: 14px; animation: entrar .5s var(--curva) both; }
+@keyframes entrar{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: none; } }
+
+/* ---------- Asas para arrastrar a los observadores (encima del SVG) ---------- */
+.asa{ position: absolute; left: 0; top: 0; z-index: 3; border-radius: 16px; cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; }
+.asa:hover{ background: rgb(255 255 255 / .07); }
+.asa:active, .asa.arrastrando{ cursor: grabbing; background: rgb(255 255 255 / .09); }
+.asa:focus-visible{ box-shadow: 0 0 0 2px #fff, 0 0 0 5px var(--c, var(--a)); background: rgb(255 255 255 / .08); }
+#asa-a{ --c: var(--a); } #asa-b{ --c: var(--b); }
+.ayuda-escena{ position: absolute; left: 14px; top: 14px; z-index: 3; margin: 0; padding: 7px 12px 7px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 650; color: #fff; background: rgb(8 12 28 / .55); border: 1px solid rgb(255 255 255 / .18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px; pointer-events: none; transition: opacity .6s var(--curva), transform .6s var(--curva); animation: entrar .8s var(--curva) 2.4s both; }
+.ayuda-escena.fuera{ opacity: 0; transform: translateY(-6px); }
+.ayuda-escena .mano{ display: inline-block; animation: vaiven 1.6s ease-in-out infinite; }
+.ayuda-escena.fuera .mano{ animation: none; }
+@keyframes vaiven{ 0%,100%{ transform: translateX(-3px); } 50%{ transform: translateX(3px); } }
+
+/* ---------- Pestañas ---------- */
+.pestanas{ position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgb(255 255 255 / .05); border: 1px solid var(--borde); flex: none; }
+.pestanas button{ position: relative; z-index: 1; appearance: none; border: 0; background: transparent; color: var(--tinta-2); font: 700 15px/1 var(--fuente); padding: 12px 0; border-radius: 999px; cursor: pointer; transition: color .35s var(--curva); }
+.pestanas button[aria-selected="true"]{ color: #0b1020; }
+.pestanas button:focus-visible{ outline: 2px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 2px #0b1020 inset; }
+.pestanas-marca{ position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: linear-gradient(135deg, #ffffff, #dde4ff); box-shadow: 0 6px 18px -6px rgb(160 170 255 / .7); transition: transform .5s var(--muelle); }
+.pestanas[data-activa="resolver"] .pestanas-marca{ transform: translateX(100%); }
+
+/* ---------- Tarjetas de cristal ---------- */
+.tarjeta{ margin: 0; min-width: 0; background: linear-gradient(180deg, rgb(255 255 255 / .075), rgb(255 255 255 / .035)); border: 1px solid var(--borde); border-radius: 22px; padding: 15px 17px 16px; backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 14px 30px -20px rgb(0 0 0 / .9); }
+.eyebrow{ margin: 0; font: 750 11px/1.2 var(--fuente); letter-spacing: .15em; text-transform: uppercase; color: var(--tinta-3); }
+.tarjeta-cab{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.cifra{ font: 750 22px/1 var(--fuente-num); font-variant-numeric: tabular-nums; letter-spacing: -.01em; color: var(--tinta); }
+.cifra small{ font-size: 14px; color: var(--tinta-2); font-weight: 650; }
+.nota{ margin: 8px 0 0; font-size: 13px; color: var(--tinta-3); }
+.fila-rango{ display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.paso-mas{ flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--borde-2); background: rgb(255 255 255 / .07); color: var(--tinta); font: 600 20px/1 var(--fuente); cursor: pointer; display: grid; place-items: center; transition: background .2s, transform .2s var(--muelle); }
+.paso-mas:hover{ background: rgb(255 255 255 / .14); }
+.paso-mas:active{ transform: scale(.92); }
+
+/* deslizadores */
+.deslizador{ -webkit-appearance: none; appearance: none; width: 100%; height: 30px; margin: 0; background: transparent; cursor: pointer; --p: 50%; --c: var(--h); }
+.deslizador::-webkit-slider-runnable-track{ height: 6px; border-radius: 999px; background: linear-gradient(90deg, var(--c) 0 var(--p), rgb(255 255 255 / .14) var(--p) 100%); }
+.deslizador::-webkit-slider-thumb{ -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 4px rgb(255 255 255 / .12), 0 4px 12px rgb(0 0 0 / .5); transition: transform .25s var(--muelle); }
+.deslizador:active::-webkit-slider-thumb{ transform: scale(1.15); }
+.deslizador::-moz-range-track{ height: 6px; border-radius: 999px; background: rgb(255 255 255 / .14); }
+.deslizador::-moz-range-progress{ height: 6px; border-radius: 999px; background: var(--c); }
+.deslizador::-moz-range-thumb{ width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 4px rgb(255 255 255 / .12), 0 4px 12px rgb(0 0 0 / .5); }
+.deslizador:focus-visible{ outline: none; }
+.deslizador:focus-visible::-webkit-slider-thumb{ box-shadow: 0 0 0 3px #0b1020, 0 0 0 6px #fff; }
+.deslizador:focus-visible::-moz-range-thumb{ box-shadow: 0 0 0 3px #0b1020, 0 0 0 6px #fff; }
+.deslizador.apagado{ --c: rgb(255 255 255 / .38); opacity: .6; }
+
+/* interruptores */
+.mundo-real{ display: flex; flex-direction: column; gap: 6px; }
+.mundo-real legend{ float: left; width: 100%; margin-bottom: 6px; padding: 0; }
+.error-fila{ display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
+.interruptor{ appearance: none; border: 0; background: transparent; color: var(--tinta); display: inline-flex; align-items: center; gap: 12px; padding: 4px 0; font: 650 15px/1.2 var(--fuente); cursor: pointer; text-align: left; border-radius: 10px; }
+.interruptor-pista{ position: relative; flex: none; width: 46px; height: 28px; border-radius: 999px; background: rgb(255 255 255 / .14); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14); transition: background .35s var(--curva); }
+.interruptor-bola{ position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgb(0 0 0 / .45); transition: transform .45s var(--muelle); }
+.interruptor[aria-checked="true"] .interruptor-pista{ background: linear-gradient(135deg, #ff7f9b, #ff5277); }
+.interruptor[aria-checked="true"] .interruptor-bola{ transform: translateX(18px); }
+.chip-valor{ flex: none; min-width: 64px; text-align: center; padding: 5px 10px; border-radius: 999px; font: 750 14px/1 var(--fuente-num); font-variant-numeric: tabular-nums; color: var(--tinta-2); background: rgb(255 255 255 / .06); border: 1px solid var(--borde); transition: color .3s, background .3s, border-color .3s; }
+.chip-valor.vivo{ color: #ffd6df; background: rgb(255 82 119 / .16); border-color: rgb(255 127 155 / .45); }
+.boton-sec{ appearance: none; border: 1px solid var(--borde-2); background: rgb(255 255 255 / .07); color: var(--tinta); font: 650 14.5px/1 var(--fuente); padding: 12px 16px; border-radius: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: background .2s, transform .25s var(--muelle); }
+.boton-sec:hover{ background: rgb(255 255 255 / .13); }
+.boton-sec:active{ transform: scale(.97); }
+.boton-sec .icono{ display: inline-block; transition: transform .5s var(--muelle); }
+.boton-sec:hover .icono{ transform: rotate(-120deg); }
+.cta{ appearance: none; border: 0; border-radius: 18px; padding: 16px 18px; font: 750 16px/1 var(--fuente); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: linear-gradient(135deg, #6a48f5, #3f57e6 55%, #2f5fe0); box-shadow: 0 16px 34px -14px rgb(90 100 255 / .9), inset 0 1px 0 rgb(255 255 255 / .35); transition: transform .3s var(--muelle), box-shadow .3s; position: relative; overflow: hidden; }
+.cta::before{ content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / .16) 50%, transparent 70%); transform: translateX(-120%); animation: barrido 4.5s var(--curva) 3s infinite; }
+@keyframes barrido{ 0%{ transform: translateX(-120%); } 30%, 100%{ transform: translateX(120%); } }
+.cta:hover{ transform: translateY(-2px); box-shadow: 0 20px 40px -14px rgb(90 100 255 / 1), inset 0 1px 0 rgb(255 255 255 / .35); }
+.cta .flecha{ display: inline-block; transition: transform .35s var(--muelle); }
+.cta:hover .flecha{ transform: translateX(4px); }
+
+/* ---------- Los móviles (inclinómetros) ---------- */
+.moviles{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* en pantallas con mucho cielo, los móviles flotan sobre la escena */
+.moviles.flotantes{ position: absolute; top: 16px; right: 16px; z-index: 3; width: 316px; gap: 10px; animation: entrar .7s var(--curva) backwards; transition: opacity .5s var(--curva), transform .5s var(--curva); }
+.escena[data-modo="resolver"] .moviles.flotantes{ opacity: 0; transform: translateY(-16px) scale(.96); pointer-events: none; }
+.moviles.flotantes .movil{ box-shadow: 0 26px 50px -20px rgb(4 10 40 / .85), inset 0 0 0 1px rgb(255 255 255 / .2), inset 0 2px 0 rgb(255 255 255 / .14); }
+.moviles.flotantes .movil-pantalla{ padding: 27px 10px 10px; }
+.moviles.flotantes .movil-lectura{ font-size: 31px; }
+.movil{ --c: var(--a); --c2: rgb(124 92 255 / .38); position: relative; border-radius: 30px; padding: 6px; background: linear-gradient(150deg, #4a5072 0%, #191c30 38%, #2c3152 100%); box-shadow: 0 22px 40px -22px rgb(0 0 0 / 1), inset 0 0 0 1px rgb(255 255 255 / .16), inset 0 2px 0 rgb(255 255 255 / .12); min-width: 0; cursor: pointer; transition: transform .4s var(--muelle); }
+.movil:hover{ transform: translateY(-3px) rotate(-.4deg); }
+.movil-b{ --c: var(--b); --c2: rgb(255 122 26 / .34); }
+.movil-b:hover{ transform: translateY(-3px) rotate(.4deg); }
+.movil-pantalla{ position: relative; border-radius: 25px; padding: 30px 11px 12px; overflow: hidden; background: radial-gradient(130% 90% at 50% -10%, var(--c2), transparent 62%), linear-gradient(180deg, #0c1024, #070915); }
+.movil-pantalla::after{ content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(125deg, rgb(255 255 255 / .09) 0%, transparent 32%); }
+.movil-isla{ position: absolute; top: 10px; left: 50%; width: 52px; height: 15px; transform: translateX(-50%); border-radius: 999px; background: #000; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); }
+.movil-cab{ margin: 0; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: var(--tinta-2); }
+.insignia{ display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font: 800 11.5px/1 var(--fuente-num); color: #0b1020; background: var(--c); box-shadow: 0 0 0 2px rgb(255 255 255 / .85); flex: none; }
+.dial{ display: block; width: 100%; height: auto; margin: 6px 0 0; overflow: visible; }
+.movil-lectura{ margin: 2px 0 0; display: flex; align-items: flex-start; justify-content: center; font: 750 clamp(30px, 3.1vw, 38px)/1 var(--fuente-num); font-variant-numeric: tabular-nums; letter-spacing: -.03em; color: #fff; text-shadow: 0 0 22px var(--c2); }
+.movil-lectura .grado{ font-size: .55em; margin-top: .12em; color: var(--c); }
+.valor{ display: inline-block; }
+.valor.tic{ animation: tic .32s var(--curva); }
+@keyframes tic{ from{ opacity: .2; transform: translateY(-.22em); filter: blur(2px); } to{ opacity: 1; transform: none; filter: none; } }
+.movil-pie{ margin: 6px 0 0; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: var(--tinta-3); min-height: 22px; flex-wrap: wrap; }
+.movil-pie .letra{ font: italic 700 15px/1 "Times New Roman", Times, serif; color: var(--c); }
+.movil-temblor{ padding: 2px 7px; border-radius: 999px; font: 700 11px/1.4 var(--fuente-num); color: #ffd6df; background: rgb(255 82 119 / .2); }
+
+/* ---------- Resolución ---------- */
+.res-cab{ display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.chip-estado{ padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; color: #c9ffe9; background: rgb(67 230 165 / .14); border: 1px solid rgb(67 230 165 / .38); }
+.chip-estado.con-errores{ color: #ffd6df; background: rgb(255 82 119 / .14); border-color: rgb(255 127 155 / .42); }
+.pasos{ list-style: none; margin: 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: 10px; }
+.pasos::before{ content: ""; position: absolute; left: 14px; top: 26px; bottom: 26px; width: 2px; border-radius: 2px; background: linear-gradient(180deg, rgb(69 220 255 / .55), rgb(180 156 255 / .3) 60%, rgb(255 173 107 / .3)); }
+.paso{ position: relative; padding-left: 42px; opacity: 0; transform: translateY(12px); transition: opacity .5s var(--curva), transform .5s var(--curva); }
+.paso.visible{ opacity: 1; transform: none; }
+.paso-num{ position: absolute; left: 0; top: 12px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 800 13px/1 var(--fuente-num); color: #0b1020; background: #dfe5ff; box-shadow: 0 0 0 4px var(--fondo); transition: background .35s, box-shadow .35s, transform .45s var(--muelle); }
+.paso.activo .paso-num{ background: linear-gradient(135deg, var(--h), #a6f3ff); box-shadow: 0 0 0 4px var(--fondo), 0 0 0 7px rgb(69 220 255 / .28); transform: scale(1.08); }
+.paso-caja{ border: 1px solid var(--borde); border-radius: 18px; background: rgb(255 255 255 / .035); padding: 4px 14px 10px; transition: border-color .35s, background .35s; cursor: pointer; }
+.paso.activo .paso-caja{ border-color: rgb(69 220 255 / .45); background: linear-gradient(180deg, rgb(69 220 255 / .09), rgb(69 220 255 / .03)); }
+.paso-boton{ appearance: none; border: 0; background: transparent; color: var(--tinta); font: 750 15px/1.3 var(--fuente); padding: 8px 0 2px; width: 100%; text-align: left; cursor: pointer; border-radius: 8px; }
+.paso-texto{ margin: 2px 0 6px; color: var(--tinta-2); font-size: 13.5px; }
+.formula{ overflow-x: auto; overflow-y: hidden; padding: 4px 2px 6px; font-size: 15px; scrollbar-width: thin; }
+.formula .katex-display{ margin: 0; text-align: left; }
+.formula .katex-display > .katex{ text-align: left; }
+.formula .katex{ font-size: 1.12em; color: #f6f7ff; }
+.formula.plano{ white-space: pre-wrap; font: 600 14px/1.6 var(--fuente-num); color: #f6f7ff; }
+.resultado{ position: relative; overflow: hidden; border-radius: 24px; padding: 18px 18px 16px; border: 1px solid rgb(255 209 102 / .35);
+  background: radial-gradient(120% 140% at 0% 0%, rgb(255 209 102 / .2), transparent 55%), linear-gradient(180deg, rgb(255 255 255 / .07), rgb(255 255 255 / .03)); }
+.resultado{ transition: opacity .5s var(--curva), transform .5s var(--curva); }
+.resultado.esperando{ opacity: 0; transform: translateY(12px); }
+.resultado.invalido{ border-color: rgb(255 127 155 / .45); background: radial-gradient(120% 140% at 0% 0%, rgb(255 82 119 / .18), transparent 55%), linear-gradient(180deg, rgb(255 255 255 / .06), rgb(255 255 255 / .03)); }
+.resultado-valor{ margin: 6px 0 4px; font: 800 clamp(40px, 4.6vw, 54px)/1 var(--fuente-num); letter-spacing: -.035em; font-variant-numeric: tabular-nums; color: #fff; }
+.resultado-valor .unidad{ font-size: .5em; color: var(--oro); letter-spacing: 0; }
+.resultado-estado{ margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: var(--tinta-2); }
+.resultado-estado .icono-estado{ flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; font-weight: 900; color: #0b1020; background: var(--ok); margin-top: 1px; }
+.resultado-estado.con-errores .icono-estado{ background: var(--oro); }
+.resultado.invalido .icono-estado{ background: var(--mal); }
+.res-acciones{ display: flex; gap: 10px; flex-wrap: wrap; }
+.res-acciones .boton-sec{ flex: 1 1 160px; }
+
+/* ---------- Pie ---------- */
+.pie{ max-width: 1680px; margin: 0 auto; padding: 4px 22px 28px; color: var(--tinta-3); font-size: 13px; display: flex; justify-content: space-between; gap: 6px 18px; flex-wrap: wrap; }
+.pie p{ margin: 0; }
+.pie a{ color: var(--tinta-2); text-underline-offset: 3px; }
+.pie a:hover{ color: var(--tinta); }
+
+/* ---------- Pantallas medianas y pequeñas ---------- */
+@media (max-width: 1179px){
+  .app{ grid-template-columns: minmax(0, 1fr); }
+  .escena{ height: min(56.25vw, 58svh); min-height: 260px; }
+  .panel{ max-height: none; overflow: visible; padding: 0; }
+}
+@media (max-width: 1179px) and (min-width: 700px){
+  #vista-medir{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  #vista-medir .moviles{ grid-row: span 2; }
+  #vista-medir .cta{ grid-column: 1 / -1; }
+}
+@media (max-width: 1179px) and (min-height: 620px){
+  .escena{ position: sticky; top: 8px; z-index: 6; }
+  /* lo que reciba el foco o un salto de ancla no debe quedar debajo de la escena fija */
+  html{ scroll-padding-top: calc(var(--alto-escena-real, 300px) + 22px); }
+}
+@media (max-width: 640px){
+  .cabecera{ padding: 12px 16px 4px; }
+  .app{ padding: 8px 16px 16px; gap: 14px; }
+  .escena{ height: min(88vw, 48svh); min-height: 250px; border-radius: 22px; }
+  .pie{ padding: 4px 16px 24px; }
+  .subtitulo{ font-size: 14.5px; }
+  .tarjeta{ padding: 14px 15px 15px; }
+  .movil-pantalla{ padding: 28px 9px 10px; }
+  .movil-cab{ font-size: 12px; }
+  .movil-lectura{ font-size: 31px; }
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+html.quieto *, html.quieto *::before, html.quieto *::after{ animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<div class="fondo" aria-hidden="true"><i class="aurora a1"></i><i class="aurora a2"></i><i class="aurora a3"></i><i class="grano"></i></div>
+<a class="saltar" href="#panel">Saltar a los mandos</a>
+
+<header class="cabecera">
+  <div class="titular">
+    <a class="volver" href="../index.html"><span aria-hidden="true">←</span> Arcademia</a>
+    <p class="antetitulo">Simulador · <b>Trigonometría</b></p>
+    <h1><span class="palabra" style="--i:0">Mide</span> <span class="palabra" style="--i:1">el</span> <span class="palabra degradado" style="--i:2">Alarcos</span></h1>
+    <p class="subtitulo">Dos observadores miran lo alto de la fachada con el móvil en la mano. Las escaleras no dejan llegar al pie del edificio, pero con los dos ángulos y la distancia entre ellos se calcula su altura.</p>
+  </div>
+  <ul class="chips" aria-label="Cursos">
+    <li>4.º ESO</li>
+    <li>1.º Bachillerato</li>
+  </ul>
+</header>
+
+<main class="app">
+  <section class="escena" id="escena" aria-label="Escena: el instituto y los dos observadores">
+    <svg id="lienzo" role="img" aria-label="El IES Emilio Alarcos y dos observadores, A y B, que miran lo alto de la fachada con el móvil." xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="asa" id="asa-a" role="slider" tabindex="0" aria-label="Observador A, el de lejos" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0"></div>
+    <div class="asa" id="asa-b" role="slider" tabindex="0" aria-label="Observador B, el de cerca" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0"></div>
+    <p class="ayuda-escena" id="ayuda-escena" aria-hidden="true"><span class="mano">↔</span> Arrastra a A y a B</p>
+  </section>
+
+  <aside class="panel" id="panel" aria-label="Mandos y resolución" tabindex="-1">
+    <div class="pestanas" role="tablist" aria-label="¿Qué quieres hacer?" data-activa="medir">
+      <span class="pestanas-marca" aria-hidden="true"></span>
+      <button type="button" role="tab" id="tab-medir" aria-selected="true" aria-controls="vista-medir" tabindex="0">Medir</button>
+      <button type="button" role="tab" id="tab-resolver" aria-selected="false" aria-controls="vista-resolver" tabindex="-1">Resolver</button>
+    </div>
+
+    <section class="vista" id="vista-medir" role="tabpanel" aria-labelledby="tab-medir">
+      <div class="moviles">
+        <article class="movil movil-a" id="movil-a" aria-label="Móvil de A, el observador de lejos">
+          <div class="movil-pantalla">
+            <span class="movil-isla" aria-hidden="true"></span>
+            <p class="movil-cab"><span class="insignia" aria-hidden="true">A</span><span>Lejos</span></p>
+            <svg class="dial" viewBox="0 0 140 96" aria-hidden="true">
+              <path class="dial-pista" d="M88 88 A70 70 0 0 0 18 18" fill="none" stroke="rgb(255 255 255 / .12)" stroke-width="6" stroke-linecap="round"/>
+              <path class="dial-marcas" fill="none" stroke="rgb(255 255 255 / .35)" stroke-width="1.2"/>
+              <path class="dial-cuna" fill="var(--c)" fill-opacity=".18"/>
+              <path class="dial-arco" fill="none" stroke="var(--c)" stroke-width="6" stroke-linecap="round"/>
+              <line class="dial-aguja" x1="18" y1="88" x2="80" y2="88" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+              <circle class="dial-punta" r="4" fill="var(--c)"/>
+              <circle cx="18" cy="88" r="5" fill="#fff"/>
+              <text x="96" y="92" font-size="9" fill="rgb(255 255 255 / .68)">0°</text>
+              <text x="2" y="12" font-size="9" fill="rgb(255 255 255 / .68)">90°</text>
+            </svg>
+            <p class="movil-lectura"><span class="valor" id="lectura-a">0,0</span><span class="grado">°</span></p>
+            <p class="movil-pie"><span class="letra">α</span> elevación <span class="movil-temblor" id="temblor-a" hidden></span></p>
+          </div>
+        </article>
+        <article class="movil movil-b" id="movil-b" aria-label="Móvil de B, el observador de cerca">
+          <div class="movil-pantalla">
+            <span class="movil-isla" aria-hidden="true"></span>
+            <p class="movil-cab"><span class="insignia" aria-hidden="true">B</span><span>Cerca</span></p>
+            <svg class="dial" viewBox="0 0 140 96" aria-hidden="true">
+              <path class="dial-pista" d="M88 88 A70 70 0 0 0 18 18" fill="none" stroke="rgb(255 255 255 / .12)" stroke-width="6" stroke-linecap="round"/>
+              <path class="dial-marcas" fill="none" stroke="rgb(255 255 255 / .35)" stroke-width="1.2"/>
+              <path class="dial-cuna" fill="var(--c)" fill-opacity=".18"/>
+              <path class="dial-arco" fill="none" stroke="var(--c)" stroke-width="6" stroke-linecap="round"/>
+              <line class="dial-aguja" x1="18" y1="88" x2="80" y2="88" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+              <circle class="dial-punta" r="4" fill="var(--c)"/>
+              <circle cx="18" cy="88" r="5" fill="#fff"/>
+              <text x="96" y="92" font-size="9" fill="rgb(255 255 255 / .68)">0°</text>
+              <text x="2" y="12" font-size="9" fill="rgb(255 255 255 / .68)">90°</text>
+            </svg>
+            <p class="movil-lectura"><span class="valor" id="lectura-b">0,0</span><span class="grado">°</span></p>
+            <p class="movil-pie"><span class="letra">β</span> elevación <span class="movil-temblor" id="temblor-b" hidden></span></p>
+          </div>
+        </article>
+      </div>
+
+      <section class="tarjeta" aria-labelledby="t-ojos">
+        <div class="tarjeta-cab">
+          <h2 class="eyebrow" id="t-ojos">Altura de los ojos</h2>
+          <span class="cifra" id="salida-ojos">1,60 <small>m</small></span>
+        </div>
+        <div class="fila-rango">
+          <button type="button" class="paso-mas" id="ojos-menos" aria-label="Bajar la altura de los ojos 5 cm">−</button>
+          <input type="range" class="deslizador" id="rango-ojos" min="1" max="2.2" step="0.05" value="1.6" aria-labelledby="t-ojos" aria-describedby="nota-ojos">
+          <button type="button" class="paso-mas" id="ojos-mas" aria-label="Subir la altura de los ojos 5 cm">+</button>
+        </div>
+        <p class="nota" id="nota-ojos">Es la altura del móvil: cada uno lo sujeta delante de los ojos.</p>
+      </section>
+
+      <fieldset class="tarjeta mundo-real">
+        <legend class="eyebrow">Mundo real · errores de medida</legend>
+        <div class="error-fila">
+          <button type="button" class="interruptor" role="switch" aria-checked="false" id="sw-temblor"><span class="interruptor-pista" aria-hidden="true"><span class="interruptor-bola"></span></span><span>Temblor del móvil</span></button>
+          <span class="chip-valor" id="salida-temblor">±2,0°</span>
+        </div>
+        <input type="range" class="deslizador apagado" id="rango-temblor" min="0" max="5" step="0.5" value="2" aria-label="Cuánto tiembla el móvil, en grados">
+        <div class="error-fila">
+          <button type="button" class="interruptor" role="switch" aria-checked="false" id="sw-error-d"><span class="interruptor-pista" aria-hidden="true"><span class="interruptor-bola"></span></span><span>Error al medir d</span></button>
+          <span class="chip-valor" id="salida-error-d">±5 cm</span>
+        </div>
+        <input type="range" class="deslizador apagado" id="rango-error-d" min="0" max="15" step="1" value="5" aria-label="Error al medir la distancia d, en centímetros">
+        <button type="button" class="boton-sec" id="repetir" hidden><span class="icono" aria-hidden="true">↻</span> Repetir la medida</button>
+      </fieldset>
+
+      <button type="button" class="cta" id="ir-resolver">Resolver paso a paso <span class="flecha" aria-hidden="true">→</span></button>
+    </section>
+
+    <section class="vista" id="vista-resolver" role="tabpanel" aria-labelledby="tab-resolver" hidden>
+      <div class="res-cab">
+        <h2 class="eyebrow">Doble observación</h2>
+        <span class="chip-estado" id="chip-estado">Medida ideal</span>
+      </div>
+      <ol class="pasos" id="pasos">
+        <li class="paso" data-paso="1"><span class="paso-num" aria-hidden="true">1</span><div class="paso-caja"><button type="button" class="paso-boton"></button><p class="paso-texto"></p><div class="formula"></div></div></li>
+        <li class="paso" data-paso="2"><span class="paso-num" aria-hidden="true">2</span><div class="paso-caja"><button type="button" class="paso-boton"></button><p class="paso-texto"></p><div class="formula"></div></div></li>
+        <li class="paso" data-paso="3"><span class="paso-num" aria-hidden="true">3</span><div class="paso-caja"><button type="button" class="paso-boton"></button><p class="paso-texto"></p><div class="formula"></div></div></li>
+        <li class="paso" data-paso="4"><span class="paso-num" aria-hidden="true">4</span><div class="paso-caja"><button type="button" class="paso-boton"></button><p class="paso-texto"></p><div class="formula"></div></div></li>
+        <li class="paso" data-paso="5"><span class="paso-num" aria-hidden="true">5</span><div class="paso-caja"><button type="button" class="paso-boton"></button><p class="paso-texto"></p><div class="formula"></div></div></li>
+      </ol>
+      <div class="resultado" id="resultado">
+        <p class="eyebrow">Altura del instituto</p>
+        <p class="resultado-valor"><span id="valor-H">15,00</span> <span class="unidad">m</span></p>
+        <p class="resultado-estado" id="estado-H"><span class="icono-estado" aria-hidden="true">✓</span><span id="estado-H-texto"></span></p>
+      </div>
+      <div class="res-acciones">
+        <button type="button" class="boton-sec" id="repetir-res" hidden><span class="icono" aria-hidden="true">↻</span> Repetir la medida</button>
+        <button type="button" class="boton-sec" id="volver-medir"><span aria-hidden="true">←</span> Volver a medir</button>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<footer class="pie">
+  <p>Aprende esto en la <a href="https://marioeducastur.github.io/mat1/unidad_03_trigonometria.html#tri%C3%A1ngulos-rect%C3%A1ngulos.-alturas-y-distancias">unidad 3 (Trigonometría) de Matemáticas I</a>.</p>
+  <p>© 2026 Mario Rodríguez Boya · Todos los derechos reservados</p>
+</footer>
+
+<div class="sr-only" aria-live="polite" id="anuncio"></div>
+
+<script id="logica">
+/* @@LOGICA-INICIO — lógica pura de Mide el Alarcos, sin DOM (jsc la ejecuta tal cual) */
+var ALTURA = (function () {
+  "use strict";
+
+  /* La situación del original, que dibujaba 15 píxeles por metro: */
+  var PX = 15;
+  var C = {
+    alturaEdificio: 15,
+    anchoEdificio: 180 / PX,        // 12 m
+    zonaSinAcceso: 100 / PX,        // 6,67 m de escaleras delante de la fachada
+    distanciaMax: 600 / PX,         // 40 m: lo más lejos que puede ponerse A
+    separacionMin: 1,               // A y B nunca se juntan (el original daba entonces una altura inventada)
+    inicialA: 500 / PX,             // 33,33 m de la fachada
+    inicialB: 320 / PX,             // 21,33 m de la fachada (d = 12 m)
+    ojos:    { min: 1, max: 2.2, paso: 0.05, inicial: 1.6 },   // metros
+    temblor: { min: 0, max: 5,   paso: 0.5,  inicial: 2 },     // grados
+    errorD:  { min: 0, max: 15,  paso: 1,    inicial: 5 },     // centímetros
+    periodoMuestreo: 500,           // ms entre dos lecturas con errores (como el original)
+    pasoTeclado: 0.1,               // m por flecha
+    pasoTecladoGrande: 1,           // m con Mayúsculas o RePág/AvPág
+    colorA: "#b49cff",
+    colorB: "#ffad6b"
+  };
+  var GRAD = 180 / Math.PI;
+  var MENOS = String.fromCharCode(8722);
+  var FINO = String.fromCharCode(8239);
+  var DURO = String.fromCharCode(160);   /* espacio de no separación: «d = 12,04 m» no se parte */
+
+  function limitar(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function limpio(v) { return Math.round(v * 1e9) / 1e9; }
+  function aPaso(v, r) {
+    var n = Number(v);
+    if (!isFinite(n)) n = r.inicial;
+    return limpio(limitar(r.min + Math.round((n - r.min) / r.paso) * r.paso, r.min, r.max));
+  }
+
+  function estadoInicial() {
+    return {
+      dA: C.inicialA, dB: C.inicialB, ojos: C.ojos.inicial,
+      temblor: false, temblorMax: C.temblor.inicial,
+      errorD: false, errorDMax: C.errorD.inicial,
+      jA: 0, jB: 0, jD: 0
+    };
+  }
+
+  /* Hasta dónde puede ir cada observador (distancias a la fachada, en metros). */
+  function rango(e, cual) {
+    return cual === "A"
+      ? { min: e.dB + C.separacionMin, max: C.distanciaMax }
+      : { min: C.zonaSinAcceso, max: e.dA - C.separacionMin };
+  }
+  function mover(e, cual, dist) {
+    var r = rango(e, cual), v = Number(dist);
+    if (!isFinite(v)) return cual === "A" ? e.dA : e.dB;
+    v = limitar(v, r.min, r.max);
+    if (cual === "A") e.dA = v; else e.dB = v;
+    return v;
+  }
+  function fijarOjos(e, v) { e.ojos = aPaso(v, C.ojos); return e.ojos; }
+  /* Al cambiar la amplitud de un error, la lectura que hay se escala con ella. */
+  function fijarTemblor(e, v) {
+    var antes = e.temblorMax, ahora = aPaso(v, C.temblor);
+    if (antes > 0) { e.jA *= ahora / antes; e.jB *= ahora / antes; } else { e.jA = 0; e.jB = 0; }
+    e.temblorMax = ahora;
+    return ahora;
+  }
+  function fijarErrorD(e, v) {
+    var antes = e.errorDMax, ahora = aPaso(v, C.errorD);
+    if (antes > 0) e.jD *= ahora / antes; else e.jD = 0;
+    e.errorDMax = ahora;
+    return ahora;
+  }
+
+  /* La verdad: lo que mediría un móvil perfecto. */
+  function geometria(e) {
+    var h = C.alturaEdificio - e.ojos;
+    return { alfa: Math.atan(h / e.dA) * GRAD, beta: Math.atan(h / e.dB) * GRAD, h: h, x: e.dB, d: e.dA - e.dB };
+  }
+  /* Lo que leen los móviles y la cinta: la verdad más los errores que estén encendidos. */
+  function lectura(e) {
+    var g = geometria(e);
+    return {
+      alfa: g.alfa + (e.temblor ? e.jA : 0),
+      beta: g.beta + (e.temblor ? e.jB : 0),
+      d: g.d + (e.errorD ? e.jD : 0),
+      ojos: e.ojos,
+      conErrores: !!(e.temblor || e.errorD),
+      real: g
+    };
+  }
+  /* El sistema: tg α = h / (x + d) y tg β = h / x. Sin solución si β no supera a α. */
+  function resolver(m) {
+    var tA = Math.tan(m.alfa / GRAD), tB = Math.tan(m.beta / GRAD);
+    var r = { tgA: tA, tgB: tB, dif: tB - tA, valido: false, x: NaN, h: NaN, H: NaN };
+    if (m.alfa > 0 && m.beta < 90 && m.d > 0 && tB - tA > 1e-9) {
+      r.x = m.d * tA / (tB - tA);
+      r.h = r.x * tB;
+      r.H = r.h + m.ojos;
+      r.valido = isFinite(r.H);
+    }
+    return r;
+  }
+  /* Una lectura nueva con errores: uniforme en ±amplitud, como el original. */
+  function muestrear(e, aleatorio) {
+    var t = e.temblorMax, ed = e.errorDMax / 100;
+    return { jA: aleatorio() * 2 * t - t, jB: aleatorio() * 2 * t - t, jD: aleatorio() * 2 * ed - ed };
+  }
+  /* Todo lo que enseña la pantalla. hRed y HRed son lo que se escribe: H = h redondeada + ojos. */
+  function informe(e) {
+    var m = lectura(e), r = resolver(m);
+    var hRed = r.valido ? Number(r.h.toFixed(2)) : NaN;
+    var HRed = r.valido ? limpio(hRed + e.ojos) : NaN;
+    return { m: m, r: r, hRed: hRed, HRed: HRed, desvio: r.valido ? r.H - C.alturaEdificio : NaN };
+  }
+
+  /* Números con coma decimal; el signo menos de verdad; espacio fino en los millares de cinco cifras o más. */
+  function partes(v, dec) {
+    var s = Math.abs(v).toFixed(dec);
+    var p = s.split(".");
+    return { neg: v < 0 && Number(s) !== 0, ent: p[0], dec: p.length > 1 ? p[1] : null };
+  }
+  function num(v, dec) {
+    if (typeof v !== "number" || !isFinite(v)) return "—";
+    var p = partes(v, dec), ent = p.ent;
+    if (ent.length > 4) ent = ent.replace(/\B(?=(\d{3})+(?!\d))/g, FINO);
+    return (p.neg ? MENOS : "") + ent + (p.dec !== null ? "," + p.dec : "");
+  }
+  function numTex(v, dec) {
+    if (typeof v !== "number" || !isFinite(v)) return "\\text{—}";
+    var p = partes(v, dec), ent = p.ent;
+    if (ent.length > 4) ent = ent.replace(/\B(?=(\d{3})+(?!\d))/g, "\\,");
+    return (p.neg ? "-" : "") + ent + (p.dec !== null ? "{,}" + p.dec : "");
+  }
+  function conSigno(v, dec) {
+    var s = num(v, dec);
+    return (v > 0 && Number(Math.abs(v).toFixed(dec)) !== 0 ? "+" : "") + s;
+  }
+
+  /* Los cinco pasos de la resolución, con los números de la medida (TeX y texto llano). */
+  function pasos(inf) {
+    var m = inf.m, r = inf.r;
+    var tg = "\\operatorname{tg}";
+    var al = "\\textcolor{" + C.colorA + "}{\\alpha}", be = "\\textcolor{" + C.colorB + "}{\\beta}";
+    var a2 = numTex(m.alfa, 2) + "^\\circ", b2 = numTex(m.beta, 2) + "^\\circ";
+    var d2 = numTex(m.d, 2), tA = numTex(r.tgA, 4), tB = numTex(r.tgB, 4), o2 = numTex(m.ojos, 2);
+    var lista = [];
+    lista.push({
+      n: 1, titulo: "Dos triángulos rectángulos",
+      texto: "Comparten el cateto h, la altura sobre los ojos. x, de B a la fachada, no se puede medir: hay escaleras. d sí se mide: d" + DURO + "=" + DURO + num(m.d, 2) + DURO + "m.",
+      tex: "\\begin{aligned}" + tg + al + "&=" + tg + a2 + "=\\dfrac{h}{x+" + d2 + "}\\\\[8pt]" + tg + be + "&=" + tg + b2 + "=\\dfrac{h}{x}\\end{aligned}",
+      plano: "tg α = tg " + num(m.alfa, 2) + "° = h / (x + " + num(m.d, 2) + ")\ntg β = tg " + num(m.beta, 2) + "° = h / x"
+    });
+    lista.push({
+      n: 2, titulo: "Despeja h en las dos e iguala",
+      texto: "h = x · tg β y h = (x + d) · tg α, así que:",
+      tex: "\\begin{aligned}x\\cdot" + tg + be + "&=(x+d)\\cdot" + tg + al + "\\\\[4pt]x\\cdot " + tB + "&=(x+" + d2 + ")\\cdot " + tA + "\\end{aligned}",
+      plano: "x · tg β = (x + d) · tg α\nx · " + num(r.tgB, 4) + " = (x + " + num(m.d, 2) + ") · " + num(r.tgA, 4)
+    });
+    if (r.valido) {
+      lista.push({
+        n: 3, titulo: "Resuelve la ecuación",
+        texto: "Es de primer grado en x:",
+        tex: "\\begin{aligned}x&=\\dfrac{d\\cdot" + tg + al + "}{" + tg + be + "-" + tg + al + "}\\\\[6pt]&=\\dfrac{" + d2 + "\\cdot " + tA + "}{" + tB + "-" + tA + "}\\approx " + numTex(r.x, 2) + "\\ \\text{m}\\end{aligned}",
+        plano: "x = d · tg α / (tg β − tg α) = " + num(m.d, 2) + " · " + num(r.tgA, 4) + " / (" + num(r.tgB, 4) + " − " + num(r.tgA, 4) + ") ≈ " + num(r.x, 2) + " m"
+      });
+      lista.push({
+        n: 4, titulo: "Halla h",
+        texto: "Sustituye x en la segunda ecuación:",
+        tex: "\\begin{aligned}h&=x\\cdot" + tg + be + "\\\\[4pt]&\\approx " + numTex(r.x, 2) + "\\cdot " + tB + "\\approx " + numTex(inf.hRed, 2) + "\\ \\text{m}\\end{aligned}",
+        plano: "h = x · tg β ≈ " + num(r.x, 2) + " · " + num(r.tgB, 4) + " ≈ " + num(inf.hRed, 2) + " m"
+      });
+      lista.push({
+        n: 5, titulo: "Suma la altura de los ojos",
+        texto: "El triángulo empieza a la altura del móvil, no en el suelo:",
+        tex: "\\begin{aligned}H&=h+" + o2 + "\\\\[4pt]&\\approx " + numTex(inf.hRed, 2) + "+" + o2 + "=" + numTex(inf.HRed, 2) + "\\ \\text{m}\\end{aligned}",
+        plano: "H = h + " + num(m.ojos, 2) + " ≈ " + num(inf.hRed, 2) + " + " + num(m.ojos, 2) + " = " + num(inf.HRed, 2) + " m"
+      });
+    } else {
+      lista.push({
+        n: 3, titulo: "La ecuación no tiene solución",
+        texto: "Con estas medidas tg β no supera a tg α: x saldría negativa o infinita. Repite la medida o separa más a los observadores.",
+        tex: "\\begin{aligned}" + tg + be + "-" + tg + al + "&=" + tB + "-" + tA + "\\\\[4pt]&=" + numTex(r.dif, 4) + "\\le 0\\end{aligned}",
+        plano: "tg β − tg α = " + num(r.tgB, 4) + " − " + num(r.tgA, 4) + " = " + num(r.dif, 4) + " ≤ 0"
+      });
+      lista.push({ n: 4, titulo: "Sin x no hay h", texto: "", tex: "h=\\ ?", plano: "h = ?" });
+      lista.push({ n: 5, titulo: "Ni altura del edificio", texto: "", tex: "H=\\ ?", plano: "H = ?" });
+    }
+    return lista;
+  }
+
+  return {
+    C: C, GRAD: GRAD, limitar: limitar, estadoInicial: estadoInicial, rango: rango, mover: mover,
+    fijarOjos: fijarOjos, fijarTemblor: fijarTemblor, fijarErrorD: fijarErrorD,
+    geometria: geometria, lectura: lectura, resolver: resolver, muestrear: muestrear, informe: informe,
+    num: num, numTex: numTex, conSigno: conSigno, pasos: pasos
+  };
+})();
+/* @@LOGICA-FIN */
+</script>
+
+<script id="interfaz">
+(function () {
+  "use strict";
+  var L = window.ALTURA, C = L.C, num = L.num;
+  var doc = document;
+  function $(s) { return doc.querySelector(s); }
+  function f1(v) { return Math.round(v * 10) / 10; }
+  function f2(v) { return Math.round(v * 100) / 100; }
+  function limitar(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function suave(t) { t = limitar(t, 0, 1); return 1 - Math.pow(1 - t, 3); }
+  function rebote(t) { t = limitar(t, 0, 1); var c = 1.70158, c3 = c + 1; return 1 + c3 * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); }
+  var FUENTE = 'ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  var NBSP = String.fromCharCode(160);
+
+  /* ---------- Estado ---------- */
+  var estado = L.estadoInicial();
+  var ui = { pestana: "medir", paso: 5, arrastre: null, tocado: false, cascada: null, pasosVisibles: 0 };
+  var mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  var forzarQuieto = /[?&]quieto\b/.test(location.search);
+  var quieto = forzarQuieto || !!(mq && mq.matches);
+  doc.documentElement.classList.toggle("quieto", quieto);
+
+  var escena = $("#escena"), svg = $("#lienzo");
+  var asas = { A: $("#asa-a"), B: $("#asa-b") };
+  var W = 0, H = 0, cam = null, nodos = {};
+  var medidor = doc.createElement("canvas").getContext("2d");
+  var anim = { t: 0, intro: quieto ? null : 0, pajaros: { x: -9999, prox: 7 }, brillo: { x: -1, prox: 2.5 } };
+  var personas = { A: { x: null, fase: 0, amp: 0 }, B: { x: null, fase: 0, amp: 0 } };
+  var agujas = { A: { v: 0, vel: 0 }, B: { v: 0, vel: 0 } };
+  var foco = { tri: 0, vara: 0 };
+  var contador = { valor: NaN, desde: NaN, hasta: NaN, t0: 0, dur: 0.7 };
+  var geoSucia = true, infFotograma = null;
+  var arrastres = { A: null, B: null };
+  function arrastrando() { return !!(arrastres.A || arrastres.B); }
+
+  /* ---------- Cámara: el mundo en metros sobre el lienzo en píxeles ---------- */
+  function camara(W, H) {
+    var estrecho = W < 560;
+    var bandaInf = estrecho ? 58 : 76, arriba = estrecho ? 24 : 40, izq = estrecho ? 8 : 18;
+    var mIzq = C.distanciaMax + 1.3;
+    var mDer = W >= 760 ? C.anchoEdificio + 0.9 : (W >= 480 ? 7 : 3.4);
+    var sAlto = (H - bandaInf - arriba) / (C.alturaEdificio + 2.8);
+    var sAncho = (W - izq - 6) / (mIzq + mDer);
+    var s = Math.min(sAlto, sAncho);
+    var total = (mIzq + C.anchoEdificio + 0.9) * s;
+    var ox = total <= W - 2 * izq ? (W - total) / 2 + mIzq * s : izq + mIzq * s;
+    return { s: s, ox: ox, gy: H - bandaInf, estrecho: estrecho, bandaInf: bandaInf, fs: estrecho ? 11.5 : 12.5 };
+  }
+  function X(xm) { return cam.ox + xm * cam.s; }
+  function Y(ym) { return cam.gy - ym * cam.s; }
+  function n2(v) { return Math.round(v * 100) / 100; }
+
+  /* ---------- Piezas fijas de la escena (se rehacen al cambiar de tamaño) ---------- */
+  function semilla(s) {
+    return function () {
+      s = s + 0x6D2B79F5 | 0;
+      var t = Math.imul(s ^ s >>> 15, 1 | s);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function colina(sem, base, amp, paso, picos) {
+    var r = semilla(sem), pts = [];
+    for (var x = -paso; x <= W + paso * 2; x += paso) pts.push([x, base - amp * (picos ? 0.25 + 0.75 * r() : 0.45 + 0.55 * r())]);
+    var d = "M" + n2(pts[0][0]) + " " + H + " L" + n2(pts[0][0]) + " " + n2(pts[0][1]);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      var k = picos ? 0.12 : 1 / 6;
+      d += " C" + n2(p1[0] + (p2[0] - p0[0]) * k) + " " + n2(p1[1] + (p2[1] - p0[1]) * k) + " " +
+        n2(p2[0] - (p3[0] - p1[0]) * k) + " " + n2(p2[1] - (p3[1] - p1[1]) * k) + " " + n2(p2[0]) + " " + n2(p2[1]);
+    }
+    return d + " L" + n2(pts[pts.length - 1][0]) + " " + H + " Z";
+  }
+  function ventanas() {
+    var s = cam.s, lista = [];
+    var cols = [1.1, 3.9, 6.7, 9.5], filas = [1.75, 6.15, 10.55];
+    filas.forEach(function (y0, f) {
+      cols.forEach(function (x0, c) {
+        if (f === 0 && c === 0) return;           // ahí va la puerta
+        lista.push({ x: X(x0), y: Y(y0 + 2.5), w: 1.9 * s, h: 2.5 * s, fila: f });
+      });
+    });
+    return lista;
+  }
+  function nube(i, esc) {
+    var c = [[0, 0, 22], [24, -12, 26], [52, -4, 22], [72, 4, 16], [-18, 6, 14]];
+    var sombra = c.map(function (p) { return '<circle cx="' + p[0] * esc + '" cy="' + (p[1] + 6) * esc + '" r="' + p[2] * esc + '" fill="#cfe3f7"/>'; }).join("");
+    var luz = c.map(function (p) { return '<circle cx="' + p[0] * esc + '" cy="' + p[1] * esc + '" r="' + p[2] * esc + '" fill="#fff"/>'; }).join("");
+    return '<g id="nube-' + i + '" opacity=".95">' + sombra + luz + '<rect x="' + (-18 * esc) + '" y="' + (4 * esc) + '" width="' + 90 * esc + '" height="' + 14 * esc + '" rx="' + 7 * esc + '" fill="#fff"/></g>';
+  }
+  function arbol(id, xm, esc) {
+    var s = cam.s * esc, x = X(xm), y = cam.gy - 2;
+    var tronco = '<path d="M' + n2(x - 0.16 * s) + " " + n2(y) + " L" + n2(x - 0.09 * s) + " " + n2(y - 2.6 * s) + " L" + n2(x + 0.09 * s) + " " + n2(y - 2.6 * s) + " L" + n2(x + 0.16 * s) + " " + n2(y) + 'Z" fill="#7a4a2b"/>';
+    var copa = '<g id="' + id + '">' +
+      '<circle cx="' + n2(x - 0.9 * s) + '" cy="' + n2(y - 3.3 * s) + '" r="' + n2(1.25 * s) + '" fill="#1f8f4e"/>' +
+      '<circle cx="' + n2(x + 0.85 * s) + '" cy="' + n2(y - 3.5 * s) + '" r="' + n2(1.3 * s) + '" fill="#1d8649"/>' +
+      '<circle cx="' + n2(x) + '" cy="' + n2(y - 4.4 * s) + '" r="' + n2(1.55 * s) + '" fill="#2aa45c"/>' +
+      '<circle cx="' + n2(x - 0.35 * s) + '" cy="' + n2(y - 4.85 * s) + '" r="' + n2(0.75 * s) + '" fill="#4cc477" opacity=".9"/></g>';
+    return '<g data-x="' + n2(x) + '" data-y="' + n2(y - 2.6 * s) + '">' + tronco + copa + '</g>';
+  }
+
+  /* Con cielo de sobra (pantallas anchas), los móviles flotan arriba a la derecha de la escena; si no, van en el panel. */
+  var moviles = $(".moviles"), vistaMedir = $("#vista-medir"), nodoValorH = $("#valor-H");
+  function colocarMoviles() {
+    var cieloLibre = Y(C.alturaEdificio + 2.9);           /* hasta la punta del mástil */
+    var flotar = W >= 720 && cieloLibre >= 214;
+    if (flotar && moviles.parentNode !== escena) { escena.appendChild(moviles); moviles.classList.add("flotantes"); }
+    /* con su altura de verdad: si flotando tapan la bandera, vuelven al panel */
+    if (flotar && 16 + moviles.offsetHeight + 10 > cieloLibre) flotar = false;
+    if (!flotar && moviles.parentNode === escena) { moviles.classList.remove("flotantes"); vistaMedir.insertBefore(moviles, vistaMedir.firstChild); }
+    moviles.inert = flotar && ui.pestana === "resolver";
+  }
+
+  var altoCabecera = 0;
+  function construir() {
+    /* la altura de la escena en escritorio descuenta la cabecera real */
+    var hc = Math.round($(".cabecera").getBoundingClientRect().height);
+    if (hc !== altoCabecera) { altoCabecera = hc; doc.documentElement.style.setProperty("--alto-cabecera", hc + "px"); }
+    var caja = escena.getBoundingClientRect();
+    W = Math.max(260, Math.round(caja.width));
+    H = Math.max(200, Math.round(caja.height));
+    cam = camara(W, H);
+    doc.documentElement.style.setProperty("--alto-escena-real", H + "px");
+    claveVara = ""; claveAsas = { A: "", B: "" }; geoSucia = true;
+    colocarMoviles();
+    var s = cam.s, gy = cam.gy, techo = Y(C.alturaEdificio);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    var v = ventanas();
+    var o = [];
+
+    /* definiciones */
+    o.push('<defs>' +
+      '<linearGradient id="g-cielo" x1="0" y1="0" x2="0" y2="' + gy + '" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1450c8"/><stop offset=".42" stop-color="#2d86ee"/><stop offset=".8" stop-color="#8ccdff"/><stop offset="1" stop-color="#dcf3ff"/></linearGradient>' +
+      '<radialGradient id="g-sol"><stop offset="0" stop-color="#fffbe8"/><stop offset=".22" stop-color="#fff2bd" stop-opacity=".95"/><stop offset=".5" stop-color="#ffd76a" stop-opacity=".32"/><stop offset="1" stop-color="#ffd76a" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="g-suelo" x1="0" y1="' + gy + '" x2="0" y2="' + H + '" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#46d36c"/><stop offset=".07" stop-color="#2cb757"/><stop offset="1" stop-color="#127238"/></linearGradient>' +
+      '<linearGradient id="g-ladrillo" x1="' + n2(X(0)) + '" y1="0" x2="' + n2(X(C.anchoEdificio)) + '" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f0603f"/><stop offset=".45" stop-color="#de4a38"/><stop offset="1" stop-color="#c03a31"/></linearGradient>' +
+      '<linearGradient id="g-cristal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6f7ff"/><stop offset=".5" stop-color="#9fd7fc"/><stop offset="1" stop-color="#57a6ea"/></linearGradient>' +
+      '<linearGradient id="g-brillo" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="g-escalon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef1f5"/><stop offset="1" stop-color="#b9c1cc"/></linearGradient>' +
+      '<radialGradient id="g-luz-a"><stop offset="0" stop-color="#e2d8ff" stop-opacity=".95"/><stop offset="1" stop-color="#b49cff" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="g-luz-b"><stop offset="0" stop-color="#ffe0c2" stop-opacity=".95"/><stop offset="1" stop-color="#ffad6b" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="g-diana"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
+      '<pattern id="p-rayado" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#ff5a5f" fill-opacity=".26"/><rect width="3.5" height="9" fill="#fff" fill-opacity=".3"/></pattern>' +
+      '<clipPath id="c-ventanas">' + v.map(function (w) { return '<rect x="' + n2(w.x) + '" y="' + n2(w.y) + '" width="' + n2(w.w) + '" height="' + n2(w.h) + '"/>'; }).join("") + '</clipPath>' +
+      '<clipPath id="c-escena"><rect width="' + W + '" height="' + H + '"/></clipPath>' +
+    '</defs>');
+
+    /* cielo, sol y nubes */
+    var solX = Math.max(46, W * 0.1 + 24), solY = Math.max(34, Math.min(techo * 0.42, 120));
+    var solR = cam.estrecho ? 15 : 24;
+    o.push('<rect width="' + W + '" height="' + gy + '" fill="url(#g-cielo)"/>');
+    o.push('<g id="sol" transform="translate(' + n2(solX) + ' ' + n2(solY) + ')">' +
+      '<circle r="' + solR * 6 + '" fill="url(#g-sol)"/>' +
+      '<g id="sol-rayos" opacity=".55">' + (function () {
+        var r = ""; for (var i = 0; i < 12; i++) { var a = i * 30; r += '<path d="M' + (solR * 1.5) + ' -2 L' + (solR * 3.2) + ' 0 L' + (solR * 1.5) + ' 2Z" fill="#fff6d6" transform="rotate(' + a + ')"/>'; } return r;
+      })() + '</g>' +
+      '<circle r="' + solR + '" fill="#fff8dc"/><circle r="' + (solR * 0.8) + '" fill="#fffdf2"/></g>');
+    var escN = limitar(W / 950, 0.5, 1.15);
+    o.push('<g id="nubes">' + [0, 1, 2, 3].map(function (i) { return nube(i, escN * [1, 0.72, 1.12, 0.6][i]); }).join("") + '</g>');
+    o.push('<g id="pajaros" opacity="0"><path id="pajaro-0" fill="none" stroke="#1e3a6b" stroke-width="1.6" stroke-linecap="round"/><path id="pajaro-1" fill="none" stroke="#1e3a6b" stroke-width="1.4" stroke-linecap="round"/><path id="pajaro-2" fill="none" stroke="#1e3a6b" stroke-width="1.3" stroke-linecap="round"/></g>');
+
+    /* montes y colinas (de lejos a cerca) */
+    var alto = C.alturaEdificio * s;
+    o.push('<path id="monte-0" d="' + colina(7, gy, alto * 0.62, Math.max(46, W / 16), true) + '" fill="#8db7ea" opacity=".85"/>');
+    o.push('<path id="monte-1" d="' + colina(21, gy, alto * 0.36, Math.max(90, W / 8), false) + '" fill="#4fb57c"/>');
+    o.push('<path id="monte-2" d="' + colina(42, gy, alto * 0.17, Math.max(150, W / 5), false) + '" fill="#36a866"/>');
+
+    /* árboles al fondo */
+    o.push('<g id="arboles">' + arbol("copa-0", -38.6, 0.92) + arbol("copa-1", -17.2, 0.8) + arbol("copa-2", C.anchoEdificio + 3.2, 1) + '</g>');
+
+    /* suelo y zona sin acceso */
+    var zx0 = X(-C.zonaSinAcceso), zx1 = X(0);
+    o.push('<rect y="' + gy + '" width="' + W + '" height="' + (H - gy) + '" fill="url(#g-suelo)"/>');
+    o.push('<rect y="' + gy + '" width="' + W + '" height="2" fill="#7df09a" opacity=".55"/>');
+    o.push('<rect x="' + n2(zx0) + '" y="' + gy + '" width="' + n2(zx1 - zx0) + '" height="' + (H - gy) + '" fill="url(#p-rayado)"/>');
+    if (zx1 - zx0 >= 66) o.push('<text x="' + n2((zx0 + zx1) / 2) + '" y="' + (gy + 18) + '" text-anchor="middle" font-size="9.5" font-weight="800" letter-spacing="1.4" fill="#fff" stroke="#3a0d12" stroke-width="2.6" stroke-opacity=".75" paint-order="stroke" stroke-linejoin="round">SIN ACCESO</text>');
+
+    /* el edificio */
+    var e = [];
+    var bx = X(0), bw = C.anchoEdificio * s, by = techo, bh = alto;
+    e.push('<rect x="' + n2(bx) + '" y="' + n2(by) + '" width="' + n2(bw) + '" height="' + n2(bh) + '" fill="url(#g-ladrillo)"/>');
+    for (var yy = 0.5; yy < C.alturaEdificio - 0.6; yy += 0.5) e.push('<rect x="' + n2(bx) + '" y="' + n2(Y(yy)) + '" width="' + n2(bw) + '" height=".7" fill="#000" opacity=".06"/>');
+    e.push('<rect x="' + n2(bx) + '" y="' + n2(Y(1.2)) + '" width="' + n2(bw) + '" height="' + n2(1.2 * s) + '" fill="#9c3b33"/>');
+    [5.1, 9.5].forEach(function (yb) { e.push('<rect x="' + n2(bx) + '" y="' + n2(Y(yb + 0.28)) + '" width="' + n2(bw) + '" height="' + n2(0.28 * s) + '" fill="#f6e7dc" opacity=".92"/>'); });
+    e.push('<rect x="' + n2(bx) + '" y="' + n2(by) + '" width="' + n2(bw) + '" height="' + n2(0.65 * s) + '" fill="#a8352c"/>');
+    e.push('<rect x="' + n2(bx) + '" y="' + n2(by) + '" width="' + n2(bw) + '" height="' + n2(Math.max(1.5, 0.12 * s)) + '" fill="#ffd2c4" opacity=".7"/>');
+    e.push('<rect x="' + n2(bx) + '" y="' + n2(by) + '" width="' + n2(Math.max(1.5, 0.14 * s)) + '" height="' + n2(bh) + '" fill="#ffb3a0" opacity=".45"/>');
+    var filasV = [[], [], []];
+    v.forEach(function (w) {
+      filasV[w.fila].push('<rect x="' + n2(w.x - 0.1 * s) + '" y="' + n2(w.y - 0.1 * s) + '" width="' + n2(w.w + 0.2 * s) + '" height="' + n2(w.h + 0.24 * s) + '" rx="' + n2(0.12 * s) + '" fill="#f7f1ec"/>' +
+        '<rect x="' + n2(w.x) + '" y="' + n2(w.y) + '" width="' + n2(w.w) + '" height="' + n2(w.h) + '" fill="url(#g-cristal)"/>' +
+        '<rect x="' + n2(w.x + w.w / 2 - 0.04 * s) + '" y="' + n2(w.y) + '" width="' + n2(Math.max(0.8, 0.08 * s)) + '" height="' + n2(w.h) + '" fill="#f7f1ec"/>' +
+        '<path d="M' + n2(w.x + 0.15 * w.w) + ' ' + n2(w.y + w.h) + ' L' + n2(w.x + 0.55 * w.w) + ' ' + n2(w.y) + ' L' + n2(w.x + 0.75 * w.w) + ' ' + n2(w.y) + ' L' + n2(w.x + 0.35 * w.w) + ' ' + n2(w.y + w.h) + 'Z" fill="#fff" opacity=".22"/>');
+    });
+    filasV.forEach(function (f, i) { e.push('<g id="fila-' + i + '">' + f.join("") + '</g>'); });
+    var px0 = X(1.15), pw = 1.8 * s, py0 = Y(4.0), ph = 2.8 * s;
+    e.push('<rect x="' + n2(px0 - 0.12 * s) + '" y="' + n2(py0 - 0.12 * s) + '" width="' + n2(pw + 0.24 * s) + '" height="' + n2(ph + 0.12 * s) + '" fill="#f7f1ec"/>' +
+      '<rect x="' + n2(px0) + '" y="' + n2(py0) + '" width="' + n2(pw) + '" height="' + n2(ph) + '" fill="#3b6fa8"/>' +
+      '<rect x="' + n2(px0 + pw / 2 - 0.04 * s) + '" y="' + n2(py0) + '" width="' + n2(Math.max(0.8, 0.08 * s)) + '" height="' + n2(ph) + '" fill="#f7f1ec"/>' +
+      '<rect x="' + n2(px0 + 0.1 * s) + '" y="' + n2(py0 + 0.1 * s) + '" width="' + n2(pw * 0.3) + '" height="' + n2(ph * 0.85) + '" fill="#fff" opacity=".15"/>');
+    e.push('<g clip-path="url(#c-ventanas)"><rect id="brillo" x="-200" y="' + n2(by) + '" width="' + n2(2.2 * s) + '" height="' + n2(bh) + '" fill="url(#g-brillo)" transform="skewX(-20)" opacity="0"/></g>');
+    /* letrero sobre la azotea */
+    /* (deja sitio a la diana de la esquina y al mástil) */
+    var margenDiana = 22, visibleDer = Math.min(W - 6, X(C.anchoEdificio - 1.3) - 8), anchoVis = visibleDer - bx - margenDiana;
+    var fsBase = limitar(0.74 * s, 9, 14), fsL = fsBase, letrero = null, wl = 0;
+    var candidatos = [["IES EMILIO ALARCOS", 1], ["IES EMILIO ALARCOS", 0.86], ["IES ALARCOS", 1], ["IES ALARCOS", 0.84]];
+    for (var li = 0; li < candidatos.length && !letrero; li++) {
+      fsL = Math.max(8.5, fsBase * candidatos[li][1]);
+      medidor.font = "800 " + fsL + "px " + FUENTE;
+      wl = medidor.measureText(candidatos[li][0]).width + (candidatos[li][0].length - 1) * fsL * 0.12;
+      if (wl <= anchoVis) letrero = candidatos[li][0];
+    }
+    if (letrero) e.push('<text x="' + n2(bx + margenDiana + (anchoVis - wl) / 2) + '" y="' + n2(by - Math.max(6, 0.35 * s)) + '" font-size="' + n2(fsL) + '" font-weight="800" letter-spacing="' + n2(fsL * 0.12) + '" fill="#fff" stroke="#7a2620" stroke-width="3" paint-order="stroke" stroke-linejoin="round">' + letrero + '</text>');
+    /* mástil y bandera de Asturias */
+    var mx = X(C.anchoEdificio - 1.3);
+    if (mx < W - 10) {
+      e.push('<line x1="' + n2(mx) + '" y1="' + n2(by) + '" x2="' + n2(mx) + '" y2="' + n2(Y(C.alturaEdificio + 2.7)) + '" stroke="#e8edf3" stroke-width="' + n2(Math.max(1.4, 0.09 * s)) + '" stroke-linecap="round"/>');
+      e.push('<g id="bandera"><path id="bandera-tela" fill="#0b63c9"/><path id="bandera-cruz" fill="#ffc72c"/></g>');
+    }
+    /* escaleras con barandilla, valla y señal de prohibido el paso */
+    var esc = [], n = 8, xi = -5.5, xf = -1.2, paso = (xf - xi) / n, sub = 1.2 / n;
+    var pts = [X(xi) + "," + gy];
+    for (var k = 0; k < n; k++) {
+      pts.push(n2(X(xi + k * paso)) + "," + n2(Y((k + 1) * sub)));
+      pts.push(n2(X(xi + (k + 1) * paso)) + "," + n2(Y((k + 1) * sub)));
+    }
+    pts.push(n2(X(0)) + "," + n2(Y(1.2)), n2(X(0)) + "," + gy);
+    esc.push('<polygon points="' + pts.join(" ") + '" fill="url(#g-escalon)"/>');
+    for (k = 0; k < n; k++) esc.push('<rect x="' + n2(X(xi + k * paso)) + '" y="' + n2(Y((k + 1) * sub)) + '" width="' + n2(paso * s) + '" height="' + n2(Math.max(1, 0.035 * s)) + '" fill="#fff" opacity=".85"/>');
+    var bar = [];
+    [-5.25, -3.9, -2.55, -1.2, -0.12].forEach(function (xb) {
+      var base = xb < -1.2 ? limitar(Math.ceil((xb - xi) / paso), 1, n) * sub : 1.2;
+      bar.push([X(xb), Y(base), Y(base + 0.95)]);
+    });
+    bar.forEach(function (b) { esc.push('<line x1="' + n2(b[0]) + '" y1="' + n2(b[1]) + '" x2="' + n2(b[0]) + '" y2="' + n2(b[2]) + '" stroke="#e6ecf2" stroke-width="' + n2(Math.max(1, 0.05 * s)) + '"/>'); });
+    esc.push('<polyline points="' + bar.map(function (b) { return n2(b[0]) + "," + n2(b[2]); }).join(" ") + '" fill="none" stroke="#f4f7fa" stroke-width="' + n2(Math.max(1.2, 0.07 * s)) + '" stroke-linecap="round" stroke-linejoin="round"/>');
+    var vx0 = X(-C.zonaSinAcceso + 0.12), vx1 = X(-C.zonaSinAcceso + 0.98);
+    esc.push('<line x1="' + n2(vx0 + 0.08 * s) + '" y1="' + gy + '" x2="' + n2(vx0 + 0.08 * s) + '" y2="' + n2(Y(0.95)) + '" stroke="#d9dee5" stroke-width="' + n2(Math.max(1, 0.06 * s)) + '"/>' +
+      '<line x1="' + n2(vx1 - 0.08 * s) + '" y1="' + gy + '" x2="' + n2(vx1 - 0.08 * s) + '" y2="' + n2(Y(0.95)) + '" stroke="#d9dee5" stroke-width="' + n2(Math.max(1, 0.06 * s)) + '"/>');
+    var rayas = "", anchoValla = vx1 - vx0, tramos = 5;
+    for (k = 0; k < tramos; k++) rayas += '<rect x="' + n2(vx0 + k * anchoValla / tramos) + '" y="' + n2(Y(0.92)) + '" width="' + n2(anchoValla / tramos) + '" height="' + n2(0.26 * s) + '" fill="' + (k % 2 ? "#fff" : "#ef3b3b") + '"/>';
+    esc.push(rayas);
+    var sx = X(-C.zonaSinAcceso + 0.55), sr = Math.max(4, 0.34 * s);
+    esc.push('<line x1="' + n2(sx) + '" y1="' + n2(Y(0.92)) + '" x2="' + n2(sx) + '" y2="' + n2(Y(1.5)) + '" stroke="#c8cfd8" stroke-width="' + n2(Math.max(1, 0.05 * s)) + '"/>' +
+      '<circle cx="' + n2(sx) + '" cy="' + n2(Y(1.5) - sr) + '" r="' + n2(sr) + '" fill="#e82e2e" stroke="#fff" stroke-width="' + n2(Math.max(0.8, sr * 0.18)) + '"/>' +
+      '<rect x="' + n2(sx - sr * 0.62) + '" y="' + n2(Y(1.5) - sr - sr * 0.16) + '" width="' + n2(sr * 1.24) + '" height="' + n2(sr * 0.32) + '" fill="#fff"/>');
+    o.push('<g id="edificio">' + e.join("") + '</g>');
+    o.push('<g id="escaleras">' + esc.join("") + '</g>');
+
+    /* piezas que se mueven (geometría, personas, cotas y etiquetas) */
+    o.push('<g id="geo">' +
+      '<polygon id="tri-a" fill="#b49cff" fill-opacity="0" stroke="#b49cff" stroke-opacity="0" stroke-width="1.2"/>' +
+      '<polygon id="tri-b" fill="#ffad6b" fill-opacity="0" stroke="#ffad6b" stroke-opacity="0" stroke-width="1.2"/>' +
+      '<line id="linea-ojos" stroke="#fff" stroke-opacity=".55" stroke-width="1.3" stroke-dasharray="5 6"/>' +
+      '<g id="haz-a"><line class="halo" stroke="#efe8ff" stroke-opacity=".42" stroke-width="7" stroke-linecap="round"/><line class="nucleo" stroke="#9a7bff" stroke-width="2.6" stroke-linecap="round"/><line class="flujo" stroke="#fff" stroke-opacity=".95" stroke-width="3" stroke-dasharray="0.1 22" stroke-linecap="round"/></g>' +
+      '<g id="haz-b"><line class="halo" stroke="#fff0e2" stroke-opacity=".42" stroke-width="7" stroke-linecap="round"/><line class="nucleo" stroke="#ff8f3d" stroke-width="2.6" stroke-linecap="round"/><line class="flujo" stroke="#fff" stroke-opacity=".95" stroke-width="3" stroke-dasharray="0.1 22" stroke-linecap="round"/></g>' +
+      '<path id="cuna-a" fill="#b49cff" fill-opacity=".28"/><path id="arco-a" fill="none" stroke="#c7b5ff" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<path id="cuna-b" fill="#ffad6b" fill-opacity=".3"/><path id="arco-b" fill="none" stroke="#ffc08d" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<g id="cota-h"><line id="cota-h-linea" stroke="#fff" stroke-width="1.6"/><path id="cota-h-marcas" stroke="#fff" stroke-width="1.6" fill="none"/></g>' +
+      '<g id="diana"><circle id="diana-halo" r="16" fill="url(#g-diana)" opacity=".7"/><circle id="diana-anillo" r="8" fill="none" stroke="#fff" stroke-width="1.4" stroke-dasharray="3 3"/><circle r="3.4" fill="#fff"/></g>' +
+    '</g>');
+    o.push('<g id="vara" opacity="0"><g id="vara-tramos"></g><line id="vara-fantasma" stroke="#ffd166" stroke-width="1.6" stroke-dasharray="4 4"/></g>');
+    o.push('<g id="personas">' + persona("A") + persona("B") + '</g>');
+    o.push('<g id="cotas">' +
+      '<line id="cinta" stroke="#ffd166" stroke-width="3.4" stroke-linecap="round"/><path id="cinta-marcas" stroke="#7a5a00" stroke-width="1" fill="none"/><circle id="cinta-carrete" r="5" fill="#ffd166" stroke="#7a5a00" stroke-width="1.6"/>' +
+      '<line id="cota-x" stroke="#fff" stroke-opacity=".85" stroke-width="1.4" stroke-dasharray="4 4"/><path id="cota-x-marcas" stroke="#fff" stroke-opacity=".85" stroke-width="1.4" fill="none"/>' +
+    '</g>');
+    o.push('<g id="etiquetas">' + ["etq-a", "etq-b", "etq-h", "etq-d", "etq-x", "etq-H", "etq-ojos"].map(function (id) {
+      return '<g id="' + id + '" opacity="0"><rect fill="#080c1c" fill-opacity=".78" stroke="#fff" stroke-opacity=".16"/><text fill="#fff" font-weight="650" text-anchor="middle"></text></g>';
+    }).join("") + '</g>');
+
+    svg.innerHTML = o.join("");
+    nodos = {};
+    Array.prototype.forEach.call(svg.querySelectorAll("[id]"), function (nd) { nodos[nd.id] = nd; });
+    nodos.copas = [0, 1, 2].map(function (i) { return nodos["copa-" + i]; });
+    ["A", "B"].forEach(function (k) {
+      var g = nodos["persona-" + k.toLowerCase()];
+      nodos["p" + k] = {
+        g: g, sombra: g.querySelector(".sombra"), p1: g.querySelector(".pierna-1"), p2: g.querySelector(".pierna-2"),
+        torso: g.querySelector(".torso"), brazo: g.querySelector(".brazo"), cabeza: g.querySelector(".cabeza"),
+        pelo: g.querySelector(".pelo"), luz: g.querySelector(".luz"), movil: g.querySelector(".movil-cuerpo"),
+        pantalla: g.querySelector(".movil-luz"), insignia: g.querySelector(".insignia-g")
+      };
+    });
+    dibujar();
+  }
+
+  function persona(k) {
+    var a = k === "A";
+    return '<g id="persona-' + k.toLowerCase() + '">' +
+      '<ellipse class="sombra" fill="#0b3d1f" opacity=".3"/>' +
+      '<path class="pierna-1" stroke="#1a2350" stroke-linecap="round" fill="none"/>' +
+      '<path class="pierna-2" stroke="#232e66" stroke-linecap="round" fill="none"/>' +
+      '<rect class="torso" fill="' + (a ? "#8f6dff" : "#ff8a3a") + '" stroke="#0b1020" stroke-opacity=".35" stroke-width=".8"/>' +
+      '<circle class="cabeza" fill="' + (a ? "#f3c9a6" : "#c58b61") + '" stroke="#0b1020" stroke-opacity=".3" stroke-width=".8"/>' +
+      '<path class="pelo" fill="' + (a ? "#2b1a10" : "#121212") + '"/>' +
+      '<circle class="luz" fill="url(#g-luz-' + k.toLowerCase() + ')"/>' +
+      '<path class="brazo" stroke="' + (a ? "#6e4ef0" : "#e8681c") + '" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      '<g class="movil-g"><rect class="movil-cuerpo" fill="#10142a"/><rect class="movil-luz" fill="' + (a ? "#e4d9ff" : "#ffe1c4") + '"/></g>' +
+      '<g class="insignia-g"><circle fill="' + (a ? "#b49cff" : "#ffad6b") + '" stroke="#fff" stroke-width="1.6"/><text text-anchor="middle" font-weight="800" fill="#0b1020">' + k + '</text></g>' +
+    '</g>';
+  }
+
+  /* ---------- Etiquetas con pastilla ---------- */
+  function etiqueta(id, texto, cx, cy, op) {
+    var g = nodos[id]; if (!g) return null;
+    op = op || {};
+    var alfa = op.opacidad == null ? 1 : op.opacidad;
+    if (!texto || alfa <= 0.01) { g.setAttribute("opacity", "0"); return null; }
+    var fs = op.fs || cam.fs;
+    var rect = g.firstChild, tx = g.lastChild;
+    if (g.__t !== texto || g.__fs !== fs) {
+      tx.textContent = texto;
+      tx.setAttribute("font-size", fs);
+      medidor.font = "650 " + fs + "px " + FUENTE;
+      g.__w = Math.ceil(medidor.measureText(texto).width) + 16;
+      g.__t = texto; g.__fs = fs;
+    }
+    var w = g.__w, h = fs + 11;
+    var x0 = op.ancla === "izq" ? cx : (op.ancla === "der" ? cx - w : cx - w / 2);
+    x0 = limitar(x0, 4, W - w - 4);
+    var y0 = limitar(cy - h / 2, 4, H - h - 3);
+    rect.setAttribute("x", n2(x0)); rect.setAttribute("y", n2(y0));
+    rect.setAttribute("width", w); rect.setAttribute("height", h); rect.setAttribute("rx", h / 2);
+    rect.setAttribute("stroke", op.borde || "#fff");
+    rect.setAttribute("stroke-opacity", op.borde ? ".85" : ".16");
+    tx.setAttribute("x", n2(x0 + w / 2)); tx.setAttribute("y", n2(y0 + h / 2 + fs * 0.36));
+    tx.setAttribute("fill", op.color || "#fff");
+    g.setAttribute("opacity", alfa.toFixed(3));
+    return { x: x0, y: y0, w: w, h: h };
+  }
+  function choca(a, b) { return a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h; }
+
+  /* ---------- Avance de las animaciones ---------- */
+  function avanzar(dt, dtReal) {
+    anim.t += dt;
+    if (anim.intro !== null) { anim.intro += dtReal == null ? dt : dtReal; if (anim.intro > 2.7) anim.intro = null; }
+    ["A", "B"].forEach(function (k) {
+      var xm = k === "A" ? -estado.dA : -estado.dB, p = personas[k];
+      if (p.x === null) p.x = xm;
+      var dx = xm - p.x; p.x = xm;
+      var vel = dt > 0 ? Math.abs(dx) / dt : 0;
+      var objetivo = quieto ? 0 : Math.min(1, vel / 1.3);
+      p.amp += (objetivo - p.amp) * Math.min(1, dt * (objetivo > p.amp ? 16 : 5));
+      if (!quieto) p.fase += Math.abs(dx) / (0.42 * estado.ojos / 1.6) * Math.PI * 0.5;
+    });
+    var inf = L.informe(estado);
+    infFotograma = inf;
+    var agujaViva = false;
+    [["A", inf.m.alfa], ["B", inf.m.beta]].forEach(function (par) {
+      var ag = agujas[par[0]];
+      if (quieto || dt === 0) { ag.v = par[1]; ag.vel = 0; return; }
+      var w = 16, acc = w * w * (par[1] - ag.v) - 2 * w * ag.vel;
+      ag.vel += acc * dt; ag.v += ag.vel * dt;
+      if (Math.abs(par[1] - ag.v) > 0.004 || Math.abs(ag.vel) > 0.004) agujaViva = true;
+    });
+    var objTri = ui.pestana === "resolver" ? 1 : 0;
+    foco.tri += (objTri - foco.tri) * (quieto ? 1 : Math.min(1, dt * 7));
+    var objVara = (ui.pestana === "resolver" && ui.paso === 5 && inf.r.valido) ? 1 : 0;
+    if (quieto) foco.vara = objVara;
+    else foco.vara = objVara ? Math.min(1, foco.vara + dt / 0.9) : Math.max(0, foco.vara - dt / 0.35);
+    if (!quieto) {
+      var pj = anim.pajaros;
+      if (pj.x < -500) { pj.prox -= dt; if (pj.prox <= 0) { pj.x = -60; pj.y = 0.18 + Math.random() * 0.25; pj.v = 34 + Math.random() * 20; } }
+      else { pj.x += pj.v * dt; if (pj.x > W + 80) { pj.x = -9999; pj.prox = 16 + Math.random() * 18; } }
+      var br = anim.brillo;
+      if (br.x < 0) { br.prox -= dt; if (br.prox <= 0) br.x = 0; }
+      else { br.x += dt / 1.3; if (br.x > 1) { br.x = -1; br.prox = 6 + Math.random() * 5; } }
+    }
+    if (!isNaN(contador.hasta)) {
+      var q = quieto ? 1 : limitar((performance.now() / 1000 - contador.t0) / contador.dur, 0, 1);
+      contador.valor = contador.desde + (contador.hasta - contador.desde) * suave(q);
+    }
+    /* la geometría solo se redibuja mientras algo se mueve de verdad */
+    if (anim.intro !== null || personas.A.amp > 0.004 || personas.B.amp > 0.004 || agujaViva ||
+        (foco.tri > 0.001 && foco.tri < 0.999) || (foco.vara > 0 && foco.vara < 1) || !isNaN(contador.hasta) ||
+        (estado.temblor && !quieto)) geoSucia = true;
+  }
+  function enIntro(ini, dur, fn) {
+    if (anim.intro === null) return 1;
+    return (fn || suave)((anim.intro - ini) / dur);
+  }
+
+  /* ---------- Dibujo de cada fotograma ---------- */
+  function dibujar() {
+    if (!cam || !nodos.geo) return;
+    var t = anim.t, s = cam.s, gy = cam.gy;
+    var inf = infFotograma || L.informe(estado), m = inf.m;
+    infFotograma = null;
+    var ojos = estado.ojos;
+    var T = { x: X(0), y: Y(C.alturaEdificio) };
+    var eA = { x: X(-estado.dA), y: Y(ojos) }, eB = { x: X(-estado.dB), y: Y(ojos) };
+    var resolviendo = ui.pestana === "resolver";
+
+    /* decorado vivo (cada fotograma, pocas piezas) */
+    if (!quieto) {
+      nodos["haz-a"].childNodes[2].setAttribute("stroke-dashoffset", n2(-t * 34));
+      nodos["haz-b"].childNodes[2].setAttribute("stroke-dashoffset", n2(-t * 34));
+      nodos["linea-ojos"].setAttribute("stroke-dashoffset", n2(-t * 6));
+      nodos["diana-anillo"].setAttribute("transform", "rotate(" + ((t * 60) % 360).toFixed(1) + ")");
+      nodos["diana-halo"].setAttribute("r", n2(14 + Math.sin(t * 3) * 3));
+      nodos.pA.luz.setAttribute("opacity", (0.55 + Math.sin(t * 3) * 0.12).toFixed(3));
+      nodos.pB.luz.setAttribute("opacity", (0.55 + Math.sin(t * 3 + 1.3) * 0.12).toFixed(3));
+    }
+    nodos["sol-rayos"].setAttribute("transform", "rotate(" + (quieto ? 0 : (t * 4) % 360).toFixed(2) + ")");
+    var datosN = [[0.06, 0.2, 9], [0.42, 0.09, 13], [0.7, 0.3, 6], [0.24, 0.42, 10]];
+    for (var i = 0; i < 4; i++) {
+      var dn = datosN[i], ancho = W + 260;
+      var nx = ((dn[0] * ancho + (quieto ? 0 : t * dn[2])) % ancho) - 130;
+      var ny = Math.max(22, T.y * dn[1] + 18);
+      nodos["nube-" + i].setAttribute("transform", "translate(" + n2(nx) + " " + n2(ny) + ")");
+    }
+    var pj = anim.pajaros;
+    if (pj.x > -500 && !quieto) {
+      nodos.pajaros.setAttribute("opacity", "1");
+      for (var b = 0; b < 3; b++) {
+        var bx = pj.x - b * 18, by = T.y * pj.y + (b % 2) * 9 + Math.sin(t * 2 + b) * 3, al = Math.sin(t * 11 + b * 1.7) * 4;
+        nodos["pajaro-" + b].setAttribute("d", "M" + n2(bx - 6) + " " + n2(by - al) + " Q" + n2(bx - 3) + " " + n2(by - 3 - al * 0.3) + " " + n2(bx) + " " + n2(by) + " Q" + n2(bx + 3) + " " + n2(by - 3 - al * 0.3) + " " + n2(bx + 6) + " " + n2(by - al));
+      }
+    } else nodos.pajaros.setAttribute("opacity", "0");
+    nodos.copas.forEach(function (c, i) {
+      var pd = c.parentNode, ang = quieto ? 0 : Math.sin(t * 1.1 + i * 2.1) * 1.6;
+      c.setAttribute("transform", "rotate(" + ang.toFixed(2) + " " + pd.getAttribute("data-x") + " " + pd.getAttribute("data-y") + ")");
+    });
+    if (nodos["bandera-tela"]) bandera(t);
+    var br = anim.brillo;
+    nodos.brillo.setAttribute("opacity", br.x >= 0 ? "1" : "0");
+    if (br.x >= 0) nodos.brillo.setAttribute("x", n2(X(-3) + br.x * (C.anchoEdificio + 9) * s));
+
+    /* geometría: solo si ha cambiado algo o se está animando */
+    if (!geoSucia) return;
+    geoSucia = false;
+
+    /* entrada: montes, edificio y personas */
+    nodos["monte-0"].setAttribute("transform", "translate(0 " + n2((1 - enIntro(0, 1)) * 60) + ")");
+    nodos["monte-1"].setAttribute("transform", "translate(0 " + n2((1 - enIntro(0.08, 1)) * 50) + ")");
+    nodos["monte-2"].setAttribute("transform", "translate(0 " + n2((1 - enIntro(0.16, 1)) * 40) + ")");
+    var pe = enIntro(0.3, 0.9, rebote);
+    nodos.edificio.setAttribute("transform", pe >= 1 ? "" : "translate(0 " + gy + ") scale(1 " + Math.max(0.001, pe).toFixed(4) + ") translate(0 " + (-gy) + ")");
+    for (var f = 0; f < 3; f++) nodos["fila-" + f].setAttribute("opacity", enIntro(0.75 + f * 0.12, 0.35).toFixed(3));
+    nodos.escaleras.setAttribute("opacity", enIntro(0.55, 0.5).toFixed(3));
+
+    /* rayos de mirada, ángulos y diana */
+    var pHaz = enIntro(1.35, 0.55);
+    haz("haz-a", eA, T, pHaz, t);
+    haz("haz-b", eB, T, enIntro(1.45, 0.55), t);
+    var pLin = enIntro(1.2, 0.5);
+    nodos["linea-ojos"].setAttribute("x1", n2(eA.x - 14)); nodos["linea-ojos"].setAttribute("y1", n2(eA.y));
+    nodos["linea-ojos"].setAttribute("x2", n2(eA.x - 14 + (T.x - eA.x + 14) * pLin)); nodos["linea-ojos"].setAttribute("y2", n2(eA.y));
+    var rA = limitar(3.1 * s, 26, 58), rB = limitar(2.6 * s, 22, 50);
+    var pAng = enIntro(1.7, 0.6);
+    arco("a", eA, m.real.alfa * pAng, rA);
+    arco("b", eB, m.real.beta * pAng, rB);
+    var dn2 = nodos.diana, pD = enIntro(1.8, 0.4, rebote);
+    dn2.setAttribute("transform", "translate(" + n2(T.x) + " " + n2(T.y) + ") scale(" + Math.max(0.001, pD).toFixed(3) + ")");
+
+    /* triángulos al resolver */
+    var pt = foco.tri;
+    var base = { x: X(0), y: Y(ojos) };
+    [["tri-a", eA], ["tri-b", eB]].forEach(function (par) {
+      var nd = nodos[par[0]];
+      nd.setAttribute("points", n2(par[1].x) + "," + n2(par[1].y) + " " + n2(base.x) + "," + n2(base.y) + " " + n2(T.x) + "," + n2(T.y));
+      nd.setAttribute("fill-opacity", (pt * (par[0] === "tri-a" ? 0.16 : 0.2)).toFixed(3));
+      nd.setAttribute("stroke-opacity", (pt * 0.7).toFixed(3));
+    });
+
+    /* cota de h junto a la fachada; con errores, al resolver, mide la h calculada (no la de verdad) */
+    var hx = X(0) - (cam.estrecho ? 9 : 13);
+    var glowH = resolviendo && (ui.paso === 2 || ui.paso === 4);
+    var calculada = resolviendo && inf.m.conErrores && inf.r.valido;
+    var hTop = calculada && ui.paso >= 4 ? Math.max(4, Y(ojos + inf.r.h)) : T.y;
+    nodos["cota-h-linea"].setAttribute("x1", n2(hx)); nodos["cota-h-linea"].setAttribute("x2", n2(hx));
+    nodos["cota-h-linea"].setAttribute("y1", n2(Y(ojos))); nodos["cota-h-linea"].setAttribute("y2", n2(hTop));
+    nodos["cota-h-marcas"].setAttribute("d", "M" + n2(hx - 5) + " " + n2(Y(ojos)) + " h10 M" + n2(hx - 5) + " " + n2(hTop) + " h10");
+    nodos["cota-h"].setAttribute("stroke", glowH ? "#45dcff" : "#fff");
+    nodos["cota-h-linea"].setAttribute("stroke", glowH ? "#45dcff" : "#fff");
+    nodos["cota-h-marcas"].setAttribute("stroke", glowH ? "#45dcff" : "#fff");
+    nodos["cota-h"].setAttribute("opacity", enIntro(2, 0.4).toFixed(3));
+
+    /* personas */
+    var pPA = enIntro(0.95, 0.6, rebote), pPB = enIntro(1.08, 0.6, rebote);
+    var vib = function (fase) { return estado.temblor && !quieto ? (Math.sin(t * 17.3 + fase) + Math.sin(t * 23.9 + fase * 2) + Math.sin(t * 31.1 + fase * 3)) / 3 * 0.22 * estado.temblorMax : 0; };
+    var tembA = vib(0), tembB = vib(1.7);
+    dibujarPersona("A", -estado.dA, m.alfa + tembA, pPA, personas.A);
+    dibujarPersona("B", -estado.dB, m.beta + tembB, pPB, personas.B);
+
+    /* cinta métrica entre los pies (d) y cota de x */
+    var pC = enIntro(2.05, 0.45);
+    var cy = gy + 6;
+    nodos.cinta.setAttribute("x1", n2(eA.x)); nodos.cinta.setAttribute("x2", n2(eA.x + (eB.x - eA.x) * pC));
+    nodos.cinta.setAttribute("y1", cy); nodos.cinta.setAttribute("y2", cy);
+    var marcas = "";
+    for (var mt = 1; mt < estado.dA - estado.dB; mt += 1) { var mx = eA.x + mt * s; if (mx > eA.x + (eB.x - eA.x) * pC) break; marcas += "M" + n2(mx) + " " + (cy - 1.8) + " v3.6 "; }
+    nodos["cinta-marcas"].setAttribute("d", marcas || "M0 0");
+    nodos["cinta-carrete"].setAttribute("cx", n2(eA.x)); nodos["cinta-carrete"].setAttribute("cy", cy);
+    nodos.cotas.setAttribute("opacity", pC.toFixed(3));
+    var filaX = gy + (cam.estrecho ? 45 : 52);
+    var xFin = calculada && ui.paso >= 3 ? limitar(X(-estado.dB + inf.r.x), eB.x + 6, W - 4) : X(0);
+    nodos["cota-x"].setAttribute("x1", n2(eB.x)); nodos["cota-x"].setAttribute("x2", n2(xFin));
+    nodos["cota-x"].setAttribute("y1", filaX); nodos["cota-x"].setAttribute("y2", filaX);
+    var glowX = resolviendo && ui.paso === 3 && inf.r.valido;
+    nodos["cota-x"].setAttribute("stroke", glowX ? "#45dcff" : "#fff");
+    nodos["cota-x-marcas"].setAttribute("stroke", glowX ? "#45dcff" : "#fff");
+    nodos["cota-x-marcas"].setAttribute("d", "M" + n2(eB.x) + " " + (filaX - 5) + " v10 M" + n2(xFin) + " " + (filaX - 5) + " v10");
+
+    /* la vara de medir H (último paso de la resolución), con sus etiquetas; nada debe pisarlas */
+    var ocupados = [];
+    var vara = dibujarVara(inf, [eA, eB]);
+    if (vara) { ocupados.push(vara.vara); if (vara.H) ocupados.push(vara.H); if (vara.ojos) ocupados.push(vara.ojos); }
+
+    /* etiquetas: primero las de abajo (d y x) y la de h; después α y β, cada una en el primer sitio libre */
+    var pE = enIntro(2.1, 0.5);
+    var largo = !cam.estrecho;
+    var cajaD = etiqueta("etq-d", "d = " + num(m.d, 2) + " m", (eA.x + eB.x) / 2, gy + (cam.estrecho ? 20 : 25), { opacidad: pE, color: "#ffe6a8" });
+    if (cajaD) ocupados.push(cajaD);
+    var conX = resolviendo && ui.paso >= 3 && inf.r.valido;
+    var cajaX = etiqueta("etq-x", conX ? "x ≈ " + num(inf.r.x, 2) + " m" : "x = ?", (eB.x + xFin) / 2, filaX, { opacidad: pE, color: glowX ? "#bff4ff" : "#fff", borde: glowX ? "#45dcff" : null });
+    if (cajaX) ocupados.push(cajaX);
+    var conH = resolviendo && ui.paso >= 4 && inf.r.valido;
+    var textoH = conH ? "h ≈ " + num(inf.hRed, 2) + " m" : "h = ?", mitadH = (Y(ojos) + hTop) / 2;
+    var opH = { opacidad: pE, color: glowH ? "#bff4ff" : "#fff", borde: glowH ? "#45dcff" : null };
+    colocar("etq-h", textoH, vara ? [
+        { cx: X(0) + 6, cy: mitadH, ancla: "izq" }, { cx: vara.vara.x - 6, cy: mitadH, ancla: "der" },
+        { cx: vara.vara.x - 6, cy: mitadH - 30, ancla: "der" }, { cx: vara.vara.x - 6, cy: mitadH + 30, ancla: "der" },
+        { cx: vara.vara.x - 6, cy: mitadH - 60, ancla: "der" }, { cx: vara.vara.x - 6, cy: mitadH + 60, ancla: "der" }]
+      : [{ cx: hx - 8, cy: mitadH, ancla: "der" }], opH, ocupados);
+    var bisA = m.real.alfa * pAng / 2 / L.GRAD, bisB = m.real.beta * pAng / 2 / L.GRAD;
+    var txtA = largo ? "α " + num(m.alfa, 1) + "°" : "α", txtB = largo ? "β " + num(m.beta, 1) + "°" : "β";
+    colocar("etq-b", txtB, [
+      { cx: eB.x + (rB + (largo ? 30 : 12)) * Math.cos(bisB), cy: eB.y - (rB + 12) * Math.sin(bisB) },
+      { cx: eB.x, cy: eB.y - rB - 26 },
+      { cx: eB.x - 6, cy: eB.y - rB - 18, ancla: "der" },
+      { cx: eB.x - 6, cy: eB.y - rB - 46, ancla: "der" },
+      { cx: eB.x + 6, cy: eB.y - rB - 58, ancla: "izq" },
+      { cx: eB.x - 6, cy: eB.y - rB - 74, ancla: "der" }
+    ].concat(vara ? [
+      { cx: vara.vara.x + vara.vara.w + 6, cy: eB.y - rB - 12, ancla: "izq" },
+      { cx: vara.vara.x + vara.vara.w + 6, cy: eB.y - rB - 40, ancla: "izq" }
+    ] : []), { opacidad: pE, color: "#ffd2ae" }, ocupados);
+    var ayA = eA.y - (rA + 12) * Math.sin(bisA);
+    colocar("etq-a", txtA, [
+      { cx: eA.x + (rA + (largo ? 30 : 12)) * Math.cos(bisA), cy: ayA },
+      { cx: eA.x - 10, cy: ayA - 6, ancla: "der" },
+      { cx: eA.x, cy: eA.y - rA - 30 },
+      { cx: eA.x - 10, cy: eA.y - rA - 52, ancla: "der" },
+      { cx: eA.x - 30, cy: ayA + 2, ancla: "der" },
+      { cx: eA.x - 10, cy: eA.y - rA - 78, ancla: "der" },
+      { cx: eA.x - 10, cy: eA.y - rA - 102, ancla: "der" }
+    ], { opacidad: pE, color: "#ddd2ff" }, ocupados);
+
+    /* asas sobre las personas */
+    colocarAsas(eA, eB);
+    /* agujas de los móviles del panel */
+    dial("a", agujas.A.v + tembA);
+    dial("b", agujas.B.v + tembB);
+    if (!isNaN(contador.hasta)) {
+      var txt = num(contador.valor, 2);
+      if (nodoValorH.textContent !== txt) nodoValorH.textContent = txt;
+      if (contador.valor === contador.hasta) contador.hasta = NaN;
+    }
+    if (anim.intro !== null) introLecturas(inf);
+  }
+
+  function haz(id, e, T, p, t) {
+    var g = nodos[id]; if (!g) return;
+    var x2 = e.x + (T.x - e.x) * p, y2 = e.y + (T.y - e.y) * p;
+    for (var i = 0; i < 3; i++) {
+      var l = g.childNodes[i];
+      l.setAttribute("x1", n2(e.x)); l.setAttribute("y1", n2(e.y)); l.setAttribute("x2", n2(x2)); l.setAttribute("y2", n2(y2));
+    }
+    g.setAttribute("opacity", p > 0 ? "1" : "0");
+  }
+  function arco(k, e, grados, r) {
+    var a = grados / L.GRAD, ex = e.x + r * Math.cos(a), ey = e.y - r * Math.sin(a);
+    nodos["cuna-" + k].setAttribute("d", "M" + n2(e.x) + " " + n2(e.y) + " L" + n2(e.x + r) + " " + n2(e.y) + " A" + r + " " + r + " 0 0 0 " + n2(ex) + " " + n2(ey) + " Z");
+    nodos["arco-" + k].setAttribute("d", "M" + n2(e.x + r) + " " + n2(e.y) + " A" + r + " " + r + " 0 0 0 " + n2(ex) + " " + n2(ey));
+  }
+  function bandera(t) {
+    var s = cam.s, mx = X(C.anchoEdificio - 1.3), top = Y(C.alturaEdificio + 2.7);
+    var w = Math.max(16, 1.7 * s), h = Math.max(11, 1.1 * s), amp = quieto ? 0 : Math.max(1, 0.12 * s);
+    var pIn = enIntro(1.25, 0.6);
+    function def(u, v) { return [mx + u * w * pIn, top + v * h + Math.sin(t * 5 - u * 4.2) * amp * u]; }
+    var d = "", nPts = 10, i, pt;
+    for (i = 0; i <= nPts; i++) { pt = def(i / nPts, 0); d += (i ? " L" : "M") + n2(pt[0]) + " " + n2(pt[1]); }
+    for (i = nPts; i >= 0; i--) { pt = def(i / nPts, 1); d += " L" + n2(pt[0]) + " " + n2(pt[1]); }
+    nodos["bandera-tela"].setAttribute("d", d + "Z");
+    var cruz = [[0.42, 0.14], [0.5, 0.14], [0.5, 0.33], [0.62, 0.33], [0.62, 0.43], [0.5, 0.43], [0.5, 0.86], [0.42, 0.86], [0.42, 0.43], [0.3, 0.43], [0.3, 0.33], [0.42, 0.33]];
+    nodos["bandera-cruz"].setAttribute("d", cruz.map(function (c, j) { var q = def(c[0], c[1]); return (j ? "L" : "M") + n2(q[0]) + " " + n2(q[1]); }).join(" ") + "Z");
+  }
+
+  function dibujarPersona(k, xm, inclin, pIntro, est) {
+    var P = nodos["p" + k]; if (!P) return;
+    var kk = estado.ojos / 1.6, u = cam.s * kk;
+    var x = X(xm), y = cam.gy;
+    P.g.setAttribute("transform", "translate(" + n2(x) + " " + n2(y - (1 - pIntro) * 80) + ")");
+    P.g.setAttribute("opacity", limitar(pIntro * 1.6, 0, 1).toFixed(3));
+    var amp = est.amp, fase = est.fase;
+    var bob = -Math.abs(Math.sin(fase)) * 0.035 * u * amp;
+    var ang = Math.sin(fase) * 0.48 * amp;
+    var hx = -0.08 * u, hy = -0.86 * u + bob, lp = 0.86 * u;
+    var grosor = Math.max(1.6, 0.115 * u);
+    P.p1.setAttribute("d", "M" + n2(hx) + " " + n2(hy) + " L" + n2(hx + Math.sin(ang) * lp) + " " + n2(hy + Math.cos(ang) * lp));
+    P.p2.setAttribute("d", "M" + n2(hx) + " " + n2(hy) + " L" + n2(hx - Math.sin(ang) * lp) + " " + n2(hy + Math.cos(ang) * lp));
+    P.p1.setAttribute("stroke-width", n2(grosor)); P.p2.setAttribute("stroke-width", n2(grosor));
+    P.sombra.setAttribute("cx", n2(0.06 * u)); P.sombra.setAttribute("cy", "1"); P.sombra.setAttribute("rx", n2(Math.max(4, 0.34 * u))); P.sombra.setAttribute("ry", n2(Math.max(1.4, 0.06 * u)));
+    P.torso.setAttribute("x", n2(-0.27 * u)); P.torso.setAttribute("y", n2(-1.44 * u + bob)); P.torso.setAttribute("width", n2(0.37 * u)); P.torso.setAttribute("height", n2(0.64 * u)); P.torso.setAttribute("rx", n2(0.14 * u));
+    var cr = 0.16 * u, ccx = -0.1 * u, ccy = -1.6 * u + bob;
+    P.cabeza.setAttribute("cx", n2(ccx)); P.cabeza.setAttribute("cy", n2(ccy)); P.cabeza.setAttribute("r", n2(Math.max(2.2, cr)));
+    var r2 = Math.max(2.2, cr);
+    P.pelo.setAttribute("d", "M" + n2(ccx - r2 * 1.02) + " " + n2(ccy + r2 * 0.1) + " A" + n2(r2 * 1.02) + " " + n2(r2 * 1.02) + " 0 0 1 " + n2(ccx + r2 * 0.92) + " " + n2(ccy - r2 * 0.42) +
+      " Q" + n2(ccx + r2 * 0.1) + " " + n2(ccy - r2 * 0.55) + " " + n2(ccx - r2 * 0.35) + " " + n2(ccy - r2 * 0.05) + " Q" + n2(ccx - r2 * 0.7) + " " + n2(ccy + r2 * 0.5) + " " + n2(ccx - r2 * 1.02) + " " + n2(ccy + r2 * 0.1) + "Z" +
+      (k === "B" ? " M" + n2(ccx - r2 * 0.95) + " " + n2(ccy - r2 * 0.65) + " a" + n2(r2 * 0.42) + " " + n2(r2 * 0.42) + " 0 1 0 0.01 0Z" : ""));
+    var a = inclin / L.GRAD, ca = Math.cos(a), sa = Math.sin(a);
+    var ojoX = 0, ojoY = -1.6 * u;
+    var lado = Math.max(0.26 * u, 4.4);
+    var mx = ojoX + ca * lado, my = ojoY - sa * lado;
+    var hombroX = -0.1 * u, hombroY = -1.36 * u + bob;
+    var manoX = mx - ca * 0.02 * u + sa * 0.03 * u, manoY = my + ca * 0.03 * u;
+    P.brazo.setAttribute("d", "M" + n2(hombroX) + " " + n2(hombroY) + " Q" + n2((hombroX + manoX) / 2 + 0.04 * u) + " " + n2(Math.max(hombroY, manoY) + 0.16 * u) + " " + n2(manoX) + " " + n2(manoY));
+    P.brazo.setAttribute("stroke-width", n2(Math.max(1.4, 0.09 * u)));
+    var lm = Math.max(7, 0.44 * u), am = Math.max(3, 0.19 * u);
+    var rot = "rotate(" + (-inclin).toFixed(2) + " " + n2(mx) + " " + n2(my) + ")";
+    P.movil.setAttribute("x", n2(mx - lm / 2)); P.movil.setAttribute("y", n2(my - am / 2)); P.movil.setAttribute("width", n2(lm)); P.movil.setAttribute("height", n2(am)); P.movil.setAttribute("rx", n2(am * 0.35));
+    P.movil.setAttribute("transform", rot);
+    P.pantalla.setAttribute("x", n2(mx - lm / 2 + 0.8)); P.pantalla.setAttribute("y", n2(my - am / 2 + 0.7)); P.pantalla.setAttribute("width", n2(lm - 1.6)); P.pantalla.setAttribute("height", n2(Math.max(0.8, am * 0.42))); P.pantalla.setAttribute("rx", "0.6");
+    P.pantalla.setAttribute("transform", rot);
+    P.luz.setAttribute("cx", n2(mx)); P.luz.setAttribute("cy", n2(my)); P.luz.setAttribute("r", n2(Math.max(9, 0.55 * u)));
+    if (quieto) P.luz.setAttribute("opacity", "0.55");
+    var ri = cam.estrecho ? 7 : 9;
+    var iy = ccy - r2 - ri - 5;
+    P.insignia.setAttribute("transform", "translate(" + n2(ccx) + " " + n2(iy) + ")");
+    P.insignia.firstChild.setAttribute("r", ri);
+    P.insignia.lastChild.setAttribute("y", n2(ri * 0.38));
+    P.insignia.lastChild.setAttribute("font-size", cam.estrecho ? 9 : 11);
+  }
+
+  var claveVara = "";
+  function dibujarVara(inf, ojosPersonas) {
+    var g = nodos.vara; if (!g) return null;
+    var p = foco.vara;
+    g.setAttribute("opacity", p > 0 ? "1" : "0");
+    if (p <= 0 || !inf.r.valido) { etiqueta("etq-H", "", 0, 0); etiqueta("etq-ojos", "", 0, 0); return null; }
+    var x = X(0) - (cam.estrecho ? 22 : 32), ancho = cam.estrecho ? 5 : 7;
+    var Hm = inf.r.H, alto = Math.min(Hm, C.alturaEdificio * 3) * suave(p);
+    var y = Y(alto);
+    /* los tramos de la mira solo se rehacen si cambia su altura */
+    var clave = n2(alto) + "|" + n2(x) + "|" + cam.gy + "|" + cam.s;
+    if (clave !== claveVara) {
+      claveVara = clave;
+      var tramos = "";
+      for (var mtr = 0; mtr < Math.ceil(alto); mtr++) {
+        var y0 = Y(mtr), y1 = Y(Math.min(alto, mtr + 1));
+        tramos += '<rect x="' + n2(x - ancho / 2) + '" y="' + n2(y1) + '" width="' + ancho + '" height="' + n2(Math.max(0, y0 - y1)) + '" fill="' + (mtr % 2 ? "#1b2240" : "#ffd166") + '"/>';
+      }
+      tramos += '<rect x="' + n2(x - ancho / 2 - 1) + '" y="' + n2(y) + '" width="' + (ancho + 2) + '" height="' + n2(cam.gy - y) + '" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1"/>';
+      nodos["vara-tramos"].innerHTML = tramos;
+    }
+    var fant = nodos["vara-fantasma"];
+    if (inf.m.conErrores && Math.abs(Hm - C.alturaEdificio) > 0.005) {
+      fant.setAttribute("x1", n2(x - 8)); fant.setAttribute("x2", n2(X(Math.min(C.anchoEdificio, 4)))); fant.setAttribute("y1", n2(y)); fant.setAttribute("y2", n2(y));
+      fant.setAttribute("opacity", suave(p).toFixed(3));
+    } else fant.setAttribute("opacity", "0");
+    var cajaH = etiqueta("etq-H", "H ≈ " + num(inf.HRed, 2) + " m", x - ancho, y - 4, { ancla: "der", color: "#ffe6a8", borde: "#ffd166", opacidad: suave(p) });
+    /* la altura de los ojos, al pie de la mira, solo si no tapa a nadie */
+    var cajaOjos = etiqueta("etq-ojos", num(estado.ojos, 2) + " m", x - ancho, Y(estado.ojos / 2), { ancla: "der", opacidad: suave(p) * 0.95, fs: cam.fs - 1 });
+    var tapa = (ojosPersonas || []).some(function (e) { return choca(cajaOjos, { x: e.x - 14, y: Y(estado.ojos * 1.35), w: 28, h: cam.gy - Y(estado.ojos * 1.35) }); });
+    if (tapa || choca(cajaOjos, cajaH)) { etiqueta("etq-ojos", "", 0, 0); cajaOjos = null; }
+    return { vara: { x: x - ancho / 2 - 3, y: y, w: ancho + 6, h: cam.gy - y }, H: cajaH, ojos: cajaOjos };
+  }
+  /* Coloca una etiqueta en el primer sitio de la lista que quepa en la escena sin pisar nada de lo ya puesto. */
+  function cajaDe(cx, cy, w, h, ancla) { return { x: ancla === "izq" ? cx : (ancla === "der" ? cx - w : cx - w / 2), y: cy - h / 2, w: w, h: h }; }
+  function colocar(id, texto, sitios, op, ocupados) {
+    var fs = op.fs || cam.fs;
+    medidor.font = "650 " + fs + "px " + FUENTE;
+    var w = Math.ceil(medidor.measureText(texto).width) + 16, h = fs + 11, elegido = sitios[0];
+    for (var i = 0; i < sitios.length; i++) {
+      var c = cajaDe(sitios[i].cx, sitios[i].cy, w, h, sitios[i].ancla);
+      var cabe = c.x >= 4 && c.x + c.w <= W - 4 && c.y >= 4 && c.y + c.h <= H - 3;
+      if (cabe && !ocupados.some(function (o) { return choca(c, o); })) { elegido = sitios[i]; break; }
+    }
+    var caja = etiqueta(id, texto, elegido.cx, elegido.cy, Object.assign({}, op, { ancla: elegido.ancla }));
+    if (caja) ocupados.push(caja);
+    return caja;
+  }
+
+  var claveAsas = { A: "", B: "" };
+  function colocarAsas(eA, eB) {
+    var mitad = (eA.x + eB.x) / 2;
+    var alto = Math.max(64, (estado.ojos * 1.32) * cam.s + 30);
+    [["A", eA], ["B", eB]].forEach(function (par) {
+      var k = par[0], e = par[1], asa = asas[k];
+      var izq = e.x - 22, der = e.x + 22;
+      if (k === "A") der = Math.min(der, mitad); else izq = Math.max(izq, mitad);
+      var top = cam.gy + 12 - alto;
+      var clave = n2(izq) + "|" + n2(top) + "|" + n2(der) + "|" + n2(alto);
+      if (clave === claveAsas[k]) return;
+      claveAsas[k] = clave;
+      asa.style.transform = "translate(" + n2(izq) + "px," + n2(top) + "px)";
+      asa.style.width = n2(Math.max(10, der - izq)) + "px";
+      asa.style.height = n2(alto) + "px";
+    });
+  }
+
+  /* agujas de los inclinómetros del panel */
+  var diales = {};
+  function prepararDiales() {
+    ["a", "b"].forEach(function (k) {
+      var raiz = $("#movil-" + k);
+      diales[k] = { cuna: raiz.querySelector(".dial-cuna"), arco: raiz.querySelector(".dial-arco"), aguja: raiz.querySelector(".dial-aguja"), punta: raiz.querySelector(".dial-punta") };
+      var d = "";
+      for (var g = 0; g <= 90; g += 5) {
+        var a = g / L.GRAD, r1 = g % 15 === 0 ? 58 : 63, r2 = 69;
+        d += "M" + n2(18 + r1 * Math.cos(a)) + " " + n2(88 - r1 * Math.sin(a)) + " L" + n2(18 + r2 * Math.cos(a)) + " " + n2(88 - r2 * Math.sin(a)) + " ";
+      }
+      raiz.querySelector(".dial-marcas").setAttribute("d", d);
+    });
+  }
+  function dial(k, grados) {
+    var D = diales[k]; if (!D) return;
+    var g = limitar(grados, 0, 90), a = g / L.GRAD;
+    var ex = 18 + 70 * Math.cos(a), ey = 88 - 70 * Math.sin(a);
+    D.cuna.setAttribute("d", "M18 88 L88 88 A70 70 0 0 0 " + n2(ex) + " " + n2(ey) + " Z");
+    D.arco.setAttribute("d", "M88 88 A70 70 0 0 0 " + n2(ex) + " " + n2(ey));
+    D.aguja.setAttribute("x2", n2(18 + 60 * Math.cos(a))); D.aguja.setAttribute("y2", n2(88 - 60 * Math.sin(a)));
+    D.punta.setAttribute("cx", n2(ex)); D.punta.setAttribute("cy", n2(ey));
+  }
+  function introLecturas(inf) {
+    var p = enIntro(1.7, 0.6);
+    $("#lectura-a").textContent = num(inf.m.alfa * p, 1);
+    $("#lectura-b").textContent = num(inf.m.beta * p, 1);
+    agujas.A.v = inf.m.alfa * p; agujas.B.v = inf.m.beta * p;
+  }
+
+  /* ---------- Bucle ---------- */
+  var ultimo = 0, pedido = false;
+  function bucle(ts) {
+    pedido = false;
+    var real = ultimo ? (ts - ultimo) / 1000 : 0.016;
+    var dt = Math.min(0.05, real);
+    ultimo = ts;
+    avanzar(dt, Math.min(0.5, real));
+    dibujar();
+    if (anim.intro === null && ultimaLecturaIntro) { ultimaLecturaIntro = false; refrescar(); }
+    if (!quieto || !isNaN(contador.hasta)) pedir();
+  }
+  var ultimaLecturaIntro = !quieto;
+  function pedir() { if (!pedido) { pedido = true; requestAnimationFrame(bucle); } }
+  function terminarIntro() { if (anim.intro !== null) { anim.intro = null; ultimaLecturaIntro = false; geoSucia = true; refrescar(); } }
+
+  /* ---------- Textos del panel ---------- */
+  function rellenar(input) {
+    var p = (input.value - input.min) / (input.max - input.min) * 100;
+    input.style.setProperty("--p", p.toFixed(2) + "%");
+  }
+  function ponerLectura(id, valor, tic) {
+    var nd = $(id), txt = num(valor, 1);
+    if (nd.textContent === txt) return;
+    nd.textContent = txt;
+    if (tic && !quieto) { nd.classList.remove("tic"); void nd.offsetWidth; nd.classList.add("tic"); }
+  }
+  /* escribe solo si cambia: así no se repiten avisos ni se reescribe el DOM sin necesidad */
+  function poner(nd, valor, atributo) {
+    if (atributo) { if (nd.getAttribute(atributo) !== valor) nd.setAttribute(atributo, valor); }
+    else if (nd.textContent !== valor) nd.textContent = valor;
+  }
+  function refrescar(op) {
+    op = op || {};
+    geoSucia = true;
+    var inf = L.informe(estado);
+    if (anim.intro === null) {
+      ponerLectura("#lectura-a", inf.m.alfa, op.tic);
+      ponerLectura("#lectura-b", inf.m.beta, op.tic);
+    }
+    var tt = "±" + num(estado.temblorMax, 1) + "°";
+    ["#temblor-a", "#temblor-b"].forEach(function (id) { var nd = $(id); nd.hidden = !estado.temblor; poner(nd, tt); });
+    var so = $("#salida-ojos"), tOjos = num(estado.ojos, 2);
+    if (so.firstChild.nodeValue !== tOjos + " ") so.firstChild.nodeValue = tOjos + " ";
+    var ro = $("#rango-ojos"); if (Number(ro.value) !== estado.ojos) ro.value = estado.ojos; rellenar(ro);
+    poner(ro, tOjos + " metros", "aria-valuetext");
+    poner($("#sw-temblor"), estado.temblor ? "true" : "false", "aria-checked");
+    poner($("#sw-error-d"), estado.errorD ? "true" : "false", "aria-checked");
+    poner($("#salida-temblor"), tt);
+    $("#salida-temblor").classList.toggle("vivo", estado.temblor);
+    poner($("#salida-error-d"), "±" + num(estado.errorDMax, 0) + " cm");
+    $("#salida-error-d").classList.toggle("vivo", estado.errorD);
+    var rt = $("#rango-temblor"), rd = $("#rango-error-d");
+    rt.classList.toggle("apagado", !estado.temblor); rd.classList.toggle("apagado", !estado.errorD);
+    poner(rt, "más o menos " + num(estado.temblorMax, 1) + " grados", "aria-valuetext");
+    poner(rd, "más o menos " + num(estado.errorDMax, 0) + " centímetros", "aria-valuetext");
+    rellenar(rt); rellenar(rd);
+    var hayErrores = estado.temblor || estado.errorD;
+    $("#repetir").hidden = !hayErrores;
+    $("#repetir-res").hidden = !hayErrores;
+    /* el valor de las asas cambia con lo que hace el alumno, no con cada lectura sorteada */
+    if (!op.tic) ariaAsas(inf);
+    if (!arrastrando()) poner(svg, descripcion(inf), "aria-label");
+    if (ui.pestana === "resolver") pintarResolucion(inf, op);
+    pedir();
+  }
+  function descripcion(inf) {
+    return "El IES Emilio Alarcos y dos observadores. A está a " + num(inf.m.d, 2) + " metros por detrás de B. El móvil de A marca " + num(inf.m.alfa, 1) + " grados y el de B, " + num(inf.m.beta, 1) + " grados.";
+  }
+  function ariaAsas(inf) {
+    var dm = C.distanciaMax;
+    var rA = L.rango(estado, "A"), rB = L.rango(estado, "B");
+    var pos = { A: dm - estado.dA, B: dm - estado.dB };
+    poner(asas.A, String(f2(dm - rA.max)), "aria-valuemin"); poner(asas.A, String(f2(dm - rA.min)), "aria-valuemax"); poner(asas.A, String(f2(pos.A)), "aria-valuenow");
+    poner(asas.B, String(f2(dm - rB.max)), "aria-valuemin"); poner(asas.B, String(f2(dm - rB.min)), "aria-valuemax"); poner(asas.B, String(f2(pos.B)), "aria-valuenow");
+    poner(asas.A, "A, " + num(inf.m.d, 2) + " metros por detrás de B; su móvil marca " + num(inf.m.alfa, 1) + " grados", "aria-valuetext");
+    poner(asas.B, "B, " + num(inf.m.d, 2) + " metros por delante de A; su móvil marca " + num(inf.m.beta, 1) + " grados", "aria-valuetext");
+  }
+  function textoLecturas(inf) {
+    return "A marca " + num(inf.m.alfa, 1) + " grados, B marca " + num(inf.m.beta, 1) + " grados y d mide " + num(inf.m.d, 2) + " metros.";
+  }
+  var anuncioT = 0;
+  function anunciar(txt) {
+    var nd = $("#anuncio");
+    clearTimeout(anuncioT);
+    nd.textContent = "";
+    anuncioT = setTimeout(function () { nd.textContent = txt; }, 60);
+  }
+  function anunciarVeredicto(inf) { ultimoVeredicto = textoResultado(inf); anunciar(ultimoVeredicto); }
+  function textoResultado(inf) {
+    if (!inf.r.valido) return "Sin solución: con estas medidas, el ángulo de B no supera al de A.";
+    var s = "Altura calculada: " + num(inf.HRed, 2) + " metros";
+    if (inf.m.conErrores) s += ", con errores de medida; la real es " + num(C.alturaEdificio, 2) + " metros";
+    return s + ".";
+  }
+
+  /* ---------- Resolución ---------- */
+  var listaPasos = Array.prototype.slice.call(doc.querySelectorAll(".paso"));
+  var temporizadorRes = 0, ultimoPintado = 0;
+  function pintarTex(nodo, tex, plano) {
+    if (nodo.__tex === tex && nodo.__katex === !!window.katex) return;
+    nodo.__tex = tex; nodo.__katex = !!window.katex;
+    if (window.katex) {
+      nodo.classList.remove("plano");
+      try { window.katex.render(tex, nodo, { displayMode: true, throwOnError: false, output: "htmlAndMathml", strict: "ignore" }); return; }
+      catch (err) { /* sigue con el texto llano */ }
+    }
+    nodo.classList.add("plano");
+    nodo.textContent = plano;
+  }
+  function pintarResolucion(inf, op) {
+    op = op || {};
+    var ahora = performance.now();
+    if (arrastrando() && ahora - ultimoPintado < 90) {
+      clearTimeout(temporizadorRes);
+      temporizadorRes = setTimeout(function () { pintarResolucion(L.informe(estado), {}); }, 95);
+      return;
+    }
+    ultimoPintado = ahora;
+    var ps = L.pasos(inf);
+    listaPasos.forEach(function (li, i) {
+      var p = ps[i], bt = li.querySelector(".paso-boton");
+      if (bt.textContent !== p.titulo) bt.textContent = p.titulo;
+      var tx = li.querySelector(".paso-texto");
+      if (tx.textContent !== p.texto) tx.textContent = p.texto;
+      tx.hidden = !p.texto;
+      pintarTex(li.querySelector(".formula"), p.tex, p.plano);
+      var activo = ui.paso === p.n;
+      li.classList.toggle("activo", activo);
+      if (activo) bt.setAttribute("aria-current", "step"); else bt.removeAttribute("aria-current");
+    });
+    var chip = $("#chip-estado");
+    chip.textContent = inf.m.conErrores ? "Con errores de medida" : "Medida ideal";
+    chip.classList.toggle("con-errores", inf.m.conErrores);
+    var res = $("#resultado"), est = $("#estado-H"), icono = est.querySelector(".icono-estado");
+    res.classList.toggle("invalido", !inf.r.valido);
+    est.classList.toggle("con-errores", inf.r.valido && inf.m.conErrores);
+    var texto;
+    if (!inf.r.valido) { icono.textContent = "✕"; texto = "Sin solución: con estas medidas, β no supera a α. Repite la medida o separa más a A y B."; }
+    else if (inf.m.conErrores) {
+      icono.textContent = "≈";
+      texto = "Con errores de medida. La altura real es " + num(C.alturaEdificio, 2) + NBSP + "m: te desvías " + L.conSigno(inf.desvio, 2) + NBSP + "m (" + L.conSigno(inf.desvio / C.alturaEdificio * 100, 1) + NBSP + "%).";
+    } else { icono.textContent = "✓"; texto = "Medida ideal: los móviles y la cinta no se equivocan."; }
+    $("#estado-H-texto").textContent = texto;
+    var objetivo = inf.r.valido ? inf.HRed : NaN;
+    var vh = $("#valor-H");
+    if (!inf.r.valido) { contador.hasta = NaN; vh.textContent = "—"; }
+    else if (op.contar && !quieto) {
+      var desde = isFinite(contador.valor) ? contador.valor : objetivo * 0.6;
+      if (op.desdeCero) desde = 0;
+      contador.desde = desde; contador.hasta = objetivo; contador.t0 = performance.now() / 1000; contador.valor = desde; pedir();
+      /* respaldo: si el bucle no corre (pestaña de fondo), el valor final queda puesto igualmente */
+      setTimeout(function () {
+        if (contador.hasta === objetivo) { contador.hasta = NaN; contador.valor = objetivo; vh.textContent = num(objetivo, 2); }
+      }, contador.dur * 1000 + 200);
+    } else if (!isNaN(contador.hasta) && Math.abs(contador.hasta - objetivo) < 1e-9) {
+      /* ya está contando hacia este mismo valor: que acabe */
+    } else { contador.hasta = NaN; contador.valor = objetivo; vh.textContent = num(objetivo, 2); }
+  }
+  /* Los pasos entran uno a uno y la escena los sigue; el resultado aparece con el último y cuenta desde cero. */
+  function cascada() {
+    clearInterval(ui.cascada);
+    var res = $("#resultado");
+    if (quieto) {
+      listaPasos.forEach(function (li) { li.classList.add("visible"); });
+      res.classList.remove("esperando");
+      ui.paso = 5; pintarResolucion(L.informe(estado), {}); return;
+    }
+    listaPasos.forEach(function (li) { li.classList.remove("visible"); });
+    res.classList.add("esperando");
+    contador.hasta = NaN; contador.valor = NaN;
+    var i = 0;
+    ui.paso = 1;
+    pintarResolucion(L.informe(estado), {});
+    listaPasos[0].classList.add("visible");
+    ui.cascada = setInterval(function () {
+      i++;
+      if (i >= listaPasos.length) { clearInterval(ui.cascada); ui.cascada = null; return; }
+      listaPasos[i].classList.add("visible");
+      ui.paso = i + 1;
+      var ultimo = i === listaPasos.length - 1;
+      if (ultimo) res.classList.remove("esperando");
+      geoSucia = true;
+      pintarResolucion(L.informe(estado), ultimo ? { contar: true, desdeCero: true } : {});
+      if (ultimo) mostrarResultado();
+    }, 420);
+  }
+  /* En escritorio el panel se desplaza por dentro: al acabar la cascada, que se vea el resultado. */
+  function mostrarResultado() {
+    var p = $("#panel");
+    if (p.scrollHeight <= p.clientHeight + 2) return;
+    var falta = function () { return $("#resultado").getBoundingClientRect().bottom - p.getBoundingClientRect().bottom + 14; };
+    var d = falta();
+    if (d <= 0) return;
+    var destino = p.scrollTop + d;
+    p.scrollTo({ top: destino, behavior: quieto ? "auto" : "smooth" });
+    /* respaldo: si el desplazamiento suave no llega (pestaña de fondo), se coloca de golpe */
+    setTimeout(function () { if (ui.pestana === "resolver" && falta() > 1) p.scrollTop = destino; }, 900);
+  }
+  function pararCascada() {
+    if (ui.cascada) {
+      clearInterval(ui.cascada); ui.cascada = null;
+      listaPasos.forEach(function (li) { li.classList.add("visible"); });
+      $("#resultado").classList.remove("esperando");
+    }
+  }
+  /* Con la escena fija arriba (pantallas medianas y móviles), deja las pestañas justo debajo de ella. */
+  function asomar(el) {
+    if (getComputedStyle(escena).position !== "sticky") return;
+    var tope = escena.getBoundingClientRect().bottom + 12, r = el.getBoundingClientRect();
+    if (r.top < tope || r.bottom > window.innerHeight - 24) {
+      var destino = Math.max(0, window.scrollY + r.top - tope);
+      window.scrollTo({ top: destino, behavior: quieto ? "auto" : "smooth" });
+      /* respaldo: si el desplazamiento suave no llega (pestaña de fondo), se coloca de golpe */
+      setTimeout(function () {
+        if (el.getBoundingClientRect().top < escena.getBoundingClientRect().bottom - 1) window.scrollTo(0, destino);
+      }, 800);
+    }
+  }
+
+  /* ---------- Pestañas ---------- */
+  var tabs = { medir: $("#tab-medir"), resolver: $("#tab-resolver") };
+  /* enfoca la pestaña y la deja a la vista: debajo de la escena fija, o con el panel arriba del todo en escritorio */
+  function enfocarPestana(nombre) {
+    tabs[nombre].focus({ preventScroll: true });
+    if (getComputedStyle(escena).position === "sticky") { asomar($(".pestanas")); return; }
+    var r = $(".pestanas").getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) $(".pestanas").scrollIntoView({ block: "nearest", behavior: quieto ? "auto" : "smooth" });
+  }
+  function elegir(nombre, enfocar) {
+    if (ui.pestana === nombre) { if (enfocar) enfocarPestana(nombre); return; }
+    ui.pestana = nombre;
+    $(".pestanas").setAttribute("data-activa", nombre);
+    Object.keys(tabs).forEach(function (k) {
+      var sel = k === nombre;
+      tabs[k].setAttribute("aria-selected", sel ? "true" : "false");
+      tabs[k].tabIndex = sel ? 0 : -1;
+    });
+    $("#vista-medir").hidden = nombre !== "medir";
+    $("#vista-resolver").hidden = nombre !== "resolver";
+    escena.setAttribute("data-modo", nombre);
+    moviles.inert = nombre === "resolver" && moviles.classList.contains("flotantes");
+    $("#panel").scrollTop = 0;                         /* cada vista empieza arriba */
+    geoSucia = true;
+    if (nombre === "resolver") { cascada(); anunciarVeredicto(L.informe(estado)); }
+    else { pararCascada(); refrescar(); }
+    if (enfocar) enfocarPestana(nombre);
+    pedir();
+  }
+  Object.keys(tabs).forEach(function (k) {
+    tabs[k].addEventListener("click", function () { elegir(k, false); });
+    tabs[k].addEventListener("keydown", function (ev) {
+      if (["ArrowLeft", "ArrowRight", "Home", "End"].indexOf(ev.key) < 0) return;
+      ev.preventDefault();
+      var otro = ev.key === "Home" ? "medir" : (ev.key === "End" ? "resolver" : (k === "medir" ? "resolver" : "medir"));
+      elegir(otro, true);
+    });
+  });
+  $("#ir-resolver").addEventListener("click", function () { elegir("resolver", true); });
+  $("#volver-medir").addEventListener("click", function () { elegir("medir", true); });
+  listaPasos.forEach(function (li) {
+    var n = Number(li.getAttribute("data-paso"));
+    function activar() { pararCascada(); ui.paso = n; geoSucia = true; pintarResolucion(L.informe(estado), {}); pedir(); }
+    li.querySelector(".paso-boton").addEventListener("click", activar);
+    li.querySelector(".paso-caja").addEventListener("click", function (ev) { if (!ev.target.closest(".paso-boton")) activar(); });
+  });
+
+  /* ---------- Mandos ---------- */
+  function cambiarOjos(v) { L.fijarOjos(estado, v); refrescar(); }
+  $("#rango-ojos").addEventListener("input", function (ev) { cambiarOjos(ev.target.value); });
+  $("#ojos-menos").addEventListener("click", function () { cambiarOjos(estado.ojos - C.ojos.paso); anunciar("Ojos a " + num(estado.ojos, 2) + " metros"); });
+  $("#ojos-mas").addEventListener("click", function () { cambiarOjos(estado.ojos + C.ojos.paso); anunciar("Ojos a " + num(estado.ojos, 2) + " metros"); });
+  function nuevaMuestra(tic) {
+    var j = L.muestrear(estado, Math.random);
+    estado.jA = j.jA; estado.jB = j.jB; estado.jD = j.jD;
+    refrescar({ tic: tic, contar: true });
+  }
+  /* (el propio interruptor dice si está encendido: no hace falta anunciarlo) */
+  $("#sw-temblor").addEventListener("click", function () {
+    estado.temblor = !estado.temblor;
+    if (estado.temblor) nuevaMuestra(true); else refrescar();
+  });
+  $("#sw-error-d").addEventListener("click", function () {
+    estado.errorD = !estado.errorD;
+    if (estado.errorD) nuevaMuestra(true); else refrescar();
+  });
+  $("#rango-temblor").addEventListener("input", function (ev) {
+    var antes = estado.temblorMax; L.fijarTemblor(estado, ev.target.value);
+    if (antes === 0 && estado.temblorMax > 0) nuevaMuestra(false); else refrescar();
+  });
+  $("#rango-error-d").addEventListener("input", function (ev) {
+    var antes = estado.errorDMax; L.fijarErrorD(estado, ev.target.value);
+    if (antes === 0 && estado.errorDMax > 0) nuevaMuestra(false); else refrescar();
+  });
+  /* al medir se dicen las lecturas nuevas; al resolver, la altura que sale con ellas */
+  function repetir() {
+    nuevaMuestra(true);
+    var inf = L.informe(estado);
+    if (ui.pestana === "resolver") anunciarVeredicto(inf); else anunciar("Nueva medida: " + textoLecturas(inf));
+  }
+  $("#repetir").addEventListener("click", repetir);
+  $("#repetir-res").addEventListener("click", repetir);
+  ["a", "b"].forEach(function (k) {
+    $("#movil-" + k).addEventListener("click", function () { asas[k.toUpperCase()].focus(); });
+  });
+
+  /* lecturas nuevas cada medio segundo, como el original (no al resolver, ni al arrastrar, ni sin movimiento) */
+  setInterval(function () {
+    if ((estado.temblor || estado.errorD) && !arrastrando() && ui.pestana === "medir" && !quieto && !doc.hidden) nuevaMuestra(true);
+  }, C.periodoMuestreo);
+
+  /* ---------- Arrastrar y teclado ---------- */
+  function ocultarAyuda() { if (!ui.tocado) { ui.tocado = true; $("#ayuda-escena").classList.add("fuera"); } }
+  ["A", "B"].forEach(function (k) {
+    var asa = asas[k];
+    asa.addEventListener("pointerdown", function (ev) {
+      if (ev.button !== 0) return;
+      ev.preventDefault();
+      terminarIntro(); ocultarAyuda();
+      asa.focus({ preventScroll: true });
+      try { asa.setPointerCapture(ev.pointerId); } catch (err) { /* sin captura */ }
+      var caja = escena.getBoundingClientRect();
+      var xm = (ev.clientX - caja.left - cam.ox) / cam.s;
+      var actual = k === "A" ? -estado.dA : -estado.dB;
+      /* un arrastre por asa: dos dedos pueden llevar a A y a B a la vez */
+      arrastres[k] = { id: ev.pointerId, desfase: xm - actual };
+      asa.classList.add("arrastrando");
+    });
+    asa.addEventListener("pointermove", function (ev) {
+      var ar = arrastres[k];
+      if (!ar || ar.id !== ev.pointerId) return;
+      var caja = escena.getBoundingClientRect();
+      var xm = (ev.clientX - caja.left - cam.ox) / cam.s - ar.desfase;
+      L.mover(estado, k, -xm);
+      refrescar();
+    });
+    function soltar(ev) {
+      var ar = arrastres[k];
+      if (!ar || ar.id !== ev.pointerId) return;
+      arrastres[k] = null;
+      asa.classList.remove("arrastrando");
+      refrescar();
+      var inf = L.informe(estado);
+      if (ui.pestana === "resolver") anunciarVeredicto(inf); else anunciar(textoLecturas(inf));
+    }
+    asa.addEventListener("pointerup", soltar);
+    asa.addEventListener("pointercancel", soltar);
+    asa.addEventListener("lostpointercapture", soltar);
+    var teclaT = 0;
+    asa.addEventListener("keydown", function (ev) {
+      var paso = ev.shiftKey ? C.pasoTecladoGrande : C.pasoTeclado, d = k === "A" ? estado.dA : estado.dB, r = L.rango(estado, k), nuevo = null;
+      switch (ev.key) {
+        case "ArrowLeft": case "ArrowDown": nuevo = d + paso; break;
+        case "ArrowRight": case "ArrowUp": nuevo = d - paso; break;
+        case "PageUp": nuevo = d - C.pasoTecladoGrande; break;
+        case "PageDown": nuevo = d + C.pasoTecladoGrande; break;
+        case "Home": nuevo = r.max; break;
+        case "End": nuevo = r.min; break;
+        default: return;
+      }
+      ev.preventDefault();
+      terminarIntro(); ocultarAyuda();
+      /* las flechas van de centímetro en centímetro; Inicio y Fin, justo hasta el tope */
+      L.mover(estado, k, ev.key === "Home" || ev.key === "End" ? nuevo : Math.round(nuevo * 100) / 100);
+      refrescar();
+      /* el lector ya lee el valor del asa; al resolver se avisa además si cambia el veredicto */
+      clearTimeout(teclaT);
+      if (ui.pestana === "resolver") teclaT = setTimeout(function () {
+        var txt = textoResultado(L.informe(estado));
+        if (txt !== ultimoVeredicto) { ultimoVeredicto = txt; anunciar(txt); }
+      }, 450);
+    });
+  });
+  var ultimoVeredicto = "";
+  doc.addEventListener("keydown", function () { terminarIntro(); }, { once: true });
+
+  /* ---------- Movimiento reducido ---------- */
+  function aplicarMovimiento() {
+    quieto = forzarQuieto || !!(mq && mq.matches);
+    doc.documentElement.classList.toggle("quieto", quieto);
+    if (quieto) terminarIntro();
+    geoSucia = true;
+    refrescar();
+  }
+  if (mq) { if (mq.addEventListener) mq.addEventListener("change", aplicarMovimiento); else if (mq.addListener) mq.addListener(aplicarMovimiento); }
+
+  /* ---------- Arranque ---------- */
+  prepararDiales();
+  var katexJs = $("#katex-js");
+  if (katexJs) katexJs.addEventListener("load", function () { if (ui.pestana === "resolver") pintarResolucion(L.informe(estado), {}); });
+  var rehacer = 0;
+  if (window.ResizeObserver) new ResizeObserver(function () { cancelAnimationFrame(rehacer); rehacer = requestAnimationFrame(construir); }).observe(escena);
+  else window.addEventListener("resize", function () { cancelAnimationFrame(rehacer); rehacer = requestAnimationFrame(construir); });
+  construir();
+  refrescar();
+  if (quieto) $("#ayuda-escena").classList.remove("fuera");
+  pedir();
+
+  /* para las pruebas (en local, o con «?pruebas» en la dirección): con el panel oculto no corre el bucle */
+  if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || /[?&]pruebas\b/.test(location.search)) {
+    window.__altura = {
+      estado: function () { return JSON.parse(JSON.stringify(estado)); },
+      ui: function () { return { pestana: ui.pestana, paso: ui.paso, quieto: quieto, intro: anim.intro !== null, camara: cam && { s: cam.s, ox: cam.ox, gy: cam.gy, W: W, H: H } }; },
+      informe: function () { return L.informe(estado); },
+      mover: function (k, d) { L.mover(estado, k, d); refrescar(); geoSucia = true; dibujar(); return this.estado(); },
+      errores: function (jA, jB, jD) { estado.jA = jA; estado.jB = jB; estado.jD = jD; refrescar(); geoSucia = true; dibujar(); },
+      muestrear: function () { nuevaMuestra(false); return this.estado(); },
+      terminarIntro: function () { terminarIntro(); avanzar(0); geoSucia = true; dibujar(); },
+      avanzar: function (seg) { var n = Math.ceil(seg / 0.016); for (var i = 0; i < n; i++) avanzar(Math.min(0.016, seg - i * 0.016)); geoSucia = true; dibujar(); },
+      dibujar: function () { geoSucia = true; dibujar(); },
+      aPixel: function (xm, ym) { return { x: X(xm), y: Y(ym) }; }
+    };
+    /* situaciones de prueba desde la dirección, para las capturas: ?dA=…&dB=…&ojos=…&temblor=jA,jB&errord=jD&pestana=resolver&paso=n */
+    var q = new URLSearchParams(location.search);
+    if (q.has("dA") || q.has("dB")) {
+      estado.dB = C.zonaSinAcceso;
+      if (q.has("dA")) L.mover(estado, "A", Number(q.get("dA")));
+      L.mover(estado, "B", q.has("dB") ? Number(q.get("dB")) : C.inicialB);
+    }
+    if (q.has("ojos")) L.fijarOjos(estado, Number(q.get("ojos")));
+    if (q.has("temblor")) { var tv = q.get("temblor").split(","); estado.temblor = true; estado.jA = Number(tv[0]) || 0; estado.jB = Number(tv[1]) || 0; }
+    if (q.has("errord")) { estado.errorD = true; estado.jD = Number(q.get("errord")) || 0; }
+    if (q.get("pestana") === "resolver") elegir("resolver", false);
+    if (q.has("paso")) { pararCascada(); ui.paso = limitar(Number(q.get("paso")) || 5, 1, 5); }
+    refrescar();
+  }
+})();
+</script>
+</body>
+</html>
