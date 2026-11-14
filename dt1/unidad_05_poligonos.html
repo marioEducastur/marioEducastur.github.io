@@ -25759,6 +25759,760 @@ Bachillerato</p>
         construir: tangenteCircPuntoConstruir
       };
 
+      // ---- Con el punto de tangencia dado, y tres tangentes dos a dos ----
+      //
+      // Desde el 9 de noviembre de 2026: los casos de las dos páginas que se
+      // recomiendan en clase que la unidad no tenía. Ninguno usa la potencia:
+      // el centro está en una recta conocida, y el otro lugar es una
+      // bisectriz o una mediatriz. Las letras van al final, cada una en el
+      // sitio más despejado de todo lo dibujado (`letrero`), y `valido`
+      // rechaza los datos con los que alguna pisaría una línea.
+
+      // De la recta por A y B, su dirección u y la normal w que va de ella
+      // hacia el punto p.
+      function haciaElPunto(A, B, p) {
+        var u = unitario(A, B);
+        var n = normalArriba(u);
+        return { u: u, w: sobre(p, A, n) >= 0 ? n : pt(-n.x, -n.y) };
+      }
+
+      // El punto T + x·w de la recta por T con la dirección w que está a la
+      // misma distancia de p que de q, donde la corta la mediatriz de pq.
+      // Devuelve x, o null si son paralelas.
+      function equidistanteEnLaRecta(T, w, p, q) {
+        var dp = pt(p.x - T.x, p.y - T.y);
+        var dq = pt(q.x - T.x, q.y - T.y);
+        var den = 2 * ((dp.x - dq.x) * w.x + (dp.y - dq.y) * w.y);
+        if (Math.abs(den) < 1e-9) {
+          return null;
+        }
+        return (dp.x * dp.x + dp.y * dp.y - dq.x * dq.x - dq.y * dq.y) / den;
+      }
+
+      // Lo que sube X sobre el punto medio de pq, hacia la normal de arriba
+      // de pq: hasta dónde tiene que llegar la mediatriz de pq para cortar en
+      // X (`mediatrizHasta`).
+      function alturaEnLaMediatriz(p, q, X) {
+        return sobre(X, entre(p, q, 0.5), normalArriba(unitario(p, q)));
+      }
+
+      // La mediatriz de pq con el compás, larga hasta el punto X en que corta
+      // a la recta de los centros, y con una abertura cuyos arcos no se
+      // cortan encima de X.
+      function mediatrizHastaElCentro(p, q, X) {
+        var h = alturaEnLaMediatriz(p, q, X);
+        return mediatrizHasta(p, q, [h], null, [h]);
+      }
+
+      // Como `letrero`, para los dibujos en que muchas líneas se cruzan en el
+      // mismo punto: cada letra prueba veinticuatro sitios alrededor de su
+      // punto a varias distancias, de la más corta a la más larga, y se queda
+      // en la primera en que su caja, con 4 píxeles de aire (los subíndices
+      // dobles son algo más anchos de lo que calcula `medioTexto`), no toca
+      // ninguna línea ni otra letra y queda a 8 del borde de la lámina, como
+      // pide `letrasDespejadas`, y la letra de un punto queda más cerca de él
+      // que de cualquier otro, con 8 píxeles de ventaja; de los sitios
+      // libres, el más despejado de lo dibujado (el borde no cuenta: alejarse
+      // de él acercaría la letra a otro punto). Si no hay ninguno libre, el
+      // más despejado de los que quedan más cerca de su punto (o de todos):
+      // la letra pisa algo y `letrasDespejadas` rechaza esos datos, en lugar
+      // de aceptar una letra lejos de su punto.
+      function letreroHolgado(trazos, puntos) {
+        // Cada estorbo lleva su caja, para descartar sin más cuentas los que
+        // quedan lejos de la de una letra: se rehace al arrastrar un dato, y
+        // tiene que ir deprisa.
+        var conCaja = function (s) {
+          s.x0 = Math.min(s[0].x, s[1].x);
+          s.x1 = Math.max(s[0].x, s[1].x);
+          s.y0 = Math.min(s[0].y, s[1].y);
+          s.y1 = Math.max(s[0].y, s[1].y);
+          return s;
+        };
+        var estorbos = lineasDe(trazos).map(conCaja);
+        var puestas = [];
+        // Cada punto, como un octógono del tamaño de su círculo: así la
+        // letra tampoco se le arrima en diagonal.
+        puntos.forEach(function (p) {
+          var i;
+          for (i = 0; i < 8; i += 1) {
+            estorbos.push(conCaja([polar(p, 7, (i * TAU) / 8), polar(p, 7, ((i + 1) * TAU) / 8)]));
+          }
+        });
+        var sitio = function (anclas, distancias, texto, cuerpo, suyo) {
+          var m = medioTexto(texto, cuerpo);
+          var mejor = null;
+          // Los estorbos, repartidos en una rejilla de celdas de 32 píxeles:
+          // la caja de una letra solo se compara con los de sus celdas, y su
+          // holgura se busca por anillos de celdas alrededor de su centro,
+          // hasta que ninguno más lejano pueda dejarla más baja. Da lo mismo
+          // que recorrerlos todos, mucho más deprisa (se rehace al arrastrar).
+          var CELDA = 32;
+          var rejilla = {};
+          var visto = [];
+          var vuelta = 0;
+          var limites = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+          estorbos.forEach(function (s, i) {
+            var cx;
+            var cy;
+            var x0 = Math.floor(s.x0 / CELDA);
+            var x1 = Math.floor(s.x1 / CELDA);
+            var y0 = Math.floor(s.y0 / CELDA);
+            var y1 = Math.floor(s.y1 / CELDA);
+            limites.x0 = Math.min(limites.x0, x0);
+            limites.x1 = Math.max(limites.x1, x1);
+            limites.y0 = Math.min(limites.y0, y0);
+            limites.y1 = Math.max(limites.y1, y1);
+            for (cx = x0; cx <= x1; cx += 1) {
+              for (cy = y0; cy <= y1; cy += 1) {
+                (rejilla[cx + "," + cy] = rejilla[cx + "," + cy] || []).push(i);
+              }
+            }
+          });
+          var pisa = function (k) {
+            var cx;
+            var cy;
+            var lista;
+            var j;
+            var s;
+            vuelta += 1;
+            for (cx = Math.floor(k.x0 / CELDA); cx <= Math.floor(k.x1 / CELDA); cx += 1) {
+              for (cy = Math.floor(k.y0 / CELDA); cy <= Math.floor(k.y1 / CELDA); cy += 1) {
+                lista = rejilla[cx + "," + cy] || [];
+                for (j = 0; j < lista.length; j += 1) {
+                  if (visto[lista[j]] === vuelta) {
+                    continue;
+                  }
+                  visto[lista[j]] = vuelta;
+                  s = estorbos[lista[j]];
+                  if (s.x1 >= k.x0 && s.x0 <= k.x1 && s.y1 >= k.y0 && s.y0 <= k.y1 && pisaLaCaja(s[0], s[1], k)) {
+                    return true;
+                  }
+                }
+              }
+            }
+            return false;
+          };
+          // Con `umbral`, en cuanto la holgura baja de él se deja de buscar:
+          // ese sitio ya no puede ganar.
+          var holguraEn = function (q, umbral) {
+            var h = Infinity;
+            var margen = m.x + m.y;
+            var qx = Math.floor(q.x / CELDA);
+            var qy = Math.floor(q.y / CELDA);
+            var r;
+            var cx;
+            var cy;
+            var lista;
+            var j;
+            vuelta += 1;
+            for (r = 0; ; r += 1) {
+              for (cx = qx - r; cx <= qx + r; cx += 1) {
+                for (cy = qy - r; cy <= qy + r; cy += 1) {
+                  if (Math.max(Math.abs(cx - qx), Math.abs(cy - qy)) !== r) {
+                    continue;
+                  }
+                  lista = rejilla[cx + "," + cy] || [];
+                  for (j = 0; j < lista.length; j += 1) {
+                    if (visto[lista[j]] !== vuelta) {
+                      visto[lista[j]] = vuelta;
+                      h = Math.min(h, holguraDeCaja(q, m, estorbos[lista[j]]));
+                      if (h <= umbral) {
+                        return h;
+                      }
+                    }
+                  }
+                }
+              }
+              // Lo que queda sin ver está a r celdas o más: su holgura no
+              // baja de r·CELDA menos la media caja. Y fuera de la rejilla no
+              // hay nada.
+              if (h <= r * CELDA - margen ||
+                (qx - r <= limites.x0 && qx + r >= limites.x1 && qy - r <= limites.y0 && qy + r >= limites.y1)) {
+                return h;
+              }
+            }
+          };
+          var holgura = -Infinity;
+          // Lo que vale cada sitio: 3, libre, sin mirar hacia otro punto
+          // cercano y a 8 píxeles de las letras ya puestas (para que dos
+          // letras no se apilen entre sus puntos); 2, libre; 1, solo cerca de
+          // su punto; 0, ninguna de las tres cosas.
+          var nivel = -1;
+          var vecinos = suyo ? puntos.filter(function (o) {
+            return o !== suyo && distancia(o, suyo) < 60;
+          }) : [];
+          // Anillo a anillo: primero lo que vale cada sitio; la holgura,
+          // solo la de los del mejor nivel, que son los que pueden ganar.
+          distancias.some(function (lejos) {
+            var anillo = [];
+            var tope = -1;
+            anclas.forEach(function (p) {
+              var i;
+              var q;
+              var k;
+              var cerca;
+              var n;
+              for (i = 0; i < 24; i += 1) {
+                q = polar(p, lejos, (i * TAU) / 24);
+                k = cajaDeTexto(q, texto, cuerpo, 4);
+                cerca = !suyo || puntos.every(function (o) {
+                  return o === suyo || distancia(q, o) > distancia(q, suyo) + 8;
+                });
+                n = cerca && k.x0 > 8 && k.y0 > 8 && k.x1 < ANCHO - 8 && k.y1 < ALTO - 8 && !pisa(k)
+                  ? 2 : cerca ? 1 : 0;
+                if (n === 2 && vecinos.every(function (o) {
+                  return Math.abs(giro(angulo(p, q), angulo(p, o))) > Math.PI / 3;
+                }) && puestas.every(function (c) {
+                  return c.x1 + 8 < k.x0 || c.x0 - 8 > k.x1 || c.y1 + 8 < k.y0 || c.y0 - 8 > k.y1;
+                })) {
+                  n = 3;
+                }
+                anillo.push({ q: q, n: n });
+                tope = Math.max(tope, n);
+              }
+            });
+            if (tope >= nivel) {
+              anillo.forEach(function (c) {
+                var h;
+                var gana = c.n > nivel;
+                if (c.n !== tope) {
+                  return;
+                }
+                h = holguraEn(c.q, gana ? -Infinity : holgura + 0.5);
+                if (gana || h > holgura + 0.5) {
+                  nivel = c.n;
+                  holgura = h;
+                  mejor = c.q;
+                }
+              });
+            }
+            return nivel === 3 || (nivel === 2 && !vecinos.length && !puestas.length);
+          });
+          puestas.push(cajaDeTexto(mejor, texto, cuerpo, 0));
+          estorbos = estorbos.concat(bordesDeCaja(cajaDeTexto(mejor, texto, cuerpo, 0)).map(conCaja));
+          return mejor;
+        };
+        return {
+          letra: function (p, nombre) {
+            var q = sitio([p], [20, 24, 28, 33, 38, 44], nombre, CUERPO, p);
+            return pt(q.x - p.x, q.y - p.y);
+          },
+          medida: function (anclas, lejos, texto) {
+            return rotulo(sitio(anclas, [lejos, lejos + 6, lejos + 12, lejos + 18, lejos + 24], texto, 15), texto,
+              { recta: true, cuerpo: 15 });
+          },
+          nombre: function (anclas, lejos, texto) {
+            return rotulo(sitio(anclas, [lejos, lejos + 6, lejos + 12], texto, CUERPO), texto);
+          }
+        };
+      }
+
+      // Las anclas de la medida del radio de una circunferencia (o de un
+      // arco, de a0 a a1): puntos de ella, para que la medida quede junto a
+      // la circunferencia que mide, donde haya sitio.
+      function anclasDelArco(c, r, a0, a1) {
+        var lista = [];
+        var i;
+        for (i = 0; i <= 12; i += 1) {
+          lista.push(polar(c, r, a0 + ((a1 - a0) * i) / 12));
+        }
+        return lista;
+      }
+
+      // Las anclas del nombre de una recta dibujada de a a b: cerca de sus
+      // extremos.
+      function anclasDeLaRecta(a, b) {
+        var u = unitario(a, b);
+        return [avanzar(a, u, 24), avanzar(b, u, -24)];
+      }
+
+      // El punto T de la circunferencia de centro O y radio R, a `aT` grados
+      // de la dirección de la recta por A y B, girado hacia ella si es
+      // positivo: la dirección de OT y el punto.
+      function puntoTDeLaCircunferencia(d) {
+        var f = haciaElPunto(d.A, d.B, d.O);
+        var a = d.aT * GRADO;
+        var dir = pt(f.u.x * Math.cos(a) - f.w.x * Math.sin(a), f.u.y * Math.cos(a) - f.w.y * Math.sin(a));
+        return { u: f.u, w: f.w, dir: dir, T: avanzar(d.O, dir, d.R * d.escala) };
+      }
+
+      // Las circunferencias tangentes a la recta r (por A y B) y a la
+      // circunferencia de centro O y radio R en su punto T. La tangente t en
+      // T corta a r en V; las bisectrices de los dos ángulos que forman t y r
+      // en V cortan a la recta OT en los centros: O₁, más allá de T, toca a
+      // la dada por fuera, y O₂, más allá de O, la envuelve. `lado1` es el
+      // sentido de r del ángulo cuya bisectriz pasa por O₁.
+      function enLaCircunferenciaGeometria(d) {
+        var R = d.R * d.escala;
+        var q = puntoTDeLaCircunferencia(d);
+        var T = q.T;
+        var V = corteRectas(T, avanzar(T, normalArriba(q.dir), 1), d.A, d.B);
+        var haciaT;
+        var cortes;
+        var k;
+        var i;
+        if (!V || distancia(V, T) < 1) {
+          return null;
+        }
+        haciaT = unitario(V, T);
+        cortes = [1, -1].map(function (s) {
+          var b = unitario(pt(0, 0), pt(q.u.x * s + haciaT.x, q.u.y * s + haciaT.y));
+          return { s: s, X: corteRectas(V, avanzar(V, b, 1), d.O, T) };
+        });
+        k = cortes.map(function (c) {
+          return c.X ? sobre(c.X, d.O, q.dir) : NaN;
+        });
+        i = k[0] > R ? 0 : 1;
+        if (!(k[i] > R) || !(k[1 - i] < 0)) {
+          return null;
+        }
+        return {
+          R: R, u: q.u, w: q.w, dir: q.dir, T: T, V: V, haciaT: haciaT,
+          lado1: pt(q.u.x * cortes[i].s, q.u.y * cortes[i].s),
+          O1: cortes[i].X, O2: cortes[1 - i].X,
+          r1: k[i] - R, r2: R - k[1 - i],
+          T1: pie(d.A, d.B, cortes[i].X), T2: pie(d.A, d.B, cortes[1 - i].X)
+        };
+      }
+
+      function enLaCircunferenciaConstruir(d) {
+        var g = enLaCircunferenciaGeometria(d);
+        var O = d.O;
+        var T = g.T;
+        var cifras = Boolean(d.cifras);
+        var r = tramoEnLaLamina(d.A, g.u, 8);
+        // Una bisectriz con el compás, la que pasa por O₁, y la otra, su
+        // perpendicular por V.
+        var radioBis = acotar(Math.min(distancia(g.V, T), distancia(g.V, g.T1)) * 0.4, 28, 56);
+        var bis = bisectrizDibujada(g.V, avanzar(g.V, g.haciaT, 10), avanzar(g.V, g.lado1, 10), radioBis,
+          distancia(g.V, g.O1) + 24);
+        var w2 = unitario(g.V, g.O2);
+        var a1 = angulo(g.O1, T);
+        var a2 = angulo(g.O2, T);
+        var base = [seg(r[0], r[1], "dato"), arco(O, g.R, 0, TAU, "dato")];
+        var pasos = [
+          [
+            seg(avanzar(g.O2, g.dir, -18), avanzar(g.O1, g.dir, 18), "aux"),
+            seg(avanzar(g.V, g.haciaT, -12), avanzar(T, g.haciaT, 34), "aux"),
+            recto(T, O, g.V)
+          ],
+          bis.trazos.concat([
+            seg(g.V, avanzar(g.O2, w2, 24), "aux"),
+            recto(g.V, avanzar(g.V, bis.w, 10), avanzar(g.V, w2, 10))
+          ]),
+          [
+            seg(g.O1, g.T1, "aux"),
+            recto(g.T1, g.O1, avanzar(g.T1, g.u, 10)),
+            seg(g.O2, g.T2, "aux"),
+            recto(g.T2, g.O2, avanzar(g.T2, g.u, 10))
+          ],
+          [
+            abrir(g.O1, T),
+            arco(g.O1, g.r1, a1, a1 + TAU, "sol"),
+            abrir(g.O2, T),
+            arco(g.O2, g.r2, a2, a2 + TAU, "sol")
+          ]
+        ];
+        var porque = aprisa([igual(g.O1, T), igual(g.O1, g.T1), igual(g.O2, T, 2), igual(g.O2, g.T2, 2)]);
+        var letras = letreroHolgado(base.concat.apply(base, pasos).concat(porque), [O, T, g.V, g.O1, g.O2, g.T1, g.T2]);
+        base.push(
+          letras.nombre(anclasDeLaRecta(r[0], r[1]), 15, "r"),
+          punto(O, "O", letras.letra(O, "O"), { forma: "hueco" }),
+          punto(T, "T", letras.letra(T, "T"), { forma: "hueco" })
+        );
+        pasos[0].push(punto(g.V, "V", letras.letra(g.V, "V")));
+        pasos[1].push(punto(g.O1, "O₁", letras.letra(g.O1, "O₁")), punto(g.O2, "O₂", letras.letra(g.O2, "O₂")));
+        pasos[2].push(punto(g.T1, "T₁", letras.letra(g.T1, "T₁")), punto(g.T2, "T₂", letras.letra(g.T2, "T₂")));
+        if (cifras) {
+          base.push(letras.medida([O], g.R * 0.55, "R " + conComa(d.R)));
+          pasos[3].push(
+            letras.medida(anclasDelArco(g.O1, g.r1, 0, TAU), 14, "R " + conComa(g.r1 / d.escala)),
+            letras.medida(anclasDelArco(g.O2, g.r2, 0, TAU), 14, "R " + conComa(g.r2 / d.escala))
+          );
+        }
+        return { base: base, pasos: pasos, porque: porque };
+      }
+
+      construcciones["recta-y-circunferencia-punto-en-la-circunferencia"] = {
+        datos: function () {
+          return { A: pt(30, 350), B: pt(570, 350), O: pt(300, 260), R: 10, escala: 4, aT: 20 };
+        },
+        asas: function (d) {
+          return { O: d.O, T: puntoTDeLaCircunferencia(d).T };
+        },
+        // T gira por la circunferencia; O la lleva con su punto.
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          var f;
+          if (nombre === "T") {
+            f = haciaElPunto(d.A, d.B, d.O);
+            nuevo.aT = Math.atan2(-sobre(p, d.O, f.w), sobre(p, d.O, f.u)) / GRADO;
+          } else {
+            nuevo.O = p;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = enLaCircunferenciaGeometria(d);
+          var c;
+          if (!g || Math.abs(sobre(d.O, d.A, g.w)) < g.R + 20 || Math.abs(Math.cos(d.aT * GRADO)) < 0.3 ||
+            g.r1 < 20 || g.r2 < 20 || distancia(g.V, g.T) < 40 ||
+            distancia(g.V, g.T1) < 26 || distancia(g.V, g.T2) < 26) {
+            return false;
+          }
+          c = enLaCircunferenciaConstruir(d);
+          return cabe(c, 6, [ANCHO, ALTO]) && letrasDespejadas(c);
+        },
+        construir: enLaCircunferenciaConstruir
+      };
+
+      // Las circunferencias tangentes a la recta r (por A y B) en su punto T
+      // y a la circunferencia de centro O y radio R, que no la corta. Los
+      // centros están en la perpendicular a r por T. En ella, a R de T, P
+      // queda del otro lado de r y Q del de la circunferencia (en el dibujo,
+      // A y B): el centro que está a la misma distancia de O que de P, O₁,
+      // toca a la dada por fuera, y el que lo está de O y de Q, O₂, la
+      // envuelve.
+      function enLaRectaGeometria(d) {
+        var R = d.R * d.escala;
+        var f = haciaElPunto(d.A, d.B, d.O);
+        var T = pie(d.A, d.B, d.T);
+        var P = avanzar(T, f.w, -R);
+        var Q = avanzar(T, f.w, R);
+        var x1 = equidistanteEnLaRecta(T, f.w, d.O, P);
+        var x2 = equidistanteEnLaRecta(T, f.w, d.O, Q);
+        var O1;
+        var O2;
+        if (x1 === null || x2 === null || !(x1 > 0) || !(x2 > R)) {
+          return null;
+        }
+        O1 = avanzar(T, f.w, x1);
+        O2 = avanzar(T, f.w, x2);
+        return {
+          R: R, u: f.u, w: f.w, T: T, P: P, Q: Q, O1: O1, O2: O2, r1: x1, r2: x2,
+          T1: avanzar(d.O, unitario(d.O, O1), R),
+          T2: avanzar(d.O, unitario(O2, d.O), R)
+        };
+      }
+
+      function enLaRectaConstruir(d) {
+        var g = enLaRectaGeometria(d);
+        var O = d.O;
+        var T = g.T;
+        var cifras = Boolean(d.cifras);
+        var r = tramoEnLaLamina(d.A, g.u, 8);
+        var aP = angulo(T, g.P);
+        var tomar = angulo(O, T);
+        var marcas = arquitos(T, g.R, aP - 0.2, [aP, angulo(T, g.Q)], 0.2);
+        var med1 = mediatrizHastaElCentro(O, g.P, g.O1);
+        var med2 = mediatrizHastaElCentro(O, g.Q, g.O2);
+        var a1 = angulo(g.O1, T);
+        var a2 = angulo(g.O2, T);
+        var base = [seg(r[0], r[1], "dato"), arco(O, g.R, 0, TAU, "dato")];
+        var pasos = [
+          // La perpendicular por T y, con el compás, el radio de la dada
+          // llevado a T, a los dos lados.
+          [
+            seg(avanzar(T, g.w, -g.R - 18), avanzar(g.O2, g.w, 22), "aux"),
+            recto(T, avanzar(T, g.u, 10), avanzar(T, g.w, 10)),
+            abrir(O, polar(O, g.R, tomar)),
+            llevar(O, polar(O, g.R, tomar), T, polar(T, g.R, aP - 0.2))
+          ].concat(marcas.trazos),
+          med1.trazos.concat(med2.trazos),
+          [seg(g.O1, O, "aux"), seg(g.O2, avanzar(g.T2, unitario(g.O2, O), 14), "aux")],
+          [
+            abrir(g.O1, T),
+            arco(g.O1, g.r1, a1, a1 + TAU, "sol"),
+            abrir(g.O2, T),
+            arco(g.O2, g.r2, a2, a2 + TAU, "sol")
+          ]
+        ];
+        var porque = aprisa([igual(g.O1, O), igual(g.O1, g.P), igual(g.O2, O, 2), igual(g.O2, g.Q, 2)]);
+        var letras = letreroHolgado(base.concat.apply(base, pasos).concat(porque),
+          [O, T, g.P, g.Q, g.O1, g.O2, g.T1, g.T2]);
+        // Primero las letras de los datos, de los centros y de los puntos de
+        // tangencia; las de A y B, que son de paso, se acomodan después.
+        base.push(
+          letras.nombre(anclasDeLaRecta(r[0], r[1]), 15, "r"),
+          punto(O, "O", letras.letra(O, "O"), { forma: "hueco" }),
+          punto(T, "T", letras.letra(T, "T"), { forma: "hueco" })
+        );
+        pasos[1].push(punto(g.O1, "O₁", letras.letra(g.O1, "O₁")), punto(g.O2, "O₂", letras.letra(g.O2, "O₂")));
+        pasos[2].push(punto(g.T1, "T₁", letras.letra(g.T1, "T₁")), punto(g.T2, "T₂", letras.letra(g.T2, "T₂")));
+        pasos[0].push(punto(g.P, "A", letras.letra(g.P, "A")), punto(g.Q, "B", letras.letra(g.Q, "B")));
+        if (cifras) {
+          base.push(letras.medida([O], g.R * 0.55, "R " + conComa(d.R)));
+          pasos[3].push(
+            letras.medida(anclasDelArco(g.O1, g.r1, 0, TAU), 14, "R " + conComa(g.r1 / d.escala)),
+            letras.medida(anclasDelArco(g.O2, g.r2, 0, TAU), 14, "R " + conComa(g.r2 / d.escala))
+          );
+        }
+        return { base: base, pasos: pasos, porque: porque };
+      }
+
+      construcciones["recta-y-circunferencia-punto-en-la-recta"] = {
+        datos: function () {
+          return { A: pt(30, 330), B: pt(570, 330), T: pt(230, 330), O: pt(340, 160), R: 10, escala: 4 };
+        },
+        asas: function (d) {
+          return { O: d.O, T: pie(d.A, d.B, d.T) };
+        },
+        // T se desliza por r.
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          nuevo[nombre] = nombre === "T" ? pie(d.A, d.B, p) : p;
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = enLaRectaGeometria(d);
+          var c;
+          if (!g || Math.abs(sobre(d.O, d.A, g.w)) < g.R + 20 || Math.abs(sobre(d.O, g.T, g.u)) < 20 ||
+            distancia(d.O, g.P) < 50 || distancia(d.O, g.Q) < 50 || g.r1 < 20 || g.r2 - g.r1 < 30) {
+            return false;
+          }
+          c = enLaRectaConstruir(d);
+          return cabe(c, 6, [ANCHO, ALTO]) && letrasDespejadas(c);
+        },
+        construir: enLaRectaConstruir
+      };
+
+      // Las circunferencias tangentes a la de centro O₁ y radio r₁ en su
+      // punto T, a `aT` grados de la recta de los centros, y a la de centro
+      // O₂ y radio r₂. Los centros están en la recta O₁T. En ella, a r₂ de T,
+      // P queda hacia O₁ y Q hacia fuera (en el dibujo, A y B): el centro que
+      // está a la misma distancia de O₂ que de P, C₁, toca a las dos por
+      // fuera, y el que lo está de O₂ y de Q, C₂, toca a la primera por fuera
+      // y envuelve a la segunda. Solo vale ese caso, el de los textos: si T
+      // no mira hacia la segunda, alguna toca a la primera por dentro.
+      function dosCircunferenciasEnUnaGeometria(d) {
+        var e = d.escala;
+        var r1 = d.r1 * e;
+        var r2 = d.r2 * e;
+        var T = polar(d.O1, r1, angulo(d.O1, d.O2) + d.aT * GRADO);
+        var u = unitario(d.O1, T);
+        var P = avanzar(T, u, -r2);
+        var Q = avanzar(T, u, r2);
+        var x1 = equidistanteEnLaRecta(T, u, d.O2, P);
+        var x2 = equidistanteEnLaRecta(T, u, d.O2, Q);
+        var C1;
+        var C2;
+        if (x1 === null || x2 === null || !(x1 > 0) || !(x2 > r2)) {
+          return null;
+        }
+        C1 = avanzar(T, u, x1);
+        C2 = avanzar(T, u, x2);
+        return {
+          r1: r1, r2: r2, T: T, u: u, P: P, Q: Q, C1: C1, C2: C2, R1: x1, R2: x2,
+          T1: avanzar(d.O2, unitario(d.O2, C1), r2),
+          T2: avanzar(d.O2, unitario(C2, d.O2), r2)
+        };
+      }
+
+      function dosCircunferenciasEnUnaConstruir(d) {
+        var g = dosCircunferenciasEnUnaGeometria(d);
+        var O1 = d.O1;
+        var O2 = d.O2;
+        var T = g.T;
+        var cifras = Boolean(d.cifras);
+        var aP = angulo(T, g.P);
+        var tomar = angulo(O2, T);
+        var marcas = arquitos(T, g.r2, aP - 0.2, [aP, angulo(T, g.Q)], 0.2);
+        var med1 = mediatrizHastaElCentro(O2, g.P, g.C1);
+        var med2 = mediatrizHastaElCentro(O2, g.Q, g.C2);
+        var a1 = angulo(g.C1, T);
+        var a2 = angulo(g.C2, T);
+        var base = [arco(O1, g.r1, 0, TAU, "dato"), arco(O2, g.r2, 0, TAU, "dato")];
+        var pasos = [
+          // La recta O₁T y, con el compás, el radio de la segunda llevado a
+          // T, a los dos lados.
+          [
+            seg(avanzar(T, g.u, -Math.max(g.r1, g.r2) - 16), avanzar(g.C2, g.u, 22), "aux"),
+            abrir(O2, polar(O2, g.r2, tomar)),
+            llevar(O2, polar(O2, g.r2, tomar), T, polar(T, g.r2, aP - 0.2))
+          ].concat(marcas.trazos),
+          med1.trazos.concat(med2.trazos),
+          [seg(g.C1, O2, "aux"), seg(g.C2, avanzar(g.T2, unitario(g.C2, O2), 14), "aux")],
+          [
+            abrir(g.C1, T),
+            arco(g.C1, g.R1, a1, a1 + TAU, "sol"),
+            abrir(g.C2, T),
+            arco(g.C2, g.R2, a2, a2 + TAU, "sol")
+          ]
+        ];
+        var porque = aprisa([igual(g.C1, O2), igual(g.C1, g.P), igual(g.C2, O2, 2), igual(g.C2, g.Q, 2)]);
+        var letras = letreroHolgado(base.concat.apply(base, pasos).concat(porque),
+          [O1, O2, T, g.P, g.Q, g.C1, g.C2, g.T1, g.T2]);
+        // Primero las letras de los datos, de los centros y de los puntos de
+        // tangencia; las de A y B, que son de paso, se acomodan después.
+        base.push(
+          punto(O1, "O₁", letras.letra(O1, "O₁"), { forma: "hueco" }),
+          punto(O2, "O₂", letras.letra(O2, "O₂"), { forma: "hueco" }),
+          punto(T, "T", letras.letra(T, "T"), { forma: "hueco" })
+        );
+        pasos[1].push(punto(g.C1, "C₁", letras.letra(g.C1, "C₁")), punto(g.C2, "C₂", letras.letra(g.C2, "C₂")));
+        pasos[2].push(punto(g.T1, "T₁", letras.letra(g.T1, "T₁")), punto(g.T2, "T₂", letras.letra(g.T2, "T₂")));
+        pasos[0].push(punto(g.P, "A", letras.letra(g.P, "A")), punto(g.Q, "B", letras.letra(g.Q, "B")));
+        if (cifras) {
+          pasos[3].push(
+            letras.medida(anclasDelArco(g.C1, g.R1, 0, TAU), 14, "R " + conComa(g.R1 / d.escala)),
+            letras.medida(anclasDelArco(g.C2, g.R2, 0, TAU), 14, "R " + conComa(g.R2 / d.escala))
+          );
+        }
+        return { base: base, pasos: pasos, porque: porque };
+      }
+
+      construcciones["dos-circunferencias-punto-en-una"] = {
+        datos: function () {
+          return { O1: pt(150, 230), r1: 15, O2: pt(370, 240), r2: 10, escala: 4, aT: -25 };
+        },
+        asas: function (d) {
+          return { O1: d.O1, O2: d.O2, T: polar(d.O1, d.r1 * d.escala, angulo(d.O1, d.O2) + d.aT * GRADO) };
+        },
+        // T gira por la primera circunferencia.
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "T") {
+            nuevo.aT = giro(angulo(d.O1, d.O2), angulo(d.O1, p)) / GRADO;
+          } else {
+            nuevo[nombre] = p;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var g = dosCircunferenciasEnUnaGeometria(d);
+          var c;
+          if (!g || distancia(d.O1, d.O2) < (d.r1 + d.r2) * d.escala + 30 || distancia(d.O2, g.P) < 50 ||
+            distancia(d.O2, g.Q) < 50 || g.R1 < 20 || g.R2 - g.R1 < 30) {
+            return false;
+          }
+          c = dosCircunferenciasEnUnaConstruir(d);
+          return cabe(c, 6, [ANCHO, ALTO]) && letrasDespejadas(c);
+        },
+        construir: dosCircunferenciasEnUnaConstruir
+      };
+
+      // Tres circunferencias tangentes por fuera dos a dos, de radios r₁, r₂
+      // y r₃. O₂ está a r₁ + r₂ de O₁, en la dirección `fi`; O₃, en el corte
+      // de los arcos de centros O₁ y O₂ y radios r₁ + r₃ y r₂ + r₃, del lado
+      // `lado` (1, el de arriba si O₁ queda a la izquierda). Los puntos de
+      // tangencia están en los lados del triángulo de los centros. Los tres
+      // radios, los datos, van arriba a la derecha (arriba a la izquierda
+      // los taparía el número de la viñeta), acabados en la x `fin`.
+      var LEYENDA_TRES = { fin: 566, y: 44, paso: 40 };
+
+      function tresTangentesGeometria(d) {
+        var e = d.escala;
+        var r = [d.r1 * e, d.r2 * e, d.r3 * e];
+        var u = polar(pt(0, 0), 1, d.fi || 0);
+        var O1 = d.O1;
+        var O2 = avanzar(O1, u, r[0] + r[1]);
+        var cortes = cortesCircunferencias(O1, r[0] + r[2], O2, r[1] + r[2]);
+        var O3 = d.lado < 0 ? cortes[1] : cortes[0];
+        return {
+          r: r, u: u, O1: O1, O2: O2, O3: O3,
+          T12: avanzar(O1, u, r[0]),
+          T13: avanzar(O1, unitario(O1, O3), r[0]),
+          T23: avanzar(O2, unitario(O2, O3), r[1])
+        };
+      }
+
+      function tresTangentesConstruir(d) {
+        var g = tresTangentesGeometria(d);
+        var cifras = Boolean(d.cifras);
+        var r = g.r;
+        var radios = [d.r1, d.r2, d.r3];
+        var nombres = ["r₁", "r₂", "r₃"];
+        var leyenda = r.map(function (largo, i) {
+          var y = LEYENDA_TRES.y + i * LEYENDA_TRES.paso;
+          return [pt(LEYENDA_TRES.fin - largo, y), pt(LEYENDA_TRES.fin, y)];
+        });
+        var base = [];
+        var a12 = angulo(g.O1, g.O2);
+        var marca2 = arcoJunto(null, g.O1, r[0] + r[1], g.O2, 18);
+        var arco13 = arcoJunto(marca2.despues, g.O1, r[0] + r[2], g.O3, 30);
+        var arco23 = arcoJunto(arco13.despues, g.O2, r[1] + r[2], g.O3, 30);
+        var en12 = arcoJunto(arco23.despues, g.O1, r[0], g.T12, 12);
+        var en13 = arcoJunto(en12.despues, g.O1, r[0], g.T13, 12);
+        var en23 = arcoJunto(en13.despues, g.O2, r[1], g.T23, 12);
+        var pasos;
+        var porque;
+        var letras;
+        leyenda.forEach(function (s) {
+          base.push(seg(s[0], s[1], "dato"), punto(s[0], "", null, { forma: "hueco" }),
+            punto(s[1], "", null, { forma: "hueco" }));
+        });
+        pasos = [
+          [seg(avanzar(g.O1, g.u, -r[0] - 26), avanzar(g.O2, g.u, r[1] + 26), "aux")].concat(marca2.trazos),
+          arco13.trazos.concat(arco23.trazos),
+          [seg(g.O1, g.O3, "aux"), seg(g.O2, g.O3, "aux")].concat(en12.trazos, en13.trazos, en23.trazos),
+          [
+            abrir(g.O1, g.T12),
+            arco(g.O1, r[0], a12, a12 + TAU, "sol"),
+            abrir(g.O2, g.T12),
+            arco(g.O2, r[1], a12 + Math.PI, a12 + Math.PI + TAU, "sol"),
+            abrir(g.O3, g.T13),
+            arco(g.O3, r[2], angulo(g.O3, g.T13), angulo(g.O3, g.T13) + TAU, "sol")
+          ]
+        ];
+        porque = aprisa([
+          igual(g.O1, g.T12), igual(g.O1, g.T13),
+          igual(g.O2, g.T12, 2), igual(g.O2, g.T23, 2),
+          igual(g.O3, g.T13, 3), igual(g.O3, g.T23, 3)
+        ]);
+        letras = letreroHolgado(base.concat.apply(base, pasos).concat(porque),
+          [g.O1, g.O2, g.O3, g.T12, g.T13, g.T23].concat([].concat.apply([], leyenda)));
+        // El nombre de cada radio, a la izquierda de su segmento, y su medida,
+        // encima, como en una cota.
+        leyenda.forEach(function (s, i) {
+          base.push(rotulo(pt(s[0].x - 24, s[0].y + 1), nombres[i]));
+          if (cifras) {
+            base.push(rotulo(pt((s[0].x + s[1].x) / 2, s[0].y - 12), conComa(radios[i]), { recta: true, cuerpo: 15 }));
+          }
+        });
+        pasos[0].push(
+          punto(g.O1, "O₁", letras.letra(g.O1, "O₁")),
+          punto(g.O2, "O₂", letras.letra(g.O2, "O₂"))
+        );
+        pasos[1].push(punto(g.O3, "O₃", letras.letra(g.O3, "O₃")));
+        // Los puntos de tangencia, sin letra: cada uno está donde se tocan
+        // dos circunferencias, y ahí no queda hueco para un nombre.
+        pasos[2].push(punto(g.T12, "", null), punto(g.T13, "", null), punto(g.T23, "", null));
+        return { base: base, pasos: pasos, porque: porque };
+      }
+
+      construcciones["tres-circunferencias-tangentes"] = {
+        datos: function () {
+          return { O1: pt(200, 300), fi: 0, r1: 14, r2: 10, r3: 18, escala: 4, lado: 1 };
+        },
+        asas: function (d) {
+          return { O1: d.O1, O2: tresTangentesGeometria(d).O2 };
+        },
+        // O₂ gira alrededor de O₁, sin cambiar la distancia.
+        mover: function (d, nombre, p) {
+          var nuevo = copia(d);
+          if (nombre === "O2") {
+            nuevo.fi = angulo(d.O1, p);
+          } else {
+            nuevo.O1 = p;
+          }
+          return nuevo;
+        },
+        valido: function (d) {
+          var c;
+          var k;
+          var mayor = Math.max(d.r1, d.r2, d.r3) * d.escala;
+          if (!(d.r1 > 3 && d.r2 > 3 && d.r3 > 3)) {
+            return false;
+          }
+          c = tresTangentesConstruir(d);
+          // Lo que se traza no pisa los datos, arriba a la derecha.
+          k = caja([].concat.apply([], c.pasos));
+          return cabe(c, 6, [ANCHO, ALTO]) && letrasDespejadas(c) &&
+            (k.x1 < LEYENDA_TRES.fin - mayor - 50 || k.y0 > LEYENDA_TRES.y + 2 * LEYENDA_TRES.paso + 30);
+        },
+        construir: tresTangentesConstruir
+      };
+
       // ---- Enlaces ----
 
       // El enlace de dos rectas que se cortan en V (r, con el ángulo fi, y s,
@@ -26104,6 +26858,116 @@ Bachillerato</p>
             distancia(g.T1, g.T2) > 30 && cabe(enlaceArcosConstruir(d), 6, [ANCHO, ALTO]);
         },
         construir: enlaceArcosConstruir
+      };
+
+      // El enlace de dos circunferencias (O₁, r₁; O₂, r₂), exteriores, con
+      // dos arcos tangentes entre sí, como una S (desde el 9 de noviembre de
+      // 2026). Los radios O₁A y O₂B son perpendiculares a la recta de los
+      // centros y de sentidos contrarios (`lado`, el de A: 1, el de la normal
+      // de arriba de O₁O₂); AB corta a O₁O₂ en T, el punto de enlace. El
+      // primer arco tiene el centro C₁ en la recta O₁A y en la mediatriz de
+      // AT; el segundo, C₂, en la recta O₂B y en la de TB. Como O₁A y O₂B
+      // son paralelas, C₁, T y C₂ quedan alineados y los arcos son tangentes.
+      function conDosArcosGeometria(d) {
+        var e = d.escala;
+        var r1 = d.r1 * e;
+        var r2 = d.r2 * e;
+        var u = unitario(d.O1, d.O2);
+        var arriba = normalArriba(u);
+        var n = d.lado < 0 ? pt(-arriba.x, -arriba.y) : arriba;
+        var A = avanzar(d.O1, n, r1);
+        var B = avanzar(d.O2, n, -r2);
+        var T = corteRectas(A, B, d.O1, d.O2);
+        var t1;
+        var t2;
+        var k1;
+        var k2;
+        if (!T) {
+          return null;
+        }
+        // C₁ = O₁ − k₁·n y C₂ = O₂ + k₂·n, con C₁A = C₁T y C₂B = C₂T.
+        t1 = distancia(d.O1, T);
+        t2 = distancia(d.O2, T);
+        k1 = (t1 * t1 - r1 * r1) / (2 * r1);
+        k2 = (t2 * t2 - r2 * r2) / (2 * r2);
+        return {
+          r1: r1, r2: r2, u: u, n: n, A: A, B: B, T: T,
+          C1: avanzar(d.O1, n, -k1), C2: avanzar(d.O2, n, k2),
+          R1: r1 + k1, R2: r2 + k2
+        };
+      }
+
+      function conDosArcosConstruir(d) {
+        var g = conDosArcosGeometria(d);
+        var O1 = d.O1;
+        var O2 = d.O2;
+        var cifras = Boolean(d.cifras);
+        var med1 = mediatrizHastaElCentro(g.A, g.T, g.C1);
+        var med2 = mediatrizHastaElCentro(g.T, g.B, g.C2);
+        var a1 = angulo(g.C1, g.A);
+        var b1 = angulo(g.C1, g.T);
+        var a2 = angulo(g.C2, g.T);
+        var b2 = angulo(g.C2, g.B);
+        var base = [arco(O1, g.r1, 0, TAU, "dato"), arco(O2, g.r2, 0, TAU, "dato")];
+        var pasos = [
+          [
+            seg(avanzar(O1, g.u, -g.r1 - 20), avanzar(O2, g.u, g.r2 + 20), "aux"),
+            seg(avanzar(O1, g.n, g.r1 + 16), avanzar(g.C1, g.n, -18), "aux"),
+            recto(O1, avanzar(O1, g.u, 10), avanzar(O1, g.n, 10)),
+            seg(avanzar(O2, g.n, -g.r2 - 16), avanzar(g.C2, g.n, 18), "aux"),
+            recto(O2, avanzar(O2, g.u, -10), avanzar(O2, g.n, -10))
+          ],
+          [seg(avanzar(g.A, unitario(g.B, g.A), 10), avanzar(g.B, unitario(g.A, g.B), 10), "aux")],
+          med1.trazos.concat(med2.trazos),
+          [
+            abrir(g.C1, g.A),
+            arco(g.C1, g.R1, a1, a1 + giro(a1, b1), "sol"),
+            abrir(g.C2, g.T),
+            arco(g.C2, g.R2, a2, a2 + giro(a2, b2), "sol")
+          ]
+        ];
+        var porque = aprisa([
+          seg(g.C1, g.C2, "guia", { sinRegla: true }),
+          igual(g.C1, g.A), igual(g.C1, g.T), igual(g.C2, g.T, 2), igual(g.C2, g.B, 2)
+        ]);
+        var letras = letreroHolgado(base.concat.apply(base, pasos).concat(porque), [O1, O2, g.A, g.B, g.T, g.C1, g.C2]);
+        base.push(
+          punto(O1, "O₁", letras.letra(O1, "O₁"), { forma: "hueco" }),
+          punto(O2, "O₂", letras.letra(O2, "O₂"), { forma: "hueco" })
+        );
+        pasos[0].push(punto(g.A, "A", letras.letra(g.A, "A")), punto(g.B, "B", letras.letra(g.B, "B")));
+        pasos[1].push(punto(g.T, "T", letras.letra(g.T, "T")));
+        pasos[2].push(punto(g.C1, "C₁", letras.letra(g.C1, "C₁")), punto(g.C2, "C₂", letras.letra(g.C2, "C₂")));
+        if (cifras) {
+          pasos[3].push(
+            letras.medida(anclasDelArco(g.C1, g.R1, a1, a1 + giro(a1, b1)), 14, "R " + conComa(g.R1 / d.escala)),
+            letras.medida(anclasDelArco(g.C2, g.R2, a2, a2 + giro(a2, b2)), 14, "R " + conComa(g.R2 / d.escala))
+          );
+        }
+        return { base: base, pasos: pasos, porque: porque };
+      }
+
+      construcciones["enlace-con-dos-arcos"] = {
+        datos: function () {
+          return { O1: pt(160, 220), r1: 12, O2: pt(430, 220), r2: 18, escala: 3.5, lado: 1 };
+        },
+        asas: function (d) {
+          return { O1: d.O1, O2: d.O2 };
+        },
+        mover: function (d, nombre, p) {
+          return moverDato(d, nombre, p);
+        },
+        valido: function (d) {
+          var g = conDosArcosGeometria(d);
+          var c;
+          if (!g || distancia(d.O1, d.O2) < (d.r1 + d.r2) * d.escala + 40 ||
+            distancia(g.A, g.T) < 40 || distancia(g.T, g.B) < 40) {
+            return false;
+          }
+          c = conDosArcosConstruir(d);
+          return cabe(c, 6, [ANCHO, ALTO]) && letrasDespejadas(c);
+        },
+        construir: conDosArcosConstruir
       };
 
       // ---- Rectificaciones ----
@@ -33944,7 +34808,7 @@ Bachillerato</p>
         lienzo: [960, 330],
         trazos: function () {
           var lista = [];
-          // 28: las poleas, de radios 20 y 30 mm, con los centros a 100 mm.
+          // 33: las poleas, de radios 20 y 30 mm, con los centros a 100 mm.
           var e = 1.4;
           var b = pt(60, 190);
           var th = Math.asin(10 / 100) / GRADO;
@@ -33955,7 +34819,7 @@ Bachillerato</p>
           };
           var g1 = 90 + th;
           var p1 = n(g1);
-          lista.push(numero(pt(24, 26), "28"));
+          lista.push(numero(pt(24, 26), "33"));
           lista.push(
             arco(A1, 20 * e, 0, TAU, "dato"),
             arco(A2, 30 * e, 0, TAU, "dato"),
@@ -33967,13 +34831,13 @@ Bachillerato</p>
             arcoMm(b, e, 100, 0, 30, 360 - g1, 360 + g1, "sol"),
             medida(pt(b.x + 50 * e, b.y + 14), "100")
           );
-          // 29: el óvalo de taller: dos circunferencias de 15 mm a 60 mm,
+          // 34: el óvalo de taller: dos circunferencias de 15 mm a 60 mm,
           // abrazadas por arcos de 50 mm.
           var c = pt(480, 180);
           var e2 = 2.2;
           var h = Math.sqrt(35 * 35 - 30 * 30);
           var gT = Math.atan2(h, 30) / GRADO;
-          lista.push(numero(pt(344, 26), "29"));
+          lista.push(numero(pt(344, 26), "34"));
           lista.push(
             arcoMm(c, e2, -30, 0, 15, 180 - gT, 180 + gT, "sol"),
             arcoMm(c, e2, 30, 0, 15, -gT, gT, "sol"),
@@ -33988,7 +34852,7 @@ Bachillerato</p>
             seg(puntoMm(c, e2, 0, -h), puntoMm(c, e2, 0, 50 - h), "aux"),
             medida(pt(c.x + 14, c.y - (50 - 2 * h) * e2 / 2), "50")
           );
-          // 30: la recta y la circunferencia de 15 mm, a 30 mm, enlazadas
+          // 35: la recta y la circunferencia de 15 mm, a 30 mm, enlazadas
           // con arcos de 25 mm, uno exterior y otro que la abraza.
           var e3 = 1.6;
           var d0 = pt(800, 290);
@@ -33997,7 +34861,7 @@ Bachillerato</p>
           var dx2 = Math.sqrt(10 * 10 - 5 * 5);
           var O1 = puntoMm(d0, e3, dx1, 25);
           var O2 = puntoMm(d0, e3, -dx2, 25);
-          lista.push(numero(pt(664, 26), "30"));
+          lista.push(numero(pt(664, 26), "35"));
           lista.push(
             seg(pt(670, d0.y), pt(950, d0.y), "dato"),
             arco(C, 15 * e3, 0, TAU, "dato"),
@@ -34025,7 +34889,7 @@ Bachillerato</p>
           var nx = 20 / 42.5;
           var ny = Math.sqrt(1 - nx * nx);
           var gn = Math.atan2(ny, nx) / GRADO;
-          lista.push(numero(pt(24, 26), "31"));
+          lista.push(numero(pt(24, 26), "36"));
           [1, -1].forEach(function (s) {
             lista.push(
               seg(puntoMm(b, e, s * 35 * nx, 35 * ny), puntoMm(b, e, s * (42.5 + 15 * nx), 15 * ny), "sol"),
@@ -34049,7 +34913,7 @@ Bachillerato</p>
           var yo = Math.sqrt(114 * 114 - xo * xo);
           var gGrande = Math.atan2(yo, xo) / GRADO;
           var gOreja = Math.atan2(yo, xo - 60) / GRADO;
-          lista.push(numero(pt(344, 26), "32"));
+          lista.push(numero(pt(344, 26), "37"));
           lista.push(
             arcoMm(b2, e2, 0, 0, 54, gGrande, 180 - gGrande, "sol"),
             arcoMm(b2, e2, 0, 0, 54, 180 + gGrande, 360 - gGrande, "sol"),
@@ -34078,7 +34942,7 @@ Bachillerato</p>
           var yc = Math.sqrt(105 * 105 - 60 * 60);
           var gT = Math.atan2(yc, 60) / GRADO;
           var gArco = Math.atan2(yc + 0, 60) / GRADO;
-          lista.push(numero(pt(664, 26), "33"));
+          lista.push(numero(pt(664, 26), "38"));
           lista.push(
             arcoMm(b3, e3, 0, -yc, 135, gArco, 180 - gArco, "sol"),
             arcoMm(b3, e3, 0, yc, 135, 180 + gArco, 360 - gArco, "sol"),
