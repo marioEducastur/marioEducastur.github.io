@@ -3371,6 +3371,28 @@
       font-family: "Times New Roman", Times, serif;
     }
 
+    @media screen and (max-width: 1000px) {
+      figure img.esquema {
+        width: 100% !important;
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+    }
+
+    .sol-pasos > figure:first-child,
+    .sol-pasos .lista-solucion-ejercicio > li > figure:first-child {
+      margin-top: 0.3rem;
+    }
+
+    @media print {
+      .resultado li:has(> figure:first-child)::before {
+        content: "\200B";
+        display: block;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+    }
+
     .leyenda-ib {
       display: flex;
       flex-wrap: wrap;
@@ -5188,8 +5210,11 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
                 estaba.</li>
                 <li><strong>Los ejercicios</strong>, con su número del
                 libro y sus datos, redactados de nuevo. Inténtalos antes
-                de mirar: el ojo enseña el resultado, y el lápiz, el
-                paso a paso.</li>
+                de mirar: escribe tu resultado en la casilla de al lado,
+                solo el número (la unidad ya va escrita), y la página te
+                dice si está bien; en los de opción múltiple, pulsa la
+                letra. Después, el ojo enseña el resultado, y el lápiz,
+                el paso a paso.</li>
                 <li><strong>Lo que ya sabes:</strong> el capítulo usa
                 todo lo de la cinemática (A.1), y en sus ejemplos
                 vuelven las ecuaciones del movimiento con aceleración
@@ -12031,7 +12056,7 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
         }
         var antes = hijos.slice(0, -1);
         var vale = antes.every(function (nodo) {
-          return nodo.nodeType === 3 || !nodo.matches("ol, ul, figure, table");
+          return nodo.nodeType === 3 || !nodo.matches("ol, ul, table");
         });
         return vale ? antes : null;
       }
@@ -12104,7 +12129,7 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
         var trozo = document.createDocumentFragment();
         var parrafo = null;
         (parte.entrada || []).forEach(function (nodo) {
-          if (nodo.nodeType === 1 && nodo.matches("p, div")) {
+          if (nodo.nodeType === 1 && nodo.matches("p, div, figure")) {
             parrafo = null;
             trozo.appendChild(nodo.cloneNode(true));
             return;
@@ -12270,6 +12295,11 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
           destino.appendChild(unidad.chip);
         }
       }
+      function ponerCasilla(unidad, enunciado, copia, letra) {
+        if (window.CasillasIB && unidad.ojo) {
+          window.CasillasIB.poner({ iconos: unidad.iconos, enunciado: enunciado, copia: copia, texDe: texDe, letra: letra });
+        }
+      }
       function letraDelante(letra) {
         var marca = document.createElement("span");
         marca.className = "sol-letra";
@@ -12339,6 +12369,11 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
           ejercicio.classList.add("solo-formula-con-solucion");
         }
         ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (!partes) {
+          ponerCasilla(unidad, ejercicio, function () {
+            return solucion.cloneNode(true);
+          }, null);
+        }
         if (unidad.chip && unidad.chip.tagName === "DIV") {
           ejercicio.appendChild(unidad.chip);
         }
@@ -12376,6 +12411,9 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
             li.classList.add("solo-formula-con-solucion");
           }
           ponerIconos(sitioDeLosBotones(li), unidad);
+          ponerCasilla(unidad, li, function () {
+            return copiaDe(partes[lugar]);
+          }, apartados.letras[lugar]);
           if (unidad.pasos) {
             li.appendChild(unidad.pasos);
           }
@@ -30916,5 +30954,677 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
         });
     })();
   </script>
-</body>
+    <style>
+    .casillas-ib {
+      display: inline;
+    }
+
+    .casilla-ib {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      max-width: 100%;
+      margin: 0.15rem 0 0.15rem 0.5rem;
+      padding: 0.1rem 0.2rem 0.1rem 0.65rem;
+      background: #ffffff;
+      border: 1.5px solid rgb(109 40 217 / 0.32);
+      border-radius: 999px;
+      vertical-align: middle;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .casilla-ib .rotulo-casilla,
+    .casilla-ib .unidad-casilla {
+      color: var(--texto-suave);
+      font-size: 0.95em;
+    }
+
+    .casilla-ib .campo-casilla {
+      width: 6.5em;
+      min-width: 0;
+      margin: 0;
+      padding: 0.1em 0.25em;
+      font: inherit;
+      font-size: 0.95em;
+      color: var(--texto);
+      background: transparent;
+      border: 0;
+      border-bottom: 1.5px solid rgb(109 40 217 / 0.35);
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .casilla-ib .campo-casilla::placeholder {
+      color: rgb(82 96 119 / 0.65);
+    }
+
+    .casilla-ib .campo-casilla:focus {
+      outline: none;
+      border-bottom-color: var(--violeta);
+    }
+
+    .casilla-ib .comprobar-casilla,
+    .casilla-ib .opcion-casilla {
+      display: inline-grid;
+      place-items: center;
+      flex: none;
+      width: 1.85rem;
+      height: 1.85rem;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      color: var(--violeta);
+      font: inherit;
+      font-size: 0.9em;
+      font-weight: 700;
+      background: var(--violeta-suave);
+      border: 1.5px solid rgb(109 40 217 / 0.32);
+      border-radius: 50%;
+      box-shadow: none;
+      cursor: pointer;
+      transform: none;
+    }
+
+    .casilla-ib .comprobar-casilla svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .casilla-ib .opcion-casilla[aria-pressed="true"] {
+      color: #ffffff;
+      background: var(--violeta);
+      border-color: var(--violeta);
+    }
+
+    .casilla-ib .comprobar-casilla:focus-visible,
+    .casilla-ib .opcion-casilla:focus-visible {
+      outline: 3px solid rgb(109 40 217 / 0.35);
+      outline-offset: 1px;
+    }
+
+    .casilla-ib .veredicto-casilla {
+      font-size: 0.92em;
+      font-weight: 650;
+      white-space: normal;
+    }
+
+    .casilla-ib .veredicto-casilla:empty {
+      display: none;
+    }
+
+    .casilla-ib[data-veredicto="bien"] {
+      background: var(--verde-suave);
+      border-color: var(--verde);
+    }
+
+    .casilla-ib[data-veredicto="bien"] .veredicto-casilla {
+      color: var(--verde);
+    }
+
+    .casilla-ib[data-veredicto="todavia-no"] {
+      background: var(--rojo-suave);
+      border-color: var(--rojo);
+    }
+
+    .casilla-ib[data-veredicto="todavia-no"] .veredicto-casilla {
+      color: var(--rojo);
+    }
+
+    .casilla-ib[data-veredicto="aviso"] .veredicto-casilla {
+      color: var(--texto-suave);
+      font-weight: 500;
+    }
+
+    .casilla-ib[data-veredicto] {
+      padding-right: 0.65rem;
+    }
+
+    @media print {
+      .casilla-ib,
+      .casillas-ib {
+        display: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function (raiz) {
+      "use strict";
+
+      var MARGEN = 0.01;
+      var SIN_CASILLA = /\b(dibuje|esboce|muestre|demuestre|explique|describa|resuma|deduzca|derive|justifique|comente|discuta|sugiera|rotule)\b/i;
+      var OPCION = /^\\text\{\s*([A-D])\s*(?:[:.)]|\}\s*[:.])/;
+      var NUMERO = /^([+-]?)\s*(\d+(?:\{,\}\d*)?|\{,\}\d+)(?:\s*(?:\\times|\\cdot)\s*10\^(?:\{\s*([+-]?\d+)\s*\}|([+-]?\d)))?/;
+      var ESPACIOS = /^(?:\s|\\ |\\,|\\;|\\:|\\!|~)+/;
+      var VISTO =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M5 12.5l4.2 4.2L19 7"></path></svg>';
+
+
+      function limpio(tex) {
+        return String(tex === null || tex === undefined ? "" : tex).replace(/\s+/g, " ").trim();
+      }
+      function cierreDe(tex, abre) {
+        var nivel = 0;
+        for (var i = abre; i < tex.length; i++) {
+          var signo = tex.charAt(i);
+          if (signo === "\\") {
+            i++;
+          } else if (signo === "{") {
+            nivel++;
+          } else if (signo === "}") {
+            nivel--;
+            if (nivel === 0) {
+              return i;
+            }
+          }
+        }
+        return -1;
+      }
+      function sinLlaves(tex) {
+        var t = tex;
+        while (t.charAt(0) === "{" && cierreDe(t, 0) === t.length - 1) {
+          t = t.slice(1, -1).trim();
+        }
+        return t;
+      }
+      function relaciones(tex) {
+        var trozos = [];
+        var desde = 0;
+        var nivel = 0;
+        for (var i = 0; i < tex.length; i++) {
+          var signo = tex.charAt(i);
+          if (signo === "\\") {
+            if (nivel === 0 && /^\\approx(?![a-zA-Z])/.test(tex.slice(i))) {
+              trozos.push(tex.slice(desde, i));
+              desde = i + 7;
+              i += 6;
+            } else {
+              i++;
+            }
+          } else if (signo === "{") {
+            nivel++;
+          } else if (signo === "}") {
+            nivel--;
+          } else if (signo === "=" && nivel === 0) {
+            trozos.push(tex.slice(desde, i));
+            desde = i + 1;
+          }
+        }
+        trozos.push(tex.slice(desde));
+        return trozos.map(function (trozo) {
+          return trozo.trim();
+        });
+      }
+      function numeroDelTex(tex) {
+        var t = limpio(tex).replace(/(\d)(?:\\,|\{\\,\}|\\ )(?=\d{3}(?!\d))/g, function (todo, cifra) {
+          return cifra;
+        });
+        var partes = NUMERO.exec(t);
+        if (!partes) {
+          return null;
+        }
+        var mantisa = partes[2].replace("{,}", ",").replace(/,(?![\s\S])/, "");
+        var exponente = partes[3] !== undefined ? partes[3] : partes[4];
+        return {
+          texto: (partes[1] === "-" ? "-" : "") + mantisa + (exponente !== undefined ? "×10^" + exponente : ""),
+          resto: t.slice(partes[0].length)
+        };
+      }
+      function unidadDelTex(tex, entero) {
+        var t = tex.replace(ESPACIOS, "");
+        var piezas = [];
+        while (t) {
+          var partes = /^\\(?:mathrm|text|textrm)\{/.exec(t);
+          if (partes) {
+            var fin = cierreDe(t, partes[0].length - 1);
+            if (fin === -1) {
+              return null;
+            }
+            piezas.push(t.slice(0, fin + 1));
+            t = t.slice(fin + 1);
+          } else if ((partes = /^\^(?:\{\s*\\circ\s*\}|\\circ)/.exec(t))) {
+            piezas.push("{}^{\\circ}");
+            t = t.slice(partes[0].length);
+          } else if (t.slice(0, 2) === "\\%") {
+            piezas.push("\\%");
+            t = t.slice(2);
+          } else if (entero) {
+            return null;
+          } else {
+            break;
+          }
+          t = t.replace(ESPACIOS, "");
+        }
+        return piezas.join("\\ ");
+      }
+      function mismaUnidad(a, b) {
+        return a.replace(/\\[ ,;:!]|\s/g, "") === b.replace(/\\[ ,;:!]|\s/g, "");
+      }
+      function leerValor(trozo) {
+        var numero = numeroDelTex(trozo);
+        if (!numero) {
+          return null;
+        }
+        var unidad = unidadDelTex(numero.resto, true);
+        if (unidad === null) {
+          return null;
+        }
+        var leido = raiz.ModelosIB.cifrasDeLoTecleado(numero.texto);
+        if (leido.error) {
+          return null;
+        }
+        return {
+          texto: numero.texto,
+          valor: leido.valor,
+          cifras: leido.cifras,
+          enDuda: leido.enDuda,
+          ultima: leido.ultima,
+          unidad: unidad
+        };
+      }
+      function leerCaja(contenido) {
+        var tex = sinLlaves(limpio(contenido));
+        var opcion = OPCION.exec(tex);
+        if (opcion) {
+          return { opcion: opcion[1] };
+        }
+        var trozos = relaciones(tex);
+        var simbolo = null;
+        if (trozos.length > 1 && !numeroDelTex(trozos[0])) {
+          simbolo = trozos.shift();
+        }
+        var alternativas = trozos.map(leerValor);
+        if (!alternativas.length || alternativas.some(function (valor) { return !valor; })) {
+          return null;
+        }
+        return { simbolo: simbolo || null, alternativas: alternativas };
+      }
+      function cajasDelTex(texEntero) {
+        var tex = limpio(texEntero);
+        var cajas = [];
+        var i = tex.indexOf("\\boxed{");
+        while (i !== -1) {
+          var fin = cierreDe(tex, i + 6);
+          if (fin === -1) {
+            break;
+          }
+          var salto = tex.lastIndexOf("\\\\", i);
+          var antes = tex
+            .slice(salto === -1 ? 0 : salto + 2, i)
+            .replace(/^\s*\[[^\]]*\]/, "")
+            .replace(/\\(?:begin|end)\{[a-z*]+\}(?:\{[^{}]*\})?/g, " ")
+            .replace(/&/g, " ");
+          var corte = tex.indexOf("\\\\", fin);
+          var despues = tex.slice(fin + 1, corte === -1 ? tex.length : corte);
+          cajas.push(rodearCaja(tex.slice(i + 7, fin), antes, despues));
+          i = tex.indexOf("\\boxed{", fin);
+        }
+        return cajas;
+      }
+      function rodearCaja(contenido, antes, despues) {
+        var caja = { contenido: sinLlaves(limpio(contenido)), leida: leerCaja(contenido) };
+        if (!caja.leida || caja.leida.opcion) {
+          return caja;
+        }
+        var principal = caja.leida.alternativas[0];
+        if (!principal.unidad) {
+          var detras = unidadDelTex(despues, false);
+          if (detras) {
+            caja.leida.alternativas.forEach(function (valor) {
+              valor.unidad = valor.unidad || detras;
+            });
+          }
+        }
+        var linea = limpio(antes);
+        var trozos = relaciones(linea);
+        var simbolo = trozos.length > 1 ? trozos[0] : "";
+        var tramos = trozos.length > 1 ? trozos[trozos.length - 2].split(/\\(?:qquad|quad|Rightarrow|implies)(?![a-zA-Z])|;/) : [];
+        if (tramos.length > 1) {
+          simbolo = tramos[tramos.length - 1].trim();
+        }
+        if (simbolo && !numeroDelTex(simbolo) && !/\\(?:frac|sqrt|left|quad|qquad|Rightarrow)/.test(simbolo)) {
+          caja.simboloDelRenglon = simbolo;
+        }
+        var conAprox = /\\approx(?![\s\S])/.test(linea);
+        var conIgual = /=(?![\s\S])/.test(linea);
+        if ((conAprox || conIgual) && trozos.length > 1) {
+          var previo = leerValor(trozos[trozos.length - 2]);
+          var cerca = previo && principal.valor !== 0 && Math.abs(previo.valor - principal.valor) <= 0.1 * Math.abs(principal.valor);
+          var unidad = previo && (!previo.unidad || mismaUnidad(previo.unidad, principal.unidad));
+          if (cerca && unidad && (conAprox || previo.valor !== principal.valor)) {
+            caja.sinRedondear = previo;
+          }
+        }
+        return caja;
+      }
+
+
+      function esperado(valor, sinRedondear) {
+        var referencia = sinRedondear || valor;
+        return {
+          valor: valor.valor,
+          cifras: valor.cifras,
+          ulpDelValor: Math.pow(10, valor.ultima - valor.enDuda),
+          referencia: referencia.valor,
+          ulp: Math.pow(10, referencia.ultima - referencia.enDuda)
+        };
+      }
+      function acepta(tecleado, esperadoDe) {
+        var r = esperadoDe.referencia;
+        var x = tecleado.valor;
+        if (r !== 0 && (x === 0 || (x < 0) !== (r < 0))) {
+          return false;
+        }
+        var diferencia = Math.abs(x - r);
+        var holgura = esperadoDe.ulp / 2 + MARGEN * Math.abs(r) + 1e-9 * Math.max(Math.abs(r), 1e-300);
+        if (diferencia <= holgura) {
+          return true;
+        }
+        if (Math.abs(x - esperadoDe.valor) <= esperadoDe.ulpDelValor / 2 + 1e-9 * Math.max(Math.abs(r), 1e-300)) {
+          return true;
+        }
+        if (tecleado.cifras >= esperadoDe.cifras || tecleado.cifras < Math.min(2, esperadoDe.cifras)) {
+          return false;
+        }
+        return diferencia <= holgura + Math.pow(10, tecleado.ultima) / 2;
+      }
+      function preguntaDe(cajas) {
+        if (!cajas.length) {
+          return null;
+        }
+        if (cajas[0].leida && cajas[0].leida.opcion) {
+          return { opcion: cajas[0].leida.opcion };
+        }
+        if (cajas.some(function (caja) { return !caja.leida || caja.leida.opcion; })) {
+          return null;
+        }
+        var valores = [];
+        cajas.forEach(function (caja) {
+          var anterior = valores[valores.length - 1];
+          if (!anterior || anterior.contenido !== caja.contenido) {
+            valores.push(caja);
+          }
+        });
+        return { valores: valores };
+      }
+      function sinCasilla(texto) {
+        return SIN_CASILLA.test(texto);
+      }
+
+
+      function pintar(tex) {
+        if (raiz.katex) {
+          return raiz.katex.renderToString(tex, { throwOnError: false });
+        }
+        return tex
+          .replace(/\\(?:mathrm|text|textrm)\{([^{}]*)\}/g, function (todo, dentro) { return dentro; })
+          .replace(/\{\}\^\{\\circ\}/g, "°")
+          .replace(/\\%/g, "%")
+          .replace(/\\[ ,;:!]/g, " ");
+      }
+      function romano(n) {
+        return ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"][n - 1] || String(n);
+      }
+      function marcasDeLaLista(lista) {
+        var tipo = lista.getAttribute("type") || "1";
+        var desde = parseInt(lista.getAttribute("start") || "1", 10);
+        return Array.prototype.map.call(lista.children, function (li, lugar) {
+          var n = desde + lugar;
+          var marca = tipo === "i" ? romano(n) : tipo === "a" ? "abcdefghij".charAt(n - 1) : String(n);
+          return { texto: marca + ")" };
+        });
+      }
+      function corto(simbolo) {
+        return Boolean(simbolo) && simbolo.replace(/\s+/g, "").length <= 14 && !/\\(?:frac|sqrt|left|text\{[^}]{6,})/.test(simbolo);
+      }
+      function rotulos(valores, enunciado) {
+        if (valores.length === 1) {
+          var propio = valores[0].leida.simbolo;
+          return [corto(propio) ? { tex: propio + "=" } : null];
+        }
+        var lista = enunciado.querySelector(":scope > ol");
+        if (lista && lista.children.length === valores.length) {
+          return marcasDeLaLista(lista);
+        }
+        var simbolos = valores.map(function (caja) {
+          return caja.leida.simbolo || caja.simboloDelRenglon || null;
+        });
+        var distintos = simbolos.every(function (simbolo, lugar) {
+          return corto(simbolo) && simbolos.indexOf(simbolo) === lugar;
+        });
+        if (distintos) {
+          return simbolos.map(function (simbolo) {
+            return { tex: simbolo + "=" };
+          });
+        }
+        return valores.map(function (caja, lugar) {
+          return { texto: lugar + 1 + ".º" };
+        });
+      }
+      function textoPropio(enunciado) {
+        var copia = enunciado.cloneNode(true);
+        Array.prototype.forEach.call(
+          copia.querySelectorAll(".sol-iconos, .sol-chip, .sol-pasos, .sol-resultado, .sol-barra, .sol-abiertos, .casilla-ib, .casillas-ib, .katex-mathml"),
+          function (nodo) {
+            nodo.parentNode.removeChild(nodo);
+          }
+        );
+        return copia.textContent;
+      }
+      function cajaDeFrase(frase, texDe) {
+        var formulas = frase.querySelectorAll(".math");
+        if (formulas.length === 1) {
+          var tex = texDe(formulas[0]);
+          var leida = leerCaja(tex);
+          var copia = frase.cloneNode(true);
+          var hueco = copia.querySelector(".math");
+          hueco.parentNode.replaceChild(document.createTextNode(" ⁣ "), hueco);
+          var fuera = limpio(copia.textContent);
+          if (leida && !leida.opcion && leida.alternativas.length === 1 && !/\d/.test(fuera)) {
+            var valor = leida.alternativas[0];
+            if (!valor.unidad) {
+              var palabras = /⁣ ([a-záéíóúüñ]+(?: [a-záéíóúüñ]+)?)(?=\s*(?:[,.;:)]|(?![\s\S])))/i.exec(fuera);
+              if (palabras) {
+                valor.unidad = "\\text{" + palabras[1] + "}";
+              }
+            }
+            return { contenido: sinLlaves(limpio(tex)), leida: leida };
+          }
+        }
+        return { contenido: limpio(frase.textContent), leida: null };
+      }
+      function cajasDeLaCopia(copia, texDe) {
+        var cajas = [];
+        (function recorrer(nodo) {
+          Array.prototype.forEach.call(nodo.childNodes, function (hijo) {
+            if (hijo.nodeType !== 1) {
+              return;
+            }
+            if (hijo.classList.contains("final")) {
+              cajas.push(cajaDeFrase(hijo, texDe));
+            } else if (hijo.classList.contains("math")) {
+              cajasDelTex(texDe(hijo)).forEach(function (caja) {
+                cajas.push(caja);
+              });
+            } else {
+              recorrer(hijo);
+            }
+          });
+        })(copia);
+        return cajas;
+      }
+      function veredicto(caja, salida, clase, texto) {
+        caja.setAttribute("data-veredicto", clase);
+        salida.textContent = texto;
+      }
+      function rotuloDe(rotulo) {
+        if (!rotulo) {
+          return null;
+        }
+        var marca = document.createElement("span");
+        marca.className = "rotulo-casilla";
+        if (rotulo.tex !== undefined) {
+          marca.innerHTML = pintar(rotulo.tex);
+        } else {
+          marca.textContent = rotulo.texto;
+        }
+        return marca;
+      }
+      function salidaNueva() {
+        var salida = document.createElement("span");
+        salida.className = "veredicto-casilla";
+        salida.setAttribute("aria-live", "polite");
+        return salida;
+      }
+      function casillaDeValor(caja, rotulo, letra) {
+        var envoltura = document.createElement("span");
+        envoltura.className = "casilla-ib";
+        var marca = rotuloDe(rotulo);
+        if (marca) {
+          envoltura.appendChild(marca);
+        }
+        var campo = document.createElement("input");
+        campo.type = "text";
+        campo.className = "campo-casilla";
+        campo.autocomplete = "off";
+        campo.spellcheck = false;
+        campo.placeholder = "tu resultado";
+        var nombre = "Tu resultado" + (letra ? " del apartado " + letra + ")" : "");
+        if (rotulo) {
+          nombre += ", " + (rotulo.texto || rotulo.tex.replace(/[\\{}_^]/g, " ").replace(/\s+/g, " ").trim());
+        }
+        campo.setAttribute("aria-label", nombre);
+        envoltura.appendChild(campo);
+        var alternativas = caja.leida.alternativas;
+        var unidades = alternativas
+          .map(function (valor) {
+            return valor.unidad;
+          })
+          .filter(function (unidad, lugar, todas) {
+            return unidad && todas.indexOf(unidad) === lugar;
+          });
+        if (unidades.length) {
+          var unidad = document.createElement("span");
+          unidad.className = "unidad-casilla";
+          unidad.innerHTML = unidades
+            .map(function (tex) {
+              return tex === "{}^{\\circ}" ? "°" : pintar(tex);
+            })
+            .join(" o ");
+          envoltura.appendChild(unidad);
+        }
+        var boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "comprobar-casilla";
+        boton.innerHTML = VISTO;
+        boton.title = "Comprobar";
+        boton.setAttribute("aria-label", "Comprobar " + nombre.charAt(0).toLowerCase() + nombre.slice(1));
+        envoltura.appendChild(boton);
+        var salida = salidaNueva();
+        envoltura.appendChild(salida);
+        var esperados = alternativas.map(function (valor, lugar) {
+          return esperado(valor, lugar === 0 ? caja.sinRedondear : null);
+        });
+        function comprobar() {
+          var leido = raiz.ModelosIB.cifrasDeLoTecleado(campo.value);
+          if (leido.error) {
+            veredicto(envoltura, salida, "aviso", campo.value.trim() ? "Escribe solo el número" : "Escribe tu resultado");
+            return;
+          }
+          var vale = esperados.some(function (uno) {
+            return acepta(leido, uno);
+          });
+          veredicto(envoltura, salida, vale ? "bien" : "todavia-no", vale ? "Bien" : "Todavía no");
+        }
+        campo.addEventListener("keydown", function (evento) {
+          if (evento.key === "Enter") {
+            evento.preventDefault();
+            comprobar();
+          }
+        });
+        campo.addEventListener("input", function () {
+          if (envoltura.hasAttribute("data-veredicto")) {
+            envoltura.removeAttribute("data-veredicto");
+            salida.textContent = "";
+          }
+        });
+        boton.addEventListener("click", comprobar);
+        return envoltura;
+      }
+      function casillaDeOpcion(opcion, letra) {
+        var envoltura = document.createElement("span");
+        envoltura.className = "casilla-ib opciones-casilla";
+        envoltura.setAttribute("role", "group");
+        envoltura.setAttribute("aria-label", "Tu respuesta" + (letra ? " del apartado " + letra + ")" : ""));
+        var salida = salidaNueva();
+        ["A", "B", "C", "D"].forEach(function (cual) {
+          var boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "opcion-casilla";
+          boton.textContent = cual;
+          boton.setAttribute("aria-pressed", "false");
+          boton.addEventListener("click", function () {
+            Array.prototype.forEach.call(envoltura.querySelectorAll(".opcion-casilla"), function (otro) {
+              otro.setAttribute("aria-pressed", String(otro === boton));
+            });
+            var vale = cual === opcion;
+            veredicto(envoltura, salida, vale ? "bien" : "todavia-no", vale ? "Bien" : "Todavía no");
+          });
+          envoltura.appendChild(boton);
+        });
+        envoltura.appendChild(salida);
+        return envoltura;
+      }
+      function poner(datos) {
+        var iconos = datos.iconos;
+        var enunciado = datos.enunciado;
+        if (!iconos || !iconos.parentNode || !enunciado) {
+          return null;
+        }
+        if (!datos.letra && enunciado.querySelector('ol[type="a"]')) {
+          return null;
+        }
+        if (sinCasilla(textoPropio(enunciado))) {
+          return null;
+        }
+        var pregunta = preguntaDe(cajasDeLaCopia(datos.copia(), datos.texDe));
+        if (!pregunta) {
+          return null;
+        }
+        var casilla;
+        if (pregunta.opcion) {
+          casilla = casillaDeOpcion(pregunta.opcion, datos.letra);
+        } else if (pregunta.valores.length === 1) {
+          casilla = casillaDeValor(pregunta.valores[0], rotulos(pregunta.valores, enunciado)[0], datos.letra);
+        } else {
+          casilla = document.createElement("span");
+          casilla.className = "casillas-ib";
+          var marcas = rotulos(pregunta.valores, enunciado);
+          pregunta.valores.forEach(function (caja, lugar) {
+            casilla.appendChild(casillaDeValor(caja, marcas[lugar], datos.letra));
+          });
+        }
+        casilla.addEventListener("click", function (evento) {
+          evento.stopPropagation();
+        });
+        iconos.parentNode.insertBefore(casilla, iconos.nextSibling);
+        return casilla;
+      }
+
+      raiz.CasillasIB = {
+        MARGEN: MARGEN,
+        poner: poner,
+        leerCaja: leerCaja,
+        cajasDelTex: cajasDelTex,
+        preguntaDe: preguntaDe,
+        esperado: esperado,
+        acepta: acepta,
+        sinCasilla: sinCasilla
+      };
+    })(window);
+  </script>
+  </body>
 </html>

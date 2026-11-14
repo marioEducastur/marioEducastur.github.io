@@ -3371,6 +3371,28 @@
       font-family: "Times New Roman", Times, serif;
     }
 
+    @media screen and (max-width: 1000px) {
+      figure img.esquema {
+        width: 100% !important;
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+    }
+
+    .sol-pasos > figure:first-child,
+    .sol-pasos .lista-solucion-ejercicio > li > figure:first-child {
+      margin-top: 0.3rem;
+    }
+
+    @media print {
+      .resultado li:has(> figure:first-child)::before {
+        content: "\200B";
+        display: block;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+    }
+
     .leyenda-ib {
       display: flex;
       flex-wrap: wrap;
@@ -10593,7 +10615,7 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
         }
         var antes = hijos.slice(0, -1);
         var vale = antes.every(function (nodo) {
-          return nodo.nodeType === 3 || !nodo.matches("ol, ul, figure, table");
+          return nodo.nodeType === 3 || !nodo.matches("ol, ul, table");
         });
         return vale ? antes : null;
       }
@@ -10666,7 +10688,7 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
         var trozo = document.createDocumentFragment();
         var parrafo = null;
         (parte.entrada || []).forEach(function (nodo) {
-          if (nodo.nodeType === 1 && nodo.matches("p, div")) {
+          if (nodo.nodeType === 1 && nodo.matches("p, div, figure")) {
             parrafo = null;
             trozo.appendChild(nodo.cloneNode(true));
             return;
@@ -10832,6 +10854,11 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
           destino.appendChild(unidad.chip);
         }
       }
+      function ponerCasilla(unidad, enunciado, copia, letra) {
+        if (window.CasillasIB && unidad.ojo) {
+          window.CasillasIB.poner({ iconos: unidad.iconos, enunciado: enunciado, copia: copia, texDe: texDe, letra: letra });
+        }
+      }
       function letraDelante(letra) {
         var marca = document.createElement("span");
         marca.className = "sol-letra";
@@ -10901,6 +10928,11 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
           ejercicio.classList.add("solo-formula-con-solucion");
         }
         ponerIconos(sitioDeLosBotones(ejercicio), unidad);
+        if (!partes) {
+          ponerCasilla(unidad, ejercicio, function () {
+            return solucion.cloneNode(true);
+          }, null);
+        }
         if (unidad.chip && unidad.chip.tagName === "DIV") {
           ejercicio.appendChild(unidad.chip);
         }
@@ -10938,6 +10970,9 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
             li.classList.add("solo-formula-con-solucion");
           }
           ponerIconos(sitioDeLosBotones(li), unidad);
+          ponerCasilla(unidad, li, function () {
+            return copiaDe(partes[lugar]);
+          }, apartados.letras[lugar]);
           if (unidad.pasos) {
             li.appendChild(unidad.pasos);
           }
@@ -23415,5 +23450,5 @@ A.1, del área temática «Espacio, tiempo y movimiento»</p>
         });
     })();
   </script>
-</body>
+  </body>
 </html>
