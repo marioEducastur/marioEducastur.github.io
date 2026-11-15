@@ -268,8 +268,11 @@
     }
 
     .descargas-unidad {
-      margin-top: 0.9rem;
-      padding-top: 0.8rem;
+      position: sticky;
+      bottom: -1rem;
+      margin: 0.9rem 0 -1rem;
+      padding: 0.8rem 0 1rem;
+      background: var(--superficie);
       border-top: 1px solid var(--borde);
     }
 
@@ -3457,6 +3460,12 @@
 
     body.libreta-a-limpio ol[type="a"] {
       list-style-type: mat-parentesis-alfa;
+    }
+
+    .pastilla-descarga.libreta {
+      color: #b4233a;
+      background: #fff4f6;
+      border-color: #e86a7a;
     }
 
     @media print {
@@ -8254,6 +8263,7 @@ Guía de estudio del capítulo A.1 del libro de Oxford</p>
         }
       }
       var lateral = indice.closest(".indice-unidad");
+      var pieDelIndice = lateral && lateral.querySelector(".descargas-unidad");
       function asomarEnElIndice() {
         var realzado =
           indice.querySelector('a[aria-current="true"]') ||
@@ -8263,10 +8273,11 @@ Guía de estudio del capítulo A.1 del libro de Oxford</p>
         }
         var caja = realzado.getBoundingClientRect();
         var marco = lateral.getBoundingClientRect();
+        var abajo = marco.bottom - (pieDelIndice ? pieDelIndice.getBoundingClientRect().height : 0);
         if (caja.top < marco.top + 8) {
           lateral.scrollTop -= marco.top + 8 - caja.top;
-        } else if (caja.bottom > marco.bottom - 8) {
-          lateral.scrollTop += caja.bottom - marco.bottom + 8;
+        } else if (caja.bottom > abajo - 8) {
+          lateral.scrollTop += caja.bottom - abajo + 8;
         }
       }
 
