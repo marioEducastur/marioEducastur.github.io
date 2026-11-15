@@ -3657,6 +3657,16 @@
       min-width: 27rem;
     }
 
+    .lectura-laboratorio p {
+      margin: 0.35rem 0;
+    }
+
+    .lectura-laboratorio .cuenta-laboratorio {
+      overflow-x: auto;
+      overflow-y: hidden;
+      font-size: 1.08rem;
+    }
+
     .fichas-interactivo button .punto-ficha {
       display: inline-block;
       width: 0.72rem;
@@ -5866,8 +5876,8 @@ Enfoques NS</p>
                 desarrollo de <span class="formula-con-signo"><span
                 class="math inline">\(\left(2x-\frac1x\right)^n\)</span>,</span>
                 donde <span class="math inline">\(n\)</span> es un
-                entero positivo y <span class="formula-con-signo"><span
-                class="math inline">\(x\neq0\)</span>.</span>
+                entero positivo y <span
+                class="math inline">\(x\neq0\)</span>
                 <ol type="a">
                 <li>El coeficiente de <span
                 class="math inline">\(x^{n-2}\)</span> es <span
@@ -6043,8 +6053,7 @@ Enfoques NS</p>
                 asientos. El número de asientos aumenta de una fila a la
                 siguiente siempre en la misma cantidad. La tercera fila
                 tiene <span class="math inline">\(18\)</span> asientos,
-                y la octava, <span class="formula-con-signo"><span
-                class="math inline">\(33\)</span>.</span>
+                y la octava, <span class="math inline">\(33\)</span>
                 <ol type="a">
                 <li>Halle una expresión del número de asientos de la
                 fila <span class="math inline">\(n\)</span> y calcule la
@@ -6230,8 +6239,7 @@ Enfoques NS</p>
                 hipótesis de inducción y el paso inductivo. Utilice
                 <span class="math inline">\(k\)</span> para formular la
                 hipótesis y pruebe el resultado para <span
-                class="formula-con-signo"><span
-                class="math inline">\(k+1\)</span>.</span>
+                class="math inline">\(k+1\)</span>
                 <ol type="a">
                 <li><span
                 class="math inline">\(\sum\limits_{j=1}^{n}(2j-1)=n^2\)</span>
@@ -9945,6 +9953,107 @@ Enfoques NS</p>
               { x: 320, y: alto(206.8, 17), texto: "5 ejercicios · 1 reto", cuerpo: 17, opacidad: 0.97 }
             ]
           };
+        },
+
+        "uve-y-recta": function () {
+          var U = 46, X0 = 222, Y0 = 150, V = 26;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (w) { return r(Y0 - w * V); };
+          var marcas = "";
+          for (var k = -4; k <= 8; k++) {
+            if (k !== 1 && k !== 5) {
+              marcas += "M" + x(k) + " " + (Y0 - 7) + "v14";
+            }
+          }
+          var eje = "M6 " + Y0 + "H" + r(x(1) - 5.6) + "M" + r(x(1) + 5.6) + " " + Y0 + "H" + r(x(5) - 5.6) +
+            "M" + r(x(5) + 5.6) + " " + Y0 + "H622";
+          var tramo = 'x1="' + r(x(1) + 6.7) + '" y1="' + Y0 + '" x2="' + r(x(5) - 6.7) + '" y2="' + Y0 + '"';
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="M' + x(1) + " " + y(2) + "L" + x(3) + " " + Y0 + "L" + x(5) + " " + y(2) +
+            'Z" fill="#fff" fill-opacity="0.12" stroke="none"/>' +
+            '<path d="M' + x(1) + " " + r(y(2) + 7) + "V" + r(Y0 - 8.7) + "M" + x(5) + " " + r(y(2) + 7) + "V" +
+            r(Y0 - 8.7) + '" stroke-opacity="0.55" stroke-width="1.4" stroke-dasharray="1.5 5.5"/>' +
+            '<path d="' + eje + '" stroke-opacity="0.9"/>' +
+            '<path d="M614 ' + (Y0 - 6) + "L624 " + Y0 + "L614 " + (Y0 + 6) + '" stroke-opacity="0.9"/>' +
+            '<path d="' + marcas + '" stroke-opacity="0.9" stroke-width="1.7"/>' +
+            '<path d="M60 ' + y(2) + 'H612" stroke-opacity="0.85" stroke-width="2"/>' +
+            '<path d="M' + x(-1.4) + " " + y(4.4) + "L" + x(3) + " " + Y0 + "L" + x(7.4) + " " + y(4.4) +
+            '" stroke-width="2.6"/>' +
+            '<circle cx="' + x(1) + '" cy="' + y(2) + '" r="5.6" fill="#fff" fill-opacity="0.94" stroke="none"/>' +
+            '<circle cx="' + x(5) + '" cy="' + y(2) + '" r="5.6" fill="#fff" fill-opacity="0.94" stroke="none"/>' +
+            "<line " + tramo + ' stroke-opacity="0.16" stroke-width="13" stroke-linecap="butt"/>' +
+            "<line " + tramo + ' stroke-width="5.4" stroke-linecap="butt"/>' +
+            '<circle cx="' + x(1) + '" cy="' + Y0 + '" r="5.6" stroke-width="2.5"/>' +
+            '<circle cx="' + x(5) + '" cy="' + Y0 + '" r="5.6" stroke-width="2.5"/>' +
+            "</g>";
+          var alto = function (base, cuerpo) { return r(base - 0.34 * cuerpo); };
+          var rotulos = [];
+          for (k = -1; k <= 7; k++) {
+            rotulos.push({ x: x(k), y: alto(Y0 + 23, 14), tex: String(k).replace("-", "{-}"), cuerpo: 14, opacidad: 0.82 });
+          }
+          rotulos.push(
+            { x: 486, y: alto(54, 17), tex: "y=|x-3|", cuerpo: 17, opacidad: 0.95 },
+            { x: 591, y: alto(88, 17), tex: "y=2", cuerpo: 17, opacidad: 0.95 },
+            { x: 320, y: alto(206.8, 17), tex: "|x-3|<2\\iff 1<x<5", cuerpo: 17, opacidad: 0.97 }
+          );
+          return { dibujo: dibujo, rotulos: rotulos };
+        },
+
+        "tres-pruebas": function () {
+          var ANCHO = 140, ARRIBA = 12, ABAJO = 178, PICO = 18, CANTO = 10;
+          var pruebas = [
+            { x: 94, nombre: "Prueba 1", calculadora: false, tiempo: "1 h", ancho: 20, vuelta: 1, puntos: "55 puntos" },
+            { x: 250, nombre: "Prueba 2", calculadora: true, tiempo: "1 h", ancho: 20, vuelta: 1, puntos: "55 puntos" },
+            { x: 406, nombre: "Prueba 3", calculadora: true, tiempo: "30 min", ancho: 48.5, vuelta: 0.5, puntos: "27 puntos" }
+          ];
+          var arco = function (radio, x, y) { return "A" + radio + " " + radio + " 0 0 1 " + r(x) + " " + r(y); };
+          var caja = function (x0, y0, x1, y1, radio) {
+            return "M" + r(x0 + radio) + " " + y0 + "H" + r(x1 - radio) + arco(radio, x1, y0 + radio) +
+              "V" + r(y1 - radio) + arco(radio, x1 - radio, y1) + "H" + r(x0 + radio) + arco(radio, x0, y1 - radio) +
+              "V" + r(y0 + radio) + arco(radio, x0 + radio, y0);
+          };
+          var alto = function (base, cuerpo) { return r(base - 0.34 * cuerpo); };
+          var dibujo = FUNDIDO + "</defs>" + '<g mask="url(#adorno-mascara)" stroke="#fff">';
+          var rotulos = [];
+          pruebas.forEach(function (p) {
+            var x0 = p.x, x1 = p.x + ANCHO, c = p.x + ANCHO / 2;
+            dibujo += '<path d="M' + (x0 + CANTO) + " " + ARRIBA + "H" + (x1 - PICO) + "L" + x1 + " " + (ARRIBA + PICO) +
+              "V" + (ABAJO - CANTO) + arco(CANTO, x1 - CANTO, ABAJO) + "H" + (x0 + CANTO) + arco(CANTO, x0, ABAJO - CANTO) +
+              "V" + (ARRIBA + CANTO) + arco(CANTO, x0 + CANTO, ARRIBA) +
+              'Z" fill="#fff" fill-opacity="0.08" stroke-opacity="0.9" stroke-width="2"/>' +
+              '<path d="M' + (x1 - PICO) + " " + ARRIBA + "V" + (ARRIBA + PICO) + "H" + x1 +
+              'Z" fill="#fff" fill-opacity="0.2" stroke-opacity="0.9" stroke-width="1.6"/>' +
+              '<path d="M' + (x0 + 18) + " 52H" + (x1 - 18) + '" stroke-opacity="0.55" stroke-width="1.4"/>';
+            var teclas = "";
+            [94, 100, 106].forEach(function (y) {
+              [-10, -2, 6].forEach(function (dx) { teclas += "M" + (c + dx) + " " + y + "h4"; });
+            });
+            dibujo += '<path d="' + caja(c - 15, 69, c + 15, 111, 4) + '" fill="#fff" fill-opacity="0.14" stroke="none"/>' +
+              '<path d="' + caja(c - 15, 69, c + 15, 111, 4) + '" stroke-width="1.8"/>' +
+              '<path d="' + caja(c - 10, 74, c + 10, 87, 2) + '" stroke-opacity="0.9" stroke-width="1.3"/>' +
+              '<path d="M' + (c - 7) + " 80.5Q" + (c - 3.5) + " 73.5 " + c + " 80.5T" + (c + 7) + ' 80.5" stroke-width="1.4"/>' +
+              '<path d="' + teclas + '" stroke-opacity="0.75" stroke-width="2.6"/>';
+            if (!p.calculadora) {
+              dibujo += '<path d="M' + (c - 17.5) + " 65.5L" + (c + 17.5) + ' 114.5" stroke-width="3"/>';
+            }
+            var cx = r(c - p.ancho / 2 - 3), cy = 135;
+            var lleno = "M" + cx + " " + (cy - 3) + arco(3, cx, cy + 3) +
+              (p.vuelta === 1 ? arco(3, cx, cy - 3) : "");
+            dibujo += '<circle cx="' + cx + '" cy="' + cy + '" r="8.5" stroke-width="1.5"/>' +
+              '<path d="M' + cx + " " + (cy - 8.5) + "V" + (cy - 11.5) + "M" + r(cx - 2.6) + " " + (cy - 12) + "H" + r(cx + 2.6) +
+              '" stroke-width="1.6"/>' +
+              '<path d="' + lleno + '" stroke-opacity="0.55" stroke-width="6" stroke-linecap="butt"/>' +
+              '<path d="M' + cx + " " + cy + "V" + (p.vuelta === 1 ? cy - 6 : cy + 6) + '" stroke-width="1.5"/>';
+            rotulos.push(
+              { x: c, y: alto(41, 17), texto: p.nombre, cuerpo: 17, opacidad: 0.97 },
+              { x: r(c + 11.5), y: alto(140, 15), texto: p.tiempo, cuerpo: 15, opacidad: 0.92 },
+              { x: c, y: alto(164, 15), texto: p.puntos, cuerpo: 15, opacidad: 0.95 }
+            );
+          });
+          dibujo += "</g>";
+          rotulos.push({ x: 320, y: alto(206.8, 17), texto: "3 pruebas · 14 preguntas", cuerpo: 17, opacidad: 0.97 });
+          return { dibujo: dibujo, rotulos: rotulos };
         }
       };
 
@@ -18411,6 +18520,7 @@ Enfoques NS</p>
         for (let lugar = 0; lugar < e.r; lugar += 1) {
           factores.push(e.n - lugar);
         }
+        const delFactorial = e.n <= 5 ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar) : [e.n, e.n - 1, "…", 1];
 
         return (
           <>
@@ -18472,7 +18582,7 @@ Enfoques NS</p>
               <Rotulo t={2.4} x="320" y="300" fontSize="19">
                 {e.que === "todos" && (
                   <>
-                    {e.n + POR + (e.n - 1) + POR + "…" + POR + "1"}
+                    {delFactorial.join(POR)}
                     {palabra(": cada casilla, una opción menos que la anterior")}
                   </>
                 )}
@@ -19102,7 +19212,11 @@ Enfoques NS</p>
             }
             const producto = factores.join("\\cdot");
             if (e.que === "todos") {
-              return [e.n + "!=" + e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1=" + enTex(factorial(e.n))];
+              const desarrollo =
+                e.n <= 5
+                  ? Array.from({ length: e.n }, (_, lugar) => e.n - lugar).join("\\cdot")
+                  : e.n + "\\cdot" + (e.n - 1) + "\\cdots2\\cdot1";
+              return [e.n + "!=" + desarrollo + "=" + enTex(factorial(e.n))];
             }
             if (e.que === "ordenados") {
               return [
@@ -19540,7 +19654,9 @@ Enfoques NS</p>
               "\\begin{aligned}" + (e.caso === 2 ? "&" + desarrollo.cabeza + "\\\\={}&" : desarrollo.cabeza + "={}&") + primera + segunda +
                 "\\end{aligned}",
               "\\text{válido si }" + desarrollo.validez,
-              Math.abs(e.t) < 1 ? (
+              Math.abs(Math.abs(e.t) - 1) < 1e-9 ? (
+                <>En el borde de la franja la condición ya no se cumple, porque es una desigualdad estricta: ahí el desarrollo no se usa.</>
+              ) : Math.abs(e.t) < 1 ? (
                 <>Dentro de la franja, cada término que se añade acerca el desarrollo a la función.</>
               ) : (
                 <>Fuera de la franja, añadir términos no mejora la aproximación: la empeora.</>
@@ -22809,6 +22925,117 @@ Enfoques NS</p>
         );
       }
 
+      const PASOS_DEL_RADICAL = ["La ecuación", "Al elevar al cuadrado", "Al comprobar"];
+
+      function ramaDelRadical(signo) {
+        const puntos = [];
+        for (let paso = 0; paso <= 60; paso += 1) {
+          const y = (signo * Math.sqrt(14) * paso) / 60;
+          puntos.push([(y * y - 7) / 2, y]);
+        }
+        return puntos;
+      }
+
+      function RotuloDelRadical({ t, x, y, menos }) {
+        return (
+          <Rotulo como="g" t={t}>
+            <text x={x} y={y} fontSize="17" textAnchor="start">
+              {cursiva("y")} = {menos ? MENOS : ""}
+            </text>
+            <Raiz x={x + (menos ? 52 : 39)} y={y} s={17} ancho={49}>
+              2{cursiva("x")} + 7
+            </Raiz>
+          </Rotulo>
+        );
+      }
+
+      function RadicalesDibujo({ e }) {
+        const v = { x0: -4.5, x1: 3.5, y0: -4, y1: 5.5, px: (x) => 24 + 45 * (x + 4.5), py: (y) => 302 - (250 * (y + 4)) / 9.5 };
+        const elevada = e.paso >= 1;
+        const comprobada = e.paso === 2;
+        const cortes = [{ x: 1, y: 3, rotulo: "(1; 3)", rx: 268, ry: 96, bien: true }];
+        if (elevada) {
+          cortes.push({ x: -3, y: -1, rotulo: "(" + MENOS + "3; " + MENOS + "1)", rx: 92, ry: 256, bien: false });
+        }
+        const lado = [
+          [
+            [palabra("la curva y la recta")],
+            [palabra("se cortan una vez:")],
+            [<>{cursiva("x")} = 1</>, true]
+          ],
+          [
+            [palabra("al elevar al cuadrado")],
+            [palabra("entra la otra rama:")],
+            [palabra("dos candidatos,")],
+            [
+              <>
+                {cursiva("x")} = 1{palabra(" y ")}
+                {cursiva("x")} = {MENOS}3
+              </>,
+              true
+            ]
+          ],
+          [
+            [<>{cursiva("x")} = 1</>, true],
+            [palabra("es solución")],
+            [""],
+            [<>{cursiva("x")} = {MENOS}3</>, true],
+            [palabra("candidato falso:")],
+            [palabra("corta la otra rama")]
+          ]
+        ][e.paso];
+
+        return (
+          <>
+            <Ejes t={0.1} x0={18} x1={392} y0={46} y1={306} ox={v.px(0)} oy={v.py(0)} />
+            <Halo t={0.5} dura={0.7} d={quebrada(ramaDelRadical(1), v)} grosor={2.4} />
+            <Trazo t={0.9} dura={0.6} d={quebrada(rectaEntre(1, 2, v.x0, v.x1), v)} strokeWidth="1.8" />
+            {elevada && <Velo t={1.2} d={quebrada(ramaDelRadical(-1), v)} strokeWidth="1.8" strokeOpacity="0.75" strokeDasharray="3 6" />}
+            {cortes.map((corte) => {
+              const cx = v.px(corte.x);
+              const cy = v.py(corte.y);
+              return (
+                <g key={corte.x}>
+                  <Punto t={1.5} cx={cx} cy={cy} r={comprobada && !corte.bien ? 5 : 6.5} />
+                  {comprobada && corte.bien && <Punto t={1.5} cx={cx} cy={cy} r="13" fillOpacity="0.26" />}
+                  {comprobada && !corte.bien && <Velo t={1.7} d={aspa(cx, cy, 9)} strokeWidth="2.6" />}
+                </g>
+              );
+            })}
+            <Trazo t={0.3} dura={0.3} d="M404 64H434" strokeWidth={3.4} />
+            <Trazo t={0.3} dura={0.3} d="M404 88H434" strokeWidth="1.8" />
+            {elevada && <Velo t={0.3} d="M404 112H434" strokeWidth="1.8" strokeDasharray="3 6" />}
+            <Letras>
+              <Rotulo como="g" t={0.1}>
+                <Raiz x={251} y={30} s={23} ancho={66}>
+                  2{cursiva("x")} + 7
+                </Raiz>
+                <text x={324} y={30} fontSize="23" textAnchor="start">
+                  = {cursiva("x")} + 2
+                </text>
+              </Rotulo>
+              <RotuloDelRadical t={0.3} x={442} y={70} />
+              <Rotulo t={0.3} x="442" y="94" fontSize="17" textAnchor="start">
+                {conY(rectaRotulo(1, 2))}
+              </Rotulo>
+              {elevada && <RotuloDelRadical t={0.3} x={442} y={118} menos />}
+              {cortes.map((corte) => (
+                <Rotulo key={corte.x} t={1.7} x={corte.rx} y={corte.ry} fontSize="16" fontWeight="700">
+                  {corte.rotulo}
+                </Rotulo>
+              ))}
+              {lado.map((linea, orden) =>
+                linea[0] === "" ? null : (
+                  <Rotulo key={orden} t={2 + 0.1 * orden} x="515" y={160 + 22 * orden} fontSize="16" fontWeight={linea[1] ? 700 : 400}>
+                    {linea[0]}
+                  </Rotulo>
+                )
+              )}
+            </Letras>
+          </>
+        );
+      }
+
       const sobreM = (m) => 386 + 18 * (m + 6);
       const VALORES_DE_M = [-6, -3, 0, 2, 6];
 
@@ -23973,6 +24200,103 @@ Enfoques NS</p>
           ]
         },
         {
+          clave: "radicales",
+          nombre: "Radicales",
+          inicial: { paso: 0 },
+          duracion: 2.6,
+          Dibujo: RadicalesDibujo,
+          descripcion: (e) =>
+            [
+              "La curva y igual a la raíz de 2 x más 7 y la recta y igual a x más 2. Se cortan en un solo punto, el (1; 3): x igual a 1 es la solución.",
+              "La misma curva y la misma recta y, a trazos, la otra rama, y igual a menos la raíz de 2 x más 7, que entra al elevar al cuadrado. La recta corta las dos ramas, en (1; 3) y en (menos 3; menos 1): son los dos candidatos.",
+              "Al comprobar, x igual a 1 es solución: es el corte con la curva y igual a la raíz de 2 x más 7. x igual a menos 3 es un candidato falso: es el corte con la otra rama, la de la raíz con el signo cambiado."
+            ][e.paso],
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "paso",
+              nombre: "el paso del método",
+              rotulo: "Paso",
+              opciones: PASOS_DEL_RADICAL.map((rotulo, orden) => ({ valor: orden, rotulo: rotulo }))
+            }
+          ],
+          vivo: (e) =>
+            [
+              [
+                "\\sqrt{2x+7}=x+2",
+                <>
+                  El radical ya está aislado. La curva <Mates tex="y=\sqrt{2x+7}" /> y la recta <Mates tex="y=x+2" /> se cortan
+                  una sola vez, en <Sujeta tex="x=1">.</Sujeta>
+                </>
+              ],
+              [
+                "\\begin{aligned}&2x+7=(x+2)^2\\\\\\iff{}&x^2+2x-3=0\\\\\\iff{}&(x-1)(x+3)=0\\end{aligned}",
+                <>
+                  Al elevar al cuadrado se pierde el signo: la ecuación vale también para la otra rama,{" "}
+                  <Sujeta tex="y=-\sqrt{2x+7}">.</Sujeta> Salen dos candidatos, <Mates tex="x=1" /> y{" "}
+                  <Sujeta tex="x=-3">.</Sujeta>
+                </>
+              ],
+              [
+                "\\begin{aligned}x=1:&\\quad\\sqrt9=3=1+2\\\\x=-3:&\\quad\\sqrt1=1\\neq-3+2\\end{aligned}",
+                <>
+                  En la ecuación de partida, <Mates tex="x=1" /> es solución, y <Sujeta tex="x=-3">,</Sujeta> un candidato
+                  falso: resuelve <Sujeta tex="-\sqrt{2x+7}=x+2">.</Sujeta>
+                </>
+              ]
+            ][e.paso],
+          pista: (
+            <>
+              Los pasos del método con el ejemplo de la unidad. Un candidato falso es el corte de la recta con la otra rama, la
+              de la raíz con el signo cambiado: por eso se comprueba cada candidato en la ecuación de partida.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "El método",
+              texto: (
+                <>
+                  Aísla un radical, eleva los dos miembros al cuadrado y repite mientras quede alguno. Las soluciones de lo que
+                  queda son los candidatos.
+                </>
+              )
+            },
+            {
+              nombre: "Comprobar cada candidato",
+              tex: "A^2=B^2\\iff A=B\\ \\text{ o }\\ A=-B",
+              texto: (
+                <>
+                  Al elevar se pierde el signo, y las soluciones de <Mates tex="A=-B" /> son candidatos falsos: en{" "}
+                  <Sujeta tex="\sqrt{2x+7}=x+2">,</Sujeta> el <Sujeta tex="x=-3">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Con una raíz cúbica",
+              tex: "A^3=B^3\\iff A=B",
+              texto: <>Al elevar al cubo no sale ningún candidato falso, y no hace falta comprobar.</>
+            },
+            {
+              nombre: "Con la calculadora",
+              texto: (
+                <>
+                  Los dos miembros, en el menú Graph, y sus cortes con G-Solv e INTSECT: un candidato falso no es un corte.
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              En <Mates tex="\sqrt{2x+7}=x+2" /> no valen los dos candidatos: con <Mates tex="x=-3" /> el segundo miembro vale{" "}
+              <Sujeta tex="-1">,</Sujeta> y un radical nunca es negativo.
+            </>,
+            <>
+              <Mates tex="(x+2)^2" /> es <Sujeta tex="x^2+4x+4">,</Sujeta> no <Sujeta tex="x^2+4">:</Sujeta> al elevar, el doble
+              producto no desaparece.
+            </>
+          ]
+        },
+        {
           clave: "sistemas",
           nombre: "Sistemas",
           inicial: { m: 1 },
@@ -24039,6 +24363,28 @@ Enfoques NS</p>
             </>
           ),
           fichas: [
+            {
+              nombre: "Gauss con la matriz",
+              tex: "\\left(\\begin{array}{rrr|r}1&3&-1&8\\\\0&-1&3&-7\\\\0&0&-1&2\\end{array}\\right)",
+              texto: (
+                <>
+                  Una fila por ecuación y, tras la raya, los términos independientes. Ceros debajo de la diagonal con operaciones de
+                  filas, como <Sujeta tex="F_2\leftarrow F_2-2F_1">,</Sujeta> y de abajo arriba: la del ejemplo da <Sujeta tex="z=-2">,</Sujeta>{" "}
+                  <Mates tex="y=1" /> y <Sujeta tex="x=3">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Una fila de ceros",
+              tex: "(0\\ \\ 0\\ \\ 0\\mid k)",
+              texto: (
+                <>
+                  Con <Sujeta tex="k\neq0">,</Sujeta> es <Sujeta tex="0=k">:</Sujeta> ninguna solución. Con <Sujeta tex="k=0">,</Sujeta> sobra; si
+                  ninguna otra fila es imposible, queda un parámetro más; con dos filas así, dos parámetros, y las tres
+                  ecuaciones son el mismo plano.
+                </>
+              )
+            },
             {
               nombre: "Dos ecuaciones",
               tex: "a_1b_2-a_2b_1\\neq0",
@@ -24133,6 +24479,1532 @@ Enfoques NS</p>
         );
       }
 
+
+      const RAD = Math.PI / 180;
+      const limpio = (valor) => (Math.abs(valor) < 1e-9 ? 0 : valor);
+      const senG = (g) => limpio(Math.sin(g * RAD));
+      const cosG = (g) => limpio(Math.cos(g * RAD));
+      const razonDe = (g, orden) => (orden === 0 ? senG(g) : orden === 1 ? cosG(g) : senG(g) / cosG(g));
+      const RAZONES = ["sen", "cos", "tan"];
+      const SEN = "\\operatorname{sen}";
+      const razonTex = (orden) => (orden === 0 ? SEN : "\\" + RAZONES[orden]);
+
+      const dos = (valor) => (exacto(valor) ? cifra(valor) : cifra(valor, 2, true));
+      const dosTex = (valor) => igual(valor) + (exacto(valor) ? enTex(valor) : enTex(valor, 2, true));
+      const leido = (valor) => (exacto(valor) ? "" : "unos ") + dos(valor);
+
+      const gr = (g) => (
+        <tspan>
+          {cifra(g)}
+          <Sup>∘</Sup>
+        </tspan>
+      );
+
+      const hacia = (x, y, r, g) => [x + r * cosG(g), y - r * senG(g)];
+      const linea = (p, q) => "M" + n1(p[0]) + " " + n1(p[1]) + "L" + n1(q[0]) + " " + n1(q[1]);
+
+      function arco(x, y, r, desde, hasta, sector) {
+        const pasos = Math.max(1, Math.ceil(Math.abs(hasta - desde) / 5));
+        let d = sector ? "M" + n1(x) + " " + n1(y) : "";
+        for (let paso = 0; paso <= pasos; paso += 1) {
+          const punto = hacia(x, y, r, desde + ((hasta - desde) * paso) / pasos);
+          d += (paso || sector ? "L" : "M") + n1(punto[0]) + " " + n1(punto[1]);
+        }
+        return d + (sector ? "Z" : "");
+      }
+
+      const enAngulo = (x, y, desde, hasta, minimo) =>
+        hacia(x, y, Math.max(minimo, 13 / Math.sin(((hasta - desde) / 2) * RAD)), (desde + hasta) / 2);
+
+      function Exacto({ x, y, s, valor }) {
+        const menos = valor[0] === "-";
+        const partes = valor.replace("-", "").split("/");
+        const desde = x + (menos ? 0.9 * s : 0);
+        const mide = (trozo) => 0.5 * trozo.replace("√", "").length + (trozo[0] === "√" ? 0.55 : 0);
+        const pon = (trozo, x0, y0, t) =>
+          trozo[0] === "√" ? (
+            <Raiz x={x0 + 0.55 * t} y={y0} s={t} ancho={0.5 * t * (trozo.length - 1)}>
+              {trozo.slice(1)}
+            </Raiz>
+          ) : (
+            <text x={x0} y={y0} fontSize={t} textAnchor="start">
+              {trozo}
+            </text>
+          );
+        const t = 0.84 * s;
+        const ancho = partes.length > 1 ? Math.max(mide(partes[0]), mide(partes[1])) * t + 0.3 * t : 0;
+        const raya = y - 0.3 * s;
+        return (
+          <g>
+            {menos && (
+              <text x={x} y={y} fontSize={s} textAnchor="start">
+                {MENOS}
+              </text>
+            )}
+            {partes.length === 1 ? (
+              pon(partes[0], desde, y, s)
+            ) : (
+              <g>
+                {pon(partes[0], desde + (ancho - mide(partes[0]) * t) / 2, raya - 0.3 * t, t)}
+                <path d={"M" + n1(desde) + " " + n1(raya) + "h" + n1(ancho)} fill="none" stroke="#fff" strokeWidth={s / 15} />
+                {pon(partes[1], desde + (ancho - mide(partes[1]) * t) / 2, raya + 0.94 * t, t)}
+              </g>
+            )}
+          </g>
+        );
+      }
+
+      const exactoTex = (valor) => {
+        const partes = valor
+          .replace("-", "")
+          .split("/")
+          .map((parte) => (parte[0] === "√" ? "\\sqrt" + parte.slice(1) : parte));
+        return (valor[0] === "-" ? "-" : "") + (partes.length > 1 ? "\\frac{" + partes[0] + "}{" + partes[1] + "}" : partes[0]);
+      };
+
+      function RazonExacta({ t, x, y, valor, children }) {
+        return (
+          <Rotulo como="g" t={t}>
+            <text x={x} y={y} fontSize="20" textAnchor="end">
+              {children} =
+            </text>
+            <Exacto x={x + 12} y={y} s={21} valor={valor} />
+          </Rotulo>
+        );
+      }
+
+      const CX = 176;
+      const CY = 162;
+      const R = 118;
+      const SIGNOS = ["", "+++", "+−−", "−−+", "−+−"];
+      const cuadranteDe = (g) => (g % 90 === 0 ? 0 : Math.floor((g % 360) / 90) + 1);
+      const CUADRANTES = ["", "primer", "segundo", "tercer", "cuarto"];
+      const POSITIVAS = ["", "las tres razones son positivas", "solo el seno es positivo", "solo la tangente es positiva", "solo el coseno es positivo"];
+
+      function Circunferencia({ cuadrante, nombres, signos }) {
+        const derecha = cuadrante === 1 || cuadrante === 4;
+        return (
+          <>
+            <Ejes t={0.1} x0={CX - 152} x1={CX + 152} y0={CY - 150} y1={CY + 150} ox={CX} oy={CY} />
+            {cuadrante > 0 && (
+              <Velo t={0.9} d={arco(CX, CY, R, 90 * cuadrante - 90, 90 * cuadrante, true)} fill="#fff" fillOpacity="0.13" stroke="none" />
+            )}
+            <Trazo
+              t={0.3}
+              dura={0.8}
+              d={"M" + (CX + R) + " " + CY + "A" + R + " " + R + " 0 1 0 " + (CX - R) + " " + CY + "A" + R + " " + R + " 0 1 0 " + (CX + R) + " " + CY}
+              strokeWidth="2.2"
+            />
+            <Letras>
+              {nombres &&
+                ["1.º", "2.º", "3.º", "4.º"].map((nombre, orden) => (
+                <Rotulo
+                  key={nombre}
+                  t={0.6}
+                  x={CX + (orden === 0 || orden === 3 ? 126 : -126)}
+                  y={CY + (orden < 2 ? -112 : 128)}
+                  fontSize="15"
+                  fontWeight={orden + 1 === cuadrante ? 700 : 400}
+                  opacity={orden + 1 === cuadrante ? 1 : 0.6}
+                >
+                  {palabra(nombre)}
+                </Rotulo>
+              ))}
+              {signos && cuadrante > 0 && (
+                <Rotulo t={1.9} x={CX + (derecha ? 196 : -152)} y={cuadrante < 3 ? 24 : 312} fontSize="14" textAnchor={derecha ? "end" : "start"}>
+                  {RAZONES.map((razon, orden) => (
+                    <tspan key={razon} fontWeight={SIGNOS[cuadrante][orden] === "+" ? 700 : 400}>
+                      {(orden ? "\u00A0\u00A0" : "") + razon + " " + SIGNOS[cuadrante][orden]}
+                    </tspan>
+                  ))}
+                </Rotulo>
+              )}
+            </Letras>
+          </>
+        );
+      }
+
+      function letraDelArco(g, rayas) {
+        const cortes = [0, g]
+          .concat(
+            [90, 180, 270].filter((eje) => eje < g),
+            rayas.filter((raya) => raya > 0 && raya < g)
+          )
+          .sort((p, q) => p - q);
+        let mejor = 1;
+        for (let lugar = 2; lugar < cortes.length; lugar += 1) {
+          if (cortes[lugar] - cortes[lugar - 1] > cortes[mejor] - cortes[mejor - 1] + 0.5) {
+            mejor = lugar;
+          }
+        }
+        return enAngulo(CX, CY, cortes[mejor - 1], cortes[mejor], 36);
+      }
+
+      const fueraDe = (g, r) => {
+        const c = cosG(g);
+        const s = senG(g);
+        return hacia(CX, CY, r, g + ((c !== 0 && Math.abs(s) > 0.85 && c * s > 0) || (c > 0.85 && s < 0) ? -8 : 8));
+      };
+
+      const RECTO = [352, 284];
+      const HIPOTENUSA = 260;
+
+      function Cociente({ t, y, razon, angulo, arriba, abajo, valor }) {
+        return (
+          <Rotulo como="g" t={t}>
+            <text x="514" y={y} fontSize="20" textAnchor="end">
+              {razon + " "}
+              {cursiva(angulo)} =
+            </text>
+            <Quebrado x={530} y={y} s={21} ancho={14} arriba={cursiva(arriba)} abajo={cursiva(abajo)} />
+            <text x="546" y={y} fontSize="20" textAnchor="start">
+              {igualRotulo(valor).trim() + " " + dos(valor)}
+            </text>
+          </Rotulo>
+        );
+      }
+
+      function TrianguloDibujo({ e }) {
+        const deAlfa = e.mira === "alfa";
+        const mirado = deAlfa ? e.alfa : 90 - e.alfa;
+        const [rx, ry] = RECTO;
+        const ax = rx - HIPOTENUSA * cosG(e.alfa);
+        const by = ry - HIPOTENUSA * senG(e.alfa);
+        const lados = { a: "M" + rx + " " + ry + "V" + n1(by), b: "M" + n1(ax) + " " + ry + "H" + rx };
+        const [opuesto, contiguo] = deAlfa ? ["a", "b"] : ["b", "a"];
+        const angulos = [
+          { letra: "α", x: ax, y: ry, desde: 0, hasta: e.alfa, radio: 34, visto: deAlfa },
+          { letra: "β", x: rx, y: by, desde: 180 + e.alfa, hasta: 270, radio: 28, visto: !deAlfa }
+        ];
+        const c = [(ax + rx) / 2 - 16 * senG(e.alfa), (ry + by) / 2 - 16 * cosG(e.alfa)];
+        const leyenda = [
+          [palabra("opuesto: "), opuesto],
+          [palabra("contiguo: "), contiguo],
+          [palabra("hipotenusa: "), "c"]
+        ];
+        return (
+          <>
+            {angulos.map(
+              (angulo) =>
+                angulo.visto && (
+                  <Velo key={angulo.letra} t={1.3} d={arco(angulo.x, angulo.y, angulo.radio, angulo.desde, angulo.hasta, true)} fill="#fff" fillOpacity="0.22" stroke="none" />
+                )
+            )}
+            <Trazo t={0.2} dura={0.6} d={"M" + n1(ax) + " " + ry + "L" + rx + " " + n1(by)} strokeWidth="2" />
+            <Halo t={0.6} dura={0.4} d={lados[opuesto]} grosor={2.6} />
+            <Velo t={0.9} d={lados[contiguo]} strokeWidth="2.6" strokeDasharray="9 6" />
+            <Velo t={1} d={"M" + (rx - 14) + " " + ry + "V" + (ry - 14) + "H" + rx} strokeWidth="1.5" />
+            {angulos.map((angulo) => (
+              <Trazo
+                key={angulo.letra}
+                t={1.1}
+                dura={0.3}
+                d={arco(angulo.x, angulo.y, angulo.radio, angulo.desde, angulo.hasta)}
+                strokeWidth={angulo.visto ? 2.4 : 1.4}
+                strokeOpacity={angulo.visto ? 1 : 0.7}
+              />
+            ))}
+            <Halo t={0.6} dura={0.3} d="M424 95H456" grosor={2.6} />
+            <Velo t={0.9} d="M424 119H456" strokeWidth="2.6" strokeDasharray="9 6" />
+            <Trazo t={0.3} dura={0.3} d="M424 143H456" strokeWidth="2" />
+            <Letras>
+              <Rotulo t={0.8} x={rx + 14} y={(ry + by) / 2 + 6} fontSize="20" textAnchor="start" fontWeight={opuesto === "a" ? 700 : 400}>
+                {cursiva("a")}
+              </Rotulo>
+              <Rotulo t={0.8} x={(ax + rx) / 2} y={ry + 24} fontSize="20" fontWeight={opuesto === "b" ? 700 : 400}>
+                {cursiva("b")}
+              </Rotulo>
+              <Rotulo t={0.8} x={c[0]} y={c[1] + 6} fontSize="20">
+                {cursiva("c")}
+              </Rotulo>
+              {angulos.map((angulo) => {
+                const sitio = enAngulo(angulo.x, angulo.y, angulo.desde, angulo.hasta, angulo.radio + 18);
+                return (
+                  <Rotulo key={angulo.letra} t={1.3} x={sitio[0]} y={sitio[1] + 6} fontSize="19" fontWeight={angulo.visto ? 700 : 400} opacity={angulo.visto ? 1 : 0.8}>
+                    {cursiva(angulo.letra)}
+                  </Rotulo>
+                );
+              })}
+              <Rotulo t={0.4} x="515" y="42" fontSize="26" fontWeight="700">
+                {cursiva(deAlfa ? "α" : "β")} = {gr(mirado)}
+              </Rotulo>
+              <Rotulo t={0.5} x="515" y="68" fontSize="16" opacity="0.92">
+                {cursiva("α")} + {cursiva("β")} = {gr(90)}
+              </Rotulo>
+              {leyenda.map(([nombre, letra], orden) => (
+                <Rotulo key={letra} t={0.7 + 0.1 * orden} x="466" y={100 + 24 * orden} fontSize="16" textAnchor="start">
+                  {nombre}
+                  {cursiva(letra)}
+                </Rotulo>
+              ))}
+              {RAZONES.map((razon, orden) => (
+                <Cociente
+                  key={razon}
+                  t={1.5 + 0.1 * orden}
+                  y={196 + 48 * orden}
+                  razon={razon}
+                  angulo={deAlfa ? "α" : "β"}
+                  arriba={orden === 1 ? contiguo : opuesto}
+                  abajo={orden === 2 ? contiguo : "c"}
+                  valor={razonDe(mirado, orden)}
+                />
+              ))}
+            </Letras>
+          </>
+        );
+      }
+
+      const NOTABLES = { 30: ["1/2", "√3/2", "√3/3"], 45: ["√2/2", "√2/2", "1"], 60: ["√3/2", "1/2", "√3"] };
+      const TABLA_NOTABLES = "\\begin{array}{c|ccc}&30^\\circ&45^\\circ&60^\\circ\\\\";
+
+      function NotablesDibujo({ e }) {
+        const g = e.g;
+        const base = 290;
+        const [abajo, recto, arriba] =
+          g === 45
+            ? [[160, base], [330, base], [330, base - 170]]
+            : [[118, base], [230, base], [230, base - 194]];
+        const alto = "M" + recto[0] + " " + base + "V" + arriba[1];
+        const suelo = "M" + abajo[0] + " " + base + "H" + recto[0];
+        const deArriba = g === 30;
+        const vertice = deArriba ? arriba : abajo;
+        const [desde, hasta] = deArriba ? [240, 270] : [0, g];
+        const sitio = deArriba ? [arriba[0] - 23, arriba[1] + 88] : enAngulo(abajo[0], base, 0, g, 56);
+        const medio = [(abajo[0] + arriba[0]) / 2, (base + arriba[1]) / 2];
+        return (
+          <>
+            {g !== 45 && (
+              <Velo t={0.3} d={"M" + recto[0] + " " + arriba[1] + "L342 " + base + "H" + recto[0]} strokeWidth="1.6" strokeOpacity="0.5" />
+            )}
+            <Velo t={1.2} d={arco(vertice[0], vertice[1], deArriba ? 40 : 34, desde, hasta, true)} fill="#fff" fillOpacity="0.22" stroke="none" />
+            <Trazo t={0.2} dura={0.6} d={linea(abajo, arriba)} strokeWidth="2" />
+            <Halo t={0.6} dura={0.4} d={deArriba ? suelo : alto} grosor={2.6} />
+            <Velo t={0.9} d={deArriba ? alto : suelo} strokeWidth="2.6" strokeDasharray="9 6" />
+            <Velo t={1} d={"M" + (recto[0] - 14) + " " + base + "V" + (base - 14) + "H" + recto[0]} strokeWidth="1.5" />
+            <Trazo t={1.1} dura={0.3} d={arco(vertice[0], vertice[1], deArriba ? 40 : 34, desde, hasta)} strokeWidth="2.4" />
+            <Letras>
+              {g === 45 ? (
+                <Rotulo como="g" t={0.8}>
+                  <Exacto x={medio[0] - 23.5} y={medio[1] - 6} s={20} valor="√2" />
+                </Rotulo>
+              ) : (
+                <Rotulo t={0.8} x={medio[0] - 14} y={medio[1] - 2} fontSize="20">
+                  2
+                </Rotulo>
+              )}
+              <Rotulo t={0.8} x={(abajo[0] + recto[0]) / 2} y={base + 24} fontSize="20">
+                1
+              </Rotulo>
+              {g === 45 ? (
+                <Rotulo t={0.8} x={recto[0] + 14} y={(base + arriba[1]) / 2 + 7} fontSize="20" textAnchor="start">
+                  1
+                </Rotulo>
+              ) : (
+                <Rotulo como="g" t={0.8}>
+                  <Exacto x={recto[0] - 30} y={base - 54} s={20} valor="√3" />
+                </Rotulo>
+              )}
+              {g !== 45 && (
+                <Rotulo t={0.5} x={286} y={base + 24} fontSize="18" opacity="0.6">
+                  1
+                </Rotulo>
+              )}
+              {g !== 45 && (
+                <Rotulo t={0.5} x={302} y={190} fontSize="18" opacity="0.6">
+                  2
+                </Rotulo>
+              )}
+              <Rotulo t={1.4} x={sitio[0]} y={sitio[1] + 6} fontSize="18" fontWeight="700">
+                {gr(g)}
+              </Rotulo>
+              <Rotulo t={0.4} x="515" y="38" fontSize="16">
+                {palabra(g === 45 ? "el rectángulo isósceles" : "la mitad de un equilátero")}
+              </Rotulo>
+              <Rotulo t={0.4} x="515" y="60" fontSize="16">
+                {palabra(g === 45 ? "de catetos " : "de lado ")}
+                {g === 45 ? "1" : "2"}
+              </Rotulo>
+              {RAZONES.map((razon, orden) => (
+                <RazonExacta key={razon} t={1.5 + 0.1 * orden} x={520} y={118 + 62 * orden} valor={NOTABLES[g][orden]}>
+                  {razon + " "}
+                  {gr(g)}
+                </RazonExacta>
+              ))}
+            </Letras>
+          </>
+        );
+      }
+
+      const CLASES = ["", "agudo", "obtuso", "cóncavo", "cóncavo"];
+
+      function CircunferenciaDibujo({ e, poner }) {
+        const g = e.t;
+        const c = cosG(g);
+        const s = senG(g);
+        const q = cuadranteDe(g);
+        const p = hacia(CX, CY, R, g);
+        const pie = CX + R * c;
+        const lado = c < 0 ? -1 : 1;
+        const arriba = s < 0 ? -1 : 1;
+        const tendido = Math.abs(c) > 0.6;
+        let theta = letraDelArco(g, q === 4 ? [45] : []);
+        if (!tendido && s !== 0 && Math.abs(theta[0] - pie) < 11) {
+          const k = (Math.abs(pie - CX) + 12) / Math.abs(theta[0] - CX);
+          theta = [CX + (theta[0] - CX) * k, CY + (theta[1] - CY) * k];
+        }
+        const nombreP = fueraDe(g, R + 15);
+        const mover = (toque) => {
+          let nuevo = (Math.round(Math.atan2(CY - toque.y, toque.x - CX) / RAD / 15) * 15 + 360) % 360;
+          if (nuevo === 0 && g > 180) {
+            nuevo = 360;
+          }
+          if (nuevo !== g) {
+            poner({ t: nuevo });
+          }
+        };
+        return (
+          <>
+            <Circunferencia cuadrante={q} nombres signos />
+            {g > 0 && <Trazo t={1.2} dura={0.5} d={arco(CX, CY, 22, 0, g)} strokeWidth="1.8" />}
+            <Halo t={1} dura={0.5} d={linea([CX, CY], p)} grosor={2.4} />
+            {c !== 0 && <Trazo t={1.4} dura={0.4} d={"M" + CX + " " + CY + "H" + n1(pie)} strokeWidth="6" strokeOpacity="0.55" />}
+            {s !== 0 && <Velo t={1.5} d={"M" + n1(pie) + " " + CY + "V" + n1(p[1])} strokeWidth="2" strokeDasharray="6 5" />}
+            {tendido && Math.abs(s) >= 0.3 && (
+              <Velo t={1.5} d={"M" + CX + " " + n1(p[1]) + "H" + n1(p[0])} strokeWidth="1.4" strokeOpacity="0.8" strokeDasharray="4 5" />
+            )}
+            <Punto t={1.6} cx={p[0]} cy={p[1]} r="13" fillOpacity="0.26" />
+            <Punto t={1.6} cx={p[0]} cy={p[1]} r="6.5" />
+            <Letras>
+              {g > 0 && (
+                <Rotulo t={1.4} x={theta[0]} y={theta[1] + 6} fontSize="18">
+                  {cursiva("θ")}
+                </Rotulo>
+              )}
+              <Rotulo t={1.7} x={nombreP[0]} y={nombreP[1] + 6} fontSize="18" fontWeight="700">
+                {cursiva("P")}
+              </Rotulo>
+              {Math.abs(c) >= 0.3 && (
+                <Rotulo t={1.8} x={CX + lado * Math.max((R * Math.abs(c)) / 2, 44)} y={CY + (arriba > 0 ? 21 : -9)} fontSize="15">
+                  cos {cursiva("θ")}
+                </Rotulo>
+              )}
+              {Math.abs(s) >= 0.3 && (
+                <Rotulo
+                  t={1.8}
+                  x={(tendido ? CX : pie) + lado * (tendido ? 6 : 7)}
+                  y={tendido ? p[1] + (arriba > 0 ? -6 : 16) : CY - arriba * R * Math.abs(s) * (Math.abs(c) < 0.4 ? 0.68 : 0.5) + 5}
+                  fontSize="15"
+                  textAnchor={lado > 0 ? "start" : "end"}
+                >
+                  sen {cursiva("θ")}
+                </Rotulo>
+              )}
+              <Rotulo t={0.4} x="490" y="44" fontSize="26" fontWeight="700">
+                {cursiva("θ")} = {gr(g)}
+              </Rotulo>
+              <Rotulo t={0.5} x="490" y="76" fontSize="17">
+                {q ? palabra(CUADRANTES[q] + " cuadrante: " + CLASES[q]) : palabra("sobre el eje ")}
+                {q ? "" : cursiva(g % 180 === 0 ? "x" : "y")}
+              </Rotulo>
+              <Rotulo t={1.6} x="490" y="128" fontSize="18">
+                {cursiva("P")} = (cos {cursiva("θ")}, sen {cursiva("θ")})
+              </Rotulo>
+              <Rotulo t={1.7} x="490" y="162" fontSize="21" fontWeight="700">
+                {(exacto(c) && exacto(s) ? "= " : "≈ ") + "(" + dos(c) + "; " + dos(s) + ")"}
+              </Rotulo>
+              <Rotulo t={1.8} x="490" y="206" fontSize="19">
+                tan {cursiva("θ")}
+                {c === 0 ? palabra(" no existe") : igualRotulo(s / c) + dos(s / c)}
+              </Rotulo>
+            </Letras>
+            <Arrastre alMover={mover}>
+              <circle cx={CX} cy={CY} r={R} fill="none" stroke="#fff" strokeOpacity="0" strokeWidth="44" style={{ touchAction: "none" }} />
+            </Arrastre>
+          </>
+        );
+      }
+
+      const A_REDUCIR = [120, 135, 150, 210, 225, 240, 300, 315, 330];
+      const agudoDe = (g) => (g < 180 ? 180 - g : g < 270 ? g - 180 : 360 - g);
+      const restaTex = (g) => (g < 180 ? "180^\\circ-" + g + "^\\circ" : g < 270 ? g + "^\\circ-180^\\circ" : "360^\\circ-" + g + "^\\circ");
+      const SIMETRIAS = ["", "", "del eje ", "del origen", "del eje "];
+
+      function ReducirDibujo({ e }) {
+        const g = e.t;
+        const a = agudoDe(g);
+        const q = cuadranteDe(g);
+        const p = hacia(CX, CY, R, g);
+        const pa = hacia(CX, CY, R, a);
+        const junto = q === 2 ? [g, 180] : q === 3 ? [180, g] : [g, 360];
+        const theta = letraDelArco(g, [a]);
+        const radio = { 30: 80, 45: 76, 60: 84 }[a];
+        const alfas = [hacia(CX, CY, radio, a / 2), hacia(CX, CY, radio, (junto[0] + junto[1]) / 2)];
+        const rotular = (angulo, libre) => hacia(CX, CY, R + libre + 18 * Math.abs(cosG(angulo)) + 7 * Math.abs(senG(angulo)), angulo);
+        const nombres = [rotular(g, 17), rotular(a, 10)];
+        const restas = [
+          [gr(180), gr(g)],
+          [gr(g), gr(180)],
+          [gr(360), gr(g)]
+        ][q - 2];
+        return (
+          <>
+            <Circunferencia cuadrante={q} />
+            {q === 2 && <Trazo t={1} dura={0.4} d={"M" + CX + " " + (CY + R) + "V" + (CY - R)} strokeWidth="8" strokeOpacity="0.3" />}
+            {q === 4 && <Trazo t={1} dura={0.4} d={"M" + (CX - R) + " " + CY + "H" + (CX + R)} strokeWidth="8" strokeOpacity="0.3" />}
+            {q === 3 && <Punto t={1} cx={CX} cy={CY} r="9" fillOpacity="0.45" />}
+            <Trazo t={0.9} dura={0.4} d={linea([CX, CY], pa)} strokeWidth="1.6" strokeOpacity="0.6" />
+            <Trazo t={1.1} dura={0.3} d={arco(CX, CY, 64, 0, a)} strokeWidth="1.6" strokeOpacity="0.75" />
+            <Punto t={1.2} cx={pa[0]} cy={pa[1]} r="5.5" fillOpacity="0.75" />
+            <Trazo t={1} dura={0.6} d={arco(CX, CY, 22, 0, g)} strokeWidth="1.8" />
+            <Halo t={1.2} dura={0.4} d={linea([CX, CY], p)} grosor={2.4} />
+            <Trazo t={1.4} dura={0.3} d={arco(CX, CY, 64, junto[0], junto[1])} strokeWidth="2.2" />
+            <Punto t={1.5} cx={p[0]} cy={p[1]} r="13" fillOpacity="0.26" />
+            <Punto t={1.5} cx={p[0]} cy={p[1]} r="6.5" />
+            <Velo t={1.7} d={linea(pa, p)} strokeWidth="1.8" strokeDasharray="5 6" />
+            <Letras>
+              <Rotulo t={1.3} x={theta[0]} y={theta[1] + 6} fontSize="18">
+                {cursiva("θ")}
+              </Rotulo>
+              {alfas.map((sitio, orden) => (
+                <Rotulo key={orden} t={1.3 + 0.2 * orden} x={sitio[0]} y={sitio[1] + 6} fontSize="18" opacity={orden ? 1 : 0.85}>
+                  {cursiva("α")}
+                </Rotulo>
+              ))}
+              <Rotulo t={1.6} x={nombres[0][0]} y={nombres[0][1] + 6} fontSize="16" fontWeight="700">
+                {gr(g)}
+              </Rotulo>
+              <Rotulo t={1.3} x={nombres[1][0]} y={nombres[1][1] + 6} fontSize="16" opacity="0.85">
+                {gr(a)}
+              </Rotulo>
+              <Rotulo t={0.4} x="490" y="44" fontSize="26" fontWeight="700">
+                {cursiva("θ")} = {gr(g)}
+              </Rotulo>
+              <Rotulo t={0.5} x="490" y="76" fontSize="17">
+                {palabra(CUADRANTES[q] + " cuadrante")}
+              </Rotulo>
+              <Rotulo t={1.5} x="490" y="114" fontSize="19">
+                {cursiva("α")} = {restas[0]} {MENOS} {restas[1]} = {gr(a)}
+              </Rotulo>
+              <Rotulo t={1.8} x="490" y="150" fontSize="16">
+                {palabra("simétricos respecto")}
+              </Rotulo>
+              <Rotulo t={1.8} x="490" y="172" fontSize="16">
+                {palabra(SIMETRIAS[q])}
+                {q === 3 ? "" : cursiva(q === 2 ? "y" : "x")}
+              </Rotulo>
+              {RAZONES.map((razon, orden) => (
+                <Rotulo key={razon} t={1.9 + 0.1 * orden} x="490" y={214 + 26 * orden} fontSize="17">
+                  {razon + " "}
+                  {cursiva("θ")}
+                  {" = " + (SIGNOS[q][orden] === "−" ? MENOS : "") + razon + " "}
+                  {cursiva("α")}
+                </Rotulo>
+              ))}
+            </Letras>
+          </>
+        );
+      }
+
+      function IdentidadDibujo({ e }) {
+        const c = (e.obtuso ? -5 : 5) / 13;
+        const s = 12 / 13;
+        const g = Math.atan2(s, c) / RAD;
+        const lado = e.obtuso ? -1 : 1;
+        const p = [CX + R * c, CY - R * s];
+        const pie = p[0];
+        const theta = letraDelArco(g, []);
+        const nombreP = fueraDe(g, R + 15);
+        const uno = [(CX + pie) / 2 - lado * 14 * s, (CY + p[1]) / 2 - 14 * Math.abs(c)];
+        const signo = e.obtuso ? "-" : "";
+        return (
+          <>
+            <Circunferencia cuadrante={e.obtuso ? 2 : 1} nombres signos />
+            <Velo t={1} d={"M" + CX + " " + CY + "H" + n1(pie) + "V" + n1(p[1]) + "Z"} fill="#fff" fillOpacity="0.12" stroke="none" />
+            <Trazo t={1.2} dura={0.5} d={arco(CX, CY, 22, 0, g)} strokeWidth="1.8" />
+            <Halo t={1} dura={0.5} d={linea([CX, CY], p)} grosor={2.4} />
+            <Trazo t={1.4} dura={0.4} d={"M" + CX + " " + CY + "H" + n1(pie)} strokeWidth="4" />
+            <Trazo t={1.6} dura={0.4} d={"M" + n1(pie) + " " + CY + "V" + n1(p[1])} strokeWidth="4" />
+            <Velo t={1.8} d={"M" + n1(pie - lado * 10) + " " + CY + "V" + (CY - 10) + "H" + n1(pie)} strokeWidth="1.5" />
+            <Punto t={1.7} cx={p[0]} cy={p[1]} r="6.5" />
+            <Letras>
+              <Rotulo t={1.4} x={theta[0]} y={theta[1] + 6} fontSize="18">
+                {cursiva("θ")}
+              </Rotulo>
+              <Rotulo t={1.7} x={nombreP[0]} y={nombreP[1] + 6} fontSize="18" fontWeight="700">
+                {cursiva("P")}
+              </Rotulo>
+              <Rotulo t={1.8} x={uno[0]} y={uno[1] + 7} fontSize="19" fontWeight="700">
+                1
+              </Rotulo>
+              <Rotulo t={1.8} x={CX + lado * 25} y={CY + 21} fontSize="14">
+                |cos {cursiva("θ")}|
+              </Rotulo>
+              <Rotulo t={1.8} x={pie + lado * 7} y={(CY + p[1]) / 2 + 5} fontSize="15" textAnchor={lado > 0 ? "start" : "end"}>
+                sen {cursiva("θ")}
+              </Rotulo>
+              <Rotulo t={0.4} x="490" y="44" fontSize="22" fontWeight="700">
+                cos<Sup>2</Sup>
+                {cursiva("θ")} + sen<Sup>2</Sup>
+                {cursiva("θ")} = 1
+              </Rotulo>
+              <RazonExacta t={0.6} x={500} y={98} valor="12/13">
+                sen {cursiva("θ")}
+              </RazonExacta>
+              <Rotulo t={1.2} x="490" y="140" fontSize="16">
+                {cursiva("θ")}
+                {palabra(e.obtuso ? " obtuso: segundo cuadrante" : " agudo: primer cuadrante")}
+              </Rotulo>
+              <RazonExacta t={1.6} x={500} y={190} valor={signo + "5/13"}>
+                cos {cursiva("θ")}
+              </RazonExacta>
+              <RazonExacta t={1.8} x={500} y={250} valor={signo + "12/5"}>
+                tan {cursiva("θ")}
+              </RazonExacta>
+            </Letras>
+          </>
+        );
+      }
+
+      const INVERSAS = ["\\operatorname{arcsen}", "\\arccos", "\\arctan"];
+      const anguloDe = (razon, k) => (razon === 0 ? Math.asin(k) : razon === 1 ? Math.acos(k) : Math.atan(k)) / RAD;
+      const tres = (g) => Number(g.toPrecision(3));
+      const redondeado = (g) => Math.abs(g - tres(g)) > 1e-9;
+
+      function InversaDibujo({ e }) {
+        const g = anguloDe(e.razon, e.k);
+        const rx = 330;
+        const ry = 288;
+        const ax = rx - 250 * cosG(g);
+        const by = ry - 250 * senG(g);
+        const lados = {
+          o: "M" + rx + " " + ry + "V" + n1(by),
+          c: "M" + n1(ax) + " " + ry + "H" + rx,
+          h: "M" + n1(ax) + " " + ry + "L" + rx + " " + n1(by)
+        };
+        const [arriba, abajo] = [["o", "h"], ["c", "h"], ["o", "c"]][e.razon];
+        const sitio = {
+          o: [rx + 12, (ry + by) / 2 + 6, "start"],
+          c: [(ax + rx) / 2, ry + 24, "middle"],
+          h: [(ax + rx) / 2 - 16 * senG(g), (ry + by) / 2 - 16 * cosG(g) + 6, "end"]
+        };
+        const letra = enAngulo(ax, ry, 0, g, 54);
+        const razon = RAZONES[e.razon];
+        return (
+          <>
+            <Velo t={1.2} d={arco(ax, ry, 34, 0, g, true)} fill="#fff" fillOpacity="0.22" stroke="none" />
+            {["o", "c", "h"].map((l) =>
+              l === arriba ? (
+                <Halo key={l} t={0.6} dura={0.4} d={lados[l]} grosor={2.6} />
+              ) : l === abajo ? (
+                <Velo key={l} t={0.9} d={lados[l]} strokeWidth="2.6" strokeDasharray="9 6" />
+              ) : (
+                <Trazo key={l} t={0.3} dura={0.5} d={lados[l]} strokeWidth="1.6" />
+              )
+            )}
+            <Velo t={1} d={"M" + (rx - 14) + " " + ry + "V" + (ry - 14) + "H" + rx} strokeWidth="1.5" />
+            <Trazo t={1.1} dura={0.3} d={arco(ax, ry, 34, 0, g)} strokeWidth="2.4" />
+            <Trazo t={1.4} dura={0.5} d="M496 180A26 26 0 1 0 444 180A26 26 0 1 0 496 180M626 180A26 26 0 1 0 574 180A26 26 0 1 0 626 180" strokeWidth="2" />
+            <Trazo t={1.6} dura={0.4} d="M494 164Q535 138 576 164l-10 -1M576 164l-4 -9" strokeWidth="2" />
+            <Trazo t={1.8} dura={0.4} d="M576 196Q535 222 494 196l10 1M494 196l4 9" strokeWidth="2" />
+            <Letras>
+              {[arriba, abajo].map((l, orden) => (
+                <Rotulo key={l} t={0.8} x={sitio[l][0]} y={sitio[l][1]} fontSize="19" textAnchor={sitio[l][2]} fontWeight={orden ? 400 : 700}>
+                  {orden ? "10" : cifra(10 * e.k)}
+                </Rotulo>
+              ))}
+              <Rotulo t={1.3} x={letra[0]} y={letra[1] + 6} fontSize="19" fontWeight="700">
+                {cursiva("θ")}
+              </Rotulo>
+              <Rotulo t={0.4} x="535" y="48" fontSize="22" fontWeight="700">
+                {razon + " "}
+                {cursiva("θ")} = {cifra(e.k)}
+              </Rotulo>
+              <Rotulo t={1.5} x="470" y="187" fontSize="19">
+                {cursiva("θ")}
+              </Rotulo>
+              <Rotulo t={1.5} x="600" y="186" fontSize="16">
+                {cifra(e.k)}
+              </Rotulo>
+              <Rotulo t={1.7} x="535" y="132" fontSize="16">
+                {razon}
+              </Rotulo>
+              <Rotulo t={1.9} x="535" y="242" fontSize="16">
+                {"arc" + razon}
+              </Rotulo>
+              <Rotulo t={2} x="535" y="292" fontSize="22" fontWeight="700">
+                {cursiva("θ")}
+                {redondeado(g) ? " ≈ " : " = "}
+                {gr(tres(g))}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const CASOS_ALTURA = {
+        lados: { d: 60, cerca: 70, lejos: 40, k: 5.5, nombre: "uno a cada lado" },
+        mismo: { d: 50, cerca: 45, lejos: 30, k: 3, nombre: "los dos al mismo lado" },
+        alto: { nombre: "desde un punto alto" }
+      };
+      const alturaDe = (caso) => {
+        const c = CASOS_ALTURA[caso];
+        const [tc, tl] = [Math.tan(c.cerca * RAD), Math.tan(c.lejos * RAD)];
+        const x = (c.d * tl) / (caso === "lados" ? tc + tl : tc - tl);
+        return [x, x * tc];
+      };
+
+      function AlturasDibujo({ e }) {
+        const y0 = 250;
+        const c = CASOS_ALTURA[e.caso];
+        const suelo = <Trazo t={0.1} dura={0.4} d={"M60 " + y0 + "H560"} strokeOpacity="0.85" strokeWidth="1.5" />;
+        const nombre = (
+          <Rotulo t={0.3} x="628" y="40" fontSize="16" textAnchor="end">
+            {palabra(c.nombre)}
+          </Rotulo>
+        );
+        if (e.caso === "alto") {
+          const o = [150, y0 - 70];
+          const pie = [380, y0];
+          const cima = [380, y0 - 70 - 230 * Math.tan(30 * RAD)];
+          const beta = Math.atan(70 / 230) / RAD;
+          const sa = enAngulo(o[0], o[1], 0, 30, 60);
+          const sb = enAngulo(o[0], o[1], -beta, 0, 80);
+          return (
+            <>
+              {suelo}
+              <Trazo t={0.3} dura={0.4} d={"M150 " + y0 + "V" + o[1]} strokeWidth="4" />
+              <Halo t={0.6} dura={0.5} d={linea(pie, cima)} grosor={2.6} />
+              <Velo t={0.9} d={"M150 " + o[1] + "H380"} strokeWidth="1.6" strokeDasharray="8 6" />
+              <Trazo t={1} dura={0.4} d={linea(o, cima) + linea(o, pie)} strokeWidth="1.8" />
+              <Trazo t={1.3} dura={0.3} d={arco(o[0], o[1], 52, 0, 30) + arco(o[0], o[1], 72, -beta, 0)} strokeWidth="2.2" />
+              <Punto t={1.2} cx={o[0]} cy={o[1]} r="6" />
+              <Letras>
+                {nombre}
+                <Rotulo t={1.4} x={sa[0]} y={sa[1] + 6} fontSize="18">
+                  {cursiva("α")}
+                </Rotulo>
+                <Rotulo t={1.4} x={sb[0]} y={sb[1] + 6} fontSize="18">
+                  {cursiva("β")}
+                </Rotulo>
+                <Rotulo t={0.8} x="136" y={y0 - 29} fontSize="19" textAnchor="end">
+                  {cursiva("a")}
+                </Rotulo>
+                <Rotulo t={1} x="300" y={o[1] - 10} fontSize="19">
+                  {cursiva("x")}
+                </Rotulo>
+                <Rotulo t={0.8} x="396" y="152" fontSize="20" textAnchor="start" fontWeight="700">
+                  {cursiva("h")}
+                </Rotulo>
+              </Letras>
+            </>
+          );
+        }
+        const lados = e.caso === "lados";
+        const [x, h] = alturaDe(e.caso);
+        const pie = 110 + (lados ? x : c.d + x) * c.k;
+        const cerca = lados ? 110 : 110 + c.d * c.k;
+        const lejos = lados ? 110 + c.d * c.k : 110;
+        const cima = [pie, y0 - h * c.k];
+        const ac = enAngulo(cerca, y0, 0, c.cerca, 40);
+        const al = lados ? enAngulo(lejos, y0, 180 - c.lejos, 180, 40) : enAngulo(lejos, y0, 0, c.lejos, 46);
+        const tramos = lados
+          ? [[110, pie, "x"], [pie, lejos, "60 − x"]]
+          : [[110, cerca, "50 m"], [cerca, pie, "x"]];
+        return (
+          <>
+            {suelo}
+            <Halo t={0.5} dura={0.5} d={"M" + n1(pie) + " " + y0 + "V" + n1(cima[1])} grosor={lados ? 2.4 : 4} />
+            <Trazo t={0.9} dura={0.5} d={linea([cerca, y0], cima) + linea([lejos, y0], cima)} strokeWidth="1.8" />
+            <Velo t={1} d={"M" + n1(pie + (lados ? 12 : -12)) + " " + y0 + "V" + (y0 - 12) + "H" + n1(pie)} strokeWidth="1.5" />
+            <Trazo
+              t={1.2}
+              dura={0.3}
+              d={arco(cerca, y0, 30, 0, c.cerca) + (lados ? arco(lejos, y0, 30, 180 - c.lejos, 180) : arco(lejos, y0, 36, 0, c.lejos))}
+              strokeWidth="2.2"
+            />
+            {lados && <Velo t={1.1} d={"M110 " + (y0 + 36) + "H" + n1(lejos) + "M110 " + (y0 + 30) + "v12M" + n1(lejos) + " " + (y0 + 30) + "v12"} strokeWidth="1.2" />}
+            <Punto t={1.1} cx={cerca} cy={y0} r="5.5" />
+            <Punto t={1.1} cx={lejos} cy={y0} r="5.5" />
+            <Punto t={1.3} cx={cima[0]} cy={cima[1]} r={lados ? 7 : 5.5} />
+            <Letras>
+              {nombre}
+              <Rotulo t={1.6} x="628" y="74" fontSize="22" textAnchor="end" fontWeight="700">
+                {cursiva("h")} ≈ {cifra(h, 1)} m
+              </Rotulo>
+              <Rotulo t={1.3} x={ac[0]} y={ac[1] + 6} fontSize="16">
+                {gr(c.cerca)}
+              </Rotulo>
+              <Rotulo t={1.3} x={al[0]} y={al[1] + 6} fontSize="16">
+                {gr(c.lejos)}
+              </Rotulo>
+              {tramos.map(([desde, hasta, texto]) => (
+                <Rotulo key={texto} t={0.8} x={(desde + hasta) / 2} y={y0 + 24} fontSize="17">
+                  {texto.length > 2 ? texto : cursiva(texto)}
+                </Rotulo>
+              ))}
+              {lados && (
+                <Rotulo t={1.2} x={(110 + lejos) / 2} y={y0 + 60} fontSize="17">
+                  60 m
+                </Rotulo>
+              )}
+              <Rotulo t={0.8} x={pie + 14} y={(y0 + cima[1]) / 2 + 6} fontSize="20" textAnchor="start" fontWeight="700">
+                {cursiva("h")}
+              </Rotulo>
+            </Letras>
+          </>
+        );
+      }
+
+      const ESTACIONES_TRIGONOMETRIA = [
+        {
+          clave: "triangulo",
+          nombre: "El triángulo rectángulo",
+          inicial: { alfa: 35, mira: "alfa" },
+          duracion: 2.4,
+          Dibujo: TrianguloDibujo,
+          descripcion: (e) => {
+            const deAlfa = e.mira === "alfa";
+            const g = deAlfa ? e.alfa : 90 - e.alfa;
+            return (
+              "Un triángulo rectángulo con el ángulo recto abajo a la derecha, alfa de " +
+              e.alfa +
+              " grados abajo a la izquierda y beta de " +
+              (90 - e.alfa) +
+              " grados arriba. Se mira " +
+              (deAlfa ? "alfa: su cateto opuesto es a, el vertical, y el contiguo, b, el de abajo." : "beta: su cateto opuesto es b, el de abajo, y el contiguo, a, el vertical.") +
+              " La hipotenusa es c. El seno de " +
+              g +
+              " grados vale " +
+              leido(senG(g)) +
+              "; el coseno, " +
+              leido(cosG(g)) +
+              ", y la tangente, " +
+              leido(razonDe(g, 2)) +
+              "."
+            );
+          },
+          mandos: () => [
+            { tipo: "barra", clave: "alfa", nombre: "el ángulo alfa", rotulo: <Mates tex="\alpha" />, min: 10, max: 80, salto: 5, escribe: (valor) => valor + "°" },
+            {
+              tipo: "opciones",
+              clave: "mira",
+              nombre: "el ángulo que se mira",
+              rotulo: "Ángulo",
+              opciones: [
+                { valor: "alfa", rotulo: <Mates tex="\alpha" /> },
+                { valor: "beta", rotulo: <Mates tex="\beta" /> }
+              ]
+            }
+          ],
+          vivo: (e) => {
+            const deAlfa = e.mira === "alfa";
+            const g = deAlfa ? e.alfa : 90 - e.alfa;
+            const [op, co] = deAlfa ? ["a", "b"] : ["b", "a"];
+            const lados = [op + "}{c}", co + "}{c}", op + "}{" + co + "}"];
+            return [
+              "\\begin{aligned}" +
+                lados.map((cociente, orden) => razonTex(orden) + g + "^\\circ&=\\frac{" + cociente + dosTex(razonDe(g, orden))).join("\\\\") +
+                "\\end{aligned}",
+              deAlfa ? (
+                <>
+                  Para <Sujeta tex="\alpha">,</Sujeta> el cateto opuesto es <Mates tex="a" />, y el contiguo, <Sujeta tex="b">.</Sujeta> La
+                  hipotenusa, <Sujeta tex="c">,</Sujeta> no cambia.
+                </>
+              ) : (
+                <>
+                  Para <Sujeta tex="\beta">,</Sujeta> los catetos se cambian: el opuesto es <Mates tex="b" />, y el contiguo,{" "}
+                  <Sujeta tex="a">.</Sujeta> Por eso <Mates tex={SEN + "\\beta=\\cos\\alpha"} /> y <Sujeta tex="\tan\beta=\frac{1}{\tan\alpha}">.</Sujeta>
+                </>
+              )
+            ];
+          },
+          pista: (
+            <>
+              Mueve <Sujeta tex="\alpha">,</Sujeta> y elige qué ángulo miras: el cateto opuesto, con halo, y el contiguo, a trazos,
+              se cambian el papel; la hipotenusa es siempre la misma.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "Las tres razones",
+              tex: SEN + "\\alpha=\\frac ac\\qquad\\cos\\alpha=\\frac bc\\qquad\\tan\\alpha=\\frac ab",
+              texto: (
+                <>
+                  Con <Mates tex="a" /> el cateto opuesto a <Sujeta tex="\alpha">,</Sujeta> <Mates tex="b" /> el contiguo y <Mates tex="c" /> la
+                  hipotenusa.
+                </>
+              )
+            },
+            {
+              nombre: "La tangente",
+              tex: "\\tan\\alpha=\\frac{" + SEN + "\\alpha}{\\cos\\alpha}",
+              texto: (
+                <>
+                  Al dividir el seno entre el coseno, la <Mates tex="c" /> se va y queda <Sujeta tex="\frac ab">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Los dos ángulos agudos",
+              tex: "\\begin{gathered}" + SEN + "\\beta=\\cos\\alpha\\qquad\\cos\\beta=" + SEN + "\\alpha\\\\\\tan\\beta=\\frac{1}{\\tan\\alpha}\\end{gathered}",
+              texto: (
+                <>
+                  Como <Sujeta tex="\alpha+\beta=90^\circ">,</Sujeta> el seno de un ángulo es el coseno de su complementario.
+                </>
+              )
+            },
+            {
+              nombre: "Cómo se escribe",
+              texto: (
+                <>
+                  En clase, la tangente es <Sujeta tex="\operatorname{tg}">;</Sujeta> en el IB, <Sujeta tex="\tan">,</Sujeta> en los exámenes y
+                  en el cuadernillo de fórmulas. El seno es <Mates tex="\operatorname{sen}" /> en los dos.
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              El seno de <Mates tex="\alpha" /> es el opuesto entre la hipotenusa, <Sujeta tex="\frac ac">;</Sujeta> el opuesto entre el
+              otro cateto, <Sujeta tex="\frac ab">,</Sujeta> es la tangente.
+            </>,
+            <>
+              <Mates tex="\tan\beta" /> no es <Sujeta tex="\tan\alpha">:</Sujeta> es su inverso, <Sujeta tex="\frac{1}{\tan\alpha}">,</Sujeta> porque
+              en <Mates tex="\beta" /> los catetos se cambian.
+            </>
+          ]
+        },
+        {
+          clave: "notables",
+          nombre: "Ángulos notables",
+          inicial: { g: 30 },
+          duracion: 2.4,
+          Dibujo: NotablesDibujo,
+          descripcion: (e) =>
+            (e.g === 45
+              ? "El triángulo rectángulo isósceles de catetos 1 y de hipotenusa raíz de 2, con el ángulo de 45 grados abajo a la izquierda."
+              : "Un triángulo equilátero de lado 2 partido por su altura. Su mitad de la izquierda, resaltada, tiene catetos 1 y raíz de 3 e hipotenusa 2, con " +
+                (e.g === 30 ? "el ángulo de 30 grados arriba marcado." : "el ángulo de 60 grados abajo marcado.")) +
+            " A la derecha, el seno, el coseno y la tangente de " +
+            e.g +
+            " grados en forma exacta.",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "g",
+              nombre: "el ángulo notable",
+              rotulo: "Ángulo",
+              opciones: [30, 45, 60].map((g) => ({ valor: g, rotulo: <Mates tex={g + "^\\circ"} /> }))
+            }
+          ],
+          vivo: (e) => {
+            const g = e.g;
+            const cocientes = {
+              30: ["\\frac12", "\\frac{\\sqrt3}{2}", "\\frac{1}{\\sqrt3}=\\frac{\\sqrt3}{3}"],
+              45: ["\\frac{1}{\\sqrt2}=\\frac{\\sqrt2}{2}", "\\frac{1}{\\sqrt2}=\\frac{\\sqrt2}{2}", "\\frac11=1"],
+              60: ["\\frac{\\sqrt3}{2}", "\\frac12", "\\frac{\\sqrt3}{1}=\\sqrt3"]
+            }[g];
+            return [
+              "\\begin{aligned}" + cocientes.map((cociente, orden) => razonTex(orden) + g + "^\\circ&=" + cociente).join("\\\\") + "\\end{aligned}",
+              g === 45 ? (
+                <>
+                  En el rectángulo isósceles de catetos <Sujeta tex="1">,</Sujeta> la hipotenusa mide <Sujeta tex="\sqrt{1^2+1^2}=\sqrt2">.</Sujeta>
+                </>
+              ) : (
+                <>
+                  En la mitad del equilátero de lado <Sujeta tex="2">,</Sujeta> la altura mide <Sujeta tex="\sqrt{2^2-1^2}=\sqrt3">:</Sujeta> el
+                  opuesto a <Mates tex={g + "^\\circ"} /> es <Sujeta tex={g === 30 ? "1" : "\\sqrt3"}>,</Sujeta> y el contiguo,{" "}
+                  <Sujeta tex={g === 30 ? "\\sqrt3" : "1"}>.</Sujeta>
+                </>
+              )
+            ];
+          },
+          pista: (
+            <>
+              Elige el ángulo: <Mates tex="30^\circ" /> y <Mates tex="60^\circ" /> salen de la mitad de un equilátero de lado{" "}
+              <Sujeta tex="2">,</Sujeta> y <Sujeta tex="45^\circ">,</Sujeta> del rectángulo isósceles de catetos <Sujeta tex="1">.</Sujeta> En la
+              prueba 1 no hay calculadora: se saben de memoria.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "Los senos",
+              tex: TABLA_NOTABLES + "\\hline " + SEN + "&\\dfrac{\\sqrt1}{2}&\\dfrac{\\sqrt2}{2}&\\dfrac{\\sqrt3}{2}\\\\[6pt]\\cos&\\dfrac{\\sqrt3}{2}&\\dfrac{\\sqrt2}{2}&\\dfrac{\\sqrt1}{2}\\end{array}",
+              texto: "Los cosenos son los mismos, en orden inverso."
+            },
+            {
+              nombre: "Las tangentes",
+              tex: TABLA_NOTABLES + "\\hline\\tan&\\dfrac{\\sqrt3}{3}&1&\\sqrt3\\end{array}",
+              texto: "Cada tangente es su seno entre su coseno."
+            },
+            {
+              nombre: "De dónde salen",
+              tex: "h=\\frac{\\sqrt3}{2}\\,l\\qquad\\sqrt{l^2+l^2}=\\sqrt2\\,l",
+              texto: (
+                <>
+                  La altura <Mates tex="h" /> del equilátero de lado <Mates tex="l" /> lo parte en dos triángulos de <Mates tex="30^\circ" /> y{" "}
+                  <Sujeta tex="60^\circ">;</Sujeta> el rectángulo isósceles de catetos <Mates tex="l" /> tiene dos ángulos de{" "}
+                  <Sujeta tex="45^\circ">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "La recta por el origen",
+              tex: "y=x\\tan\\theta",
+              texto: (
+                <>
+                  Su pendiente es la tangente del ángulo <Mates tex="\theta" /> que forma con el eje <Mates tex="x" /> positivo: con{" "}
+                  <Sujeta tex="\theta=45^\circ">,</Sujeta> la recta <Sujeta tex="y=x">.</Sujeta>
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              <Mates tex={SEN + "60^\\circ"} /> no es el doble de <Sujeta tex={SEN + "30^\\circ"}>:</Sujeta> es <Sujeta tex="\frac{\sqrt3}{2}">,</Sujeta> no{" "}
+              <Sujeta tex="1">.</Sujeta>
+            </>,
+            <>
+              <Mates tex="\tan30^\circ=\frac{1}{\sqrt3}" /> se escribe racionalizada: <Sujeta tex="\frac{\sqrt3}{3}">.</Sujeta>
+            </>
+          ]
+        },
+        {
+          clave: "circunferencia",
+          nombre: "La circunferencia",
+          inicial: { t: 60 },
+          duracion: 2.6,
+          Dibujo: CircunferenciaDibujo,
+          descripcion: (e) => {
+            const c = cosG(e.t);
+            const s = senG(e.t);
+            const q = cuadranteDe(e.t);
+            return (
+              "La circunferencia de radio 1 con el ángulo theta de " +
+              e.t +
+              " grados. Su punto P tiene de abscisa el coseno, " +
+              leido(c) +
+              ", y de ordenada el seno, " +
+              leido(s) +
+              (q
+                ? ". Está en el " + CUADRANTES[q] + " cuadrante, resaltado: allí " + POSITIVAS[q] + "."
+                : ". Está sobre el eje " + (e.t % 180 === 0 ? "x." : "y, y la tangente no existe.")) +
+              " Se puede arrastrar P por la circunferencia."
+            );
+          },
+          mandos: () => [
+            { tipo: "barra", clave: "t", nombre: "el ángulo theta", rotulo: <Mates tex="\theta" />, min: 0, max: 360, salto: 15, escribe: (valor) => valor + "°" }
+          ],
+          vivo: (e) => {
+            const g = e.t;
+            const c = cosG(g);
+            const s = senG(g);
+            const q = cuadranteDe(g);
+            return [
+              "P=(\\cos" +
+                g +
+                "^\\circ,\\ " +
+                SEN +
+                g +
+                "^\\circ)" +
+                (exacto(c) && exacto(s) ? "=" : "\\approx") +
+                "\\left(" +
+                (exacto(c) ? enTex(c) : enTex(c, 2, true)) +
+                ";\\ " +
+                (exacto(s) ? enTex(s) : enTex(s, 2, true)) +
+                "\\right)",
+              c === 0
+                ? "\\cos" + g + "^\\circ=0\\ \\Rightarrow\\ \\tan" + g + "^\\circ\\ \\text{no existe}"
+                : "\\tan" + g + "^\\circ=\\frac{" + SEN + g + "^\\circ}{\\cos" + g + "^\\circ}" + dosTex(s / c),
+              q ? (
+                <>
+                  <Mates tex={g + "^\\circ"} /> está en el {CUADRANTES[q]} cuadrante, y es {CLASES[q]}: {POSITIVAS[q]}.
+                </>
+              ) : g % 180 === 0 ? (
+                <>
+                  <Mates tex="P" /> está sobre el eje <Sujeta tex="x">:</Sujeta> el seno vale <Sujeta tex="0">,</Sujeta> y la tangente también.
+                </>
+              ) : (
+                <>
+                  <Mates tex="P" /> está sobre el eje <Sujeta tex="y">:</Sujeta> el coseno vale <Sujeta tex="0">,</Sujeta> y la tangente no
+                  existe.
+                </>
+              )
+            ];
+          },
+          pista: (
+            <>
+              Mueve <Sujeta tex="\theta">,</Sujeta> con la barra o arrastrando <Mates tex="P" /> por la circunferencia: su abscisa es el
+              coseno, y su ordenada, el seno. Fuera de la circunferencia salen los signos del cuadrante.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "El punto del ángulo",
+              tex: "P=(\\cos\\theta,\\ " + SEN + "\\theta)",
+              texto: (
+                <>
+                  <Mates tex="\theta" /> se mide desde el eje <Mates tex="x" /> positivo, en sentido contrario al de las agujas del reloj, y su
+                  lado corta en <Mates tex="P" /> la circunferencia de radio <Sujeta tex="1">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "La tangente",
+              tex: "\\tan\\theta=\\frac{" + SEN + "\\theta}{\\cos\\theta}",
+              texto: (
+                <>
+                  No existe cuando <Sujeta tex="\cos\theta=0">:</Sujeta> en <Mates tex="90^\circ" /> y en <Sujeta tex="270^\circ">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Los signos",
+              tex: "\\begin{array}{r|cccc}&\\text{1.}^{\\text{o}}&\\text{2.}^{\\text{o}}&\\text{3.}^{\\text{o}}&\\text{4.}^{\\text{o}}\\\\\\hline " + SEN + "&+&+&-&-\\\\\\cos&+&-&-&+\\\\\\tan&+&-&+&-\\end{array}",
+              texto: "En el primer cuadrante, las tres positivas; en el segundo, solo el seno; en el tercero, solo la tangente, y en el cuarto, solo el coseno."
+            },
+            {
+              nombre: "Agudos, obtusos y cóncavos",
+              texto: "Según su cuadrante, un ángulo es agudo (el primero), obtuso (el segundo) o cóncavo (el tercero y el cuarto)."
+            },
+            {
+              nombre: "Más de una vuelta",
+              tex: "420^\\circ=360^\\circ+60^\\circ",
+              texto: (
+                <>
+                  Un ángulo de más de una vuelta tiene las razones del que queda al quitarle las vueltas: <Sujeta tex="420^\circ">,</Sujeta> las
+                  de <Sujeta tex="60^\circ">.</Sujeta>
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              El coseno es la abscisa de <Mates tex="P" />, su <Sujeta tex="x">,</Sujeta> y el seno, la ordenada, su <Sujeta tex="y">:</Sujeta> no
+              al revés.
+            </>,
+            <>
+              El seno y el coseno están siempre entre <Mates tex="-1" /> y <Sujeta tex="1">:</Sujeta> son las coordenadas de un punto de la
+              circunferencia de radio <Sujeta tex="1">.</Sujeta>
+            </>
+          ]
+        },
+        {
+          clave: "reducir",
+          nombre: "Reducir al primer cuadrante",
+          inicial: { t: 240 },
+          duracion: 2.6,
+          Dibujo: ReducirDibujo,
+          descripcion: (e) => {
+            const q = cuadranteDe(e.t);
+            const a = agudoDe(e.t);
+            return (
+              "La circunferencia de radio 1 con el punto del ángulo theta de " +
+              e.t +
+              " grados, en el " +
+              CUADRANTES[q] +
+              " cuadrante, y, más tenue, el de su ángulo agudo alfa, de " +
+              a +
+              " grados, en el primero. Los dos puntos son simétricos respecto " +
+              (q === 2 ? "del eje y" : q === 3 ? "del origen" : "del eje x") +
+              ": sus razones solo cambian de signo, y allí " +
+              POSITIVAS[q] +
+              "."
+            );
+          },
+          mandos: () => [
+            { tipo: "paso", clave: "t", nombre: "el ángulo theta", rotulo: <Mates tex="\theta" />, valores: A_REDUCIR, escribe: (valor) => valor + "°" }
+          ],
+          vivo: (e) => {
+            const g = e.t;
+            const a = agudoDe(g);
+            const q = cuadranteDe(g);
+            const filas = RAZONES.map((razon, orden) => {
+              const signo = SIGNOS[q][orden] === "−" ? "-" : "";
+              return razonTex(orden) + g + "^\\circ&=" + signo + razonTex(orden) + a + "^\\circ=" + exactoTex(signo + NOTABLES[a][orden]);
+            });
+            return [
+              "\\begin{aligned}" + filas.join("\\\\") + "\\end{aligned}",
+              <>
+                <Mates tex={g + "^\\circ"} /> está en el {CUADRANTES[q]} cuadrante, donde {POSITIVAS[q]}. Su ángulo agudo con el eje{" "}
+                <Mates tex="x" /> es <Sujeta tex={"\\alpha=" + restaTex(g) + "=" + a + "^\\circ"}>,</Sujeta> y los puntos de los dos ángulos
+                son simétricos respecto {q === 3 ? "del origen." : <>del eje <Sujeta tex={q === 2 ? "y" : "x"}>.</Sujeta></>}
+              </>
+            ];
+          },
+          pista: (
+            <>
+              Recorre los ángulos: cada uno tiene las razones de su ángulo agudo <Sujeta tex="\alpha">,</Sujeta> con el signo que tienen en
+              su cuadrante.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "Segundo cuadrante",
+              tex: "\\begin{aligned}" + SEN + "(180^\\circ-\\alpha)&=" + SEN + "\\alpha\\\\\\cos(180^\\circ-\\alpha)&=-\\cos\\alpha\\end{aligned}",
+              texto: (
+                <>
+                  Los puntos son simétricos respecto del eje <Sujeta tex="y">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "Tercer cuadrante",
+              tex: "\\begin{aligned}" + SEN + "(180^\\circ+\\alpha)&=-" + SEN + "\\alpha\\\\\\cos(180^\\circ+\\alpha)&=-\\cos\\alpha\\end{aligned}",
+              texto: "Los puntos son simétricos respecto del origen."
+            },
+            {
+              nombre: "Cuarto cuadrante",
+              tex: "\\begin{aligned}" + SEN + "(360^\\circ-\\alpha)&=-" + SEN + "\\alpha\\\\\\cos(360^\\circ-\\alpha)&=\\cos\\alpha\\end{aligned}",
+              texto: (
+                <>
+                  Los puntos son simétricos respecto del eje <Sujeta tex="x">.</Sujeta>
+                </>
+              )
+            },
+            {
+              nombre: "El método",
+              texto: (
+                <>
+                  Mira en qué cuadrante está <Sujeta tex="\theta">.</Sujeta> Halla el ángulo agudo <Mates tex="\alpha" /> que forma su lado con
+                  el eje <Sujeta tex="x">:</Sujeta> <Sujeta tex="180^\circ-\theta">,</Sujeta> <Mates tex="\theta-180^\circ" /> o{" "}
+                  <Sujeta tex="360^\circ-\theta">.</Sujeta> Las razones de <Mates tex="\theta" /> son las de <Sujeta tex="\alpha">,</Sujeta> con el
+                  signo del cuadrante.
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              El ángulo agudo se mide con el eje <Sujeta tex="x">,</Sujeta> no con el <Sujeta tex="y">:</Sujeta> el de <Mates tex="240^\circ" />{" "}
+              es <Sujeta tex="240^\circ-180^\circ=60^\circ">,</Sujeta> no <Sujeta tex="270^\circ-240^\circ=30^\circ">.</Sujeta>
+            </>,
+            <>
+              En el tercer cuadrante la tangente es positiva: <Sujeta tex="\tan240^\circ=\tan60^\circ=\sqrt3">,</Sujeta> porque el seno y el
+              coseno son negativos los dos.
+            </>
+          ]
+        },
+        {
+          clave: "identidad",
+          nombre: "La identidad fundamental",
+          inicial: { obtuso: true },
+          duracion: 2.6,
+          Dibujo: IdentidadDibujo,
+          descripcion: (e) =>
+            "La circunferencia de radio 1 con el punto P de un ángulo theta " +
+            (e.obtuso ? "obtuso, en el segundo cuadrante: P es (menos 5/13, 12/13)." : "agudo, en el primer cuadrante: P es (5/13, 12/13).") +
+            " El triángulo rectángulo de P, su pie en el eje x y el origen tiene catetos 5/13 y 12/13 e hipotenusa 1: el coseno al cuadrado más el seno al cuadrado es 1.",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "obtuso",
+              nombre: "el cuadrante de theta",
+              opciones: [
+                {
+                  valor: false,
+                  rotulo: (
+                    <>
+                      <Mates tex="\theta" /> agudo
+                    </>
+                  )
+                },
+                {
+                  valor: true,
+                  rotulo: (
+                    <>
+                      <Mates tex="\theta" /> obtuso
+                    </>
+                  )
+                }
+              ]
+            }
+          ],
+          vivo: (e) => {
+            const signo = e.obtuso ? "-" : "";
+            return [
+              "\\begin{aligned}\\cos^2\\theta&=1-\\left(\\frac{12}{13}\\right)^2=1-\\frac{144}{169}=\\frac{25}{169}\\\\\\cos\\theta&=\\pm\\frac{5}{13}\\end{aligned}",
+              <>
+                Un ángulo {e.obtuso ? "obtuso" : "agudo"} está en el {e.obtuso ? "segundo" : "primer"} cuadrante, donde el coseno es{" "}
+                {e.obtuso ? "negativo" : "positivo"}: <Sujeta tex={"\\cos\\theta=" + signo + "\\frac{5}{13}"}>.</Sujeta>
+              </>,
+              "\\tan\\theta=\\frac{" + SEN + "\\theta}{\\cos\\theta}=\\frac{12/13}{" + signo + "5/13}=" + signo + "\\frac{12}{5}"
+            ];
+          },
+          pista: (
+            <>
+              Cambia el ángulo de cuadrante: la identidad da el mismo <Sujeta tex="\cos^2\theta">,</Sujeta> y el signo del coseno lo pone el
+              cuadrante.
+            </>
+          ),
+          fichas: [
+            {
+              nombre: "La identidad fundamental",
+              tex: "\\cos^2\\theta+" + SEN + "^2\\theta=1",
+              texto: (
+                <>
+                  Es el teorema de Pitágoras en la circunferencia: <Mates tex="P" /> está a distancia <Mates tex="1" /> del origen. Vale para
+                  cualquier ángulo, y está en el cuadernillo de fórmulas.
+                </>
+              )
+            },
+            {
+              nombre: "El cuadrado de una razón",
+              tex: "\\cos^2\\theta=(\\cos\\theta)^2",
+              texto: "Es el coseno, elevado al cuadrado."
+            },
+            {
+              nombre: "Conocida una razón y el cuadrante",
+              texto: (
+                <>
+                  La identidad da la otra al cuadrado. Su raíz, con el signo que tiene en el cuadrante, da la razón, y la tangente es el seno
+                  entre el coseno.
+                </>
+              )
+            },
+            {
+              nombre: "Conocida la tangente",
+              tex: SEN + "\\theta=\\tan\\theta\\cdot\\cos\\theta",
+              texto: (
+                <>
+                  Se sustituye en la identidad, y queda una ecuación con solo <Sujeta tex="\cos\theta">.</Sujeta>
+                </>
+              )
+            }
+          ],
+          ojo: [
+            <>
+              <Mates tex="\cos^2\theta" /> es <Sujeta tex="(\cos\theta)^2">,</Sujeta> no <Sujeta tex="\cos\left(\theta^2\right)">.</Sujeta>
+            </>,
+            <>
+              La raíz de <Mates tex="\cos^2\theta=\frac{25}{169}" /> da dos valores, <Mates tex="\frac{5}{13}" /> y{" "}
+              <Sujeta tex="-\frac{5}{13}">:</Sujeta> el signo lo decide el cuadrante.
+            </>
+          ]
+        },
+        {
+          clave: "inversa",
+          nombre: "El ángulo a partir de una razón",
+          inicial: { razon: 0, k: 0.7 },
+          duracion: 2.6,
+          Dibujo: InversaDibujo,
+          descripcion: (e) => {
+            const g = anguloDe(e.razon, e.k);
+            const lados = [["el cateto opuesto", "la hipotenusa"], ["el cateto contiguo", "la hipotenusa"], ["el cateto opuesto", "el contiguo"]][e.razon];
+            return (
+              "Un triángulo rectángulo con el ángulo theta abajo a la izquierda. " +
+              ["El seno", "El coseno", "La tangente"][e.razon] +
+              " de theta vale " +
+              cifra(e.k) +
+              ": " +
+              lados[0] +
+              " mide " +
+              cifra(10 * e.k) +
+              ", y " +
+              lados[1] +
+              ", 10. A la derecha, la razón lleva theta al número " +
+              cifra(e.k) +
+              " y su inversa lo devuelve: theta" +
+              (redondeado(g) ? " ≈ " : " = ") +
+              cifra(tres(g)) +
+              " grados."
+            );
+          },
+          mandos: (e) => [
+            {
+              tipo: "opciones",
+              clave: "razon",
+              nombre: "la razón que se conoce",
+              rotulo: "Razón",
+              opciones: [0, 1, 2].map((r) => ({ valor: r, rotulo: <Mates tex={razonTex(r)} /> })),
+              cambios: () => ({ k: 0.7 })
+            },
+            {
+              tipo: "barra",
+              clave: "k",
+              nombre: "el valor de la razón",
+              rotulo: <Mates tex="k" />,
+              min: 0.2,
+              max: e.razon === 2 ? 4 : 0.95,
+              salto: e.razon === 2 ? 0.1 : 0.05,
+              escribe: (valor) => cifra(valor)
+            }
+          ],
+          vivo: (e) => {
+            const g = anguloDe(e.razon, e.k);
+            const tecla = e.razon === 0 ? "sin" : RAZONES[e.razon];
+            return [
+              razonTex(e.razon) + "\\theta=" + enTex(e.k) + "\\ \\Longrightarrow\\ \\theta=" + INVERSAS[e.razon] + enTex(e.k) + (redondeado(g) ? "\\approx" : "=") + enTex(tres(g)) + "^\\circ",
+              <>
+                En la calculadora, en grados: <code>SHIFT</code> y <code>{tecla}</code>, que la pantalla escribe{" "}
+                <Sujeta tex={"\\" + tecla + "^{-1}"}>.</Sujeta> El ángulo va con tres cifras significativas, como en el examen.
+              </>
+            ];
+          },
+          pista: <>Elige la razón y mueve su valor: el triángulo se rehace con el ángulo que la tiene, y la función inversa devuelve ese ángulo.</>,
+          fichas: [
+            {
+              nombre: "Las funciones inversas",
+              tex:
+                "\\begin{gathered}" +
+                SEN +
+                "\\theta=k\\ \\Rightarrow\\ \\theta=" +
+                INVERSAS[0] +
+                "k\\\\\\cos\\theta=k\\ \\Rightarrow\\ \\theta=\\arccos k\\\\\\tan\\theta=k\\ \\Rightarrow\\ \\theta=\\arctan k\\end{gathered}",
+              texto: "Llevan el valor de la razón de vuelta a su ángulo."
+            },
+            {
+              nombre: "Cómo se escribe",
+              texto: (
+                <>
+                  En clase, <Sujeta tex="\operatorname{arctg}">;</Sujeta> en el IB, <Mates tex="\arctan" /> o <Sujeta tex="\tan^{-1}">,</Sujeta> que es
+                  como sale en la calculadora.
+                </>
+              )
+            },
+            {
+              nombre: "No es una potencia",
+              tex: SEN + "^{-1}k\\neq\\frac{1}{" + SEN + "k}",
+              texto: (
+                <>
+                  El <Mates tex="-1" /> quiere decir «la inversa».
+                </>
+              )
+            },
+            {
+              nombre: "En la fx-CG50",
+              texto: (
+                <>
+                  En grados (SET UP, Angle, Deg). Con SHIFT, sin, cos y tan dan <Mates tex="\sin^{-1}" />, <Mates tex="\cos^{-1}" /> y{" "}
+                  <Sujeta tex="\tan^{-1}">,</Sujeta> y Ans recupera el último resultado sin redondear.
+                </>
+              )
+            },
+            {
+              nombre: "Tres cifras significativas",
+              texto: "Salvo que se pida otra cosa, las respuestas van exactas o con tres cifras significativas, y se redondea solo al final."
+            }
+          ],
+          ojo: [
+            <>
+              <Mates tex={SEN + "^{-1}0{,}7\\approx44{,}4^\\circ"} />, no <Sujeta tex="\frac{1}{0{,}7}">:</Sujeta> el <Mates tex="-1" /> es la inversa, no
+              una potencia.
+            </>,
+            <>
+              Con tres cifras significativas, <Mates tex="44{,}427^\circ" /> es <Sujeta tex="44{,}4^\circ">,</Sujeta> no <Sujeta tex="44^\circ">,</Sujeta> que
+              tiene dos, ni <Sujeta tex="44{,}43^\circ">,</Sujeta> que tiene cuatro.
+            </>
+          ]
+        },
+        {
+          clave: "alturas",
+          nombre: "Alturas y distancias",
+          inicial: { caso: "lados" },
+          duracion: 2.4,
+          Dibujo: AlturasDibujo,
+          descripcion: (e) =>
+            e.caso === "alto"
+              ? "Desde un punto a una altura a sobre el suelo, la visual a lo alto de un edificio forma el ángulo alfa con la horizontal, y la visual a su pie, el ángulo beta. La horizontal, de longitud x, parte la altura h del edificio en a, por debajo, y x por la tangente de alfa, por encima."
+              : e.caso === "lados"
+                ? "Dos personas a 60 metros, una a cada lado del pie de la altura de un dron: la de la izquierda, a x del pie, lo ve con 70 grados, y la de la derecha, a 60 menos x, con 40. El dron está a unos 38,6 metros."
+                : "Una torre vista desde dos puntos al mismo lado de su pie: desde el cercano, a x del pie, con 45 grados, y desde el lejano, 50 metros más atrás, con 30. La torre mide unos 68,3 metros.",
+          mandos: () => [
+            {
+              tipo: "opciones",
+              clave: "caso",
+              nombre: "desde dónde se mira",
+              rotulo: "Desde",
+              opciones: [
+                { valor: "lados", rotulo: "uno a cada lado" },
+                { valor: "mismo", rotulo: "dos al mismo lado" },
+                { valor: "alto", rotulo: "un punto alto" }
+              ]
+            }
+          ],
+          vivo: (e) =>
+            e.caso === "alto"
+              ? [
+                  "\\begin{aligned}\\tan\\beta&=\\frac ax\\ \\Longrightarrow\\ x=\\frac{a}{\\tan\\beta}\\\\h&=a+x\\tan\\alpha\\end{aligned}",
+                  <>
+                    La horizontal del punto parte la altura en dos trozos: <Mates tex="a" /> por debajo y <Mates tex="x\tan\alpha" /> por encima.
+                  </>
+                ]
+              : e.caso === "lados"
+                ? [
+                    "\\begin{aligned}h&=x\\tan70^\\circ=(60-x)\\tan40^\\circ\\\\x&=\\frac{60\\tan40^\\circ}{\\tan70^\\circ+\\tan40^\\circ}\\approx14{,}04\\text{ m}\\\\h&=x\\tan70^\\circ\\approx38{,}6\\text{ m}\\end{aligned}",
+                    <>
+                      La segunda persona está a <Mates tex="60-x" /> del pie: cada triángulo rectángulo da la altura, y se igualan.
+                    </>
+                  ]
+                : [
+                    "\\begin{aligned}h&=x\\tan45^\\circ=(x+50)\\tan30^\\circ\\\\x&=\\frac{50\\tan30^\\circ}{\\tan45^\\circ-\\tan30^\\circ}\\approx68{,}3\\text{ m}\\\\h&=x\\tan45^\\circ\\approx68{,}3\\text{ m}\\end{aligned}",
+                    <>
+                      Es la doble observación de Matemáticas I: el punto lejano está a <Mates tex="x+50" /> del pie.
+                    </>
+                  ],
+          pista: <>Elige desde dónde se mira: cada triángulo rectángulo da una ecuación con la altura, y se igualan o se suman.</>,
+          fichas: [
+            {
+              nombre: "Elevación y depresión",
+              texto: "Los dos los forma la visual con la horizontal: la depresión desde arriba es igual a la elevación desde abajo."
+            },
+            {
+              nombre: "Uno a cada lado",
+              tex: "h=x\\tan\\alpha=(d-x)\\tan\\beta",
+              texto: (
+                <>
+                  Con <Mates tex="d" /> la distancia entre los dos puntos y <Mates tex="x" /> la del primero al pie.
+                </>
+              )
+            },
+            {
+              nombre: "Los dos al mismo lado",
+              tex: "h=x\\tan\\beta=(x+d)\\tan\\alpha",
+              texto: (
+                <>
+                  La doble observación: <Mates tex="x" /> es la distancia del punto cercano al pie.
+                </>
+              )
+            },
+            {
+              nombre: "Desde un punto alto",
+              tex: "\\tan\\beta=\\frac ax\\qquad h=a+x\\tan\\alpha",
+              texto: (
+                <>
+                  Con la elevación <Mates tex="\alpha" /> hasta lo alto y la depresión <Mates tex="\beta" /> hasta el pie.
+                </>
+              )
+            },
+            {
+              nombre: "En el examen",
+              texto: "El diagrama rotulado es parte de la respuesta. Se calcula sin redondear, y el resultado va con tres cifras significativas."
+            }
+          ],
+          ojo: [
+            <>
+              En el dron, la segunda persona está a <Mates tex="60-x" /> del pie, no a <Sujeta tex="60">:</Sujeta> los <Mates tex="60" /> m son la
+              distancia entre las dos.
+            </>,
+            <>
+              Si se redondea <Mates tex="x\approx14" /> antes de seguir, sale <Mates tex="h\approx38{,}5" /> m en vez de <Sujeta tex="38{,}6">:</Sujeta> se
+              redondea al final.
+            </>
+          ]
+        }
+      ];
+
+      function TrigonometriaResumen({ configuracion, alPreparar }) {
+        return (
+          <ResumenIB
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono="azul"
+            titulo="Trigonometría, de un vistazo"
+            estaciones={ESTACIONES_TRIGONOMETRIA}
+          />
+        );
+      }
+
       window.ResumenesIB = {
         "resumen-numeros-reales": RealesResumen,
         "resumen-exponenciales": ExponencialesResumen,
@@ -24140,7 +26012,588 @@ Enfoques NS</p>
         "resumen-sucesiones": SucesionesResumen,
         "resumen-demostracion": DemostracionResumen,
         "resumen-repaso": RepasoResumen,
-        "resumen-ecuaciones": EcuacionesResumen
+        "resumen-ecuaciones": EcuacionesResumen,
+        "resumen-trigonometria": TrigonometriaResumen
+      };
+    })();
+  </script>
+
+  <script type="text/babel" data-presets="env,react">
+    (() => {
+      if (!window.React) {
+        return;
+      }
+
+      const AZUL = "#2563eb";
+      const NARANJA = "#ea580c";
+      const VERDE = "#16a34a";
+      let recortesLab = 0;
+
+      function numeroLab(valor) {
+        const redondo = Math.round(valor * 100) / 100;
+        const texto = String(Math.abs(redondo)).replace(".", ",");
+        return (redondo < 0 ? "−" : "") + texto;
+      }
+
+      function texLab(valor) {
+        const redondo = Math.round(valor * 100) / 100;
+        return (redondo < 0 ? "-" : "") + String(Math.abs(redondo)).replace(".", "{,}");
+      }
+
+      function MatematicaLab({ tex }) {
+        if (!window.katex) {
+          return <span>{tex}</span>;
+        }
+        return (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: window.katex.renderToString(tex, {
+                displayMode: false,
+                output: "htmlAndMathml",
+                strict: "ignore",
+                throwOnError: false
+              })
+            }}
+          />
+        );
+      }
+      const MatematicaFijaLab = React.memo(MatematicaLab);
+
+      function en(tex, signo) {
+        return (
+          <span className={signo ? "formula-con-signo" : undefined}>
+            <MatematicaFijaLab tex={"{" + tex + "}"} />
+            {signo}
+          </span>
+        );
+      }
+
+      function dentroTex(a) {
+        if (a === 0) {
+          return "x";
+        }
+        return a > 0 ? "x-" + texLab(a) : "x+" + texLab(-a);
+      }
+
+      function DistanciaEnLaRectaInteractivo({ configuracion, alPreparar }) {
+        const [equis, setEquis] = React.useState(5);
+        const [a, setA] = React.useState(-2);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const MINIMO = -8;
+        const MAXIMO = 8;
+        const izq = 34;
+        const der = 626;
+        const X = (v) => izq + ((v - MINIMO) / (MAXIMO - MINIMO)) * (der - izq);
+        const Y = 96;
+        const dentro = equis - a;
+        const distancia = Math.abs(dentro);
+        const marcas = [];
+        for (let v = MINIMO; v <= MAXIMO; v += 1) {
+          marcas.push(v);
+        }
+        const juntos = Math.abs(X(equis) - X(a)) < 28;
+        const lado = equis >= a ? 1 : -1;
+        const aTex = a < 0 ? "(" + texLab(a) + ")" : texLab(a);
+        const cuenta =
+          "|x-a|=|" + texLab(equis) + "-" + aTex + "|=|" + texLab(dentro) + "|=" + texLab(distancia);
+        let signo;
+        if (dentro > 0) {
+          signo = (
+            <>
+              Lo de dentro vale {en(texLab(dentro), ",")} que es positivo: se deja.
+            </>
+          );
+        } else if (dentro < 0) {
+          signo = (
+            <>
+              Lo de dentro vale {en(texLab(dentro), ",")} que es negativo: se le cambia el
+              signo y queda {en(texLab(distancia), ".")}
+            </>
+          );
+        } else {
+          signo = (
+            <>
+              Lo de dentro vale {en("0", ":")} {en("x")} y {en("a")} son el mismo número, y
+              la distancia es {en("0", ".")}
+            </>
+          );
+        }
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "La distancia en la recta"}
+            </p>
+            <p className="instruccion-interactivo">
+              Mueve los dos números. La distancia entre ellos es siempre {en("|x-a|", ",")}{" "}
+              esté {en("x")} a la derecha o a la izquierda de {en("a", ".")}
+            </p>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Número <MatematicaFijaLab tex="x" /></span>
+                  <output>{numeroLab(equis)}</output>
+                  <input
+                    type="range"
+                    min={MINIMO}
+                    max={MAXIMO}
+                    step="0.5"
+                    value={equis}
+                    aria-valuetext={"x = " + numeroLab(equis)}
+                    onChange={(evento) => setEquis(Math.round(Number(evento.target.value) * 2) / 2)}
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Número <MatematicaFijaLab tex="a" /></span>
+                  <output>{numeroLab(a)}</output>
+                  <input
+                    type="range"
+                    min="-6"
+                    max="6"
+                    step="1"
+                    value={a}
+                    aria-valuetext={"a = " + numeroLab(a)}
+                    onChange={(evento) => setA(Math.round(Number(evento.target.value)))}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 660 140"
+                role="img"
+                aria-label={
+                  "Recta numérica con x en " + numeroLab(equis) + " y a en " + numeroLab(a) +
+                  ". La distancia entre los dos es " + numeroLab(distancia) + "."
+                }
+              >
+                <line x1="10" y1={Y} x2="650" y2={Y} stroke="var(--texto-suave)" strokeWidth="2" />
+                <path d={"M650 " + Y + "l-11 -6v12z"} fill="var(--texto-suave)" />
+                <path d={"M10 " + Y + "l11 -6v12z"} fill="var(--texto-suave)" />
+                {marcas.map((v) => (
+                  <g key={v}>
+                    <line x1={X(v)} y1={Y - 6} x2={X(v)} y2={Y + 6} stroke="var(--texto-suave)" strokeWidth="1.5" />
+                    {v % 2 === 0 && (
+                      <text x={X(v)} y={Y + 28} textAnchor="middle" fontSize="15" fill="var(--texto-suave)">
+                        {numeroLab(v)}
+                      </text>
+                    )}
+                  </g>
+                ))}
+                {distancia > 0 && (
+                  <g>
+                    <line x1={X(a)} y1={Y} x2={X(equis)} y2={Y} stroke={NARANJA} strokeWidth="7" strokeLinecap="butt" opacity="0.85" />
+                    <text
+                      x={(X(a) + X(equis)) / 2}
+                      y={Y - 34}
+                      textAnchor="middle"
+                      fontSize="18"
+                      fontWeight="700"
+                      fill={NARANJA}
+                      fontFamily="KaTeX_Main, serif"
+                    >
+                      {numeroLab(distancia)}
+                    </text>
+                  </g>
+                )}
+                <circle cx={X(a)} cy={Y} r="8" fill={AZUL} />
+                <text
+                  x={X(a) - (juntos ? lado * 10 : 0)}
+                  y={Y - 15}
+                  textAnchor={juntos ? (lado > 0 ? "end" : "start") : "middle"}
+                  fontSize="19"
+                  fill={AZUL}
+                  fontFamily="KaTeX_Math, serif"
+                >
+                  a
+                </text>
+                <circle cx={X(equis)} cy={Y} r="8" fill={NARANJA} />
+                <text
+                  x={X(equis) + (juntos ? lado * 10 : 0)}
+                  y={Y - 15}
+                  textAnchor={juntos ? (lado > 0 ? "start" : "end") : "middle"}
+                  fontSize="19"
+                  fill={NARANJA}
+                  fontFamily="KaTeX_Math, serif"
+                >
+                  x
+                </text>
+              </svg>
+            </div>
+
+            <div className="resultado-operacion lectura-laboratorio" aria-live="polite">
+              <p className="cuenta-laboratorio">
+                <MatematicaFijaLab tex={cuenta} />
+              </p>
+              <p>{signo}</p>
+              {distancia > 0 && (
+                <p>
+                  El {en(texLab(equis))} está a {en(texLab(distancia))} del {en(texLab(a), ".")}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      const RELACIONES = [
+        { clave: "=", tex: "=", nombre: "igual a" },
+        { clave: "<", tex: "<", nombre: "menor que" },
+        { clave: "≤", tex: "\\leq ", nombre: "menor o igual que" },
+        { clave: ">", tex: ">", nombre: "mayor que" },
+        { clave: "≥", tex: "\\geq ", nombre: "mayor o igual que" }
+      ];
+
+      function resolverUve(a, r, rel) {
+        const I = dentroTex(a);
+        const p = a - r;
+        const q = a + r;
+        const R = RELACIONES.find((uno) => uno.clave === rel);
+        const salida = { pasos: [], piezas: [], puntos: [], cortes: [], solucion: null, porque: "" };
+        if (r > 0) {
+          salida.cortes = [p, q];
+          if (rel === "=") {
+            salida.pasos = [
+              I + "=" + texLab(r) + "\\ \\text{o}\\ " + I + "=" + texLab(-r),
+              "x=" + texLab(q) + "\\ \\text{o}\\ x=" + texLab(p)
+            ];
+            salida.puntos = [p, q];
+            salida.solucion = { tex: "x=" + texLab(p) + "\\ \\text{y}\\ x=" + texLab(q), texto: "Dos soluciones: " };
+            salida.porque =
+              "Son las dos ramas, y en la gráfica, los dos cortes de la uve con la recta: los números a distancia " +
+              numeroLab(r) + " del " + numeroLab(a) + ".";
+          } else if (rel === "<" || rel === "≤") {
+            const cerrado = rel === "≤";
+            salida.pasos = [
+              texLab(-r) + R.tex + I + R.tex + texLab(r),
+              texLab(p) + R.tex + "x" + R.tex + texLab(q)
+            ];
+            salida.piezas = [{ a: p, b: q, ca: cerrado, cb: cerrado }];
+            salida.solucion = {
+              tex: (cerrado ? "[" : "(") + texLab(p) + "," + texLab(q) + (cerrado ? "]" : ")"),
+              texto: "Solución: "
+            };
+            salida.porque =
+              "Lo de dentro queda entre " + numeroLab(-r) + " y " + numeroLab(r) +
+              ": la uve va por debajo de la recta entre los dos cortes. Los cortes " +
+              (cerrado ? "entran, porque es ≤." : "no entran, porque es <.");
+          } else {
+            const cerrado = rel === "≥";
+            const menor = cerrado ? "\\leq " : "<";
+            salida.pasos = [
+              I + menor + texLab(-r) + "\\ \\text{o}\\ " + I + R.tex + texLab(r),
+              "x" + menor + texLab(p) + "\\ \\text{o}\\ x" + R.tex + texLab(q)
+            ];
+            salida.piezas = [
+              { a: null, b: p, ca: false, cb: cerrado },
+              { a: q, b: null, ca: cerrado, cb: false }
+            ];
+            salida.solucion = {
+              tex:
+                "(-\\infty," + texLab(p) + (cerrado ? "]" : ")") + "\\cup" +
+                (cerrado ? "[" : "(") + texLab(q) + ",+\\infty)",
+              texto: "Solución: "
+            };
+            salida.porque =
+              "Lo de dentro queda fuera: la uve va por encima de la recta a los dos lados de los cortes, y son dos semirrectas. Los cortes " +
+              (cerrado ? "entran, porque es ≥." : "no entran, porque es >.");
+          }
+        } else if (r === 0) {
+          salida.cortes = [a];
+          if (rel === "=" || rel === "≤") {
+            salida.pasos = [I + "=0", "x=" + texLab(a)];
+            salida.puntos = [a];
+            salida.solucion = { tex: "x=" + texLab(a), texto: "Una sola solución: " };
+            salida.porque = "Un valor absoluto solo vale 0 cuando lo de dentro vale 0: en el vértice.";
+          } else if (rel === "<") {
+            salida.solucion = { texto: "Ninguna solución." };
+            salida.porque = "Un valor absoluto nunca es menor que 0: la uve no baja nunca del eje.";
+          } else if (rel === ">") {
+            salida.pasos = ["x\\neq " + texLab(a)];
+            salida.piezas = [
+              { a: null, b: a, ca: false, cb: false },
+              { a: a, b: null, ca: false, cb: false }
+            ];
+            salida.solucion = {
+              tex: "\\mathbb R\\setminus\\{" + texLab(a) + "\\}",
+              texto: "Todos los números menos el " + numeroLab(a) + ": "
+            };
+            salida.porque = "Solo en el vértice vale 0; en todos los demás números es positivo.";
+          } else {
+            salida.piezas = [{ a: null, b: null }];
+            salida.solucion = { tex: "\\mathbb R", texto: "Todos los números: " };
+            salida.porque = "Un valor absoluto nunca es negativo: siempre es mayor o igual que 0.";
+          }
+        } else if (rel === ">" || rel === "≥") {
+          salida.piezas = [{ a: null, b: null }];
+          salida.solucion = { tex: "\\mathbb R", texto: "Todos los números: " };
+          salida.porque =
+            "Un valor absoluto nunca es negativo, así que siempre es mayor que " + numeroLab(r) +
+            ": la uve va siempre por encima de la recta.";
+        } else {
+          salida.solucion = { texto: "Ninguna solución." };
+          salida.porque =
+            "Un valor absoluto nunca es negativo: no puede " + (rel === "=" ? "valer " : "ser menor que ") +
+            numeroLab(r) + ". La uve no toca nunca la recta.";
+        }
+        salida.cabeza = "|" + I + "|" + R.tex + texLab(r);
+        salida.pasos = salida.pasos.filter((paso, orden) => orden === 0 || paso !== salida.pasos[orden - 1]);
+        return salida;
+      }
+
+      function UveYRectaInteractivo({ configuracion, alPreparar }) {
+        const [a, setA] = React.useState(3);
+        const [r, setR] = React.useState(2);
+        const [rel, setRel] = React.useState("<");
+        const recorte = React.useMemo(() => {
+          recortesLab += 1;
+          return "recorte-lab-" + recortesLab;
+        }, []);
+
+        React.useEffect(() => {
+          if (window.katex) {
+            alPreparar();
+          }
+        }, [alPreparar]);
+
+        if (!window.katex) {
+          return null;
+        }
+
+        const XMIN = -8.4;
+        const XMAX = 8.4;
+        const YMIN = -3.2;
+        const YMAX = 6.6;
+        const area = { izq: 12, der: 588, arr: 10, aba: 330 };
+        const X = (v) => area.izq + ((v - XMIN) / (XMAX - XMIN)) * (area.der - area.izq);
+        const Y = (w) => area.arr + ((YMAX - w) / (YMAX - YMIN)) * (area.aba - area.arr);
+        const res = resolverUve(a, r, rel);
+        const verticales = [];
+        for (let v = Math.ceil(XMIN); v <= XMAX; v += 1) {
+          verticales.push(v);
+        }
+        const horizontales = [];
+        for (let w = Math.ceil(YMIN); w <= YMAX; w += 1) {
+          horizontales.push(w);
+        }
+        const uve =
+          "M" + X(XMIN) + " " + Y(Math.abs(XMIN - a)) + "L" + X(a) + " " + Y(0) + "L" + X(XMAX) + " " + Y(Math.abs(XMAX - a));
+        const lectura = (tex) =>
+          tex
+            .replace(/\{,\}/g, ",")
+            .replace(/\\ \\text\{o\}\\ /g, " o ")
+            .replace(/\\ \\text\{y\}\\ /g, " y ")
+            .replace(/\\leq/g, " ≤ ")
+            .replace(/\\geq/g, " ≥ ")
+            .replace(/\\neq/g, " ≠ ")
+            .replace(/\\iff/g, " ⟺ ")
+            .replace(/\\infty/g, "∞")
+            .replace(/\\cup/g, " ∪ ")
+            .replace(/\\mathbb R/g, "ℝ")
+            .replace(/\\setminus/g, " ∖ ")
+            .replace(/\\\{/g, "{")
+            .replace(/\\\}/g, "}")
+            .replace(/-/g, "−");
+        const solucionLeida = res.solucion.tex
+          ? res.solucion.texto + lectura(res.solucion.tex) + "."
+          : res.solucion.texto;
+
+        return (
+          <div className="componente-interactivo">
+            <p className="titulo-interactivo">
+              {configuracion.titulo || "La uve y la recta"}
+            </p>
+            <p className="instruccion-interactivo">
+              La uve es {en("y=|x-a|")} y la recta, {en("y=r", ".")} Elige el signo y mueve
+              el vértice y la altura de la recta: la solución es el trozo del eje en que la
+              uve corta a la recta, va por debajo o va por encima.
+            </p>
+
+            <div className="controles-conjuntos" role="group" aria-label="Signo de la ecuación o la inecuación">
+              {RELACIONES.map((uno) => (
+                <button
+                  key={uno.clave}
+                  type="button"
+                  aria-pressed={rel === uno.clave}
+                  aria-label={uno.nombre}
+                  style={{ "--color-conjunto": "#255792" }}
+                  onClick={() => setRel(uno.clave)}
+                >
+                  <MatematicaFijaLab tex={uno.tex} />
+                </button>
+              ))}
+            </div>
+
+            <div className="controles-intervalos">
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Vértice <MatematicaFijaLab tex="a" /></span>
+                  <output>{numeroLab(a)}</output>
+                  <input
+                    type="range"
+                    min="-4"
+                    max="4"
+                    step="0.5"
+                    value={a}
+                    aria-valuetext={"a = " + numeroLab(a)}
+                    onChange={(evento) => setA(Math.round(Number(evento.target.value) * 2) / 2)}
+                  />
+                </label>
+              </div>
+              <div className="panel-control">
+                <label className="control-rango">
+                  <span>Altura de la recta <MatematicaFijaLab tex="r" /></span>
+                  <output>{numeroLab(r)}</output>
+                  <input
+                    type="range"
+                    min="-2"
+                    max="5"
+                    step="0.5"
+                    value={r}
+                    aria-valuetext={"r = " + numeroLab(r)}
+                    onChange={(evento) => setR(Math.round(Number(evento.target.value) * 2) / 2)}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="leyenda-ib" aria-hidden="true">
+              <span style={{ "--color-leyenda": AZUL }}>
+                La uve, <MatematicaLab tex={"y=|" + dentroTex(a) + "|"} />
+              </span>
+              <span style={{ "--color-leyenda": NARANJA }}>
+                La recta, <MatematicaLab tex={"y=" + texLab(r)} />
+              </span>
+              <span style={{ "--color-leyenda": VERDE }}>La solución, en el eje</span>
+            </div>
+            <div className="zona-grafica">
+              <svg
+                className="grafica-ib"
+                viewBox="0 0 600 342"
+                role="img"
+                aria-label={
+                  "La uve de y igual a " + lectura("|" + dentroTex(a) + "|") + " y la recta y igual a " +
+                  numeroLab(r) + ". " + solucionLeida
+                }
+              >
+                <defs>
+                  <clipPath id={recorte}>
+                    <rect x={area.izq} y={area.arr} width={area.der - area.izq} height={area.aba - area.arr} />
+                  </clipPath>
+                </defs>
+                <g stroke="var(--borde)" strokeWidth="1">
+                  {verticales.map((v) => (
+                    <line key={"v" + v} x1={X(v)} y1={area.arr} x2={X(v)} y2={area.aba} />
+                  ))}
+                  {horizontales.map((w) => (
+                    <line key={"h" + w} x1={area.izq} y1={Y(w)} x2={area.der} y2={Y(w)} />
+                  ))}
+                </g>
+                <line x1={area.izq} y1={Y(0)} x2={area.der} y2={Y(0)} stroke="var(--texto-suave)" strokeWidth="1.5" />
+                <line x1={X(0)} y1={area.arr} x2={X(0)} y2={area.aba} stroke="var(--texto-suave)" strokeWidth="1.5" />
+                {verticales
+                  .filter((v) => v !== 0 && v % 2 === 0)
+                  .map((v) => (
+                    <text key={"tx" + v} x={X(v)} y={Y(0) + 17} textAnchor="middle" fontSize="13" fill="var(--texto-suave)">
+                      {numeroLab(v)}
+                    </text>
+                  ))}
+                {horizontales
+                  .filter((w) => w !== 0 && w % 2 === 0)
+                  .map((w) => (
+                    <text key={"ty" + w} x={X(0) - 6} y={Y(w) + 4} textAnchor="end" fontSize="13" fill="var(--texto-suave)">
+                      {numeroLab(w)}
+                    </text>
+                  ))}
+                <g clipPath={"url(#" + recorte + ")"} fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1={area.izq} y1={Y(r)} x2={area.der} y2={Y(r)} stroke={NARANJA} strokeWidth="3" />
+                  <path d={uve} stroke={AZUL} strokeWidth="3.5" />
+                </g>
+                {res.piezas.map((pieza, orden) => {
+                  const xa = pieza.a === null ? area.izq : X(pieza.a);
+                  const xb = pieza.b === null ? area.der : X(pieza.b);
+                  return (
+                    <line
+                      key={"pieza" + orden}
+                      x1={xa}
+                      y1={Y(0)}
+                      x2={xb}
+                      y2={Y(0)}
+                      stroke={VERDE}
+                      strokeWidth="7"
+                      strokeLinecap="butt"
+                    />
+                  );
+                })}
+                {res.piezas.map((pieza, orden) =>
+                  [
+                    [pieza.a, pieza.ca],
+                    [pieza.b, pieza.cb]
+                  ]
+                    .filter(([extremo]) => extremo !== null && extremo !== undefined)
+                    .map(([extremo, dentro], lado) => (
+                      <circle
+                        key={"extremo" + orden + "-" + lado}
+                        cx={X(extremo)}
+                        cy={Y(0)}
+                        r="6"
+                        fill={dentro ? VERDE : "#ffffff"}
+                        stroke={VERDE}
+                        strokeWidth="2.5"
+                      />
+                    ))
+                )}
+                {res.puntos.map((punto) => (
+                  <circle key={"punto" + punto} cx={X(punto)} cy={Y(0)} r="6.5" fill={VERDE} />
+                ))}
+                {res.cortes.map((corte) => (
+                  <circle key={"corte" + corte} cx={X(corte)} cy={Y(Math.max(r, 0))} r="5.5" fill={NARANJA} />
+                ))}
+              </svg>
+            </div>
+
+            <div className="resultado-operacion lectura-laboratorio" aria-live="polite">
+              <p className="cuenta-laboratorio">
+                <MatematicaFijaLab tex={res.cabeza} />
+              </p>
+              {res.pasos.map((paso, orden) => (
+                <p key={orden} className="cuenta-laboratorio">
+                  <MatematicaFijaLab tex={"\\iff " + paso} />
+                </p>
+              ))}
+              <p style={{ color: VERDE, fontWeight: 800 }}>
+                {res.solucion.texto}
+                {res.solucion.tex && <MatematicaFijaLab tex={res.solucion.tex} />}
+                {res.solucion.tex && "."}
+              </p>
+              <p>{res.porque}</p>
+            </div>
+            <p className="nota-escala">
+              Baja la recta por debajo del eje y mira qué pasa con {en("<")} y con {en(">", ".")} Lo
+              verde, en el eje, es la solución.
+            </p>
+          </div>
+        );
+      }
+
+      window.LaboratoriosIB = {
+        "distancia-en-la-recta": DistanciaEnLaRectaInteractivo,
+        "uve-y-recta": UveYRectaInteractivo
       };
     })();
   </script>
@@ -37758,6 +40211,7 @@ Enfoques NS</p>
 
       Object.assign(COMPONENTES, window.InfografiasIB || {});
       Object.assign(COMPONENTES, window.ResumenesIB || {});
+      Object.assign(COMPONENTES, window.LaboratoriosIB || {});
 
       document
         .querySelectorAll("#contenido-unidad .interactivo")
