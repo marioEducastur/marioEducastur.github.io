@@ -3188,6 +3188,12 @@
         text-decoration: none;
       }
 
+      #contenido-unidad a.tema-del-dia.libreta-del-dia {
+        color: #b4233a;
+        background: #fff4f6;
+        box-shadow: inset 0 0 0 1px #f3c6cd;
+      }
+
       #contenido-unidad a.remision {
         padding: 0.05rem 0.55rem;
         color: var(--apartado, var(--acento-oscuro));
@@ -3390,6 +3396,72 @@
         display: block;
         break-after: avoid;
         page-break-after: avoid;
+      }
+    }
+
+    .fecha {
+      margin: 2.4rem 0 1rem;
+    }
+
+    .fecha > p {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem 0.8rem;
+      margin: 0;
+      color: #5b6474;
+      font-size: 0.98rem;
+      font-style: italic;
+      font-weight: 650;
+    }
+
+    .fecha > p::after {
+      content: "";
+      order: 1;
+      flex: 1 1 3rem;
+      border-top: 1px dashed #cbd2dc;
+    }
+
+    .fecha a {
+      order: 2;
+      padding: 0.12rem 0.65rem;
+      border: 1px solid #d9d1f5;
+      border-radius: 999px;
+      background: #f6f3ff;
+      color: #5b21b6;
+      font-size: 0.82rem;
+      font-style: normal;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .fecha a:hover,
+    .fecha a:focus-visible {
+      border-color: #a78bfa;
+      background: #ede9fe;
+    }
+
+    .correccion {
+      display: block;
+      padding: 0.6rem 0.95rem;
+      border-left: 3px solid #b39000;
+      border-radius: 0 0.5rem 0.5rem 0;
+      background: #fdf9eb;
+      color: #5a4800;
+      font-size: 0.95em;
+    }
+
+    .completado {
+      color: #6b6b6b;
+    }
+
+    body.libreta-a-limpio ol[type="a"] {
+      list-style-type: mat-parentesis-alfa;
+    }
+
+    @media print {
+      .fecha a {
+        display: none;
       }
     }
 
@@ -31093,7 +31165,7 @@ Guía de estudio del capítulo A.2 del libro de Oxford</p>
       "use strict";
 
       var MARGEN = 0.01;
-      var SIN_CASILLA = /\b(dibuje|esboce|muestre|demuestre|explique|describa|resuma|deduzca|derive|justifique|comente|discuta|sugiera|rotule)\b/i;
+      var SIN_CASILLA = /\b(dibuje|esboce|muestre|demuestre|explique|describa|resuma|deduzca|derive|justifique|comente|discuta|sugiera|rotule|dibuja|esboza|demuestra|explica|describe|resume|deduce|justifica|comenta|discute|sugiere|rotula)\b/i;
       var OPCION = /^\\text\{\s*([A-D])\s*(?:[:.)]|\}\s*[:.])/;
       var NUMERO = /^([+-]?)\s*(\d+(?:\{,\}\d*)?|\{,\}\d+)(?:\s*(?:\\times|\\cdot)\s*10\^(?:\{\s*([+-]?\d+)\s*\}|([+-]?\d)))?/;
       var ESPACIOS = /^(?:\s|\\ |\\,|\\;|\\:|\\!|~)+/;
