@@ -44961,7 +44961,7 @@ void main() {
         const textoY = coordenadaCorta(seno);
         const signoRaiz = (window.PiezasDeInfografia || {}).SIGNO_RAIZ_KATEX;
         const exactas =
-          reducir && signoRaiz && [30, 45, 60].indexOf(reduccion.beta) >= 0
+          signoRaiz && [30, 45, 60].indexOf(reduccion.beta) >= 0
             ? coordenadasExactas(NOTABLES_TRIGO[reduccion.beta], reduccion.signos, letra)
             : null;
         const rotuloCoordenadas = (() => {
@@ -44983,7 +44983,9 @@ void main() {
           });
           const mas = [{ circulo: [cx, cy, R + 3] }];
           if (exactas) {
-            mas.push({ segmento: [cx + R, cy - 2 * R, cx + R, cy + 2 * R], grosor: 1, peso: 0.3 });
+            estorbos
+              .filter((e) => e.segmento && e.peso === 0.01)
+              .forEach((e) => mas.push(Object.assign({}, e, { peso: 0.3 })));
           }
           if (tangenteVisible && coseno > 0 && cx + R - px > 25) {
             const arriba = Math.min(yTangente, cy) - 24;
