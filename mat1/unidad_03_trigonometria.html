@@ -23109,6 +23109,48 @@ void main() {
         '<mask id="adorno-mascara"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido)"/></mask>';
 
       var PORTADAS = {
+        "parabola-recta": function () {
+          var SX = 52, SY = 15, X0 = 470, Y0 = 150;
+          var x = function (v) { return r(X0 + v * SX); };
+          var y = function (v) { return r(Y0 - v * SY); };
+          var parabola = function (v) { return [X0 + v * SX, Y0 - (v * v + 2 * v) * SY]; };
+          var recta = function (v) { return [X0 + v * SX, Y0 - (-3 * v - 4) * SY]; };
+          var rejilla = "";
+          for (var k = -9; k <= 3; k++) {
+            rejilla += "M" + x(k) + " 6V219";
+          }
+          for (k = -5; k <= 11; k += 2) {
+            if (k !== 0) {
+              rejilla += "M24 " + y(k) + "H616";
+            }
+          }
+          var curva = trazo(parabola, -6.2, 3.4, 0.04);
+          var linea = trazo(recta, -7.5, 3.4, 0.1);
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<line x1="' + x(0) + '" y1="10" x2="' + x(0) + '" y2="219" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y0 + '" x2="622" y2="' + Y0 + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y0 - 6) + "L624 " + Y0 + "L614 " + (Y0 + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="' + linea + '" stroke-opacity="0.75" stroke-width="2.2" stroke-dasharray="9 7"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            [[-4, 8], [-1, -1]].map(function (q) {
+              return '<circle cx="' + x(q[0]) + '" cy="' + y(q[1]) + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(q[0]) + '" cy="' + y(q[1]) + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(-4) - 50, y: y(8) + 2, tex: "({-}4,\\ 8)", cuerpo: 16, opacidad: 0.95 },
+              { x: x(-1) + 94, y: y(-1) + 6, tex: "({-}1,\\ {-}1)", cuerpo: 16, opacidad: 0.95 },
+              { x: x(-1) - 14, y: 30, tex: "y=x^2+2x", cuerpo: 16.5, opacidad: 0.97 },
+              { x: x(-2.3), y: 206, tex: "y={-}3x-4", cuerpo: 16.5, opacidad: 0.9 }
+            ]
+          };
+        },
+
         "interes-compuesto": function () {
           var X0 = 92, U = 25, Y = 188, S = 0.034;
           var x = function (t) { return r(X0 + t * U); };
@@ -23442,7 +23484,16 @@ void main() {
         "factores":
           '<path d="M12.5 8c-7 9.5-7 22.5 0 32M21 8c7 9.5 7 22.5 0 32M27 8c-7 9.5-7 22.5 0 32M35.5 8c7 9.5 7 22.5 0 32" stroke-width="2.4"/>' +
           '<circle cx="16.75" cy="24" r="2.3" fill="currentColor" stroke="none"/>' +
-          '<circle cx="31.25" cy="24" r="2.3" fill="currentColor" stroke="none"/>'
+          '<circle cx="31.25" cy="24" r="2.3" fill="currentColor" stroke="none"/>',
+        "parabola":
+          '<path d="M4 24h40" stroke-width="1.8"/>' +
+          '<path d="M9 8Q24 50 39 8" stroke-width="2.5"/>' +
+          '<circle cx="16.7" cy="24" r="2.6" fill="currentColor" stroke="none"/>' +
+          '<circle cx="31.3" cy="24" r="2.6" fill="currentColor" stroke="none"/>',
+        "enunciado":
+          '<path d="M10 6h20l8 8v28H10z" stroke-width="2.3"/>' +
+          '<path d="M30 6v8h8" stroke-width="1.8"/>' +
+          '<path d="M15 19h14M15 26h18M15 33h11" stroke-width="2.1"/>'
       };
       function emblema(nombre) {
         var dentro = EMBLEMAS[nombre];
@@ -24142,6 +24193,232 @@ void main() {
           };
         },
 
+        "transformar": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 56h52M" + (desde + 44) + " 50l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(222) + flecha(436) + flecha(626) + '" stroke-width="1.6"/>' +
+            '<rect x="780" y="33" width="140" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 130, y: 56, tex: "4x-1=x+8", cuerpo: 17 },
+              { x: 248, y: 32, texto: "restar x", cuerpo: 11.5 },
+              { x: 362, y: 56, tex: "3x-1=8", cuerpo: 17 },
+              { x: 462, y: 32, texto: "sumar 1", cuerpo: 11.5 },
+              { x: 562, y: 56, tex: "3x=9", cuerpo: 17 },
+              { x: 652, y: 32, texto: "dividir entre 3", cuerpo: 11.5 },
+              { x: 850, y: 56, tex: "x=3", cuerpo: 18 },
+              { x: 562, y: 92, texto: "lo mismo en los dos miembros", cuerpo: 12 }
+            ],
+            foco: 480
+          };
+        },
+
+        "discriminante": function () {
+          var d = "";
+          var rotulos = [];
+          var casos = [
+            { cx: 160, vertice: 96, cortes: [-34.6, 34.6], signo: "\\Delta>0", texto: "dos soluciones" },
+            { cx: 470, vertice: 70, cortes: [0], signo: "\\Delta=0", texto: "una doble" },
+            { cx: 780, vertice: 46, cortes: [], signo: "\\Delta<0", texto: "ninguna" }
+          ];
+          casos.forEach(function (c) {
+            var control = 2 * c.vertice - 18;
+            d += '<path d="M' + (c.cx - 78) + " 70h156" + '" stroke-width="1.4" opacity="0.6"/>' +
+              '<path d="M' + (c.cx - 60) + " 18Q" + c.cx + " " + control + " " + (c.cx + 60) + ' 18" stroke-width="2.2"/>';
+            c.cortes.forEach(function (dx) {
+              d += '<circle cx="' + r(c.cx + dx) + '" cy="70" r="4.4" fill="currentColor" stroke="none"/>';
+            });
+            rotulos.push({ x: c.cx + 128, y: 44, tex: c.signo, cuerpo: 17 });
+            rotulos.push({ x: c.cx + 128, y: 72, texto: c.texto, cuerpo: 12 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 470 };
+        },
+
+        "cuerda": function () {
+          var E = 7, X = 96, Y = 54;
+          var cortes = [0, 20, 60, 93];
+          var nombres = ["x", "2x", "2x-7"];
+          var medidas = ["20", "40", "33"];
+          var d = "";
+          var rotulos = [];
+          for (var k = 0; k < 3; k++) {
+            var a = X + cortes[k] * E, b = X + cortes[k + 1] * E;
+            d += '<path d="M' + r(a + 5) + " " + Y + "H" + r(b - 5) + '" stroke-width="5" opacity="' + (k === 1 ? 0.75 : 1) + '"/>';
+            rotulos.push({ x: r((a + b) / 2), y: 28, tex: nombres[k], cuerpo: 16 });
+            rotulos.push({ x: r((a + b) / 2), y: 82, texto: medidas[k] + " cm", cuerpo: 12 });
+          }
+          d += '<path d="M' + X + " 40v28M" + r(X + 93 * E) + ' 40v28" stroke-width="1.5"/>';
+          rotulos.push({ x: 880, y: 44, tex: "x+2x+(2x-7)=93", cuerpo: 15.5 });
+          rotulos.push({ x: 880, y: 76, tex: "x=20", cuerpo: 16 });
+          return { dibujo: d, rotulos: rotulos, foco: 420 };
+        },
+
+        "bicuadrada": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 52h44M" + (desde + 36) + " 46l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(214) + flecha(484) + flecha(676) + '" stroke-width="1.6"/>' +
+            '<rect x="736" y="29" width="226" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 112, y: 52, tex: "x^4-29x^2+100=0", cuerpo: 16 },
+              { x: 236, y: 30, tex: "z=x^2", cuerpo: 12.5 },
+              { x: 382, y: 52, tex: "z^2-29z+100=0", cuerpo: 16 },
+              { x: 606, y: 52, tex: "z=25,\\ z=4", cuerpo: 16 },
+              { x: 698, y: 30, texto: "deshacer", cuerpo: 11.5 },
+              { x: 849, y: 52, tex: "x=\\pm5,\\ x=\\pm2", cuerpo: 16.5 },
+              { x: 849, y: 93, texto: "cuatro soluciones", cuerpo: 12 }
+            ],
+            foco: 560
+          };
+        },
+
+        "racional": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 46h48M" + (desde + 40) + " 40l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(252) + flecha(508) + '" stroke-width="1.6"/>' +
+            '<rect x="604" y="23" width="92" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="784" y="23" width="92" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 150, y: 46, tex: "\\dfrac{x+3}{x-2}=\\dfrac{5}{x-2}+x", cuerpo: 16 },
+              { x: 150, y: 94, tex: "x\\neq2", cuerpo: 13, opacidad: 0.85 },
+              { x: 276, y: 24, tex: "\\cdot(x-2)", cuerpo: 12.5 },
+              { x: 410, y: 46, tex: "x^2-3x+2=0", cuerpo: 17 },
+              { x: 650, y: 46, tex: "x=1", cuerpo: 18 },
+              { x: 830, y: 46, tex: "x=2", cuerpo: 18, opacidad: 0.6 },
+              { x: 830, y: 92, texto: "anula el denominador", cuerpo: 12 }
+            ],
+            foco: 560
+          };
+        },
+
+        "radical": function () {
+          var X0 = 250, Y0 = 54, U = 10.5, A = 8.6;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var rama = function (desde, hasta) {
+            return trazo(function (t) { return [px(t * t - 17), py(t)]; }, desde, hasta, 0.05);
+          };
+          var d = '<path d="M' + r(px(-18.5)) + " " + Y0 + "H" + r(px(11)) + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="' + rama(-5.2, 0) + '" stroke-width="1.8" stroke-dasharray="5 5" opacity="0.6"/>' +
+            '<path d="' + rama(0, 5.2) + '" stroke-width="2.3"/>' +
+            '<path d="M' + r(px(-2.6)) + " " + r(py(-5.6)) + "L" + r(px(9)) + " " + r(py(6)) + '" stroke-width="2.1" opacity="0.8"/>' +
+            '<circle cx="' + r(px(8)) + '" cy="' + r(py(5)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(px(-1)) + '" cy="' + r(py(-4)) + '" r="4.2" fill="#ffffff" stroke-width="1.8"/>' +
+            '<path d="M626 52h52M670 46l8 6-8 6" stroke-width="1.6"/>' +
+            '<rect x="726" y="29" width="88" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="852" y="29" width="96" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 140, y: 18, tex: "\\sqrt{x+17}", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 140, y: 93, tex: "-\\sqrt{x+17}", cuerpo: 12.5, opacidad: 0.65 },
+              { x: 530, y: 52, tex: "\\sqrt{x+17}=x-3", cuerpo: 17 },
+              { x: 652, y: 30, texto: "elevar al cuadrado", cuerpo: 11.5 },
+              { x: 770, y: 52, tex: "x=8", cuerpo: 18 },
+              { x: 900, y: 52, tex: "x=-1", cuerpo: 18, opacidad: 0.6 },
+              { x: 900, y: 94, texto: "falsa", cuerpo: 12 }
+            ],
+            foco: 480
+          };
+        },
+
+        "exponente": function () {
+          var X0 = 150, Y0 = 86, U = 64, A = 4.6;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var curva = trazo(function (v) { return [px(v), py(Math.pow(2, v))]; }, -1.8, 4.08, 0.05);
+          var corte = Math.log(10) / Math.LN2;
+          var d = '<path d="M' + r(px(-2)) + " " + Y0 + "H" + r(px(4.5)) + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="M' + r(px(3)) + " " + (Y0 - 5) + "v10M" + r(px(4)) + " " + (Y0 - 5) + 'v10" stroke-width="1.3" opacity="0.7"/>' +
+            '<path d="M' + r(px(-1.8)) + " " + r(py(10)) + "H" + r(px(corte) - 9) + '" stroke-width="1.4" stroke-dasharray="5 5"/>' +
+            '<path d="M' + r(px(corte)) + " " + r(py(10) + 9) + "V" + (Y0 - 6) + '" stroke-width="1.4" stroke-dasharray="3 4" opacity="0.75"/>' +
+            '<path d="' + curva + '" stroke-width="2.3"/>' +
+            '<circle cx="' + r(px(corte)) + '" cy="' + r(py(10)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<path d="M556 52h48M596 46l8 6-8 6" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: r(px(3)), y: Y0 + 15, tex: "3", cuerpo: 12, opacidad: 0.8 },
+              { x: r(px(4)), y: Y0 + 15, tex: "4", cuerpo: 12, opacidad: 0.8 },
+              { x: r(px(-1.2)), y: r(py(10)) - 14, tex: "10", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 480, y: 52, tex: "2^x=10", cuerpo: 18 },
+              { x: 750, y: 52, tex: "x=\\log_2 10", cuerpo: 18 },
+              { x: 750, y: 88, texto: "entre 3 y 4", cuerpo: 12 },
+              { x: 900, y: 52, tex: "\\approx3{,}32", cuerpo: 15, opacidad: 0.85 }
+            ],
+            foco: 470
+          };
+        },
+
+        "logaritmica": function () {
+          var X0 = 290, Y0 = 68, U = 10, A = 0.58;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var parabola = function (desde, hasta) {
+            return trazo(function (v) { return [px(v), py(v * (v + 15))]; }, desde, hasta, 0.1);
+          };
+          var alto = (-15 + Math.sqrt(225 + 4 * 112)) / 2;
+          var d = '<rect x="' + r(px(0)) + '" y="2" width="' + r(px(8) - px(0)) + '" height="104" fill="currentColor" fill-opacity="0.07" stroke="none"/>' +
+            '<path d="M' + r(px(-23)) + " " + Y0 + "H" + r(px(8)) + "M" + r(px(0)) + " 2V106" + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="M' + r(px(-23)) + " " + r(py(100)) + "H" + r(px(8)) + '" stroke-width="1.6" opacity="0.8"/>' +
+            '<path d="' + parabola(-15 - alto, 0) + '" stroke-width="1.8" stroke-dasharray="5 5" opacity="0.6"/>' +
+            '<path d="' + parabola(0, alto) + '" stroke-width="2.3"/>' +
+            '<circle cx="' + r(px(5)) + '" cy="' + r(py(100)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(px(-20)) + '" cy="' + r(py(100)) + '" r="4.2" fill="#ffffff" stroke-width="1.8"/>' +
+            '<path d="M654 52h52M698 46l8 6-8 6" stroke-width="1.6"/>' +
+            '<rect x="750" y="29" width="88" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="862" y="29" width="108" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 333, y: 90, tex: "x>0", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 534, y: 52, tex: "\\log x+\\log(x+15)=2", cuerpo: 15.5 },
+              { x: 680, y: 28, tex: "x(x+15)=100", cuerpo: 11.5 },
+              { x: 794, y: 52, tex: "x=5", cuerpo: 18 },
+              { x: 916, y: 52, tex: "x=-20", cuerpo: 18, opacidad: 0.6 },
+              { x: 916, y: 94, tex: "\\log(-20)\\text{ no existe}", cuerpo: 11.5 }
+            ],
+            foco: 480
+          };
+        },
+
+        "dos-rectas": function () {
+          var U = 13, X0 = 158, Y0 = 54;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (v) { return r(Y0 - v * U); };
+          var rejilla = "";
+          for (var k = -3; k <= 7; k++) {
+            rejilla += "M" + x(k) + " " + y(3.4) + "V" + y(-3.4);
+          }
+          for (k = -3; k <= 3; k++) {
+            rejilla += "M" + x(-3.4) + " " + y(k) + "H" + x(7.4);
+          }
+          var d = '<path d="' + rejilla + '" stroke-width="1" opacity="0.14"/>' +
+            '<path d="M' + x(-3.4) + " " + y(0) + "H" + x(7.4) + "M" + x(0) + " " + y(3.4) + "V" + y(-3.4) + '" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="M' + x(-3.2) + " " + y(2.6) + "L" + x(7.2) + " " + y(-2.6) + '" stroke-width="2.2"/>' +
+            '<path d="M' + x(3.2) + " " + y(-3.4) + "L" + x(5.47) + " " + y(3.4) + '" stroke-width="2.2" opacity="0.6"/>' +
+            '<circle cx="' + x(4) + '" cy="' + y(-1) + '" r="8.5" stroke-width="1.3" opacity="0.5"/>' +
+            '<circle cx="' + x(4) + '" cy="' + y(-1) + '" r="4.2" fill="currentColor" stroke="none"/>' +
+            '<path d="M592 56h62M646 50l8 6-8 6" stroke-width="1.7"/>' +
+            '<rect x="698" y="33" width="190" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 468, y: 56, tex: "\\left\\{\\begin{aligned}x+2y&=2\\\\3x-y&=13\\end{aligned}\\right.", cuerpo: 18 },
+              { x: 793, y: 56, tex: "(4,\\,{-}1)", cuerpo: 18 },
+              { x: 793, y: 96, texto: "un solo punto: una solución", cuerpo: 12 }
+            ],
+            foco: 470
+          };
+        },
+
         "cumbre": function (seccion) {
           var apartados = [];
           var hermanas = seccion && seccion.parentElement ? seccion.parentElement.children : [];
@@ -24255,6 +24532,33 @@ void main() {
           '<path d="M37 13c3 0 4 2.5 4 11s-1 11-4 11" stroke-width="1.8"/>' +
           '<path d="M19.5 18.5c3.5-3.2 10.5-3.2 14 0c-3.5 3.2-10.5 3.2-14 0z" stroke-width="1.9"/>' +
           '<path d="M22.5 25v5.5M26.5 25v5.5M30.5 25v5.5" stroke-width="2.2"/>', 2),
+        "epitafio": svg(48, 48,
+          '<path d="M13 41V17L24 8L35 17V41" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+          '<path d="M9 41h30M13 17h22" stroke-width="1.8"/>' +
+          '<path d="M17.5 23h13M17.5 28h13M17.5 33h9" stroke-width="2"/>', 2.2),
+        "tablilla": svg(48, 48,
+          '<rect x="7" y="6" width="34" height="36" rx="7" fill="currentColor" fill-opacity="0.12" stroke-width="1.8"/>' +
+          '<path d="M13 11.5l4 1.5-4 1.5zM20 11.5l4 1.5-4 1.5zM27 11.5l4 1.5-4 1.5z" fill="currentColor" stroke="none"/>' +
+          '<path d="M13 20h13v13H13zM26 20h4v13M13 33v4h13" stroke-width="1.8"/>' +
+          '<rect x="26" y="33" width="4" height="4" fill="currentColor" stroke="none"/>', 2.2),
+        "codice": svg(48, 48,
+          '<path d="M24 14c-4-3-10-4-16-3v25c6-1 12 0 16 3c4-3 10-4 16-3V11c-6-1-12 0-16 3zM24 14v25" stroke-width="1.8"/>' +
+          '<path d="M11.5 18h9M11.5 22.5h9M11.5 27h6.5" stroke-width="1.7"/>' +
+          '<path d="M42 5c-6 2-10 8-12 16c3-1 6-3 8-6s3.5-7 4-10zM30 21l-1.5 4.5" stroke-width="1.7"/>', 2.2),
+        "conicas": svg(48, 48,
+          '<circle cx="21" cy="24" r="13" stroke-width="1.9"/>' +
+          '<path d="M27 6Q31 26 45 30" stroke-width="2.2"/>' +
+          '<circle cx="33.9" cy="22.5" r="2.7" fill="currentColor" stroke="none"/>', 2.2),
+        "altavoz": svg(48, 48,
+          '<path d="M7 19h6l9-8v26l-9-8H7z" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+          '<path d="M27 18a8 8 0 0 1 0 12" stroke-width="1.5"/>' +
+          '<path d="M31 14a13 13 0 0 1 0 20" stroke-width="2"/>' +
+          '<path d="M35 10a18 18 0 0 1 0 28" stroke-width="2.5"/>', 2.2),
+        "varillas": svg(48, 48,
+          '<path d="M8 8h32v32H8zM18.67 8v32M29.33 8v32M8 18.67h32M8 29.33h32" stroke-width="1.4" opacity="0.7"/>' +
+          '<path d="M13.33 10.33v6M12.03 21v6M14.63 21v6M10.73 31.67v6M13.33 31.67v6M15.93 31.67v6' +
+          'M22.7 10.33v6M25.3 10.33v6M21.4 21v6M24 21v6M26.6 21v6M24 31.67v6' +
+          'M32.07 10.33v6M34.67 10.33v6M37.27 10.33v6M33.37 21v6M35.97 21v6M34.67 31.67v6" stroke-width="1.9"/>', 2.2),
         "": svg(48, 48, '<path d="M24 8v8M24 32v8M8 24h8M32 24h8M13 13l5 5M30 30l5 5M35 13l-5 5M18 30l-5 5" stroke-width="2.2"/>', 2.2)
       };
 
@@ -27632,6 +27936,7 @@ void main() {
           "c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,-221l0 -0c5.3,-9.3,12,-14,20,-14HFINv40H845.2724" +
           "s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z" +
           "M834 80HFINv40H834z";
+      window.PiezasDeInfografia.SIGNO_RAIZ_KATEX = SIGNO_RAIZ_KATEX;
       function TextoConRaices({ texto, x, y, fontSize, fill, ...resto }) {
         const piezas = String(texto).split(/(√\d+)/).filter((p) => p !== "");
         const marcas = React.useRef([]);
@@ -30573,7 +30878,7 @@ void main() {
             "grupo": "Logaritmos",
             "desde": 0,
             "nombres": ["Qué es un logaritmo", "Producto y cociente", "Potencia", "Cambio de base"],
-            "errores": ["se busca el", "sumar logaritmos es", "el coeficiente pasa como", "puede ser negativo el"]
+            "errores": ["se busca el", "sumar logaritmos es", "por el logaritmo de una potencia", "puede ser negativo el"]
           }
         ],
         "resumen-polinomios-cuarto": [
@@ -30611,7 +30916,7 @@ void main() {
             "grupo": "Fracciones algebraicas",
             "desde": 0,
             "nombres": ["Simplificar", "Sumar y restar", "Multiplicar y dividir"],
-            "errores": ["se tachan factores, nunca sumandos", "no hay nada que tachar", "por un lado y los denominadores por otro", "se da la vuelta a la segunda fracción"]
+            "errores": ["se cancelan factores, nunca sumandos", "no se ve ningún factor común", "por un lado y los denominadores por otro", "se da la vuelta a la segunda fracción"]
           }
         ],
         "resumen-trigonometria": [
@@ -32560,10 +32865,14 @@ void main() {
         };
       }
 
-      function estacionDeSimplificar({ clave, nombre, original, factorizada, condiciones, simplificada, cadenas, pista }) {
+      function estacionDeSimplificar({ clave, nombre, original, factorizada, condiciones, condicionesPrimero, simplificada, cadenas, pista }) {
         const PASOS = condiciones
-          ? ["La fracción", "1. Factorizar", "2. Condiciones", "3. Cancelar"]
-          : ["La fracción", "1. Factorizar", "2. Tachar los factores comunes"];
+          ? condicionesPrimero
+            ? ["La fracción", "1. Condiciones", "2. Factorizar", "3. Cancelar"]
+            : ["La fracción", "1. Factorizar", "2. Condiciones", "3. Cancelar"]
+          : ["La fracción", "1. Factorizar", "2. Cancelar los factores comunes"];
+        const pasoFactorizar = condiciones && condicionesPrimero ? 2 : 1;
+        const pasoCondiciones = condicionesPrimero ? 1 : 2;
         const ultimo = PASOS.length - 1;
         const numeros = PASOS.slice(1).map((paso, orden) => orden + 1);
         const yFinal = condiciones ? 262 : 214;
@@ -32572,6 +32881,8 @@ void main() {
         const centro = 396;
         const xOriginal = centro - (anchoFactorizada + 44) / 2;
         const xFactorizada = centro + (anchoOriginal + 44) / 2;
+        const yFraccion = condicionesPrimero ? 178 : 96;
+        const yCondiciones = condicionesPrimero ? 98 : 180;
 
         function Dibujo({ e }) {
           const tinta = (paso) => (e.paso >= paso ? 1 : 0.4);
@@ -32605,18 +32916,18 @@ void main() {
                   </g>
                 ))}
                 <Rotulo como="g" t={0.3}>
-                  <Cociente x={e.paso >= 1 ? xOriginal : centro} y={96} s={26} arriba={original[0]} abajo={original[1]} />
+                  <Cociente x={e.paso >= pasoFactorizar ? xOriginal : centro} y={yFraccion} s={26} arriba={original[0]} abajo={original[1]} />
                 </Rotulo>
-                {e.paso >= 1 && (
-                  <Rotulo como="g" t={0.9}>
-                    <text x={(xOriginal + anchoOriginal / 2 + xFactorizada - anchoFactorizada / 2) / 2} y="96" fontSize="26">
+                {e.paso >= pasoFactorizar && (
+                  <Rotulo como="g" t={0.3 + 0.6 * pasoFactorizar}>
+                    <text x={(xOriginal + anchoOriginal / 2 + xFactorizada - anchoFactorizada / 2) / 2} y={yFraccion} fontSize="26">
                       =
                     </text>
-                    <Cociente x={xFactorizada} y={96} s={26} arriba={factorizada[0]} abajo={factorizada[1]} />
+                    <Cociente x={xFactorizada} y={yFraccion} s={26} arriba={factorizada[0]} abajo={factorizada[1]} />
                   </Rotulo>
                 )}
-                {condiciones && e.paso >= 2 && (
-                  <Rotulo t={1.5} x={centro} y="180" fontSize="24">
+                {condiciones && e.paso >= pasoCondiciones && (
+                  <Rotulo t={0.3 + 0.6 * pasoCondiciones} x={centro} y={yCondiciones} fontSize="24">
                     {palabra("existe si ")}
                     {formula(condiciones)}
                   </Rotulo>
@@ -32638,7 +32949,7 @@ void main() {
                       </Rotulo>
                     )}
                     <Rotulo t={2.4} x={centro} y={condiciones ? 296 : 272} fontSize="17" opacity="0.92">
-                      {palabra(condiciones ? "las condiciones se conservan, aunque ya no se vean" : "se tachan factores, nunca sumandos")}
+                      {palabra(condiciones ? "las condiciones se conservan, aunque ya no se vean" : "se cancelan factores, nunca sumandos")}
                     </Rotulo>
                   </>
                 )}
@@ -32655,9 +32966,12 @@ void main() {
           Dibujo: Dibujo,
           descripcion: (e) =>
             (condiciones
-              ? "Los tres pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador, anotar las " +
-                "condiciones de existencia y cancelar los factores comunes."
-              : "Los dos pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador y tachar " +
+              ? condicionesPrimero
+                ? "Los tres pasos para simplificar una fracción algebraica: anotar las condiciones de existencia, factorizar el " +
+                  "numerador y el denominador y cancelar los factores comunes."
+                : "Los tres pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador, anotar las " +
+                  "condiciones de existencia y cancelar los factores comunes."
+              : "Los dos pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador y cancelar " +
                 "los factores comunes.") +
             " Se ve hasta el paso " + e.paso + ".",
           mandos: () => [
@@ -34257,16 +34571,19 @@ void main() {
           nombre: "Fracciones",
           original: ["x^2 − 6x − 16", "x^2 − 64"],
           factorizada: ["(x − 8)(x + 2)", "(x + 8)(x − 8)"],
+          condiciones: "x ≠ 8, x ≠ −8",
+          condicionesPrimero: true,
           simplificada: ["x + 2", "x + 8"],
           cadenas: [
             "\\frac{x^2-6x-16}{x^2-64}",
-            "\\frac{x^2-6x-16}{x^2-64}=\\frac{(x-8)(x+2)}{(x+8)(x-8)}",
-            "\\frac{(x-8)(x+2)}{(x+8)(x-8)}=\\frac{x+2}{x+8}"
+            ["x^2-64=(x+8)(x-8)", "x\\neq8,\\quad x\\neq-8"],
+            ["\\frac{x^2-6x-16}{x^2-64}=\\frac{(x-8)(x+2)}{(x+8)(x-8)}", "x\\neq8,\\quad x\\neq-8"],
+            ["\\frac{(x-8)(x+2)}{(x+8)(x-8)}=\\frac{x+2}{x+8}", "x\\neq8,\\quad x\\neq-8"]
           ],
           pista: (
             <>
-              Baja el paso a «La fracción» y piensa cada uno antes de destaparlo. Se tachan factores, nunca sumandos: por eso
-              hay que factorizar antes.
+              Baja el paso a «La fracción» y piensa cada uno antes de destaparlo. Las condiciones se anotan lo primero, y se
+              cancelan factores, nunca sumandos: por eso hay que factorizar antes.
             </>
           )
         })
@@ -44237,6 +44554,137 @@ void main() {
         return { beta: 360 - g, forma: "360^\\circ-", signos: { sen: -1, cos: 1, tg: -1 } };
       }
 
+      let lienzoDeLaCircunferencia = null;
+      function medidaConLaLetra(texto, letra, peso) {
+        if (!lienzoDeLaCircunferencia) {
+          lienzoDeLaCircunferencia = document.createElement("canvas").getContext("2d");
+        }
+        lienzoDeLaCircunferencia.font = peso + " " + letra.toFixed(2) + "px " + window.getComputedStyle(document.body).fontFamily;
+        return lienzoDeLaCircunferencia.measureText(texto);
+      }
+      const anchoConLaLetra = (texto, letra, peso) => medidaConLaLetra(texto, letra, peso).width;
+
+      function coordenadasExactas(notable, signos, letra) {
+        const peso = 600;
+        const chica = letra;
+        const menos = medidaConLaLetra("−", letra, peso);
+        const eje = Number.isFinite(menos.actualBoundingBoxAscent)
+          ? (menos.actualBoundingBoxDescent - menos.actualBoundingBoxAscent) / 2
+          : -0.286 * letra;
+        const cifras = medidaConLaLetra("123", chica, peso);
+        const alto = Number.isFinite(cifras.actualBoundingBoxAscent) ? cifras.actualBoundingBoxAscent : 0.705 * chica;
+        const grosor = Math.max(1.2, 0.08 * letra);
+        const aire = 0.16 * chica;
+        const baseArriba = (raiz) => eje - grosor / 2 - aire - (raiz ? 0.133 * chica : 0);
+        const baseAbajo = eje + grosor / 2 + aire + alto;
+        const sube = -(baseArriba(true) - 0.867 * chica) + 0.08 * letra;
+        const baja = baseAbajo + 0.08 * letra;
+        const piezas = [];
+        let x = 0;
+        const parentesis = (lado) => {
+          const ancho = 0.3 * letra;
+          piezas.push({ tipo: "parentesis", x: x, ancho: ancho, lado: lado, arriba: -sube, abajo: baja, grosor: 0.085 * letra, clave: "p" + lado });
+          x += ancho + 0.08 * letra;
+        };
+        const coordenada = (razon, color) => {
+          const partes = /^\\frac\{(\\sqrt)?(\d+)\}\{(\d+)\}/.exec(notable[razon]);
+          if (signos[razon] < 0) {
+            piezas.push({ tipo: "texto", x: x, y: 0, texto: "−", letra: letra, color: color, clave: razon + "-menos" });
+            x += anchoConLaLetra("−", letra, peso) + 0.12 * letra;
+          }
+          if (!partes) {
+            piezas.push({ tipo: "texto", x: x, y: 0, texto: notable[razon], letra: letra, color: color, clave: razon });
+            x += anchoConLaLetra(notable[razon], letra, peso);
+            return;
+          }
+          const cifra = anchoConLaLetra(partes[2], chica, peso);
+          const arriba = (partes[1] ? 0.833 * chica : 0) + cifra;
+          const abajo = anchoConLaLetra(partes[3], chica, peso);
+          const raya = Math.max(arriba, abajo) + 0.34 * chica;
+          const centro = x + raya / 2;
+          const base = baseArriba(Boolean(partes[1]));
+          if (partes[1]) {
+            piezas.push({ tipo: "raiz", x: centro - arriba / 2 + 0.833 * chica, y: base, em: chica, ancho: cifra, color: color, clave: razon + "-raiz" });
+          }
+          piezas.push({ tipo: "texto", x: centro + arriba / 2 - cifra, y: base, texto: partes[2], letra: chica, color: color, clave: razon + "-arriba" });
+          piezas.push({ tipo: "raya", x: x, y: eje, ancho: raya, grosor: grosor, color: color, clave: razon + "-raya" });
+          piezas.push({ tipo: "texto", x: centro - abajo / 2, y: baseAbajo, texto: partes[3], letra: chica, color: color, clave: razon + "-abajo" });
+          x += raya;
+        };
+        parentesis(-1);
+        coordenada("cos", COLORES_CIRCUNFERENCIA.cos);
+        piezas.push({ tipo: "texto", x: x + 0.12 * letra, y: 0, texto: ";", letra: letra, color: COLORES_CIRCUNFERENCIA.punto, clave: "separa" });
+        x += 0.12 * letra + anchoConLaLetra("; ", letra, peso);
+        coordenada("sen", COLORES_CIRCUNFERENCIA.sen);
+        parentesis(1);
+        return { piezas: piezas, ancho: x - 0.08 * letra, sube: sube, baja: baja };
+      }
+
+      function piezaDeCoordenadas(pieza, halo, signoRaiz) {
+        const blanco = "#ffffff";
+        const clave = pieza.clave + (halo ? "-halo" : "");
+        if (pieza.tipo === "texto") {
+          return (
+            <text
+              key={clave}
+              x={pieza.x.toFixed(2)}
+              y={pieza.y.toFixed(2)}
+              fontSize={pieza.letra.toFixed(2)}
+              fontWeight="600"
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : "none"}
+              strokeWidth={halo ? 4 : 0}
+              strokeLinejoin="round"
+            >
+              {pieza.texto}
+            </text>
+          );
+        }
+        if (pieza.tipo === "raya") {
+          return (
+            <rect
+              key={clave}
+              x={pieza.x.toFixed(2)}
+              y={(pieza.y - pieza.grosor / 2).toFixed(2)}
+              width={pieza.ancho.toFixed(2)}
+              height={pieza.grosor.toFixed(2)}
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : "none"}
+              strokeWidth={halo ? 4 : 0}
+              strokeLinejoin="round"
+            />
+          );
+        }
+        if (pieza.tipo === "raiz") {
+          return (
+            <path
+              key={clave}
+              d={signoRaiz.split("FIN").join(String(Math.round(833 + (1000 * pieza.ancho) / pieza.em)))}
+              transform={"translate(" + (pieza.x - 0.833 * pieza.em).toFixed(2) + " " + (pieza.y - 0.9472 * pieza.em).toFixed(2) + ") scale(" + (pieza.em / 1000).toFixed(5) + ")"}
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : pieza.color}
+              strokeWidth={halo ? Math.round(36 + 4000 / pieza.em) : 36}
+              strokeLinejoin="round"
+            />
+          );
+        }
+        const dentro = pieza.lado < 0 ? pieza.x + pieza.ancho : pieza.x;
+        const curva = pieza.lado < 0 ? pieza.x - 0.8 * pieza.ancho : pieza.x + 1.8 * pieza.ancho;
+        return (
+          <path
+            key={clave}
+            d={
+              "M" + dentro.toFixed(2) + " " + pieza.arriba.toFixed(2) +
+              "Q" + curva.toFixed(2) + " " + ((pieza.arriba + pieza.abajo) / 2).toFixed(2) + " " + dentro.toFixed(2) + " " + pieza.abajo.toFixed(2)
+            }
+            fill="none"
+            stroke={halo ? blanco : COLORES_CIRCUNFERENCIA.punto}
+            strokeWidth={(pieza.grosor + (halo ? 4 : 0)).toFixed(2)}
+            strokeLinecap="round"
+          />
+        );
+      }
+
       const COLORES_CIRCUNFERENCIA = {
         cos: "#2563eb",
         sen: "#dc2626",
@@ -44511,9 +44959,14 @@ void main() {
 
         const textoX = coordenadaCorta(coseno);
         const textoY = coordenadaCorta(seno);
+        const signoRaiz = (window.PiezasDeInfografia || {}).SIGNO_RAIZ_KATEX;
+        const exactas =
+          reducir && signoRaiz && [30, 45, 60].indexOf(reduccion.beta) >= 0
+            ? coordenadasExactas(NOTABLES_TRIGO[reduccion.beta], reduccion.signos, letra)
+            : null;
         const rotuloCoordenadas = (() => {
-          const w = anchoDeRotulo("(" + textoX + "; " + textoY + ")", letra) + 6;
-          const h = letra + 4;
+          const w = (exactas ? exactas.ancho : anchoDeRotulo("(" + textoX + "; " + textoY + ")", letra)) + 6;
+          const h = (exactas ? exactas.sube + exactas.baja : letra) + 4;
           const candidatas = [];
           [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7].forEach((k) => {
             const giro = radianes + (k * 15 * Math.PI) / 180;
@@ -44529,6 +44982,9 @@ void main() {
             });
           });
           const mas = [{ circulo: [cx, cy, R + 3] }];
+          if (exactas) {
+            mas.push({ segmento: [cx + R, cy - 2 * R, cx + R, cy + 2 * R], grosor: 1, peso: 0.3 });
+          }
           if (tangenteVisible && coseno > 0 && cx + R - px > 25) {
             const arriba = Math.min(yTangente, cy) - 24;
             mas.push({ zona: { x: cx + R, y: arriba, w: ancho - cx - R, h: Math.abs(yTangente - cy) + 48 }, coste: 0.5 });
@@ -44748,17 +45204,30 @@ void main() {
                     {textoAngulo}
                   </text>
                 )}
-                <text
-                  data-rotulo="coordenadas"
-                  {...enCaja(rotuloCoordenadas)}
-                  fontSize={letra}
-                  fontWeight="600"
-                  textAnchor="middle"
-                  fill={colores.punto}
-                  {...halo}
-                >
-                  (<tspan fill={colores.cos}>{textoX}</tspan>; <tspan fill={colores.sen}>{textoY}</tspan>)
-                </text>
+                {exactas ? (
+                  <g
+                    data-rotulo="coordenadas"
+                    transform={
+                      "translate(" + (rotuloCoordenadas.x + (rotuloCoordenadas.w - exactas.ancho) / 2).toFixed(2) + " " +
+                      (rotuloCoordenadas.y + rotuloCoordenadas.h / 2 + (exactas.sube - exactas.baja) / 2).toFixed(2) + ")"
+                    }
+                  >
+                    {exactas.piezas.map((pieza) => piezaDeCoordenadas(pieza, true, signoRaiz))}
+                    {exactas.piezas.map((pieza) => piezaDeCoordenadas(pieza, false, signoRaiz))}
+                  </g>
+                ) : (
+                  <text
+                    data-rotulo="coordenadas"
+                    {...enCaja(rotuloCoordenadas)}
+                    fontSize={letra}
+                    fontWeight="600"
+                    textAnchor="middle"
+                    fill={colores.punto}
+                    {...halo}
+                  >
+                    (<tspan fill={colores.cos}>{textoX}</tspan>; <tspan fill={colores.sen}>{textoY}</tspan>)
+                  </text>
+                )}
               </svg>
             </div>
 
