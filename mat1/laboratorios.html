@@ -21574,150 +21574,209 @@ void main() {
 
 
       function SumaAngulosInfografia({ configuracion, alPreparar }) {
-        const ox = 50;
-        const oy = 320;
-        const R = 220;
+        const ox = 95;
+        const oy = 292;
+        const R = 250;
         const a = (30 * Math.PI) / 180;
-        const b = (35 * Math.PI) / 180;
-        const q = [ox + R * Math.cos(b) * Math.cos(a), oy - R * Math.cos(b) * Math.sin(a)];
-        const p = [ox + R * Math.cos(a + b), oy - R * Math.sin(a + b)];
-        const regla = 300;
-        const otra = 470;
-        const altoA = R * Math.sin(a);
-        const altoB = R * Math.sin(b);
-        const linea = (x1, y1, x2, y2) => "M" + n1(x1) + " " + n1(y1) + "L" + n1(x2) + " " + n1(y2);
-        const arco = (radio, desde, hasta) =>
-          "M" + n1(ox + radio * Math.cos(desde)) + " " + n1(oy - radio * Math.sin(desde)) +
-          "A" + radio + " " + radio + " 0 0 0 " + n1(ox + radio * Math.cos(hasta)) + " " + n1(oy - radio * Math.sin(hasta));
+        const b = (40 * Math.PI) / 180;
+        const ancho = R * Math.cos(a) * Math.cos(b);
+        const A = [ox + ancho, oy];
+        const Q = [ox + ancho, oy - R * Math.sin(a) * Math.cos(b)];
+        const B = [ox + ancho, oy - R * Math.sin(a + b)];
+        const C = [ox, B[1]];
+        const P = [ox + R * Math.cos(a + b), B[1]];
+        const oro = "#FFDA7A";
+        const oroOscuro = "#EE8F33";
+        const letraOro = "#FFE08A";
+        const letraOroOscuro = "#FFB660";
+        const linea = (p1, p2) => "M" + n1(p1[0]) + " " + n1(p1[1]) + "L" + n1(p2[0]) + " " + n1(p2[1]);
+        const enAngulo = (v, radio, angulo) => [v[0] + radio * Math.cos(angulo), v[1] - radio * Math.sin(angulo)];
+        const arcoEn = (v, radio, desde, hasta) => {
+          const p1 = enAngulo(v, radio, desde);
+          const p2 = enAngulo(v, radio, hasta);
+          return "M" + n1(p1[0]) + " " + n1(p1[1]) + "A" + radio + " " + radio + " 0 0 0 " + n1(p2[0]) + " " + n1(p2[1]);
+        };
+        const sectorEn = (v, radio, desde, hasta) => {
+          const arco = arcoEn(v, radio, desde, hasta);
+          return "M" + n1(v[0]) + " " + n1(v[1]) + "L" + arco.slice(1) + "Z";
+        };
         const unidad = (x, y) => {
           const m = Math.hypot(x, y);
           return [x / m, y / m];
         };
-        const u1 = unidad(ox - q[0], oy - q[1]);
-        const u2 = unidad(p[0] - q[0], p[1] - q[1]);
-        const k = 11;
+        const u1 = unidad(ox - Q[0], oy - Q[1]);
+        const u2 = unidad(P[0] - Q[0], P[1] - Q[1]);
+        const k = 10;
         const rectoQ =
-          "M" + n1(q[0] + k * u1[0]) + " " + n1(q[1] + k * u1[1]) +
-          "L" + n1(q[0] + k * (u1[0] + u2[0])) + " " + n1(q[1] + k * (u1[1] + u2[1])) +
-          "L" + n1(q[0] + k * u2[0]) + " " + n1(q[1] + k * u2[1]);
-        const rectoPie = "M" + n1(q[0] - 10) + " " + oy + "V" + (oy - 10) + "H" + n1(q[0]);
-        const rectoR = "M" + n1(p[0] + 10) + " " + n1(q[1]) + "V" + n1(q[1] - 10) + "H" + n1(p[0]);
-        const marca = (x, y) => linea(x - 9, y, x + 9, y);
-        const A = cursiva("α");
-        const B = cursiva("β");
+          "M" + n1(Q[0] + k * u1[0]) + " " + n1(Q[1] + k * u1[1]) +
+          "L" + n1(Q[0] + k * (u1[0] + u2[0])) + " " + n1(Q[1] + k * (u1[1] + u2[1])) +
+          "L" + n1(Q[0] + k * u2[0]) + " " + n1(Q[1] + k * u2[1]);
+        const rectoA = "M" + n1(A[0] - 10) + " " + oy + "V" + (oy - 10) + "H" + n1(A[0]);
+        const rectoB = "M" + n1(B[0] - 10) + " " + n1(B[1]) + "V" + n1(B[1] + 10) + "H" + n1(B[0]);
+        const rectoC = "M" + n1(C[0] + 10) + " " + n1(C[1]) + "V" + n1(C[1] + 10) + "H" + n1(C[0]);
+        const grado = <Sup>{"∘"}</Sup>;
+        const al = cursiva("α");
+        const be = cursiva("β");
         const sen = (letra) => (
           <tspan>
-            sen{" "}
+            sen{" "}
             {letra}
           </tspan>
         );
         const cos = (letra) => (
           <tspan>
-            cos{" "}
+            cos{" "}
             {letra}
           </tspan>
         );
+        const posAlfaO = enAngulo([ox, oy], 52, a / 2);
+        const posBetaO = enAngulo([ox, oy], 64, a + b / 2);
+        const posAlfaQ = enAngulo(Q, 41, Math.PI / 2 + a / 2);
+        const derecha = A[0] + 11;
+        const columna = 500;
 
         return (
           <Infografia
             configuracion={configuracion}
             alPreparar={alPreparar}
             tono={tonoDeLaUnidad()}
-            titulo="La suma, a la vista"
-            duracion={12}
-            alto="352"
+            titulo="Un rectángulo, dos fórmulas"
+            duracion={17.4}
+            alto="326"
             descripcion={
-              "Un radio de longitud 1 forma con el eje un ángulo alfa más beta. Dentro, un triángulo " +
-              "rectángulo con el ángulo beta, de catetos coseno de beta y seno de beta, apoyado en el lado " +
-              "del ángulo alfa. La altura del extremo del radio se parte en dos tramos: la altura del " +
-              "vértice intermedio, seno de alfa por coseno de beta, y lo que sube desde él, coseno de alfa " +
-              "por seno de beta. Los dos tramos, apilados en una regla, forman el seno de alfa más beta. Al " +
-              "lado, las alturas de alfa y de beta por separado forman una regla más alta: el seno de la " +
-              "suma no es la suma de los senos."
+              "Un radio de longitud 1 forma con el eje un ángulo alfa más beta y queda dentro de un " +
+              "rectángulo. Desde su extremo se baja una perpendicular al lado del ángulo alfa: sale un " +
+              "triángulo rectángulo de catetos coseno de beta y seno de beta. En el triángulo de abajo, de " +
+              "hipotenusa coseno de beta, el lado opuesto a alfa mide seno de alfa por coseno de beta. En el " +
+              "vértice donde se juntan esos dos catetos vuelve a salir el ángulo alfa, porque los tres " +
+              "ángulos de ese vértice forman un ángulo llano, y en el triángulo de arriba, de " +
+              "hipotenusa seno de beta, el lado contiguo a alfa mide coseno de alfa por seno de beta. Los dos " +
+              "trozos forman el lado derecho del rectángulo, que mide lo mismo que el izquierdo, el seno de " +
+              "alfa más beta. Con los lados de arriba y de abajo sale el coseno de alfa más beta: coseno de " +
+              "alfa por coseno de beta menos seno de alfa por seno de beta."
             }
             texto={
               <>
-                La altura del extremo, <Mates tex="\operatorname{sen}(\alpha+\beta)" />, se parte en dos tramos:
-                la del vértice del ángulo recto, <Mates tex="\operatorname{sen}\alpha\cos\beta" />, y lo que sube
-                desde él, <Mates tex="\cos\alpha\operatorname{sen}\beta" />. Las alturas de <Mates tex="\alpha" /> y de{" "}
-                <Mates tex="\beta" /> por separado suman más: el seno de la suma no es la suma de los senos.
+                Abajo, en el triángulo de hipotenusa <Mates tex="\cos\beta" />, el lado opuesto a{" "}
+                <Mates tex="\alpha" /> mide <Mates tex="\operatorname{sen}\alpha\cos\beta" />. Donde se juntan{" "}
+                <Mates tex="\cos\beta" /> y <Mates tex="\operatorname{sen}\beta" /> vuelve a salir{" "}
+                <Mates tex="\alpha" />, y arriba, en el de hipotenusa <Mates tex="\operatorname{sen}\beta" />, el
+                lado contiguo a <Mates tex="\alpha" /> mide <Mates tex="\cos\alpha\operatorname{sen}\beta" />. Los
+                lados verticales del rectángulo miden lo mismo, y los horizontales también.
               </>
             }
             rotulos={
               <g>
-                <Rotulo t={1.1} x={n1((ox + p[0]) / 2 - 15)} y={n1((oy + p[1]) / 2 - 2)} fontSize="19">
+                <Rotulo t={1.2} x={n1(ox + 0.47 * (P[0] - ox) - 13)} y={n1(oy + 0.47 * (P[1] - oy) + 6)} fontSize="19">
                   1
                 </Rotulo>
-                <Rotulo t={2.1} x={n1(ox + 47 * Math.cos(a / 2))} y={n1(oy - 47 * Math.sin(a / 2) + 6)} fontSize="18">
-                  {A}
+                <Rotulo t={2.2} x={n1(posAlfaO[0])} y={n1(posAlfaO[1] + 6)} fontSize="18" fill={letraOro}>
+                  {al}
                 </Rotulo>
-                <Rotulo t={2.3} x={n1((ox + q[0]) / 2 + 12)} y={n1((oy + q[1]) / 2 + 22)} fontSize="17">
-                  {cos(B)}
+                <Rotulo t={2.7} x={n1(posBetaO[0])} y={n1(posBetaO[1] + 6)} fontSize="18">
+                  {be}
                 </Rotulo>
-                <Rotulo t={2.8} x={n1((q[0] + p[0]) / 2 + 36)} y={n1((q[1] + p[1]) / 2 - 2)} fontSize="17">
-                  {sen(B)}
+                <Rotulo t={3.3} x={n1((ox + Q[0]) / 2 + 9)} y={n1((oy + Q[1]) / 2 + 20)} fontSize="17">
+                  {cos(be)}
                 </Rotulo>
-                <Rotulo t={3.3} x={n1(ox + 74 * Math.cos(a + b / 2))} y={n1(oy - 74 * Math.sin(a + b / 2) + 6)} fontSize="18">
-                  {B}
+                <Rotulo t={3.7} x={n1((Q[0] + P[0]) / 2 - 25)} y={n1((Q[1] + P[1]) / 2 + 17)} fontSize="17">
+                  {sen(be)}
                 </Rotulo>
-                <Rotulo t={7.5} x={regla + 13} y={n1((oy + q[1]) / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(A)}
-                  {" "}
-                  {cos(B)}
+                <Rotulo t={5.0} x={derecha} y={n1((oy + Q[1]) / 2 + 6)} fontSize="16" textAnchor="start" fill={letraOro}>
+                  {sen(al)} {cos(be)}
                 </Rotulo>
-                <Rotulo t={8.1} x={regla + 13} y={n1((q[1] + p[1]) / 2 + 6)} fontSize="16" textAnchor="start">
-                  {cos(A)}
-                  {" "}
-                  {sen(B)}
+                <Rotulo t={6.2} x={n1(Q[0] - 27)} y={n1(Q[1] + 43)} fontSize="13.5">
+                  90{grado} − {al}
                 </Rotulo>
-                <Rotulo t={8.6} x={regla} y={n1(p[1] - 13)} fontSize="17">
-                  sen({A} + {B})
+                <Rotulo t={6.8} x={n1(posAlfaQ[0])} y={n1(posAlfaQ[1] + 6)} fontSize="17" fill={letraOro}>
+                  {al}
                 </Rotulo>
-                <Rotulo t={9.1} x="452" y="38" fontSize="19">
-                  sen({A} + {B}) = {sen(A)}
-                  {" "}
-                  {cos(B)} + {cos(A)}
-                  {" "}
-                  {sen(B)}
+                <Rotulo t={7.1} x={columna} y="58" fontSize="16">
+                  {palabra("donde se juntan")} {cos(be)} {palabra("y")} {sen(be)}:
                 </Rotulo>
-                <Rotulo t={10.3} x={otra + 13} y={n1(oy - altoA / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(A)}
+                <Rotulo t={7.3} x={columna} y="84" fontSize="17">
+                  <tspan fill={letraOro}>{al}</tspan> + 90{grado} + (90{grado} − {al}) = 180{grado}
                 </Rotulo>
-                <Rotulo t={10.9} x={otra + 13} y={n1(oy - altoA - altoB / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(B)}
+                <Rotulo t={8.9} x={derecha} y={n1((Q[1] + B[1]) / 2 + 6)} fontSize="16" textAnchor="start" fill={letraOroOscuro}>
+                  {cos(al)} {sen(be)}
                 </Rotulo>
-                <Rotulo t={11.3} x={otra} y={n1(oy - altoA - altoB - 13)} fontSize="17">
-                  {sen(A)} + {sen(B)}
+                <Rotulo t={10.3} x={ox - 9} y={n1((oy + C[1]) / 2 + 6)} fontSize="16" textAnchor="end">
+                  sen({al} + {be})
+                </Rotulo>
+                <Rotulo t={11.5} x={columna} y="142" fontSize="20">
+                  sen({al} + {be}) =
+                </Rotulo>
+                <Rotulo t={12.0} x={columna} y="174" fontSize="19">
+                  <tspan fill={letraOro}>
+                    {sen(al)} {cos(be)}
+                  </tspan>{" "}
+                  +{" "}
+                  <tspan fill={letraOroOscuro}>
+                    {cos(al)} {sen(be)}
+                  </tspan>
+                </Rotulo>
+                <Rotulo t={13.3} x={n1((ox + A[0]) / 2)} y={oy + 22} fontSize="16" fill={letraOro}>
+                  {cos(al)} {cos(be)}
+                </Rotulo>
+                <Rotulo t={14.2} x={n1((P[0] + B[0]) / 2)} y={n1(B[1] - 11)} fontSize="15" fill={letraOroOscuro}>
+                  {sen(al)} {sen(be)}
+                </Rotulo>
+                <Rotulo t={15.0} x={n1((C[0] + P[0]) / 2)} y={n1(C[1] - 11)} fontSize="15">
+                  cos({al} + {be})
+                </Rotulo>
+                <Rotulo t={16.0} x={columna} y="236" fontSize="20">
+                  cos({al} + {be}) =
+                </Rotulo>
+                <Rotulo t={16.5} x={columna} y="268" fontSize="19">
+                  <tspan fill={letraOro}>
+                    {cos(al)} {cos(be)}
+                  </tspan>{" "}
+                  −{" "}
+                  <tspan fill={letraOroOscuro}>
+                    {sen(al)} {sen(be)}
+                  </tspan>
                 </Rotulo>
               </g>
             }
           >
-            <Trazo t={0.2} dura={0.5} d={"M28 " + oy + "H" + (otra + 70)} strokeWidth="1.5" strokeOpacity="0.7" />
-            <Halo t={0.6} dura={0.6} d={linea(ox, oy, p[0], p[1])} grosor={2.2} />
-            <Punto t={1.2} cx={n1(p[0])} cy={n1(p[1])} r="4.2" />
+            <Trazo t={0.2} dura={0.5} d={"M" + (ox - 30) + " " + oy + "H" + n1(A[0] + 34)} strokeWidth="1.5" strokeOpacity="0.7" />
+            <Velo t={4.2} d={"M" + n1(ox) + " " + oy + "L" + n1(A[0]) + " " + oy + "L" + n1(Q[0]) + " " + n1(Q[1]) + "Z"} fill="#FFF1C9" fillOpacity="0.1" stroke="none" />
+            <Velo t={7.6} d={"M" + n1(Q[0]) + " " + n1(Q[1]) + "L" + n1(B[0]) + " " + n1(B[1]) + "L" + n1(P[0]) + " " + n1(P[1]) + "Z"} fill="#FFF1C9" fillOpacity="0.1" stroke="none" />
+            <Halo t={0.6} dura={0.6} d={linea([ox, oy], P)} grosor={2.2} />
+            <Punto t={1.2} cx={n1(P[0])} cy={n1(P[1])} r="4.2" />
             <Punto t={0.4} cx={ox} cy={oy} r="3.4" />
-            <Trazo t={1.6} dura={0.5} d={linea(ox, oy, q[0], q[1])} strokeWidth="2" />
-            <Trazo t={1.9} dura={0.3} d={arco(34, 0, a)} strokeWidth="1.6" />
-            <Trazo t={2.4} dura={0.4} d={linea(q[0], q[1], p[0], p[1])} strokeWidth="2" />
-            <Trazo t={2.8} dura={0.2} d={rectoQ} strokeWidth="1.3" />
-            <Trazo t={3.0} dura={0.3} d={arco(58, a, a + b)} strokeWidth="1.6" />
-            <Halo t={4.0} dura={0.5} d={linea(q[0], q[1], q[0], oy)} grosor={3} />
-            <Trazo t={4.5} dura={0.2} d={rectoPie} strokeWidth="1.2" />
-            <Trazo t={5.0} dura={0.4} d={linea(q[0], q[1], p[0], q[1])} strokeWidth="1.3" strokeDasharray="5 5" />
-            <Halo t={5.5} dura={0.5} d={linea(p[0], q[1], p[0], p[1])} grosor={3} />
-            <Trazo t={6.0} dura={0.2} d={rectoR} strokeWidth="1.2" />
-            <Trazo t={6.6} dura={0.5} d={linea(q[0], q[1], regla, q[1])} strokeWidth="1.1" strokeDasharray="2 5" strokeOpacity="0.85" />
-            <Trazo t={6.6} dura={0.6} d={linea(p[0], p[1], regla, p[1])} strokeWidth="1.1" strokeDasharray="2 5" strokeOpacity="0.85" />
-            <Halo t={7.2} dura={0.5} d={linea(regla, oy, regla, q[1] + 2)} grosor={3} />
-            <Halo t={7.8} dura={0.5} d={linea(regla, q[1] - 2, regla, p[1])} grosor={3} />
-            <Trazo t={7.8} dura={0.2} d={marca(regla, q[1])} strokeWidth="1.4" />
-            <Trazo t={8.3} dura={0.2} d={marca(regla, p[1])} strokeWidth="1.4" />
-            <Luz t={8.4} dura={0.6} d={linea(regla, oy, regla, p[1])} />
-            <Halo t={10.0} dura={0.5} d={linea(otra, oy, otra, oy - altoA + 2)} grosor={3} />
-            <Halo t={10.6} dura={0.5} d={linea(otra, oy - altoA - 2, otra, oy - altoA - altoB)} grosor={3} />
-            <Trazo t={10.6} dura={0.2} d={marca(otra, oy - altoA)} strokeWidth="1.4" />
-            <Trazo t={11.1} dura={0.2} d={marca(otra, oy - altoA - altoB)} strokeWidth="1.4" />
-            <Trazo t={11.5} dura={0.4} d={linea(regla - 14, p[1], otra + 14, p[1])} strokeWidth="1.1" strokeDasharray="6 5" strokeOpacity="0.85" />
+            <Trazo t={1.6} dura={0.5} d={linea([ox, oy], Q)} strokeWidth="2" />
+            <Velo t={2.0} d={sectorEn([ox, oy], 32, 0, a)} fill={oro} fillOpacity="0.5" stroke="none" />
+            <Trazo t={2.0} dura={0.3} d={arcoEn([ox, oy], 32, 0, a)} stroke={oro} strokeWidth="3.4" />
+            <Trazo t={2.5} dura={0.3} d={arcoEn([ox, oy], 46, a, a + b)} strokeWidth="1.6" />
+            <Trazo t={3.0} dura={0.4} d={linea(Q, P)} strokeWidth="2" />
+            <Trazo t={3.4} dura={0.2} d={rectoQ} strokeWidth="1.3" />
+            <g stroke={oro}>
+              <Halo t={4.4} dura={0.5} d={linea(A, Q)} grosor={3.2} />
+            </g>
+            <Trazo t={4.9} dura={0.2} d={rectoA} strokeWidth="1.2" />
+            <Trazo t={6.0} dura={0.3} d={arcoEn(Q, 19, Math.PI + a, 1.5 * Math.PI)} strokeWidth="1.4" />
+            <Velo t={6.6} d={sectorEn(Q, 27, Math.PI / 2, Math.PI / 2 + a)} fill={oro} fillOpacity="0.5" stroke="none" />
+            <Trazo t={6.6} dura={0.3} d={arcoEn(Q, 27, Math.PI / 2, Math.PI / 2 + a)} stroke={oro} strokeWidth="3.4" />
+            <g stroke={oroOscuro}>
+              <Halo t={7.8} dura={0.5} d={linea(Q, B)} grosor={3.2} />
+            </g>
+            <Trazo t={8.3} dura={0.4} d={linea(B, P)} strokeWidth="1.5" strokeOpacity="0.9" />
+            <Trazo t={8.7} dura={0.2} d={rectoB} strokeWidth="1.2" />
+            <Halo t={9.6} dura={0.6} d={linea([ox, oy], C)} grosor={3.2} />
+            <Trazo t={10.1} dura={0.3} d={linea(C, P)} strokeWidth="1.5" strokeOpacity="0.9" />
+            <Trazo t={10.4} dura={0.2} d={rectoC} strokeWidth="1.2" />
+            <Luz t={10.9} dura={0.6} d={linea(A, B)} />
+            <Luz t={10.9} dura={0.6} d={linea([ox, oy], C)} />
+            <g stroke={oro}>
+              <Halo t={12.8} dura={0.6} d={linea([ox, oy], A)} grosor={3.2} />
+            </g>
+            <g stroke={oroOscuro}>
+              <Halo t={13.8} dura={0.4} d={linea(P, B)} grosor={3.2} />
+            </g>
+            <Halo t={14.6} dura={0.4} d={linea(C, P)} grosor={3.2} />
+            <Luz t={15.4} dura={0.6} d={linea(C, B)} />
+            <Luz t={15.4} dura={0.6} d={linea([ox, oy], A)} />
           </Infografia>
         );
       }
