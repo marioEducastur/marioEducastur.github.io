@@ -18852,6 +18852,15 @@ void main() {
         );
       }
 
+      function MatesConSigno({ tex, signo }) {
+        return (
+          <span style={{ whiteSpace: "nowrap" }}>
+            <Mates tex={tex} />
+            {signo}
+          </span>
+        );
+      }
+
       function caja(x, y, ancho, alto, radio) {
         const r = radio + " " + radio + " 0 0 1 ";
         return (
@@ -21640,7 +21649,7 @@ void main() {
             configuracion={configuracion}
             alPreparar={alPreparar}
             tono={tonoDeLaUnidad()}
-            titulo="Un rectángulo, dos fórmulas"
+            titulo="Demostración del seno y del coseno de la suma"
             duracion={17.4}
             alto="326"
             descripcion={
@@ -21657,12 +21666,14 @@ void main() {
             }
             texto={
               <>
-                Abajo, en el triángulo de hipotenusa <Mates tex="\cos\beta" />, el lado opuesto a{" "}
-                <Mates tex="\alpha" /> mide <Mates tex="\operatorname{sen}\alpha\cos\beta" />. Donde se juntan{" "}
-                <Mates tex="\cos\beta" /> y <Mates tex="\operatorname{sen}\beta" /> vuelve a salir{" "}
-                <Mates tex="\alpha" />, y arriba, en el de hipotenusa <Mates tex="\operatorname{sen}\beta" />, el
-                lado contiguo a <Mates tex="\alpha" /> mide <Mates tex="\cos\alpha\operatorname{sen}\beta" />. Los
-                lados verticales del rectángulo miden lo mismo, y los horizontales también.
+                Con <Mates tex="\alpha+\beta" /> agudo: abajo, en el triángulo de hipotenusa{" "}
+                <MatesConSigno tex="\cos\beta" signo="," /> el lado opuesto a{" "}
+                <Mates tex="\alpha" /> mide <MatesConSigno tex="\operatorname{sen}\alpha\cos\beta" signo="." /> Donde se
+                juntan <Mates tex="\cos\beta" /> y <Mates tex="\operatorname{sen}\beta" /> vuelve a salir{" "}
+                <MatesConSigno tex="\alpha" signo="," /> y arriba, en el de hipotenusa{" "}
+                <MatesConSigno tex="\operatorname{sen}\beta" signo="," /> el lado contiguo a <Mates tex="\alpha" /> mide{" "}
+                <MatesConSigno tex="\cos\alpha\operatorname{sen}\beta" signo="." /> Los lados opuestos del rectángulo
+                miden lo mismo.
               </>
             }
             rotulos={
@@ -24955,6 +24966,56 @@ void main() {
             "errores": ["se cancelan factores, nunca sumandos", "no se ve ningún factor común", "por un lado y los denominadores por otro", "se da la vuelta a la segunda fracción"]
           }
         ],
+        "resumen-ecuaciones-cuarto": [
+          {
+            "grupo": "Ecuaciones de primer grado",
+            "desde": 0,
+            "nombres": ["Los dos miembros", "Orden", "Sin x", "Problemas"],
+            "errores": ["no sale 5x=9", "también el que no tiene denominador", "el menos delante del paréntesis cambia", "ningún número cumple esa igualdad"]
+          },
+          {
+            "grupo": "Ecuaciones de segundo grado",
+            "desde": 0,
+            "nombres": ["Incompletas", "Dos opuestas", "La fórmula", "El discriminante", "Problemas"],
+            "errores": ["dividir entre x deja solo", "menos por menos es más", "abarca también el -b", "no vale tomar c=1"]
+          },
+          {
+            "grupo": "Ecuaciones polinómicas de grado mayor que 2",
+            "desde": 0,
+            "nombres": ["Una sola potencia", "Bicuadradas", "Factorizar"],
+            "errores": ["con exponente impar no hay dos opuestas", "hay que deshacer el cambio, y salen cuatro", "se perdería la solución 0", "el producto igual a cero solo funciona"]
+          },
+          {
+            "grupo": "Ecuaciones racionales",
+            "desde": 0,
+            "nombres": ["Condiciones", "Mínimo común múltiplo"],
+            "errores": ["también se multiplica la x suelta", "anula un denominador", "se anotan antes de multiplicar"]
+          },
+          {
+            "grupo": "Ecuaciones con radicales",
+            "desde": 0,
+            "nombres": ["Aislar y elevar", "Comprobar"],
+            "errores": ["falta el doble producto", "se aísla el radical antes de elevar", "solo la original decide", "la raíz no se reparte en una suma"]
+          },
+          {
+            "grupo": "Ecuaciones exponenciales",
+            "desde": 0,
+            "nombres": ["Igualar bases", "Despejar el exponente", "Cambio de variable"],
+            "errores": ["multiplica los exponentes", "se suman como términos semejantes", "una potencia de base positiva nunca lo es", "se duplica el exponente"]
+          },
+          {
+            "grupo": "Ecuaciones logarítmicas",
+            "desde": 0,
+            "nombres": ["Sin logaritmos", "Argumentos positivos"],
+            "errores": ["la suma de logaritmos es el logaritmo del producto", "el 3 es el logaritmo, no el argumento", "el 2 es el exponente de x", "no por ser negativo"]
+          },
+          {
+            "grupo": "Sistemas de ecuaciones",
+            "desde": 0,
+            "nombres": ["Métodos", "Cuántas soluciones", "No lineales"],
+            "errores": ["No basta con hallar una de las dos incógnitas", "el 3 multiplica a los dos términos", "significa que hay infinitas soluciones", "Cada valor de x lleva su y"]
+          }
+        ],
         "resumen-trigonometria": [
           {
             "grupo": "Razones trigonométricas de un ángulo agudo",
@@ -27061,12 +27122,14 @@ void main() {
               ))}
               <Letras>
                 {marcas.map((marca) => {
-                  const esRaiz = raices.some((raiz) => Math.abs(raiz - marca) < 1e-9);
+                  const cual = raices.findIndex((raiz) => Math.abs(raiz - marca) < 1e-9);
+                  const esRaiz = cual >= 0;
+                  const aparte = raices.length === 2 && esRaiz && marca < 0 ? (cual === 0 ? -10 : 10) : 0;
                   return (
                     <Rotulo
                       key={marca}
                       t={0.6}
-                      x={n1(px(marca) - (marca === 0 ? 10 : 0))}
+                      x={n1(px(marca) - (marca === 0 ? 10 : 0) + aparte)}
                       y={n1(py(0) + (esRaiz ? 34 : 22))}
                       fontSize={esRaiz ? 22 : 15}
                       fontWeight={esRaiz ? 700 : 400}
@@ -28634,6 +28697,669 @@ void main() {
             titulo="Polinomios, de un vistazo"
             estaciones={ESTACIONES_POLINOMIOS_CUARTO}
             reparto={LO_ESCRITO["resumen-polinomios-cuarto"]}
+          />
+        );
+      }
+
+
+
+      function Subindice({ children }) {
+        return (
+          <tspan>
+            <tspan dy="0.3em" fontSize="0.68em">
+              {children}
+            </tspan>
+            <tspan dy="-0.204em">{"​"}</tspan>
+          </tspan>
+        );
+      }
+
+      const LETRAS_DE_PALABRA = "abcdefghijklmnopqrstuvwxyzáéíóúñü";
+      function formulaDePasos(texto) {
+        const piezas = [];
+        let lugar = 0;
+        const grupo = (desde) => {
+          if (texto[desde] === "{") {
+            const fin = texto.indexOf("}", desde);
+            return [texto.slice(desde + 1, fin), fin + 1];
+          }
+          return [texto[desde], desde + 1];
+        };
+        while (lugar < texto.length) {
+          const letra = texto[lugar];
+          if (letra === "^" || letra === "_") {
+            const [dentro, siguiente] = grupo(lugar + 1);
+            piezas.push(
+              letra === "^" ? <Sup key={lugar}>{formulaDePasos(dentro)}</Sup> : <Subindice key={lugar}>{formulaDePasos(dentro)}</Subindice>
+            );
+            lugar = siguiente;
+          } else if (LETRAS_DE_PALABRA.indexOf(letra) >= 0) {
+            let fin = lugar;
+            while (fin < texto.length && LETRAS_DE_PALABRA.indexOf(texto[fin]) >= 0) {
+              fin += 1;
+            }
+            piezas.push(fin - lugar > 1 ? texto.slice(lugar, fin) : <React.Fragment key={lugar}>{cursiva(letra)}</React.Fragment>);
+            lugar = fin;
+          } else {
+            piezas.push(letra);
+            lugar += 1;
+          }
+        }
+        return piezas;
+      }
+
+      function anchoDePasos(texto) {
+        return anchoDeFormula(texto.split("{").join("").split("}").join("").split("_").join("^"));
+      }
+
+      const leidoDePasos = (texto) =>
+        texto.split("^{").join(" elevado a ").split("^").join(" elevado a ").split("_{").join(" en base ").split("_").join(" en base ").split("{").join("").split("}").join("");
+
+      function Escrito({ x, y, s, valor, peso }) {
+        if (typeof valor === "string") {
+          return (
+            <text x={n1(x)} y={n1(y)} fontSize={s} textAnchor="start" fontWeight={peso}>
+              {formulaDePasos(valor)}
+            </text>
+          );
+        }
+        const antes = valor.antes || "";
+        const xRaiz = x + 0.84 * s * anchoDePasos(antes) + (antes ? 0.75 * s : 0.5 * s);
+        const dentro = 1.02 * s * anchoDePasos(valor.raiz) + 0.12 * s;
+        return (
+          <g fontWeight={peso}>
+            {antes && (
+              <text x={n1(x)} y={n1(y)} fontSize={s} textAnchor="start">
+                {formulaDePasos(antes)}
+              </text>
+            )}
+            <Raiz x={xRaiz} y={y} s={s} ancho={dentro}>
+              {formulaDePasos(valor.raiz)}
+            </Raiz>
+            {valor.despues && (
+              <text x={n1(xRaiz + dentro + 0.2 * s)} y={n1(y)} fontSize={s} textAnchor="start">
+                {formulaDePasos(valor.despues.trim())}
+              </text>
+            )}
+          </g>
+        );
+      }
+
+      const leidoDeEscrito = (valor) =>
+        typeof valor === "string"
+          ? leidoDePasos(valor)
+          : leidoDePasos(valor.antes || "") + " raíz de " + leidoDePasos(valor.raiz) + leidoDePasos(valor.despues || "");
+
+      function estacionDePasos({ clave, nombre, regla, inicio, ejemplos, pista }) {
+        const COLUMNA = 404;
+        const ANCHO_COLUMNA = 224;
+        const filas = (ejemplo) => {
+          const cuantas = ejemplo.pasos.length;
+          const salto = cuantas > 1 ? Math.min(66, 196 / (cuantas - 1)) : 0;
+          const arriba = 84 + Math.max(0, (196 - salto * (cuantas - 1)) / 2);
+          return ejemplo.pasos.map((paso, orden) => arriba + salto * orden);
+        };
+        const palomita = (x, y) => "M" + n1(x - 9) + " " + n1(y) + "l6 7l12 -15";
+        const aspa = (x, y) => "M" + n1(x - 8) + " " + n1(y - 8) + "l16 16M" + n1(x + 8) + " " + n1(y - 8) + "l-16 16";
+
+        function Dibujo({ e, poner }) {
+          const ejemplo = ejemplos[e.i];
+          const ultimo = ejemplo.pasos.length;
+          const ys = filas(ejemplo);
+          const candidatas = ejemplo.candidatas || [];
+          const alto = 54;
+          const hueco = 10;
+          const total = candidatas.length * (alto + hueco) - hueco;
+          const yCandidata = (orden) => 182 - total / 2 + orden * (alto + hueco);
+          return (
+            <>
+              {ys.slice(1).map((y, orden) => (
+                <Velo
+                  key={"guia" + orden}
+                  t={0.3 + 0.3 * orden}
+                  d={"M44 " + n1(ys[orden] + 17) + "V" + n1(y - 17)}
+                  strokeOpacity={e.paso > orden + 1 ? 0.8 : 0.3}
+                  strokeWidth="1.6"
+                />
+              ))}
+              {ys.map((y, orden) => (
+                <Velo
+                  key={"circulo" + orden}
+                  t={0.2 + 0.3 * orden}
+                  como="circle"
+                  cx="44"
+                  cy={n1(y)}
+                  r="15"
+                  fill="#fff"
+                  fillOpacity={e.paso > orden ? 0.95 : 0.12}
+                  strokeOpacity={e.paso > orden ? 1 : 0.4}
+                  strokeWidth="1.6"
+                />
+              ))}
+              {e.paso >= ultimo ? (
+                candidatas.map((candidata, orden) => (
+                  <g key={"marco" + orden}>
+                    <Velo
+                      t={1.6 + 0.2 * orden}
+                      como="rect"
+                      x={COLUMNA}
+                      y={n1(yCandidata(orden))}
+                      width={ANCHO_COLUMNA}
+                      height={alto}
+                      rx="10"
+                      fill="#fff"
+                      fillOpacity={candidata.vale ? 0.16 : 0.04}
+                      strokeOpacity={candidata.vale ? 0.9 : 0.55}
+                      strokeDasharray={candidata.vale ? undefined : "6 5"}
+                      strokeWidth="1.6"
+                    />
+                    <Velo
+                      t={1.8 + 0.2 * orden}
+                      d={candidata.vale ? palomita(COLUMNA + ANCHO_COLUMNA - 22, yCandidata(orden) + 31) : aspa(COLUMNA + ANCHO_COLUMNA - 22, yCandidata(orden) + 27)}
+                      strokeWidth="3"
+                    />
+                  </g>
+                ))
+              ) : (
+                <Velo
+                  t={1.4}
+                  como="rect"
+                  x={COLUMNA}
+                  y="112"
+                  width={ANCHO_COLUMNA}
+                  height="140"
+                  rx="12"
+                  strokeOpacity="0.4"
+                  strokeDasharray="6 6"
+                  strokeWidth="1.6"
+                />
+              )}
+              <Letras>
+                <Rotulo t={0.1} x="320" y="34" fontSize="18">
+                  {palabra(ejemplo.regla || regla)}
+                </Rotulo>
+                {ys.map((y, orden) => {
+                  const paso = ejemplo.pasos[orden];
+                  const visto = e.paso > orden;
+                  return (
+                    <Toca key={"paso" + orden} alTocar={() => poner({ paso: orden + 1 })}>
+                      <Zona x="24" y={n1(y - 30)} width="372" height="60" />
+                      <Rotulo como="g" t={0.2 + 0.3 * orden}>
+                        <text x="44" y={n1(y + 6)} fontSize="17" fontWeight="700" style={{ fill: visto ? "var(--tono)" : "#fff" }}>
+                          {orden + 1}
+                        </text>
+                      </Rotulo>
+                      <Rotulo t={0.3 + 0.3 * orden} x="72" y={n1(y - 5)} fontSize="16" textAnchor="start" opacity={visto ? 1 : 0.45}>
+                        {palabra(paso.hace, e.paso === orden + 1)}
+                      </Rotulo>
+                      {visto && paso.queda && (
+                        <Rotulo como="g" t={0.4 + 0.3 * orden}>
+                          <Escrito x={72} y={y + 21} s={20} valor={paso.queda} />
+                        </Rotulo>
+                      )}
+                    </Toca>
+                  );
+                })}
+                <Toca alTocar={() => poner({ paso: ultimo })}>
+                  <Zona x={COLUMNA} y="60" width={ANCHO_COLUMNA} height="250" />
+                  {e.paso >= ultimo ? (
+                    candidatas.length > 0 ? (
+                      candidatas.map((candidata, orden) => (
+                        <Rotulo key={"candidata" + orden} como="g" t={1.7 + 0.2 * orden} opacity={candidata.vale ? 1 : 0.7}>
+                          <Escrito x={COLUMNA + 14} y={yCandidata(orden) + 23} s={19} valor={candidata.valor} peso="700" />
+                          <Escrito x={COLUMNA + 14} y={yCandidata(orden) + 45} s={14} valor={candidata.porque} />
+                        </Rotulo>
+                      ))
+                    ) : (
+                      <Rotulo t={1.7} x={COLUMNA + ANCHO_COLUMNA / 2} y="190" fontSize="23" fontWeight="700">
+                        {formulaDePasos(ejemplo.resultado)}
+                      </Rotulo>
+                    )
+                  ) : (
+                    <Rotulo t={1.5} x={COLUMNA + ANCHO_COLUMNA / 2} y="190" fontSize="17" opacity="0.6">
+                      {palabra(candidatas.length > 0 ? "lo que sale, y si vale" : "lo que sale")}
+                    </Rotulo>
+                  )}
+                </Toca>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0, paso: ejemplos[0].pasos.length },
+          duracion: 2.6,
+          Dibujo: Dibujo,
+          descripcion: (e) => {
+            const ejemplo = ejemplos[e.i];
+            const vistos = ejemplo.pasos.slice(0, e.paso);
+            let texto = (ejemplo.regla || regla) + ". Ejemplo " + (e.i + 1) + " de " + ejemplos.length + ". ";
+            texto += vistos.length
+              ? "Pasos a la vista: " + vistos.map((paso) => paso.hace + (paso.queda ? ", " + leidoDeEscrito(paso.queda) : "")).join("; ") + "."
+              : "Todavía sin ningún paso.";
+            if (e.paso >= ejemplo.pasos.length) {
+              texto += ejemplo.candidatas
+                ? " " + ejemplo.candidatas.map((candidata) => leidoDeEscrito(candidata.valor) + (candidata.vale ? ", vale" : ", no vale")).join("; ") + "."
+                : " Sale " + leidoDePasos(ejemplo.resultado) + ".";
+            }
+            return texto;
+          },
+          mandos: (e) => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "el ejemplo",
+              rotulo: "Ejemplo",
+              opciones: ejemplos.map((ejemplo, orden) => ({ valor: orden, rotulo: ejemplo.rotulo || <Mates tex={ejemplo.tex} /> })),
+              cambios: (valor) => ({ paso: ejemplos[valor].pasos.length })
+            },
+            {
+              tipo: "paso",
+              clave: "paso",
+              nombre: "el paso",
+              rotulo: "Paso",
+              min: 0,
+              max: ejemplos[e.i].pasos.length,
+              escribe: (valor) => (valor === 0 ? inicio || "La ecuación" : valor + ". " + ejemplos[e.i].pasos[valor - 1].hace)
+            }
+          ],
+          vivo: (e) => {
+            const ejemplo = ejemplos[e.i];
+            const lineas = [ejemplo.tex];
+            ejemplo.pasos.slice(0, e.paso).forEach((paso) => {
+              if (paso.tex) {
+                lineas.push(paso.tex);
+              }
+            });
+            if (e.paso >= ejemplo.pasos.length && ejemplo.cierre) {
+              lineas.push(ejemplo.cierre);
+            }
+            return lineas;
+          },
+          pista: pista
+        };
+      }
+
+      const ESTACIONES_ECUACIONES_CUARTO = [
+        estacionDePasos({
+          clave: "primer-grado",
+          nombre: "Primer grado",
+          regla: "Lo mismo en los dos miembros, paso a paso",
+          ejemplos: [
+            {
+              tex: "4x-1=x+8",
+              pasos: [
+                { hace: "Restar x en los dos miembros", queda: "3x − 1 = 8", tex: "3x-1=8" },
+                { hace: "Sumar 1 en los dos miembros", queda: "3x = 9", tex: "3x=9" },
+                { hace: "Dividir los dos entre 3", queda: "x = 3", tex: "x=3" }
+              ],
+              resultado: "x = 3",
+              cierre: <>Una solución.</>
+            },
+            {
+              tex: "\\frac{x+2}{3}-\\frac{x-4}{2}=\\frac{x}{6}-1",
+              pasos: [
+                { hace: "Multiplicar por 6 cada término", queda: "2(x + 2) − 3(x − 4) = x − 6", tex: "2(x+2)-3(x-4)=x-6" },
+                { hace: "Hacer los productos", queda: "2x + 4 − 3x + 12 = x − 6", tex: "2x+4-3x+12=x-6" },
+                { hace: "Agrupar", queda: "−x + 16 = x − 6", tex: "-x+16=x-6" },
+                { hace: "Restar x y 16; dividir entre −2", queda: "−2x = −22", tex: "-2x=-22\\iff x=11" }
+              ],
+              resultado: "x = 11",
+              cierre: <>Una solución: los dos miembros valen <Mates tex="\frac{5}{6}" />.</>
+            },
+            {
+              tex: "2(x+3)=2x+1",
+              pasos: [
+                { hace: "Hacer el producto", queda: "2x + 6 = 2x + 1", tex: "2x+6=2x+1" },
+                { hace: "Restar 2x y 6 en los dos", queda: "0x = −5", tex: "0x=-5" }
+              ],
+              resultado: "ninguna solución",
+              cierre: <>Ningún número cumple esa igualdad: no tiene solución.</>
+            },
+            {
+              tex: "3(x-2)+x=4x-6",
+              pasos: [
+                { hace: "Hacer el producto y agrupar", queda: "4x − 6 = 4x − 6", tex: "4x-6=4x-6" },
+                { hace: "Restar 4x y sumar 6 en los dos", queda: "0x = 0", tex: "0x=0" }
+              ],
+              resultado: "infinitas soluciones",
+              cierre: <>Es una identidad: cualquier número es solución.</>
+            }
+          ],
+          pista: (
+            <>
+              Baja el paso a «La ecuación» y piensa cada uno antes de destaparlo. Cada paso hace lo mismo en los dos
+              miembros, y la ecuación que queda tiene las mismas soluciones.
+            </>
+          )
+        }),
+        estacionDelDiscriminante({
+          clave: "segundo-grado",
+          nombre: "Segundo grado",
+          ecuaciones: [
+            { a: 1, b: 5, c: -14 },
+            { a: 4, b: -12, c: 9 },
+            { a: 1, b: -3, c: 5 }
+          ],
+          ventana: [-8.6, 4.2, -21, 9],
+          pista: (
+            <>
+              Las soluciones de la ecuación son los puntos donde su parábola corta al eje, y el discriminante dice cuántos
+              hay sin resolverla.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "grado-mayor",
+          nombre: "Grado mayor que 2",
+          regla: "Se reduce a ecuaciones que ya sabes resolver",
+          ejemplos: [
+            {
+              tex: "x^{3}=-64",
+              pasos: [{ hace: "Exponente impar: una sola solución" }],
+              candidatas: [{ valor: "x = −4", vale: true, porque: "(−4)^3 = −64" }],
+              cierre: <>Con exponente impar no hay dos opuestas.</>
+            },
+            {
+              tex: "x^{4}-29x^{2}+100=0",
+              pasos: [
+                { hace: "Cambio z = x²", queda: "z^2 − 29z + 100 = 0", tex: "z^{2}-29z+100=0" },
+                { hace: "Resolver en z", queda: "z = 25,  z = 4", tex: "z=\\frac{29\\pm21}{2}" },
+                { hace: "Deshacer el cambio", tex: "x^{2}=25\\quad\\text{y}\\quad x^{2}=4" }
+              ],
+              candidatas: [
+                { valor: "x = 5", vale: true, porque: "x^2 = 25" },
+                { valor: "x = −5", vale: true, porque: "x^2 = 25" },
+                { valor: "x = 2", vale: true, porque: "x^2 = 4" },
+                { valor: "x = −2", vale: true, porque: "x^2 = 4" }
+              ],
+              cierre: <>Cuatro soluciones: hay que deshacer el cambio.</>
+            },
+            {
+              tex: "x^{4}+5x^{2}-36=0",
+              pasos: [
+                { hace: "Cambio z = x²", queda: "z^2 + 5z − 36 = 0", tex: "z^{2}+5z-36=0" },
+                { hace: "Resolver en z", queda: "z = 4,  z = −9" },
+                { hace: "Deshacer el cambio", tex: "x^{2}=4\\quad\\text{y}\\quad x^{2}=-9" }
+              ],
+              candidatas: [
+                { valor: "x = 2", vale: true, porque: "x^2 = 4" },
+                { valor: "x = −2", vale: true, porque: "x^2 = 4" },
+                { valor: "x^2 = −9", vale: false, porque: "no aporta" }
+              ],
+              cierre: <>Dos soluciones: <Mates tex="x^{2}=-9" /> no aporta ninguna.</>
+            },
+            {
+              tex: "x^{3}-6x^{2}=0",
+              pasos: [
+                { hace: "Sacar factor común", queda: "x^2(x − 6) = 0", tex: "x^{2}(x-6)=0" },
+                { hace: "Cada factor, igual a 0" }
+              ],
+              candidatas: [
+                { valor: "x = 0", vale: true, porque: "doble" },
+                { valor: "x = 6", vale: true, porque: "x − 6 = 0" }
+              ],
+              cierre: <>Sin dividir entre <Mates tex="x^{2}" />, que perdería el <Mates tex="0" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Con una sola potencia, se mira si el exponente es par o impar; si es bicuadrada, el cambio <Mates tex="z=x^{2}" />;
+              si no, un <Mates tex="0" /> en un miembro y factorizar.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "racionales",
+          nombre: "Racionales",
+          regla: "Lo primero, las condiciones; al final, se descartan las prohibidas",
+          ejemplos: [
+            {
+              tex: "\\frac{x}{3}=\\frac{6}{x}+1",
+              pasos: [
+                { hace: "Condición", queda: "x ≠ 0", tex: "x\\neq0" },
+                { hace: "Multiplicar por 3x", queda: "x^2 = 18 + 3x", tex: "x^{2}=18+3x" },
+                { hace: "Igualar a 0", queda: "x^2 − 3x − 18 = 0", tex: "x^{2}-3x-18=0" },
+                { hace: "Resolver y descartar", tex: "x=\\frac{3\\pm9}{2}" }
+              ],
+              candidatas: [
+                { valor: "x = 6", vale: true, porque: "2 = 1 + 1" },
+                { valor: "x = −3", vale: true, porque: "−1 = −2 + 1" }
+              ],
+              cierre: <>Ninguna es <Mates tex="0" />: valen las dos.</>
+            },
+            {
+              tex: "\\frac{x+3}{x-2}=\\frac{5}{x-2}+x",
+              pasos: [
+                { hace: "Condición", queda: "x ≠ 2", tex: "x\\neq2" },
+                { hace: "Multiplicar por x − 2", queda: "x + 3 = 5 + x(x − 2)", tex: "x+3=5+x(x-2)" },
+                { hace: "Igualar a 0", queda: "x^2 − 3x + 2 = 0", tex: "x^{2}-3x+2=0" },
+                { hace: "Resolver y descartar" }
+              ],
+              candidatas: [
+                { valor: "x = 1", vale: true, porque: "no es 2" },
+                { valor: "x = 2", vale: false, porque: "anula un denominador" }
+              ],
+              cierre: <>La única solución es <Mates tex="x=1" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Elige el segundo ejemplo: el <Mates tex="2" /> sale de la ecuación de segundo grado, pero estaba prohibido desde
+              el primer paso.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "radicales",
+          nombre: "Con radicales",
+          regla: "Aislar, elevar al cuadrado y comprobar en la original",
+          ejemplos: [
+            {
+              tex: "x-\\sqrt{x+17}=3",
+              pasos: [
+                { hace: "Aislar el radical", queda: { raiz: "x + 17", despues: " = x − 3" }, tex: "\\sqrt{x+17}=x-3" },
+                { hace: "Elevar al cuadrado", queda: "x + 17 = x^2 − 6x + 9", tex: "x+17=x^{2}-6x+9" },
+                { hace: "Igualar a 0", queda: "x^2 − 7x − 8 = 0", tex: "x^{2}-7x-8=0" },
+                { hace: "Comprobar en la original" }
+              ],
+              candidatas: [
+                { valor: "x = 8", vale: true, porque: "8 − 5 = 3" },
+                { valor: "x = −1", vale: false, porque: "−1 − 4 = −5" }
+              ],
+              cierre: <>El <Mates tex="-1" /> es una solución falsa: la única es <Mates tex="x=8" />.</>
+            },
+            {
+              tex: "\\sqrt{12x-32}=x",
+              pasos: [
+                { hace: "El radical ya está aislado", queda: { raiz: "12x − 32", despues: " = x" } },
+                { hace: "Elevar al cuadrado", queda: "12x − 32 = x^2", tex: "12x-32=x^{2}" },
+                { hace: "Igualar a 0", queda: "x^2 − 12x + 32 = 0", tex: "x^{2}-12x+32=0" },
+                { hace: "Comprobar en la original" }
+              ],
+              candidatas: [
+                { valor: "x = 4", vale: true, porque: { raiz: "16", despues: " = 4" } },
+                { valor: "x = 8", vale: true, porque: { raiz: "64", despues: " = 8" } }
+              ],
+              cierre: <>Esta vez valen las dos, pero la comprobación se hace igual.</>
+            }
+          ],
+          pista: (
+            <>
+              Al elevar al cuadrado pueden aparecer soluciones falsas: solo la ecuación original decide cuáles valen.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "exponenciales",
+          nombre: "Exponenciales",
+          regla: "La incógnita está en el exponente",
+          ejemplos: [
+            {
+              tex: "5^{x-1}=125",
+              regla: "Igualar bases",
+              pasos: [
+                { hace: "Escribir 125 como potencia de 5", queda: "5^{x − 1} = 5^3", tex: "5^{x-1}=5^{3}" },
+                { hace: "Igualar los exponentes", queda: "x − 1 = 3", tex: "x-1=3" },
+                { hace: "Despejar", queda: "x = 4", tex: "x=4" }
+              ],
+              resultado: "x = 4"
+            },
+            {
+              tex: "2^{x}=10",
+              regla: "Despejar el exponente",
+              pasos: [
+                { hace: "Por la definición de logaritmo", queda: "x = log_2 10", tex: "x=\\log_{2}10" },
+                { hace: "Estimar con potencias de 2", queda: "3 < x < 4", tex: "2^{3}=8<10<16=2^{4}" },
+                { hace: "Cambio de base, con log 2 ≈ 0,301", queda: "x ≈ 3,32", tex: "x=\\frac{\\log10}{\\log2}\\approx\\frac{1}{0{,}301}\\approx3{,}32" }
+              ],
+              resultado: "x = log_2 10",
+              cierre: <>La solución exacta es <Mates tex="\log_{2}10" />; el redondeo, solo si se pide.</>
+            },
+            {
+              tex: "4^{x}-24\\cdot2^{x}+128=0",
+              regla: "Con un cambio de variable",
+              pasos: [
+                { hace: "Cambio de variable", queda: "z = 2^x", tex: "4^{x}=\\left(2^{x}\\right)^{2},\\quad z=2^{x}" },
+                { hace: "Queda de segundo grado", queda: "z^2 − 24z + 128 = 0", tex: "z^{2}-24z+128=0" },
+                { hace: "Resolver en z", queda: "z = 16,  z = 8" },
+                { hace: "Deshacer el cambio", tex: "2^{x}=16\\quad\\text{y}\\quad2^{x}=8" }
+              ],
+              candidatas: [
+                { valor: "x = 4", vale: true, porque: "2^4 = 16" },
+                { valor: "x = 3", vale: true, porque: "2^3 = 8" }
+              ],
+              cierre: <>Las soluciones son las de <Mates tex="x" />, no las de <Mates tex="z" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Elige el ejemplo y mira la regla de arriba: igualar bases, despejar el exponente con un logaritmo o, si salen{" "}
+              <Mates tex="a^{2x}" /> y <Mates tex="a^{x}" />, el cambio <Mates tex="z=a^{x}" />.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "logaritmicas",
+          nombre: "Logarítmicas",
+          regla: "Una ecuación sin logaritmos; al final, los argumentos",
+          ejemplos: [
+            {
+              tex: "\\log_{2}(x+1)=3",
+              pasos: [
+                { hace: "Por la definición", queda: "x + 1 = 2^3 = 8", tex: "x+1=2^{3}=8" },
+                { hace: "Despejar", queda: "x = 7", tex: "x=7" },
+                { hace: "Comprobar el argumento" }
+              ],
+              candidatas: [{ valor: "x = 7", vale: true, porque: "log_2 8 = 3" }],
+              cierre: <>El argumento vale <Mates tex="8" />, positivo.</>
+            },
+            {
+              tex: "\\log(3x-2)=\\log(x+4)",
+              pasos: [
+                { hace: "Igualar los argumentos", queda: "3x − 2 = x + 4", tex: "3x-2=x+4" },
+                { hace: "Despejar", queda: "x = 3", tex: "x=3" },
+                { hace: "Comprobar los argumentos" }
+              ],
+              candidatas: [{ valor: "x = 3", vale: true, porque: "los dos valen 7" }],
+              cierre: <>Los dos argumentos son positivos.</>
+            },
+            {
+              tex: "\\log x+\\log(x+15)=2",
+              pasos: [
+                { hace: "Logaritmo del producto", queda: "log [x(x + 15)] = 2", tex: "\\log[x(x+15)]=2" },
+                { hace: "Por la definición", queda: "x(x + 15) = 100", tex: "x(x+15)=10^{2}=100" },
+                { hace: "Igualar a 0", queda: "x^2 + 15x − 100 = 0", tex: "x^{2}+15x-100=0" },
+                { hace: "Comprobar los argumentos" }
+              ],
+              candidatas: [
+                { valor: "x = 5", vale: true, porque: "log 5 + log 20 = 2" },
+                { valor: "x = −20", vale: false, porque: "log(−20) no existe" }
+              ],
+              cierre: <>El <Mates tex="-20" /> se descarta porque deja un logaritmo que no existe.</>
+            }
+          ],
+          pista: (
+            <>
+              Con la definición o igualando argumentos, el logaritmo desaparece. Al final, cada argumento tiene que quedar
+              positivo.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "sistemas",
+          nombre: "Sistemas",
+          regla: "De dos incógnitas a una; la solución es un par",
+          inicio: "El sistema",
+          ejemplos: [
+            {
+              rotulo: "Sustitución",
+              tex: "\\left\\{\\begin{aligned}x+2y&=2\\\\3x-y&=13\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Despejar x en la primera", queda: "x = 2 − 2y", tex: "x=2-2y" },
+                { hace: "Sustituir en la segunda", queda: "3(2 − 2y) − y = 13", tex: "3(2-2y)-y=13" },
+                { hace: "Resolver", queda: "y = −1", tex: "6-7y=13\\iff y=-1" },
+                { hace: "Volver a la x", queda: "x = 4", tex: "x=2+2=4" }
+              ],
+              resultado: "x = 4,  y = −1",
+              cierre: <>La solución es el par <Mates tex="x=4" />, <Mates tex="y=-1" />.</>
+            },
+            {
+              rotulo: "Igualación",
+              tex: "\\left\\{\\begin{aligned}y&=2x+1\\\\y&=7-x\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Igualar las dos y", queda: "2x + 1 = 7 − x", tex: "2x+1=7-x" },
+                { hace: "Despejar", queda: "x = 2", tex: "3x=6\\iff x=2" },
+                { hace: "Volver a la y", queda: "y = 5", tex: "y=2\\cdot2+1=5" }
+              ],
+              resultado: "x = 2,  y = 5"
+            },
+            {
+              rotulo: "Reducción",
+              tex: "\\left\\{\\begin{aligned}3x+4y&=10\\\\5x-2y&=8\\end{aligned}\\right.",
+              pasos: [
+                { hace: "La segunda, por 2", queda: "10x − 4y = 16", tex: "10x-4y=16" },
+                { hace: "Sumar las dos", queda: "13x = 26", tex: "13x=26\\iff x=2" },
+                { hace: "En la primera", queda: "6 + 4y = 10", tex: "6+4y=10\\iff y=1" }
+              ],
+              resultado: "x = 2,  y = 1"
+            },
+            {
+              rotulo: "No lineal",
+              tex: "\\left\\{\\begin{aligned}x+y&=13\\\\xy&=40\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Despejar y en la primera", queda: "y = 13 − x", tex: "y=13-x" },
+                { hace: "Sustituir en la segunda", queda: "x(13 − x) = 40", tex: "x(13-x)=40" },
+                { hace: "Igualar a 0", queda: "x^2 − 13x + 40 = 0", tex: "x^{2}-13x+40=0" },
+                { hace: "Cada x, con su y" }
+              ],
+              candidatas: [
+                { valor: "(5, 8)", vale: true, porque: "5 + 8 = 13" },
+                { valor: "(8, 5)", vale: true, porque: "8 · 5 = 40" }
+              ],
+              cierre: <>Dos soluciones, dos pares: no basta con <Mates tex="x=5" /> y <Mates tex="x=8" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Los tres métodos dejan una ecuación con una sola incógnita; la otra sale después. En los no lineales, cada{" "}
+              <Mates tex="x" /> lleva su <Mates tex="y" />.
+            </>
+          )
+        })
+      ];
+
+      function ResumenEcuacionesCuarto({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Ecuaciones y sistemas, de un vistazo"
+            estaciones={ESTACIONES_ECUACIONES_CUARTO}
+            reparto={LO_ESCRITO["resumen-ecuaciones-cuarto"]}
           />
         );
       }
@@ -30467,6 +31193,7 @@ void main() {
         "resumen-reales-sociales": ResumenRealesSociales,
         "resumen-reales-cuarto": ResumenRealesCuarto,
         "resumen-polinomios-cuarto": ResumenPolinomiosCuarto,
+        "resumen-ecuaciones-cuarto": ResumenEcuacionesCuarto,
         "resumen-financieras-sociales": ResumenFinancierasSociales
       };
     })();
