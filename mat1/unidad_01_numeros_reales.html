@@ -7635,8 +7635,9 @@ Bachillerato</p>
                 <p>Compruébalo: en <a
                 href="https://pi.thefirstverse.com">pi.thefirstverse.com</a>
                 puedes buscar en qué posición de <span
-                class="math inline">\(\pi\)</span> aparecen tu fecha de
-                cumpleaños, tu DNI o tu teléfono.</p>
+                class="math inline">\(\pi\)</span> aparece un número
+                cualquiera, como una fecha histórica. No escribas en una
+                web ajena tu DNI, tu teléfono ni otros datos tuyos.</p>
                 </div>
                 <section id="ejercicios"
                 class="level4 ejercicios unnumbered">
@@ -15387,6 +15388,11 @@ Bachillerato</p>
           encogerTablas(evento.target);
         }
       });
+      contenido.addEventListener("interactivo-preparado", function (evento) {
+        if (raiz.classList.contains("letra-libre") && !raiz.classList.contains("ampliando")) {
+          encogerTablas(evento.target);
+        }
+      });
 
       var puesto = 100;
       function ponerTamano(p, conAncla) {
@@ -19362,6 +19368,48 @@ void main() {
         '<mask id="adorno-mascara"><rect x="0" y="0" width="640" height="225" fill="url(#adorno-fundido)"/></mask>';
 
       var PORTADAS = {
+        "parabola-recta": function () {
+          var SX = 52, SY = 15, X0 = 470, Y0 = 150;
+          var x = function (v) { return r(X0 + v * SX); };
+          var y = function (v) { return r(Y0 - v * SY); };
+          var parabola = function (v) { return [X0 + v * SX, Y0 - (v * v + 2 * v) * SY]; };
+          var recta = function (v) { return [X0 + v * SX, Y0 - (-3 * v - 4) * SY]; };
+          var rejilla = "";
+          for (var k = -9; k <= 3; k++) {
+            rejilla += "M" + x(k) + " 6V219";
+          }
+          for (k = -5; k <= 11; k += 2) {
+            if (k !== 0) {
+              rejilla += "M24 " + y(k) + "H616";
+            }
+          }
+          var curva = trazo(parabola, -6.2, 3.4, 0.04);
+          var linea = trazo(recta, -7.5, 3.4, 0.1);
+          var dibujo = FUNDIDO + "</defs>" +
+            '<g mask="url(#adorno-mascara)" stroke="#fff">' +
+            '<path d="' + rejilla + '" stroke-opacity="0.085" stroke-width="1"/>' +
+            '<line x1="' + x(0) + '" y1="10" x2="' + x(0) + '" y2="219" stroke-opacity="0.5" stroke-width="1.4"/>' +
+            '<line x1="14" y1="' + Y0 + '" x2="622" y2="' + Y0 + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="M614 ' + (Y0 - 6) + "L624 " + Y0 + "L614 " + (Y0 + 6) + '" stroke-opacity="0.85" stroke-width="1.7"/>' +
+            '<path d="' + linea + '" stroke-opacity="0.75" stroke-width="2.2" stroke-dasharray="9 7"/>' +
+            '<path d="' + curva + '" stroke-opacity="0.16" stroke-width="8"/>' +
+            '<path d="' + curva + '" stroke-width="2.6"/>' +
+            [[-4, 8], [-1, -1]].map(function (q) {
+              return '<circle cx="' + x(q[0]) + '" cy="' + y(q[1]) + '" r="10.5" fill="#fff" fill-opacity="0.2" stroke="none"/>' +
+                '<circle cx="' + x(q[0]) + '" cy="' + y(q[1]) + '" r="5" fill="#fff" stroke="none"/>';
+            }).join("") +
+            "</g>";
+          return {
+            dibujo: dibujo,
+            rotulos: [
+              { x: x(-4) - 50, y: y(8) + 2, tex: "({-}4,\\ 8)", cuerpo: 16, opacidad: 0.95 },
+              { x: x(-1) + 94, y: y(-1) + 6, tex: "({-}1,\\ {-}1)", cuerpo: 16, opacidad: 0.95 },
+              { x: x(-1) - 14, y: 30, tex: "y=x^2+2x", cuerpo: 16.5, opacidad: 0.97 },
+              { x: x(-2.3), y: 206, tex: "y={-}3x-4", cuerpo: 16.5, opacidad: 0.9 }
+            ]
+          };
+        },
+
         "interes-compuesto": function () {
           var X0 = 92, U = 25, Y = 188, S = 0.034;
           var x = function (t) { return r(X0 + t * U); };
@@ -19695,7 +19743,16 @@ void main() {
         "factores":
           '<path d="M12.5 8c-7 9.5-7 22.5 0 32M21 8c7 9.5 7 22.5 0 32M27 8c-7 9.5-7 22.5 0 32M35.5 8c7 9.5 7 22.5 0 32" stroke-width="2.4"/>' +
           '<circle cx="16.75" cy="24" r="2.3" fill="currentColor" stroke="none"/>' +
-          '<circle cx="31.25" cy="24" r="2.3" fill="currentColor" stroke="none"/>'
+          '<circle cx="31.25" cy="24" r="2.3" fill="currentColor" stroke="none"/>',
+        "parabola":
+          '<path d="M4 24h40" stroke-width="1.8"/>' +
+          '<path d="M9 8Q24 50 39 8" stroke-width="2.5"/>' +
+          '<circle cx="16.7" cy="24" r="2.6" fill="currentColor" stroke="none"/>' +
+          '<circle cx="31.3" cy="24" r="2.6" fill="currentColor" stroke="none"/>',
+        "enunciado":
+          '<path d="M10 6h20l8 8v28H10z" stroke-width="2.3"/>' +
+          '<path d="M30 6v8h8" stroke-width="1.8"/>' +
+          '<path d="M15 19h14M15 26h18M15 33h11" stroke-width="2.1"/>'
       };
       function emblema(nombre) {
         var dentro = EMBLEMAS[nombre];
@@ -20395,6 +20452,232 @@ void main() {
           };
         },
 
+        "transformar": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 56h52M" + (desde + 44) + " 50l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(222) + flecha(436) + flecha(626) + '" stroke-width="1.6"/>' +
+            '<rect x="780" y="33" width="140" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 130, y: 56, tex: "4x-1=x+8", cuerpo: 17 },
+              { x: 248, y: 32, texto: "restar x", cuerpo: 11.5 },
+              { x: 362, y: 56, tex: "3x-1=8", cuerpo: 17 },
+              { x: 462, y: 32, texto: "sumar 1", cuerpo: 11.5 },
+              { x: 562, y: 56, tex: "3x=9", cuerpo: 17 },
+              { x: 652, y: 32, texto: "dividir entre 3", cuerpo: 11.5 },
+              { x: 850, y: 56, tex: "x=3", cuerpo: 18 },
+              { x: 562, y: 92, texto: "lo mismo en los dos miembros", cuerpo: 12 }
+            ],
+            foco: 480
+          };
+        },
+
+        "discriminante": function () {
+          var d = "";
+          var rotulos = [];
+          var casos = [
+            { cx: 160, vertice: 96, cortes: [-34.6, 34.6], signo: "\\Delta>0", texto: "dos soluciones" },
+            { cx: 470, vertice: 70, cortes: [0], signo: "\\Delta=0", texto: "una doble" },
+            { cx: 780, vertice: 46, cortes: [], signo: "\\Delta<0", texto: "ninguna" }
+          ];
+          casos.forEach(function (c) {
+            var control = 2 * c.vertice - 18;
+            d += '<path d="M' + (c.cx - 78) + " 70h156" + '" stroke-width="1.4" opacity="0.6"/>' +
+              '<path d="M' + (c.cx - 60) + " 18Q" + c.cx + " " + control + " " + (c.cx + 60) + ' 18" stroke-width="2.2"/>';
+            c.cortes.forEach(function (dx) {
+              d += '<circle cx="' + r(c.cx + dx) + '" cy="70" r="4.4" fill="currentColor" stroke="none"/>';
+            });
+            rotulos.push({ x: c.cx + 128, y: 44, tex: c.signo, cuerpo: 17 });
+            rotulos.push({ x: c.cx + 128, y: 72, texto: c.texto, cuerpo: 12 });
+          });
+          return { dibujo: d, rotulos: rotulos, foco: 470 };
+        },
+
+        "cuerda": function () {
+          var E = 7, X = 96, Y = 54;
+          var cortes = [0, 20, 60, 93];
+          var nombres = ["x", "2x", "2x-7"];
+          var medidas = ["20", "40", "33"];
+          var d = "";
+          var rotulos = [];
+          for (var k = 0; k < 3; k++) {
+            var a = X + cortes[k] * E, b = X + cortes[k + 1] * E;
+            d += '<path d="M' + r(a + 5) + " " + Y + "H" + r(b - 5) + '" stroke-width="5" opacity="' + (k === 1 ? 0.75 : 1) + '"/>';
+            rotulos.push({ x: r((a + b) / 2), y: 28, tex: nombres[k], cuerpo: 16 });
+            rotulos.push({ x: r((a + b) / 2), y: 82, texto: medidas[k] + " cm", cuerpo: 12 });
+          }
+          d += '<path d="M' + X + " 40v28M" + r(X + 93 * E) + ' 40v28" stroke-width="1.5"/>';
+          rotulos.push({ x: 880, y: 44, tex: "x+2x+(2x-7)=93", cuerpo: 15.5 });
+          rotulos.push({ x: 880, y: 76, tex: "x=20", cuerpo: 16 });
+          return { dibujo: d, rotulos: rotulos, foco: 420 };
+        },
+
+        "bicuadrada": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 52h44M" + (desde + 36) + " 46l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(214) + flecha(484) + flecha(676) + '" stroke-width="1.6"/>' +
+            '<rect x="736" y="29" width="226" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 112, y: 52, tex: "x^4-29x^2+100=0", cuerpo: 16 },
+              { x: 236, y: 30, tex: "z=x^2", cuerpo: 12.5 },
+              { x: 382, y: 52, tex: "z^2-29z+100=0", cuerpo: 16 },
+              { x: 606, y: 52, tex: "z=25,\\ z=4", cuerpo: 16 },
+              { x: 698, y: 30, texto: "deshacer", cuerpo: 11.5 },
+              { x: 849, y: 52, tex: "x=\\pm5,\\ x=\\pm2", cuerpo: 16.5 },
+              { x: 849, y: 93, texto: "cuatro soluciones", cuerpo: 12 }
+            ],
+            foco: 560
+          };
+        },
+
+        "racional": function () {
+          var flecha = function (desde) {
+            return "M" + desde + " 46h48M" + (desde + 40) + " 40l8 6-8 6";
+          };
+          var d = '<path d="' + flecha(252) + flecha(508) + '" stroke-width="1.6"/>' +
+            '<rect x="604" y="23" width="92" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="784" y="23" width="92" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 150, y: 46, tex: "\\dfrac{x+3}{x-2}=\\dfrac{5}{x-2}+x", cuerpo: 16 },
+              { x: 150, y: 94, tex: "x\\neq2", cuerpo: 13, opacidad: 0.85 },
+              { x: 276, y: 24, tex: "\\cdot(x-2)", cuerpo: 12.5 },
+              { x: 410, y: 46, tex: "x^2-3x+2=0", cuerpo: 17 },
+              { x: 650, y: 46, tex: "x=1", cuerpo: 18 },
+              { x: 830, y: 46, tex: "x=2", cuerpo: 18, opacidad: 0.6 },
+              { x: 830, y: 92, texto: "anula el denominador", cuerpo: 12 }
+            ],
+            foco: 560
+          };
+        },
+
+        "radical": function () {
+          var X0 = 250, Y0 = 54, U = 10.5, A = 8.6;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var rama = function (desde, hasta) {
+            return trazo(function (t) { return [px(t * t - 17), py(t)]; }, desde, hasta, 0.05);
+          };
+          var d = '<path d="M' + r(px(-18.5)) + " " + Y0 + "H" + r(px(11)) + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="' + rama(-5.2, 0) + '" stroke-width="1.8" stroke-dasharray="5 5" opacity="0.6"/>' +
+            '<path d="' + rama(0, 5.2) + '" stroke-width="2.3"/>' +
+            '<path d="M' + r(px(-2.6)) + " " + r(py(-5.6)) + "L" + r(px(9)) + " " + r(py(6)) + '" stroke-width="2.1" opacity="0.8"/>' +
+            '<circle cx="' + r(px(8)) + '" cy="' + r(py(5)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(px(-1)) + '" cy="' + r(py(-4)) + '" r="4.2" fill="#ffffff" stroke-width="1.8"/>' +
+            '<path d="M626 52h52M670 46l8 6-8 6" stroke-width="1.6"/>' +
+            '<rect x="726" y="29" width="88" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="852" y="29" width="96" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 140, y: 18, tex: "\\sqrt{x+17}", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 140, y: 93, tex: "-\\sqrt{x+17}", cuerpo: 12.5, opacidad: 0.65 },
+              { x: 530, y: 52, tex: "\\sqrt{x+17}=x-3", cuerpo: 17 },
+              { x: 652, y: 30, texto: "elevar al cuadrado", cuerpo: 11.5 },
+              { x: 770, y: 52, tex: "x=8", cuerpo: 18 },
+              { x: 900, y: 52, tex: "x=-1", cuerpo: 18, opacidad: 0.6 },
+              { x: 900, y: 94, texto: "falsa", cuerpo: 12 }
+            ],
+            foco: 480
+          };
+        },
+
+        "exponente": function () {
+          var X0 = 150, Y0 = 86, U = 64, A = 4.6;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var curva = trazo(function (v) { return [px(v), py(Math.pow(2, v))]; }, -1.8, 4.08, 0.05);
+          var corte = Math.log(10) / Math.LN2;
+          var d = '<path d="M' + r(px(-2)) + " " + Y0 + "H" + r(px(4.5)) + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="M' + r(px(3)) + " " + (Y0 - 5) + "v10M" + r(px(4)) + " " + (Y0 - 5) + 'v10" stroke-width="1.3" opacity="0.7"/>' +
+            '<path d="M' + r(px(-1.8)) + " " + r(py(10)) + "H" + r(px(corte) - 9) + '" stroke-width="1.4" stroke-dasharray="5 5"/>' +
+            '<path d="M' + r(px(corte)) + " " + r(py(10) + 9) + "V" + (Y0 - 6) + '" stroke-width="1.4" stroke-dasharray="3 4" opacity="0.75"/>' +
+            '<path d="' + curva + '" stroke-width="2.3"/>' +
+            '<circle cx="' + r(px(corte)) + '" cy="' + r(py(10)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<path d="M556 52h48M596 46l8 6-8 6" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: r(px(3)), y: Y0 + 15, tex: "3", cuerpo: 12, opacidad: 0.8 },
+              { x: r(px(4)), y: Y0 + 15, tex: "4", cuerpo: 12, opacidad: 0.8 },
+              { x: r(px(-1.2)), y: r(py(10)) - 14, tex: "10", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 480, y: 52, tex: "2^x=10", cuerpo: 18 },
+              { x: 750, y: 52, tex: "x=\\log_2 10", cuerpo: 18 },
+              { x: 750, y: 88, texto: "entre 3 y 4", cuerpo: 12 },
+              { x: 900, y: 52, tex: "\\approx3{,}32", cuerpo: 15, opacidad: 0.85 }
+            ],
+            foco: 470
+          };
+        },
+
+        "logaritmica": function () {
+          var X0 = 290, Y0 = 68, U = 10, A = 0.58;
+          var px = function (v) { return X0 + v * U; };
+          var py = function (v) { return Y0 - v * A; };
+          var parabola = function (desde, hasta) {
+            return trazo(function (v) { return [px(v), py(v * (v + 15))]; }, desde, hasta, 0.1);
+          };
+          var alto = (-15 + Math.sqrt(225 + 4 * 112)) / 2;
+          var d = '<rect x="' + r(px(0)) + '" y="2" width="' + r(px(8) - px(0)) + '" height="104" fill="currentColor" fill-opacity="0.07" stroke="none"/>' +
+            '<path d="M' + r(px(-23)) + " " + Y0 + "H" + r(px(8)) + "M" + r(px(0)) + " 2V106" + '" stroke-width="1.3" opacity="0.6"/>' +
+            '<path d="M' + r(px(-23)) + " " + r(py(100)) + "H" + r(px(8)) + '" stroke-width="1.6" opacity="0.8"/>' +
+            '<path d="' + parabola(-15 - alto, 0) + '" stroke-width="1.8" stroke-dasharray="5 5" opacity="0.6"/>' +
+            '<path d="' + parabola(0, alto) + '" stroke-width="2.3"/>' +
+            '<circle cx="' + r(px(5)) + '" cy="' + r(py(100)) + '" r="4.5" fill="currentColor" stroke="none"/>' +
+            '<circle cx="' + r(px(-20)) + '" cy="' + r(py(100)) + '" r="4.2" fill="#ffffff" stroke-width="1.8"/>' +
+            '<path d="M654 52h52M698 46l8 6-8 6" stroke-width="1.6"/>' +
+            '<rect x="750" y="29" width="88" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>' +
+            '<rect x="862" y="29" width="108" height="46" rx="23" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 333, y: 90, tex: "x>0", cuerpo: 12.5, opacidad: 0.85 },
+              { x: 534, y: 52, tex: "\\log x+\\log(x+15)=2", cuerpo: 15.5 },
+              { x: 680, y: 28, tex: "x(x+15)=100", cuerpo: 11.5 },
+              { x: 794, y: 52, tex: "x=5", cuerpo: 18 },
+              { x: 916, y: 52, tex: "x=-20", cuerpo: 18, opacidad: 0.6 },
+              { x: 916, y: 94, tex: "\\log(-20)\\text{ no existe}", cuerpo: 11.5 }
+            ],
+            foco: 480
+          };
+        },
+
+        "dos-rectas": function () {
+          var U = 13, X0 = 158, Y0 = 54;
+          var x = function (v) { return r(X0 + v * U); };
+          var y = function (v) { return r(Y0 - v * U); };
+          var rejilla = "";
+          for (var k = -3; k <= 7; k++) {
+            rejilla += "M" + x(k) + " " + y(3.4) + "V" + y(-3.4);
+          }
+          for (k = -3; k <= 3; k++) {
+            rejilla += "M" + x(-3.4) + " " + y(k) + "H" + x(7.4);
+          }
+          var d = '<path d="' + rejilla + '" stroke-width="1" opacity="0.14"/>' +
+            '<path d="M' + x(-3.4) + " " + y(0) + "H" + x(7.4) + "M" + x(0) + " " + y(3.4) + "V" + y(-3.4) + '" stroke-width="1.4" opacity="0.6"/>' +
+            '<path d="M' + x(-3.2) + " " + y(2.6) + "L" + x(7.2) + " " + y(-2.6) + '" stroke-width="2.2"/>' +
+            '<path d="M' + x(3.2) + " " + y(-3.4) + "L" + x(5.47) + " " + y(3.4) + '" stroke-width="2.2" opacity="0.6"/>' +
+            '<circle cx="' + x(4) + '" cy="' + y(-1) + '" r="8.5" stroke-width="1.3" opacity="0.5"/>' +
+            '<circle cx="' + x(4) + '" cy="' + y(-1) + '" r="4.2" fill="currentColor" stroke="none"/>' +
+            '<path d="M592 56h62M646 50l8 6-8 6" stroke-width="1.7"/>' +
+            '<rect x="698" y="33" width="190" height="46" rx="23" fill="currentColor" fill-opacity="0.1" stroke-width="1.6"/>';
+          return {
+            dibujo: d,
+            rotulos: [
+              { x: 468, y: 56, tex: "\\left\\{\\begin{aligned}x+2y&=2\\\\3x-y&=13\\end{aligned}\\right.", cuerpo: 18 },
+              { x: 793, y: 56, tex: "(4,\\,{-}1)", cuerpo: 18 },
+              { x: 793, y: 96, texto: "un solo punto: una solución", cuerpo: 12 }
+            ],
+            foco: 470
+          };
+        },
+
         "cumbre": function (seccion) {
           var apartados = [];
           var hermanas = seccion && seccion.parentElement ? seccion.parentElement.children : [];
@@ -20508,6 +20791,33 @@ void main() {
           '<path d="M37 13c3 0 4 2.5 4 11s-1 11-4 11" stroke-width="1.8"/>' +
           '<path d="M19.5 18.5c3.5-3.2 10.5-3.2 14 0c-3.5 3.2-10.5 3.2-14 0z" stroke-width="1.9"/>' +
           '<path d="M22.5 25v5.5M26.5 25v5.5M30.5 25v5.5" stroke-width="2.2"/>', 2),
+        "epitafio": svg(48, 48,
+          '<path d="M13 41V17L24 8L35 17V41" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+          '<path d="M9 41h30M13 17h22" stroke-width="1.8"/>' +
+          '<path d="M17.5 23h13M17.5 28h13M17.5 33h9" stroke-width="2"/>', 2.2),
+        "tablilla": svg(48, 48,
+          '<rect x="7" y="6" width="34" height="36" rx="7" fill="currentColor" fill-opacity="0.12" stroke-width="1.8"/>' +
+          '<path d="M13 11.5l4 1.5-4 1.5zM20 11.5l4 1.5-4 1.5zM27 11.5l4 1.5-4 1.5z" fill="currentColor" stroke="none"/>' +
+          '<path d="M13 20h13v13H13zM26 20h4v13M13 33v4h13" stroke-width="1.8"/>' +
+          '<rect x="26" y="33" width="4" height="4" fill="currentColor" stroke="none"/>', 2.2),
+        "codice": svg(48, 48,
+          '<path d="M24 14c-4-3-10-4-16-3v25c6-1 12 0 16 3c4-3 10-4 16-3V11c-6-1-12 0-16 3zM24 14v25" stroke-width="1.8"/>' +
+          '<path d="M11.5 18h9M11.5 22.5h9M11.5 27h6.5" stroke-width="1.7"/>' +
+          '<path d="M42 5c-6 2-10 8-12 16c3-1 6-3 8-6s3.5-7 4-10zM30 21l-1.5 4.5" stroke-width="1.7"/>', 2.2),
+        "conicas": svg(48, 48,
+          '<circle cx="21" cy="24" r="13" stroke-width="1.9"/>' +
+          '<path d="M27 6Q31 26 45 30" stroke-width="2.2"/>' +
+          '<circle cx="33.9" cy="22.5" r="2.7" fill="currentColor" stroke="none"/>', 2.2),
+        "altavoz": svg(48, 48,
+          '<path d="M7 19h6l9-8v26l-9-8H7z" fill="currentColor" fill-opacity="0.12" stroke-width="1.9"/>' +
+          '<path d="M27 18a8 8 0 0 1 0 12" stroke-width="1.5"/>' +
+          '<path d="M31 14a13 13 0 0 1 0 20" stroke-width="2"/>' +
+          '<path d="M35 10a18 18 0 0 1 0 28" stroke-width="2.5"/>', 2.2),
+        "varillas": svg(48, 48,
+          '<path d="M8 8h32v32H8zM18.67 8v32M29.33 8v32M8 18.67h32M8 29.33h32" stroke-width="1.4" opacity="0.7"/>' +
+          '<path d="M13.33 10.33v6M12.03 21v6M14.63 21v6M10.73 31.67v6M13.33 31.67v6M15.93 31.67v6' +
+          'M22.7 10.33v6M25.3 10.33v6M21.4 21v6M24 21v6M26.6 21v6M24 31.67v6' +
+          'M32.07 10.33v6M34.67 10.33v6M37.27 10.33v6M33.37 21v6M35.97 21v6M34.67 31.67v6" stroke-width="1.9"/>', 2.2),
         "": svg(48, 48, '<path d="M24 8v8M24 32v8M8 24h8M32 24h8M13 13l5 5M30 30l5 5M35 13l-5 5M18 30l-5 5" stroke-width="2.2"/>', 2.2)
       };
 
@@ -20821,6 +21131,15 @@ void main() {
               })
             }}
           />
+        );
+      }
+
+      function MatesConSigno({ tex, signo }) {
+        return (
+          <span style={{ whiteSpace: "nowrap" }}>
+            <Mates tex={tex} />
+            {signo}
+          </span>
         );
       }
 
@@ -23546,150 +23865,211 @@ void main() {
 
 
       function SumaAngulosInfografia({ configuracion, alPreparar }) {
-        const ox = 50;
-        const oy = 320;
-        const R = 220;
+        const ox = 95;
+        const oy = 292;
+        const R = 250;
         const a = (30 * Math.PI) / 180;
-        const b = (35 * Math.PI) / 180;
-        const q = [ox + R * Math.cos(b) * Math.cos(a), oy - R * Math.cos(b) * Math.sin(a)];
-        const p = [ox + R * Math.cos(a + b), oy - R * Math.sin(a + b)];
-        const regla = 300;
-        const otra = 470;
-        const altoA = R * Math.sin(a);
-        const altoB = R * Math.sin(b);
-        const linea = (x1, y1, x2, y2) => "M" + n1(x1) + " " + n1(y1) + "L" + n1(x2) + " " + n1(y2);
-        const arco = (radio, desde, hasta) =>
-          "M" + n1(ox + radio * Math.cos(desde)) + " " + n1(oy - radio * Math.sin(desde)) +
-          "A" + radio + " " + radio + " 0 0 0 " + n1(ox + radio * Math.cos(hasta)) + " " + n1(oy - radio * Math.sin(hasta));
+        const b = (40 * Math.PI) / 180;
+        const ancho = R * Math.cos(a) * Math.cos(b);
+        const A = [ox + ancho, oy];
+        const Q = [ox + ancho, oy - R * Math.sin(a) * Math.cos(b)];
+        const B = [ox + ancho, oy - R * Math.sin(a + b)];
+        const C = [ox, B[1]];
+        const P = [ox + R * Math.cos(a + b), B[1]];
+        const oro = "#FFDA7A";
+        const oroOscuro = "#EE8F33";
+        const letraOro = "#FFE08A";
+        const letraOroOscuro = "#FFB660";
+        const linea = (p1, p2) => "M" + n1(p1[0]) + " " + n1(p1[1]) + "L" + n1(p2[0]) + " " + n1(p2[1]);
+        const enAngulo = (v, radio, angulo) => [v[0] + radio * Math.cos(angulo), v[1] - radio * Math.sin(angulo)];
+        const arcoEn = (v, radio, desde, hasta) => {
+          const p1 = enAngulo(v, radio, desde);
+          const p2 = enAngulo(v, radio, hasta);
+          return "M" + n1(p1[0]) + " " + n1(p1[1]) + "A" + radio + " " + radio + " 0 0 0 " + n1(p2[0]) + " " + n1(p2[1]);
+        };
+        const sectorEn = (v, radio, desde, hasta) => {
+          const arco = arcoEn(v, radio, desde, hasta);
+          return "M" + n1(v[0]) + " " + n1(v[1]) + "L" + arco.slice(1) + "Z";
+        };
         const unidad = (x, y) => {
           const m = Math.hypot(x, y);
           return [x / m, y / m];
         };
-        const u1 = unidad(ox - q[0], oy - q[1]);
-        const u2 = unidad(p[0] - q[0], p[1] - q[1]);
-        const k = 11;
+        const u1 = unidad(ox - Q[0], oy - Q[1]);
+        const u2 = unidad(P[0] - Q[0], P[1] - Q[1]);
+        const k = 10;
         const rectoQ =
-          "M" + n1(q[0] + k * u1[0]) + " " + n1(q[1] + k * u1[1]) +
-          "L" + n1(q[0] + k * (u1[0] + u2[0])) + " " + n1(q[1] + k * (u1[1] + u2[1])) +
-          "L" + n1(q[0] + k * u2[0]) + " " + n1(q[1] + k * u2[1]);
-        const rectoPie = "M" + n1(q[0] - 10) + " " + oy + "V" + (oy - 10) + "H" + n1(q[0]);
-        const rectoR = "M" + n1(p[0] + 10) + " " + n1(q[1]) + "V" + n1(q[1] - 10) + "H" + n1(p[0]);
-        const marca = (x, y) => linea(x - 9, y, x + 9, y);
-        const A = cursiva("α");
-        const B = cursiva("β");
+          "M" + n1(Q[0] + k * u1[0]) + " " + n1(Q[1] + k * u1[1]) +
+          "L" + n1(Q[0] + k * (u1[0] + u2[0])) + " " + n1(Q[1] + k * (u1[1] + u2[1])) +
+          "L" + n1(Q[0] + k * u2[0]) + " " + n1(Q[1] + k * u2[1]);
+        const rectoA = "M" + n1(A[0] - 10) + " " + oy + "V" + (oy - 10) + "H" + n1(A[0]);
+        const rectoB = "M" + n1(B[0] - 10) + " " + n1(B[1]) + "V" + n1(B[1] + 10) + "H" + n1(B[0]);
+        const rectoC = "M" + n1(C[0] + 10) + " " + n1(C[1]) + "V" + n1(C[1] + 10) + "H" + n1(C[0]);
+        const grado = <Sup>{"∘"}</Sup>;
+        const al = cursiva("α");
+        const be = cursiva("β");
         const sen = (letra) => (
           <tspan>
-            sen{" "}
+            sen{" "}
             {letra}
           </tspan>
         );
         const cos = (letra) => (
           <tspan>
-            cos{" "}
+            cos{" "}
             {letra}
           </tspan>
         );
+        const posAlfaO = enAngulo([ox, oy], 52, a / 2);
+        const posBetaO = enAngulo([ox, oy], 64, a + b / 2);
+        const posAlfaQ = enAngulo(Q, 41, Math.PI / 2 + a / 2);
+        const derecha = A[0] + 11;
+        const columna = 500;
 
         return (
           <Infografia
             configuracion={configuracion}
             alPreparar={alPreparar}
             tono={tonoDeLaUnidad()}
-            titulo="La suma, a la vista"
-            duracion={12}
-            alto="352"
+            titulo="Demostración del seno y del coseno de la suma"
+            duracion={17.4}
+            alto="326"
             descripcion={
-              "Un radio de longitud 1 forma con el eje un ángulo alfa más beta. Dentro, un triángulo " +
-              "rectángulo con el ángulo beta, de catetos coseno de beta y seno de beta, apoyado en el lado " +
-              "del ángulo alfa. La altura del extremo del radio se parte en dos tramos: la altura del " +
-              "vértice intermedio, seno de alfa por coseno de beta, y lo que sube desde él, coseno de alfa " +
-              "por seno de beta. Los dos tramos, apilados en una regla, forman el seno de alfa más beta. Al " +
-              "lado, las alturas de alfa y de beta por separado forman una regla más alta: el seno de la " +
-              "suma no es la suma de los senos."
+              "Un radio de longitud 1 forma con el eje un ángulo alfa más beta y queda dentro de un " +
+              "rectángulo. Desde su extremo se baja una perpendicular al lado del ángulo alfa: sale un " +
+              "triángulo rectángulo de catetos coseno de beta y seno de beta. En el triángulo de abajo, de " +
+              "hipotenusa coseno de beta, el lado opuesto a alfa mide seno de alfa por coseno de beta. En el " +
+              "vértice donde se juntan esos dos catetos vuelve a salir el ángulo alfa, porque los tres " +
+              "ángulos de ese vértice forman un ángulo llano, y en el triángulo de arriba, de " +
+              "hipotenusa seno de beta, el lado contiguo a alfa mide coseno de alfa por seno de beta. Los dos " +
+              "trozos forman el lado derecho del rectángulo, que mide lo mismo que el izquierdo, el seno de " +
+              "alfa más beta. Con los lados de arriba y de abajo sale el coseno de alfa más beta: coseno de " +
+              "alfa por coseno de beta menos seno de alfa por seno de beta."
             }
             texto={
               <>
-                La altura del extremo, <Mates tex="\operatorname{sen}(\alpha+\beta)" />, se parte en dos tramos:
-                la del vértice del ángulo recto, <Mates tex="\operatorname{sen}\alpha\cos\beta" />, y lo que sube
-                desde él, <Mates tex="\cos\alpha\operatorname{sen}\beta" />. Las alturas de <Mates tex="\alpha" /> y de{" "}
-                <Mates tex="\beta" /> por separado suman más: el seno de la suma no es la suma de los senos.
+                Con <Mates tex="\alpha+\beta" /> agudo: abajo, en el triángulo de hipotenusa{" "}
+                <MatesConSigno tex="\cos\beta" signo="," /> el lado opuesto a{" "}
+                <Mates tex="\alpha" /> mide <MatesConSigno tex="\operatorname{sen}\alpha\cos\beta" signo="." /> Donde se
+                juntan <Mates tex="\cos\beta" /> y <Mates tex="\operatorname{sen}\beta" /> vuelve a salir{" "}
+                <MatesConSigno tex="\alpha" signo="," /> y arriba, en el de hipotenusa{" "}
+                <MatesConSigno tex="\operatorname{sen}\beta" signo="," /> el lado contiguo a <Mates tex="\alpha" /> mide{" "}
+                <MatesConSigno tex="\cos\alpha\operatorname{sen}\beta" signo="." /> Los lados opuestos del rectángulo
+                miden lo mismo.
               </>
             }
             rotulos={
               <g>
-                <Rotulo t={1.1} x={n1((ox + p[0]) / 2 - 15)} y={n1((oy + p[1]) / 2 - 2)} fontSize="19">
+                <Rotulo t={1.2} x={n1(ox + 0.47 * (P[0] - ox) - 13)} y={n1(oy + 0.47 * (P[1] - oy) + 6)} fontSize="19">
                   1
                 </Rotulo>
-                <Rotulo t={2.1} x={n1(ox + 47 * Math.cos(a / 2))} y={n1(oy - 47 * Math.sin(a / 2) + 6)} fontSize="18">
-                  {A}
+                <Rotulo t={2.2} x={n1(posAlfaO[0])} y={n1(posAlfaO[1] + 6)} fontSize="18" fill={letraOro}>
+                  {al}
                 </Rotulo>
-                <Rotulo t={2.3} x={n1((ox + q[0]) / 2 + 12)} y={n1((oy + q[1]) / 2 + 22)} fontSize="17">
-                  {cos(B)}
+                <Rotulo t={2.7} x={n1(posBetaO[0])} y={n1(posBetaO[1] + 6)} fontSize="18">
+                  {be}
                 </Rotulo>
-                <Rotulo t={2.8} x={n1((q[0] + p[0]) / 2 + 36)} y={n1((q[1] + p[1]) / 2 - 2)} fontSize="17">
-                  {sen(B)}
+                <Rotulo t={3.3} x={n1((ox + Q[0]) / 2 + 9)} y={n1((oy + Q[1]) / 2 + 20)} fontSize="17">
+                  {cos(be)}
                 </Rotulo>
-                <Rotulo t={3.3} x={n1(ox + 74 * Math.cos(a + b / 2))} y={n1(oy - 74 * Math.sin(a + b / 2) + 6)} fontSize="18">
-                  {B}
+                <Rotulo t={3.7} x={n1((Q[0] + P[0]) / 2 - 25)} y={n1((Q[1] + P[1]) / 2 + 17)} fontSize="17">
+                  {sen(be)}
                 </Rotulo>
-                <Rotulo t={7.5} x={regla + 13} y={n1((oy + q[1]) / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(A)}
-                  {" "}
-                  {cos(B)}
+                <Rotulo t={5.0} x={derecha} y={n1((oy + Q[1]) / 2 + 6)} fontSize="16" textAnchor="start" fill={letraOro}>
+                  {sen(al)} {cos(be)}
                 </Rotulo>
-                <Rotulo t={8.1} x={regla + 13} y={n1((q[1] + p[1]) / 2 + 6)} fontSize="16" textAnchor="start">
-                  {cos(A)}
-                  {" "}
-                  {sen(B)}
+                <Rotulo t={6.2} x={n1(Q[0] - 27)} y={n1(Q[1] + 43)} fontSize="13.5">
+                  90{grado} − {al}
                 </Rotulo>
-                <Rotulo t={8.6} x={regla} y={n1(p[1] - 13)} fontSize="17">
-                  sen({A} + {B})
+                <Rotulo t={6.8} x={n1(posAlfaQ[0])} y={n1(posAlfaQ[1] + 6)} fontSize="17" fill={letraOro}>
+                  {al}
                 </Rotulo>
-                <Rotulo t={9.1} x="452" y="38" fontSize="19">
-                  sen({A} + {B}) = {sen(A)}
-                  {" "}
-                  {cos(B)} + {cos(A)}
-                  {" "}
-                  {sen(B)}
+                <Rotulo t={7.1} x={columna} y="58" fontSize="16">
+                  {palabra("donde se juntan")} {cos(be)} {palabra("y")} {sen(be)}:
                 </Rotulo>
-                <Rotulo t={10.3} x={otra + 13} y={n1(oy - altoA / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(A)}
+                <Rotulo t={7.3} x={columna} y="84" fontSize="17">
+                  <tspan fill={letraOro}>{al}</tspan> + 90{grado} + (90{grado} − {al}) = 180{grado}
                 </Rotulo>
-                <Rotulo t={10.9} x={otra + 13} y={n1(oy - altoA - altoB / 2 + 6)} fontSize="16" textAnchor="start">
-                  {sen(B)}
+                <Rotulo t={8.9} x={derecha} y={n1((Q[1] + B[1]) / 2 + 6)} fontSize="16" textAnchor="start" fill={letraOroOscuro}>
+                  {cos(al)} {sen(be)}
                 </Rotulo>
-                <Rotulo t={11.3} x={otra} y={n1(oy - altoA - altoB - 13)} fontSize="17">
-                  {sen(A)} + {sen(B)}
+                <Rotulo t={10.3} x={ox - 9} y={n1((oy + C[1]) / 2 + 6)} fontSize="16" textAnchor="end">
+                  sen({al} + {be})
+                </Rotulo>
+                <Rotulo t={11.5} x={columna} y="142" fontSize="20">
+                  sen({al} + {be}) =
+                </Rotulo>
+                <Rotulo t={12.0} x={columna} y="174" fontSize="19">
+                  <tspan fill={letraOro}>
+                    {sen(al)} {cos(be)}
+                  </tspan>{" "}
+                  +{" "}
+                  <tspan fill={letraOroOscuro}>
+                    {cos(al)} {sen(be)}
+                  </tspan>
+                </Rotulo>
+                <Rotulo t={13.3} x={n1((ox + A[0]) / 2)} y={oy + 22} fontSize="16" fill={letraOro}>
+                  {cos(al)} {cos(be)}
+                </Rotulo>
+                <Rotulo t={14.2} x={n1((P[0] + B[0]) / 2)} y={n1(B[1] - 11)} fontSize="15" fill={letraOroOscuro}>
+                  {sen(al)} {sen(be)}
+                </Rotulo>
+                <Rotulo t={15.0} x={n1((C[0] + P[0]) / 2)} y={n1(C[1] - 11)} fontSize="15">
+                  cos({al} + {be})
+                </Rotulo>
+                <Rotulo t={16.0} x={columna} y="236" fontSize="20">
+                  cos({al} + {be}) =
+                </Rotulo>
+                <Rotulo t={16.5} x={columna} y="268" fontSize="19">
+                  <tspan fill={letraOro}>
+                    {cos(al)} {cos(be)}
+                  </tspan>{" "}
+                  −{" "}
+                  <tspan fill={letraOroOscuro}>
+                    {sen(al)} {sen(be)}
+                  </tspan>
                 </Rotulo>
               </g>
             }
           >
-            <Trazo t={0.2} dura={0.5} d={"M28 " + oy + "H" + (otra + 70)} strokeWidth="1.5" strokeOpacity="0.7" />
-            <Halo t={0.6} dura={0.6} d={linea(ox, oy, p[0], p[1])} grosor={2.2} />
-            <Punto t={1.2} cx={n1(p[0])} cy={n1(p[1])} r="4.2" />
+            <Trazo t={0.2} dura={0.5} d={"M" + (ox - 30) + " " + oy + "H" + n1(A[0] + 34)} strokeWidth="1.5" strokeOpacity="0.7" />
+            <Velo t={4.2} d={"M" + n1(ox) + " " + oy + "L" + n1(A[0]) + " " + oy + "L" + n1(Q[0]) + " " + n1(Q[1]) + "Z"} fill="#FFF1C9" fillOpacity="0.1" stroke="none" />
+            <Velo t={7.6} d={"M" + n1(Q[0]) + " " + n1(Q[1]) + "L" + n1(B[0]) + " " + n1(B[1]) + "L" + n1(P[0]) + " " + n1(P[1]) + "Z"} fill="#FFF1C9" fillOpacity="0.1" stroke="none" />
+            <Halo t={0.6} dura={0.6} d={linea([ox, oy], P)} grosor={2.2} />
+            <Punto t={1.2} cx={n1(P[0])} cy={n1(P[1])} r="4.2" />
             <Punto t={0.4} cx={ox} cy={oy} r="3.4" />
-            <Trazo t={1.6} dura={0.5} d={linea(ox, oy, q[0], q[1])} strokeWidth="2" />
-            <Trazo t={1.9} dura={0.3} d={arco(34, 0, a)} strokeWidth="1.6" />
-            <Trazo t={2.4} dura={0.4} d={linea(q[0], q[1], p[0], p[1])} strokeWidth="2" />
-            <Trazo t={2.8} dura={0.2} d={rectoQ} strokeWidth="1.3" />
-            <Trazo t={3.0} dura={0.3} d={arco(58, a, a + b)} strokeWidth="1.6" />
-            <Halo t={4.0} dura={0.5} d={linea(q[0], q[1], q[0], oy)} grosor={3} />
-            <Trazo t={4.5} dura={0.2} d={rectoPie} strokeWidth="1.2" />
-            <Trazo t={5.0} dura={0.4} d={linea(q[0], q[1], p[0], q[1])} strokeWidth="1.3" strokeDasharray="5 5" />
-            <Halo t={5.5} dura={0.5} d={linea(p[0], q[1], p[0], p[1])} grosor={3} />
-            <Trazo t={6.0} dura={0.2} d={rectoR} strokeWidth="1.2" />
-            <Trazo t={6.6} dura={0.5} d={linea(q[0], q[1], regla, q[1])} strokeWidth="1.1" strokeDasharray="2 5" strokeOpacity="0.85" />
-            <Trazo t={6.6} dura={0.6} d={linea(p[0], p[1], regla, p[1])} strokeWidth="1.1" strokeDasharray="2 5" strokeOpacity="0.85" />
-            <Halo t={7.2} dura={0.5} d={linea(regla, oy, regla, q[1] + 2)} grosor={3} />
-            <Halo t={7.8} dura={0.5} d={linea(regla, q[1] - 2, regla, p[1])} grosor={3} />
-            <Trazo t={7.8} dura={0.2} d={marca(regla, q[1])} strokeWidth="1.4" />
-            <Trazo t={8.3} dura={0.2} d={marca(regla, p[1])} strokeWidth="1.4" />
-            <Luz t={8.4} dura={0.6} d={linea(regla, oy, regla, p[1])} />
-            <Halo t={10.0} dura={0.5} d={linea(otra, oy, otra, oy - altoA + 2)} grosor={3} />
-            <Halo t={10.6} dura={0.5} d={linea(otra, oy - altoA - 2, otra, oy - altoA - altoB)} grosor={3} />
-            <Trazo t={10.6} dura={0.2} d={marca(otra, oy - altoA)} strokeWidth="1.4" />
-            <Trazo t={11.1} dura={0.2} d={marca(otra, oy - altoA - altoB)} strokeWidth="1.4" />
-            <Trazo t={11.5} dura={0.4} d={linea(regla - 14, p[1], otra + 14, p[1])} strokeWidth="1.1" strokeDasharray="6 5" strokeOpacity="0.85" />
+            <Trazo t={1.6} dura={0.5} d={linea([ox, oy], Q)} strokeWidth="2" />
+            <Velo t={2.0} d={sectorEn([ox, oy], 32, 0, a)} fill={oro} fillOpacity="0.5" stroke="none" />
+            <Trazo t={2.0} dura={0.3} d={arcoEn([ox, oy], 32, 0, a)} stroke={oro} strokeWidth="3.4" />
+            <Trazo t={2.5} dura={0.3} d={arcoEn([ox, oy], 46, a, a + b)} strokeWidth="1.6" />
+            <Trazo t={3.0} dura={0.4} d={linea(Q, P)} strokeWidth="2" />
+            <Trazo t={3.4} dura={0.2} d={rectoQ} strokeWidth="1.3" />
+            <g stroke={oro}>
+              <Halo t={4.4} dura={0.5} d={linea(A, Q)} grosor={3.2} />
+            </g>
+            <Trazo t={4.9} dura={0.2} d={rectoA} strokeWidth="1.2" />
+            <Trazo t={6.0} dura={0.3} d={arcoEn(Q, 19, Math.PI + a, 1.5 * Math.PI)} strokeWidth="1.4" />
+            <Velo t={6.6} d={sectorEn(Q, 27, Math.PI / 2, Math.PI / 2 + a)} fill={oro} fillOpacity="0.5" stroke="none" />
+            <Trazo t={6.6} dura={0.3} d={arcoEn(Q, 27, Math.PI / 2, Math.PI / 2 + a)} stroke={oro} strokeWidth="3.4" />
+            <g stroke={oroOscuro}>
+              <Halo t={7.8} dura={0.5} d={linea(Q, B)} grosor={3.2} />
+            </g>
+            <Trazo t={8.3} dura={0.4} d={linea(B, P)} strokeWidth="1.5" strokeOpacity="0.9" />
+            <Trazo t={8.7} dura={0.2} d={rectoB} strokeWidth="1.2" />
+            <Halo t={9.6} dura={0.6} d={linea([ox, oy], C)} grosor={3.2} />
+            <Trazo t={10.1} dura={0.3} d={linea(C, P)} strokeWidth="1.5" strokeOpacity="0.9" />
+            <Trazo t={10.4} dura={0.2} d={rectoC} strokeWidth="1.2" />
+            <Luz t={10.9} dura={0.6} d={linea(A, B)} />
+            <Luz t={10.9} dura={0.6} d={linea([ox, oy], C)} />
+            <g stroke={oro}>
+              <Halo t={12.8} dura={0.6} d={linea([ox, oy], A)} grosor={3.2} />
+            </g>
+            <g stroke={oroOscuro}>
+              <Halo t={13.8} dura={0.4} d={linea(P, B)} grosor={3.2} />
+            </g>
+            <Halo t={14.6} dura={0.4} d={linea(C, P)} grosor={3.2} />
+            <Luz t={15.4} dura={0.6} d={linea(C, B)} />
+            <Luz t={15.4} dura={0.6} d={linea([ox, oy], A)} />
           </Infografia>
         );
       }
@@ -23885,6 +24265,7 @@ void main() {
           "c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,-221l0 -0c5.3,-9.3,12,-14,20,-14HFINv40H845.2724" +
           "s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z" +
           "M834 80HFINv40H834z";
+      window.PiezasDeInfografia.SIGNO_RAIZ_KATEX = SIGNO_RAIZ_KATEX;
       function TextoConRaices({ texto, x, y, fontSize, fill, ...resto }) {
         const piezas = String(texto).split(/(√\d+)/).filter((p) => p !== "");
         const marcas = React.useRef([]);
@@ -26826,7 +27207,7 @@ void main() {
             "grupo": "Logaritmos",
             "desde": 0,
             "nombres": ["Qué es un logaritmo", "Producto y cociente", "Potencia", "Cambio de base"],
-            "errores": ["se busca el", "sumar logaritmos es", "el coeficiente pasa como", "puede ser negativo el"]
+            "errores": ["se busca el", "sumar logaritmos es", "por el logaritmo de una potencia", "puede ser negativo el"]
           }
         ],
         "resumen-polinomios-cuarto": [
@@ -26864,14 +27245,64 @@ void main() {
             "grupo": "Fracciones algebraicas",
             "desde": 0,
             "nombres": ["Simplificar", "Sumar y restar", "Multiplicar y dividir"],
-            "errores": ["se tachan factores, nunca sumandos", "no hay nada que tachar", "por un lado y los denominadores por otro", "se da la vuelta a la segunda fracción"]
+            "errores": ["se cancelan factores, nunca sumandos", "no se ve ningún factor común", "por un lado y los denominadores por otro", "se da la vuelta a la segunda fracción"]
+          }
+        ],
+        "resumen-ecuaciones-cuarto": [
+          {
+            "grupo": "Ecuaciones de primer grado",
+            "desde": 0,
+            "nombres": ["Los dos miembros", "Orden", "Sin x", "Problemas"],
+            "errores": ["no sale 5x=9", "también el que no tiene denominador", "el menos delante del paréntesis cambia", "ningún número cumple esa igualdad"]
+          },
+          {
+            "grupo": "Ecuaciones de segundo grado",
+            "desde": 0,
+            "nombres": ["Incompletas", "Dos opuestas", "La fórmula", "El discriminante", "Problemas"],
+            "errores": ["dividir entre x deja solo", "menos por menos es más", "abarca también el -b", "no vale tomar c=1"]
+          },
+          {
+            "grupo": "Ecuaciones polinómicas de grado mayor que 2",
+            "desde": 0,
+            "nombres": ["Una sola potencia", "Bicuadradas", "Factorizar"],
+            "errores": ["con exponente impar no hay dos opuestas", "hay que deshacer el cambio, y salen cuatro", "se perdería la solución 0", "el producto igual a cero solo funciona"]
+          },
+          {
+            "grupo": "Ecuaciones racionales",
+            "desde": 0,
+            "nombres": ["Condiciones", "Mínimo común múltiplo"],
+            "errores": ["también se multiplica la x suelta", "anula un denominador", "se anotan antes de multiplicar"]
+          },
+          {
+            "grupo": "Ecuaciones con radicales",
+            "desde": 0,
+            "nombres": ["Aislar y elevar", "Comprobar"],
+            "errores": ["falta el doble producto", "se aísla el radical antes de elevar", "solo la original decide", "la raíz no se reparte en una suma"]
+          },
+          {
+            "grupo": "Ecuaciones exponenciales",
+            "desde": 0,
+            "nombres": ["Igualar bases", "Despejar el exponente", "Cambio de variable"],
+            "errores": ["multiplica los exponentes", "se suman como términos semejantes", "una potencia de base positiva nunca lo es", "se duplica el exponente"]
+          },
+          {
+            "grupo": "Ecuaciones logarítmicas",
+            "desde": 0,
+            "nombres": ["Sin logaritmos", "Argumentos positivos"],
+            "errores": ["la suma de logaritmos es el logaritmo del producto", "el 3 es el logaritmo, no el argumento", "el 2 es el exponente de x", "no por ser negativo"]
+          },
+          {
+            "grupo": "Sistemas de ecuaciones",
+            "desde": 0,
+            "nombres": ["Métodos", "Cuántas soluciones", "No lineales"],
+            "errores": ["No basta con hallar una de las dos incógnitas", "el 3 multiplica a los dos términos", "significa que hay infinitas soluciones", "Cada valor de x lleva su y"]
           }
         ],
         "resumen-trigonometria": [
           {
             "grupo": "Razones trigonométricas de un ángulo agudo",
             "desde": 0,
-            "nombres": ["Grados y radianes", "Seno, coseno y tangente", "Las inversas", "Relación fundamental", "Con la tangente", "Ángulos notables", "Pendiente"],
+            "nombres": ["Grados y radianes", "Seno, coseno y tangente", "Las inversas", "Relación fundamental", "Con la tangente", "Ángulos notables", "Pendiente", "Del valor al ángulo"],
             "errores": ["la relación es", "la cosecante invierte el seno", "el seno no es proporcional al ángulo", "el cuadrado es de la razón"]
           },
           {
@@ -28813,10 +29244,14 @@ void main() {
         };
       }
 
-      function estacionDeSimplificar({ clave, nombre, original, factorizada, condiciones, simplificada, cadenas, pista }) {
+      function estacionDeSimplificar({ clave, nombre, original, factorizada, condiciones, condicionesPrimero, simplificada, cadenas, pista }) {
         const PASOS = condiciones
-          ? ["La fracción", "1. Factorizar", "2. Condiciones", "3. Cancelar"]
-          : ["La fracción", "1. Factorizar", "2. Tachar los factores comunes"];
+          ? condicionesPrimero
+            ? ["La fracción", "1. Condiciones", "2. Factorizar", "3. Cancelar"]
+            : ["La fracción", "1. Factorizar", "2. Condiciones", "3. Cancelar"]
+          : ["La fracción", "1. Factorizar", "2. Cancelar los factores comunes"];
+        const pasoFactorizar = condiciones && condicionesPrimero ? 2 : 1;
+        const pasoCondiciones = condicionesPrimero ? 1 : 2;
         const ultimo = PASOS.length - 1;
         const numeros = PASOS.slice(1).map((paso, orden) => orden + 1);
         const yFinal = condiciones ? 262 : 214;
@@ -28825,6 +29260,8 @@ void main() {
         const centro = 396;
         const xOriginal = centro - (anchoFactorizada + 44) / 2;
         const xFactorizada = centro + (anchoOriginal + 44) / 2;
+        const yFraccion = condicionesPrimero ? 178 : 96;
+        const yCondiciones = condicionesPrimero ? 98 : 180;
 
         function Dibujo({ e }) {
           const tinta = (paso) => (e.paso >= paso ? 1 : 0.4);
@@ -28858,18 +29295,18 @@ void main() {
                   </g>
                 ))}
                 <Rotulo como="g" t={0.3}>
-                  <Cociente x={e.paso >= 1 ? xOriginal : centro} y={96} s={26} arriba={original[0]} abajo={original[1]} />
+                  <Cociente x={e.paso >= pasoFactorizar ? xOriginal : centro} y={yFraccion} s={26} arriba={original[0]} abajo={original[1]} />
                 </Rotulo>
-                {e.paso >= 1 && (
-                  <Rotulo como="g" t={0.9}>
-                    <text x={(xOriginal + anchoOriginal / 2 + xFactorizada - anchoFactorizada / 2) / 2} y="96" fontSize="26">
+                {e.paso >= pasoFactorizar && (
+                  <Rotulo como="g" t={0.3 + 0.6 * pasoFactorizar}>
+                    <text x={(xOriginal + anchoOriginal / 2 + xFactorizada - anchoFactorizada / 2) / 2} y={yFraccion} fontSize="26">
                       =
                     </text>
-                    <Cociente x={xFactorizada} y={96} s={26} arriba={factorizada[0]} abajo={factorizada[1]} />
+                    <Cociente x={xFactorizada} y={yFraccion} s={26} arriba={factorizada[0]} abajo={factorizada[1]} />
                   </Rotulo>
                 )}
-                {condiciones && e.paso >= 2 && (
-                  <Rotulo t={1.5} x={centro} y="180" fontSize="24">
+                {condiciones && e.paso >= pasoCondiciones && (
+                  <Rotulo t={0.3 + 0.6 * pasoCondiciones} x={centro} y={yCondiciones} fontSize="24">
                     {palabra("existe si ")}
                     {formula(condiciones)}
                   </Rotulo>
@@ -28891,7 +29328,7 @@ void main() {
                       </Rotulo>
                     )}
                     <Rotulo t={2.4} x={centro} y={condiciones ? 296 : 272} fontSize="17" opacity="0.92">
-                      {palabra(condiciones ? "las condiciones se conservan, aunque ya no se vean" : "se tachan factores, nunca sumandos")}
+                      {palabra(condiciones ? "las condiciones se conservan, aunque ya no se vean" : "se cancelan factores, nunca sumandos")}
                     </Rotulo>
                   </>
                 )}
@@ -28908,9 +29345,12 @@ void main() {
           Dibujo: Dibujo,
           descripcion: (e) =>
             (condiciones
-              ? "Los tres pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador, anotar las " +
-                "condiciones de existencia y cancelar los factores comunes."
-              : "Los dos pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador y tachar " +
+              ? condicionesPrimero
+                ? "Los tres pasos para simplificar una fracción algebraica: anotar las condiciones de existencia, factorizar el " +
+                  "numerador y el denominador y cancelar los factores comunes."
+                : "Los tres pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador, anotar las " +
+                  "condiciones de existencia y cancelar los factores comunes."
+              : "Los dos pasos para simplificar una fracción algebraica: factorizar el numerador y el denominador y cancelar " +
                 "los factores comunes.") +
             " Se ve hasta el paso " + e.paso + ".",
           mandos: () => [
@@ -28964,12 +29404,14 @@ void main() {
               ))}
               <Letras>
                 {marcas.map((marca) => {
-                  const esRaiz = raices.some((raiz) => Math.abs(raiz - marca) < 1e-9);
+                  const cual = raices.findIndex((raiz) => Math.abs(raiz - marca) < 1e-9);
+                  const esRaiz = cual >= 0;
+                  const aparte = raices.length === 2 && esRaiz && marca < 0 ? (cual === 0 ? -10 : 10) : 0;
                   return (
                     <Rotulo
                       key={marca}
                       t={0.6}
-                      x={n1(px(marca) - (marca === 0 ? 10 : 0))}
+                      x={n1(px(marca) - (marca === 0 ? 10 : 0) + aparte)}
                       y={n1(py(0) + (esRaiz ? 34 : 22))}
                       fontSize={esRaiz ? 22 : 15}
                       fontWeight={esRaiz ? 700 : 400}
@@ -30510,16 +30952,19 @@ void main() {
           nombre: "Fracciones",
           original: ["x^2 − 6x − 16", "x^2 − 64"],
           factorizada: ["(x − 8)(x + 2)", "(x + 8)(x − 8)"],
+          condiciones: "x ≠ 8, x ≠ −8",
+          condicionesPrimero: true,
           simplificada: ["x + 2", "x + 8"],
           cadenas: [
             "\\frac{x^2-6x-16}{x^2-64}",
-            "\\frac{x^2-6x-16}{x^2-64}=\\frac{(x-8)(x+2)}{(x+8)(x-8)}",
-            "\\frac{(x-8)(x+2)}{(x+8)(x-8)}=\\frac{x+2}{x+8}"
+            ["x^2-64=(x+8)(x-8)", "x\\neq8,\\quad x\\neq-8"],
+            ["\\frac{x^2-6x-16}{x^2-64}=\\frac{(x-8)(x+2)}{(x+8)(x-8)}", "x\\neq8,\\quad x\\neq-8"],
+            ["\\frac{(x-8)(x+2)}{(x+8)(x-8)}=\\frac{x+2}{x+8}", "x\\neq8,\\quad x\\neq-8"]
           ],
           pista: (
             <>
-              Baja el paso a «La fracción» y piensa cada uno antes de destaparlo. Se tachan factores, nunca sumandos: por eso
-              hay que factorizar antes.
+              Baja el paso a «La fracción» y piensa cada uno antes de destaparlo. Las condiciones se anotan lo primero, y se
+              cancelan factores, nunca sumandos: por eso hay que factorizar antes.
             </>
           )
         })
@@ -30534,6 +30979,669 @@ void main() {
             titulo="Polinomios, de un vistazo"
             estaciones={ESTACIONES_POLINOMIOS_CUARTO}
             reparto={LO_ESCRITO["resumen-polinomios-cuarto"]}
+          />
+        );
+      }
+
+
+
+      function Subindice({ children }) {
+        return (
+          <tspan>
+            <tspan dy="0.3em" fontSize="0.68em">
+              {children}
+            </tspan>
+            <tspan dy="-0.204em">{"​"}</tspan>
+          </tspan>
+        );
+      }
+
+      const LETRAS_DE_PALABRA = "abcdefghijklmnopqrstuvwxyzáéíóúñü";
+      function formulaDePasos(texto) {
+        const piezas = [];
+        let lugar = 0;
+        const grupo = (desde) => {
+          if (texto[desde] === "{") {
+            const fin = texto.indexOf("}", desde);
+            return [texto.slice(desde + 1, fin), fin + 1];
+          }
+          return [texto[desde], desde + 1];
+        };
+        while (lugar < texto.length) {
+          const letra = texto[lugar];
+          if (letra === "^" || letra === "_") {
+            const [dentro, siguiente] = grupo(lugar + 1);
+            piezas.push(
+              letra === "^" ? <Sup key={lugar}>{formulaDePasos(dentro)}</Sup> : <Subindice key={lugar}>{formulaDePasos(dentro)}</Subindice>
+            );
+            lugar = siguiente;
+          } else if (LETRAS_DE_PALABRA.indexOf(letra) >= 0) {
+            let fin = lugar;
+            while (fin < texto.length && LETRAS_DE_PALABRA.indexOf(texto[fin]) >= 0) {
+              fin += 1;
+            }
+            piezas.push(fin - lugar > 1 ? texto.slice(lugar, fin) : <React.Fragment key={lugar}>{cursiva(letra)}</React.Fragment>);
+            lugar = fin;
+          } else {
+            piezas.push(letra);
+            lugar += 1;
+          }
+        }
+        return piezas;
+      }
+
+      function anchoDePasos(texto) {
+        return anchoDeFormula(texto.split("{").join("").split("}").join("").split("_").join("^"));
+      }
+
+      const leidoDePasos = (texto) =>
+        texto.split("^{").join(" elevado a ").split("^").join(" elevado a ").split("_{").join(" en base ").split("_").join(" en base ").split("{").join("").split("}").join("");
+
+      function Escrito({ x, y, s, valor, peso }) {
+        if (typeof valor === "string") {
+          return (
+            <text x={n1(x)} y={n1(y)} fontSize={s} textAnchor="start" fontWeight={peso}>
+              {formulaDePasos(valor)}
+            </text>
+          );
+        }
+        const antes = valor.antes || "";
+        const xRaiz = x + 0.84 * s * anchoDePasos(antes) + (antes ? 0.75 * s : 0.5 * s);
+        const dentro = 1.02 * s * anchoDePasos(valor.raiz) + 0.12 * s;
+        return (
+          <g fontWeight={peso}>
+            {antes && (
+              <text x={n1(x)} y={n1(y)} fontSize={s} textAnchor="start">
+                {formulaDePasos(antes)}
+              </text>
+            )}
+            <Raiz x={xRaiz} y={y} s={s} ancho={dentro}>
+              {formulaDePasos(valor.raiz)}
+            </Raiz>
+            {valor.despues && (
+              <text x={n1(xRaiz + dentro + 0.2 * s)} y={n1(y)} fontSize={s} textAnchor="start">
+                {formulaDePasos(valor.despues.trim())}
+              </text>
+            )}
+          </g>
+        );
+      }
+
+      const leidoDeEscrito = (valor) =>
+        typeof valor === "string"
+          ? leidoDePasos(valor)
+          : leidoDePasos(valor.antes || "") + " raíz de " + leidoDePasos(valor.raiz) + leidoDePasos(valor.despues || "");
+
+      function estacionDePasos({ clave, nombre, regla, inicio, ejemplos, pista }) {
+        const COLUMNA = 404;
+        const ANCHO_COLUMNA = 224;
+        const filas = (ejemplo) => {
+          const cuantas = ejemplo.pasos.length;
+          const salto = cuantas > 1 ? Math.min(66, 196 / (cuantas - 1)) : 0;
+          const arriba = 84 + Math.max(0, (196 - salto * (cuantas - 1)) / 2);
+          return ejemplo.pasos.map((paso, orden) => arriba + salto * orden);
+        };
+        const palomita = (x, y) => "M" + n1(x - 9) + " " + n1(y) + "l6 7l12 -15";
+        const aspa = (x, y) => "M" + n1(x - 8) + " " + n1(y - 8) + "l16 16M" + n1(x + 8) + " " + n1(y - 8) + "l-16 16";
+
+        function Dibujo({ e, poner }) {
+          const ejemplo = ejemplos[e.i];
+          const ultimo = ejemplo.pasos.length;
+          const ys = filas(ejemplo);
+          const candidatas = ejemplo.candidatas || [];
+          const alto = 54;
+          const hueco = 10;
+          const total = candidatas.length * (alto + hueco) - hueco;
+          const yCandidata = (orden) => 182 - total / 2 + orden * (alto + hueco);
+          return (
+            <>
+              {ys.slice(1).map((y, orden) => (
+                <Velo
+                  key={"guia" + orden}
+                  t={0.3 + 0.3 * orden}
+                  d={"M44 " + n1(ys[orden] + 17) + "V" + n1(y - 17)}
+                  strokeOpacity={e.paso > orden + 1 ? 0.8 : 0.3}
+                  strokeWidth="1.6"
+                />
+              ))}
+              {ys.map((y, orden) => (
+                <Velo
+                  key={"circulo" + orden}
+                  t={0.2 + 0.3 * orden}
+                  como="circle"
+                  cx="44"
+                  cy={n1(y)}
+                  r="15"
+                  fill="#fff"
+                  fillOpacity={e.paso > orden ? 0.95 : 0.12}
+                  strokeOpacity={e.paso > orden ? 1 : 0.4}
+                  strokeWidth="1.6"
+                />
+              ))}
+              {e.paso >= ultimo ? (
+                candidatas.map((candidata, orden) => (
+                  <g key={"marco" + orden}>
+                    <Velo
+                      t={1.6 + 0.2 * orden}
+                      como="rect"
+                      x={COLUMNA}
+                      y={n1(yCandidata(orden))}
+                      width={ANCHO_COLUMNA}
+                      height={alto}
+                      rx="10"
+                      fill="#fff"
+                      fillOpacity={candidata.vale ? 0.16 : 0.04}
+                      strokeOpacity={candidata.vale ? 0.9 : 0.55}
+                      strokeDasharray={candidata.vale ? undefined : "6 5"}
+                      strokeWidth="1.6"
+                    />
+                    <Velo
+                      t={1.8 + 0.2 * orden}
+                      d={candidata.vale ? palomita(COLUMNA + ANCHO_COLUMNA - 22, yCandidata(orden) + 31) : aspa(COLUMNA + ANCHO_COLUMNA - 22, yCandidata(orden) + 27)}
+                      strokeWidth="3"
+                    />
+                  </g>
+                ))
+              ) : (
+                <Velo
+                  t={1.4}
+                  como="rect"
+                  x={COLUMNA}
+                  y="112"
+                  width={ANCHO_COLUMNA}
+                  height="140"
+                  rx="12"
+                  strokeOpacity="0.4"
+                  strokeDasharray="6 6"
+                  strokeWidth="1.6"
+                />
+              )}
+              <Letras>
+                <Rotulo t={0.1} x="320" y="34" fontSize="18">
+                  {palabra(ejemplo.regla || regla)}
+                </Rotulo>
+                {ys.map((y, orden) => {
+                  const paso = ejemplo.pasos[orden];
+                  const visto = e.paso > orden;
+                  return (
+                    <Toca key={"paso" + orden} alTocar={() => poner({ paso: orden + 1 })}>
+                      <Zona x="24" y={n1(y - 30)} width="372" height="60" />
+                      <Rotulo como="g" t={0.2 + 0.3 * orden}>
+                        <text x="44" y={n1(y + 6)} fontSize="17" fontWeight="700" style={{ fill: visto ? "var(--tono)" : "#fff" }}>
+                          {orden + 1}
+                        </text>
+                      </Rotulo>
+                      <Rotulo t={0.3 + 0.3 * orden} x="72" y={n1(y - 5)} fontSize="16" textAnchor="start" opacity={visto ? 1 : 0.45}>
+                        {palabra(paso.hace, e.paso === orden + 1)}
+                      </Rotulo>
+                      {visto && paso.queda && (
+                        <Rotulo como="g" t={0.4 + 0.3 * orden}>
+                          <Escrito x={72} y={y + 21} s={20} valor={paso.queda} />
+                        </Rotulo>
+                      )}
+                    </Toca>
+                  );
+                })}
+                <Toca alTocar={() => poner({ paso: ultimo })}>
+                  <Zona x={COLUMNA} y="60" width={ANCHO_COLUMNA} height="250" />
+                  {e.paso >= ultimo ? (
+                    candidatas.length > 0 ? (
+                      candidatas.map((candidata, orden) => (
+                        <Rotulo key={"candidata" + orden} como="g" t={1.7 + 0.2 * orden} opacity={candidata.vale ? 1 : 0.7}>
+                          <Escrito x={COLUMNA + 14} y={yCandidata(orden) + 23} s={19} valor={candidata.valor} peso="700" />
+                          <Escrito x={COLUMNA + 14} y={yCandidata(orden) + 45} s={14} valor={candidata.porque} />
+                        </Rotulo>
+                      ))
+                    ) : (
+                      <Rotulo t={1.7} x={COLUMNA + ANCHO_COLUMNA / 2} y="190" fontSize="23" fontWeight="700">
+                        {formulaDePasos(ejemplo.resultado)}
+                      </Rotulo>
+                    )
+                  ) : (
+                    <Rotulo t={1.5} x={COLUMNA + ANCHO_COLUMNA / 2} y="190" fontSize="17" opacity="0.6">
+                      {palabra(candidatas.length > 0 ? "lo que sale, y si vale" : "lo que sale")}
+                    </Rotulo>
+                  )}
+                </Toca>
+              </Letras>
+            </>
+          );
+        }
+
+        return {
+          clave: clave,
+          nombre: nombre,
+          inicial: { i: 0, paso: ejemplos[0].pasos.length },
+          duracion: 2.6,
+          Dibujo: Dibujo,
+          descripcion: (e) => {
+            const ejemplo = ejemplos[e.i];
+            const vistos = ejemplo.pasos.slice(0, e.paso);
+            let texto = (ejemplo.regla || regla) + ". Ejemplo " + (e.i + 1) + " de " + ejemplos.length + ". ";
+            texto += vistos.length
+              ? "Pasos a la vista: " + vistos.map((paso) => paso.hace + (paso.queda ? ", " + leidoDeEscrito(paso.queda) : "")).join("; ") + "."
+              : "Todavía sin ningún paso.";
+            if (e.paso >= ejemplo.pasos.length) {
+              texto += ejemplo.candidatas
+                ? " " + ejemplo.candidatas.map((candidata) => leidoDeEscrito(candidata.valor) + (candidata.vale ? ", vale" : ", no vale")).join("; ") + "."
+                : " Sale " + leidoDePasos(ejemplo.resultado) + ".";
+            }
+            return texto;
+          },
+          mandos: (e) => [
+            {
+              tipo: "opciones",
+              clave: "i",
+              nombre: "el ejemplo",
+              rotulo: "Ejemplo",
+              opciones: ejemplos.map((ejemplo, orden) => ({ valor: orden, rotulo: ejemplo.rotulo || <Mates tex={ejemplo.tex} /> })),
+              cambios: (valor) => ({ paso: ejemplos[valor].pasos.length })
+            },
+            {
+              tipo: "paso",
+              clave: "paso",
+              nombre: "el paso",
+              rotulo: "Paso",
+              min: 0,
+              max: ejemplos[e.i].pasos.length,
+              escribe: (valor) => (valor === 0 ? inicio || "La ecuación" : valor + ". " + ejemplos[e.i].pasos[valor - 1].hace)
+            }
+          ],
+          vivo: (e) => {
+            const ejemplo = ejemplos[e.i];
+            const lineas = [ejemplo.tex];
+            ejemplo.pasos.slice(0, e.paso).forEach((paso) => {
+              if (paso.tex) {
+                lineas.push(paso.tex);
+              }
+            });
+            if (e.paso >= ejemplo.pasos.length && ejemplo.cierre) {
+              lineas.push(ejemplo.cierre);
+            }
+            return lineas;
+          },
+          pista: pista
+        };
+      }
+
+      const ESTACIONES_ECUACIONES_CUARTO = [
+        estacionDePasos({
+          clave: "primer-grado",
+          nombre: "Primer grado",
+          regla: "Lo mismo en los dos miembros, paso a paso",
+          ejemplos: [
+            {
+              tex: "4x-1=x+8",
+              pasos: [
+                { hace: "Restar x en los dos miembros", queda: "3x − 1 = 8", tex: "3x-1=8" },
+                { hace: "Sumar 1 en los dos miembros", queda: "3x = 9", tex: "3x=9" },
+                { hace: "Dividir los dos entre 3", queda: "x = 3", tex: "x=3" }
+              ],
+              resultado: "x = 3",
+              cierre: <>Una solución.</>
+            },
+            {
+              tex: "\\frac{x+2}{3}-\\frac{x-4}{2}=\\frac{x}{6}-1",
+              pasos: [
+                { hace: "Multiplicar por 6 cada término", queda: "2(x + 2) − 3(x − 4) = x − 6", tex: "2(x+2)-3(x-4)=x-6" },
+                { hace: "Hacer los productos", queda: "2x + 4 − 3x + 12 = x − 6", tex: "2x+4-3x+12=x-6" },
+                { hace: "Agrupar", queda: "−x + 16 = x − 6", tex: "-x+16=x-6" },
+                { hace: "Restar x y 16; dividir entre −2", queda: "−2x = −22", tex: "-2x=-22\\iff x=11" }
+              ],
+              resultado: "x = 11",
+              cierre: <>Una solución: los dos miembros valen <Mates tex="\frac{5}{6}" />.</>
+            },
+            {
+              tex: "2(x+3)=2x+1",
+              pasos: [
+                { hace: "Hacer el producto", queda: "2x + 6 = 2x + 1", tex: "2x+6=2x+1" },
+                { hace: "Restar 2x y 6 en los dos", queda: "0x = −5", tex: "0x=-5" }
+              ],
+              resultado: "ninguna solución",
+              cierre: <>Ningún número cumple esa igualdad: no tiene solución.</>
+            },
+            {
+              tex: "3(x-2)+x=4x-6",
+              pasos: [
+                { hace: "Hacer el producto y agrupar", queda: "4x − 6 = 4x − 6", tex: "4x-6=4x-6" },
+                { hace: "Restar 4x y sumar 6 en los dos", queda: "0x = 0", tex: "0x=0" }
+              ],
+              resultado: "infinitas soluciones",
+              cierre: <>Es una identidad: cualquier número es solución.</>
+            }
+          ],
+          pista: (
+            <>
+              Baja el paso a «La ecuación» y piensa cada uno antes de destaparlo. Cada paso hace lo mismo en los dos
+              miembros, y la ecuación que queda tiene las mismas soluciones.
+            </>
+          )
+        }),
+        estacionDelDiscriminante({
+          clave: "segundo-grado",
+          nombre: "Segundo grado",
+          ecuaciones: [
+            { a: 1, b: 5, c: -14 },
+            { a: 4, b: -12, c: 9 },
+            { a: 1, b: -3, c: 5 }
+          ],
+          ventana: [-8.6, 4.2, -21, 9],
+          pista: (
+            <>
+              Las soluciones de la ecuación son los puntos donde su parábola corta al eje, y el discriminante dice cuántos
+              hay sin resolverla.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "grado-mayor",
+          nombre: "Grado mayor que 2",
+          regla: "Se reduce a ecuaciones que ya sabes resolver",
+          ejemplos: [
+            {
+              tex: "x^{3}=-64",
+              pasos: [{ hace: "Exponente impar: una sola solución" }],
+              candidatas: [{ valor: "x = −4", vale: true, porque: "(−4)^3 = −64" }],
+              cierre: <>Con exponente impar no hay dos opuestas.</>
+            },
+            {
+              tex: "x^{4}-29x^{2}+100=0",
+              pasos: [
+                { hace: "Cambio z = x²", queda: "z^2 − 29z + 100 = 0", tex: "z^{2}-29z+100=0" },
+                { hace: "Resolver en z", queda: "z = 25,  z = 4", tex: "z=\\frac{29\\pm21}{2}" },
+                { hace: "Deshacer el cambio", tex: "x^{2}=25\\quad\\text{y}\\quad x^{2}=4" }
+              ],
+              candidatas: [
+                { valor: "x = 5", vale: true, porque: "x^2 = 25" },
+                { valor: "x = −5", vale: true, porque: "x^2 = 25" },
+                { valor: "x = 2", vale: true, porque: "x^2 = 4" },
+                { valor: "x = −2", vale: true, porque: "x^2 = 4" }
+              ],
+              cierre: <>Cuatro soluciones: hay que deshacer el cambio.</>
+            },
+            {
+              tex: "x^{4}+5x^{2}-36=0",
+              pasos: [
+                { hace: "Cambio z = x²", queda: "z^2 + 5z − 36 = 0", tex: "z^{2}+5z-36=0" },
+                { hace: "Resolver en z", queda: "z = 4,  z = −9" },
+                { hace: "Deshacer el cambio", tex: "x^{2}=4\\quad\\text{y}\\quad x^{2}=-9" }
+              ],
+              candidatas: [
+                { valor: "x = 2", vale: true, porque: "x^2 = 4" },
+                { valor: "x = −2", vale: true, porque: "x^2 = 4" },
+                { valor: "x^2 = −9", vale: false, porque: "no aporta" }
+              ],
+              cierre: <>Dos soluciones: <Mates tex="x^{2}=-9" /> no aporta ninguna.</>
+            },
+            {
+              tex: "x^{3}-6x^{2}=0",
+              pasos: [
+                { hace: "Sacar factor común", queda: "x^2(x − 6) = 0", tex: "x^{2}(x-6)=0" },
+                { hace: "Cada factor, igual a 0" }
+              ],
+              candidatas: [
+                { valor: "x = 0", vale: true, porque: "doble" },
+                { valor: "x = 6", vale: true, porque: "x − 6 = 0" }
+              ],
+              cierre: <>Sin dividir entre <Mates tex="x^{2}" />, que perdería el <Mates tex="0" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Con una sola potencia, se mira si el exponente es par o impar; si es bicuadrada, el cambio <Mates tex="z=x^{2}" />;
+              si no, un <Mates tex="0" /> en un miembro y factorizar.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "racionales",
+          nombre: "Racionales",
+          regla: "Lo primero, las condiciones; al final, se descartan las prohibidas",
+          ejemplos: [
+            {
+              tex: "\\frac{x}{3}=\\frac{6}{x}+1",
+              pasos: [
+                { hace: "Condición", queda: "x ≠ 0", tex: "x\\neq0" },
+                { hace: "Multiplicar por 3x", queda: "x^2 = 18 + 3x", tex: "x^{2}=18+3x" },
+                { hace: "Igualar a 0", queda: "x^2 − 3x − 18 = 0", tex: "x^{2}-3x-18=0" },
+                { hace: "Resolver y descartar", tex: "x=\\frac{3\\pm9}{2}" }
+              ],
+              candidatas: [
+                { valor: "x = 6", vale: true, porque: "2 = 1 + 1" },
+                { valor: "x = −3", vale: true, porque: "−1 = −2 + 1" }
+              ],
+              cierre: <>Ninguna es <Mates tex="0" />: valen las dos.</>
+            },
+            {
+              tex: "\\frac{x+3}{x-2}=\\frac{5}{x-2}+x",
+              pasos: [
+                { hace: "Condición", queda: "x ≠ 2", tex: "x\\neq2" },
+                { hace: "Multiplicar por x − 2", queda: "x + 3 = 5 + x(x − 2)", tex: "x+3=5+x(x-2)" },
+                { hace: "Igualar a 0", queda: "x^2 − 3x + 2 = 0", tex: "x^{2}-3x+2=0" },
+                { hace: "Resolver y descartar" }
+              ],
+              candidatas: [
+                { valor: "x = 1", vale: true, porque: "no es 2" },
+                { valor: "x = 2", vale: false, porque: "anula un denominador" }
+              ],
+              cierre: <>La única solución es <Mates tex="x=1" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Elige el segundo ejemplo: el <Mates tex="2" /> sale de la ecuación de segundo grado, pero estaba prohibido desde
+              el primer paso.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "radicales",
+          nombre: "Con radicales",
+          regla: "Aislar, elevar al cuadrado y comprobar en la original",
+          ejemplos: [
+            {
+              tex: "x-\\sqrt{x+17}=3",
+              pasos: [
+                { hace: "Aislar el radical", queda: { raiz: "x + 17", despues: " = x − 3" }, tex: "\\sqrt{x+17}=x-3" },
+                { hace: "Elevar al cuadrado", queda: "x + 17 = x^2 − 6x + 9", tex: "x+17=x^{2}-6x+9" },
+                { hace: "Igualar a 0", queda: "x^2 − 7x − 8 = 0", tex: "x^{2}-7x-8=0" },
+                { hace: "Comprobar en la original" }
+              ],
+              candidatas: [
+                { valor: "x = 8", vale: true, porque: "8 − 5 = 3" },
+                { valor: "x = −1", vale: false, porque: "−1 − 4 = −5" }
+              ],
+              cierre: <>El <Mates tex="-1" /> es una solución falsa: la única es <Mates tex="x=8" />.</>
+            },
+            {
+              tex: "\\sqrt{12x-32}=x",
+              pasos: [
+                { hace: "El radical ya está aislado", queda: { raiz: "12x − 32", despues: " = x" } },
+                { hace: "Elevar al cuadrado", queda: "12x − 32 = x^2", tex: "12x-32=x^{2}" },
+                { hace: "Igualar a 0", queda: "x^2 − 12x + 32 = 0", tex: "x^{2}-12x+32=0" },
+                { hace: "Comprobar en la original" }
+              ],
+              candidatas: [
+                { valor: "x = 4", vale: true, porque: { raiz: "16", despues: " = 4" } },
+                { valor: "x = 8", vale: true, porque: { raiz: "64", despues: " = 8" } }
+              ],
+              cierre: <>Esta vez valen las dos, pero la comprobación se hace igual.</>
+            }
+          ],
+          pista: (
+            <>
+              Al elevar al cuadrado pueden aparecer soluciones falsas: solo la ecuación original decide cuáles valen.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "exponenciales",
+          nombre: "Exponenciales",
+          regla: "La incógnita está en el exponente",
+          ejemplos: [
+            {
+              tex: "5^{x-1}=125",
+              regla: "Igualar bases",
+              pasos: [
+                { hace: "Escribir 125 como potencia de 5", queda: "5^{x − 1} = 5^3", tex: "5^{x-1}=5^{3}" },
+                { hace: "Igualar los exponentes", queda: "x − 1 = 3", tex: "x-1=3" },
+                { hace: "Despejar", queda: "x = 4", tex: "x=4" }
+              ],
+              resultado: "x = 4"
+            },
+            {
+              tex: "2^{x}=10",
+              regla: "Despejar el exponente",
+              pasos: [
+                { hace: "Por la definición de logaritmo", queda: "x = log_2 10", tex: "x=\\log_{2}10" },
+                { hace: "Estimar con potencias de 2", queda: "3 < x < 4", tex: "2^{3}=8<10<16=2^{4}" },
+                { hace: "Cambio de base, con log 2 ≈ 0,301", queda: "x ≈ 3,32", tex: "x=\\frac{\\log10}{\\log2}\\approx\\frac{1}{0{,}301}\\approx3{,}32" }
+              ],
+              resultado: "x = log_2 10",
+              cierre: <>La solución exacta es <Mates tex="\log_{2}10" />; el redondeo, solo si se pide.</>
+            },
+            {
+              tex: "4^{x}-24\\cdot2^{x}+128=0",
+              regla: "Con un cambio de variable",
+              pasos: [
+                { hace: "Cambio de variable", queda: "z = 2^x", tex: "4^{x}=\\left(2^{x}\\right)^{2},\\quad z=2^{x}" },
+                { hace: "Queda de segundo grado", queda: "z^2 − 24z + 128 = 0", tex: "z^{2}-24z+128=0" },
+                { hace: "Resolver en z", queda: "z = 16,  z = 8" },
+                { hace: "Deshacer el cambio", tex: "2^{x}=16\\quad\\text{y}\\quad2^{x}=8" }
+              ],
+              candidatas: [
+                { valor: "x = 4", vale: true, porque: "2^4 = 16" },
+                { valor: "x = 3", vale: true, porque: "2^3 = 8" }
+              ],
+              cierre: <>Las soluciones son las de <Mates tex="x" />, no las de <Mates tex="z" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Elige el ejemplo y mira la regla de arriba: igualar bases, despejar el exponente con un logaritmo o, si salen{" "}
+              <Mates tex="a^{2x}" /> y <Mates tex="a^{x}" />, el cambio <Mates tex="z=a^{x}" />.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "logaritmicas",
+          nombre: "Logarítmicas",
+          regla: "Una ecuación sin logaritmos; al final, los argumentos",
+          ejemplos: [
+            {
+              tex: "\\log_{2}(x+1)=3",
+              pasos: [
+                { hace: "Por la definición", queda: "x + 1 = 2^3 = 8", tex: "x+1=2^{3}=8" },
+                { hace: "Despejar", queda: "x = 7", tex: "x=7" },
+                { hace: "Comprobar el argumento" }
+              ],
+              candidatas: [{ valor: "x = 7", vale: true, porque: "log_2 8 = 3" }],
+              cierre: <>El argumento vale <Mates tex="8" />, positivo.</>
+            },
+            {
+              tex: "\\log(3x-2)=\\log(x+4)",
+              pasos: [
+                { hace: "Igualar los argumentos", queda: "3x − 2 = x + 4", tex: "3x-2=x+4" },
+                { hace: "Despejar", queda: "x = 3", tex: "x=3" },
+                { hace: "Comprobar los argumentos" }
+              ],
+              candidatas: [{ valor: "x = 3", vale: true, porque: "los dos valen 7" }],
+              cierre: <>Los dos argumentos son positivos.</>
+            },
+            {
+              tex: "\\log x+\\log(x+15)=2",
+              pasos: [
+                { hace: "Logaritmo del producto", queda: "log [x(x + 15)] = 2", tex: "\\log[x(x+15)]=2" },
+                { hace: "Por la definición", queda: "x(x + 15) = 100", tex: "x(x+15)=10^{2}=100" },
+                { hace: "Igualar a 0", queda: "x^2 + 15x − 100 = 0", tex: "x^{2}+15x-100=0" },
+                { hace: "Comprobar los argumentos" }
+              ],
+              candidatas: [
+                { valor: "x = 5", vale: true, porque: "log 5 + log 20 = 2" },
+                { valor: "x = −20", vale: false, porque: "log(−20) no existe" }
+              ],
+              cierre: <>El <Mates tex="-20" /> se descarta porque deja un logaritmo que no existe.</>
+            }
+          ],
+          pista: (
+            <>
+              Con la definición o igualando argumentos, el logaritmo desaparece. Al final, cada argumento tiene que quedar
+              positivo.
+            </>
+          )
+        }),
+        estacionDePasos({
+          clave: "sistemas",
+          nombre: "Sistemas",
+          regla: "De dos incógnitas a una; la solución es un par",
+          inicio: "El sistema",
+          ejemplos: [
+            {
+              rotulo: "Sustitución",
+              tex: "\\left\\{\\begin{aligned}x+2y&=2\\\\3x-y&=13\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Despejar x en la primera", queda: "x = 2 − 2y", tex: "x=2-2y" },
+                { hace: "Sustituir en la segunda", queda: "3(2 − 2y) − y = 13", tex: "3(2-2y)-y=13" },
+                { hace: "Resolver", queda: "y = −1", tex: "6-7y=13\\iff y=-1" },
+                { hace: "Volver a la x", queda: "x = 4", tex: "x=2+2=4" }
+              ],
+              resultado: "x = 4,  y = −1",
+              cierre: <>La solución es el par <Mates tex="x=4" />, <Mates tex="y=-1" />.</>
+            },
+            {
+              rotulo: "Igualación",
+              tex: "\\left\\{\\begin{aligned}y&=2x+1\\\\y&=7-x\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Igualar las dos y", queda: "2x + 1 = 7 − x", tex: "2x+1=7-x" },
+                { hace: "Despejar", queda: "x = 2", tex: "3x=6\\iff x=2" },
+                { hace: "Volver a la y", queda: "y = 5", tex: "y=2\\cdot2+1=5" }
+              ],
+              resultado: "x = 2,  y = 5"
+            },
+            {
+              rotulo: "Reducción",
+              tex: "\\left\\{\\begin{aligned}3x+4y&=10\\\\5x-2y&=8\\end{aligned}\\right.",
+              pasos: [
+                { hace: "La segunda, por 2", queda: "10x − 4y = 16", tex: "10x-4y=16" },
+                { hace: "Sumar las dos", queda: "13x = 26", tex: "13x=26\\iff x=2" },
+                { hace: "En la primera", queda: "6 + 4y = 10", tex: "6+4y=10\\iff y=1" }
+              ],
+              resultado: "x = 2,  y = 1"
+            },
+            {
+              rotulo: "No lineal",
+              tex: "\\left\\{\\begin{aligned}x+y&=13\\\\xy&=40\\end{aligned}\\right.",
+              pasos: [
+                { hace: "Despejar y en la primera", queda: "y = 13 − x", tex: "y=13-x" },
+                { hace: "Sustituir en la segunda", queda: "x(13 − x) = 40", tex: "x(13-x)=40" },
+                { hace: "Igualar a 0", queda: "x^2 − 13x + 40 = 0", tex: "x^{2}-13x+40=0" },
+                { hace: "Cada x, con su y" }
+              ],
+              candidatas: [
+                { valor: "(5, 8)", vale: true, porque: "5 + 8 = 13" },
+                { valor: "(8, 5)", vale: true, porque: "8 · 5 = 40" }
+              ],
+              cierre: <>Dos soluciones, dos pares: no basta con <Mates tex="x=5" /> y <Mates tex="x=8" />.</>
+            }
+          ],
+          pista: (
+            <>
+              Los tres métodos dejan una ecuación con una sola incógnita; la otra sale después. En los no lineales, cada{" "}
+              <Mates tex="x" /> lleva su <Mates tex="y" />.
+            </>
+          )
+        })
+      ];
+
+      function ResumenEcuacionesCuarto({ configuracion, alPreparar }) {
+        return (
+          <Resumen
+            configuracion={configuracion}
+            alPreparar={alPreparar}
+            tono={tonoDeLaUnidad()}
+            titulo="Ecuaciones y sistemas, de un vistazo"
+            estaciones={ESTACIONES_ECUACIONES_CUARTO}
+            reparto={LO_ESCRITO["resumen-ecuaciones-cuarto"]}
           />
         );
       }
@@ -32367,6 +33475,7 @@ void main() {
         "resumen-reales-sociales": ResumenRealesSociales,
         "resumen-reales-cuarto": ResumenRealesCuarto,
         "resumen-polinomios-cuarto": ResumenPolinomiosCuarto,
+        "resumen-ecuaciones-cuarto": ResumenEcuacionesCuarto,
         "resumen-financieras-sociales": ResumenFinancierasSociales
       };
     })();
@@ -40490,12 +41599,264 @@ void main() {
         return { beta: 360 - g, forma: "360^\\circ-", signos: { sen: -1, cos: 1, tg: -1 } };
       }
 
+      let lienzoDeLaCircunferencia = null;
+      function medidaConLaLetra(texto, letra, peso) {
+        if (!lienzoDeLaCircunferencia) {
+          lienzoDeLaCircunferencia = document.createElement("canvas").getContext("2d");
+        }
+        lienzoDeLaCircunferencia.font = peso + " " + letra.toFixed(2) + "px " + window.getComputedStyle(document.body).fontFamily;
+        return lienzoDeLaCircunferencia.measureText(texto);
+      }
+      const anchoConLaLetra = (texto, letra, peso) => medidaConLaLetra(texto, letra, peso).width;
+
+      function coordenadasExactas(notable, signos, letra) {
+        const peso = 600;
+        const chica = letra;
+        const menos = medidaConLaLetra("−", letra, peso);
+        const eje = Number.isFinite(menos.actualBoundingBoxAscent)
+          ? (menos.actualBoundingBoxDescent - menos.actualBoundingBoxAscent) / 2
+          : -0.286 * letra;
+        const cifras = medidaConLaLetra("123", chica, peso);
+        const alto = Number.isFinite(cifras.actualBoundingBoxAscent) ? cifras.actualBoundingBoxAscent : 0.705 * chica;
+        const grosor = Math.max(1.2, 0.08 * letra);
+        const aire = 0.16 * chica;
+        const baseArriba = (raiz) => eje - grosor / 2 - aire - (raiz ? 0.133 * chica : 0);
+        const baseAbajo = eje + grosor / 2 + aire + alto;
+        const sube = -(baseArriba(true) - 0.867 * chica) + 0.08 * letra;
+        const baja = baseAbajo + 0.08 * letra;
+        const piezas = [];
+        let x = 0;
+        const parentesis = (lado) => {
+          const ancho = 0.3 * letra;
+          piezas.push({ tipo: "parentesis", x: x, ancho: ancho, lado: lado, arriba: -sube, abajo: baja, grosor: 0.085 * letra, clave: "p" + lado });
+          x += ancho + 0.08 * letra;
+        };
+        const coordenada = (razon, color) => {
+          const partes = /^\\frac\{(\\sqrt)?(\d+)\}\{(\d+)\}/.exec(notable[razon]);
+          if (signos[razon] < 0) {
+            piezas.push({ tipo: "texto", x: x, y: 0, texto: "−", letra: letra, color: color, clave: razon + "-menos" });
+            x += anchoConLaLetra("−", letra, peso) + 0.12 * letra;
+          }
+          if (!partes) {
+            piezas.push({ tipo: "texto", x: x, y: 0, texto: notable[razon], letra: letra, color: color, clave: razon });
+            x += anchoConLaLetra(notable[razon], letra, peso);
+            return;
+          }
+          const cifra = anchoConLaLetra(partes[2], chica, peso);
+          const arriba = (partes[1] ? 0.833 * chica : 0) + cifra;
+          const abajo = anchoConLaLetra(partes[3], chica, peso);
+          const raya = Math.max(arriba, abajo) + 0.34 * chica;
+          const centro = x + raya / 2;
+          const base = baseArriba(Boolean(partes[1]));
+          if (partes[1]) {
+            piezas.push({ tipo: "raiz", x: centro - arriba / 2 + 0.833 * chica, y: base, em: chica, ancho: cifra, color: color, clave: razon + "-raiz" });
+          }
+          piezas.push({ tipo: "texto", x: centro + arriba / 2 - cifra, y: base, texto: partes[2], letra: chica, color: color, clave: razon + "-arriba" });
+          piezas.push({ tipo: "raya", x: x, y: eje, ancho: raya, grosor: grosor, color: color, clave: razon + "-raya" });
+          piezas.push({ tipo: "texto", x: centro - abajo / 2, y: baseAbajo, texto: partes[3], letra: chica, color: color, clave: razon + "-abajo" });
+          x += raya;
+        };
+        parentesis(-1);
+        coordenada("cos", COLORES_CIRCUNFERENCIA.cos);
+        piezas.push({ tipo: "texto", x: x + 0.12 * letra, y: 0, texto: ";", letra: letra, color: COLORES_CIRCUNFERENCIA.punto, clave: "separa" });
+        x += 0.12 * letra + anchoConLaLetra("; ", letra, peso);
+        coordenada("sen", COLORES_CIRCUNFERENCIA.sen);
+        parentesis(1);
+        return { piezas: piezas, ancho: x - 0.08 * letra, sube: sube, baja: baja };
+      }
+
+      function piezaDeCoordenadas(pieza, halo, signoRaiz) {
+        const blanco = "#ffffff";
+        const clave = pieza.clave + (halo ? "-halo" : "");
+        if (pieza.tipo === "texto") {
+          return (
+            <text
+              key={clave}
+              x={pieza.x.toFixed(2)}
+              y={pieza.y.toFixed(2)}
+              fontSize={pieza.letra.toFixed(2)}
+              fontWeight="600"
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : "none"}
+              strokeWidth={halo ? 4 : 0}
+              strokeLinejoin="round"
+            >
+              {pieza.texto}
+            </text>
+          );
+        }
+        if (pieza.tipo === "raya") {
+          return (
+            <rect
+              key={clave}
+              x={pieza.x.toFixed(2)}
+              y={(pieza.y - pieza.grosor / 2).toFixed(2)}
+              width={pieza.ancho.toFixed(2)}
+              height={pieza.grosor.toFixed(2)}
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : "none"}
+              strokeWidth={halo ? 4 : 0}
+              strokeLinejoin="round"
+            />
+          );
+        }
+        if (pieza.tipo === "raiz") {
+          return (
+            <path
+              key={clave}
+              d={signoRaiz.split("FIN").join(String(Math.round(833 + (1000 * pieza.ancho) / pieza.em)))}
+              transform={"translate(" + (pieza.x - 0.833 * pieza.em).toFixed(2) + " " + (pieza.y - 0.9472 * pieza.em).toFixed(2) + ") scale(" + (pieza.em / 1000).toFixed(5) + ")"}
+              fill={halo ? blanco : pieza.color}
+              stroke={halo ? blanco : pieza.color}
+              strokeWidth={halo ? Math.round(36 + 4000 / pieza.em) : 36}
+              strokeLinejoin="round"
+            />
+          );
+        }
+        const dentro = pieza.lado < 0 ? pieza.x + pieza.ancho : pieza.x;
+        const curva = pieza.lado < 0 ? pieza.x - 0.8 * pieza.ancho : pieza.x + 1.8 * pieza.ancho;
+        return (
+          <path
+            key={clave}
+            d={
+              "M" + dentro.toFixed(2) + " " + pieza.arriba.toFixed(2) +
+              "Q" + curva.toFixed(2) + " " + ((pieza.arriba + pieza.abajo) / 2).toFixed(2) + " " + dentro.toFixed(2) + " " + pieza.abajo.toFixed(2)
+            }
+            fill="none"
+            stroke={halo ? blanco : COLORES_CIRCUNFERENCIA.punto}
+            strokeWidth={(pieza.grosor + (halo ? 4 : 0)).toFixed(2)}
+            strokeLinecap="round"
+          />
+        );
+      }
+
+      const COLORES_CIRCUNFERENCIA = {
+        cos: "#2563eb",
+        sen: "#dc2626",
+        tg: "#16a34a",
+        angulo: "#7c3aed",
+        agudo: "#047857",
+        sombra: "#e8edff",
+        punto: "#0f172a"
+      };
+
+      function coordenadaCorta(valor) {
+        const redondo = Math.round(valor * 100) / 100;
+        if (Math.abs(redondo) < 0.005) {
+          return "0";
+        }
+        return String(redondo).replace("-", "−").replace(".", ",");
+      }
+
+      function anchoDeRotulo(texto, letra) {
+        let em = 0;
+        Array.from(texto).forEach((signo) => {
+          if (/[,;. ]/.test(signo)) {
+            em += 0.3;
+          } else if (/[()]/.test(signo)) {
+            em += 0.36;
+          } else if (signo === "°") {
+            em += 0.42;
+          } else {
+            em += 0.62;
+          }
+        });
+        return em * letra;
+      }
+
+      function cajaDeTexto(x, y, texto, letra, ancla) {
+        const w = anchoDeRotulo(texto, letra);
+        const izquierda = ancla === "middle" ? x - w / 2 : ancla === "end" ? x - w : x;
+        return { x: izquierda, y: y - 0.78 * letra, w: w, h: letra };
+      }
+
+      function estorboDeCaja(caja, estorbos, ancho, alto, margen) {
+        let estorbo = 0;
+        estorbos.forEach((e) => {
+          if (e.zona) {
+            const x = Math.min(caja.x + caja.w, e.zona.x + e.zona.w) - Math.max(caja.x, e.zona.x);
+            const y = Math.min(caja.y + caja.h, e.zona.y + e.zona.h) - Math.max(caja.y, e.zona.y);
+            if (x > 0 && y > 0) {
+              estorbo += e.coste;
+            }
+          } else if (e.anillo) {
+            const [ccx, ccy, radio, grosor] = e.anillo;
+            const nx = Math.max(caja.x, Math.min(ccx, caja.x + caja.w));
+            const ny = Math.max(caja.y, Math.min(ccy, caja.y + caja.h));
+            const cerca = Math.hypot(nx - ccx, ny - ccy);
+            const lejos = Math.max(
+              Math.hypot(caja.x - ccx, caja.y - ccy), Math.hypot(caja.x + caja.w - ccx, caja.y - ccy),
+              Math.hypot(caja.x - ccx, caja.y + caja.h - ccy), Math.hypot(caja.x + caja.w - ccx, caja.y + caja.h - ccy)
+            );
+            if (cerca < radio + grosor / 2 + 1.5 && lejos > radio - grosor / 2 - 1.5) {
+              estorbo += 3;
+            }
+          } else if (e.caja) {
+            const x = Math.min(caja.x + caja.w, e.caja.x + e.caja.w) - Math.max(caja.x, e.caja.x);
+            const y = Math.min(caja.y + caja.h, e.caja.y + e.caja.h) - Math.max(caja.y, e.caja.y);
+            if (x > -2 && y > -2) {
+              estorbo += 4 + (Math.max(0, x) * Math.max(0, y)) / 20;
+            }
+          } else if (e.segmento) {
+            const [x1, y1, x2, y2] = e.segmento;
+            const holgura = (e.grosor || 2) / 2 + (margen === undefined ? 2 : margen);
+            const pasos = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 3));
+            for (let i = 0; i <= pasos; i++) {
+              const x = x1 + ((x2 - x1) * i) / pasos;
+              const y = y1 + ((y2 - y1) * i) / pasos;
+              if (x > caja.x - holgura && x < caja.x + caja.w + holgura && y > caja.y - holgura && y < caja.y + caja.h + holgura) {
+                estorbo += e.peso === undefined ? 1 : e.peso;
+              }
+            }
+          } else if (e.circulo) {
+            const [ccx, ccy, radio] = e.circulo;
+            const nx = Math.max(caja.x, Math.min(ccx, caja.x + caja.w));
+            const ny = Math.max(caja.y, Math.min(ccy, caja.y + caja.h));
+            const d = Math.hypot(nx - ccx, ny - ccy);
+            if (d < radio) {
+              estorbo += 2 * (radio - d);
+            }
+          }
+        });
+        const fuera =
+          Math.max(0, 2 - caja.x) + Math.max(0, caja.x + caja.w - (ancho - 2)) +
+          Math.max(0, 2 - caja.y) + Math.max(0, caja.y + caja.h - (alto - 2));
+        return estorbo + 3 * fuera;
+      }
+
+      function mejorCaja(candidatas, estorbos, ancho, alto, margen) {
+        let mejor = null;
+        candidatas.forEach((caja) => {
+          const coste = 100 * estorboDeCaja(caja, estorbos, ancho, alto, margen) + caja.preferencia;
+          if (!mejor || coste < mejor.coste) {
+            mejor = Object.assign({}, caja, { coste: coste });
+          }
+        });
+        return mejor;
+      }
+
       function CircunferenciaGoniometricaInteractivo({ configuracion, alPreparar }) {
         const reducir = configuracion.modo === "reducir";
         const inicial = Number(configuracion.angulo) || (reducir ? 240 : 130);
         const [angulo, setAngulo] = React.useState(inicial);
         const lienzo = React.useRef(null);
         const arrastre = React.useRef(false);
+        const [anchoEnPantalla, setAnchoEnPantalla] = React.useState(643);
+
+        React.useEffect(() => {
+          const svg = lienzo.current;
+          if (!svg || !window.ResizeObserver) {
+            return undefined;
+          }
+          const observador = new ResizeObserver(() => {
+            const medido = svg.getBoundingClientRect().width;
+            if (medido > 0) {
+              setAnchoEnPantalla(Math.round(medido));
+            }
+          });
+          observador.observe(svg);
+          return () => observador.disconnect();
+        }, [window.katex]);
 
         React.useEffect(() => {
           if (window.katex) {
@@ -40507,9 +41868,15 @@ void main() {
           return null;
         }
 
-        const cx = 230;
+        const colores = COLORES_CIRCUNFERENCIA;
+        const ancho = 540;
+        const alto = 420;
+        const cx = 270;
         const cy = 210;
         const R = 150;
+        const radioArco = 24;
+        const radioPunto = 8;
+        const letra = Math.round((150 * Math.min(560, anchoEnPantalla) * 540) / (470 * anchoEnPantalla)) / 10;
         const vueltas = reducir ? Math.floor(angulo / 360) : 0;
         const g = reducir ? angulo - 360 * vueltas : angulo % 360;
         const radianes = (g * Math.PI) / 180;
@@ -40542,14 +41909,13 @@ void main() {
         };
 
         const arcoAlfa = (() => {
-          const radio = 22;
           if (g === 0) {
             return "";
           }
           const grande = g > 180 ? 1 : 0;
           return (
-            "M" + (cx + radio) + " " + cy + "A" + radio + " " + radio + " 0 " + grande + " 0 " +
-            (cx + radio * coseno).toFixed(1) + " " + (cy - radio * seno).toFixed(1)
+            "M" + (cx + radioArco) + " " + cy + "A" + radioArco + " " + radioArco + " 0 " + grande + " 0 " +
+            (cx + radioArco * coseno).toFixed(1) + " " + (cy - radioArco * seno).toFixed(1)
           );
         })();
 
@@ -40560,6 +41926,173 @@ void main() {
           "M" + cx + " " + cy + "H" + (cx - R) + "A" + R + " " + R + " 0 0 0 " + cx + " " + (cy + R) + "Z",
           "M" + cx + " " + cy + "V" + (cy + R) + "A" + R + " " + R + " 0 0 0 " + (cx + R) + " " + cy + "Z"
         ][cuadrante];
+
+        const rotulosCuadrantes = [
+          { texto: "1.º", x: cx + 1.3 * R, y: cy - 1.22 * R },
+          { texto: "2.º", x: cx - 1.3 * R, y: cy - 1.22 * R },
+          { texto: "3.º", x: cx - 1.3 * R, y: cy + 1.22 * R + 10 },
+          { texto: "4.º", x: cx + 1.3 * R, y: cy + 1.22 * R + 10 }
+        ];
+        const tangenteVisible = !reducir && tangente !== null;
+        const discontinuaTangente = tangenteVisible && Math.abs(tangente) <= 1.9;
+        const yTangente = tangenteVisible ? cy - R * alturaTangente : cy;
+
+        const estorbos = [
+          { segmento: [cx - R - 30, cy, cx + R + 60, cy], grosor: 1.3 },
+          { segmento: [cx, cy + R + 30, cx, cy - R - 30], grosor: 1.3 },
+          { segmento: [cx + R, cy - 2 * R, cx + R, cy + 2 * R], grosor: 1, peso: 0.01 },
+          { segmento: [cx, cy, px, py], grosor: 2.5 },
+          { segmento: [cx, cy, px, cy], grosor: 6 },
+          { segmento: [px, cy, px, py], grosor: 6 },
+          { circulo: [px, py, radioPunto + 2] },
+          { caja: cajaDeTexto(cx + R + 6, cy + 18, "1", letra - 1, "start") }
+        ].concat(rotulosCuadrantes.map((r) => ({ caja: cajaDeTexto(r.x, r.y, r.texto, letra - 1, "middle") })));
+        for (let grados = 0; grados < g; grados += 10) {
+          const a1 = (grados * Math.PI) / 180;
+          const a2 = (Math.min(g, grados + 10) * Math.PI) / 180;
+          estorbos.push({
+            segmento: [cx + radioArco * Math.cos(a1), cy - radioArco * Math.sin(a1), cx + radioArco * Math.cos(a2), cy - radioArco * Math.sin(a2)],
+            grosor: 2.4
+          });
+        }
+        if (tangenteVisible) {
+          estorbos.push({ segmento: [cx + R, cy, cx + R, yTangente], grosor: 5 });
+          if (discontinuaTangente) {
+            estorbos.push({ segmento: [coseno >= 0 ? px : cx, coseno >= 0 ? py : cy, cx + R, cy - R * tangente], grosor: 1.2, peso: 0.01 });
+          }
+        }
+        if (reducir && reduccion.forma) {
+          estorbos.push({ segmento: [cx, cy, qx, qy], grosor: 2.5 });
+          estorbos.push({ segmento: [qx, qy, px, py], grosor: 1.5, peso: 0.01 });
+          estorbos.push({ circulo: [qx, qy, 11] });
+          estorbos.push({ caja: cajaDeTexto(qx + 10, qy - 10, beta + "°", letra, "start") });
+        }
+        const trazo = { anillo: [cx, cy, R, 2.2] };
+        const coloca = (candidatas, mas, siCabe, margen) => {
+          const mejor = mejorCaja(candidatas, estorbos.concat(mas), ancho, alto, margen);
+          if (!mejor || (siCabe && mejor.coste >= 100)) {
+            return null;
+          }
+          estorbos.push({ caja: mejor });
+          return mejor;
+        };
+        const corto = 25;
+        const centrada = (x, y, w, h, preferencia) => ({ x: x - w / 2, y: y - h / 2, w: w, h: h, preferencia: preferencia });
+        const altoRotulo = letra + 2;
+
+        const textoAngulo = g + "°";
+        let rotuloAngulo = null;
+        if (g > 0) {
+          const w = anchoDeRotulo(textoAngulo, letra) + 4;
+          const candidatas = [];
+          for (let k = 0; k <= 26; k++) {
+            [1, -1].forEach((sentido) => {
+              if (k === 0 && sentido < 0) {
+                return;
+              }
+              const grados = g / 2 + sentido * k * 3.5;
+              const giro = (grados * Math.PI) / 180;
+              const fuera = grados < 3 ? 40 : grados > g - 3 ? 30 : 0;
+              [32, 35, 38, 41, 44, 47, 51, 56, 62, 70].forEach((d, j) => {
+                const preferencia = 1.5 * k + j + fuera;
+                candidatas.push(centrada(cx + d * Math.cos(giro), cy - d * Math.sin(giro), w, altoRotulo, preferencia));
+              });
+            });
+          }
+          rotuloAngulo = coloca(candidatas, [{ circulo: [cx, cy, radioArco + 2] }], false, 1);
+        }
+
+        const textoX = coordenadaCorta(coseno);
+        const textoY = coordenadaCorta(seno);
+        const signoRaiz = (window.PiezasDeInfografia || {}).SIGNO_RAIZ_KATEX;
+        const exactas =
+          signoRaiz && [30, 45, 60].indexOf(reduccion.beta) >= 0
+            ? coordenadasExactas(NOTABLES_TRIGO[reduccion.beta], reduccion.signos, letra)
+            : null;
+        const rotuloCoordenadas = (() => {
+          const w = (exactas ? exactas.ancho : anchoDeRotulo("(" + textoX + "; " + textoY + ")", letra)) + 6;
+          const h = (exactas ? exactas.sube + exactas.baja : letra) + 4;
+          const candidatas = [];
+          [0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6, 7, -7].forEach((k) => {
+            const giro = radianes + (k * 15 * Math.PI) / 180;
+            const ux = Math.cos(giro);
+            const uy = -Math.sin(giro);
+            const borde = Math.min(Math.abs(ux) > 1e-6 ? w / 2 / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? h / 2 / Math.abs(uy) : Infinity);
+            [4, 9, 15, 22, 30, 38, 48].forEach((separacion, j) => {
+              const d = radioPunto + separacion + borde;
+              const caja = centrada(px + d * ux, py + d * uy, w, h, 0);
+              const hueco = Math.hypot(Math.max(caja.x - px, 0, px - caja.x - w), Math.max(caja.y - py, 0, py - caja.y - h));
+              caja.preferencia = 4 * Math.abs(k) + 4 * j + 0.5 * hueco;
+              candidatas.push(caja);
+            });
+          });
+          const mas = [{ circulo: [cx, cy, R + 3] }];
+          if (exactas) {
+            estorbos
+              .filter((e) => e.segmento && e.peso === 0.01)
+              .forEach((e) => mas.push(Object.assign({}, e, { peso: 0.3 })));
+          }
+          if (tangenteVisible && coseno > 0 && cx + R - px > 25) {
+            const arriba = Math.min(yTangente, cy) - 24;
+            mas.push({ zona: { x: cx + R, y: arriba, w: ancho - cx - R, h: Math.abs(yTangente - cy) + 48 }, coste: 0.5 });
+          }
+          if (tangenteVisible && Math.abs(yTangente - cy) >= corto) {
+            const medio = cy + 0.5 * (yTangente - cy);
+            mas.push({ zona: { x: cx + R + 2, y: medio - 16, w: anchoDeRotulo("tg", letra) + 16, h: 32 }, coste: 0.25 });
+          }
+          return coloca(candidatas, mas);
+        })();
+        let rotuloTg = null;
+        if (tangenteVisible && Math.abs(yTangente - cy) >= corto) {
+          const w = anchoDeRotulo("tg", letra) + 4;
+          const candidatas = [];
+          [0.5, 0.36, 0.64, 0.22, 0.78].forEach((t, j) => {
+            const y = cy + t * (yTangente - cy);
+            candidatas.push(centrada(cx + R + 7 + w / 2, y, w, altoRotulo, 4 * j));
+            candidatas.push(centrada(cx + R - 7 - w / 2, y, w, altoRotulo, 4 * j + 12));
+          });
+          const arriba = yTangente < cy ? -1 : 1;
+          candidatas.push(centrada(cx + R + 7 + w / 2, cy + arriba * (altoRotulo / 2 + 6), w, altoRotulo, 8));
+          candidatas.push(centrada(cx + R - 7 - w / 2, cy + arriba * (altoRotulo / 2 + 6), w, altoRotulo, 16));
+          candidatas.push(centrada(cx + R + 7 + w / 2, yTangente + arriba * (altoRotulo / 2 + 4), w, altoRotulo, 14));
+          candidatas.push(centrada(cx + R + 7 + w / 2, cy + arriba * (altoRotulo * 1.5 + 10), w, altoRotulo, 18));
+          rotuloTg = coloca(candidatas, [trazo], true);
+        }
+
+        let rotuloSen = null;
+        if (Math.abs(seno) * R >= corto) {
+          const w = anchoDeRotulo("sen", letra) + 4;
+          const fuera = coseno >= 0 ? 1 : -1;
+          const candidatas = [];
+          [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74].forEach((t, j) => {
+            const y = cy - t * R * seno;
+            candidatas.push(centrada(px + fuera * (8 + w / 2), y, w, altoRotulo, 4 * j));
+            candidatas.push(centrada(px - fuera * (8 + w / 2), y, w, altoRotulo, 4 * j + 10));
+          });
+          const arriba = seno > 0 ? -1 : 1;
+          candidatas.push(centrada(px + fuera * (8 + w / 2), cy + arriba * (altoRotulo / 2 + 6), w, altoRotulo, 8));
+          candidatas.push(centrada(px - fuera * (8 + w / 2), cy + arriba * (altoRotulo / 2 + 6), w, altoRotulo, 16));
+          rotuloSen = coloca(candidatas, [trazo], true);
+        }
+
+        let rotuloCos = null;
+        if (Math.abs(coseno) * R >= corto) {
+          const w = anchoDeRotulo("cos", letra) + 4;
+          const lado = seno >= 0 ? 1 : -1;
+          const candidatas = [];
+          [0.62, 0.5, 0.74, 0.4, 0.86, 0.3].forEach((t, j) => {
+            const x = cx + t * (px - cx);
+            candidatas.push(centrada(x, cy + lado * (6 + altoRotulo / 2), w, altoRotulo, 3 * j));
+            candidatas.push(centrada(x, cy - lado * (6 + altoRotulo / 2), w, altoRotulo, 3 * j + 10));
+          });
+          const hacia = coseno >= 0 ? 1 : -1;
+          candidatas.push(centrada(px + hacia * (6 + w / 2), cy + lado * (6 + altoRotulo / 2), w, altoRotulo, 12));
+          rotuloCos = coloca(candidatas, [trazo], true);
+        }
+
+        const enCaja = (caja) => ({ x: caja.x + caja.w / 2, y: caja.y + caja.h / 2 + 0.36 * letra });
+
+        const halo = { stroke: "#ffffff", strokeWidth: 4, paintOrder: "stroke", strokeLinejoin: "round" };
 
         const valorTex = (razon, valor) => {
           const notable = NOTABLES_TRIGO[beta];
@@ -40623,12 +42156,13 @@ void main() {
             <div className="zona-grafica">
               <svg
                 ref={lienzo}
-                viewBox="0 0 470 420"
+                viewBox={"0 0 " + ancho + " " + alto}
                 role="img"
-                style={{ touchAction: "none", display: "block", maxWidth: "560px", margin: "0 auto" }}
+                style={{ touchAction: "none", display: "block", maxWidth: "643px", margin: "0 auto" }}
                 aria-label={
                   "Circunferencia de radio 1 con un ángulo de " + angulo + " grados, en el " + nombreCuadrante +
-                  ". Coseno " + decimalTrigo(coseno, 3) + ", seno " + decimalTrigo(seno, 3) + "."
+                  ". El punto tiene coordenadas " + textoX + " y " + textoY + ": coseno " + decimalTrigo(coseno, 3) +
+                  ", seno " + decimalTrigo(seno, 3) + "."
                 }
                 onPointerDown={(evento) => {
                   arrastre.current = true;
@@ -40649,19 +42183,18 @@ void main() {
                   arrastre.current = false;
                 }}
               >
-                {sombra && <path d={sombra} fill="#e0e7ff" stroke="none" />}
+                {sombra && <path d={sombra} fill={colores.sombra} stroke="none" />}
                 <line x1={cx - R - 30} y1={cy} x2={cx + R + 60} y2={cy} stroke="var(--texto-suave)" strokeWidth="1.3" />
                 <line x1={cx} y1={cy + R + 30} x2={cx} y2={cy - R - 30} stroke="var(--texto-suave)" strokeWidth="1.3" />
-                <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1e293b" strokeWidth="2.2" />
+                <circle cx={cx} cy={cy} r={R} fill="none" stroke={colores.punto} strokeWidth="2.2" />
                 <line x1={cx + R} y1={cy - 2 * R} x2={cx + R} y2={cy + 2 * R} stroke="var(--texto-suave)" strokeWidth="1" strokeDasharray="5 5" />
-                <text x={cx + R + 6} y={cy + 18} fontSize="14" fill="var(--texto-suave)">1</text>
-                <text x={cx + 0.86 * R} y={cy - 0.86 * R} fontSize="14" textAnchor="middle" fill="var(--texto-suave)">1.º</text>
-                <text x={cx - 0.86 * R} y={cy - 0.86 * R} fontSize="14" textAnchor="middle" fill="var(--texto-suave)">2.º</text>
-                <text x={cx - 0.86 * R} y={cy + 0.86 * R + 10} fontSize="14" textAnchor="middle" fill="var(--texto-suave)">3.º</text>
-                <text x={cx + 0.86 * R} y={cy + 0.86 * R + 10} fontSize="14" textAnchor="middle" fill="var(--texto-suave)">4.º</text>
-                {!reducir && tangente !== null && (
+                <text x={cx + R + 6} y={cy + 18} fontSize={letra - 1} fill="var(--texto-suave)">1</text>
+                {rotulosCuadrantes.map((r) => (
+                  <text key={r.texto} x={r.x} y={r.y} fontSize={letra - 1} textAnchor="middle" fill="var(--texto-suave)">{r.texto}</text>
+                ))}
+                {tangenteVisible && (
                   <g>
-                    {Math.abs(tangente) <= 1.9 && (
+                    {discontinuaTangente && (
                       <line
                         x1={coseno >= 0 ? px : cx}
                         y1={coseno >= 0 ? py : cy}
@@ -40672,33 +42205,76 @@ void main() {
                         strokeDasharray="4 4"
                       />
                     )}
-                    <line x1={cx + R} y1={cy} x2={cx + R} y2={cy - R * alturaTangente} stroke="#c2410c" strokeWidth="5" strokeLinecap="round" />
-                    <text x={cx + R + 10} y={cy - (R * alturaTangente) / 2 + 5} fontSize="15" fill="#c2410c">
-                      tg
-                    </text>
+                    <line x1={cx + R} y1={cy} x2={cx + R} y2={cy - R * alturaTangente} stroke={colores.tg} strokeWidth="5" strokeLinecap="round" />
+                    {rotuloTg && (
+                      <text data-rotulo="tangente" {...enCaja(rotuloTg)} fontSize={letra} fontWeight="600" textAnchor="middle" fill={colores.tg} {...halo}>
+                        tg
+                      </text>
+                    )}
                   </g>
                 )}
-                <path d={arcoAlfa} fill="none" stroke="#047857" strokeWidth="2" />
-                <line x1={cx} y1={cy} x2={px} y2={cy} stroke="#1d4ed8" strokeWidth="6" strokeLinecap="round" />
-                <line x1={px} y1={cy} x2={px} y2={py} stroke="#b91c1c" strokeWidth="6" strokeLinecap="round" />
-                <line x1={cx} y1={cy} x2={px} y2={py} stroke="#1e293b" strokeWidth="2.5" />
+                <path d={arcoAlfa} fill="none" stroke={colores.angulo} strokeWidth="2.4" />
+                <line x1={cx} y1={cy} x2={px} y2={cy} stroke={colores.cos} strokeWidth="6" strokeLinecap="round" />
+                <line x1={px} y1={cy} x2={px} y2={py} stroke={colores.sen} strokeWidth="6" strokeLinecap="round" />
+                <line x1={cx} y1={cy} x2={px} y2={py} stroke={colores.punto} strokeWidth="2.5" />
                 {reducir && reduccion.forma && (
                   <g>
-                    <line x1={cx} y1={cy} x2={qx} y2={qy} stroke="#047857" strokeWidth="2.5" strokeDasharray="6 4" />
+                    <line x1={cx} y1={cy} x2={qx} y2={qy} stroke={colores.agudo} strokeWidth="2.5" strokeDasharray="6 4" />
                     <line x1={qx} y1={qy} x2={px} y2={py} stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 4" />
-                    <circle cx={qx} cy={qy} r="8" fill="#047857" />
-                    <text x={qx + 10} y={qy - 10} fontSize="15" fill="#047857">
+                    <circle cx={qx} cy={qy} r="7" fill={colores.agudo} />
+                    <text x={qx + 10} y={qy - 10} fontSize={letra} fontWeight="600" fill={colores.agudo} {...halo}>
                       {beta}°
                     </text>
                   </g>
                 )}
-                <circle cx={px} cy={py} r="11" fill="#1e293b" style={{ cursor: "grab" }} />
-                <text x={cx + 0.62 * (px - cx)} y={cy + (seno >= 0 ? 22 : -12)} fontSize="15" textAnchor="middle" fill="#1d4ed8">
-                  cos
-                </text>
-                <text x={px + (coseno >= 0 ? 8 : -8)} y={cy - (R * seno) / 2 + 5} fontSize="15" textAnchor={coseno >= 0 ? "start" : "end"} fill="#b91c1c">
-                  sen
-                </text>
+                <circle cx={px} cy={py} r={radioPunto} fill={colores.punto} style={{ cursor: "grab" }} />
+                {rotuloCos && (
+                  <text data-rotulo="coseno" {...enCaja(rotuloCos)} fontSize={letra} fontWeight="600" textAnchor="middle" fill={colores.cos} {...halo}>
+                    cos
+                  </text>
+                )}
+                {rotuloSen && (
+                  <text data-rotulo="seno" {...enCaja(rotuloSen)} fontSize={letra} fontWeight="600" textAnchor="middle" fill={colores.sen} {...halo}>
+                    sen
+                  </text>
+                )}
+                {rotuloAngulo && (
+                  <text
+                    data-rotulo="angulo"
+                    {...enCaja(rotuloAngulo)}
+                    fontSize={letra}
+                    fontWeight="700"
+                    textAnchor="middle"
+                    fill={colores.angulo}
+                    {...halo}
+                  >
+                    {textoAngulo}
+                  </text>
+                )}
+                {exactas ? (
+                  <g
+                    data-rotulo="coordenadas"
+                    transform={
+                      "translate(" + (rotuloCoordenadas.x + (rotuloCoordenadas.w - exactas.ancho) / 2).toFixed(2) + " " +
+                      (rotuloCoordenadas.y + rotuloCoordenadas.h / 2 + (exactas.sube - exactas.baja) / 2).toFixed(2) + ")"
+                    }
+                  >
+                    {exactas.piezas.map((pieza) => piezaDeCoordenadas(pieza, true, signoRaiz))}
+                    {exactas.piezas.map((pieza) => piezaDeCoordenadas(pieza, false, signoRaiz))}
+                  </g>
+                ) : (
+                  <text
+                    data-rotulo="coordenadas"
+                    {...enCaja(rotuloCoordenadas)}
+                    fontSize={letra}
+                    fontWeight="600"
+                    textAnchor="middle"
+                    fill={colores.punto}
+                    {...halo}
+                  >
+                    (<tspan fill={colores.cos}>{textoX}</tspan>; <tspan fill={colores.sen}>{textoY}</tspan>)
+                  </text>
+                )}
               </svg>
             </div>
 
@@ -43179,7 +44755,10 @@ void main() {
             respaldo.removeAttribute("id");
           }
 
-          const preparado = () => anfitrion.classList.add("is-enhanced");
+          const preparado = () => {
+            anfitrion.classList.add("is-enhanced");
+            anfitrion.dispatchEvent(new CustomEvent("interactivo-preparado", { bubbles: true }));
+          };
           const fallo = () => anfitrion.classList.remove("is-enhanced");
 
           try {
