@@ -44023,12 +44023,16 @@ void main() {
         const altoTope = 118;
         const escala = altoTope / limite;
 
+        const TECHO_TAE = 1000;
         const factor = devuelto / recibido;
         const unica = Math.pow(factor, 365 / dias) - 1;
+        const pasaTecho = unica > TECHO_TAE;
         const texUnica =
           "\\text{TAE}=\\left(\\frac{" + finTex(finNumero(devuelto, 0)) + "}{" +
           finTex(finNumero(recibido, 0)) + "}\\right)^{365/" + dias + "}-1" +
-          finIgual(unica, unica >= 1 ? 2 : 4) + finTex(finDecimal(unica, unica >= 1 ? 2 : 4));
+          (pasaTecho
+            ? ">" + TECHO_TAE
+            : finIgual(unica, unica >= 1 ? 2 : 4) + finTex(finDecimal(unica, unica >= 1 ? 2 : 4)));
 
         const cambiarRecibido = (valor) => {
           setRecibido(valor);
@@ -44194,12 +44198,19 @@ void main() {
                 className={"veredicto-interactivo" + (unica > 1 ? " es-fallo" : "")}
                 aria-live="polite"
               >
-                <strong>{"Una TAE del " + finPorcentaje(unica)}</strong>
+                <strong>
+                  {pasaTecho
+                    ? "Una TAE de más del " + finPorcentaje(TECHO_TAE)
+                    : "Una TAE del " + finPorcentaje(unica)}
+                </strong>
                 <FormulaViva tex={texUnica} />
                 <p>
                   {"En " + dias + " días se paga un " + finDecimal((factor - 1) * 100, 2) + "\u00a0%" +
                     " más; en un año, la deuda se multiplicaría por " +
-                    finDecimal(1 + unica, unica >= 10 ? 1 : 2) + "."}
+                    (pasaTecho
+                      ? "más de " + finNumero(TECHO_TAE, 0)
+                      : finDecimal(1 + unica, unica >= 10 ? 1 : unica >= 1 ? 2 : 4)) +
+                    "."}
                 </p>
               </div>
             </div>
