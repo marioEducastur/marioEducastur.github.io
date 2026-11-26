@@ -32513,7 +32513,9 @@ void main() {
                   ? "El precio vuelve a ser el del principio."
                   : (cambio > 0 ? "En total sube un " : "En total baja un ") +
                     cifra(Math.abs(cambio)) +
-                    " %, porque la segunda variación se aplica sobre el precio ya cambiado."}
+                    (e.subida > 0 && e.rebaja > 0
+                      ? " %, porque la segunda variación se aplica sobre el precio ya cambiado."
+                      : " %.")}
               </>
             ];
           },
@@ -32942,7 +32944,7 @@ void main() {
           mandos: () => [{ tipo: "paso", clave: "t", nombre: "los años", rotulo: "Años, t =", min: 1, max: maximo }],
           vivo: (e) => [
             "C_f=" + dineroTex(cuota) + "\\cdot " + enTex(1 + i, 6) + "\\cdot\\frac{" + enTex(1 + i, 6) + "^{" + e.t + "}-1}{" + tantoTex(tipo) + "}",
-            "\\approx " + dineroTex(reunido(e.t)),
+            igualOCasi(reunido(e.t)) + dineroTex(reunido(e.t)),
             <>
               {"Se han ingresado " + dineroDe(cuota * e.t) + " €: los intereses son " + dineroDe(reunido(e.t) - cuota * e.t) + " €."}
             </>
@@ -32957,8 +32959,9 @@ void main() {
           const j = tipo / 100 / porAnio;
           const n = e.anios * porAnio;
           const potencia = Math.pow(1 + j, n);
-          const cuota = Math.round((prestamo * j * potencia * 100) / (potencia - 1)) / 100;
-          return { j: j, n: n, cuota: cuota, total: Math.round(cuota * n * 100) / 100 };
+          const exacta = (prestamo * j * potencia) / (potencia - 1);
+          const cuota = Math.round(exacta * 100) / 100;
+          return { j: j, n: n, exacta: exacta, cuota: cuota, total: Math.round(cuota * n * 100) / 100 };
         };
         const suelo = 262;
         const techo = 96;
@@ -33034,7 +33037,7 @@ void main() {
             const jTex = enTex(d.j, 6);
             return [
               "A=\\frac{" + dineroTex(prestamo) + "\\cdot " + jTex + "\\cdot " + enTex(1 + d.j, 6) + "^{" + d.n + "}}{" + enTex(1 + d.j, 6) + "^{" + d.n + "}-1}",
-              "\\approx " + dineroTex(d.cuota),
+              igualOCasi(d.exacta) + dineroTex(d.cuota),
               <>
                 {"En total se pagan " + d.n + " · " + dineroDe(d.cuota) + " = " + dineroDe(d.total) + " €, de los que " +
                   dineroDe(d.total - prestamo) + " € son intereses."}
@@ -33049,12 +33052,13 @@ void main() {
         const j = tipo / 100;
         const potencia = Math.pow(1 + j, anios);
         const cuotaFija = Math.round((prestamo * 100 * j * potencia) / (potencia - 1));
-        const parte = Math.round((prestamo * 100) / anios);
+        const centimos = Math.round(prestamo * 100);
+        const parteHasta = (k) => Math.round((centimos * k) / anios);
         const filas = [];
-        let pendiente = Math.round(prestamo * 100);
+        let pendiente = centimos;
         for (let k = 1; k <= anios; k += 1) {
           const intereses = Math.round(pendiente * j);
-          const amortizado = k === anios ? pendiente : constante ? parte : cuotaFija - intereses;
+          const amortizado = k === anios ? pendiente : constante ? parteHasta(k) - parteHasta(k - 1) : cuotaFija - intereses;
           const anterior = pendiente;
           pendiente -= amortizado;
           filas.push({ anterior: anterior / 100, cuota: (amortizado + intereses) / 100, intereses: intereses / 100, amortizado: amortizado / 100, pendiente: pendiente / 100 });
@@ -44224,12 +44228,13 @@ void main() {
         const j = tin / 100 / porAnio;
         const potencia = Math.pow(1 + j, periodos);
         const cuotaFija = Math.round((capital * 100 * j * potencia) / (potencia - 1));
-        const parteFija = Math.round((capital * 100) / periodos);
+        const centimos = Math.round(capital * 100);
+        const parteHasta = (k) => Math.round((centimos * k) / periodos);
         const filas = [];
-        let pendiente = Math.round(capital * 100);
+        let pendiente = centimos;
         for (let k = 1; k <= periodos; k += 1) {
           const intereses = Math.round(pendiente * j);
-          let amortizado = constante ? parteFija : cuotaFija - intereses;
+          let amortizado = constante ? parteHasta(k) - parteHasta(k - 1) : cuotaFija - intereses;
           if (k === periodos || amortizado > pendiente) {
             amortizado = pendiente;
           }
@@ -44284,6 +44289,7 @@ void main() {
         const nombrePeriodo = mensual ? "Mes" : "Año";
         const primera = filas[0].cuota;
         const ultima = filas[filas.length - 1].cuota;
+        const varias = constante && primera !== ultima;
 
         const barras = [];
         if (!mensual) {
@@ -44310,6 +44316,9 @@ void main() {
         const paso = (derecha - izquierda) / barras.length;
         const ancho = Math.min(paso * 0.72, 70);
         const marcarCada = barras.length <= 12 ? 1 : barras.length <= 24 ? 2 : 5;
+        const rotular = (indice) =>
+          indice === barras.length - 1 ||
+          (indice % marcarCada === 0 && (barras.length - 1 - indice) * paso >= 28);
 
         const visibles = entero ? filas : filas.slice(0, 12);
         const euros = (centimos) => finEuros(centimos / 100);
@@ -44388,9 +44397,9 @@ void main() {
 
             <div className="resumen-operaciones fin-tres" aria-live="polite">
               <div className="resultado-operacion">
-                <strong>{constante ? "Cuotas" : mensual ? "Cuota mensual" : "Cuota anual"}</strong>
+                <strong>{varias ? "Cuotas" : mensual ? "Cuota mensual" : "Cuota anual"}</strong>
                 <span className="fin-cifra">
-                  {constante
+                  {varias
                     ? "De " + euros(primera) + " a " + euros(ultima) + "\u00a0€"
                     : euros(primera) + "\u00a0€"}
                 </span>
@@ -44430,7 +44439,7 @@ void main() {
                         height={hAmortizado}
                         fill="#059669"
                       />
-                      {(indice % marcarCada === 0 || indice === barras.length - 1) && (
+                      {rotular(indice) && (
                         <text x={x + ancho / 2} y={base + 18} textAnchor="middle" fontSize="13" fill="var(--texto-suave)">
                           {barra.clave}
                         </text>
